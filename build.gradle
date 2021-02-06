@@ -1,0 +1,167 @@
+buildscript {
+    repositories {
+        maven { url = 'https://files.minecraftforge.net/maven' }
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath 'org.ajoberstar:gradle-git:0.6.1'
+    }
+}
+import org.ajoberstar.gradle.git.tasks.GitTag
+import org.ajoberstar.gradle.git.tasks.GitPush
+
+plugins {
+    id "com.matthewprenger.cursegradle" version '1.4.0'
+}
+apply plugin: 'net.minecraftforge.gradle'
+// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+
+libsDirName = "../output"
+distsDirName = "../output"
+
+def version_minor='0'
+def version_revision='1'
+def minecraft_version='1.16.5'
+def version_build='0 alpha'
+def version_major='0'
+
+version = minecraft_version+'-'+version_major+'.'+version_minor+'.'+version_revision+'-'+version_build
+group = 'ballistix' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = 'Ballistix'
+
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+
+println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
+minecraft {
+    mappings channel: 'snapshot', version: '20201028-1.16.3'
+    
+    runs {
+        client {
+            workingDirectory project.file('run')
+
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                ballistix {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                ballistix {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        data {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            args '--mod', 'ballistix', '--all', '--output', file('src/generated/resources/')
+
+            mods {
+                ballistix {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.16.5-36.0.1'
+    compile fileTree("libs")
+}
+
+// Example for how to get properties into the manifest for reading by the runtime..
+jar {
+    manifest {
+        attributes([
+            "Specification-Title": "ballistix",
+            "Specification-Vendor": "aurilisdev",
+            "Specification-Version": "1", // We are version 1 of ourselves
+            "Implementation-Title": project.name,
+            "Implementation-Version": "${version}",
+            "Implementation-Vendor" :"aurilisdev",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+jar.finalizedBy('reobfJar') 
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+	from sourceSets.main.allSource
+	classifier = 'sources'
+}
+task deobfJar(type: Jar) {
+	from sourceSets.main.output
+	classifier = 'deobf'
+}
+
+artifacts {
+	archives sourcesJar
+	archives deobfJar
+}
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            url "file:///${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
+
+ext.gittagnew = 'v'+project.version
+
+task createTag(type: GitTag) {
+   repoPath = rootDir
+   tagName = gittagnew
+   message = "tag ${project.version.toString()}"
+}
+
+task pushTag(type: GitPush, dependsOn: createTag) {
+   namesOrSpecs = [gittagnew]
+}
+tasks.curseforge.dependsOn jar
+tasks.curseforge.dependsOn pushTag
+
+curseforge {
+  apiKey = System.getenv("CURSEFORGE_KEY")
+  project {
+    id = '318646'
+    changelog = 'You can find changelog at: https://aurilis.dev/'
+    releaseType = 'release'
+    addGameVersion minecraft_version
+
+    mainArtifact(jar) {
+      displayName=project.name+' ' + project.version
+    }
+  }
+}

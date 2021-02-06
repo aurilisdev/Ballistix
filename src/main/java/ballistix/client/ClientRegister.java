@@ -1,4 +1,4 @@
-package nuclearscience.client;
+package ballistix.client;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraftforge.api.distmarker.Dist;

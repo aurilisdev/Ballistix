@@ -1,4 +1,4 @@
-package nuclearscience;
+package ballistix;
 
 import com.google.common.base.Supplier;
 

@@ -1,4 +1,4 @@
-package nuclearscience.common.settings;
+package ballistix.common.settings;
 
 import electrodynamics.api.configuration.Configuration;
 

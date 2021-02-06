@@ -1,4 +1,4 @@
-package nuclearscience.common.tab;
+package ballistix.common.tab;
 
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;

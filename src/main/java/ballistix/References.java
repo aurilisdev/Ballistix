@@ -1,6 +1,6 @@
-package nuclearscience;
+package ballistix;
 
-import nuclearscience.common.tab.ItemGroupBallistix;
+import ballistix.common.tab.ItemGroupBallistix;
 
 public class References {
 	public static final String ID = "ballistix";

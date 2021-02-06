@@ -1,5 +1,7 @@
-package nuclearscience;
+package ballistix;
 
+import ballistix.client.ClientRegister;
+import ballistix.common.settings.Constants;
 import electrodynamics.api.configuration.ConfigurationHandler;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -10,8 +12,6 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import nuclearscience.client.ClientRegister;
-import nuclearscience.common.settings.Constants;
 
 @Mod(References.ID)
 @EventBusSubscriber(modid = References.ID, bus = Bus.MOD)

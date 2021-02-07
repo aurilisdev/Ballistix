@@ -1,0 +1,12 @@
+{
+	"parent": "block/cube_all",
+	"textures": {
+		"particle": "ballistix:block/condensiveside",
+		"north": "ballistix:block/condensiveside",
+		"south": "ballistix:block/condensiveside",
+		"east": "ballistix:block/condensiveside",
+		"west": "ballistix:block/condensiveside",
+		"up": "ballistix:block/condensivetop",
+		"down": "ballistix:block/condensivebottom"
+	}
+}

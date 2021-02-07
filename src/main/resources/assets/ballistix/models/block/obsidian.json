@@ -1,0 +1,12 @@
+{
+	"parent": "block/cube_all",
+	"textures": {
+		"particle": "ballistix:block/obsidianside",
+		"north": "ballistix:block/obsidianside",
+		"south": "ballistix:block/obsidianside",
+		"east": "ballistix:block/obsidianside",
+		"west": "ballistix:block/obsidianside",
+		"up": "ballistix:block/obsidiantop",
+		"down": "ballistix:block/obsidianbottom"
+	}
+}

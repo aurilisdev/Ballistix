@@ -1,7 +1,13 @@
 {
-	"item.ballistix.example": "Example",
-	"block.ballistix.example": "Example",
-	"container.example": "Example",
-	"gui.example.example": "Example",
+	"block.ballistix.obsidian": "Obsidian TNT",
+	"block.ballistix.condensive": "Condensive Explosive",
+	"block.ballistix.attractive": "Attractive Explosive",
+	"block.ballistix.repulsive": "Repulsive Explosive",
+	"block.ballistix.incendiary": "Incendiary Explosive",
+	"block.ballistix.breaching": "Breaching Explosive",
+	"item.ballistix.grenadecondensive": "Condensive Grenade",
+	"item.ballistix.grenadeattractive": "Attractive Grenade",
+	"item.ballistix.grenaderepulsive": "Repulsive Grenade",
+	"item.ballistix.grenadeincendiary": "Incendiary Grenade",
 	"itemGroup.itemgroupballistix": "Ballistix"
 }

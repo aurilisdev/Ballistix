@@ -1,5 +1,6 @@
 package ballistix.common.blast;
 
+import ballistix.common.block.SubtypeBlast;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion.Mode;
 import net.minecraft.world.World;
@@ -24,6 +25,10 @@ public class BlastCondensive extends Blast {
 
 	@Override
 	public void doPostExplode() {
+	}
+	@Override
+	public SubtypeBlast getBlastType() {
+		return SubtypeBlast.condensive;
 	}
 
 }

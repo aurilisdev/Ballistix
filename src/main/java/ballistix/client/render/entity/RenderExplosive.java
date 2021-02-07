@@ -3,7 +3,7 @@ package ballistix.client.render.entity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import ballistix.DeferredRegisters;
-import ballistix.common.block.SubtypeExplosive;
+import ballistix.common.block.SubtypeBlast;
 import ballistix.common.entity.EntityExplosive;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -27,7 +27,7 @@ public class RenderExplosive extends EntityRenderer<EntityExplosive> {
 
 	@Override
 	public void render(EntityExplosive entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
-		SubtypeExplosive subtype = entityIn.getExplosiveType();
+		SubtypeBlast subtype = entityIn.getBlastType();
 		if (subtype != null) {
 			matrixStackIn.push();
 			matrixStackIn.translate(0.0D, 0.5D, 0.0D);

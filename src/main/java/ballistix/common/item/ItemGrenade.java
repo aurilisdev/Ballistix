@@ -1,7 +1,7 @@
 package ballistix.common.item;
 
 import ballistix.References;
-import ballistix.common.block.SubtypeExplosive;
+import ballistix.common.block.SubtypeBlast;
 import ballistix.common.entity.EntityGrenade;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,9 +16,9 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
 
 public class ItemGrenade extends Item {
-	private SubtypeExplosive explosive;
+	private SubtypeBlast explosive;
 
-	public ItemGrenade(SubtypeExplosive explosive) {
+	public ItemGrenade(SubtypeBlast explosive) {
 		super(new Item.Properties().group(References.BALLISTIXTAB).maxStackSize(16));
 		this.explosive = explosive;
 	}

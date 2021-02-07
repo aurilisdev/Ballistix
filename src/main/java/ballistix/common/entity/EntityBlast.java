@@ -2,7 +2,7 @@ package ballistix.common.entity;
 
 import ballistix.DeferredRegisters;
 import ballistix.common.blast.Blast;
-import ballistix.common.block.SubtypeExplosive;
+import ballistix.common.block.SubtypeBlast;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
@@ -16,6 +16,8 @@ import net.minecraftforge.fml.network.NetworkHooks;
 public class EntityBlast extends Entity {
 	private static final DataParameter<Integer> CALLCOUNT = EntityDataManager.createKey(EntityBlast.class, DataSerializers.VARINT);
 	private static final DataParameter<Integer> TYPE = EntityDataManager.createKey(EntityBlast.class, DataSerializers.VARINT);
+
+	private Blast blast;
 	public int blastOrdinal = -1;
 	public int callcount = 0;
 
@@ -28,15 +30,14 @@ public class EntityBlast extends Entity {
 		this(DeferredRegisters.ENTITY_BLAST.get(), worldIn);
 	}
 
-	public void setExplosiveType(SubtypeExplosive explosive) {
+	public void setBlastType(SubtypeBlast explosive) {
 		blastOrdinal = explosive.ordinal();
+		blast = Blast.createFromSubtype(getBlastType(), world, getPosition());
 	}
 
-	public SubtypeExplosive getExplosiveType() {
-		return blastOrdinal == -1 ? null : SubtypeExplosive.values()[blastOrdinal];
+	public SubtypeBlast getBlastType() {
+		return blastOrdinal == -1 ? null : SubtypeBlast.values()[blastOrdinal];
 	}
-
-	public Blast blast;
 
 	@Override
 	protected void registerData() {
@@ -55,14 +56,20 @@ public class EntityBlast extends Entity {
 		}
 		if (blast != null) {
 			if (callcount == 0) {
-				blast.doPreExplode();
-			} else if (blast.doExplode(callcount)) {
-				blast.doPostExplode();
+				blast.preExplode();
+			} else if (blast.explode(callcount)) {
+				blast.postExplode();
 				remove();
 			}
 			callcount++;
 		} else {
-			remove();
+			if (blastOrdinal == -1) {
+				if (ticksExisted > 20) {
+					remove();
+				}
+			} else {
+				blast = Blast.createFromSubtype(getBlastType(), world, getPosition());
+			}
 		}
 	}
 
@@ -76,8 +83,8 @@ public class EntityBlast extends Entity {
 	protected void readAdditional(CompoundNBT compound) {
 		blastOrdinal = compound.getInt("type");
 		callcount = compound.getInt("callcount");
-		if (blast == null && blastOrdinal != -1) {
-			blast = Blast.createFromSubtype(getExplosiveType(), world, getPosition());
+		if (blastOrdinal != -1) {
+			setBlastType(getBlastType());
 		}
 	}
 

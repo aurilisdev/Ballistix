@@ -5,7 +5,7 @@ import java.util.HashMap;
 import com.google.common.base.Supplier;
 
 import ballistix.common.block.BlockExplosive;
-import ballistix.common.block.SubtypeExplosive;
+import ballistix.common.block.SubtypeBlast;
 import ballistix.common.entity.EntityBlast;
 import ballistix.common.entity.EntityExplosive;
 import ballistix.common.entity.EntityGrenade;
@@ -33,11 +33,11 @@ public class DeferredRegisters {
 	public static final DeferredRegister<ContainerType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, References.ID);
 	public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, References.ID);
 	static {
-		for (SubtypeExplosive subtype : SubtypeExplosive.values()) {
+		for (SubtypeBlast subtype : SubtypeBlast.values()) {
 			SUBTYPEBLOCKREGISTER_MAPPINGS.put(subtype, BLOCKS.register(subtype.tag(), supplier(new BlockExplosive(subtype), subtype)));
 			ITEMS.register(subtype.tag(), supplier(new BlockItemDescriptable(SUBTYPEBLOCK_MAPPINGS.get(subtype), new Item.Properties().group(References.BALLISTIXTAB)), subtype));
 		}
-		for (SubtypeExplosive subtype : SubtypeExplosive.values()) {
+		for (SubtypeBlast subtype : SubtypeBlast.values()) {
 			if (subtype.hasGrenade) {
 				ItemGrenade grenade = new ItemGrenade(subtype);
 				ITEMS.register("grenade" + subtype.tag(), supplier(grenade, subtype));

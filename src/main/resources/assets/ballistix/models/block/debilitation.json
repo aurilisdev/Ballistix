@@ -1,0 +1,12 @@
+{
+	"parent": "block/cube_all",
+	"textures": {
+		"particle": "ballistix:block/debilitationside",
+		"north": "ballistix:block/debilitationside",
+		"south": "ballistix:block/debilitationside",
+		"east": "ballistix:block/debilitationside",
+		"west": "ballistix:block/debilitationside",
+		"up": "ballistix:block/debilitationtop",
+		"down": "ballistix:block/debilitationbottom"
+	}
+}

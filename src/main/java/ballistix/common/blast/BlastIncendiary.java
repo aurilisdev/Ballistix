@@ -1,5 +1,6 @@
 package ballistix.common.blast;
 
+import ballistix.common.block.SubtypeBlast;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -40,6 +41,10 @@ public class BlastIncendiary extends Blast {
 
 	@Override
 	public void doPostExplode() {
+	}
+	@Override
+	public SubtypeBlast getBlastType() {
+		return SubtypeBlast.incendiary;
 	}
 
 }

@@ -26,9 +26,9 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
 public class BlockExplosive extends Block {
-	private SubtypeExplosive explosive;
+	private SubtypeBlast explosive;
 
-	public BlockExplosive(SubtypeExplosive explosive) {
+	public BlockExplosive(SubtypeBlast explosive) {
 		super(AbstractBlock.Properties.create(Material.TNT).zeroHardnessAndResistance().sound(SoundType.PLANT));
 		this.explosive = explosive;
 	}
@@ -72,10 +72,10 @@ public class BlockExplosive extends Block {
 		}
 	}
 
-	private static void explode(World worldIn, BlockPos pos, SubtypeExplosive explosive) {
+	private static void explode(World worldIn, BlockPos pos, SubtypeBlast explosive) {
 		if (!worldIn.isRemote) {
 			EntityExplosive explosiveEntity = new EntityExplosive(worldIn, pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D);
-			explosiveEntity.setExplosiveType(explosive);
+			explosiveEntity.setBlastType(explosive);
 			worldIn.addEntity(explosiveEntity);
 			worldIn.playSound((PlayerEntity) null, explosiveEntity.getPosX(), explosiveEntity.getPosY(), explosiveEntity.getPosZ(), SoundEvents.ENTITY_TNT_PRIMED, SoundCategory.BLOCKS, 1.0F, 1.0F);
 		}

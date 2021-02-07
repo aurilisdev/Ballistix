@@ -6,14 +6,14 @@
 	"block.ballistix.incendiary": "Incendiary Explosive",
 	"block.ballistix.breaching": "Breaching Explosive",
 	"block.ballistix.shrapnel": "Shrapnel Explosive",
-	"block.ballistix.debilition": "Debilition Explosive",
+	"block.ballistix.debilitation": "Debilitation Explosive",
 	"block.ballistix.chemical": "Chemical Explosive",
 	"item.ballistix.grenadecondensive": "Condensive Grenade",
 	"item.ballistix.grenadeattractive": "Attractive Grenade",
 	"item.ballistix.grenaderepulsive": "Repulsive Grenade",
 	"item.ballistix.grenadeincendiary": "Incendiary Grenade",
 	"item.ballistix.grenadeshrapnel": "Shrapnel Grenade",
-	"item.ballistix.grenadedebilition": "Debilition Grenade",
+	"item.ballistix.grenadedebilitation": "Debilitation Grenade",
 	"item.ballistix.grenadechemical": "Chemical Grenade",
 	"itemGroup.itemgroupballistix": "Ballistix"
 }

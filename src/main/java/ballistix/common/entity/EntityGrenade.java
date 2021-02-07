@@ -2,7 +2,7 @@ package ballistix.common.entity;
 
 import ballistix.DeferredRegisters;
 import ballistix.common.blast.Blast;
-import ballistix.common.block.SubtypeExplosive;
+import ballistix.common.block.SubtypeBlast;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.projectile.ThrowableEntity;
@@ -29,13 +29,13 @@ public class EntityGrenade extends ThrowableEntity {
 		this(DeferredRegisters.ENTITY_GRENADE.get(), worldIn);
 	}
 
-	public void setExplosiveType(SubtypeExplosive explosive) {
+	public void setExplosiveType(SubtypeBlast explosive) {
 		blastOrdinal = explosive.ordinal();
 		fuse = explosive.fuse;
 	}
 
-	public SubtypeExplosive getExplosiveType() {
-		return blastOrdinal == -1 ? null : SubtypeExplosive.values()[blastOrdinal];
+	public SubtypeBlast getExplosiveType() {
+		return blastOrdinal == -1 ? null : SubtypeBlast.values()[blastOrdinal];
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class EntityGrenade extends ThrowableEntity {
 		if (fuse <= 0) {
 			this.remove();
 			if (blastOrdinal != -1) {
-				SubtypeExplosive explosive = SubtypeExplosive.values()[blastOrdinal];
+				SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
 				Blast b = Blast.createFromSubtype(explosive, world, getPosition());
 				if (b != null) {
 					b.performExplosion();

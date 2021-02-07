@@ -2,6 +2,7 @@ package ballistix.common.blast;
 
 import java.util.List;
 
+import ballistix.common.block.SubtypeBlast;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.TNTEntity;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -57,6 +58,11 @@ public class BlastAttractive extends Blast {
 
 	@Override
 	public void doPostExplode() {
+	}
+
+	@Override
+	public SubtypeBlast getBlastType() {
+		return SubtypeBlast.attractive;
 	}
 
 }

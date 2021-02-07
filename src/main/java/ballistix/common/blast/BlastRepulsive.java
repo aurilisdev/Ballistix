@@ -21,7 +21,7 @@ public class BlastRepulsive extends Blast {
 	}
 
 	@Override
-	public void doExplode(int callCount) {
+	public boolean doExplode(int callCount) {
 		if (!world.isRemote) {
 			world.createExplosion(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, 1f, Mode.BREAK);
 		}
@@ -36,14 +36,14 @@ public class BlastRepulsive extends Blast {
 		int i1 = MathHelper.floor(y + (double) f2 + 1.0D);
 		int j2 = MathHelper.floor(z - (double) f2 - 1.0D);
 		int j1 = MathHelper.floor(z + (double) f2 + 1.0D);
-		List<Entity> list = this.world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB((double) k1, (double) i2, (double) j2, (double) l1, (double) i1, (double) j1));
+		List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(k1, i2, j2, l1, i1, j1));
 
 		for (int k2 = 0; k2 < list.size(); ++k2) {
 			Entity entity = list.get(k2);
 			double d5 = entity.getPosX() - x;
 			double d7 = (entity instanceof TNTEntity ? entity.getPosY() : entity.getPosYEye()) - y;
 			double d9 = entity.getPosZ() - z;
-			double d13 = (double) MathHelper.sqrt(d5 * d5 + d7 * d7 + d9 * d9);
+			double d13 = MathHelper.sqrt(d5 * d5 + d7 * d7 + d9 * d9);
 			if (d13 != 0.0D) {
 				d5 = d5 / d13;
 				d7 = d7 / d13;
@@ -52,6 +52,7 @@ public class BlastRepulsive extends Blast {
 				entity.setMotion(entity.getMotion().add(d5 * d11, d7 * d11, d9 * d11));
 			}
 		}
+		return true;
 	}
 
 	@Override

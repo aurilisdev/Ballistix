@@ -15,10 +15,11 @@ public class BlastObsidian extends Blast {
 	}
 
 	@Override
-	public void doExplode(int callCount) {
+	public boolean doExplode(int callCount) {
 		if (!world.isRemote) {
 			world.createExplosion(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, 10f, Mode.BREAK);
 		}
+		return true;
 	}
 
 	@Override

@@ -14,7 +14,8 @@ public class BlastDebilition extends Blast {
 	}
 
 	@Override
-	public void doExplode(int callCount) {
+	public boolean doExplode(int callCount) {
+		return true;
 	}
 
 	@Override

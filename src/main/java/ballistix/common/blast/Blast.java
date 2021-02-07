@@ -7,6 +7,7 @@ import ballistix.api.event.BlastEvent.ConstructBlastEvent;
 import ballistix.api.event.BlastEvent.PostBlastEvent;
 import ballistix.api.event.BlastEvent.PreBlastEvent;
 import ballistix.common.block.SubtypeExplosive;
+import ballistix.common.entity.EntityBlast;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -27,7 +28,7 @@ public abstract class Blast {
 
 	public abstract void doPreExplode();
 
-	public abstract void doExplode(int callCount);
+	public abstract boolean doExplode(int callCount);
 
 	public abstract void doPostExplode();
 
@@ -71,7 +72,10 @@ public abstract class Blast {
 				doExplode(0);
 				doPostExplode();
 			} else if (!world.isRemote) {
-				// world.addEntity(new EntityBlast(this));
+				EntityBlast entity = new EntityBlast(world);
+				entity.setPosition(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5);
+				entity.blast = this;
+				world.addEntity(entity);
 			}
 		}
 	}

@@ -16,7 +16,7 @@ public class BlastIncendiary extends Blast {
 	}
 
 	@Override
-	public void doExplode(int callCount) {
+	public boolean doExplode(int callCount) {
 		if (!world.isRemote) {
 			int radius = 7;
 			for (int x = -radius; x <= radius; x++) {
@@ -35,6 +35,7 @@ public class BlastIncendiary extends Blast {
 				}
 			}
 		}
+		return true;
 	}
 
 	@Override

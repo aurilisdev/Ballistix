@@ -6,6 +6,7 @@ import com.google.common.base.Supplier;
 
 import ballistix.common.block.BlockExplosive;
 import ballistix.common.block.SubtypeExplosive;
+import ballistix.common.entity.EntityBlast;
 import ballistix.common.entity.EntityExplosive;
 import ballistix.common.entity.EntityGrenade;
 import ballistix.common.item.ItemGrenade;
@@ -48,6 +49,8 @@ public class DeferredRegisters {
 			() -> EntityType.Builder.<EntityExplosive>create(EntityExplosive::new, EntityClassification.MISC).immuneToFire().size(1, 1).build(References.ID + ".explosive"));
 	public static final RegistryObject<EntityType<EntityGrenade>> ENTITY_GRENADE = ENTITIES.register("grenade",
 			() -> EntityType.Builder.<EntityGrenade>create(EntityGrenade::new, EntityClassification.MISC).immuneToFire().size(0.25f, 0.25f).build(References.ID + ".grenade"));
+	public static final RegistryObject<EntityType<EntityBlast>> ENTITY_BLAST = ENTITIES.register("blast",
+			() -> EntityType.Builder.<EntityBlast>create(EntityBlast::new, EntityClassification.MISC).immuneToFire().build(References.ID + ".explosive"));
 
 	private static <T extends IForgeRegistryEntry<T>> Supplier<? extends T> supplier(T entry) {
 		return () -> entry;

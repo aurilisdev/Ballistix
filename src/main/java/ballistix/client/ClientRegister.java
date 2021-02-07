@@ -1,6 +1,7 @@
 package ballistix.client;
 
 import ballistix.DeferredRegisters;
+import ballistix.client.render.entity.RenderBlast;
 import ballistix.client.render.entity.RenderExplosive;
 import ballistix.client.render.entity.RenderGrenade;
 import net.minecraft.client.renderer.RenderType;
@@ -14,6 +15,7 @@ public class ClientRegister {
 	public static void setup() {
 		RenderingRegistry.registerEntityRenderingHandler(DeferredRegisters.ENTITY_EXPLOSIVE.get(), RenderExplosive::new);
 		RenderingRegistry.registerEntityRenderingHandler(DeferredRegisters.ENTITY_GRENADE.get(), RenderGrenade::new);
+		RenderingRegistry.registerEntityRenderingHandler(DeferredRegisters.ENTITY_BLAST.get(), RenderBlast::new);
 	}
 
 	public static boolean shouldMultilayerRender(RenderType type) {

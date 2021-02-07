@@ -1,13 +1,17 @@
 package ballistix.common.blast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ballistix.common.block.SubtypeBlast;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.TNTEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.play.server.SExplosionPacket;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.Explosion.Mode;
 import net.minecraft.world.World;
 
@@ -51,6 +55,10 @@ public class BlastRepulsive extends Blast {
 				d9 = d9 / d13;
 				double d11 = 2;
 				entity.setMotion(entity.getMotion().add(d5 * d11, d7 * d11, d9 * d11));
+				if (entity instanceof ServerPlayerEntity) {
+					ServerPlayerEntity serverplayerentity = (ServerPlayerEntity) entity;
+					serverplayerentity.connection.sendPacket(new SExplosionPacket(x, y, z, size, new ArrayList<>(), new Vector3d(d5 * d11, d7 * d11, d9 * d11)));
+				}
 			}
 		}
 		return true;
@@ -58,10 +66,11 @@ public class BlastRepulsive extends Blast {
 
 	@Override
 	public void doPostExplode() {
-	}	@Override
+	}
+
+	@Override
 	public SubtypeBlast getBlastType() {
 		return SubtypeBlast.repulsive;
 	}
-
 
 }

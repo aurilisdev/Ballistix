@@ -13,7 +13,8 @@ import electrodynamics.api.subtype.Subtype;
 
 public enum SubtypeBlast implements Subtype {
 	obsidian(BlastObsidian.class, 120, false), condensive(BlastCondensive.class, 30, true), attractive(BlastAttractive.class, 30, true), repulsive(BlastRepulsive.class, 30, true),
-	incendiary(BlastIncendiary.class, 80, true), shrapnel(BlastShrapnel.class, 40, true), debilitation(BlastDebilitation.class, 80, true), chemical(BlastChemical.class, 100, true), breaching(BlastBreaching.class, 5, false);
+	incendiary(BlastIncendiary.class, 80, true), shrapnel(BlastShrapnel.class, 40, true), debilitation(BlastDebilitation.class, 80, true), chemical(BlastChemical.class, 100, true),
+	breaching(BlastBreaching.class, 5, false);
 	public final Class<?> blastClass;
 	public final int fuse;
 	public final boolean hasGrenade;

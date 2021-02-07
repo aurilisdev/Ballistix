@@ -26,6 +26,7 @@ public class BlastCondensive extends Blast {
 	@Override
 	public void doPostExplode() {
 	}
+
 	@Override
 	public SubtypeBlast getBlastType() {
 		return SubtypeBlast.condensive;

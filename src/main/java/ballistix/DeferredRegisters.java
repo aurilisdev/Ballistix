@@ -9,6 +9,7 @@ import ballistix.common.block.SubtypeBlast;
 import ballistix.common.entity.EntityBlast;
 import ballistix.common.entity.EntityExplosive;
 import ballistix.common.entity.EntityGrenade;
+import ballistix.common.entity.EntityShrapnel;
 import ballistix.common.item.ItemGrenade;
 import electrodynamics.api.subtype.Subtype;
 import electrodynamics.common.blockitem.BlockItemDescriptable;
@@ -50,7 +51,9 @@ public class DeferredRegisters {
 	public static final RegistryObject<EntityType<EntityGrenade>> ENTITY_GRENADE = ENTITIES.register("grenade",
 			() -> EntityType.Builder.<EntityGrenade>create(EntityGrenade::new, EntityClassification.MISC).immuneToFire().size(0.25f, 0.25f).build(References.ID + ".grenade"));
 	public static final RegistryObject<EntityType<EntityBlast>> ENTITY_BLAST = ENTITIES.register("blast",
-			() -> EntityType.Builder.<EntityBlast>create(EntityBlast::new, EntityClassification.MISC).immuneToFire().build(References.ID + ".explosive"));
+			() -> EntityType.Builder.<EntityBlast>create(EntityBlast::new, EntityClassification.MISC).immuneToFire().build(References.ID + ".blast"));
+	public static final RegistryObject<EntityType<EntityShrapnel>> ENTITY_SHRAPNEL = ENTITIES.register("shrapnel",
+			() -> EntityType.Builder.<EntityShrapnel>create(EntityShrapnel::new, EntityClassification.MISC).immuneToFire().size(0.5f, 0.5f).build(References.ID + ".shrapnel"));
 
 	private static <T extends IForgeRegistryEntry<T>> Supplier<? extends T> supplier(T entry) {
 		return () -> entry;

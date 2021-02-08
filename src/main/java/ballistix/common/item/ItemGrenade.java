@@ -49,7 +49,7 @@ public class ItemGrenade extends Item {
 
 			EntityGrenade grenade = new EntityGrenade(world, 0, 0, 0);
 			grenade.setLocationAndAngles(entityLiving.getPosX(), entityLiving.getPosY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getPosZ(), entityLiving.rotationYaw, entityLiving.rotationPitch);
-			grenade.setExplosiveType(explosive);
+			grenade.setShrapnelType(explosive);
 			grenade.func_234612_a_(entityLiving, entityLiving.rotationPitch - 20, entityLiving.rotationYaw, 0.0F, throwEnergy, 1.0F);
 			world.addEntity(grenade);
 			if (!(entityLiving instanceof PlayerEntity) || !((PlayerEntity) entityLiving).isCreative()) {

@@ -17,8 +17,8 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.Explosion.Mode;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
@@ -59,7 +59,8 @@ public class EntityShrapnel extends ThrowableEntity {
 			setBoundingBox(new AxisAlignedBB(getPosX() - size.width * 2, getPosY() - size.height * 2, getPosZ() - size.width * 2, getPosX() + size.width * 2, getPosY() + size.height * 2, getPosZ() + size.width * 2));
 			List<LivingEntity> livings = world.getEntitiesWithinAABB(LivingEntity.class, getBoundingBox());
 			for (LivingEntity living : livings) {
-				living.attackEntityFrom(DamageSourceShrapnel.INSTANCE, 5);
+				living.attackEntityFrom(DamageSourceShrapnel.INSTANCE, 10);
+				remove();
 			}
 		}
 	}
@@ -78,14 +79,11 @@ public class EntityShrapnel extends ThrowableEntity {
 	}
 
 	@Override
-	protected void onEntityHit(EntityRayTraceResult entity) {
-		if (!world.isRemote) {
-			Entity instance = entity.getEntity();
-			if (instance instanceof LivingEntity) {
-				LivingEntity living = (LivingEntity) instance;
-				living.attackEntityFrom(DamageSourceShrapnel.INSTANCE, 10);
-			}
+	public void remove() {
+		if (!world.isRemote && isExplosive) {
+			world.createExplosion(this, getPositionVec().x, getPositionVec().y, getPositionVec().z, 2f, Mode.BREAK);
 		}
+		super.remove();
 	}
 
 	@Override

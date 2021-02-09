@@ -9,6 +9,8 @@
 	"block.ballistix.debilitation": "Debilitation Explosive",
 	"block.ballistix.chemical": "Chemical Explosive",
 	"block.ballistix.thermobaric": "Thermobaric Explosive",
+	"block.ballistix.contagious": "Contagious Explosive",
+	"block.ballistix.fragmentation": "Fragmentation Explosive",
 	"item.ballistix.grenadecondensive": "Condensive Grenade",
 	"item.ballistix.grenadeattractive": "Attractive Grenade",
 	"item.ballistix.grenaderepulsive": "Repulsive Grenade",

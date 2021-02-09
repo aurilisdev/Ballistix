@@ -1,0 +1,12 @@
+{
+	"parent": "block/cube_all",
+	"textures": {
+		"particle": "ballistix:block/contagiousside",
+		"north": "ballistix:block/contagiousside",
+		"south": "ballistix:block/contagiousside",
+		"east": "ballistix:block/contagiousside",
+		"west": "ballistix:block/contagiousside",
+		"up": "ballistix:block/contagioustop",
+		"down": "ballistix:block/contagiousbottom"
+	}
+}

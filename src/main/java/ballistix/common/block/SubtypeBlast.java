@@ -9,12 +9,13 @@ import ballistix.common.blast.BlastIncendiary;
 import ballistix.common.blast.BlastObsidian;
 import ballistix.common.blast.BlastRepulsive;
 import ballistix.common.blast.BlastShrapnel;
+import ballistix.common.blast.BlastThermobaric;
 import electrodynamics.api.subtype.Subtype;
 
 public enum SubtypeBlast implements Subtype {
 	obsidian(BlastObsidian.class, 120, false), condensive(BlastCondensive.class, 30, true), attractive(BlastAttractive.class, 30, true), repulsive(BlastRepulsive.class, 30, true),
 	incendiary(BlastIncendiary.class, 80, true), shrapnel(BlastShrapnel.class, 40, true), debilitation(BlastDebilitation.class, 80, true), chemical(BlastChemical.class, 100, true),
-	breaching(BlastBreaching.class, 5, false);
+	breaching(BlastBreaching.class, 5, false), thermobaric(BlastThermobaric.class, 200, false);
 	public final Class<?> blastClass;
 	public final int fuse;
 	public final boolean hasGrenade;

@@ -11,7 +11,7 @@ public abstract class ThreadBlast extends Thread {
 	public final HashSet<BlockPos> results = new HashSet<>();
 
 	public final BlockPos position;
-	public World worldObj;
+	public World world;
 	public int explosionRadius;
 	public float explosionEnergy;
 	public Entity explosionSource;
@@ -19,7 +19,7 @@ public abstract class ThreadBlast extends Thread {
 	public boolean isComplete = false;
 
 	public ThreadBlast(World world, BlockPos pos, int radius, float energy, Entity source) {
-		worldObj = world;
+		this.world = world;
 		position = pos;
 		explosionRadius = radius;
 		explosionEnergy = energy;

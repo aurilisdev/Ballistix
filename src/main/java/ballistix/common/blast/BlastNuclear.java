@@ -15,16 +15,16 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkDirection;
 
-public class BlastThermobaric extends Blast {
+public class BlastNuclear extends Blast {
 
-	public BlastThermobaric(World world, BlockPos position) {
+	public BlastNuclear(World world, BlockPos position) {
 		super(world, position);
 	}
 
 	@Override
 	public void doPreExplode() {
 		if (!world.isRemote) {
-			thread = new ThreadRaycastBlast(world, position, 15, 45, null);
+			thread = new ThreadRaycastBlast(world, position, 25, 90, null);
 			thread.start();
 		}
 
@@ -42,7 +42,7 @@ public class BlastThermobaric extends Blast {
 			Explosion ex = new Explosion(world, null, position.getX(), position.getY(), position.getZ(), 25, true, Mode.BREAK);
 			if (thread.isComplete) {
 				if (pertick == -1) {
-					pertick = (int) (thread.results.size() / 15.0 + 1);
+					pertick = (int) (thread.results.size() / 35.0 + 1);
 				}
 				int finished = pertick;
 				Iterator<BlockPos> iterator = thread.results.iterator();
@@ -63,7 +63,7 @@ public class BlastThermobaric extends Blast {
 					iterator.remove();
 				}
 				if (thread.results.isEmpty()) {
-					attackEntities(15);
+					attackEntities(25);
 					return true;
 				}
 			}
@@ -82,7 +82,7 @@ public class BlastThermobaric extends Blast {
 
 	@Override
 	public SubtypeBlast getBlastType() {
-		return SubtypeBlast.thermobaric;
+		return SubtypeBlast.nuclear;
 	}
 
 }

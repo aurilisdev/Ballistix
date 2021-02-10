@@ -66,7 +66,6 @@ public abstract class Blast {
 	public final boolean explode(int callcount) {
 		BlastEvent evt = new BlastEvent(world, this);
 		MinecraftForge.EVENT_BUS.post(evt);
-
 		if (!evt.isCanceled()) {
 			return doExplode(callcount);
 		}

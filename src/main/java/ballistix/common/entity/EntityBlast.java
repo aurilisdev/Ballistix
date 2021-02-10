@@ -64,7 +64,7 @@ public class EntityBlast extends Entity {
 			callcount++;
 		} else {
 			if (blastOrdinal == -1) {
-				if (ticksExisted > 20) {
+				if (ticksExisted > 60) {
 					remove();
 				}
 			} else {

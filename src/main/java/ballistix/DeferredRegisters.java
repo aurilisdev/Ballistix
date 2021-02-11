@@ -33,6 +33,7 @@ public class DeferredRegisters {
 	public static final DeferredRegister<TileEntityType<?>> TILES = DeferredRegister.create(ForgeRegistries.TILE_ENTITIES, References.ID);
 	public static final DeferredRegister<ContainerType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, References.ID);
 	public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, References.ID);
+
 	static {
 		for (SubtypeBlast subtype : SubtypeBlast.values()) {
 			SUBTYPEBLOCKREGISTER_MAPPINGS.put(subtype, BLOCKS.register(subtype.tag(), supplier(new BlockExplosive(subtype), subtype)));
@@ -46,6 +47,7 @@ public class DeferredRegisters {
 			}
 		}
 	}
+	public static final RegistryObject<Item> ITEM_DUSTPOISON = ITEMS.register("dustpoison", supplier(new Item(new Item.Properties().group(References.BALLISTIXTAB))));
 	public static final RegistryObject<EntityType<EntityExplosive>> ENTITY_EXPLOSIVE = ENTITIES.register("explosive",
 			() -> EntityType.Builder.<EntityExplosive>create(EntityExplosive::new, EntityClassification.MISC).immuneToFire().size(1, 1).build(References.ID + ".explosive"));
 	public static final RegistryObject<EntityType<EntityGrenade>> ENTITY_GRENADE = ENTITIES.register("grenade",

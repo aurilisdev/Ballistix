@@ -24,7 +24,7 @@ libsDirName = "../output"
 distsDirName = "../output"
 
 def version_minor='0'
-def version_revision='4'
+def version_revision='1'
 def minecraft_version='1.16.5'
 def version_build='0'
 def version_major='0'
@@ -157,7 +157,7 @@ curseforge {
   project {
     id = '443915'
     changelog = 'You can find changelog at: https://aurilis.dev/'
-    releaseType = 'alpha'
+    releaseType = 'beta'
     addGameVersion minecraft_version
 
     mainArtifact(jar) {

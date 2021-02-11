@@ -1,0 +1,18 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"crc"
+	],
+	"key": {
+		"c": {
+			"item": "ballistix:condensive"
+		},
+		"r": {
+			"item": "minecraft:gunpowder"
+		}
+	},
+	"result": {
+		"item": "ballistix:repulsive",
+		"count": 1
+	}
+}

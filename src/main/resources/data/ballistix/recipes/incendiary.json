@@ -1,0 +1,23 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"sss",
+		"srs",
+		"sls"
+	],
+	"key": {
+		"r": {
+			"item": "ballistix:repulsive"
+		},
+		"s": {
+			"item": "electrodynamics:dustsulfur"
+		},
+		"l": {
+			"item": "minecraft:lava_bucket"
+		}
+	},
+	"result": {
+		"item": "ballistix:repulsive",
+		"count": 1
+	}
+}

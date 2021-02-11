@@ -1,0 +1,18 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"ingredients": [
+		{
+			"item": "ballistix:debilitation"
+		},
+		{
+			"item": "minecraft:string"
+		},
+		{
+			"item": "minecraft:gunpowder"
+		}
+	],
+	"result": {
+		"item": "ballistix:grenadedebilitation",
+		"count": 1
+	}
+}

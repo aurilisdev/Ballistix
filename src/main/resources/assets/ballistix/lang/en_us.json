@@ -22,6 +22,7 @@
 	"item.ballistix.grenadeshrapnel": "Shrapnel Grenade",
 	"item.ballistix.grenadedebilitation": "Debilitation Grenade",
 	"item.ballistix.grenadechemical": "Chemical Grenade",
+	"item.ballistix.dustpoison": "Poison Dust",
 	"death.attack.chemicalgas": "%s opened the Zyklon-B without reading the instructions!",
 	"death.attack.shrapnel": "%s was hit by shrapnel!",
 	"itemGroup.itemgroupballistix": "Ballistix"

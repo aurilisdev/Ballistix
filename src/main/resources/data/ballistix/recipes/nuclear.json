@@ -1,0 +1,23 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"gfg",
+		"ftf",
+		"gfg"
+	],
+	"key": {
+		"t": {
+			"item": "ballistix:thermobaric"
+		},
+		"g": {
+			"item": "minecraft:gunpowder"
+		},
+		"f": {
+			"tag": "forge:fuels/heuo2"
+		}
+	},
+	"result": {
+		"item": "ballistix:nuclear",
+		"count": 1
+	}
+}

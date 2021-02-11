@@ -1,0 +1,23 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"ooo",
+		"trt",
+		"ooo"
+	],
+	"key": {
+		"o": {
+			"item": "minecraft:obsidian"
+		},
+		"t": {
+			"item": "minecraft:tnt"
+		},
+		"r": {
+			"item": "minecraft:redstone"
+		}
+	},
+	"result": {
+		"item": "ballistix:obsidian",
+		"count": 1
+	}
+}

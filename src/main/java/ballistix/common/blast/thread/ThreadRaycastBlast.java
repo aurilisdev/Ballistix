@@ -62,7 +62,7 @@ public class ThreadRaycastBlast extends ThreadBlast {
 					}
 					BlockPos tt = new BlockPos(t);
 					BlockState block = world.getBlockState(tt);
-					if (block != Blocks.AIR.getDefaultState()) {
+					if (block != Blocks.AIR.getDefaultState() && block != Blocks.VOID_AIR.getDefaultState()) {
 						if (block.getBlockHardness(world, tt) >= 0) {
 							power -= callBack.getResistance(world, position, tt, explosionSource, block);
 							if (power > 0f) {

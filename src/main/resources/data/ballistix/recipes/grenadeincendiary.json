@@ -1,0 +1,18 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"ingredients": [
+		{
+			"item": "ballistix:incendiary"
+		},
+		{
+			"item": "minecraft:string"
+		},
+		{
+			"item": "minecraft:gunpowder"
+		}
+	],
+	"result": {
+		"item": "ballistix:grenadeincendiary",
+		"count": 1
+	}
+}

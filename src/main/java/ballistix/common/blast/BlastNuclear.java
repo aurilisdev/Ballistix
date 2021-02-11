@@ -63,14 +63,23 @@ public class BlastNuclear extends Blast {
 					}
 					iterator.remove();
 				}
-				if (particleHeight < 20) {
-					for (int i = -2; i <= 2; i++) {
-						for (int k = -2; k <= 2; k++) {
-							if (world.rand.nextFloat() < 0.6) {
-								BlockPos p = position.add(i, particleHeight, k);
-								((ServerWorld) world).getChunkProvider().chunkManager.getTrackingPlayers(new ChunkPos(p), false).forEach(pl -> {
-									NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
-								});
+				if (particleHeight < 23) {
+					int radius = 2;
+					if (particleHeight > 18) {
+						radius = 25 + 20 - particleHeight;
+					}
+					if (particleHeight > 20) {
+						radius = 25 - 20 + particleHeight;
+					}
+					for (int i = -radius; i <= radius; i++) {
+						for (int k = -radius; k <= radius; k++) {
+							if (i * i + k * k < radius * radius) {
+								if (world.rand.nextFloat() < (particleHeight > 18 ? 0.2 : 0.6)) {
+									BlockPos p = position.add(i, particleHeight, k);
+									((ServerWorld) world).getChunkProvider().chunkManager.getTrackingPlayers(new ChunkPos(p), false).forEach(pl -> {
+										NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+									});
+								}
 							}
 						}
 					}

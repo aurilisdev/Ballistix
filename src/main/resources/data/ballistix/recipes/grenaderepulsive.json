@@ -1,0 +1,18 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"ingredients": [
+		{
+			"item": "ballistix:repulsive"
+		},
+		{
+			"item": "minecraft:string"
+		},
+		{
+			"item": "minecraft:gunpowder"
+		}
+	],
+	"result": {
+		"item": "ballistix:grenaderepulsive",
+		"count": 1
+	}
+}

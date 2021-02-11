@@ -22,7 +22,7 @@ public class ThreadSimpleBlast extends ThreadBlast {
 					if (idistance <= explosionRadius * explosionRadius && world.rand.nextFloat() * (explosionRadius * explosionRadius) < explosionRadius * explosionRadius * 1.85 - idistance) {
 						HashDistanceBlockPos pos = new HashDistanceBlockPos(position.getX() + i, position.getY() + j, position.getZ() + k, idistance);
 						BlockState block = world.getBlockState(pos);
-						if (block != Blocks.AIR.getDefaultState()) {
+						if (block != Blocks.AIR.getDefaultState() && block != Blocks.VOID_AIR.getDefaultState()) {
 							if (block.getBlockHardness(world, pos) >= 0) {
 								results.add(pos);
 							}

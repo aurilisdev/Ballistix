@@ -1,12 +1,7 @@
 {
-	"parent": "block/cube_all",
+	"parent": "ballistix:block/explosivemodelone",
 	"textures": {
-		"particle": "ballistix:block/breachingside",
-		"north": "ballistix:block/breachingside",
-		"south": "ballistix:block/breachingside",
-		"east": "ballistix:block/breachingside",
-		"west": "ballistix:block/breachingside",
-		"up": "ballistix:block/breachingtop",
-		"down": "ballistix:block/breachingbottom"
+		"particle": "ballistix:block/breachingbase",
+		"3": "ballistix:block/breachingbase"
 	}
 }

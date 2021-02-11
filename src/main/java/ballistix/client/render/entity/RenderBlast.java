@@ -42,7 +42,7 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 			RenderSystem.multMatrix(matrixStackIn.getLast().getMatrix());
 			matrixStackIn.rotate(Minecraft.getInstance().getRenderManager().getCameraOrientation());
 			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F));
-			float scale = entityIn.ticksExisted / 6000.0f;
+			float scale = entityIn.ticksExisted / 1200.0f;
 			GlStateManager.scalef(scale, scale, scale);
 
 			GlStateManager.disableTexture();

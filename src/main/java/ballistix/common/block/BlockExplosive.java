@@ -23,14 +23,19 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
 public class BlockExplosive extends Block {
 	private SubtypeBlast explosive;
 
 	public BlockExplosive(SubtypeBlast explosive) {
-		super(AbstractBlock.Properties.create(Material.TNT).zeroHardnessAndResistance().sound(SoundType.PLANT));
+		super(AbstractBlock.Properties.create(Material.TNT).zeroHardnessAndResistance().sound(SoundType.PLANT).notSolid().setOpaque(BlockExplosive::isntSolid));
 		this.explosive = explosive;
+	}
+
+	private static boolean isntSolid(BlockState state, IBlockReader reader, BlockPos pos) {
+		return false;
 	}
 
 	@Override

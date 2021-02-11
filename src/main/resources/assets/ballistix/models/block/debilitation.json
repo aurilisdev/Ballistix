@@ -1,12 +1,7 @@
 {
-	"parent": "block/cube_all",
+	"parent": "ballistix:block/explosivemodelone",
 	"textures": {
-		"particle": "ballistix:block/debilitationside",
-		"north": "ballistix:block/debilitationside",
-		"south": "ballistix:block/debilitationside",
-		"east": "ballistix:block/debilitationside",
-		"west": "ballistix:block/debilitationside",
-		"up": "ballistix:block/debilitationtop",
-		"down": "ballistix:block/debilitationbottom"
+		"particle": "ballistix:block/debilitationbase",
+		"3": "ballistix:block/debilitationbase"
 	}
 }

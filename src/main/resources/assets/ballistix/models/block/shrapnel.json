@@ -1,12 +1,8 @@
 {
-	"parent": "block/cube_all",
+	"parent": "ballistix:block/explosivemodelone",
 	"textures": {
-		"particle": "ballistix:block/shrapnelside",
-		"north": "ballistix:block/shrapnelside",
-		"south": "ballistix:block/shrapnelside",
-		"east": "ballistix:block/shrapnelside",
-		"west": "ballistix:block/shrapnelside",
-		"up": "ballistix:block/shrapneltop",
-		"down": "ballistix:block/shrapnelbottom"
+		"particle": "ballistix:block/shrapnelbase",
+		"3": "ballistix:block/shrapnelbase"
 	}
 }
+z

@@ -1,12 +1,7 @@
 {
-	"parent": "block/cube_all",
+	"parent": "ballistix:block/explosivemodelone",
 	"textures": {
-		"particle": "ballistix:block/darkmatterside",
-		"north": "ballistix:block/darkmatterside",
-		"south": "ballistix:block/darkmatterside",
-		"east": "ballistix:block/darkmatterside",
-		"west": "ballistix:block/darkmatterside",
-		"up": "ballistix:block/darkmattertop",
-		"down": "ballistix:block/darkmatterbottom"
+		"particle": "ballistix:block/darkmatterbase",
+		"3": "ballistix:block/darkmatterbase"
 	}
 }

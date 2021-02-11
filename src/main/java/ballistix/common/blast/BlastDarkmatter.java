@@ -8,6 +8,7 @@ import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.SubtypeBlast;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.FallingBlockEntity;
 import net.minecraft.entity.item.TNTEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.play.server.SExplosionPacket;
@@ -34,6 +35,7 @@ public class BlastDarkmatter extends Blast {
 	}
 
 	private ThreadSimpleBlast thread;
+	private int callAtStart = -1;
 	private int pertick = -1;
 
 	@Override
@@ -44,8 +46,11 @@ public class BlastDarkmatter extends Blast {
 			}
 			Explosion ex = new Explosion(world, null, position.getX(), position.getY(), position.getZ(), 25, true, Mode.BREAK);
 			if (thread.isComplete) {
+				if (callAtStart == -1) {
+					callAtStart = callCount;
+				}
 				if (pertick == -1) {
-					pertick = (int) (thread.results.size() / 6000.0);
+					pertick = (int) (thread.results.size() / 1200.0);
 				}
 				int finished = pertick;
 				Iterator<BlockPos> iterator = thread.results.iterator();
@@ -85,17 +90,19 @@ public class BlastDarkmatter extends Blast {
 					d5 = d5 / d13;
 					d7 = d7 / d13;
 					d9 = d9 / d13;
-					double d11 = (-0.2 - callCount / 600.0) / d13;
+					double d11 = (-0.2 - (callCount - callAtStart) / 150.0) / d13;
 					entity.setMotion(entity.getMotion().add(d5 * d11, d7 * d11, d9 * d11));
 					if (entity instanceof ServerPlayerEntity) {
 						ServerPlayerEntity serverplayerentity = (ServerPlayerEntity) entity;
 						if (!serverplayerentity.isCreative()) {
 							serverplayerentity.connection.sendPacket(new SExplosionPacket(x, y, z, size, new ArrayList<>(), new Vector3d(d5 * d11, d7 * d11, d9 * d11)));
 						}
+					} else if (entity instanceof FallingBlockEntity) {
+						entity.remove();
 					}
 				}
 			}
-			attackEntities((float) (callCount / 300.0));
+			attackEntities((float) ((callCount - callAtStart) / 75.0));
 		}
 		return false;
 	}

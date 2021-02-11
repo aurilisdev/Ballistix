@@ -1,12 +1,8 @@
 {
-	"parent": "block/cube_all",
+	"parent": "ballistix:block/explosivemodelone",
 	"textures": {
-		"particle": "ballistix:block/contagiousside",
-		"north": "ballistix:block/contagiousside",
-		"south": "ballistix:block/contagiousside",
-		"east": "ballistix:block/contagiousside",
-		"west": "ballistix:block/contagiousside",
-		"up": "ballistix:block/contagioustop",
-		"down": "ballistix:block/contagiousbottom"
+		"particle": "ballistix:block/contagiousbase",
+		"3": "ballistix:block/contagiousbase"
 	}
 }
+z

@@ -83,7 +83,7 @@ public class EntityExplosive extends Entity {
 		} else {
 			func_233566_aG_();
 			if (world.isRemote) {
-				world.addParticle(ParticleTypes.SMOKE, getPosX(), getPosY() + 0.5D, getPosZ(), 0.0D, 0.0D, 0.0D);
+				world.addParticle(ParticleTypes.LAVA, getPosX(), getPosY() + 0.5D, getPosZ(), 0.0D, 0.0D, 0.0D);
 			}
 		}
 

@@ -1,12 +1,7 @@
 {
-	"parent": "block/cube_all",
+	"parent": "ballistix:block/explosivemodelone",
 	"textures": {
-		"particle": "ballistix:block/attractiveside",
-		"north": "ballistix:block/attractiveside",
-		"south": "ballistix:block/attractiveside",
-		"east": "ballistix:block/attractiveside",
-		"west": "ballistix:block/attractiveside",
-		"up": "ballistix:block/attractivetop",
-		"down": "ballistix:block/attractivebottom"
+		"particle": "ballistix:block/attractivebase",
+		"3": "ballistix:block/attractivebase"
 	}
 }

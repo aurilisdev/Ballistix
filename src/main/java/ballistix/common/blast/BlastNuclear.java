@@ -24,7 +24,7 @@ public class BlastNuclear extends Blast {
 	@Override
 	public void doPreExplode() {
 		if (!world.isRemote) {
-			thread = new ThreadRaycastBlast(world, position, 25, 90, null);
+			thread = new ThreadRaycastBlast(world, position, 30, 100, null);
 			thread.start();
 		}
 
@@ -32,6 +32,7 @@ public class BlastNuclear extends Blast {
 
 	private ThreadRaycastBlast thread;
 	private int pertick = -1;
+	private int particleHeight = 0;
 
 	@Override
 	public boolean doExplode(int callCount) {
@@ -62,8 +63,23 @@ public class BlastNuclear extends Blast {
 					}
 					iterator.remove();
 				}
+				if (particleHeight < 20) {
+					for (int i = -2; i <= 2; i++) {
+						for (int k = -2; k <= 2; k++) {
+							if (world.rand.nextFloat() < 0.6) {
+								BlockPos p = position.add(i, particleHeight, k);
+								((ServerWorld) world).getChunkProvider().chunkManager.getTrackingPlayers(new ChunkPos(p), false).forEach(pl -> {
+									NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+								});
+							}
+						}
+					}
+					particleHeight++;
+				}
 				if (thread.results.isEmpty()) {
 					attackEntities(25);
+					if (world instanceof ServerWorld) {
+					}
 					return true;
 				}
 			}

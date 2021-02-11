@@ -24,7 +24,7 @@ public class BlastThermobaric extends Blast {
 	@Override
 	public void doPreExplode() {
 		if (!world.isRemote) {
-			thread = new ThreadRaycastBlast(world, position, 15, 45, null);
+			thread = new ThreadRaycastBlast(world, position, 20, 45, null);
 			thread.start();
 		}
 

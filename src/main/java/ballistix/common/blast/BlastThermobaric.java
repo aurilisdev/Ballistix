@@ -39,7 +39,7 @@ public class BlastThermobaric extends Blast {
 			if (thread == null) {
 				return true;
 			}
-			Explosion ex = new Explosion(world, null, position.getX(), position.getY(), position.getZ(), 25, true, Mode.BREAK);
+			Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), 20, false, Mode.BREAK);
 			if (thread.isComplete) {
 				if (pertick == -1) {
 					pertick = (int) (thread.results.size() / 15.0 + 1);

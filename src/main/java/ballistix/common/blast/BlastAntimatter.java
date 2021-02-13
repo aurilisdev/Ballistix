@@ -33,7 +33,7 @@ public class BlastAntimatter extends Blast {
 			if (thread == null) {
 				return true;
 			}
-			Explosion ex = new Explosion(world, null, position.getX(), position.getY(), position.getZ(), 25, true, Mode.BREAK);
+			Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), 36, false, Mode.BREAK);
 			if (thread.isComplete) {
 				if (pertick == -1) {
 					pertick = (int) (thread.results.size() / 70.0 + 1);

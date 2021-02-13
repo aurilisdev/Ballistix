@@ -1,7 +1,5 @@
 package ballistix.common.blast.thread;
 
-import java.util.ArrayList;
-
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -9,6 +7,7 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.Explosion.Mode;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidBlock;
 
@@ -32,7 +31,7 @@ public class ThreadRaycastBlast extends ThreadBlast {
 			if (block.getFluidState() != Fluids.EMPTY.getDefaultState() || block instanceof IFluidBlock) {
 				resistance = 0.25f;
 			} else {
-				resistance = block.getExplosionResistance(world1, position, new Explosion(world1, source1, position.getX(), position.getY(), position.getZ(), range, new ArrayList<BlockPos>()));
+				resistance = block.getExplosionResistance(world1, position, new Explosion(world, source, null, null, position.getX(), position.getY(), position.getZ(), range, false, Mode.BREAK));
 				if (resistance > 200) {
 					resistance = 0.75f * (float) Math.sqrt(resistance);
 				}

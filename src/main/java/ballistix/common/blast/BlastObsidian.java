@@ -1,6 +1,7 @@
 package ballistix.common.blast;
 
 import ballistix.common.block.SubtypeBlast;
+import ballistix.common.settings.Constants;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion.Mode;
 import net.minecraft.world.World;
@@ -18,7 +19,7 @@ public class BlastObsidian extends Blast {
 	@Override
 	public boolean doExplode(int callCount) {
 		if (!world.isRemote) {
-			world.createExplosion(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, 10f, Mode.BREAK);
+			world.createExplosion(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) Constants.EXPLOSIVE_OBSIDIAN_SIZE, Mode.BREAK);
 		}
 		return true;
 	}

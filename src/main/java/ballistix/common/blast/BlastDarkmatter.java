@@ -6,6 +6,7 @@ import java.util.List;
 
 import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.SubtypeBlast;
+import ballistix.common.settings.Constants;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.FallingBlockEntity;
@@ -29,7 +30,7 @@ public class BlastDarkmatter extends Blast {
 	@Override
 	public void doPreExplode() {
 		if (!world.isRemote) {
-			thread = new ThreadSimpleBlast(world, position, 50, Integer.MAX_VALUE, null);
+			thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null);
 			thread.start();
 		}
 	}
@@ -44,13 +45,13 @@ public class BlastDarkmatter extends Blast {
 			if (thread == null) {
 				return true;
 			}
-			Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), 50, false, Mode.BREAK);
+			Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) Constants.EXPLOSIVE_DARKMATTER_RADIUS, false, Mode.BREAK);
 			if (thread.isComplete) {
 				if (callAtStart == -1) {
 					callAtStart = callCount;
 				}
 				if (pertick == -1) {
-					pertick = (int) (thread.results.size() / 1200.0);
+					pertick = (int) (thread.results.size() / Constants.EXPLOSIVE_DARKMATTER_DURATION);
 				}
 				int finished = pertick;
 				Iterator<BlockPos> iterator = thread.results.iterator();
@@ -70,7 +71,7 @@ public class BlastDarkmatter extends Blast {
 			float x = position.getX();
 			float y = position.getY();
 			float z = position.getZ();
-			float size = 50f;
+			float size = (float) Constants.EXPLOSIVE_DARKMATTER_RADIUS;
 			float f2 = size * 2.0F;
 			int k1 = MathHelper.floor(x - (double) f2 - 1.0D);
 			int l1 = MathHelper.floor(x + (double) f2 + 1.0D);

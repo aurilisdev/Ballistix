@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import ballistix.common.blast.thread.ThreadRaycastBlast;
 import ballistix.common.block.SubtypeBlast;
+import ballistix.common.settings.Constants;
 import electrodynamics.packet.NetworkHandler;
 import electrodynamics.packet.PacketSpawnSmokeParticle;
 import net.minecraft.block.Blocks;
@@ -24,7 +25,7 @@ public class BlastNuclear extends Blast {
 	@Override
 	public void doPreExplode() {
 		if (!world.isRemote) {
-			thread = new ThreadRaycastBlast(world, position, 30, 100, null);
+			thread = new ThreadRaycastBlast(world, position, (int) Constants.EXPLOSIVE_NUCLEAR_SIZE, (float) Constants.EXPLOSIVE_NUCLEAR_ENERGY, null);
 			thread.start();
 		}
 
@@ -40,10 +41,10 @@ public class BlastNuclear extends Blast {
 			if (thread == null) {
 				return true;
 			}
-			Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), 30, false, Mode.BREAK);
+			Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) Constants.EXPLOSIVE_NUCLEAR_SIZE, false, Mode.BREAK);
 			if (thread.isComplete) {
 				if (pertick == -1) {
-					pertick = (int) (thread.results.size() / 35.0 + 1);
+					pertick = (int) (thread.results.size() / Constants.EXPLOSIVE_NUCLEAR_DURATION + 1);
 				}
 				int finished = pertick;
 				Iterator<BlockPos> iterator = thread.results.iterator();
@@ -86,7 +87,7 @@ public class BlastNuclear extends Blast {
 					particleHeight++;
 				}
 				if (thread.results.isEmpty()) {
-					attackEntities(25);
+					attackEntities((float) Constants.EXPLOSIVE_NUCLEAR_SIZE);
 					if (world instanceof ServerWorld) {
 					}
 					return true;

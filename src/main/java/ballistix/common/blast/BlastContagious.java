@@ -4,6 +4,7 @@ import java.util.List;
 
 import ballistix.api.damage.DamageSourceChemicalGas;
 import ballistix.common.block.SubtypeBlast;
+import ballistix.common.settings.Constants;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -32,7 +33,7 @@ public class BlastContagious extends Blast {
 
 	@Override
 	public boolean doExplode(int callCount) {
-		int radius = 7;
+		int radius = (int) Constants.EXPLOSIVE_CONTAGIOUS_SIZE;
 		if (world.isRemote && world instanceof ClientWorld && callCount % 3 == 0) {
 			for (int x = -radius; x <= radius; x++) {
 				for (int y = -radius; y <= radius; y++) {
@@ -69,7 +70,7 @@ public class BlastContagious extends Blast {
 				}
 			}
 		}
-		return callCount > 1200;
+		return callCount > Constants.EXPLOSIVE_CONTAGIOUS_DURATION;
 	}
 
 	@Override

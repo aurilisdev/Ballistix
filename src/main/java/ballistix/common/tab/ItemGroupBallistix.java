@@ -1,8 +1,9 @@
 package ballistix.common.tab;
 
+import ballistix.DeferredRegisters;
+import ballistix.common.block.SubtypeBlast;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 
 public class ItemGroupBallistix extends ItemGroup {
 
@@ -12,6 +13,6 @@ public class ItemGroupBallistix extends ItemGroup {
 
 	@Override
 	public ItemStack createIcon() {
-		return new ItemStack(Items.TNT);
+		return new ItemStack(DeferredRegisters.SUBTYPEBLOCK_MAPPINGS.get(SubtypeBlast.condensive));
 	}
 }

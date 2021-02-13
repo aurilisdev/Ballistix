@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import ballistix.common.blast.thread.ThreadRaycastBlast;
 import ballistix.common.block.SubtypeBlast;
+import ballistix.common.settings.Constants;
 import electrodynamics.packet.NetworkHandler;
 import electrodynamics.packet.PacketSpawnSmokeParticle;
 import net.minecraft.block.Blocks;
@@ -24,7 +25,7 @@ public class BlastThermobaric extends Blast {
 	@Override
 	public void doPreExplode() {
 		if (!world.isRemote) {
-			thread = new ThreadRaycastBlast(world, position, 20, 45, null);
+			thread = new ThreadRaycastBlast(world, position, (int) Constants.EXPLOSIVE_THERMOBARIC_SIZE, (float) Constants.EXPLOSIVE_THERMOBARIC_ENERGY, null);
 			thread.start();
 		}
 
@@ -39,10 +40,10 @@ public class BlastThermobaric extends Blast {
 			if (thread == null) {
 				return true;
 			}
-			Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), 20, false, Mode.BREAK);
+			Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) Constants.EXPLOSIVE_THERMOBARIC_SIZE, false, Mode.BREAK);
 			if (thread.isComplete) {
 				if (pertick == -1) {
-					pertick = (int) (thread.results.size() / 15.0 + 1);
+					pertick = (int) (thread.results.size() / Constants.EXPLOSIVE_THERMOBARIC_DURATION + 1);
 				}
 				int finished = pertick;
 				Iterator<BlockPos> iterator = thread.results.iterator();
@@ -63,7 +64,7 @@ public class BlastThermobaric extends Blast {
 					iterator.remove();
 				}
 				if (thread.results.isEmpty()) {
-					attackEntities(15);
+					attackEntities((float) Constants.EXPLOSIVE_THERMOBARIC_SIZE);
 					return true;
 				}
 			}

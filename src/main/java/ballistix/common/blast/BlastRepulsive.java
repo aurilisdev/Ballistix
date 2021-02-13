@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ballistix.common.block.SubtypeBlast;
+import ballistix.common.settings.Constants;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.TNTEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -28,7 +29,7 @@ public class BlastRepulsive extends Blast {
 	@Override
 	public boolean doExplode(int callCount) {
 		if (!world.isRemote) {
-			world.createExplosion(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, 1f, Mode.BREAK);
+			world.createExplosion(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) Constants.EXPLOSIVE_REPULSIVE_SIZE, Mode.BREAK);
 		}
 		float x = position.getX();
 		float y = position.getY();
@@ -53,7 +54,7 @@ public class BlastRepulsive extends Blast {
 				d5 = d5 / d13;
 				d7 = d7 / d13;
 				d9 = d9 / d13;
-				double d11 = 2;
+				double d11 = Constants.EXPLOSIVE_ATTRACTIVE_REPULSIVE_PUSH_STRENGTH;
 				entity.setMotion(entity.getMotion().add(d5 * d11, d7 * d11, d9 * d11));
 				if (entity instanceof ServerPlayerEntity) {
 					ServerPlayerEntity serverplayerentity = (ServerPlayerEntity) entity;

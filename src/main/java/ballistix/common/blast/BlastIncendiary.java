@@ -1,6 +1,7 @@
 package ballistix.common.blast;
 
 import ballistix.common.block.SubtypeBlast;
+import ballistix.common.settings.Constants;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -19,7 +20,7 @@ public class BlastIncendiary extends Blast {
 	@Override
 	public boolean doExplode(int callCount) {
 		if (!world.isRemote) {
-			int radius = 7;
+			int radius = (int) Constants.EXPLOSIVE_INCENDIARY_RADIUS;
 			for (int x = -radius; x <= radius; x++) {
 				for (int y = -radius; y <= radius; y++) {
 					for (int z = -radius; z <= radius; z++) {

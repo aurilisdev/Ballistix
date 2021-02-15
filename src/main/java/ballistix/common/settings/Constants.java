@@ -55,4 +55,6 @@ public class Constants {
 	public static double EXPLOSIVE_THERMOBARIC_DURATION = 15.0;
 	@DoubleValue(def = 45.0)
 	public static double EXPLOSIVE_THERMOBARIC_ENERGY = 45.0;
+	@DoubleValue(def = 10000, comment = "Usage per launch in joules")
+	public static double MISSILESILO_USAGE = 10000;
 }

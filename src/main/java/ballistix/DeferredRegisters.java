@@ -12,6 +12,7 @@ import ballistix.common.entity.EntityBlast;
 import ballistix.common.entity.EntityExplosive;
 import ballistix.common.entity.EntityGrenade;
 import ballistix.common.entity.EntityShrapnel;
+import ballistix.common.inventory.container.ContainerMissileSilo;
 import ballistix.common.item.ItemGrenade;
 import ballistix.common.tile.TileMissileSilo;
 import electrodynamics.api.subtype.Subtype;
@@ -55,8 +56,11 @@ public class DeferredRegisters {
 
 	}
 	public static final RegistryObject<Item> ITEM_DUSTPOISON = ITEMS.register("dustpoison", supplier(new Item(new Item.Properties().group(References.BALLISTIXTAB))));
-	public static final RegistryObject<TileEntityType<TileMissileSilo>> TILE_MISSILESILO = TILES.register("missilesilo",
-			() -> new TileEntityType<>(TileMissileSilo::new, Sets.newHashSet(blockMissileSilo), null));
+	public static final RegistryObject<Item> ITEM_MISSILECLOSERANGE = ITEMS.register("missilecloserange", supplier(new Item(new Item.Properties().group(References.BALLISTIXTAB))));
+	public static final RegistryObject<Item> ITEM_MISSILEMEDIUMRANGE = ITEMS.register("missilemediumrange", supplier(new Item(new Item.Properties().group(References.BALLISTIXTAB))));
+	public static final RegistryObject<Item> ITEM_MISSILELONGRANGE = ITEMS.register("missilelongrange", supplier(new Item(new Item.Properties().group(References.BALLISTIXTAB))));
+	public static final RegistryObject<TileEntityType<TileMissileSilo>> TILE_MISSILESILO = TILES.register("missilesilo", () -> new TileEntityType<>(TileMissileSilo::new, Sets.newHashSet(blockMissileSilo), null));
+	public static final RegistryObject<ContainerType<ContainerMissileSilo>> CONTAINER_MISSILESILO = CONTAINERS.register("missilesilo", () -> new ContainerType<>(ContainerMissileSilo::new));
 	public static final RegistryObject<EntityType<EntityExplosive>> ENTITY_EXPLOSIVE = ENTITIES.register("explosive",
 			() -> EntityType.Builder.<EntityExplosive>create(EntityExplosive::new, EntityClassification.MISC).immuneToFire().size(1, 1).build(References.ID + ".explosive"));
 	public static final RegistryObject<EntityType<EntityGrenade>> ENTITY_GRENADE = ENTITIES.register("grenade",

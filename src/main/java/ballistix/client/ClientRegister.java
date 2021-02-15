@@ -7,6 +7,8 @@ import ballistix.client.render.entity.RenderExplosive;
 import ballistix.client.render.entity.RenderGrenade;
 import ballistix.client.render.entity.RenderShrapnel;
 import ballistix.client.render.tile.RenderMissileSilo;
+import ballistix.client.screen.ScreenMissileSilo;
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.util.ResourceLocation;
@@ -32,6 +34,9 @@ public class ClientRegister {
 		ModelLoader.addSpecialModel(MODEL_MISSILELONGRANGE);
 
 		ClientRegistry.bindTileEntityRenderer(DeferredRegisters.TILE_MISSILESILO.get(), RenderMissileSilo::new);
+
+		ScreenManager.registerFactory(DeferredRegisters.CONTAINER_MISSILESILO.get(), ScreenMissileSilo::new);
+
 		RenderingRegistry.registerEntityRenderingHandler(DeferredRegisters.ENTITY_EXPLOSIVE.get(), RenderExplosive::new);
 		RenderingRegistry.registerEntityRenderingHandler(DeferredRegisters.ENTITY_GRENADE.get(), RenderGrenade::new);
 		RenderingRegistry.registerEntityRenderingHandler(DeferredRegisters.ENTITY_BLAST.get(), RenderBlast::new);

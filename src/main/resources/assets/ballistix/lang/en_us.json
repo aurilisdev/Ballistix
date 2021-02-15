@@ -24,6 +24,12 @@
 	"item.ballistix.grenadedebilitation": "Debilitation Grenade",
 	"item.ballistix.grenadechemical": "Chemical Grenade",
 	"item.ballistix.dustpoison": "Poison Dust",
+	"item.ballistix.missilecloserange": "Close-range Ballistic Missile",
+	"item.ballistix.missilemediumrange": "Medium-range Ballistic Missile",
+	"item.ballistix.missilelongrange": "Long-range Ballistic Missile",
+	"gui.missilesilo.missile": "Missile",
+	"gui.missilesilo.explosive": "Explosive",
+	"container.missilesilo": "Missile Silo",
 	"death.attack.chemicalgas": "%s opened the Zyklon-B without reading the instructions!",
 	"death.attack.shrapnel": "%s was hit by shrapnel!",
 	"itemGroup.itemgroupballistix": "Ballistix"

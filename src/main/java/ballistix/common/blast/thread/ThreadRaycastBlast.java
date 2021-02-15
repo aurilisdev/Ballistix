@@ -70,7 +70,7 @@ public class ThreadRaycastBlast extends ThreadBlast {
 							}
 						}
 					}
-					t = t.add(delta);
+					t = new Vector3d(t.x + delta.x, t.y + delta.y, t.z + delta.z);
 				}
 			}
 		}

@@ -11,6 +11,7 @@ import ballistix.common.block.SubtypeBlast;
 import ballistix.common.entity.EntityBlast;
 import ballistix.common.entity.EntityExplosive;
 import ballistix.common.entity.EntityGrenade;
+import ballistix.common.entity.EntityMissile;
 import ballistix.common.entity.EntityShrapnel;
 import ballistix.common.inventory.container.ContainerMissileSilo;
 import ballistix.common.item.ItemGrenade;
@@ -69,6 +70,8 @@ public class DeferredRegisters {
 			() -> EntityType.Builder.<EntityBlast>create(EntityBlast::new, EntityClassification.MISC).immuneToFire().build(References.ID + ".blast"));
 	public static final RegistryObject<EntityType<EntityShrapnel>> ENTITY_SHRAPNEL = ENTITIES.register("shrapnel",
 			() -> EntityType.Builder.<EntityShrapnel>create(EntityShrapnel::new, EntityClassification.MISC).immuneToFire().size(0.5f, 0.5f).build(References.ID + ".shrapnel"));
+	public static final RegistryObject<EntityType<EntityMissile>> ENTITY_MISSILE = ENTITIES.register("missile",
+			() -> EntityType.Builder.<EntityMissile>create(EntityMissile::new, EntityClassification.MISC).immuneToFire().size(0.5f, 0.5f).build(References.ID + ".missile"));
 
 	private static <T extends IForgeRegistryEntry<T>> Supplier<? extends T> supplier(T entry) {
 		return () -> entry;

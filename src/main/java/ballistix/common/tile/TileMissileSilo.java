@@ -1,46 +1,129 @@
 package ballistix.common.tile;
 
+import java.util.HashSet;
+
 import ballistix.DeferredRegisters;
 import ballistix.common.block.BlockExplosive;
+import ballistix.common.block.BlockMissileSilo;
+import ballistix.common.entity.EntityMissile;
 import ballistix.common.inventory.container.ContainerMissileSilo;
 import electrodynamics.api.tile.ITickableTileBase;
-import electrodynamics.api.tile.electric.IElectricTile;
-import electrodynamics.api.tile.electric.IPowerProvider;
 import electrodynamics.api.utilities.CachedTileOutput;
-import electrodynamics.api.utilities.TransferPack;
 import electrodynamics.common.blockitem.BlockItemDescriptable;
+import electrodynamics.common.multiblock.IMultiblockTileNode;
+import electrodynamics.common.multiblock.Subnode;
 import electrodynamics.common.tile.generic.GenericTileInventory;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.IIntArray;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
-public class TileMissileSilo extends GenericTileInventory implements ITickableTileBase, IPowerProvider, IElectricTile {
+public class TileMissileSilo extends GenericTileInventory implements ITickableTileBase, IMultiblockTileNode {
 	public static final int[] SLOTS_INPUT = new int[] { 0, 1 };
 
 	protected CachedTileOutput output1;
 	protected CachedTileOutput output2;
+	public int range = -1;
+	private int cooldown = 100;
+	public BlockPos target;
 
 	public TileMissileSilo() {
 		super(DeferredRegisters.TILE_MISSILESILO.get());
 	}
 
 	@Override
-	public double getVoltage(Direction arg0) {
-		return 120;
+	public void tickServer() {
+		if (target == null) {
+			target = getPos();
+		}
+		ItemStack it = getStackInSlot(0);
+		if (it.getItem() == DeferredRegisters.ITEM_MISSILECLOSERANGE.get()) {
+			if (range != 0) {
+				range = 0;
+				sendUpdatePacket();
+			}
+		} else if (it.getItem() == DeferredRegisters.ITEM_MISSILEMEDIUMRANGE.get()) {
+			if (range != 1) {
+				range = 1;
+				sendUpdatePacket();
+			}
+		} else if (it.getItem() == DeferredRegisters.ITEM_MISSILELONGRANGE.get()) {
+			if (range != 2) {
+				range = 2;
+				sendUpdatePacket();
+			}
+		} else if (range != -1) {
+			range = -1;
+			sendUpdatePacket();
+		}
+		cooldown--;
+		if (target != null && cooldown < 0 && world.getWorldInfo().getDayTime() % 20 == 0) {
+			ItemStack exp = getStackInSlot(1);
+			if (exp.getItem() instanceof BlockItemDescriptable) {
+				BlockItemDescriptable des = (BlockItemDescriptable) exp.getItem();
+				if (des.getBlock() instanceof BlockExplosive) {
+					if (range >= 0 && exp.getCount() > 0) {
+						boolean hasSignal = false;
+						if (world.getRedstonePowerFromNeighbors(getPos()) > 0) {
+							hasSignal = true;
+						}
+						if (!hasSignal) {
+							for (Subnode node : getSubNodes()) {
+								BlockPos off = pos.add(node.pos);
+								if (world.getRedstonePowerFromNeighbors(off) > 0) {
+									hasSignal = true;
+									break;
+								}
+							}
+						}
+						if (hasSignal) {
+							double dist = Math.sqrt(Math.pow(pos.getX() - target.getX(), 2) + Math.pow(pos.getY() - target.getY(), 2) + Math.pow(pos.getZ() - target.getZ(), 2));
+							if (range == 0 ? dist < 3000 : range == 1 ? dist < 10000 : true) {
+								EntityMissile missile = new EntityMissile(world);
+								missile.setPosition(getPos().getX() + 1, getPos().getY() + 2, getPos().getZ() + 1);
+								missile.range = range;
+								missile.target = new BlockPos(target);
+								missile.blastOrdinal = ((BlockExplosive) des.getBlock()).explosive.ordinal();
+								exp.shrink(1);
+								it.shrink(1);
+								world.addEntity(missile);
+							}
+							cooldown = 100;
+						}
+					}
+				}
+			}
+		}
 	}
 
 	@Override
-	public void tickServer() {
+	public void handleUpdatePacket(CompoundNBT nbt) {
+		super.handleUpdatePacket(nbt);
+		range = nbt.getInt("range");
+	}
+
+	@Override
+	public CompoundNBT createUpdateTag() {
+		CompoundNBT tag = super.createUpdateTag();
+		tag.putInt("range", range);
+		return tag;
 	}
 
 	@Override
 	public int getSizeInventory() {
 		return 2;
+	}
+
+	@Override
+	public AxisAlignedBB getRenderBoundingBox() {
+		return INFINITE_EXTENT_AABB;
 	}
 
 	@Override
@@ -59,6 +142,18 @@ public class TileMissileSilo extends GenericTileInventory implements ITickableTi
 			switch (index) {
 			case 0:
 				return 0;
+			case 1:
+				return pos.getX();
+			case 2:
+				return pos.getY();
+			case 3:
+				return pos.getZ();
+			case 4:
+				return target.getX();
+			case 5:
+				return target.getY();
+			case 6:
+				return target.getZ();
 			default:
 				return 0;
 			}
@@ -66,11 +161,13 @@ public class TileMissileSilo extends GenericTileInventory implements ITickableTi
 
 		@Override
 		public void set(int index, int value) {
+			switch (index) {
+			}
 		}
 
 		@Override
 		public int size() {
-			return 1;
+			return 7;
 		}
 	};
 
@@ -96,13 +193,7 @@ public class TileMissileSilo extends GenericTileInventory implements ITickableTi
 	}
 
 	@Override
-	public TransferPack extractPower(TransferPack transfer, Direction from, boolean debug) {
-		return TransferPack.EMPTY;
+	public HashSet<Subnode> getSubNodes() {
+		return BlockMissileSilo.subnodes;
 	}
-
-	@Override
-	public boolean canConnectElectrically(Direction direction) {
-		return direction == Direction.UP || direction == Direction.DOWN;
-	}
-
 }

@@ -27,7 +27,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
 public class BlockExplosive extends Block {
-	private SubtypeBlast explosive;
+	public final SubtypeBlast explosive;
 
 	public BlockExplosive(SubtypeBlast explosive) {
 		super(AbstractBlock.Properties.create(Material.TNT).zeroHardnessAndResistance().sound(SoundType.PLANT).notSolid().setOpaque(BlockExplosive::isntSolid));

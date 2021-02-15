@@ -5,6 +5,7 @@ import ballistix.References;
 import ballistix.client.render.entity.RenderBlast;
 import ballistix.client.render.entity.RenderExplosive;
 import ballistix.client.render.entity.RenderGrenade;
+import ballistix.client.render.entity.RenderMissile;
 import ballistix.client.render.entity.RenderShrapnel;
 import ballistix.client.render.tile.RenderMissileSilo;
 import ballistix.client.screen.ScreenMissileSilo;
@@ -41,6 +42,7 @@ public class ClientRegister {
 		RenderingRegistry.registerEntityRenderingHandler(DeferredRegisters.ENTITY_GRENADE.get(), RenderGrenade::new);
 		RenderingRegistry.registerEntityRenderingHandler(DeferredRegisters.ENTITY_BLAST.get(), RenderBlast::new);
 		RenderingRegistry.registerEntityRenderingHandler(DeferredRegisters.ENTITY_SHRAPNEL.get(), RenderShrapnel::new);
+		RenderingRegistry.registerEntityRenderingHandler(DeferredRegisters.ENTITY_MISSILE.get(), RenderMissile::new);
 		RenderTypeLookup.setRenderLayer(DeferredRegisters.blockMissileSilo, RenderType.getCutout());
 	}
 

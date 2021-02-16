@@ -1,0 +1,26 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		" s ",
+		"ibi",
+		"igi"
+	],
+	"key": {
+		"s": {
+			"tag": "forge:plates/steel"
+		},
+		"i": {
+			"tag": "forge:ingots/steel"
+		},
+		"b": {
+			"tag": "forge:circuits/basic"
+		},
+		"g": {
+			"item": "minecraft:gunpowder"
+		}
+	},
+	"result": {
+		"item": "ballistix:missilecloserange",
+		"count": 1
+	}
+}

@@ -1,0 +1,23 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"s s",
+		"ses",
+		"sls"
+	],
+	"key": {
+		"s": {
+			"tag": "forge:plates/steel"
+		},
+		"e": {
+			"tag": "forge:circuits/elite"
+		},
+		"l": {
+			"item": "minecraft:lever"
+		}
+	},
+	"result": {
+		"item": "ballistix:missilesilo",
+		"count": 1
+	}
+}

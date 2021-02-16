@@ -1,0 +1,26 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		" a ",
+		"sgs",
+		"sbs"
+	],
+	"key": {
+		"s": {
+			"tag": "forge:plates/steel"
+		},
+		"a": {
+			"tag": "forge:circuits/elite"
+		},
+		"g": {
+			"item": "minecraft:gunpowder"
+		},
+		"b": {
+			"item": "ballistix:missilemediumrange"
+		}
+	},
+	"result": {
+		"item": "ballistix:missilelongrange",
+		"count": 1
+	}
+}

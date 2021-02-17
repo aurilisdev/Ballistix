@@ -43,6 +43,7 @@ public class Ballistix {
 	public static void onCommonSetup(FMLCommonSetupEvent event) {
 		NetworkHandler.init();
 	}
+
 	@SubscribeEvent
 	public static void onLoadEvent(FMLLoadCompleteEvent event) {
 		MachineRecipes.registerRecipe(electrodynamics.DeferredRegisters.TILE_MINERALGRINDER.get(), new O2OProcessingRecipe(Items.ROTTEN_FLESH, DeferredRegisters.ITEM_DUSTPOISON.get(), 2));

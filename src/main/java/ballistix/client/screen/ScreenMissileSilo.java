@@ -35,9 +35,9 @@ public class ScreenMissileSilo extends GenericContainerScreen<ContainerMissileSi
 	@Override
 	public void tick() {
 		super.tick();
-		this.xCoordField.tick();
-		this.yCoordField.tick();
-		this.zCoordField.tick();
+		xCoordField.tick();
+		yCoordField.tick();
+		zCoordField.tick();
 	}
 
 	@Override
@@ -47,75 +47,78 @@ public class ScreenMissileSilo extends GenericContainerScreen<ContainerMissileSi
 	}
 
 	protected void initFields() {
-		this.minecraft.keyboardListener.enableRepeatEvents(true);
-		int i = (this.width - this.xSize) / 2;
-		int j = (this.height - this.ySize) / 2;
-		this.xCoordField = new TextFieldWidget(this.font, i + 127, j + 19, 103, 12, new TranslationTextComponent("container.missilesilo.xCoord"));
-		this.xCoordField.setCanLoseFocus(false);
-		this.xCoordField.setTextColor(-1);
-		this.xCoordField.setDisabledTextColour(-1);
-		this.xCoordField.setEnableBackgroundDrawing(false);
-		this.xCoordField.setMaxStringLength(6);
-		this.xCoordField.setResponder(this::setCoord);
+		minecraft.keyboardListener.enableRepeatEvents(true);
+		int i = (width - xSize) / 2;
+		int j = (height - ySize) / 2;
+		xCoordField = new TextFieldWidget(font, i + 127, j + 19, 103, 12, new TranslationTextComponent("container.missilesilo.xCoord"));
+		xCoordField.setCanLoseFocus(false);
+		xCoordField.setTextColor(-1);
+		xCoordField.setDisabledTextColour(-1);
+		xCoordField.setEnableBackgroundDrawing(false);
+		xCoordField.setMaxStringLength(6);
+		xCoordField.setResponder(this::setCoord);
 
-		this.yCoordField = new TextFieldWidget(this.font, i + 127, j + 37, 103, 24, new TranslationTextComponent("container.missilesilo.yCoord"));
-		this.yCoordField.setCanLoseFocus(false);
-		this.yCoordField.setTextColor(-1);
-		this.yCoordField.setDisabledTextColour(-1);
-		this.yCoordField.setEnableBackgroundDrawing(false);
-		this.yCoordField.setMaxStringLength(6);
-		this.yCoordField.setResponder(this::setCoord);
+		yCoordField = new TextFieldWidget(font, i + 127, j + 37, 103, 24, new TranslationTextComponent("container.missilesilo.yCoord"));
+		yCoordField.setCanLoseFocus(false);
+		yCoordField.setTextColor(-1);
+		yCoordField.setDisabledTextColour(-1);
+		yCoordField.setEnableBackgroundDrawing(false);
+		yCoordField.setMaxStringLength(6);
+		yCoordField.setResponder(this::setCoord);
 
-		this.zCoordField = new TextFieldWidget(this.font, i + 127, j + 55, 103, 36, new TranslationTextComponent("container.missilesilo.zCoord"));
-		this.zCoordField.setCanLoseFocus(false);
-		this.zCoordField.setTextColor(-1);
-		this.zCoordField.setDisabledTextColour(-1);
-		this.zCoordField.setEnableBackgroundDrawing(false);
-		this.zCoordField.setMaxStringLength(6);
-		this.zCoordField.setResponder(this::setCoord);
-		this.children.add(this.xCoordField);
-		this.children.add(this.yCoordField);
-		this.children.add(this.zCoordField);
-		this.setFocusedDefault(this.zCoordField);
+		zCoordField = new TextFieldWidget(font, i + 127, j + 55, 103, 36, new TranslationTextComponent("container.missilesilo.zCoord"));
+		zCoordField.setCanLoseFocus(false);
+		zCoordField.setTextColor(-1);
+		zCoordField.setDisabledTextColour(-1);
+		zCoordField.setEnableBackgroundDrawing(false);
+		zCoordField.setMaxStringLength(6);
+		zCoordField.setResponder(this::setCoord);
+		children.add(xCoordField);
+		children.add(yCoordField);
+		children.add(zCoordField);
+		setFocusedDefault(zCoordField);
 	}
 
 	private boolean needsUpdate = true;
 
 	private void setCoord(String coord) {
 		if (!coord.isEmpty()) {
-			this.container.setCoord(xCoordField.getText(), yCoordField.getText(), zCoordField.getText());
+			container.setCoord(xCoordField.getText(), yCoordField.getText(), zCoordField.getText());
 		}
 	}
 
+	@Override
 	public void resize(Minecraft minecraft, int width, int height) {
-		String s = this.xCoordField.getText();
-		String s1 = this.yCoordField.getText();
-		String s2 = this.zCoordField.getText();
+		String s = xCoordField.getText();
+		String s1 = yCoordField.getText();
+		String s2 = zCoordField.getText();
 		this.init(minecraft, width, height);
-		this.xCoordField.setText(s);
-		this.yCoordField.setText(s1);
-		this.zCoordField.setText(s2);
+		xCoordField.setText(s);
+		yCoordField.setText(s1);
+		zCoordField.setText(s2);
 	}
 
+	@Override
 	public void onClose() {
 		super.onClose();
-		this.minecraft.keyboardListener.enableRepeatEvents(false);
+		minecraft.keyboardListener.enableRepeatEvents(false);
 	}
 
+	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
 		if (keyCode == 256) {
-			this.minecraft.player.closeScreen();
+			minecraft.player.closeScreen();
 		}
-		boolean x = !this.xCoordField.keyPressed(keyCode, scanCode, modifiers) && !this.xCoordField.canWrite();
-		boolean y = !this.yCoordField.keyPressed(keyCode, scanCode, modifiers) && !this.yCoordField.canWrite();
-		boolean z = !this.zCoordField.keyPressed(keyCode, scanCode, modifiers) && !this.zCoordField.canWrite();
+		boolean x = !xCoordField.keyPressed(keyCode, scanCode, modifiers) && !xCoordField.canWrite();
+		boolean y = !yCoordField.keyPressed(keyCode, scanCode, modifiers) && !yCoordField.canWrite();
+		boolean z = !zCoordField.keyPressed(keyCode, scanCode, modifiers) && !zCoordField.canWrite();
 		return x || y || z ? super.keyPressed(keyCode, scanCode, modifiers) : true;
 	}
 
 	@Override
 	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 		super.render(matrixStack, mouseX, mouseY, partialTicks);
-		 if (needsUpdate) {
+		if (needsUpdate) {
 			needsUpdate = false;
 			xCoordField.setText("" + container.getTXCoord());
 			yCoordField.setText("" + container.getTYCoord());

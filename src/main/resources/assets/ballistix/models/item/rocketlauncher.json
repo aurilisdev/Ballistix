@@ -1,0 +1,29 @@
+{
+  "parent": "ballistix:item/rocketlaunchermodel",
+   "display": {
+        "gui": {
+            "rotation": [ 30, 225, 0 ],
+            "translation": [ 2.75, 2.75, 0],
+            "scale":[ 0.625, 0.625, 0.625 ]
+        },
+        "ground": {
+            "translation": [0, 10, 0],
+            "scale":[ 1, 1, 1 ]
+        },
+        "thirdperson_righthand": {
+            "rotation": [ 0, -180, 0 ],
+            "translation": [ 0.5, 8.25, 3.5],
+            "scale": [ 1, 1, 1 ]
+        },
+        "thirdperson_lefthand": {
+            "rotation": [ 0, -180, 0 ],
+            "translation": [ -0.5, 8.25, 3.5],
+            "scale": [ 1, 1, 1 ]
+        },
+        "firstperson_righthand": {
+            "rotation": [ 0, -180, 0  ],
+            "translation": [ -2.75, 11, 5.5 ],
+            "scale": [ 1, 1, 1 ]
+        }
+    }
+}

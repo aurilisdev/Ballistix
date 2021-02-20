@@ -15,6 +15,7 @@ import ballistix.common.entity.EntityMissile;
 import ballistix.common.entity.EntityShrapnel;
 import ballistix.common.inventory.container.ContainerMissileSilo;
 import ballistix.common.item.ItemGrenade;
+import ballistix.common.item.ItemRocketLauncher;
 import ballistix.common.tile.TileMissileSilo;
 import electrodynamics.api.subtype.Subtype;
 import electrodynamics.common.blockitem.BlockItemDescriptable;
@@ -60,6 +61,7 @@ public class DeferredRegisters {
 	public static final RegistryObject<Item> ITEM_MISSILECLOSERANGE = ITEMS.register("missilecloserange", supplier(new Item(new Item.Properties().group(References.BALLISTIXTAB))));
 	public static final RegistryObject<Item> ITEM_MISSILEMEDIUMRANGE = ITEMS.register("missilemediumrange", supplier(new Item(new Item.Properties().group(References.BALLISTIXTAB))));
 	public static final RegistryObject<Item> ITEM_MISSILELONGRANGE = ITEMS.register("missilelongrange", supplier(new Item(new Item.Properties().group(References.BALLISTIXTAB))));
+	public static final RegistryObject<Item> ITEM_ROCKETLAUNCHER = ITEMS.register("rocketlauncher", supplier(new ItemRocketLauncher()));
 	public static final RegistryObject<TileEntityType<TileMissileSilo>> TILE_MISSILESILO = TILES.register("missilesilo", () -> new TileEntityType<>(TileMissileSilo::new, Sets.newHashSet(blockMissileSilo), null));
 	public static final RegistryObject<ContainerType<ContainerMissileSilo>> CONTAINER_MISSILESILO = CONTAINERS.register("missilesilo", () -> new ContainerType<>(ContainerMissileSilo::new));
 	public static final RegistryObject<EntityType<EntityExplosive>> ENTITY_EXPLOSIVE = ENTITIES.register("explosive",

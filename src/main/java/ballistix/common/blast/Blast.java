@@ -31,132 +31,136 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
 public abstract class Blast {
-	public BlockPos position;
-	public World world;
+    public BlockPos position;
+    public World world;
 
-	public Blast(World world, BlockPos position) {
-		this.world = world;
-		this.position = position;
+    public Blast(World world, BlockPos position) {
+	this.world = world;
+	this.position = position;
+    }
+
+    public boolean isInstantaneous() {
+	return true;
+    }
+
+    public abstract SubtypeBlast getBlastType();
+
+    @Deprecated
+    public abstract void doPreExplode();
+
+    @Deprecated
+    public abstract boolean doExplode(int callCount);
+
+    @Deprecated
+    public abstract void doPostExplode();
+
+    public final void preExplode() {
+	PreBlastEvent evt = new PreBlastEvent(world, this);
+	MinecraftForge.EVENT_BUS.post(evt);
+
+	if (!evt.isCanceled()) {
+	    doPreExplode();
 	}
+    }
 
-	public boolean isInstantaneous() {
-		return true;
+    public final boolean explode(int callcount) {
+	BlastEvent evt = new BlastEvent(world, this);
+	MinecraftForge.EVENT_BUS.post(evt);
+	if (!evt.isCanceled()) {
+	    return doExplode(callcount);
 	}
+	return true;
+    }
 
-	public abstract SubtypeBlast getBlastType();
+    public final void postExplode() {
+	PostBlastEvent evt = new PostBlastEvent(world, this);
+	MinecraftForge.EVENT_BUS.post(evt);
 
-	@Deprecated
-	public abstract void doPreExplode();
-
-	@Deprecated
-	public abstract boolean doExplode(int callCount);
-
-	@Deprecated
-	public abstract void doPostExplode();
-
-	public final void preExplode() {
-		PreBlastEvent evt = new PreBlastEvent(world, this);
-		MinecraftForge.EVENT_BUS.post(evt);
-
-		if (!evt.isCanceled()) {
-			doPreExplode();
-		}
+	if (!evt.isCanceled()) {
+	    doPostExplode();
 	}
+    }
 
-	public final boolean explode(int callcount) {
-		BlastEvent evt = new BlastEvent(world, this);
-		MinecraftForge.EVENT_BUS.post(evt);
-		if (!evt.isCanceled()) {
-			return doExplode(callcount);
-		}
-		return true;
+    public void performExplosion() {
+	ConstructBlastEvent evt = new ConstructBlastEvent(world, this);
+	MinecraftForge.EVENT_BUS.post(evt);
+
+	if (!evt.isCanceled()) {
+	    if (isInstantaneous()) {
+		doPreExplode();
+		doExplode(0);
+		doPostExplode();
+	    } else if (!world.isRemote) {
+		EntityBlast entity = new EntityBlast(world);
+		entity.setPosition(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5);
+		entity.setBlastType(getBlastType());
+		world.addEntity(entity);
+	    }
 	}
+    }
 
-	public final void postExplode() {
-		PostBlastEvent evt = new PostBlastEvent(world, this);
-		MinecraftForge.EVENT_BUS.post(evt);
+    protected void attackEntities(float size) {
+	Map<PlayerEntity, Vector3d> playerKnockbackMap = Maps.newHashMap();
+	float f2 = size * 2.0F;
+	int k1 = MathHelper.floor(position.getX() - (double) f2 - 1.0D);
+	int l1 = MathHelper.floor(position.getX() + (double) f2 + 1.0D);
+	int i2 = MathHelper.floor(position.getY() - (double) f2 - 1.0D);
+	int i1 = MathHelper.floor(position.getY() + (double) f2 + 1.0D);
+	int j2 = MathHelper.floor(position.getZ() - (double) f2 - 1.0D);
+	int j1 = MathHelper.floor(position.getZ() + (double) f2 + 1.0D);
+	List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(k1, i2, j2, l1, i1, j1));
+	Vector3d vector3d = new Vector3d(position.getX(), position.getY(), position.getZ());
 
-		if (!evt.isCanceled()) {
-			doPostExplode();
-		}
-	}
-
-	public void performExplosion() {
-		ConstructBlastEvent evt = new ConstructBlastEvent(world, this);
-		MinecraftForge.EVENT_BUS.post(evt);
-
-		if (!evt.isCanceled()) {
-			if (isInstantaneous()) {
-				doPreExplode();
-				doExplode(0);
-				doPostExplode();
-			} else if (!world.isRemote) {
-				EntityBlast entity = new EntityBlast(world);
-				entity.setPosition(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5);
-				entity.setBlastType(getBlastType());
-				world.addEntity(entity);
+	for (Entity entity : list) {
+	    if (!entity.isImmuneToExplosions()) {
+		double d12 = MathHelper.sqrt(entity.getDistanceSq(vector3d)) / f2;
+		if (d12 <= 1.0D) {
+		    double d5 = entity.getPosX() - position.getX();
+		    double d7 = (entity instanceof TNTEntity ? entity.getPosY() : entity.getPosYEye())
+			    - position.getY();
+		    double d9 = entity.getPosZ() - position.getZ();
+		    double d13 = MathHelper.sqrt(d5 * d5 + d7 * d7 + d9 * d9);
+		    if (d13 != 0.0D) {
+			d5 = d5 / d13;
+			d7 = d7 / d13;
+			d9 = d9 / d13;
+			double d14 = Explosion.getBlockDensity(vector3d, entity);
+			double d10 = (1.0D - d12) * d14;
+			entity.attackEntityFrom(DamageSource.causeExplosionDamage((LivingEntity) null),
+				(int) ((d10 * d10 + d10) / 2.0D * 7.0D * f2 + 1.0D));
+			double d11 = d10;
+			if (entity instanceof LivingEntity) {
+			    d11 = ProtectionEnchantment.getBlastDamageReduction((LivingEntity) entity, d10);
 			}
-		}
-	}
 
-	protected void attackEntities(float size) {
-		Map<PlayerEntity, Vector3d> playerKnockbackMap = Maps.newHashMap();
-		float f2 = size * 2.0F;
-		int k1 = MathHelper.floor(position.getX() - (double) f2 - 1.0D);
-		int l1 = MathHelper.floor(position.getX() + (double) f2 + 1.0D);
-		int i2 = MathHelper.floor(position.getY() - (double) f2 - 1.0D);
-		int i1 = MathHelper.floor(position.getY() + (double) f2 + 1.0D);
-		int j2 = MathHelper.floor(position.getZ() - (double) f2 - 1.0D);
-		int j1 = MathHelper.floor(position.getZ() + (double) f2 + 1.0D);
-		List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(k1, i2, j2, l1, i1, j1));
-		Vector3d vector3d = new Vector3d(position.getX(), position.getY(), position.getZ());
-
-		for (int k2 = 0; k2 < list.size(); ++k2) {
-			Entity entity = list.get(k2);
-			if (!entity.isImmuneToExplosions()) {
-				double d12 = MathHelper.sqrt(entity.getDistanceSq(vector3d)) / f2;
-				if (d12 <= 1.0D) {
-					double d5 = entity.getPosX() - position.getX();
-					double d7 = (entity instanceof TNTEntity ? entity.getPosY() : entity.getPosYEye()) - position.getY();
-					double d9 = entity.getPosZ() - position.getZ();
-					double d13 = MathHelper.sqrt(d5 * d5 + d7 * d7 + d9 * d9);
-					if (d13 != 0.0D) {
-						d5 = d5 / d13;
-						d7 = d7 / d13;
-						d9 = d9 / d13;
-						double d14 = Explosion.getBlockDensity(vector3d, entity);
-						double d10 = (1.0D - d12) * d14;
-						entity.attackEntityFrom(DamageSource.causeExplosionDamage((LivingEntity) null), (int) ((d10 * d10 + d10) / 2.0D * 7.0D * f2 + 1.0D));
-						double d11 = d10;
-						if (entity instanceof LivingEntity) {
-							d11 = ProtectionEnchantment.getBlastDamageReduction((LivingEntity) entity, d10);
-						}
-
-						entity.setMotion(entity.getMotion().add(d5 * d11, d7 * d11, d9 * d11));
-						if (entity instanceof PlayerEntity) {
-							PlayerEntity playerentity = (PlayerEntity) entity;
-							if (!playerentity.isSpectator() && (!playerentity.isCreative() || !playerentity.abilities.isFlying)) {
-								playerKnockbackMap.put(playerentity, new Vector3d(d5 * d10, d7 * d10, d9 * d10));
-							}
-						}
-					}
-				}
+			entity.setMotion(entity.getMotion().add(d5 * d11, d7 * d11, d9 * d11));
+			if (entity instanceof PlayerEntity) {
+			    PlayerEntity playerentity = (PlayerEntity) entity;
+			    if (!playerentity.isSpectator()
+				    && (!playerentity.isCreative() || !playerentity.abilities.isFlying)) {
+				playerKnockbackMap.put(playerentity, new Vector3d(d5 * d10, d7 * d10, d9 * d10));
+			    }
 			}
+		    }
 		}
-		for (Entry<PlayerEntity, Vector3d> entry : playerKnockbackMap.entrySet()) {
-			if (entry.getKey() instanceof ServerPlayerEntity) {
-				ServerPlayerEntity serverplayerentity = (ServerPlayerEntity) entry.getKey();
-				serverplayerentity.connection.sendPacket(new SExplosionPacket(position.getX(), position.getY(), position.getZ(), size, new ArrayList<>(), entry.getValue()));
-			}
-		}
+	    }
 	}
+	for (Entry<PlayerEntity, Vector3d> entry : playerKnockbackMap.entrySet()) {
+	    if (entry.getKey() instanceof ServerPlayerEntity) {
+		ServerPlayerEntity serverplayerentity = (ServerPlayerEntity) entry.getKey();
+		serverplayerentity.connection.sendPacket(new SExplosionPacket(position.getX(), position.getY(),
+			position.getZ(), size, new ArrayList<>(), entry.getValue()));
+	    }
+	}
+    }
 
-	public static Blast createFromSubtype(SubtypeBlast explosive, World world, BlockPos pos) {
-		try {
-			return (Blast) explosive.blastClass.getConstructor(World.class, BlockPos.class).newInstance(world, pos);
-		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
-		}
-		return null;
+    public static Blast createFromSubtype(SubtypeBlast explosive, World world, BlockPos pos) {
+	try {
+	    return (Blast) explosive.blastClass.getConstructor(World.class, BlockPos.class).newInstance(world, pos);
+	} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
+		| IllegalArgumentException | InvocationTargetException e) {
+	    e.printStackTrace();
 	}
+	return null;
+    }
 }

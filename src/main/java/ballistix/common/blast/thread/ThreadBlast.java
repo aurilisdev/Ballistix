@@ -8,28 +8,28 @@ import net.minecraft.world.World;
 
 public abstract class ThreadBlast extends Thread {
 
-	public final HashSet<BlockPos> results = new HashSet<>();
+    public final HashSet<BlockPos> results = new HashSet<>();
 
-	public final BlockPos position;
-	public World world;
-	public int explosionRadius;
-	public float explosionEnergy;
-	public Entity explosionSource;
+    public final BlockPos position;
+    public World world;
+    public int explosionRadius;
+    public float explosionEnergy;
+    public Entity explosionSource;
 
-	public boolean isComplete = false;
+    public boolean isComplete = false;
 
-	public ThreadBlast(World world, BlockPos pos, int radius, float energy, Entity source) {
-		this.world = world;
-		position = pos;
-		explosionRadius = radius;
-		explosionEnergy = energy;
-		explosionSource = source;
-		setPriority(Thread.MIN_PRIORITY);
-	}
+    public ThreadBlast(World world, BlockPos pos, int radius, float energy, Entity source) {
+	this.world = world;
+	position = pos;
+	explosionRadius = radius;
+	explosionEnergy = energy;
+	explosionSource = source;
+	setPriority(Thread.MIN_PRIORITY);
+    }
 
-	@Override
-	public void run() {
-		isComplete = true;
-		super.run();
-	}
+    @Override
+    public void run() {
+	isComplete = true;
+	super.run();
+    }
 }

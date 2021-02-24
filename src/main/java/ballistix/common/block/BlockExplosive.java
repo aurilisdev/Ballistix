@@ -27,104 +27,108 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
 public class BlockExplosive extends Block {
-	public final SubtypeBlast explosive;
+    public final SubtypeBlast explosive;
 
-	public BlockExplosive(SubtypeBlast explosive) {
-		super(AbstractBlock.Properties.create(Material.TNT).zeroHardnessAndResistance().sound(SoundType.PLANT).notSolid().setOpaque(BlockExplosive::isntSolid));
-		this.explosive = explosive;
+    public BlockExplosive(SubtypeBlast explosive) {
+	super(AbstractBlock.Properties.create(Material.TNT).zeroHardnessAndResistance().sound(SoundType.PLANT)
+		.notSolid().setOpaque(BlockExplosive::isntSolid));
+	this.explosive = explosive;
+    }
+
+    private static boolean isntSolid(BlockState state, IBlockReader reader, BlockPos pos) {
+	return false;
+    }
+
+    @Override
+    public void catchFire(BlockState state, World world, BlockPos pos, @Nullable net.minecraft.util.Direction face,
+	    @Nullable LivingEntity igniter) {
+	explode(world, pos, explosive);
+    }
+
+    @Override
+    public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
+	if (!oldState.isIn(state.getBlock())) {
+	    if (worldIn.isBlockPowered(pos)) {
+		catchFire(state, worldIn, pos, null, null);
+		worldIn.removeBlock(pos, false);
+	    }
+	}
+    }
+
+    @Override
+    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos,
+	    boolean isMoving) {
+	if (worldIn.isBlockPowered(pos)) {
+	    catchFire(state, worldIn, pos, null, null);
+	    worldIn.removeBlock(pos, false);
 	}
 
-	private static boolean isntSolid(BlockState state, IBlockReader reader, BlockPos pos) {
-		return false;
+    }
+
+    @Override
+    public void onBlockHarvested(World worldIn, BlockPos pos, BlockState state, PlayerEntity player) {
+	if (!worldIn.isRemote() && !player.isCreative()) {
+	    catchFire(state, worldIn, pos, null, null);
 	}
+	super.onBlockHarvested(worldIn, pos, state, player);
+    }
 
-	@Override
-	public void catchFire(BlockState state, World world, BlockPos pos, @Nullable net.minecraft.util.Direction face, @Nullable LivingEntity igniter) {
-		explode(world, pos, explosive);
+    @Override
+    public void onExplosionDestroy(World worldIn, BlockPos pos, Explosion explosionIn) {
+	if (!worldIn.isRemote) {
+	    explode(worldIn, pos, explosive);
 	}
+    }
 
-	@Override
-	public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
-		if (!oldState.isIn(state.getBlock())) {
-			if (worldIn.isBlockPowered(pos)) {
-				catchFire(state, worldIn, pos, null, null);
-				worldIn.removeBlock(pos, false);
-			}
-		}
+    private static void explode(World worldIn, BlockPos pos, SubtypeBlast explosive) {
+	if (!worldIn.isRemote) {
+	    EntityExplosive explosiveEntity = new EntityExplosive(worldIn, pos.getX() + 0.5D, pos.getY(),
+		    pos.getZ() + 0.5D);
+	    explosiveEntity.setBlastType(explosive);
+	    worldIn.addEntity(explosiveEntity);
+	    worldIn.playSound((PlayerEntity) null, explosiveEntity.getPosX(), explosiveEntity.getPosY(),
+		    explosiveEntity.getPosZ(), SoundEvents.ENTITY_TNT_PRIMED, SoundCategory.BLOCKS, 1.0F, 1.0F);
 	}
+    }
 
-	@Override
-	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
-		if (worldIn.isBlockPowered(pos)) {
-			catchFire(state, worldIn, pos, null, null);
-			worldIn.removeBlock(pos, false);
-		}
-
+    @Override
+    public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player,
+	    Hand handIn, BlockRayTraceResult hit) {
+	ItemStack itemstack = player.getHeldItem(handIn);
+	Item item = itemstack.getItem();
+	if (item != Items.FLINT_AND_STEEL && item != Items.FIRE_CHARGE) {
+	    return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
 	}
-
-	@Override
-	public void onBlockHarvested(World worldIn, BlockPos pos, BlockState state, PlayerEntity player) {
-		if (!worldIn.isRemote() && !player.isCreative()) {
-			catchFire(state, worldIn, pos, null, null);
-		}
-		super.onBlockHarvested(worldIn, pos, state, player);
+	catchFire(state, worldIn, pos, hit.getFace(), player);
+	worldIn.setBlockState(pos, Blocks.AIR.getDefaultState(), 11);
+	if (!player.isCreative()) {
+	    if (item == Items.FLINT_AND_STEEL) {
+		itemstack.damageItem(1, player, (player1) -> {
+		    player1.sendBreakAnimation(handIn);
+		});
+	    } else {
+		itemstack.shrink(1);
+	    }
 	}
+	return ActionResultType.func_233537_a_(worldIn.isRemote);
+    }
 
-	@Override
-	public void onExplosionDestroy(World worldIn, BlockPos pos, Explosion explosionIn) {
-		if (!worldIn.isRemote) {
-			explode(worldIn, pos, explosive);
-		}
+    @Override
+    public void onProjectileCollision(World worldIn, BlockState state, BlockRayTraceResult hit,
+	    ProjectileEntity projectile) {
+	if (!worldIn.isRemote) {
+	    Entity entity = projectile.func_234616_v_();
+	    if (projectile.isBurning()) {
+		BlockPos blockpos = hit.getPos();
+		catchFire(state, worldIn, blockpos, null,
+			entity instanceof LivingEntity ? (LivingEntity) entity : null);
+		worldIn.removeBlock(blockpos, false);
+	    }
 	}
+    }
 
-	private static void explode(World worldIn, BlockPos pos, SubtypeBlast explosive) {
-		if (!worldIn.isRemote) {
-			EntityExplosive explosiveEntity = new EntityExplosive(worldIn, pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D);
-			explosiveEntity.setBlastType(explosive);
-			worldIn.addEntity(explosiveEntity);
-			worldIn.playSound((PlayerEntity) null, explosiveEntity.getPosX(), explosiveEntity.getPosY(), explosiveEntity.getPosZ(), SoundEvents.ENTITY_TNT_PRIMED, SoundCategory.BLOCKS, 1.0F, 1.0F);
-		}
-	}
-
-	@Override
-	@SuppressWarnings("deprecation")
-	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-		ItemStack itemstack = player.getHeldItem(handIn);
-		Item item = itemstack.getItem();
-		if (item != Items.FLINT_AND_STEEL && item != Items.FIRE_CHARGE) {
-			return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
-		} else {
-			catchFire(state, worldIn, pos, hit.getFace(), player);
-			worldIn.setBlockState(pos, Blocks.AIR.getDefaultState(), 11);
-			if (!player.isCreative()) {
-				if (item == Items.FLINT_AND_STEEL) {
-					itemstack.damageItem(1, player, (player1) -> {
-						player1.sendBreakAnimation(handIn);
-					});
-				} else {
-					itemstack.shrink(1);
-				}
-			}
-
-			return ActionResultType.func_233537_a_(worldIn.isRemote);
-		}
-	}
-
-	@Override
-	public void onProjectileCollision(World worldIn, BlockState state, BlockRayTraceResult hit, ProjectileEntity projectile) {
-		if (!worldIn.isRemote) {
-			Entity entity = projectile.func_234616_v_();
-			if (projectile.isBurning()) {
-				BlockPos blockpos = hit.getPos();
-				catchFire(state, worldIn, blockpos, null, entity instanceof LivingEntity ? (LivingEntity) entity : null);
-				worldIn.removeBlock(blockpos, false);
-			}
-		}
-
-	}
-
-	@Override
-	public boolean canDropFromExplosion(Explosion explosionIn) {
-		return false;
-	}
+    @Override
+    public boolean canDropFromExplosion(Explosion explosionIn) {
+	return false;
+    }
 }

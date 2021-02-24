@@ -14,82 +14,84 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 public class EntityBlast extends Entity {
-	private static final DataParameter<Integer> CALLCOUNT = EntityDataManager.createKey(EntityBlast.class, DataSerializers.VARINT);
-	private static final DataParameter<Integer> TYPE = EntityDataManager.createKey(EntityBlast.class, DataSerializers.VARINT);
+    private static final DataParameter<Integer> CALLCOUNT = EntityDataManager.createKey(EntityBlast.class,
+	    DataSerializers.VARINT);
+    private static final DataParameter<Integer> TYPE = EntityDataManager.createKey(EntityBlast.class,
+	    DataSerializers.VARINT);
 
-	private Blast blast;
-	public int blastOrdinal = -1;
-	public int callcount = 0;
+    private Blast blast;
+    public int blastOrdinal = -1;
+    public int callcount = 0;
 
-	public EntityBlast(EntityType<? extends EntityBlast> type, World worldIn) {
-		super(type, worldIn);
-		preventEntitySpawning = true;
+    public EntityBlast(EntityType<? extends EntityBlast> type, World worldIn) {
+	super(type, worldIn);
+	preventEntitySpawning = true;
+    }
+
+    public EntityBlast(World worldIn) {
+	this(DeferredRegisters.ENTITY_BLAST.get(), worldIn);
+    }
+
+    public void setBlastType(SubtypeBlast explosive) {
+	blastOrdinal = explosive.ordinal();
+	blast = Blast.createFromSubtype(getBlastType(), world, getPosition());
+    }
+
+    public SubtypeBlast getBlastType() {
+	return blastOrdinal == -1 ? null : SubtypeBlast.values()[blastOrdinal];
+    }
+
+    @Override
+    protected void registerData() {
+	dataManager.register(CALLCOUNT, 80);
+	dataManager.register(TYPE, -1);
+    }
+
+    @Override
+    public void tick() {
+	if (!world.isRemote) {
+	    dataManager.set(TYPE, blastOrdinal);
+	    dataManager.set(CALLCOUNT, callcount);
+	} else {
+	    blastOrdinal = dataManager.get(TYPE);
+	    callcount = dataManager.get(CALLCOUNT);
 	}
-
-	public EntityBlast(World worldIn) {
-		this(DeferredRegisters.ENTITY_BLAST.get(), worldIn);
-	}
-
-	public void setBlastType(SubtypeBlast explosive) {
-		blastOrdinal = explosive.ordinal();
+	if (blast != null) {
+	    if (callcount == 0) {
+		blast.preExplode();
+	    } else if (blast.explode(callcount)) {
+		blast.postExplode();
+		remove();
+	    }
+	    callcount++;
+	} else {
+	    if (blastOrdinal == -1) {
+		if (ticksExisted > 60) {
+		    remove();
+		}
+	    } else {
 		blast = Blast.createFromSubtype(getBlastType(), world, getPosition());
+	    }
 	}
+    }
 
-	public SubtypeBlast getBlastType() {
-		return blastOrdinal == -1 ? null : SubtypeBlast.values()[blastOrdinal];
-	}
+    @Override
+    protected void writeAdditional(CompoundNBT compound) {
+	compound.putInt("type", blastOrdinal);
+	compound.putInt("callcount", callcount);
+    }
 
-	@Override
-	protected void registerData() {
-		dataManager.register(CALLCOUNT, 80);
-		dataManager.register(TYPE, -1);
+    @Override
+    protected void readAdditional(CompoundNBT compound) {
+	blastOrdinal = compound.getInt("type");
+	callcount = compound.getInt("callcount");
+	if (blastOrdinal != -1) {
+	    setBlastType(getBlastType());
 	}
+    }
 
-	@Override
-	public void tick() {
-		if (!world.isRemote) {
-			dataManager.set(TYPE, blastOrdinal);
-			dataManager.set(CALLCOUNT, callcount);
-		} else {
-			blastOrdinal = dataManager.get(TYPE);
-			callcount = dataManager.get(CALLCOUNT);
-		}
-		if (blast != null) {
-			if (callcount == 0) {
-				blast.preExplode();
-			} else if (blast.explode(callcount)) {
-				blast.postExplode();
-				remove();
-			}
-			callcount++;
-		} else {
-			if (blastOrdinal == -1) {
-				if (ticksExisted > 60) {
-					remove();
-				}
-			} else {
-				blast = Blast.createFromSubtype(getBlastType(), world, getPosition());
-			}
-		}
-	}
-
-	@Override
-	protected void writeAdditional(CompoundNBT compound) {
-		compound.putInt("type", blastOrdinal);
-		compound.putInt("callcount", callcount);
-	}
-
-	@Override
-	protected void readAdditional(CompoundNBT compound) {
-		blastOrdinal = compound.getInt("type");
-		callcount = compound.getInt("callcount");
-		if (blastOrdinal != -1) {
-			setBlastType(getBlastType());
-		}
-	}
-
-	@Override
-	public IPacket<?> createSpawnPacket() {
-		return NetworkHooks.getEntitySpawningPacket(this);
-	}
+    @Override
+    public IPacket<?> createSpawnPacket() {
+	return NetworkHooks.getEntitySpawningPacket(this);
+    }
 }

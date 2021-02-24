@@ -20,50 +20,52 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class RenderExplosive extends EntityRenderer<EntityExplosive> {
-	public RenderExplosive(EntityRendererManager renderManagerIn) {
-		super(renderManagerIn);
-		shadowSize = 0.5F;
+    public RenderExplosive(EntityRendererManager renderManagerIn) {
+	super(renderManagerIn);
+	shadowSize = 0.5F;
+    }
+
+    @Override
+    public void render(EntityExplosive entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
+	    IRenderTypeBuffer bufferIn, int packedLightIn) {
+	SubtypeBlast subtype = entityIn.getBlastType();
+	if (subtype != null) {
+	    matrixStackIn.push();
+	    matrixStackIn.translate(0.0D, 0.5D, 0.0D);
+	    if (entityIn.fuse - partialTicks + 1.0F < 10.0F) {
+		float f = 1.0F - (entityIn.fuse - partialTicks + 1.0F) / 10.0F;
+		f = MathHelper.clamp(f, 0.0F, 1.0F);
+		f = f * f;
+		f = f * f;
+		float f1 = 1.0F + f * 0.3F;
+		matrixStackIn.scale(f1, f1, f1);
+	    }
+
+	    matrixStackIn.rotate(Vector3f.YP.rotationDegrees(-90.0F));
+	    matrixStackIn.translate(-0.5D, -0.5D, 0.5D);
+	    matrixStackIn.rotate(Vector3f.YP.rotationDegrees(90.0F));
+	    renderTntFlash(DeferredRegisters.SUBTYPEBLOCK_MAPPINGS.get(subtype).getDefaultState(), matrixStackIn,
+		    bufferIn, packedLightIn, entityIn.fuse / 5 % 2 == 0);
+	    matrixStackIn.pop();
+	}
+	super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+    }
+
+    public static void renderTntFlash(BlockState blockStateIn, MatrixStack matrixStackIn,
+	    IRenderTypeBuffer renderTypeBuffer, int combinedLight, boolean doFullBright) {
+	int i;
+	if (doFullBright) {
+	    i = OverlayTexture.getPackedUV(OverlayTexture.getU(1.0F), 10);
+	} else {
+	    i = OverlayTexture.NO_OVERLAY;
 	}
 
-	@Override
-	public void render(EntityExplosive entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
-		SubtypeBlast subtype = entityIn.getBlastType();
-		if (subtype != null) {
-			matrixStackIn.push();
-			matrixStackIn.translate(0.0D, 0.5D, 0.0D);
-			if (entityIn.fuse - partialTicks + 1.0F < 10.0F) {
-				float f = 1.0F - (entityIn.fuse - partialTicks + 1.0F) / 10.0F;
-				f = MathHelper.clamp(f, 0.0F, 1.0F);
-				f = f * f;
-				f = f * f;
-				float f1 = 1.0F + f * 0.3F;
-				matrixStackIn.scale(f1, f1, f1);
-			}
+	Minecraft.getInstance().getBlockRendererDispatcher().renderBlock(blockStateIn, matrixStackIn, renderTypeBuffer,
+		combinedLight, i);
+    }
 
-			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(-90.0F));
-			matrixStackIn.translate(-0.5D, -0.5D, 0.5D);
-			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(90.0F));
-			renderTntFlash(DeferredRegisters.SUBTYPEBLOCK_MAPPINGS.get(subtype).getDefaultState(), matrixStackIn, bufferIn, packedLightIn, entityIn.fuse / 5 % 2 == 0);
-			matrixStackIn.pop();
-		}
-		super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
-	}
-
-	@SuppressWarnings("deprecation")
-	public static void renderTntFlash(BlockState blockStateIn, MatrixStack matrixStackIn, IRenderTypeBuffer renderTypeBuffer, int combinedLight, boolean doFullBright) {
-		int i;
-		if (doFullBright) {
-			i = OverlayTexture.getPackedUV(OverlayTexture.getU(1.0F), 10);
-		} else {
-			i = OverlayTexture.NO_OVERLAY;
-		}
-
-		Minecraft.getInstance().getBlockRendererDispatcher().renderBlock(blockStateIn, matrixStackIn, renderTypeBuffer, combinedLight, i);
-	}
-
-	@Override
-	@SuppressWarnings("deprecation")
-	public ResourceLocation getEntityTexture(EntityExplosive entity) {
-		return AtlasTexture.LOCATION_BLOCKS_TEXTURE;
-	}
+    @Override
+    public ResourceLocation getEntityTexture(EntityExplosive entity) {
+	return AtlasTexture.LOCATION_BLOCKS_TEXTURE;
+    }
 }

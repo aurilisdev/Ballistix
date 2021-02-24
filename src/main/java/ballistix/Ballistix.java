@@ -23,30 +23,31 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @EventBusSubscriber(modid = References.ID, bus = Bus.MOD)
 public class Ballistix {
 
-	public Ballistix() {
-		ConfigurationHandler.registerConfig(Constants.class);
-		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-		DeferredRegisters.BLOCKS.register(bus);
-		DeferredRegisters.ITEMS.register(bus);
-		DeferredRegisters.TILES.register(bus);
-		DeferredRegisters.CONTAINERS.register(bus);
-		DeferredRegisters.ENTITIES.register(bus);
-	}
+    public Ballistix() {
+	ConfigurationHandler.registerConfig(Constants.class);
+	IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+	DeferredRegisters.BLOCKS.register(bus);
+	DeferredRegisters.ITEMS.register(bus);
+	DeferredRegisters.TILES.register(bus);
+	DeferredRegisters.CONTAINERS.register(bus);
+	DeferredRegisters.ENTITIES.register(bus);
+    }
 
-	@SubscribeEvent
-	@OnlyIn(Dist.CLIENT)
-	public static void onClientSetup(FMLClientSetupEvent event) {
-		ClientRegister.setup();
-	}
+    @SubscribeEvent
+    @OnlyIn(Dist.CLIENT)
+    public static void onClientSetup(FMLClientSetupEvent event) {
+	ClientRegister.setup();
+    }
 
-	@SubscribeEvent
-	public static void onCommonSetup(FMLCommonSetupEvent event) {
-		NetworkHandler.init();
-	}
+    @SubscribeEvent
+    public static void onCommonSetup(FMLCommonSetupEvent event) {
+	NetworkHandler.init();
+    }
 
-	@SubscribeEvent
-	public static void onLoadEvent(FMLLoadCompleteEvent event) {
-		MachineRecipes.registerRecipe(electrodynamics.DeferredRegisters.TILE_MINERALGRINDER.get(), new O2OProcessingRecipe(Items.ROTTEN_FLESH, DeferredRegisters.ITEM_DUSTPOISON.get(), 2));
-	}
+    @SubscribeEvent
+    public static void onLoadEvent(FMLLoadCompleteEvent event) {
+	MachineRecipes.registerRecipe(electrodynamics.DeferredRegisters.TILE_MINERALGRINDER.get(),
+		new O2OProcessingRecipe(Items.ROTTEN_FLESH, DeferredRegisters.ITEM_DUSTPOISON.get(), 2));
+    }
 
 }

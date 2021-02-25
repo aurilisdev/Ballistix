@@ -1,0 +1,26 @@
+{
+	"type": "minecraft:crafting_shaped",
+    "pattern": [
+        "  #",
+        "ttT",
+        " St"
+    ],
+    "key": {
+        "#": {
+            "item": "minecraft:glass"
+        },
+        "t": {
+            "tag": "forge:ingots/steel"
+        },
+        "T": {
+            "tag": "forge:circuits/advanced" 
+        },
+        "S": {
+            "item": "minecraft:stone_button"
+        }
+    },
+	"result": {
+		"item": "ballistix:rocketlauncher",
+		"count": 1
+	}
+}

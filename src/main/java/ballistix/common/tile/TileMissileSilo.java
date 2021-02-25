@@ -89,7 +89,7 @@ public class TileMissileSilo extends GenericTileInventory implements ITickableTi
 					    + Math.pow(pos.getZ() - target.getZ(), 2));
 			    if (range == 0 ? dist < 3000 : range == 1 ? dist < 10000 : true) {
 				EntityMissile missile = new EntityMissile(world);
-				missile.setPosition(getPos().getX() + 1, getPos().getY() + 2, getPos().getZ() + 1);
+				missile.setPosition(getPos().getX() + 1, getPos().getY(), getPos().getZ() + 1);
 				missile.range = range;
 				missile.target = new BlockPos(target);
 				missile.blastOrdinal = ((BlockExplosive) des.getBlock()).explosive.ordinal();

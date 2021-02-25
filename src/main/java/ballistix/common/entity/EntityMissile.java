@@ -24,6 +24,7 @@ public class EntityMissile extends Entity {
     public BlockPos target;
     public int blastOrdinal = -1;
     public int range = -1;
+    public boolean isItem = false;
 
     public EntityMissile(EntityType<? extends EntityMissile> type, World worldIn) {
 	super(type, worldIn);
@@ -43,6 +44,11 @@ public class EntityMissile extends Entity {
     }
 
     @Override
+    protected void doBlockCollisions() {
+	super.doBlockCollisions();
+    }
+
+    @Override
     protected void registerData() {
 	dataManager.register(TYPE, -1);
 	dataManager.register(RANGE, -1);
@@ -59,7 +65,11 @@ public class EntityMissile extends Entity {
 	} else {
 	    rotationPitch = rotationYaw = 90;
 	}
-	move(MoverType.SELF, getMotion());
+	if (ticksExisted < 30) {
+	    setPosition(getPosX() + getMotion().x, getPosY() + getMotion().y, getPosZ() + getMotion().z);
+	} else {
+	    move(MoverType.SELF, getMotion());
+	}
 	if (!world.isRemote) {
 	    dataManager.set(TYPE, blastOrdinal);
 	    dataManager.set(RANGE, range);
@@ -68,7 +78,7 @@ public class EntityMissile extends Entity {
 	    range = dataManager.get(RANGE);
 	}
 	if (!world.isRemote) {
-	    if (onGround) {
+	    if (onGround || (!isItem && target != null && getPosY() < target.getY() && getMotion().getY() < 0)) {
 		setDead();
 		if (blastOrdinal != -1) {
 		    SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
@@ -78,7 +88,7 @@ public class EntityMissile extends Entity {
 		    }
 		}
 	    }
-	    if (getPosY() > 500) {
+	    if (!isItem && getPosY() > 500) {
 		if (target == null) {
 		    setDead();
 		} else {
@@ -87,7 +97,7 @@ public class EntityMissile extends Entity {
 		}
 	    }
 	}
-	if (target != null && getMotion().y < 3 && getMotion().y >= 0) {
+	if (!isItem && target != null && getMotion().y < 3 && getMotion().y >= 0) {
 	    setMotion(getMotion().add(0, 0.02, 0));
 	}
 	for (int i = 0; i < 5; i++) {
@@ -112,15 +122,24 @@ public class EntityMissile extends Entity {
     protected void writeAdditional(CompoundNBT compound) {
 	compound.putInt("type", blastOrdinal);
 	compound.putInt("range", range);
-	compound.putInt("targetX", target.getX());
-	compound.putInt("targetY", target.getY());
-	compound.putInt("targetZ", target.getZ());
+	compound.putBoolean("isItem", isItem);
+	if (target != null) {
+	    compound.putInt("targetX", target.getX());
+	    compound.putInt("targetY", target.getY());
+	    compound.putInt("targetZ", target.getZ());
+	} else {
+	    compound.putInt("targetX", 0);
+	    compound.putInt("targetY", 0);
+	    compound.putInt("targetZ", 0);
+	}
+
     }
 
     @Override
     protected void readAdditional(CompoundNBT compound) {
 	blastOrdinal = compound.getInt("type");
 	range = compound.getInt("range");
+	isItem = compound.getBoolean("isItem");
 	if (blastOrdinal != -1) {
 	    setBlastType(getBlastType());
 	}

@@ -27,6 +27,7 @@
 	"item.ballistix.missilecloserange": "Close-range Ballistic Missile",
 	"item.ballistix.missilemediumrange": "Medium-range Ballistic Missile",
 	"item.ballistix.missilelongrange": "Long-range Ballistic Missile",
+	"item.ballistix.rocketlauncher": "Rocket Launcher",
 	"gui.missilesilo.missile": "Missile",
 	"gui.missilesilo.explosive": "Explosive",
 	"container.missilesilo": "Missile Silo",

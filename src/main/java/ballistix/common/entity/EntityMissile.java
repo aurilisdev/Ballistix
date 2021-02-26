@@ -78,7 +78,7 @@ public class EntityMissile extends Entity {
 	    range = dataManager.get(RANGE);
 	}
 	if (!world.isRemote) {
-	    if (onGround || (!isItem && target != null && getPosY() < target.getY() && getMotion().getY() < 0)) {
+	    if (onGround || !isItem && target != null && getPosY() < target.getY() && getMotion().getY() < 0) {
 		setDead();
 		if (blastOrdinal != -1) {
 		    SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];

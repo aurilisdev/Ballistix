@@ -65,7 +65,7 @@ public class EntityMissile extends Entity {
 	} else {
 	    rotationPitch = rotationYaw = 90;
 	}
-	if (ticksExisted < 30) {
+	if (ticksExisted < 10 && !isItem) {
 	    setPosition(getPosX() + getMotion().x, getPosY() + getMotion().y, getPosZ() + getMotion().z);
 	} else {
 	    move(MoverType.SELF, getMotion());
@@ -78,7 +78,7 @@ public class EntityMissile extends Entity {
 	    range = dataManager.get(RANGE);
 	}
 	if (!world.isRemote) {
-	    if (onGround || !isItem && target != null && getPosY() < target.getY() && getMotion().getY() < 0) {
+	    if (onGround || collidedHorizontally || collidedVertically || (!isItem && target != null && getPosY() < target.getY() && getMotion().getY() < 0)) {
 		setDead();
 		if (blastOrdinal != -1) {
 		    SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];

@@ -35,6 +35,8 @@ public class ClientRegister {
 	    References.ID + ":textures/model/missilemediumrange.png");
     public static final ResourceLocation TEXTURE_MISSILELONGRANGE = new ResourceLocation(
 	    References.ID + ":textures/model/missilelongrange.png");
+    public static final ResourceLocation TEXTURE_FIREBALL = new ResourceLocation(
+	    References.ID + ":textures/model/fireball.png");
 
     public static void setup() {
 	ModelLoader.addSpecialModel(MODEL_MISSILECLOSERANGE);

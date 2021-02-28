@@ -2,6 +2,7 @@ package ballistix.common.entity;
 
 import ballistix.DeferredRegisters;
 import ballistix.common.blast.Blast;
+import ballistix.common.blast.IHasCustomRenderer;
 import ballistix.common.block.SubtypeBlast;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -18,10 +19,14 @@ public class EntityBlast extends Entity {
 	    DataSerializers.VARINT);
     private static final DataParameter<Integer> TYPE = EntityDataManager.createKey(EntityBlast.class,
 	    DataSerializers.VARINT);
+    private static final DataParameter<Boolean> SHOULDSTARTCUSTOMRENDER = EntityDataManager.createKey(EntityBlast.class,
+	    DataSerializers.BOOLEAN);
 
     private Blast blast;
     public int blastOrdinal = -1;
     public int callcount = 0;
+    public boolean shouldRenderCustom = false;
+    public int ticksWhenCustomRender;
 
     public EntityBlast(EntityType<? extends EntityBlast> type, World worldIn) {
 	super(type, worldIn);
@@ -45,6 +50,7 @@ public class EntityBlast extends Entity {
     protected void registerData() {
 	dataManager.register(CALLCOUNT, 80);
 	dataManager.register(TYPE, -1);
+	dataManager.register(SHOULDSTARTCUSTOMRENDER, false);
     }
 
     @Override
@@ -52,9 +58,15 @@ public class EntityBlast extends Entity {
 	if (!world.isRemote) {
 	    dataManager.set(TYPE, blastOrdinal);
 	    dataManager.set(CALLCOUNT, callcount);
+	    dataManager.set(SHOULDSTARTCUSTOMRENDER,
+		    blast instanceof IHasCustomRenderer && ((IHasCustomRenderer) blast).shouldRender());
 	} else {
 	    blastOrdinal = dataManager.get(TYPE);
 	    callcount = dataManager.get(CALLCOUNT);
+	    if (!shouldRenderCustom && dataManager.get(SHOULDSTARTCUSTOMRENDER)) {
+		ticksWhenCustomRender = ticksExisted;
+	    }
+	    shouldRenderCustom = dataManager.get(SHOULDSTARTCUSTOMRENDER);
 	}
 	if (blast != null) {
 	    if (callcount == 0) {

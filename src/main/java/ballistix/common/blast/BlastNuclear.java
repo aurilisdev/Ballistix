@@ -5,9 +5,12 @@ import java.util.Iterator;
 import ballistix.common.blast.thread.ThreadRaycastBlast;
 import ballistix.common.block.SubtypeBlast;
 import ballistix.common.settings.Constants;
+import electrodynamics.api.math.Location;
 import electrodynamics.packet.NetworkHandler;
 import electrodynamics.packet.PacketSpawnSmokeParticle;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.Explosion;
@@ -16,7 +19,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkDirection;
 
-public class BlastNuclear extends Blast {
+public class BlastNuclear extends Blast implements IHasCustomRenderer {
 
     public BlastNuclear(World world, BlockPos position) {
 	super(world, position);
@@ -37,6 +40,11 @@ public class BlastNuclear extends Blast {
     private int particleHeight = 0;
 
     @Override
+    public boolean shouldRender() {
+	return pertick > 0;
+    }
+
+    @Override
     public boolean doExplode(int callCount) {
 	if (!world.isRemote) {
 	    if (thread == null) {
@@ -55,8 +63,18 @@ public class BlastNuclear extends Blast {
 			break;
 		    }
 		    BlockPos p = new BlockPos(iterator.next());
+
+		    BlockState state = Blocks.AIR.getDefaultState();
+		    double dis = new Location(p.getX(), 0, p.getZ())
+			    .distance(new Location(position.getX(), 0, position.getZ()));
+		    if (dis < 15) {
+			BlockPos offset = p.offset(Direction.DOWN);
+			if (!world.isAirBlock(offset) && world.rand.nextFloat() < (15.0f - dis) / 15.0f) {
+			    state = Blocks.FIRE.getDefaultState();
+			}
+		    }
 		    world.getBlockState(p).getBlock().onExplosionDestroy(world, p, ex);
-		    world.setBlockState(p, Blocks.AIR.getDefaultState(), 2);
+		    world.setBlockState(p, state, 2 | 16 | 32);
 		    if (world.rand.nextFloat() < 1 / 10.0) {
 			if (world instanceof ServerWorld) {
 			    ((ServerWorld) world).getChunkProvider().chunkManager
@@ -95,8 +113,6 @@ public class BlastNuclear extends Blast {
 		}
 		if (thread.results.isEmpty()) {
 		    attackEntities((float) Constants.EXPLOSIVE_NUCLEAR_SIZE);
-		    if (world instanceof ServerWorld) {
-		    }
 		    return true;
 		}
 	    }

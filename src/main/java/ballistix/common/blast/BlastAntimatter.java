@@ -49,7 +49,7 @@ public class BlastAntimatter extends Blast {
 		    }
 		    BlockPos p = new BlockPos(iterator.next());
 		    world.getBlockState(p).getBlock().onExplosionDestroy(world, p, ex);
-		    world.setBlockState(p, Blocks.AIR.getDefaultState(), 2);
+		    world.setBlockState(p, Blocks.AIR.getDefaultState(), 2 | 16 | 32);
 		    iterator.remove();
 		}
 		if (thread.results.isEmpty()) {

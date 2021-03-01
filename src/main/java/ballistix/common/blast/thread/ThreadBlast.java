@@ -18,7 +18,7 @@ public abstract class ThreadBlast extends Thread {
 
     public boolean isComplete = false;
 
-    public ThreadBlast(World world, BlockPos pos, int radius, float energy, Entity source) {
+    protected ThreadBlast(World world, BlockPos pos, int radius, float energy, Entity source) {
 	this.world = world;
 	position = pos;
 	explosionRadius = radius;

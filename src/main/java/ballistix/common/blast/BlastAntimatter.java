@@ -62,10 +62,6 @@ public class BlastAntimatter extends Blast {
     }
 
     @Override
-    public void doPostExplode() {
-    }
-
-    @Override
     public boolean isInstantaneous() {
 	return false;
     }

@@ -28,10 +28,6 @@ public class BlastChemical extends Blast {
     }
 
     @Override
-    public void doPreExplode() {
-    }
-
-    @Override
     public boolean doExplode(int callCount) {
 	int radius = (int) Constants.EXPLOSIVE_CHEMICAL_SIZE;
 	if (world.isRemote && world instanceof ClientWorld && callCount % 3 == 0) {
@@ -73,10 +69,6 @@ public class BlastChemical extends Blast {
 	    }
 	}
 	return callCount > Constants.EXPLOSIVE_CHEMICAL_DURATION;
-    }
-
-    @Override
-    public void doPostExplode() {
     }
 
     @Override

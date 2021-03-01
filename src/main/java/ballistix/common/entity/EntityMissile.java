@@ -44,11 +44,6 @@ public class EntityMissile extends Entity {
     }
 
     @Override
-    protected void doBlockCollisions() {
-	super.doBlockCollisions();
-    }
-
-    @Override
     protected void registerData() {
 	dataManager.register(TYPE, -1);
 	dataManager.register(RANGE, -1);
@@ -78,7 +73,8 @@ public class EntityMissile extends Entity {
 	    range = dataManager.get(RANGE);
 	}
 	if (!world.isRemote) {
-	    if (onGround || collidedHorizontally || collidedVertically || (!isItem && target != null && getPosY() < target.getY() && getMotion().getY() < 0)) {
+	    if (onGround || collidedHorizontally || collidedVertically
+		    || (!isItem && target != null && getPosY() < target.getY() && getMotion().getY() < 0)) {
 		setDead();
 		if (blastOrdinal != -1) {
 		    SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];

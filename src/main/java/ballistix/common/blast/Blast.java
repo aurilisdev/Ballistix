@@ -34,7 +34,7 @@ public abstract class Blast {
     public BlockPos position;
     public World world;
 
-    public Blast(World world, BlockPos position) {
+    protected Blast(World world, BlockPos position) {
 	this.world = world;
 	this.position = position;
     }
@@ -46,13 +46,15 @@ public abstract class Blast {
     public abstract SubtypeBlast getBlastType();
 
     @Deprecated
-    public abstract void doPreExplode();
+    public void doPreExplode() {
+    }
 
     @Deprecated
     public abstract boolean doExplode(int callCount);
 
     @Deprecated
-    public abstract void doPostExplode();
+    public void doPostExplode() {
+    }
 
     public final void preExplode() {
 	PreBlastEvent evt = new PreBlastEvent(world, this);

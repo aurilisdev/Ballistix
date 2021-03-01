@@ -115,7 +115,10 @@ public class ScreenMissileSilo extends GenericContainerScreen<ContainerMissileSi
 	boolean x = !xCoordField.keyPressed(keyCode, scanCode, modifiers) && !xCoordField.canWrite();
 	boolean y = !yCoordField.keyPressed(keyCode, scanCode, modifiers) && !yCoordField.canWrite();
 	boolean z = !zCoordField.keyPressed(keyCode, scanCode, modifiers) && !zCoordField.canWrite();
-	return x || y || z ? super.keyPressed(keyCode, scanCode, modifiers) : true;
+	if (x || y || z) {
+	    return super.keyPressed(keyCode, scanCode, modifiers);
+	}
+	return true;
     }
 
     @Override
@@ -137,9 +140,9 @@ public class ScreenMissileSilo extends GenericContainerScreen<ContainerMissileSi
 	super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
 	font.func_243248_b(matrixStack, title, titleX, titleY, 4210752);
 	font.func_243248_b(matrixStack, new TranslationTextComponent("gui.missilesilo.missile"), playerInventoryTitleX,
-		playerInventoryTitleY - 55, 4210752);
+		playerInventoryTitleY - 55.0f, 4210752);
 	font.func_243248_b(matrixStack, new TranslationTextComponent("gui.missilesilo.explosive"),
-		playerInventoryTitleX, playerInventoryTitleY - 20, 4210752);
+		playerInventoryTitleX, playerInventoryTitleY - 20.0f, 4210752);
     }
 
 }

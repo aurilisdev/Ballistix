@@ -23,10 +23,6 @@ public class BlastAttractive extends Blast {
     }
 
     @Override
-    public void doPreExplode() {
-    }
-
-    @Override
     public boolean doExplode(int callCount) {
 	if (!world.isRemote) {
 	    world.createExplosion(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5,
@@ -64,10 +60,6 @@ public class BlastAttractive extends Blast {
 	    }
 	}
 	return true;
-    }
-
-    @Override
-    public void doPostExplode() {
     }
 
     @Override

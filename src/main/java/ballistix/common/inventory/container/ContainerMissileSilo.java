@@ -92,16 +92,19 @@ public class ContainerMissileSilo extends GenericContainerInventory {
 	try {
 	    triedX = Integer.parseInt(valX);
 	} catch (Exception e) {
+	    // Just for safety
 	}
 	Integer triedY = 0;
 	try {
 	    triedY = Integer.parseInt(valY);
 	} catch (Exception e) {
+	    // Just for safety
 	}
 	Integer triedZ = 0;
 	try {
 	    triedZ = Integer.parseInt(valZ);
 	} catch (Exception e) {
+	    // Just for safety
 	}
 	NetworkHandler.CHANNEL.sendToServer(new PacketSetMissileData(
 		new BlockPos(getXCoord(), getYCoord(), getZCoord()), new BlockPos(triedX, triedY, triedZ)));

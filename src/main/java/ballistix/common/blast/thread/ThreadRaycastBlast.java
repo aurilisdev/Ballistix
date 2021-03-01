@@ -65,15 +65,14 @@ public class ThreadRaycastBlast extends ThreadBlast {
 		    }
 		    BlockPos tt = new BlockPos(t);
 		    BlockState block = world.getBlockState(tt);
-		    if (block != Blocks.AIR.getDefaultState() && block != Blocks.VOID_AIR.getDefaultState()) {
-			if (block.getBlockHardness(world, tt) >= 0) {
-			    power -= callBack.getResistance(world, position, tt, explosionSource, block);
-			    if (power > 0f) {
-				int idistancesq = (int) (Math.pow(tt.getX() - position.getX(), 2)
-					+ Math.pow(tt.getY() - position.getY(), 2)
-					+ Math.pow(tt.getZ() - position.getZ(), 2));
-				results.add(new HashDistanceBlockPos(tt.getX(), tt.getY(), tt.getZ(), idistancesq));
-			    }
+		    if (block != Blocks.AIR.getDefaultState() && block != Blocks.VOID_AIR.getDefaultState()
+			    && block.getBlockHardness(world, tt) >= 0) {
+			power -= callBack.getResistance(world, position, tt, explosionSource, block);
+			if (power > 0f) {
+			    int idistancesq = (int) (Math.pow(tt.getX() - position.getX(), 2)
+				    + Math.pow(tt.getY() - position.getY(), 2)
+				    + Math.pow(tt.getZ() - position.getZ(), 2));
+			    results.add(new HashDistanceBlockPos(tt.getX(), tt.getY(), tt.getZ(), idistancesq));
 			}
 		    }
 		    t = new Vector3d(t.x + delta.x, t.y + delta.y, t.z + delta.z);

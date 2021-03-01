@@ -46,16 +46,16 @@ public class BlockExplosive extends Block {
     }
 
     @Override
+    @Deprecated
     public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
-	if (!oldState.isIn(state.getBlock())) {
-	    if (worldIn.isBlockPowered(pos)) {
-		catchFire(state, worldIn, pos, null, null);
-		worldIn.removeBlock(pos, false);
-	    }
+	if (!oldState.isIn(state.getBlock()) && worldIn.isBlockPowered(pos)) {
+	    catchFire(state, worldIn, pos, null, null);
+	    worldIn.removeBlock(pos, false);
 	}
     }
 
     @Override
+    @Deprecated
     public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos,
 	    boolean isMoving) {
 	if (worldIn.isBlockPowered(pos)) {
@@ -92,6 +92,7 @@ public class BlockExplosive extends Block {
     }
 
     @Override
+    @Deprecated
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player,
 	    Hand handIn, BlockRayTraceResult hit) {
 	ItemStack itemstack = player.getHeldItem(handIn);
@@ -103,9 +104,7 @@ public class BlockExplosive extends Block {
 	worldIn.setBlockState(pos, Blocks.AIR.getDefaultState(), 11);
 	if (!player.isCreative()) {
 	    if (item == Items.FLINT_AND_STEEL) {
-		itemstack.damageItem(1, player, (player1) -> {
-		    player1.sendBreakAnimation(handIn);
-		});
+		itemstack.damageItem(1, player, player1 -> player1.sendBreakAnimation(handIn));
 	    } else {
 		itemstack.shrink(1);
 	    }
@@ -114,6 +113,7 @@ public class BlockExplosive extends Block {
     }
 
     @Override
+    @Deprecated
     public void onProjectileCollision(World worldIn, BlockState state, BlockRayTraceResult hit,
 	    ProjectileEntity projectile) {
 	if (!worldIn.isRemote) {
@@ -128,6 +128,7 @@ public class BlockExplosive extends Block {
     }
 
     @Override
+    @Deprecated
     public boolean canDropFromExplosion(Explosion explosionIn) {
 	return false;
     }

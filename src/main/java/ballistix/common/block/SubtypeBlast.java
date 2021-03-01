@@ -24,8 +24,8 @@ public enum SubtypeBlast implements Subtype {
     debilitation(BlastDebilitation.class, 80, true), chemical(BlastChemical.class, 100, true),
     breaching(BlastBreaching.class, 5, false), thermobaric(BlastThermobaric.class, 100, false),
     contagious(BlastContagious.class, 100, false), fragmentation(BlastFragmentation.class, 100, false),
-    /* emp(BlastEmp.class, 5, false), */ nuclear(BlastNuclear.class, 200, false),
-    antimatter(BlastAntimatter.class, 400, false), darkmatter(BlastDarkmatter.class, 400, false);
+    nuclear(BlastNuclear.class, 200, false), antimatter(BlastAntimatter.class, 400, false),
+    darkmatter(BlastDarkmatter.class, 400, false);
 
     public final Class<?> blastClass;
     public final int fuse;

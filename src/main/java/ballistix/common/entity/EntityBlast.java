@@ -63,7 +63,7 @@ public class EntityBlast extends Entity {
 	} else {
 	    blastOrdinal = dataManager.get(TYPE);
 	    callcount = dataManager.get(CALLCOUNT);
-	    if (!shouldRenderCustom && dataManager.get(SHOULDSTARTCUSTOMRENDER)) {
+	    if (!shouldRenderCustom && dataManager.get(SHOULDSTARTCUSTOMRENDER) == Boolean.TRUE) {
 		ticksWhenCustomRender = ticksExisted;
 	    }
 	    shouldRenderCustom = dataManager.get(SHOULDSTARTCUSTOMRENDER);

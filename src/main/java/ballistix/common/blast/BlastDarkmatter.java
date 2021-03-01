@@ -112,10 +112,6 @@ public class BlastDarkmatter extends Blast {
     }
 
     @Override
-    public void doPostExplode() {
-    }
-
-    @Override
     public boolean isInstantaneous() {
 	return false;
     }

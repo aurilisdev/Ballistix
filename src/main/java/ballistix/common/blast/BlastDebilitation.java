@@ -27,10 +27,6 @@ public class BlastDebilitation extends Blast {
     }
 
     @Override
-    public void doPreExplode() {
-    }
-
-    @Override
     public boolean doExplode(int callCount) {
 	int radius = (int) Constants.EXPLOSIVE_DEBILITATION_SIZE;
 	if (world.isRemote && world instanceof ClientWorld && callCount % 3 == 0) {
@@ -69,10 +65,6 @@ public class BlastDebilitation extends Blast {
 	    }
 	}
 	return callCount > Constants.EXPLOSIVE_DEBILITATION_DURATION;
-    }
-
-    @Override
-    public void doPostExplode() {
     }
 
     @Override

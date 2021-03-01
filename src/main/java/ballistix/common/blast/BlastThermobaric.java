@@ -56,14 +56,10 @@ public class BlastThermobaric extends Blast {
 		    BlockPos p = new BlockPos(iterator.next());
 		    world.getBlockState(p).getBlock().onExplosionDestroy(world, p, ex);
 		    world.setBlockState(p, Blocks.AIR.getDefaultState(), 2);
-		    if (world.rand.nextFloat() < 1 / 10.0) {
-			if (world instanceof ServerWorld) {
-			    ((ServerWorld) world).getChunkProvider().chunkManager
-				    .getTrackingPlayers(new ChunkPos(p), false).forEach(pl -> {
-					NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p),
-						pl.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
-				    });
-			}
+		    if (world.rand.nextFloat() < 1 / 10.0 && world instanceof ServerWorld) {
+			((ServerWorld) world).getChunkProvider().chunkManager.getTrackingPlayers(new ChunkPos(p), false)
+				.forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p),
+					pl.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT));
 		    }
 		    iterator.remove();
 		}
@@ -74,10 +70,6 @@ public class BlastThermobaric extends Blast {
 	    }
 	}
 	return false;
-    }
-
-    @Override
-    public void doPostExplode() {
     }
 
     @Override

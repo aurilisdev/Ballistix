@@ -26,6 +26,7 @@ public class RenderShrapnel extends EntityRenderer<EntityShrapnel> {
     }
 
     @Override
+    @Deprecated
     public void render(EntityShrapnel entity, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
 	    IRenderTypeBuffer bufferIn, int packedLightIn) {
 	super.render(entity, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);

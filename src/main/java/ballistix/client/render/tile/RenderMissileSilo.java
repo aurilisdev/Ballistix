@@ -19,6 +19,7 @@ public class RenderMissileSilo extends TileEntityRenderer<TileMissileSilo> {
     }
 
     @Override
+    @Deprecated
     public void render(TileMissileSilo tileEntityIn, float partialTicks, MatrixStack matrixStackIn,
 	    IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
 	int type = tileEntityIn.range;

@@ -75,14 +75,10 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 		    }
 		    world.getBlockState(p).getBlock().onExplosionDestroy(world, p, ex);
 		    world.setBlockState(p, state, 2 | 16 | 32);
-		    if (world.rand.nextFloat() < 1 / 10.0) {
-			if (world instanceof ServerWorld) {
-			    ((ServerWorld) world).getChunkProvider().chunkManager
-				    .getTrackingPlayers(new ChunkPos(p), false).forEach(pl -> {
-					NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p),
-						pl.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
-				    });
-			}
+		    if (world.rand.nextFloat() < 1 / 10.0 && world instanceof ServerWorld) {
+			((ServerWorld) world).getChunkProvider().chunkManager.getTrackingPlayers(new ChunkPos(p), false)
+				.forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p),
+					pl.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT));
 		    }
 		    iterator.remove();
 		}
@@ -96,16 +92,13 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 		    }
 		    for (int i = -radius; i <= radius; i++) {
 			for (int k = -radius; k <= radius; k++) {
-			    if (i * i + k * k < radius * radius) {
-				if (world.rand.nextFloat() < (particleHeight > 18 ? 0.2 : 0.6)) {
-				    BlockPos p = position.add(i, particleHeight, k);
-				    ((ServerWorld) world).getChunkProvider().chunkManager
-					    .getTrackingPlayers(new ChunkPos(p), false).forEach(pl -> {
-						NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p),
-							pl.connection.getNetworkManager(),
-							NetworkDirection.PLAY_TO_CLIENT);
-					    });
-				}
+			    if (i * i + k * k < radius * radius
+				    && world.rand.nextFloat() < (particleHeight > 18 ? 0.2 : 0.6)) {
+				BlockPos p = position.add(i, particleHeight, k);
+				((ServerWorld) world).getChunkProvider().chunkManager
+					.getTrackingPlayers(new ChunkPos(p), false)
+					.forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p),
+						pl.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT));
 			    }
 			}
 		    }
@@ -118,10 +111,6 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 	    }
 	}
 	return false;
-    }
-
-    @Override
-    public void doPostExplode() {
     }
 
     @Override

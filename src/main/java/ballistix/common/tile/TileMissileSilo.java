@@ -68,37 +68,34 @@ public class TileMissileSilo extends GenericTileInventory implements ITickableTi
 	    ItemStack exp = getStackInSlot(1);
 	    if (exp.getItem() instanceof BlockItemDescriptable) {
 		BlockItemDescriptable des = (BlockItemDescriptable) exp.getItem();
-		if (des.getBlock() instanceof BlockExplosive) {
-		    if (range >= 0 && exp.getCount() > 0) {
-			boolean hasSignal = false;
-			if (world.getRedstonePowerFromNeighbors(getPos()) > 0) {
-			    hasSignal = true;
-			}
-			if (!hasSignal) {
-			    for (Subnode node : getSubNodes()) {
-				BlockPos off = pos.add(node.pos);
-				if (world.getRedstonePowerFromNeighbors(off) > 0) {
-				    hasSignal = true;
-				    break;
-				}
+		if (des.getBlock() instanceof BlockExplosive && range >= 0 && exp.getCount() > 0) {
+		    boolean hasSignal = false;
+		    if (world.getRedstonePowerFromNeighbors(getPos()) > 0) {
+			hasSignal = true;
+		    }
+		    if (!hasSignal) {
+			for (Subnode node : getSubNodes()) {
+			    BlockPos off = pos.add(node.pos);
+			    if (world.getRedstonePowerFromNeighbors(off) > 0) {
+				hasSignal = true;
+				break;
 			    }
 			}
-			if (hasSignal) {
-			    double dist = Math.sqrt(
-				    Math.pow(pos.getX() - target.getX(), 2) + Math.pow(pos.getY() - target.getY(), 2)
-					    + Math.pow(pos.getZ() - target.getZ(), 2));
-			    if (range == 0 ? dist < 3000 : range == 1 ? dist < 10000 : true) {
-				EntityMissile missile = new EntityMissile(world);
-				missile.setPosition(getPos().getX() + 1, getPos().getY(), getPos().getZ() + 1);
-				missile.range = range;
-				missile.target = new BlockPos(target);
-				missile.blastOrdinal = ((BlockExplosive) des.getBlock()).explosive.ordinal();
-				exp.shrink(1);
-				it.shrink(1);
-				world.addEntity(missile);
-			    }
-			    cooldown = 100;
+		    }
+		    if (hasSignal) {
+			double dist = Math.sqrt(Math.pow(pos.getX() - target.getX(), 2)
+				+ Math.pow(pos.getY() - target.getY(), 2) + Math.pow(pos.getZ() - target.getZ(), 2));
+			if (range == 0 && dist < 3000 || range == 1 && dist < 10000 || range == 2) {
+			    EntityMissile missile = new EntityMissile(world);
+			    missile.setPosition(getPos().getX() + 1.0, getPos().getY(), getPos().getZ() + 1.0);
+			    missile.range = range;
+			    missile.target = new BlockPos(target);
+			    missile.blastOrdinal = ((BlockExplosive) des.getBlock()).explosive.ordinal();
+			    exp.shrink(1);
+			    it.shrink(1);
+			    world.addEntity(missile);
 			}
+			cooldown = 100;
 		    }
 		}
 	    }
@@ -163,8 +160,7 @@ public class TileMissileSilo extends GenericTileInventory implements ITickableTi
 
 	@Override
 	public void set(int index, int value) {
-	    switch (index) {
-	    }
+	    // Doesn't support setting values
 	}
 
 	@Override

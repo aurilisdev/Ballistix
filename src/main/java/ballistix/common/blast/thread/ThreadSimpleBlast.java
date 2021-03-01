@@ -25,10 +25,9 @@ public class ThreadSimpleBlast extends ThreadBlast {
 			HashDistanceBlockPos pos = new HashDistanceBlockPos(position.getX() + i, position.getY() + j,
 				position.getZ() + k, idistance);
 			BlockState block = world.getBlockState(pos);
-			if (block != Blocks.AIR.getDefaultState() && block != Blocks.VOID_AIR.getDefaultState()) {
-			    if (block.getBlockHardness(world, pos) >= 0) {
-				results.add(pos);
-			    }
+			if (block != Blocks.AIR.getDefaultState() && block != Blocks.VOID_AIR.getDefaultState()
+				&& block.getBlockHardness(world, pos) >= 0) {
+			    results.add(pos);
 			}
 		    }
 		}

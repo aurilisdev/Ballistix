@@ -31,6 +31,7 @@ public class RenderMissile extends EntityRenderer<EntityMissile> {
     }
 
     @Override
+    @Deprecated
     public void render(EntityMissile entity, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
 	    IRenderTypeBuffer bufferIn, int packedLightIn) {
 	int type = entity.range;
@@ -73,6 +74,7 @@ public class RenderMissile extends EntityRenderer<EntityMissile> {
     }
 
     @Override
+    @Deprecated
     public ResourceLocation getEntityTexture(EntityMissile entity) {
 	return AtlasTexture.LOCATION_BLOCKS_TEXTURE;
     }

@@ -43,6 +43,7 @@ public class BlockMissileSilo extends BlockGenericMachine implements IMultiblock
     }
 
     @Override
+    @Deprecated
     public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos) {
 	return isValidMultiblockPlacement(state, worldIn, pos, subnodes);
     }

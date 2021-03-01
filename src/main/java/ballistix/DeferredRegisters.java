@@ -42,7 +42,7 @@ public class DeferredRegisters {
 	    .create(ForgeRegistries.CONTAINERS, References.ID);
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES,
 	    References.ID);
-    public static BlockMissileSilo blockMissileSilo;
+    public static BlockMissileSilo blockMissileSilo = new BlockMissileSilo();
 
     static {
 	for (SubtypeBlast subtype : SubtypeBlast.values()) {
@@ -58,7 +58,7 @@ public class DeferredRegisters {
 		SUBTYPEITEM_MAPPINGS.put(subtype, grenade);
 	    }
 	}
-	BLOCKS.register("missilesilo", supplier(blockMissileSilo = new BlockMissileSilo()));
+	BLOCKS.register("missilesilo", supplier(blockMissileSilo));
 	ITEMS.register("missilesilo", supplier(
 		new BlockItemDescriptable(blockMissileSilo, new Item.Properties().group(References.BALLISTIXTAB))));
 

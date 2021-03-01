@@ -13,10 +13,6 @@ public class BlastShrapnel extends Blast {
     }
 
     @Override
-    public void doPreExplode() {
-    }
-
-    @Override
     public boolean doExplode(int callCount) {
 	for (int i = 0; i < Constants.EXPLOSIVE_SHRAPNEL_SHRAPNEL_COUNT; i++) {
 	    EntityShrapnel shrapnel = new EntityShrapnel(world);
@@ -27,10 +23,6 @@ public class BlastShrapnel extends Blast {
 	    world.addEntity(shrapnel);
 	}
 	return true;
-    }
-
-    @Override
-    public void doPostExplode() {
     }
 
     @Override

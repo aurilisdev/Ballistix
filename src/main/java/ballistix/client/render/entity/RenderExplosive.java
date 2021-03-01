@@ -26,6 +26,7 @@ public class RenderExplosive extends EntityRenderer<EntityExplosive> {
     }
 
     @Override
+    @Deprecated
     public void render(EntityExplosive entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
 	    IRenderTypeBuffer bufferIn, int packedLightIn) {
 	SubtypeBlast subtype = entityIn.getBlastType();
@@ -51,6 +52,7 @@ public class RenderExplosive extends EntityRenderer<EntityExplosive> {
 	super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
     }
 
+    @Deprecated
     public static void renderTntFlash(BlockState blockStateIn, MatrixStack matrixStackIn,
 	    IRenderTypeBuffer renderTypeBuffer, int combinedLight, boolean doFullBright) {
 	int i;
@@ -65,6 +67,7 @@ public class RenderExplosive extends EntityRenderer<EntityExplosive> {
     }
 
     @Override
+    @Deprecated
     public ResourceLocation getEntityTexture(EntityExplosive entity) {
 	return AtlasTexture.LOCATION_BLOCKS_TEXTURE;
     }

@@ -39,8 +39,6 @@ public class RenderGrenade extends EntityRenderer<EntityGrenade> {
 	    if (itemEntity == null) {
 		itemEntity = new ItemEntity(EntityType.ITEM, entityIn.world);
 	    }
-
-	    // Apply data from entity
 	    itemEntity.setWorld(entityIn.world);
 	    itemEntity.setPosition(entityIn.getPosX(), entityIn.getPosY(), entityIn.getPosZ());
 	    itemEntity.setItem(new ItemStack(DeferredRegisters.SUBTYPEITEM_MAPPINGS.get(subtype)));
@@ -51,6 +49,7 @@ public class RenderGrenade extends EntityRenderer<EntityGrenade> {
     }
 
     @Override
+    @Deprecated
     public ResourceLocation getEntityTexture(EntityGrenade entity) {
 	return AtlasTexture.LOCATION_BLOCKS_TEXTURE;
     }

@@ -154,7 +154,7 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 	    GlStateManager.disableDepthTest();
 	    GlStateManager.enableLighting();
 	    GlStateManager.disableBlend();
-	    if ((entityIn.ticksExisted - entityIn.ticksWhenCustomRender) < 10) {
+	    if (entityIn.ticksExisted - entityIn.ticksWhenCustomRender < 10) {
 		scale = entityIn.ticksExisted - entityIn.ticksWhenCustomRender;
 		matrixStackIn.scale(scale, scale, scale);
 		renderStar(entityIn.ticksExisted, 500);

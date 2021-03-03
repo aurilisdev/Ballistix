@@ -74,7 +74,7 @@ public class EntityMissile extends Entity {
 	}
 	if (!world.isRemote) {
 	    if (onGround || collidedHorizontally || collidedVertically
-		    || (!isItem && target != null && getPosY() < target.getY() && getMotion().getY() < 0)) {
+		    || !isItem && target != null && getPosY() < target.getY() && getMotion().getY() < 0) {
 		setDead();
 		if (blastOrdinal != -1) {
 		    SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];

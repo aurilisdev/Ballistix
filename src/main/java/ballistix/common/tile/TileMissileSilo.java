@@ -47,21 +47,21 @@ public class TileMissileSilo extends GenericTileInventory implements ITickableTi
 	if (it.getItem() == DeferredRegisters.ITEM_MISSILECLOSERANGE.get()) {
 	    if (range != 0) {
 		range = 0;
-		sendUpdatePacket();
+		sendCustomPacket();
 	    }
 	} else if (it.getItem() == DeferredRegisters.ITEM_MISSILEMEDIUMRANGE.get()) {
 	    if (range != 1) {
 		range = 1;
-		sendUpdatePacket();
+		sendCustomPacket();
 	    }
 	} else if (it.getItem() == DeferredRegisters.ITEM_MISSILELONGRANGE.get()) {
 	    if (range != 2) {
 		range = 2;
-		sendUpdatePacket();
+		sendCustomPacket();
 	    }
 	} else if (range != -1) {
 	    range = -1;
-	    sendUpdatePacket();
+	    sendCustomPacket();
 	}
 	cooldown--;
 	if (target != null && cooldown < 0 && world.getWorldInfo().getDayTime() % 20 == 0) {
@@ -103,14 +103,14 @@ public class TileMissileSilo extends GenericTileInventory implements ITickableTi
     }
 
     @Override
-    public void handleUpdatePacket(CompoundNBT nbt) {
-	super.handleUpdatePacket(nbt);
+    public void readCustomPacket(CompoundNBT nbt) {
+	super.readCustomPacket(nbt);
 	range = nbt.getInt("range");
     }
 
     @Override
-    public CompoundNBT createUpdateTag() {
-	CompoundNBT tag = super.createUpdateTag();
+    public CompoundNBT writeCustomPacket() {
+	CompoundNBT tag = super.writeCustomPacket();
 	tag.putInt("range", range);
 	return tag;
     }
@@ -132,42 +132,8 @@ public class TileMissileSilo extends GenericTileInventory implements ITickableTi
 
     @Override
     protected Container createMenu(int id, PlayerInventory player) {
-	return new ContainerMissileSilo(id, player, this, inventorydata);
+	return new ContainerMissileSilo(id, player, this, getInventoryData());
     }
-
-    protected final IIntArray inventorydata = new IIntArray() {
-	@Override
-	public int get(int index) {
-	    switch (index) {
-	    case 0:
-		return 0;
-	    case 1:
-		return pos.getX();
-	    case 2:
-		return pos.getY();
-	    case 3:
-		return pos.getZ();
-	    case 4:
-		return target.getX();
-	    case 5:
-		return target.getY();
-	    case 6:
-		return target.getZ();
-	    default:
-		return 0;
-	    }
-	}
-
-	@Override
-	public void set(int index, int value) {
-	    // Doesn't support setting values
-	}
-
-	@Override
-	public int size() {
-	    return 7;
-	}
-    };
 
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {

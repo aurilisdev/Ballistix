@@ -4,6 +4,7 @@ import ballistix.DeferredRegisters;
 import ballistix.common.block.BlockExplosive;
 import ballistix.common.packet.NetworkHandler;
 import ballistix.common.packet.PacketSetMissileData;
+import ballistix.common.tile.TileMissileSilo;
 import electrodynamics.common.blockitem.BlockItemDescriptable;
 import electrodynamics.common.inventory.container.GenericContainerInventory;
 import electrodynamics.common.inventory.container.slot.SlotRestricted;
@@ -18,7 +19,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class ContainerMissileSilo extends GenericContainerInventory {
+public class ContainerMissileSilo extends GenericContainerInventory<TileMissileSilo> {
 
     public ContainerMissileSilo(int id, PlayerInventory playerinv) {
 	this(id, playerinv, new Inventory(2));
@@ -92,19 +93,16 @@ public class ContainerMissileSilo extends GenericContainerInventory {
 	try {
 	    triedX = Integer.parseInt(valX);
 	} catch (Exception e) {
-	    // Just for safety
 	}
 	Integer triedY = 0;
 	try {
 	    triedY = Integer.parseInt(valY);
 	} catch (Exception e) {
-	    // Just for safety
 	}
 	Integer triedZ = 0;
 	try {
 	    triedZ = Integer.parseInt(valZ);
 	} catch (Exception e) {
-	    // Just for safety
 	}
 	NetworkHandler.CHANNEL.sendToServer(new PacketSetMissileData(
 		new BlockPos(getXCoord(), getYCoord(), getZCoord()), new BlockPos(triedX, triedY, triedZ)));

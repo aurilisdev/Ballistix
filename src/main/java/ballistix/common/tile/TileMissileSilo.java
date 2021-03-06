@@ -99,12 +99,10 @@ public class TileMissileSilo extends GenericTileInventory implements ITickableTi
 		}
 	    }
 	}
-	if (target != null) {
-	    trackInteger(0, range);
-	    trackInteger(1, target.getX());
-	    trackInteger(1, target.getY());
-	    trackInteger(1, target.getZ());
-	}
+	trackInteger(0, range);
+	trackInteger(1, target.getX());
+	trackInteger(2, target.getY());
+	trackInteger(3, target.getZ());
     }
 
     @Override

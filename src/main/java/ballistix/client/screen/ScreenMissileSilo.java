@@ -50,27 +50,24 @@ public class ScreenMissileSilo extends GenericContainerScreen<ContainerMissileSi
 	minecraft.keyboardListener.enableRepeatEvents(true);
 	int i = (width - xSize) / 2;
 	int j = (height - ySize) / 2;
-	xCoordField = new TextFieldWidget(font, i + 127, j + 19, 103, 12,
+	xCoordField = new TextFieldWidget(font, i + 127, j + 18, 46, 13,
 		new TranslationTextComponent("container.missilesilo.xCoord"));
-	xCoordField.setCanLoseFocus(false);
 	xCoordField.setTextColor(-1);
 	xCoordField.setDisabledTextColour(-1);
 	xCoordField.setEnableBackgroundDrawing(false);
 	xCoordField.setMaxStringLength(6);
 	xCoordField.setResponder(this::setCoord);
 
-	yCoordField = new TextFieldWidget(font, i + 127, j + 37, 103, 24,
+	yCoordField = new TextFieldWidget(font, i + 127, j + 18 + 18, 46, 13,
 		new TranslationTextComponent("container.missilesilo.yCoord"));
-	yCoordField.setCanLoseFocus(false);
 	yCoordField.setTextColor(-1);
 	yCoordField.setDisabledTextColour(-1);
 	yCoordField.setEnableBackgroundDrawing(false);
 	yCoordField.setMaxStringLength(6);
 	yCoordField.setResponder(this::setCoord);
 
-	zCoordField = new TextFieldWidget(font, i + 127, j + 55, 103, 36,
+	zCoordField = new TextFieldWidget(font, i + 127, j + 18 + 18 * 2, 46, 13,
 		new TranslationTextComponent("container.missilesilo.zCoord"));
-	zCoordField.setCanLoseFocus(false);
 	zCoordField.setTextColor(-1);
 	zCoordField.setDisabledTextColour(-1);
 	zCoordField.setEnableBackgroundDrawing(false);

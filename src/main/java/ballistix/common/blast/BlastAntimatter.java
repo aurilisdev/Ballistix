@@ -11,7 +11,7 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.Explosion.Mode;
 import net.minecraft.world.World;
 
-public class BlastAntimatter extends Blast {
+public class BlastAntimatter extends Blast implements IHasCustomRenderer {
 
     public BlastAntimatter(World world, BlockPos position) {
 	super(world, position);
@@ -28,6 +28,11 @@ public class BlastAntimatter extends Blast {
 
     private ThreadSimpleBlast thread;
     private int pertick = -1;
+
+    @Override
+    public boolean shouldRender() {
+	return pertick > 0;
+    }
 
     @Override
     public boolean doExplode(int callCount) {
@@ -53,7 +58,7 @@ public class BlastAntimatter extends Blast {
 		    iterator.remove();
 		}
 		if (thread.results.isEmpty()) {
-		    attackEntities((float) Constants.EXPLOSIVE_ANTIMATTER_RADIUS);
+		    attackEntities((float) Constants.EXPLOSIVE_ANTIMATTER_RADIUS * 2);
 		    return true;
 		}
 	    }

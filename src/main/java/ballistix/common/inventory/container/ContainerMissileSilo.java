@@ -54,21 +54,6 @@ public class ContainerMissileSilo extends GenericContainerInventory<TileMissileS
 
     @OnlyIn(Dist.CLIENT)
     public int getMissileType() {
-	return inventorydata.get(0);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public int getXCoord() {
-	return inventorydata.get(1);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public int getYCoord() {
-	return inventorydata.get(2);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public int getZCoord() {
 	return inventorydata.get(3);
     }
 
@@ -93,18 +78,23 @@ public class ContainerMissileSilo extends GenericContainerInventory<TileMissileS
 	try {
 	    triedX = Integer.parseInt(valX);
 	} catch (Exception e) {
+	    // Filler
 	}
 	Integer triedY = 0;
 	try {
 	    triedY = Integer.parseInt(valY);
 	} catch (Exception e) {
+	    // Filler
 	}
 	Integer triedZ = 0;
 	try {
 	    triedZ = Integer.parseInt(valZ);
 	} catch (Exception e) {
+	    // Filler
 	}
-	NetworkHandler.CHANNEL.sendToServer(new PacketSetMissileData(
-		new BlockPos(getXCoord(), getYCoord(), getZCoord()), new BlockPos(triedX, triedY, triedZ)));
+	if (getHostFromIntArray() != null) {
+	    NetworkHandler.CHANNEL.sendToServer(
+		    new PacketSetMissileData(getHostFromIntArray().getPos(), new BlockPos(triedX, triedY, triedZ)));
+	}
     }
 }

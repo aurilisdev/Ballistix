@@ -105,7 +105,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 		    particleHeight++;
 		}
 		if (thread.results.isEmpty()) {
-		    attackEntities((float) Constants.EXPLOSIVE_NUCLEAR_SIZE);
+		    attackEntities((float) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2);
 		    return true;
 		}
 	    }

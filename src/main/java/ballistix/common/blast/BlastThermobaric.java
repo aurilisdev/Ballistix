@@ -64,7 +64,7 @@ public class BlastThermobaric extends Blast {
 		    iterator.remove();
 		}
 		if (thread.results.isEmpty()) {
-		    attackEntities((float) Constants.EXPLOSIVE_THERMOBARIC_SIZE);
+		    attackEntities((float) Constants.EXPLOSIVE_THERMOBARIC_SIZE * 2);
 		    return true;
 		}
 	    }

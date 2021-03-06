@@ -19,7 +19,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
-import net.minecraft.util.IIntArray;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -99,6 +98,12 @@ public class TileMissileSilo extends GenericTileInventory implements ITickableTi
 		    }
 		}
 	    }
+	}
+	if (target != null) {
+	    trackInteger(0, range);
+	    trackInteger(1, target.getX());
+	    trackInteger(1, target.getY());
+	    trackInteger(1, target.getZ());
 	}
     }
 

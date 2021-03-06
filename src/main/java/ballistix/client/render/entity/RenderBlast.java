@@ -177,8 +177,8 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 	    double dj = 0.04;
 	    double du = di * 2 * pi;
 	    double dv = dj * pi;
-	    float scale = (float) (((entityIn.ticksExisted - entityIn.ticksWhenCustomRender)
-		    / Constants.EXPLOSIVE_ANTIMATTER_DURATION) * Constants.EXPLOSIVE_ANTIMATTER_RADIUS);
+	    float scale = (float) ((entityIn.ticksExisted - entityIn.ticksWhenCustomRender)
+		    / Constants.EXPLOSIVE_ANTIMATTER_DURATION * Constants.EXPLOSIVE_ANTIMATTER_RADIUS);
 	    GL11.glScalef(scale, scale, scale);
 	    for (double i = 0; i < 1.0; i += di) {// horizonal
 		for (double j = 0; j < 1.0; j += dj) // vertical

@@ -92,7 +92,6 @@ public class ContainerMissileSilo extends GenericContainerInventory<TileMissileS
 	} catch (Exception e) {
 	    // Filler
 	}
-	System.out.println(triedX+":"+triedY+":"+triedZ);
 	if (getHostFromIntArray() != null) {
 	    NetworkHandler.CHANNEL.sendToServer(
 		    new PacketSetMissileData(getHostFromIntArray().getPos(), new BlockPos(triedX, triedY, triedZ)));

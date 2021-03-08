@@ -10,7 +10,7 @@ import ballistix.client.ClientRegister;
 import ballistix.common.block.SubtypeBlast;
 import ballistix.common.entity.EntityBlast;
 import ballistix.common.settings.Constants;
-import electrodynamics.client.render.tile.RenderQuantumCapacitor;
+import electrodynamics.api.utilities.RenderUtilities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderHelper;
@@ -43,7 +43,7 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 	    float scale = entityIn.ticksExisted / 1200.0f;
 	    GlStateManager.scalef(scale, scale, scale);
 
-	    RenderQuantumCapacitor.renderStar(entityIn.ticksExisted, 100, 1, 1, 1, 0.3f, true);
+	    RenderUtilities.renderStar(entityIn.ticksExisted, 100, 1, 1, 1, 0.3f, true);
 
 	    GlStateManager.popMatrix();
 	} else if (subtype == SubtypeBlast.nuclear && entityIn.shouldRenderCustom) {
@@ -102,7 +102,7 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 	    if (entityIn.ticksExisted - entityIn.ticksWhenCustomRender < 10) {
 		scale = (entityIn.ticksExisted - entityIn.ticksWhenCustomRender) * 5000;
 		matrixStackIn.scale(scale, scale, scale);
-		RenderQuantumCapacitor.renderStar(entityIn.ticksExisted, 500, 1, 1, 1, 0.7f, true);
+		RenderUtilities.renderStar(entityIn.ticksExisted, 500, 1, 1, 1, 0.7f, true);
 	    }
 	    GlStateManager.popMatrix();
 	    RenderHelper.enableStandardItemLighting();

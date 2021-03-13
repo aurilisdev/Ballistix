@@ -60,6 +60,7 @@ public class BlockMissileSilo extends BlockGenericMachine implements IMultiblock
     }
 
     @Override
+    @Deprecated
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
 	super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 	TileEntity tile = worldIn.getTileEntity(pos);

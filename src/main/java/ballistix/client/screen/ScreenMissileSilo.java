@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 
 import ballistix.References;
 import ballistix.common.inventory.container.ContainerMissileSilo;
+import ballistix.common.tile.TileMissileSilo;
 import electrodynamics.client.screen.generic.GenericContainerScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -123,9 +124,12 @@ public class ScreenMissileSilo extends GenericContainerScreen<ContainerMissileSi
 	super.render(matrixStack, mouseX, mouseY, partialTicks);
 	if (needsUpdate) {
 	    needsUpdate = false;
-	    xCoordField.setText("" + container.getTXCoord());
-	    yCoordField.setText("" + container.getTYCoord());
-	    zCoordField.setText("" + container.getTZCoord());
+	    TileMissileSilo silo = container.getHostFromIntArray();
+	    if (silo != null && silo.target != null) {
+		xCoordField.setText("" + silo.target.intX());
+		yCoordField.setText("" + silo.target.intY());
+		zCoordField.setText("" + silo.target.intZ());
+	    }
 	}
 	xCoordField.render(matrixStack, mouseX, mouseY, partialTicks);
 	yCoordField.render(matrixStack, mouseX, mouseY, partialTicks);

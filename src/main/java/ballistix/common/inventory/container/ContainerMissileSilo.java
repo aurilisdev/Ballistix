@@ -53,26 +53,6 @@ public class ContainerMissileSilo extends GenericContainer<TileMissileSilo> {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public int getMissileType() {
-	return inventorydata.get(3);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public int getTXCoord() {
-	return inventorydata.get(4);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public int getTYCoord() {
-	return inventorydata.get(5);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public int getTZCoord() {
-	return inventorydata.get(6);
-    }
-
-    @OnlyIn(Dist.CLIENT)
     public void setCoord(String valX, String valY, String valZ) {
 	Integer triedX = 0;
 	try {

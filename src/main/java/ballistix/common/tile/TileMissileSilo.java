@@ -7,64 +7,77 @@ import ballistix.common.block.BlockExplosive;
 import ballistix.common.block.BlockMissileSilo;
 import ballistix.common.entity.EntityMissile;
 import ballistix.common.inventory.container.ContainerMissileSilo;
-import electrodynamics.api.tile.ITickableTileBase;
+import electrodynamics.api.math.Location;
 import electrodynamics.api.utilities.CachedTileOutput;
 import electrodynamics.common.blockitem.BlockItemDescriptable;
 import electrodynamics.common.multiblock.IMultiblockTileNode;
 import electrodynamics.common.multiblock.Subnode;
-import electrodynamics.common.tile.generic.GenericTileInventory;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
+import electrodynamics.common.tile.generic.GenericTileTicking;
+import electrodynamics.common.tile.generic.component.ComponentType;
+import electrodynamics.common.tile.generic.component.type.ComponentContainerProvider;
+import electrodynamics.common.tile.generic.component.type.ComponentInventory;
+import electrodynamics.common.tile.generic.component.type.ComponentPacketHandler;
+import electrodynamics.common.tile.generic.component.type.ComponentTickable;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 
-public class TileMissileSilo extends GenericTileInventory implements ITickableTileBase, IMultiblockTileNode {
+public class TileMissileSilo extends GenericTileTicking implements IMultiblockTileNode {
     public static final int[] SLOTS_INPUT = new int[] { 0, 1 };
 
     protected CachedTileOutput output1;
     protected CachedTileOutput output2;
     public int range = -1;
     private int cooldown = 100;
-    public BlockPos target;
+    public Location target;
 
     public TileMissileSilo() {
 	super(DeferredRegisters.TILE_MISSILESILO.get());
+	addComponent(new ComponentTickable().addTickServer(this::tickServer));
+	addComponent(new ComponentInventory().setInventorySize(2).addSlotsOnFace(Direction.UP, 0, 1)
+		.setItemValidPredicate(this::isItemValidForSlot));
+	addComponent(new ComponentPacketHandler().addCustomPacketWriter(this::writePacket)
+		.addCustomPacketReader(this::readPacket).addGuiPacketReader(this::readPacket)
+		.addGuiPacketWriter(this::writePacket));
+	addComponent(new ComponentContainerProvider("container.missilesilo")
+		.setCreateMenuFunction((id, player) -> new ContainerMissileSilo(id, player,
+			getComponent(ComponentType.Inventory), getCoordsArray())));
+
     }
 
-    @Override
-    public void tickServer() {
+    protected void tickServer(ComponentTickable tickable) {
+	ComponentInventory inv = getComponent(ComponentType.Inventory);
+	ComponentPacketHandler packet = getComponent(ComponentType.PacketHandler);
 	if (target == null) {
-	    target = getPos();
+	    target = new Location(getPos());
+	    packet.sendCustomPacket();
 	}
-	ItemStack it = getStackInSlot(0);
+	ItemStack it = inv.getStackInSlot(0);
 	if (it.getItem() == DeferredRegisters.ITEM_MISSILECLOSERANGE.get()) {
 	    if (range != 0) {
 		range = 0;
-		sendCustomPacket();
+		packet.sendCustomPacket();
 	    }
 	} else if (it.getItem() == DeferredRegisters.ITEM_MISSILEMEDIUMRANGE.get()) {
 	    if (range != 1) {
 		range = 1;
-		sendCustomPacket();
+		packet.sendCustomPacket();
 	    }
 	} else if (it.getItem() == DeferredRegisters.ITEM_MISSILELONGRANGE.get()) {
 	    if (range != 2) {
 		range = 2;
-		sendCustomPacket();
+		packet.sendCustomPacket();
 	    }
 	} else if (range != -1) {
 	    range = -1;
-	    sendCustomPacket();
+	    packet.sendCustomPacket();
 	}
 	cooldown--;
 	if (target != null && cooldown < 0 && world.getWorldInfo().getDayTime() % 20 == 0) {
-	    ItemStack exp = getStackInSlot(1);
+	    ItemStack exp = inv.getStackInSlot(1);
 	    if (exp.getItem() instanceof BlockItemDescriptable) {
 		BlockItemDescriptable des = (BlockItemDescriptable) exp.getItem();
 		if (des.getBlock() instanceof BlockExplosive && range >= 0 && exp.getCount() > 0) {
@@ -82,13 +95,13 @@ public class TileMissileSilo extends GenericTileInventory implements ITickableTi
 			}
 		    }
 		    if (hasSignal) {
-			double dist = Math.sqrt(Math.pow(pos.getX() - target.getX(), 2)
-				+ Math.pow(pos.getY() - target.getY(), 2) + Math.pow(pos.getZ() - target.getZ(), 2));
+			double dist = Math.sqrt(Math.pow(pos.getX() - target.x(), 2)
+				+ Math.pow(pos.getY() - target.y(), 2) + Math.pow(pos.getZ() - target.x(), 2));
 			if (range == 0 && dist < 3000 || range == 1 && dist < 10000 || range == 2) {
 			    EntityMissile missile = new EntityMissile(world);
 			    missile.setPosition(getPos().getX() + 1.0, getPos().getY(), getPos().getZ() + 1.0);
 			    missile.range = range;
-			    missile.target = new BlockPos(target);
+			    missile.target = target.toBlockPos();
 			    missile.blastOrdinal = ((BlockExplosive) des.getBlock()).explosive.ordinal();
 			    exp.shrink(1);
 			    it.shrink(1);
@@ -99,47 +112,21 @@ public class TileMissileSilo extends GenericTileInventory implements ITickableTi
 		}
 	    }
 	}
-	trackInteger(0, range);
-	trackInteger(1, target.getX());
-	trackInteger(2, target.getY());
-	trackInteger(3, target.getZ());
     }
 
-    @Override
-    public void readCustomPacket(CompoundNBT nbt) {
-	super.readCustomPacket(nbt);
+    protected void readPacket(CompoundNBT nbt) {
 	range = nbt.getInt("range");
+	target = Location.readFromNBT(nbt, "target");
     }
 
-    @Override
-    public CompoundNBT writeCustomPacket() {
-	CompoundNBT tag = super.writeCustomPacket();
+    protected void writePacket(CompoundNBT tag) {
 	tag.putInt("range", range);
-	return tag;
+	if (target != null) {
+	    target.writeToNBT(tag, "target");
+	}
     }
 
-    @Override
-    public int getSizeInventory() {
-	return 2;
-    }
-
-    @Override
-    public AxisAlignedBB getRenderBoundingBox() {
-	return INFINITE_EXTENT_AABB;
-    }
-
-    @Override
-    public int[] getSlotsForFace(Direction side) {
-	return side == Direction.UP ? SLOTS_INPUT : SLOTS_EMPTY;
-    }
-
-    @Override
-    protected Container createMenu(int id, PlayerInventory player) {
-	return new ContainerMissileSilo(id, player, this, getInventoryData());
-    }
-
-    @Override
-    public boolean isItemValidForSlot(int index, ItemStack stack) {
+    protected boolean isItemValidForSlot(int index, ItemStack stack) {
 	Item it = stack.getItem();
 	if (index == 1) {
 	    if (it instanceof BlockItemDescriptable) {
@@ -157,8 +144,8 @@ public class TileMissileSilo extends GenericTileInventory implements ITickableTi
     }
 
     @Override
-    public ITextComponent getDisplayName() {
-	return new TranslationTextComponent("container.missilesilo");
+    public AxisAlignedBB getRenderBoundingBox() {
+	return INFINITE_EXTENT_AABB;
     }
 
     @Override

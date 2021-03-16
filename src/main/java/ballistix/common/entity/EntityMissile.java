@@ -17,10 +17,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 public class EntityMissile extends Entity {
-    private static final DataParameter<Integer> TYPE = EntityDataManager.createKey(EntityMissile.class,
-	    DataSerializers.VARINT);
-    private static final DataParameter<Integer> RANGE = EntityDataManager.createKey(EntityMissile.class,
-	    DataSerializers.VARINT);
+    private static final DataParameter<Integer> TYPE = EntityDataManager.createKey(EntityMissile.class, DataSerializers.VARINT);
+    private static final DataParameter<Integer> RANGE = EntityDataManager.createKey(EntityMissile.class, DataSerializers.VARINT);
     public BlockPos target;
     public int blastOrdinal = -1;
     public int range = -1;
@@ -53,9 +51,8 @@ public class EntityMissile extends Entity {
     public void tick() {
 	if (getMotion().length() > 0) {
 	    rotationPitch = (float) (Math
-		    .atan(getMotion().getY() / Math
-			    .sqrt(getMotion().getX() * getMotion().getX() + getMotion().getZ() * getMotion().getZ()))
-		    * 180.0D / Math.PI);
+		    .atan(getMotion().getY() / Math.sqrt(getMotion().getX() * getMotion().getX() + getMotion().getZ() * getMotion().getZ())) * 180.0D
+		    / Math.PI);
 	    rotationYaw = (float) (Math.atan2(getMotion().getX(), getMotion().getZ()) * 180.0D / Math.PI);
 	} else {
 	    rotationPitch = rotationYaw = 90;
@@ -104,8 +101,8 @@ public class EntityMissile extends Entity {
 	    float x = (float) (getPosX() - getSize(getPose()).width / 1.0f);
 	    float y = (float) (getPosY() + getSize(getPose()).height / 1.0f);
 	    float z = (float) (getPosZ() - getSize(getPose()).width / 1.0f);
-	    world.addParticle(ParticleTypes.LARGE_SMOKE, x + ranX, y + ranY, z + ranZ, -getMotion().x + ranX,
-		    -getMotion().y - 0.075f + ranY, -getMotion().z + ranZ);
+	    world.addParticle(ParticleTypes.LARGE_SMOKE, x + ranX, y + ranY, z + ranZ, -getMotion().x + ranX, -getMotion().y - 0.075f + ranY,
+		    -getMotion().z + ranZ);
 	}
     }
 

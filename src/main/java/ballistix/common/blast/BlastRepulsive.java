@@ -54,8 +54,8 @@ public class BlastRepulsive extends Blast {
 		entity.setMotion(entity.getMotion().add(d5 * d11, d7 * d11, d9 * d11));
 		if (entity instanceof ServerPlayerEntity) {
 		    ServerPlayerEntity serverplayerentity = (ServerPlayerEntity) entity;
-		    serverplayerentity.connection.sendPacket(new SExplosionPacket(x, y, z, size, new ArrayList<>(),
-			    new Vector3d(d5 * d11, d7 * d11, d9 * d11)));
+		    serverplayerentity.connection
+			    .sendPacket(new SExplosionPacket(x, y, z, size, new ArrayList<>(), new Vector3d(d5 * d11, d7 * d11, d9 * d11)));
 		}
 	    }
 	}

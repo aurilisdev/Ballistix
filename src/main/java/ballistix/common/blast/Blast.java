@@ -27,8 +27,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.Explosion.Mode;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeEventFactory;
 
 public abstract class Blast {
     public BlockPos position;
@@ -86,7 +88,10 @@ public abstract class Blast {
     public void performExplosion() {
 	ConstructBlastEvent evt = new ConstructBlastEvent(world, this);
 	MinecraftForge.EVENT_BUS.post(evt);
-
+	Explosion explosion = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), 3, true, Mode.BREAK);
+	if (ForgeEventFactory.onExplosionStart(world, explosion)) {
+	    return;
+	}
 	if (!evt.isCanceled()) {
 	    if (isInstantaneous()) {
 		doPreExplode();
@@ -118,8 +123,7 @@ public abstract class Blast {
 		double d12 = MathHelper.sqrt(entity.getDistanceSq(vector3d)) / f2;
 		if (d12 <= 1.0D) {
 		    double d5 = entity.getPosX() - position.getX();
-		    double d7 = (entity instanceof TNTEntity ? entity.getPosY() : entity.getPosYEye())
-			    - position.getY();
+		    double d7 = (entity instanceof TNTEntity ? entity.getPosY() : entity.getPosYEye()) - position.getY();
 		    double d9 = entity.getPosZ() - position.getZ();
 		    double d13 = MathHelper.sqrt(d5 * d5 + d7 * d7 + d9 * d9);
 		    if (d13 != 0.0D) {
@@ -138,8 +142,7 @@ public abstract class Blast {
 			entity.setMotion(entity.getMotion().add(d5 * d11, d7 * d11, d9 * d11));
 			if (entity instanceof PlayerEntity) {
 			    PlayerEntity playerentity = (PlayerEntity) entity;
-			    if (!playerentity.isSpectator()
-				    && (!playerentity.isCreative() || !playerentity.abilities.isFlying)) {
+			    if (!playerentity.isSpectator() && (!playerentity.isCreative() || !playerentity.abilities.isFlying)) {
 				playerKnockbackMap.put(playerentity, new Vector3d(d5 * d10, d7 * d10, d9 * d10));
 			    }
 			}
@@ -150,8 +153,8 @@ public abstract class Blast {
 	for (Entry<PlayerEntity, Vector3d> entry : playerKnockbackMap.entrySet()) {
 	    if (entry.getKey() instanceof ServerPlayerEntity) {
 		ServerPlayerEntity serverplayerentity = (ServerPlayerEntity) entry.getKey();
-		serverplayerentity.connection.sendPacket(new SExplosionPacket(position.getX(), position.getY(),
-			position.getZ(), size, new ArrayList<>(), entry.getValue()));
+		serverplayerentity.connection.sendPacket(
+			new SExplosionPacket(position.getX(), position.getY(), position.getZ(), size, new ArrayList<>(), entry.getValue()));
 	    }
 	}
     }
@@ -159,8 +162,8 @@ public abstract class Blast {
     public static Blast createFromSubtype(SubtypeBlast explosive, World world, BlockPos pos) {
 	try {
 	    return (Blast) explosive.blastClass.getConstructor(World.class, BlockPos.class).newInstance(world, pos);
-	} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
-		| IllegalArgumentException | InvocationTargetException e) {
+	} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException
+		| InvocationTargetException e) {
 	    e.printStackTrace();
 	}
 	return null;

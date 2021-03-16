@@ -19,8 +19,7 @@ public class ThreadRaycastBlast extends ThreadBlast {
 
     public IResistanceCallback callBack;
 
-    public ThreadRaycastBlast(World world, BlockPos position, int range, float energy, Entity source,
-	    IResistanceCallback cb) {
+    public ThreadRaycastBlast(World world, BlockPos position, int range, float energy, Entity source, IResistanceCallback cb) {
 	super(world, position, range, energy, source);
 	callBack = cb;
     }
@@ -32,8 +31,8 @@ public class ThreadRaycastBlast extends ThreadBlast {
 	    if (block.getFluidState() != Fluids.EMPTY.getDefaultState() || block instanceof IFluidBlock) {
 		resistance = 0.25f;
 	    } else {
-		resistance = block.getExplosionResistance(world1, position, new Explosion(world, source, null, null,
-			position.getX(), position.getY(), position.getZ(), range, false, Mode.BREAK));
+		resistance = block.getExplosionResistance(world1, position,
+			new Explosion(world, source, null, null, position.getX(), position.getY(), position.getZ(), range, false, Mode.BREAK));
 		if (resistance > 200) {
 		    resistance = 0.75f * (float) Math.sqrt(resistance);
 		}
@@ -52,14 +51,13 @@ public class ThreadRaycastBlast extends ThreadBlast {
 		double phi = Math.PI * 2 / steps * phi_n;
 		double theta = Math.PI / steps * theta_n;
 
-		Vector3d delta = new Vector3d(Math.sin(theta) * Math.cos(phi), Math.cos(theta),
-			Math.sin(theta) * Math.sin(phi));
+		Vector3d delta = new Vector3d(Math.sin(theta) * Math.cos(phi), Math.cos(theta), Math.sin(theta) * Math.sin(phi));
 		float power = explosionEnergy - explosionEnergy * world.rand.nextFloat() / 2;
 
 		Vector3d t = new Vector3d(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5);
 		for (float d = 0.3F; power > 0f; power -= d * 0.75F * 10) {
-		    double distancesq = Math.pow(t.getX() - position.getX(), 2)
-			    + Math.pow(t.getY() - position.getY(), 2) + Math.pow(t.getZ() - position.getZ(), 2);
+		    double distancesq = Math.pow(t.getX() - position.getX(), 2) + Math.pow(t.getY() - position.getY(), 2)
+			    + Math.pow(t.getZ() - position.getZ(), 2);
 		    if (distancesq > explosionRadius * explosionRadius) {
 			break;
 		    }
@@ -69,8 +67,7 @@ public class ThreadRaycastBlast extends ThreadBlast {
 			    && block.getBlockHardness(world, tt) >= 0) {
 			power -= callBack.getResistance(world, position, tt, explosionSource, block);
 			if (power > 0f) {
-			    int idistancesq = (int) (Math.pow(tt.getX() - position.getX(), 2)
-				    + Math.pow(tt.getY() - position.getY(), 2)
+			    int idistancesq = (int) (Math.pow(tt.getX() - position.getX(), 2) + Math.pow(tt.getY() - position.getY(), 2)
 				    + Math.pow(tt.getZ() - position.getZ(), 2));
 			    results.add(new HashDistanceBlockPos(tt.getX(), tt.getY(), tt.getZ(), idistancesq));
 			}

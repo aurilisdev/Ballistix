@@ -32,44 +32,40 @@ public class RenderMissile extends EntityRenderer<EntityMissile> {
 
     @Override
     @Deprecated
-    public void render(EntityMissile entity, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
-	    IRenderTypeBuffer bufferIn, int packedLightIn) {
+    public void render(EntityMissile entity, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn,
+	    int packedLightIn) {
 	int type = entity.range;
 	World world = entity.world;
 	matrixStackIn.push();
 	matrixStackIn.rotate(new Quaternion(new Vector3f(0, 1, 0), entity.rotationYaw + 90.0F, true));
 	matrixStackIn.rotate(new Quaternion(new Vector3f(0, 0, 1), 90 - entity.rotationPitch, true));
 	if (type == 1) {
-	    IBakedModel closerange = Minecraft.getInstance().getModelManager()
-		    .getModel(ballistix.client.ClientRegister.MODEL_MISSILEMEDIUMRANGE);
+	    IBakedModel closerange = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILEMEDIUMRANGE);
 	    matrixStackIn.translate(0.5f, 2.6f, 0.5f);
 	    matrixStackIn.scale(1.5f, 2.5f, 1.5f);
-	    Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelRenderer().renderModelFlat(world,
-		    closerange, Blocks.AIR.getDefaultState(), entity.getPosition(), matrixStackIn,
-		    bufferIn.getBuffer(RenderType.getSolid()), false, world.rand, new Random().nextLong(), 0);
+	    Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelRenderer().renderModelFlat(world, closerange,
+		    Blocks.AIR.getDefaultState(), entity.getPosition(), matrixStackIn, bufferIn.getBuffer(RenderType.getSolid()), false, world.rand,
+		    new Random().nextLong(), 0);
 	} else if (type == 0) {
-	    IBakedModel closerange = Minecraft.getInstance().getModelManager()
-		    .getModel(ballistix.client.ClientRegister.MODEL_MISSILECLOSERANGE);
+	    IBakedModel closerange = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILECLOSERANGE);
 	    matrixStackIn.translate(0.5f, 1.5f, 0.5f);
 	    matrixStackIn.scale(1.25f, 1.5f, 1.25f);
-	    Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelRenderer().renderModelFlat(world,
-		    closerange, Blocks.AIR.getDefaultState(), entity.getPosition(), matrixStackIn,
-		    bufferIn.getBuffer(RenderType.getSolid()), false, world.rand, new Random().nextLong(), 0);
+	    Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelRenderer().renderModelFlat(world, closerange,
+		    Blocks.AIR.getDefaultState(), entity.getPosition(), matrixStackIn, bufferIn.getBuffer(RenderType.getSolid()), false, world.rand,
+		    new Random().nextLong(), 0);
 	} else if (type == 2) {
-	    IBakedModel closerange = Minecraft.getInstance().getModelManager()
-		    .getModel(ballistix.client.ClientRegister.MODEL_MISSILELONGRANGE);
+	    IBakedModel closerange = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILELONGRANGE);
 	    matrixStackIn.translate(0.5f, 4, 0.5f);
 	    matrixStackIn.scale(2f, 4f, 2f);
-	    Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelRenderer().renderModelFlat(world,
-		    closerange, Blocks.AIR.getDefaultState(), entity.getPosition(), matrixStackIn,
-		    bufferIn.getBuffer(RenderType.getSolid()), false, world.rand, new Random().nextLong(), 0);
+	    Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelRenderer().renderModelFlat(world, closerange,
+		    Blocks.AIR.getDefaultState(), entity.getPosition(), matrixStackIn, bufferIn.getBuffer(RenderType.getSolid()), false, world.rand,
+		    new Random().nextLong(), 0);
 	}
 	matrixStackIn.pop();
     }
 
     @Override
-    public boolean shouldRender(EntityMissile livingEntityIn, ClippingHelper camera, double camX, double camY,
-	    double camZ) {
+    public boolean shouldRender(EntityMissile livingEntityIn, ClippingHelper camera, double camX, double camY, double camZ) {
 	return true;
     }
 

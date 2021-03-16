@@ -7,17 +7,17 @@ import ballistix.common.block.BlockExplosive;
 import ballistix.common.block.BlockMissileSilo;
 import ballistix.common.entity.EntityMissile;
 import ballistix.common.inventory.container.ContainerMissileSilo;
-import electrodynamics.api.math.Location;
-import electrodynamics.api.utilities.CachedTileOutput;
+import electrodynamics.api.tile.GenericTileTicking;
+import electrodynamics.api.tile.components.ComponentType;
+import electrodynamics.api.tile.components.type.ComponentContainerProvider;
+import electrodynamics.api.tile.components.type.ComponentInventory;
+import electrodynamics.api.tile.components.type.ComponentPacketHandler;
+import electrodynamics.api.tile.components.type.ComponentTickable;
+import electrodynamics.api.utilities.object.CachedTileOutput;
+import electrodynamics.api.utilities.object.Location;
 import electrodynamics.common.blockitem.BlockItemDescriptable;
 import electrodynamics.common.multiblock.IMultiblockTileNode;
 import electrodynamics.common.multiblock.Subnode;
-import electrodynamics.common.tile.generic.GenericTileTicking;
-import electrodynamics.common.tile.generic.component.ComponentType;
-import electrodynamics.common.tile.generic.component.type.ComponentContainerProvider;
-import electrodynamics.common.tile.generic.component.type.ComponentInventory;
-import electrodynamics.common.tile.generic.component.type.ComponentPacketHandler;
-import electrodynamics.common.tile.generic.component.type.ComponentTickable;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -37,14 +37,11 @@ public class TileMissileSilo extends GenericTileTicking implements IMultiblockTi
     public TileMissileSilo() {
 	super(DeferredRegisters.TILE_MISSILESILO.get());
 	addComponent(new ComponentTickable().addTickServer(this::tickServer));
-	addComponent(new ComponentInventory().setInventorySize(2).addSlotsOnFace(Direction.UP, 0, 1)
-		.setItemValidPredicate(this::isItemValidForSlot));
-	addComponent(new ComponentPacketHandler().addCustomPacketWriter(this::writePacket)
-		.addCustomPacketReader(this::readPacket).addGuiPacketReader(this::readPacket)
-		.addGuiPacketWriter(this::writePacket));
-	addComponent(new ComponentContainerProvider("container.missilesilo")
-		.setCreateMenuFunction((id, player) -> new ContainerMissileSilo(id, player,
-			getComponent(ComponentType.Inventory), getCoordsArray())));
+	addComponent(new ComponentInventory().setInventorySize(2).addSlotsOnFace(Direction.UP, 0, 1).setItemValidPredicate(this::isItemValidForSlot));
+	addComponent(new ComponentPacketHandler().addCustomPacketWriter(this::writePacket).addCustomPacketReader(this::readPacket)
+		.addGuiPacketReader(this::readPacket).addGuiPacketWriter(this::writePacket));
+	addComponent(new ComponentContainerProvider("container.missilesilo").setCreateMenuFunction(
+		(id, player) -> new ContainerMissileSilo(id, player, getComponent(ComponentType.Inventory), getCoordsArray())));
 
     }
 
@@ -95,8 +92,8 @@ public class TileMissileSilo extends GenericTileTicking implements IMultiblockTi
 			}
 		    }
 		    if (hasSignal) {
-			double dist = Math.sqrt(Math.pow(pos.getX() - target.x(), 2)
-				+ Math.pow(pos.getY() - target.y(), 2) + Math.pow(pos.getZ() - target.x(), 2));
+			double dist = Math.sqrt(
+				Math.pow(pos.getX() - target.x(), 2) + Math.pow(pos.getY() - target.y(), 2) + Math.pow(pos.getZ() - target.x(), 2));
 			if (range == 0 && dist < 3000 || range == 1 && dist < 10000 || range == 2) {
 			    EntityMissile missile = new EntityMissile(world);
 			    missile.setPosition(getPos().getX() + 1.0, getPos().getY(), getPos().getZ() + 1.0);
@@ -136,8 +133,7 @@ public class TileMissileSilo extends GenericTileTicking implements IMultiblockTi
 		}
 	    }
 	} else if (index == 0) {
-	    return it == DeferredRegisters.ITEM_MISSILECLOSERANGE.get()
-		    || it == DeferredRegisters.ITEM_MISSILELONGRANGE.get()
+	    return it == DeferredRegisters.ITEM_MISSILECLOSERANGE.get() || it == DeferredRegisters.ITEM_MISSILELONGRANGE.get()
 		    || it == DeferredRegisters.ITEM_MISSILEMEDIUMRANGE.get();
 	}
 	return false;

@@ -58,8 +58,8 @@ public class BlastThermobaric extends Blast {
 		    world.setBlockState(p, Blocks.AIR.getDefaultState(), 2);
 		    if (world.rand.nextFloat() < 1 / 10.0 && world instanceof ServerWorld) {
 			((ServerWorld) world).getChunkProvider().chunkManager.getTrackingPlayers(new ChunkPos(p), false)
-				.forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p),
-					pl.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT));
+				.forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getNetworkManager(),
+					NetworkDirection.PLAY_TO_CLIENT));
 		    }
 		    iterator.remove();
 		}

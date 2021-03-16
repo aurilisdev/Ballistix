@@ -70,11 +70,9 @@ public class ItemRocketLauncher extends Item {
 		ex.shrink(1);
 		missile.shrink(1);
 		EntityMissile miss = new EntityMissile(world);
-		miss.setLocationAndAngles(entityLiving.getPosX(),
-			entityLiving.getPosY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getPosZ(),
+		miss.setLocationAndAngles(entityLiving.getPosX(), entityLiving.getPosY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getPosZ(),
 			entityLiving.rotationYaw, entityLiving.rotationPitch);
-		miss.setMotion(entityLiving.getLookVec().x * 2, entityLiving.getLookVec().y * 2,
-			entityLiving.getLookVec().z * 2);
+		miss.setMotion(entityLiving.getLookVec().x * 2, entityLiving.getLookVec().y * 2, entityLiving.getLookVec().z * 2);
 		miss.blastOrdinal = blastOrdinal;
 		miss.range = 0;
 		miss.isItem = true;

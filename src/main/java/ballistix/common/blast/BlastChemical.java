@@ -35,8 +35,7 @@ public class BlastChemical extends Blast {
 		for (int y = -radius; y <= radius; y++) {
 		    for (int z = -radius; z <= radius; z++) {
 			if (x * x + y * y + z * z < radius * radius && world.rand.nextDouble() < 1 / 20.0) {
-			    world.addParticle(new RedstoneParticleData(0.7f, 0.8f, 0, 5),
-				    position.getX() + x + 0.5 + world.rand.nextDouble() - 1.0,
+			    world.addParticle(new RedstoneParticleData(0.7f, 0.8f, 0, 5), position.getX() + x + 0.5 + world.rand.nextDouble() - 1.0,
 				    position.getY() + y + 0.5 + world.rand.nextDouble() - 1.0,
 				    position.getZ() + z + 0.5 + world.rand.nextDouble() - 1.0, 0.0D, 0.0D, 0.0D);
 			}
@@ -54,8 +53,7 @@ public class BlastChemical extends Blast {
 	    int i1 = MathHelper.floor(y + (double) radius + 1.0D);
 	    int j2 = MathHelper.floor(z - (double) radius - 1.0D);
 	    int j1 = MathHelper.floor(z + (double) radius + 1.0D);
-	    List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(null,
-		    new AxisAlignedBB(k1, i2, j2, l1, i1, j1));
+	    List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(k1, i2, j2, l1, i1, j1));
 	    for (Entity entity : list) {
 		if (entity instanceof LivingEntity) {
 		    LivingEntity living = (LivingEntity) entity;

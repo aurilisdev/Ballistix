@@ -27,8 +27,8 @@ public class RenderShrapnel extends EntityRenderer<EntityShrapnel> {
 
     @Override
     @Deprecated
-    public void render(EntityShrapnel entity, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
-	    IRenderTypeBuffer bufferIn, int packedLightIn) {
+    public void render(EntityShrapnel entity, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn,
+	    int packedLightIn) {
 	super.render(entity, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 	Minecraft.getInstance().textureManager.bindTexture(getEntityTexture(entity));
 	GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -38,12 +38,8 @@ public class RenderShrapnel extends EntityRenderer<EntityShrapnel> {
 	RenderSystem.multMatrix(matrixStackIn.getLast().getMatrix());
 	matrixStackIn.rotate(Minecraft.getInstance().getRenderManager().getCameraOrientation());
 	matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F));
-	GlStateManager.rotatef(
-		entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks - 90.0F, 0.0F,
-		1.0F, 0.0F);
-	GlStateManager.rotatef(
-		entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks, 0.0F, 0.0F,
-		1.0F);
+	GlStateManager.rotatef(entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks - 90.0F, 0.0F, 1.0F, 0.0F);
+	GlStateManager.rotatef(entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks, 0.0F, 0.0F, 1.0F);
 	Tessellator tessellator = Tessellator.getInstance();
 	BufferBuilder bufferbuilder = tessellator.getBuffer();
 

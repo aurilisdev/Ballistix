@@ -23,8 +23,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 public class EntityShrapnel extends ThrowableEntity {
-    private static final DataParameter<Boolean> ISEXPLOSIVE = EntityDataManager.createKey(EntityShrapnel.class,
-	    DataSerializers.BOOLEAN);
+    private static final DataParameter<Boolean> ISEXPLOSIVE = EntityDataManager.createKey(EntityShrapnel.class, DataSerializers.BOOLEAN);
     public boolean isExplosive = false;
 
     public EntityShrapnel(EntityType<? extends EntityShrapnel> type, World worldIn) {
@@ -57,9 +56,8 @@ public class EntityShrapnel extends ThrowableEntity {
 	}
 	if (!world.isRemote) {
 	    EntitySize size = getSize(Pose.STANDING);
-	    setBoundingBox(new AxisAlignedBB(getPosX() - size.width * 2, getPosY() - size.height * 2,
-		    getPosZ() - size.width * 2, getPosX() + size.width * 2, getPosY() + size.height * 2,
-		    getPosZ() + size.width * 2));
+	    setBoundingBox(new AxisAlignedBB(getPosX() - size.width * 2, getPosY() - size.height * 2, getPosZ() - size.width * 2,
+		    getPosX() + size.width * 2, getPosY() + size.height * 2, getPosZ() + size.width * 2));
 	    List<LivingEntity> livings = world.getEntitiesWithinAABB(LivingEntity.class, getBoundingBox());
 	    for (LivingEntity living : livings) {
 		living.attackEntityFrom(DamageSourceShrapnel.INSTANCE, 10);

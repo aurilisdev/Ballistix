@@ -15,12 +15,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 public class EntityBlast extends Entity {
-    private static final DataParameter<Integer> CALLCOUNT = EntityDataManager.createKey(EntityBlast.class,
-	    DataSerializers.VARINT);
-    private static final DataParameter<Integer> TYPE = EntityDataManager.createKey(EntityBlast.class,
-	    DataSerializers.VARINT);
-    private static final DataParameter<Boolean> SHOULDSTARTCUSTOMRENDER = EntityDataManager.createKey(EntityBlast.class,
-	    DataSerializers.BOOLEAN);
+    private static final DataParameter<Integer> CALLCOUNT = EntityDataManager.createKey(EntityBlast.class, DataSerializers.VARINT);
+    private static final DataParameter<Integer> TYPE = EntityDataManager.createKey(EntityBlast.class, DataSerializers.VARINT);
+    private static final DataParameter<Boolean> SHOULDSTARTCUSTOMRENDER = EntityDataManager.createKey(EntityBlast.class, DataSerializers.BOOLEAN);
 
     private Blast blast;
     public int blastOrdinal = -1;
@@ -58,8 +55,7 @@ public class EntityBlast extends Entity {
 	if (!world.isRemote) {
 	    dataManager.set(TYPE, blastOrdinal);
 	    dataManager.set(CALLCOUNT, callcount);
-	    dataManager.set(SHOULDSTARTCUSTOMRENDER,
-		    blast instanceof IHasCustomRenderer && ((IHasCustomRenderer) blast).shouldRender());
+	    dataManager.set(SHOULDSTARTCUSTOMRENDER, blast instanceof IHasCustomRenderer && ((IHasCustomRenderer) blast).shouldRender());
 	} else {
 	    blastOrdinal = dataManager.get(TYPE);
 	    callcount = dataManager.get(CALLCOUNT);

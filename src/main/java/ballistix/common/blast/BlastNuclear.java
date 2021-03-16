@@ -5,7 +5,7 @@ import java.util.Iterator;
 import ballistix.common.blast.thread.ThreadRaycastBlast;
 import ballistix.common.block.SubtypeBlast;
 import ballistix.common.settings.Constants;
-import electrodynamics.api.math.Location;
+import electrodynamics.api.utilities.object.Location;
 import electrodynamics.common.packet.NetworkHandler;
 import electrodynamics.common.packet.PacketSpawnSmokeParticle;
 import net.minecraft.block.BlockState;
@@ -28,8 +28,8 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
     @Override
     public void doPreExplode() {
 	if (!world.isRemote) {
-	    thread = new ThreadRaycastBlast(world, position, (int) Constants.EXPLOSIVE_NUCLEAR_SIZE,
-		    (float) Constants.EXPLOSIVE_NUCLEAR_ENERGY, null);
+	    thread = new ThreadRaycastBlast(world, position, (int) Constants.EXPLOSIVE_NUCLEAR_SIZE, (float) Constants.EXPLOSIVE_NUCLEAR_ENERGY,
+		    null);
 	    thread.start();
 	}
 
@@ -65,8 +65,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 		    BlockPos p = new BlockPos(iterator.next());
 
 		    BlockState state = Blocks.AIR.getDefaultState();
-		    double dis = new Location(p.getX(), 0, p.getZ())
-			    .distance(new Location(position.getX(), 0, position.getZ()));
+		    double dis = new Location(p.getX(), 0, p.getZ()).distance(new Location(position.getX(), 0, position.getZ()));
 		    if (dis < 15) {
 			BlockPos offset = p.offset(Direction.DOWN);
 			if (!world.isAirBlock(offset) && world.rand.nextFloat() < (15.0f - dis) / 15.0f) {
@@ -77,8 +76,8 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 		    world.setBlockState(p, state, 2 | 16 | 32);
 		    if (world.rand.nextFloat() < 1 / 10.0 && world instanceof ServerWorld) {
 			((ServerWorld) world).getChunkProvider().chunkManager.getTrackingPlayers(new ChunkPos(p), false)
-				.forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p),
-					pl.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT));
+				.forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getNetworkManager(),
+					NetworkDirection.PLAY_TO_CLIENT));
 		    }
 		    iterator.remove();
 		}
@@ -92,11 +91,9 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 		    }
 		    for (int i = -radius; i <= radius; i++) {
 			for (int k = -radius; k <= radius; k++) {
-			    if (i * i + k * k < radius * radius
-				    && world.rand.nextFloat() < (particleHeight > 18 ? 0.2 : 0.6)) {
+			    if (i * i + k * k < radius * radius && world.rand.nextFloat() < (particleHeight > 18 ? 0.2 : 0.6)) {
 				BlockPos p = position.add(i, particleHeight, k);
-				((ServerWorld) world).getChunkProvider().chunkManager
-					.getTrackingPlayers(new ChunkPos(p), false)
+				((ServerWorld) world).getChunkProvider().chunkManager.getTrackingPlayers(new ChunkPos(p), false)
 					.forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p),
 						pl.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT));
 			    }

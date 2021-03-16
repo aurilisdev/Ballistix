@@ -30,8 +30,7 @@ public class BlastDarkmatter extends Blast {
     @Override
     public void doPreExplode() {
 	if (!world.isRemote) {
-	    thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_DARKMATTER_RADIUS,
-		    Integer.MAX_VALUE, null);
+	    thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null);
 	    thread.start();
 	}
     }
@@ -81,8 +80,7 @@ public class BlastDarkmatter extends Blast {
 	    int i1 = MathHelper.floor(y + (double) f2 + 1.0D);
 	    int j2 = MathHelper.floor(z - (double) f2 - 1.0D);
 	    int j1 = MathHelper.floor(z + (double) f2 + 1.0D);
-	    List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(null,
-		    new AxisAlignedBB(k1, i2, j2, l1, i1, j1));
+	    List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(k1, i2, j2, l1, i1, j1));
 
 	    for (Entity entity : list) {
 		double d5 = entity.getPosX() - x;
@@ -98,8 +96,8 @@ public class BlastDarkmatter extends Blast {
 		    if (entity instanceof ServerPlayerEntity) {
 			ServerPlayerEntity serverplayerentity = (ServerPlayerEntity) entity;
 			if (!serverplayerentity.isCreative()) {
-			    serverplayerentity.connection.sendPacket(new SExplosionPacket(x, y, z, size,
-				    new ArrayList<>(), new Vector3d(d5 * d11, d7 * d11, d9 * d11)));
+			    serverplayerentity.connection
+				    .sendPacket(new SExplosionPacket(x, y, z, size, new ArrayList<>(), new Vector3d(d5 * d11, d7 * d11, d9 * d11)));
 			}
 		    } else if (entity instanceof FallingBlockEntity) {
 			entity.remove();

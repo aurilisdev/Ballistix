@@ -3,7 +3,7 @@ package ballistix.common.packet;
 import java.util.function.Supplier;
 
 import ballistix.common.tile.TileMissileSilo;
-import electrodynamics.api.math.Location;
+import electrodynamics.api.utilities.object.Location;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;

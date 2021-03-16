@@ -16,10 +16,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 public class EntityExplosive extends Entity {
-    private static final DataParameter<Integer> FUSE = EntityDataManager.createKey(EntityExplosive.class,
-	    DataSerializers.VARINT);
-    private static final DataParameter<Integer> TYPE = EntityDataManager.createKey(EntityExplosive.class,
-	    DataSerializers.VARINT);
+    private static final DataParameter<Integer> FUSE = EntityDataManager.createKey(EntityExplosive.class, DataSerializers.VARINT);
+    private static final DataParameter<Integer> TYPE = EntityDataManager.createKey(EntityExplosive.class, DataSerializers.VARINT);
     public int blastOrdinal = -1;
     public int fuse = 80;
 

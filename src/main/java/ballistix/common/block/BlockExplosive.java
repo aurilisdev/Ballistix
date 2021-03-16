@@ -30,8 +30,8 @@ public class BlockExplosive extends Block {
     public final SubtypeBlast explosive;
 
     public BlockExplosive(SubtypeBlast explosive) {
-	super(AbstractBlock.Properties.create(Material.TNT).zeroHardnessAndResistance().sound(SoundType.PLANT)
-		.notSolid().setOpaque(BlockExplosive::isntSolid));
+	super(AbstractBlock.Properties.create(Material.TNT).zeroHardnessAndResistance().sound(SoundType.PLANT).notSolid()
+		.setOpaque(BlockExplosive::isntSolid));
 	this.explosive = explosive;
     }
 
@@ -40,8 +40,7 @@ public class BlockExplosive extends Block {
     }
 
     @Override
-    public void catchFire(BlockState state, World world, BlockPos pos, @Nullable net.minecraft.util.Direction face,
-	    @Nullable LivingEntity igniter) {
+    public void catchFire(BlockState state, World world, BlockPos pos, @Nullable net.minecraft.util.Direction face, @Nullable LivingEntity igniter) {
 	explode(world, pos, explosive);
     }
 
@@ -56,8 +55,7 @@ public class BlockExplosive extends Block {
 
     @Override
     @Deprecated
-    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos,
-	    boolean isMoving) {
+    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
 	if (worldIn.isBlockPowered(pos)) {
 	    catchFire(state, worldIn, pos, null, null);
 	    worldIn.removeBlock(pos, false);
@@ -82,19 +80,18 @@ public class BlockExplosive extends Block {
 
     private static void explode(World worldIn, BlockPos pos, SubtypeBlast explosive) {
 	if (!worldIn.isRemote) {
-	    EntityExplosive explosiveEntity = new EntityExplosive(worldIn, pos.getX() + 0.5D, pos.getY(),
-		    pos.getZ() + 0.5D);
+	    EntityExplosive explosiveEntity = new EntityExplosive(worldIn, pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D);
 	    explosiveEntity.setBlastType(explosive);
 	    worldIn.addEntity(explosiveEntity);
-	    worldIn.playSound((PlayerEntity) null, explosiveEntity.getPosX(), explosiveEntity.getPosY(),
-		    explosiveEntity.getPosZ(), SoundEvents.ENTITY_TNT_PRIMED, SoundCategory.BLOCKS, 1.0F, 1.0F);
+	    worldIn.playSound((PlayerEntity) null, explosiveEntity.getPosX(), explosiveEntity.getPosY(), explosiveEntity.getPosZ(),
+		    SoundEvents.ENTITY_TNT_PRIMED, SoundCategory.BLOCKS, 1.0F, 1.0F);
 	}
     }
 
     @Override
     @Deprecated
-    public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player,
-	    Hand handIn, BlockRayTraceResult hit) {
+    public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn,
+	    BlockRayTraceResult hit) {
 	ItemStack itemstack = player.getHeldItem(handIn);
 	Item item = itemstack.getItem();
 	if (item != Items.FLINT_AND_STEEL && item != Items.FIRE_CHARGE) {
@@ -114,14 +111,12 @@ public class BlockExplosive extends Block {
 
     @Override
     @Deprecated
-    public void onProjectileCollision(World worldIn, BlockState state, BlockRayTraceResult hit,
-	    ProjectileEntity projectile) {
+    public void onProjectileCollision(World worldIn, BlockState state, BlockRayTraceResult hit, ProjectileEntity projectile) {
 	if (!worldIn.isRemote) {
 	    Entity entity = projectile.func_234616_v_();
 	    if (projectile.isBurning()) {
 		BlockPos blockpos = hit.getPos();
-		catchFire(state, worldIn, blockpos, null,
-			entity instanceof LivingEntity ? (LivingEntity) entity : null);
+		catchFire(state, worldIn, blockpos, null, entity instanceof LivingEntity ? (LivingEntity) entity : null);
 		worldIn.removeBlock(blockpos, false);
 	    }
 	}

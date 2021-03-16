@@ -27,8 +27,8 @@ public class RenderExplosive extends EntityRenderer<EntityExplosive> {
 
     @Override
     @Deprecated
-    public void render(EntityExplosive entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
-	    IRenderTypeBuffer bufferIn, int packedLightIn) {
+    public void render(EntityExplosive entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn,
+	    int packedLightIn) {
 	SubtypeBlast subtype = entityIn.getBlastType();
 	if (subtype != null) {
 	    matrixStackIn.push();
@@ -45,16 +45,16 @@ public class RenderExplosive extends EntityRenderer<EntityExplosive> {
 	    matrixStackIn.rotate(Vector3f.YP.rotationDegrees(-90.0F));
 	    matrixStackIn.translate(-0.5D, -0.5D, 0.5D);
 	    matrixStackIn.rotate(Vector3f.YP.rotationDegrees(90.0F));
-	    renderTntFlash(DeferredRegisters.SUBTYPEBLOCK_MAPPINGS.get(subtype).getDefaultState(), matrixStackIn,
-		    bufferIn, packedLightIn, entityIn.fuse / 5 % 2 == 0);
+	    renderTntFlash(DeferredRegisters.SUBTYPEBLOCK_MAPPINGS.get(subtype).getDefaultState(), matrixStackIn, bufferIn, packedLightIn,
+		    entityIn.fuse / 5 % 2 == 0);
 	    matrixStackIn.pop();
 	}
 	super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
     }
 
     @Deprecated
-    public static void renderTntFlash(BlockState blockStateIn, MatrixStack matrixStackIn,
-	    IRenderTypeBuffer renderTypeBuffer, int combinedLight, boolean doFullBright) {
+    public static void renderTntFlash(BlockState blockStateIn, MatrixStack matrixStackIn, IRenderTypeBuffer renderTypeBuffer, int combinedLight,
+	    boolean doFullBright) {
 	int i;
 	if (doFullBright) {
 	    i = OverlayTexture.getPackedUV(OverlayTexture.getU(1.0F), 10);
@@ -62,8 +62,7 @@ public class RenderExplosive extends EntityRenderer<EntityExplosive> {
 	    i = OverlayTexture.NO_OVERLAY;
 	}
 
-	Minecraft.getInstance().getBlockRendererDispatcher().renderBlock(blockStateIn, matrixStackIn, renderTypeBuffer,
-		combinedLight, i);
+	Minecraft.getInstance().getBlockRendererDispatcher().renderBlock(blockStateIn, matrixStackIn, renderTypeBuffer, combinedLight, i);
     }
 
     @Override

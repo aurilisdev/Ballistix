@@ -80,11 +80,11 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 			    (float) (1.25f - (entityIn.ticksExisted - entityIn.ticksWhenCustomRender) / Constants.EXPLOSIVE_NUCLEAR_DURATION));
 		    GL11.glTexCoord2d(i, j);
 		    GL11.glVertex3dv(p[0]);
-		    GL11.glTexCoord2d(i + di + entityIn.world.rand.nextFloat() * 2, j + entityIn.world.rand.nextFloat() * 2);
+		    GL11.glTexCoord2d(i + di, j);
 		    GL11.glVertex3dv(p[1]);
-		    GL11.glTexCoord2d(i + di + entityIn.world.rand.nextFloat() * 2, j + dj + entityIn.world.rand.nextFloat() * 2);
+		    GL11.glTexCoord2d(i + di, j + dj);
 		    GL11.glVertex3dv(p[2]);
-		    GL11.glTexCoord2d(i + entityIn.world.rand.nextFloat() * 2, j + dj + entityIn.world.rand.nextFloat() * 2);
+		    GL11.glTexCoord2d(i, j + dj);
 		    GL11.glVertex3dv(p[3]);
 		    GL11.glEnd();
 		}

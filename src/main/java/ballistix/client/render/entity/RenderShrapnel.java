@@ -30,9 +30,9 @@ public class RenderShrapnel extends EntityRenderer<EntityShrapnel> {
     public void render(EntityShrapnel entity, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn,
 	    int packedLightIn) {
 	super.render(entity, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+	GlStateManager.pushMatrix();
 	Minecraft.getInstance().textureManager.bindTexture(getEntityTexture(entity));
 	GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-	GlStateManager.pushMatrix();
 	GlStateManager.enableDepthTest();
 	GlStateManager.disableLighting();
 	RenderSystem.multMatrix(matrixStackIn.getLast().getMatrix());

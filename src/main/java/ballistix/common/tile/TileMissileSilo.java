@@ -36,12 +36,12 @@ public class TileMissileSilo extends GenericTileTicking implements IMultiblockTi
 
     public TileMissileSilo() {
 	super(DeferredRegisters.TILE_MISSILESILO.get());
-	addComponent(new ComponentTickable().addTickServer(this::tickServer));
-	addComponent(new ComponentInventory().setInventorySize(2).addSlotsOnFace(Direction.UP, 0, 1).setItemValidPredicate(this::isItemValidForSlot));
-	addComponent(new ComponentPacketHandler().addCustomPacketWriter(this::writePacket).addCustomPacketReader(this::readPacket)
-		.addGuiPacketReader(this::readPacket).addGuiPacketWriter(this::writePacket));
-	addComponent(new ComponentContainerProvider("container.missilesilo").setCreateMenuFunction(
-		(id, player) -> new ContainerMissileSilo(id, player, getComponent(ComponentType.Inventory), getCoordsArray())));
+	addComponent(new ComponentTickable().tickServer(this::tickServer));
+	addComponent(new ComponentInventory(this).size(2).faceSlots(Direction.UP, 0, 1).valid(this::isItemValidForSlot));
+	addComponent(new ComponentPacketHandler().customPacketWriter(this::writePacket).customPacketReader(this::readPacket)
+		.guiPacketReader(this::readPacket).guiPacketWriter(this::writePacket));
+	addComponent(new ComponentContainerProvider("container.missilesilo")
+		.createMenu((id, player) -> new ContainerMissileSilo(id, player, getComponent(ComponentType.Inventory), getCoordsArray())));
 
     }
 

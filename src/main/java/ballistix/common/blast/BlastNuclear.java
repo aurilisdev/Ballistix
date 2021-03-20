@@ -68,7 +68,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 		    double dis = new Location(p.getX(), 0, p.getZ()).distance(new Location(position.getX(), 0, position.getZ()));
 		    if (dis < 15) {
 			BlockPos offset = p.offset(Direction.DOWN);
-			if (!world.isAirBlock(offset) && world.rand.nextFloat() < (15.0f - dis) / 15.0f) {
+			if (!thread.results.contains(offset) && world.rand.nextFloat() < (15.0f - dis) / 15.0f) {
 			    state = Blocks.FIRE.getDefaultState();
 			}
 		    }

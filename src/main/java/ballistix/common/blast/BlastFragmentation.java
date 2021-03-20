@@ -21,7 +21,7 @@ public class BlastFragmentation extends Blast {
 	    shrapnel.setLocationAndAngles(position.getX(), position.getY() + 1, position.getZ(), yaw, pitch);
 	    shrapnel.func_234612_a_(null, pitch, yaw, 0.0F, 0.5f, 0.0F);
 	    shrapnel.isExplosive = true;
-	    shrapnel.addVelocity(0, 2f, 0);
+	    shrapnel.addVelocity(0, 0.7f, 0);
 	    world.addEntity(shrapnel);
 	}
 	return true;

@@ -4,6 +4,8 @@ import java.util.List;
 
 import ballistix.DeferredRegisters;
 import ballistix.api.damage.DamageSourceShrapnel;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
@@ -16,7 +18,9 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.Explosion.Mode;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -52,7 +56,7 @@ public class EntityShrapnel extends ThrowableEntity {
 	EntitySize size = getSize(Pose.STANDING);
 	setBoundingBox(new AxisAlignedBB(getPosX() - size.width * 2, getPosY() - size.height * 2, getPosZ() - size.width * 2,
 		getPosX() + size.width * 2, getPosY() + size.height * 2, getPosZ() + size.width * 2));
-	if (onGround || ticksExisted > 100 || world.getBlockState(getPosition()).getMaterial().blocksMovement()) {
+	if (onGround || ticksExisted > (isExplosive ? 400 : 100) || world.getBlockState(getPosition()).getMaterial().blocksMovement()) {
 	    remove();
 	}
 	if (!world.isRemote) {
@@ -79,8 +83,28 @@ public class EntityShrapnel extends ThrowableEntity {
 
     @Override
     public void remove() {
-	if (!world.isRemote && isExplosive) {
-	    world.createExplosion(this, getPositionVec().x, getPositionVec().y, getPositionVec().z, 2f, Mode.BREAK);
+	if (isExplosive) {
+	    Explosion ex = new Explosion(world, this, DamageSourceShrapnel.INSTANCE, null, getPosX(), getPosY(), getPosZ(), 2, true, Mode.DESTROY);
+	    if (!world.isRemote) {
+		int explosionRadius = 2;
+		for (int i = -explosionRadius; i <= explosionRadius; i++) {
+		    for (int j = -explosionRadius; j <= explosionRadius; j++) {
+			for (int k = -explosionRadius; k <= explosionRadius; k++) {
+			    int idistance = i * i + j * j + k * k;
+			    if (idistance <= explosionRadius * explosionRadius && world.rand.nextFloat()
+				    * (explosionRadius * explosionRadius) < explosionRadius * explosionRadius * 1.85 - idistance) {
+				BlockPos pos = new BlockPos(getPosX() + i, getPosY() + j, getPosZ() + k);
+				BlockState block = world.getBlockState(pos);
+				if (block != Blocks.AIR.getDefaultState() && block != Blocks.VOID_AIR.getDefaultState()
+					&& block.getExplosionResistance(world, pos, ex) < explosionRadius * 2 * world.rand.nextFloat()) {
+				    block.onBlockExploded(world, pos, ex);
+				}
+			    }
+			}
+		    }
+		}
+	    }
+	    ex.doExplosionB(true);
 	}
 	super.remove();
     }

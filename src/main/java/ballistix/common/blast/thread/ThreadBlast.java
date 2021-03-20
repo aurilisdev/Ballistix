@@ -24,7 +24,7 @@ public abstract class ThreadBlast extends Thread {
 	explosionRadius = radius;
 	explosionEnergy = energy;
 	explosionSource = source;
-	setPriority(Thread.MIN_PRIORITY);
+	setPriority(Thread.MAX_PRIORITY);
     }
 
     @Override

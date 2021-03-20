@@ -8,7 +8,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MoverType;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -49,15 +48,14 @@ public class EntityShrapnel extends ThrowableEntity {
 	if (!hasNoGravity()) {
 	    this.setMotion(getMotion().add(0.0D, -0.04D, 0.0D));
 	}
-	move(MoverType.SELF, getMotion());
-	this.setMotion(getMotion().scale(0.98D));
-	if (onGround) {
+	this.forceSetPosition(getPosX() + getMotion().x, getPosY() + getMotion().y, getPosZ() + getMotion().z);
+	EntitySize size = getSize(Pose.STANDING);
+	setBoundingBox(new AxisAlignedBB(getPosX() - size.width * 2, getPosY() - size.height * 2, getPosZ() - size.width * 2,
+		getPosX() + size.width * 2, getPosY() + size.height * 2, getPosZ() + size.width * 2));
+	if (onGround || ticksExisted > 100 || world.getBlockState(getPosition()).getMaterial().blocksMovement()) {
 	    remove();
 	}
 	if (!world.isRemote) {
-	    EntitySize size = getSize(Pose.STANDING);
-	    setBoundingBox(new AxisAlignedBB(getPosX() - size.width * 2, getPosY() - size.height * 2, getPosZ() - size.width * 2,
-		    getPosX() + size.width * 2, getPosY() + size.height * 2, getPosZ() + size.width * 2));
 	    List<LivingEntity> livings = world.getEntitiesWithinAABB(LivingEntity.class, getBoundingBox());
 	    for (LivingEntity living : livings) {
 		living.attackEntityFrom(DamageSourceShrapnel.INSTANCE, 10);

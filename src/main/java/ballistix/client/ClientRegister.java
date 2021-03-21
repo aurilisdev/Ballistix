@@ -15,12 +15,24 @@ import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
 @OnlyIn(Dist.CLIENT)
+@EventBusSubscriber(modid = References.ID, bus = Bus.MOD)
 public class ClientRegister {
+    @SubscribeEvent
+    public static void onModelEvent(ModelRegistryEvent event) {
+	ModelLoader.addSpecialModel(MODEL_MISSILECLOSERANGE);
+	ModelLoader.addSpecialModel(MODEL_MISSILEMEDIUMRANGE);
+	ModelLoader.addSpecialModel(MODEL_MISSILELONGRANGE);
+    }
+
     public static final ResourceLocation TEXTURE_SHRAPNEL = new ResourceLocation(References.ID + ":textures/model/shrapnel.png");
     public static final ResourceLocation MODEL_MISSILECLOSERANGE = new ResourceLocation(References.ID + ":entity/missilecloserange");
     public static final ResourceLocation MODEL_MISSILEMEDIUMRANGE = new ResourceLocation(References.ID + ":entity/missilemediumrange");
@@ -31,9 +43,6 @@ public class ClientRegister {
     public static final ResourceLocation TEXTURE_FIREBALL = new ResourceLocation(References.ID + ":textures/model/fireball.png");
 
     public static void setup() {
-	ModelLoader.addSpecialModel(MODEL_MISSILECLOSERANGE);
-	ModelLoader.addSpecialModel(MODEL_MISSILEMEDIUMRANGE);
-	ModelLoader.addSpecialModel(MODEL_MISSILELONGRANGE);
 
 	ClientRegistry.bindTileEntityRenderer(DeferredRegisters.TILE_MISSILESILO.get(), RenderMissileSilo::new);
 

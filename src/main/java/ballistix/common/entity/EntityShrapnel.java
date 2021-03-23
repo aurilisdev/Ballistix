@@ -52,7 +52,7 @@ public class EntityShrapnel extends ThrowableEntity {
 	if (!hasNoGravity()) {
 	    this.setMotion(getMotion().add(0.0D, -0.04D, 0.0D));
 	}
-	this.forceSetPosition(getPosX() + getMotion().x, getPosY() + getMotion().y, getPosZ() + getMotion().z);
+	forceSetPosition(getPosX() + getMotion().x, getPosY() + getMotion().y, getPosZ() + getMotion().z);
 	EntitySize size = getSize(Pose.STANDING);
 	setBoundingBox(new AxisAlignedBB(getPosX() - size.width * 2, getPosY() - size.height * 2, getPosZ() - size.width * 2,
 		getPosX() + size.width * 2, getPosY() + size.height * 2, getPosZ() + size.width * 2));

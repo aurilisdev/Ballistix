@@ -53,21 +53,21 @@ public class ScreenMissileSilo extends GenericContainerScreen<ContainerMissileSi
 	xCoordField = new TextFieldWidget(font, i + 127, j + 18, 46, 13, new TranslationTextComponent("container.missilesilo.xCoord"));
 	xCoordField.setTextColor(-1);
 	xCoordField.setDisabledTextColour(-1);
-	xCoordField.setEnableBackgroundDrawing(true);
+	xCoordField.setEnableBackgroundDrawing(false);
 	xCoordField.setMaxStringLength(6);
 	xCoordField.setResponder(this::setX);
 
 	yCoordField = new TextFieldWidget(font, i + 127, j + 18 + 18, 46, 13, new TranslationTextComponent("container.missilesilo.yCoord"));
 	yCoordField.setTextColor(-1);
 	yCoordField.setDisabledTextColour(-1);
-	yCoordField.setEnableBackgroundDrawing(true);
+	yCoordField.setEnableBackgroundDrawing(false);
 	yCoordField.setMaxStringLength(6);
 	yCoordField.setResponder(this::setY);
 
 	zCoordField = new TextFieldWidget(font, i + 127, j + 18 + 18 * 2, 46, 13, new TranslationTextComponent("container.missilesilo.zCoord"));
 	zCoordField.setTextColor(-1);
 	zCoordField.setDisabledTextColour(-1);
-	zCoordField.setEnableBackgroundDrawing(true);
+	zCoordField.setEnableBackgroundDrawing(false);
 	zCoordField.setMaxStringLength(6);
 	zCoordField.setResponder(this::setZ);
 	children.add(xCoordField);
@@ -120,20 +120,6 @@ public class ScreenMissileSilo extends GenericContainerScreen<ContainerMissileSi
     public void onClose() {
 	super.onClose();
 	minecraft.keyboardListener.enableRepeatEvents(false);
-    }
-
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-	if (keyCode == 256) {
-	    minecraft.player.closeScreen();
-	}
-	boolean x = !xCoordField.keyPressed(keyCode, scanCode, modifiers) && !xCoordField.canWrite();
-	boolean y = !yCoordField.keyPressed(keyCode, scanCode, modifiers) && !yCoordField.canWrite();
-	boolean z = !zCoordField.keyPressed(keyCode, scanCode, modifiers) && !zCoordField.canWrite();
-	if (x || y || z) {
-	    return super.keyPressed(keyCode, scanCode, modifiers);
-	}
-	return true;
     }
 
     @Override

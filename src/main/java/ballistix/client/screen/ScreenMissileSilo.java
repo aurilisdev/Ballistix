@@ -53,23 +53,23 @@ public class ScreenMissileSilo extends GenericContainerScreen<ContainerMissileSi
 	xCoordField = new TextFieldWidget(font, i + 127, j + 18, 46, 13, new TranslationTextComponent("container.missilesilo.xCoord"));
 	xCoordField.setTextColor(-1);
 	xCoordField.setDisabledTextColour(-1);
-	xCoordField.setEnableBackgroundDrawing(false);
+	xCoordField.setEnableBackgroundDrawing(true);
 	xCoordField.setMaxStringLength(6);
-	xCoordField.setResponder(this::setCoord);
+	xCoordField.setResponder(this::setX);
 
 	yCoordField = new TextFieldWidget(font, i + 127, j + 18 + 18, 46, 13, new TranslationTextComponent("container.missilesilo.yCoord"));
 	yCoordField.setTextColor(-1);
 	yCoordField.setDisabledTextColour(-1);
-	yCoordField.setEnableBackgroundDrawing(false);
+	yCoordField.setEnableBackgroundDrawing(true);
 	yCoordField.setMaxStringLength(6);
-	yCoordField.setResponder(this::setCoord);
+	yCoordField.setResponder(this::setY);
 
 	zCoordField = new TextFieldWidget(font, i + 127, j + 18 + 18 * 2, 46, 13, new TranslationTextComponent("container.missilesilo.zCoord"));
 	zCoordField.setTextColor(-1);
 	zCoordField.setDisabledTextColour(-1);
-	zCoordField.setEnableBackgroundDrawing(false);
+	zCoordField.setEnableBackgroundDrawing(true);
 	zCoordField.setMaxStringLength(6);
-	zCoordField.setResponder(this::setCoord);
+	zCoordField.setResponder(this::setZ);
 	children.add(xCoordField);
 	children.add(yCoordField);
 	children.add(zCoordField);
@@ -82,6 +82,27 @@ public class ScreenMissileSilo extends GenericContainerScreen<ContainerMissileSi
 	if (!coord.isEmpty()) {
 	    container.setCoord(xCoordField.getText(), yCoordField.getText(), zCoordField.getText());
 	}
+    }
+
+    private void setX(String val) {
+	xCoordField.setFocused2(true);
+	yCoordField.setFocused2(false);
+	zCoordField.setFocused2(false);
+	setCoord(val);
+    }
+
+    private void setY(String val) {
+	yCoordField.setFocused2(true);
+	xCoordField.setFocused2(false);
+	zCoordField.setFocused2(false);
+	setCoord(val);
+    }
+
+    private void setZ(String val) {
+	zCoordField.setFocused2(true);
+	yCoordField.setFocused2(false);
+	xCoordField.setFocused2(false);
+	setCoord(val);
     }
 
     @Override

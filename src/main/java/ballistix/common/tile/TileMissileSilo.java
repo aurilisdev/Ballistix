@@ -18,6 +18,7 @@ import electrodynamics.api.utilities.object.Location;
 import electrodynamics.common.blockitem.BlockItemDescriptable;
 import electrodynamics.common.multiblock.IMultiblockTileNode;
 import electrodynamics.common.multiblock.Subnode;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -46,8 +47,12 @@ public class TileMissileSilo extends GenericTileTicking implements IMultiblockTi
     }
 
     protected void tickServer(ComponentTickable tickable) {
+
 	ComponentInventory inv = getComponent(ComponentType.Inventory);
 	ComponentPacketHandler packet = getComponent(ComponentType.PacketHandler);
+	if (tickable.getTicks() % 20 == 1) {
+	    packet.sendCustomPacket();
+	}
 	if (target == null) {
 	    target = new Location(getPos());
 	    packet.sendCustomPacket();
@@ -121,6 +126,18 @@ public class TileMissileSilo extends GenericTileTicking implements IMultiblockTi
 	if (target != null) {
 	    target.writeToNBT(tag, "target");
 	}
+    }
+
+    @Override
+    public CompoundNBT write(CompoundNBT compound) {
+	readPacket(compound);
+	return super.write(compound);
+    }
+
+    @Override
+    public void read(BlockState state, CompoundNBT compound) {
+	super.read(state, compound);
+	write(compound);
     }
 
     protected boolean isItemValidForSlot(int index, ItemStack stack) {

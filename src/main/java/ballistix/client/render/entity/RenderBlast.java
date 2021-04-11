@@ -10,7 +10,7 @@ import ballistix.client.ClientRegister;
 import ballistix.common.block.SubtypeBlast;
 import ballistix.common.entity.EntityBlast;
 import ballistix.common.settings.Constants;
-import electrodynamics.api.utilities.UtilitiesRendering;
+import electrodynamics.prefab.utilities.UtilitiesRendering;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderHelper;

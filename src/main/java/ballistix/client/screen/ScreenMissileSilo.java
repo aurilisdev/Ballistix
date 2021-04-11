@@ -5,7 +5,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import ballistix.References;
 import ballistix.common.inventory.container.ContainerMissileSilo;
 import ballistix.common.tile.TileMissileSilo;
-import electrodynamics.prefab.screen.GenericContainerScreen;
+import electrodynamics.prefab.screen.GenericCustomScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.entity.player.PlayerInventory;
@@ -16,7 +16,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class ScreenMissileSilo extends GenericContainerScreen<ContainerMissileSilo> {
+public class ScreenMissileSilo extends GenericCustomScreen<ContainerMissileSilo> {
     public static final ResourceLocation SCREEN_BACKGROUND = new ResourceLocation(References.ID + ":textures/gui/missilesilo.png");
 
     public ScreenMissileSilo(ContainerMissileSilo container, PlayerInventory playerInventory, ITextComponent title) {

@@ -5,7 +5,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import ballistix.References;
 import ballistix.common.inventory.container.ContainerMissileSilo;
 import ballistix.common.tile.TileMissileSilo;
-import electrodynamics.client.screen.generic.GenericContainerScreen;
+import electrodynamics.prefab.screen.GenericContainerScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.entity.player.PlayerInventory;
@@ -110,7 +110,7 @@ public class ScreenMissileSilo extends GenericContainerScreen<ContainerMissileSi
 	String s = xCoordField.getText();
 	String s1 = yCoordField.getText();
 	String s2 = zCoordField.getText();
-	this.init(minecraft, width, height);
+	init(minecraft, width, height);
 	xCoordField.setText(s);
 	yCoordField.setText(s1);
 	zCoordField.setText(s2);

@@ -2,30 +2,25 @@ package ballistix.client.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import ballistix.References;
 import ballistix.common.inventory.container.ContainerMissileSilo;
 import ballistix.common.tile.TileMissileSilo;
-import electrodynamics.prefab.screen.GenericCustomScreen;
+import electrodynamics.prefab.screen.GenericScreen;
+import electrodynamics.prefab.screen.component.ScreenComponentTextInputBar;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class ScreenMissileSilo extends GenericCustomScreen<ContainerMissileSilo> {
-    public static final ResourceLocation SCREEN_BACKGROUND = new ResourceLocation(References.ID + ":textures/gui/missilesilo.png");
-
+public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
     public ScreenMissileSilo(ContainerMissileSilo container, PlayerInventory playerInventory, ITextComponent title) {
 	super(container, playerInventory, title);
-    }
-
-    @Override
-    public ResourceLocation getScreenBackground() {
-	return SCREEN_BACKGROUND;
+	components.add(new ScreenComponentTextInputBar(this, 122, 14).small());
+	components.add(new ScreenComponentTextInputBar(this, 122, 32).small());
+	components.add(new ScreenComponentTextInputBar(this, 122, 50).small());
     }
 
     private TextFieldWidget xCoordField;

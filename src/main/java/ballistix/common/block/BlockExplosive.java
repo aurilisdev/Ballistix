@@ -64,14 +64,6 @@ public class BlockExplosive extends Block {
     }
 
     @Override
-    public void onBlockHarvested(World worldIn, BlockPos pos, BlockState state, PlayerEntity player) {
-	if (!worldIn.isRemote() && !player.isCreative()) {
-	    catchFire(state, worldIn, pos, null, null);
-	}
-	super.onBlockHarvested(worldIn, pos, state, player);
-    }
-
-    @Override
     public void onExplosionDestroy(World worldIn, BlockPos pos, Explosion explosionIn) {
 	if (!worldIn.isRemote) {
 	    explode(worldIn, pos, explosive);

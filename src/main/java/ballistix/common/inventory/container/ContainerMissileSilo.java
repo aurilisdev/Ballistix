@@ -76,4 +76,5 @@ public class ContainerMissileSilo extends GenericContainer<TileMissileSilo> {
 	    NetworkHandler.CHANNEL.sendToServer(new PacketSetMissileData(getHostFromIntArray().getPos(), new BlockPos(triedX, triedY, triedZ)));
 	}
     }
+
 }

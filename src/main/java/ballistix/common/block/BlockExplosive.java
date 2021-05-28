@@ -1,7 +1,11 @@
 package ballistix.common.block;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.annotation.Nullable;
 
+import ballistix.DeferredRegisters;
 import ballistix.common.entity.EntityExplosive;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -16,6 +20,7 @@ import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.loot.LootContext.Builder;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
@@ -78,6 +83,11 @@ public class BlockExplosive extends Block {
 	    worldIn.playSound((PlayerEntity) null, explosiveEntity.getPosX(), explosiveEntity.getPosY(), explosiveEntity.getPosZ(),
 		    SoundEvents.ENTITY_TNT_PRIMED, SoundCategory.BLOCKS, 1.0F, 1.0F);
 	}
+    }
+
+    @Override
+    public List<ItemStack> getDrops(BlockState state, Builder builder) {
+	return Arrays.asList(new ItemStack(DeferredRegisters.SUBTYPEBLOCK_MAPPINGS.get(explosive)));
     }
 
     @Override

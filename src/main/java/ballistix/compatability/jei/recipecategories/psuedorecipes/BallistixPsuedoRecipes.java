@@ -3,9 +3,9 @@ package ballistix.compatability.jei.recipecategories.psuedorecipes;
 import java.util.ArrayList;
 
 import ballistix.common.block.SubtypeBlast;
+import electrodynamics.compatability.jei.recipecategories.psuedorecipes.PsuedoDO2ORecipe;
+import electrodynamics.compatability.jei.recipecategories.psuedorecipes.PsuedoO2ORecipe;
 import electrodynamics.compatability.jei.recipecategories.psuedorecipes.PsuedoRecipes;
-import electrodynamics.prefab.tile.processing.DO2OProcessingRecipe;
-import electrodynamics.prefab.tile.processing.O2OProcessingRecipe;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -13,8 +13,9 @@ public class BallistixPsuedoRecipes {
 
     public static ArrayList<ArrayList<ItemStack>> BALLISTIX_ITEMS = new ArrayList<>();
 
-    public static ArrayList<DO2OProcessingRecipe> WARHEAD_RECIPES = new ArrayList<>();
-    public static ArrayList<O2OProcessingRecipe> SILO_RECIPES = new ArrayList<>();
+    public static ArrayList<PsuedoDO2ORecipe> WARHEAD_RECIPES = new ArrayList<>();
+    public static ArrayList<PsuedoO2ORecipe> SILO_RECIPES = new ArrayList<>();
+
 
     public static void addBallistixRecipes() {
 	PsuedoRecipes.addElectrodynamicsMachines();
@@ -26,10 +27,12 @@ public class BallistixPsuedoRecipes {
 	addBallistixItems();
 
 	/* SILO RECIPES */
-	SILO_RECIPES.add(new O2OProcessingRecipe(BALLISTIX_ITEMS.get(1).get(0), BALLISTIX_ITEMS.get(2).get(0)));
+
+	SILO_RECIPES.add(new PsuedoO2ORecipe(BALLISTIX_ITEMS.get(1).get(0), BALLISTIX_ITEMS.get(2).get(0)));
 
 	/* WARHEAD RECIPES */
-	WARHEAD_RECIPES.add(new DO2OProcessingRecipe(BALLISTIX_ITEMS.get(0).get(0), BALLISTIX_ITEMS.get(1).get(0), BALLISTIX_ITEMS.get(1).get(0)));
+	WARHEAD_RECIPES.add(new PsuedoDO2ORecipe(BALLISTIX_ITEMS.get(0).get(0), BALLISTIX_ITEMS.get(1).get(0), BALLISTIX_ITEMS.get(1).get(0)));
+
 
     }
 

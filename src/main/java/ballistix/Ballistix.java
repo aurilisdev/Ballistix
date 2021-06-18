@@ -3,9 +3,7 @@ package ballistix;
 import ballistix.client.ClientRegister;
 import ballistix.common.packet.NetworkHandler;
 import ballistix.common.settings.Constants;
-import electrodynamics.common.recipe.MachineRecipes;
 import electrodynamics.prefab.configuration.ConfigurationHandler;
-import electrodynamics.prefab.tile.processing.O2OProcessingRecipe;
 import net.minecraft.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -45,9 +43,6 @@ public class Ballistix {
     }
 
     @SubscribeEvent
-    public static void onLoadEvent(FMLLoadCompleteEvent event) {
-	MachineRecipes.registerRecipe(electrodynamics.DeferredRegisters.TILE_MINERALGRINDER.get(),
-		new O2OProcessingRecipe(Items.ROTTEN_FLESH, DeferredRegisters.ITEM_DUSTPOISON.get(), 2));
-    }
+    public static void onLoadEvent(FMLLoadCompleteEvent event) {}
 
 }

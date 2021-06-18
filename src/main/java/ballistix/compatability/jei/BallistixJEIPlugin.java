@@ -6,6 +6,7 @@ import java.util.Set;
 
 import ballistix.compatability.jei.recipecategories.psuedorecipes.BallistixPsuedoRecipes;
 import ballistix.compatability.jei.recipecategories.specificmachines.ballistix.WarheadRecipeCategory;
+import electrodynamics.compatability.jei.recipecategories.psuedorecipes.PsuedoDO2ORecipe;
 import electrodynamics.prefab.tile.processing.DO2OProcessingRecipe;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -38,7 +39,8 @@ public class BallistixJEIPlugin implements IModPlugin {
 	BallistixPsuedoRecipes.addBallistixRecipes();
 
 	// Warhead Template
-	Set<DO2OProcessingRecipe> warheadTemplateRecipes = new HashSet<>(BallistixPsuedoRecipes.WARHEAD_RECIPES);
+	Set<PsuedoDO2ORecipe> warheadTemplateRecipes = new HashSet<>(BallistixPsuedoRecipes.WARHEAD_RECIPES);
+
 	registration.addRecipes(warheadTemplateRecipes, WarheadRecipeCategory.UID);
 
 	ballistixInfoTabs(registration);

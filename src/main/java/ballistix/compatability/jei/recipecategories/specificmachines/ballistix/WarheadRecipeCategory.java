@@ -11,9 +11,11 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 
 import ballistix.References;
 import ballistix.compatability.jei.recipecategories.psuedorecipes.BallistixPsuedoRecipes;
+
 import electrodynamics.common.recipe.categories.do2o.DO2ORecipe;
 import electrodynamics.compatability.jei.recipecategories.ElectrodynamicsRecipeCategory;
 import electrodynamics.compatability.jei.recipecategories.psuedorecipes.PsuedoDO2ORecipe;
+
 import electrodynamics.prefab.tile.processing.DO2OProcessingRecipe;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
@@ -27,6 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 
+
 public class WarheadRecipeCategory extends ElectrodynamicsRecipeCategory<PsuedoDO2ORecipe> {
 
 	// JEI Window Parameters
@@ -38,6 +41,7 @@ public class WarheadRecipeCategory extends ElectrodynamicsRecipeCategory<PsuedoD
 
     private static int[] INPUT_1_OFFSET = { 89, 7 };
     private static int[] INPUT_2_OFFSET = { 89, 33 };
+
     private static int[] OutputItemOffset = { 0, 0 };
     private static int[] ProcessingArrowOffset = { 0, 0 };
 
@@ -46,16 +50,18 @@ public class WarheadRecipeCategory extends ElectrodynamicsRecipeCategory<PsuedoD
     private static String guiTexture = "textures/gui/jei/warhead_template_gui.png";
     private static ItemStack inputMachine = new ItemStack(ballistix.DeferredRegisters.blockMissileSilo);
     private static ArrayList<int[]> inputCoordinates = new ArrayList<>(
+
 	    Arrays.asList(GUI_BACKGROUND, PROCESSING_ARROW_COORDS, INPUT_1_OFFSET, INPUT_2_OFFSET, OutputItemOffset, ProcessingArrowOffset));
     private static int ARROW_SMELT_TIME = 50;
     private static int textYHeight = 48;
     private static IDrawableAnimated.StartDirection START_DIRECTION = IDrawableAnimated.StartDirection.LEFT;
     private LoadingCache<Integer, IDrawableAnimated> CACHED_ARROWS;
 
+
     public static ResourceLocation UID = new ResourceLocation(modID, recipeGroup);
 
     public WarheadRecipeCategory(IGuiHelper guiHelper) {
-    	
+
 		super(guiHelper, modID, recipeGroup, guiTexture, inputMachine,GUI_BACKGROUND, PsuedoDO2ORecipe.class,textYHeight, ARROW_SMELT_TIME);
 		CACHED_ARROWS = CacheBuilder.newBuilder().maximumSize(25).build(new CacheLoader<Integer, IDrawableAnimated>() {
 		    @Override
@@ -76,9 +82,11 @@ public class WarheadRecipeCategory extends ElectrodynamicsRecipeCategory<PsuedoD
 
     	ingredients.setInputLists(VanillaTypes.ITEM, recipeInput(recipe));
 
+
     }
 
     @Override
+
     public void setRecipe(IRecipeLayout recipeLayout, PsuedoDO2ORecipe recipe, IIngredients ingredients) {
 
 		IGuiItemStackGroup guiItemStacks = recipeLayout.getItemStacks();
@@ -88,9 +96,11 @@ public class WarheadRecipeCategory extends ElectrodynamicsRecipeCategory<PsuedoD
 	
 		guiItemStacks.set(ingredients);
 
+
     }
 
     @Override
+
     public void draw(PsuedoDO2ORecipe recipe, MatrixStack matrixStack, double mouseX, double mouseY) {
 		IDrawableAnimated arrow = getArrow(recipe);
 		arrow.draw(matrixStack, ProcessingArrowOffset[0], ProcessingArrowOffset[1]);
@@ -126,6 +136,7 @@ public class WarheadRecipeCategory extends ElectrodynamicsRecipeCategory<PsuedoD
 		inputSlots.add(BallistixPsuedoRecipes.BALLISTIX_ITEMS.get(1));
 
 		return inputSlots;
+
 
     }
 

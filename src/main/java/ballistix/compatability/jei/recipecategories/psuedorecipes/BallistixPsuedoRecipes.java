@@ -16,6 +16,7 @@ public class BallistixPsuedoRecipes {
     public static ArrayList<PsuedoDO2ORecipe> WARHEAD_RECIPES = new ArrayList<>();
     public static ArrayList<PsuedoO2ORecipe> SILO_RECIPES = new ArrayList<>();
 
+
     public static void addBallistixRecipes() {
 	PsuedoRecipes.addElectrodynamicsMachines();
 	PsuedoRecipes.addElectrodynamicsFluids();
@@ -26,10 +27,12 @@ public class BallistixPsuedoRecipes {
 	addBallistixItems();
 
 	/* SILO RECIPES */
+
 	SILO_RECIPES.add(new PsuedoO2ORecipe(BALLISTIX_ITEMS.get(1).get(0), BALLISTIX_ITEMS.get(2).get(0)));
 
 	/* WARHEAD RECIPES */
 	WARHEAD_RECIPES.add(new PsuedoDO2ORecipe(BALLISTIX_ITEMS.get(0).get(0), BALLISTIX_ITEMS.get(1).get(0), BALLISTIX_ITEMS.get(1).get(0)));
+
 
     }
 

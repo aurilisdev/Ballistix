@@ -40,6 +40,7 @@ public class BallistixJEIPlugin implements IModPlugin {
 
 	// Warhead Template
 	Set<PsuedoDO2ORecipe> warheadTemplateRecipes = new HashSet<>(BallistixPsuedoRecipes.WARHEAD_RECIPES);
+
 	registration.addRecipes(warheadTemplateRecipes, WarheadRecipeCategory.UID);
 
 	ballistixInfoTabs(registration);

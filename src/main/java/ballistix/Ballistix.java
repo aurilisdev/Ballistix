@@ -4,7 +4,6 @@ import ballistix.client.ClientRegister;
 import ballistix.common.packet.NetworkHandler;
 import ballistix.common.settings.Constants;
 import electrodynamics.prefab.configuration.ConfigurationHandler;
-import net.minecraft.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -43,6 +42,7 @@ public class Ballistix {
     }
 
     @SubscribeEvent
-    public static void onLoadEvent(FMLLoadCompleteEvent event) {}
+    public static void onLoadEvent(FMLLoadCompleteEvent event) {
+    }
 
 }

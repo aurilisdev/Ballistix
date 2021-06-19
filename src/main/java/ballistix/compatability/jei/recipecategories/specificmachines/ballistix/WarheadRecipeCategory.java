@@ -15,8 +15,6 @@ import ballistix.compatability.jei.recipecategories.psuedorecipes.BallistixPsued
 import electrodynamics.common.recipe.categories.do2o.DO2ORecipe;
 import electrodynamics.compatability.jei.recipecategories.ElectrodynamicsRecipeCategory;
 import electrodynamics.compatability.jei.recipecategories.psuedorecipes.PsuedoDO2ORecipe;
-
-import electrodynamics.prefab.tile.processing.DO2OProcessingRecipe;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;

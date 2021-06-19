@@ -7,7 +7,6 @@ import java.util.Set;
 import ballistix.compatability.jei.recipecategories.psuedorecipes.BallistixPsuedoRecipes;
 import ballistix.compatability.jei.recipecategories.specificmachines.ballistix.WarheadRecipeCategory;
 import electrodynamics.compatability.jei.recipecategories.psuedorecipes.PsuedoDO2ORecipe;
-import electrodynamics.prefab.tile.processing.DO2OProcessingRecipe;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;

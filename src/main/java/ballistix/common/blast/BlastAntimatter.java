@@ -43,7 +43,7 @@ public class BlastAntimatter extends Blast implements IHasCustomRenderer {
 		    (float) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, false, Mode.BREAK);
 	    if (thread.isComplete) {
 		if (pertick == -1) {
-		    pertick = (int) (thread.results.size() / Constants.EXPLOSIVE_ANTIMATTER_DURATION + 1);
+		    pertick = (int) (thread.results.size() * 1.5 / Constants.EXPLOSIVE_ANTIMATTER_DURATION + 1);
 		}
 		int finished = pertick;
 		Iterator<BlockPos> iterator = thread.results.iterator();

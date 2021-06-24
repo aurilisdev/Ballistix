@@ -115,7 +115,7 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 	    double du = di * 2 * pi;
 	    double dv = dj * pi;
 	    float scale = (float) ((entityIn.ticksExisted - entityIn.ticksWhenCustomRender) / Constants.EXPLOSIVE_ANTIMATTER_DURATION
-		    * Constants.EXPLOSIVE_ANTIMATTER_RADIUS);
+		    * Constants.EXPLOSIVE_ANTIMATTER_RADIUS * 1.5);
 	    GL11.glScalef(scale, scale, scale);
 	    for (double i = 0; i < 1.0; i += di) {// horizonal
 		for (double j = 0; j < 1.0; j += dj) // vertical
@@ -134,11 +134,11 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 			    (float) (1.25f - (entityIn.ticksExisted - entityIn.ticksWhenCustomRender) / Constants.EXPLOSIVE_ANTIMATTER_DURATION));
 		    GL11.glTexCoord2d(i, j);
 		    GL11.glVertex3dv(p[0]);
-		    GL11.glTexCoord2d(i + di + entityIn.world.rand.nextFloat() * 2, j + entityIn.world.rand.nextFloat() * 2);
+		    GL11.glTexCoord2d(i + di, j);
 		    GL11.glVertex3dv(p[1]);
-		    GL11.glTexCoord2d(i + di + entityIn.world.rand.nextFloat() * 2, j + dj + entityIn.world.rand.nextFloat() * 2);
+		    GL11.glTexCoord2d(i + di, j + dj);
 		    GL11.glVertex3dv(p[2]);
-		    GL11.glTexCoord2d(i + entityIn.world.rand.nextFloat() * 2, j + dj + entityIn.world.rand.nextFloat() * 2);
+		    GL11.glTexCoord2d(i, j + dj);
 		    GL11.glVertex3dv(p[3]);
 		    GL11.glEnd();
 		}

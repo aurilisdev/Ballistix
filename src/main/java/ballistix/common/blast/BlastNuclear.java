@@ -66,15 +66,17 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 
 		    BlockState state = Blocks.AIR.getDefaultState();
 		    double dis = new Location(p.getX(), 0, p.getZ()).distance(new Location(position.getX(), 0, position.getZ()));
-		    if (dis < 15) {
-			BlockPos offset = p.offset(Direction.DOWN);
-			if (!thread.results.contains(offset) && world.rand.nextFloat() < (15.0f - dis) / 15.0f) {
-			    state = Blocks.FIRE.getDefaultState();
+		    if (world.rand.nextFloat() < 1 / 5.0) {
+			if (dis < 15) {
+			    BlockPos offset = p.offset(Direction.DOWN);
+			    if (!thread.results.contains(offset) && world.rand.nextFloat() < (15.0f - dis) / 15.0f) {
+				state = Blocks.FIRE.getDefaultState();
+			    }
 			}
 		    }
 		    world.getBlockState(p).getBlock().onExplosionDestroy(world, p, ex);
 		    world.setBlockState(p, state, 2 | 16 | 32);
-		    if (world.rand.nextFloat() < 1 / 10.0 && world instanceof ServerWorld) {
+		    if (world.rand.nextFloat() < 1 / 20.0 && world instanceof ServerWorld) {
 			((ServerWorld) world).getChunkProvider().chunkManager.getTrackingPlayers(new ChunkPos(p), false)
 				.forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getNetworkManager(),
 					NetworkDirection.PLAY_TO_CLIENT));
@@ -91,7 +93,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 		    }
 		    for (int i = -radius; i <= radius; i++) {
 			for (int k = -radius; k <= radius; k++) {
-			    if (i * i + k * k < radius * radius && world.rand.nextFloat() < (particleHeight > 18 ? 0.2 : 0.6)) {
+			    if (i * i + k * k < radius * radius && world.rand.nextFloat() < (particleHeight > 18 ? 0.1 : 0.3)) {
 				BlockPos p = position.add(i, particleHeight, k);
 				((ServerWorld) world).getChunkProvider().chunkManager.getTrackingPlayers(new ChunkPos(p), false)
 					.forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p),

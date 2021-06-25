@@ -28,8 +28,8 @@ import net.minecraft.util.text.TranslationTextComponent;
 public class WarheadRecipeCategory extends ElectrodynamicsRecipeCategory<PsuedoDO2ORecipe> {
 
     // JEI Window Parameters
-    public static final int INPUT_1_SLOT = 0;
-    public static final int INPUT_2_SLOT = 1;
+    private static final int INPUT_1_SLOT = 0;
+    private static final int INPUT_2_SLOT = 1;
 
     private static int[] GUI_BACKGROUND = { 0, 0, 132, 58 };
     private static int[] PROCESSING_ARROW_COORDS = { 0, 0, 10, 10 };
@@ -37,31 +37,36 @@ public class WarheadRecipeCategory extends ElectrodynamicsRecipeCategory<PsuedoD
     private static int[] INPUT_1_OFFSET = { 89, 7 };
     private static int[] INPUT_2_OFFSET = { 89, 33 };
 
-    private static int[] ProcessingArrowOffset = { 0, 0 };
+    private static int[] PROCESSING_ARROW_OFFSET = { 0, 0 };
+    
+    private static int SMELT_TIME = 50;
+    private static int TEXT_Y_HEIGHT = 48;
 
-    private static String modID = References.ID;
-    private static String recipeGroup = "warhead_template";
-    private static String guiTexture = "textures/gui/jei/warhead_template_gui.png";
-    private static ItemStack inputMachine = new ItemStack(ballistix.DeferredRegisters.blockMissileSilo);
-    private static int ARROW_SMELT_TIME = 50;
-    private static int textYHeight = 48;
+    private static String MOD_ID = References.ID;
+    private static String RECIPE_GROUP = "warhead_template";
+    private static String GUI_TEXTURE = "textures/gui/jei/warhead_template_gui.png";
+    
+    private static ItemStack INPUT_MACHINE = new ItemStack(ballistix.DeferredRegisters.blockMissileSilo);
+   
     private static IDrawableAnimated.StartDirection START_DIRECTION = IDrawableAnimated.StartDirection.LEFT;
     private LoadingCache<Integer, IDrawableAnimated> CACHED_ARROWS;
 
-    public static ResourceLocation UID = new ResourceLocation(modID, recipeGroup);
+    public static ResourceLocation UID = new ResourceLocation(MOD_ID, RECIPE_GROUP);
 
     public WarheadRecipeCategory(IGuiHelper guiHelper) {
 
-	super(guiHelper, modID, recipeGroup, guiTexture, inputMachine, GUI_BACKGROUND, PsuedoDO2ORecipe.class, textYHeight, ARROW_SMELT_TIME);
-	CACHED_ARROWS = CacheBuilder.newBuilder().maximumSize(25).build(new CacheLoader<Integer, IDrawableAnimated>() {
-	    @Override
-	    public IDrawableAnimated load(Integer cookTime) {
-		return guiHelper.drawableBuilder(getGuiTexture(), PROCESSING_ARROW_COORDS[0], PROCESSING_ARROW_COORDS[1], PROCESSING_ARROW_COORDS[2],
-			PROCESSING_ARROW_COORDS[3]).buildAnimated(cookTime, START_DIRECTION, false);
-	    }
-	});
+		super(guiHelper, MOD_ID, RECIPE_GROUP, GUI_TEXTURE, INPUT_MACHINE, GUI_BACKGROUND,
+				PsuedoDO2ORecipe.class, TEXT_Y_HEIGHT, SMELT_TIME);
+		CACHED_ARROWS = CacheBuilder.newBuilder().maximumSize(25).build(new CacheLoader<Integer, IDrawableAnimated>() {
+		    @Override
+		    public IDrawableAnimated load(Integer cookTime) {
+			return guiHelper.drawableBuilder(getGuiTexture(), PROCESSING_ARROW_COORDS[0], PROCESSING_ARROW_COORDS[1], PROCESSING_ARROW_COORDS[2],
+				PROCESSING_ARROW_COORDS[3]).buildAnimated(cookTime, START_DIRECTION, false);
+		    }
+		});
+		
     }
-
+    
     @Override
     public ResourceLocation getUid() {
 	return UID;
@@ -91,7 +96,7 @@ public class WarheadRecipeCategory extends ElectrodynamicsRecipeCategory<PsuedoD
 
     public void draw(PsuedoDO2ORecipe recipe, MatrixStack matrixStack, double mouseX, double mouseY) {
 	IDrawableAnimated arrow = getArrow(recipe);
-	arrow.draw(matrixStack, ProcessingArrowOffset[0], ProcessingArrowOffset[1]);
+	arrow.draw(matrixStack, PROCESSING_ARROW_OFFSET[0], PROCESSING_ARROW_OFFSET[1]);
 
 	drawSmeltTime(recipe, matrixStack, getYHeight());
     }
@@ -99,8 +104,8 @@ public class WarheadRecipeCategory extends ElectrodynamicsRecipeCategory<PsuedoD
     protected void drawSmeltTime(PsuedoDO2ORecipe recipe, MatrixStack matrixStack, int y) {
 	int smeltTimeSeconds = getArrowSmeltTime() / 20;
 
-	TranslationTextComponent missileString = new TranslationTextComponent("gui.jei.category." + recipeGroup + ".info.missile", smeltTimeSeconds);
-	TranslationTextComponent explosiveString = new TranslationTextComponent("gui.jei.category." + recipeGroup + ".info.explosive",
+	TranslationTextComponent missileString = new TranslationTextComponent("gui.jei.category." + getRecipeGroup() + ".info.missile", smeltTimeSeconds);
+	TranslationTextComponent explosiveString = new TranslationTextComponent("gui.jei.category." + getRecipeGroup() + ".info.explosive",
 		smeltTimeSeconds);
 
 	Minecraft minecraft = Minecraft.getInstance();

@@ -19,9 +19,6 @@ import net.minecraft.util.ResourceLocation;
 @JeiPlugin
 public class BallistixJEIPlugin implements IModPlugin {
 
-    // public static final boolean isBallistixLoaded =
-    // ModList.get().isLoaded("ballistix");
-
     @Override
     public ResourceLocation getPluginUid() {
 	return new ResourceLocation(electrodynamics.api.References.ID, "balx_jei_plugin");
@@ -65,7 +62,6 @@ public class BallistixJEIPlugin implements IModPlugin {
 	for (ItemStack itemStack : ballistixInfoItems) {
 	    temp = itemStack.getItem().toString();
 	    registration.addIngredientInfo(itemStack, VanillaTypes.ITEM, "info.jei.item." + temp);
-	    // logger.info("Item name: " + temp);
 	}
 
 	ballistixInfoItems = BallistixPsuedoRecipes.BALLISTIX_ITEMS.get(2);
@@ -73,7 +69,6 @@ public class BallistixJEIPlugin implements IModPlugin {
 	for (ItemStack itemStack : ballistixInfoItems) {
 	    temp = itemStack.getItem().toString();
 	    registration.addIngredientInfo(itemStack, VanillaTypes.ITEM, "info.jei.item." + temp);
-	    // logger.info("Item name: " + temp);
 	}
 
     }

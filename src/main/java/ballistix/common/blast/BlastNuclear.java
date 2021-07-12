@@ -1,6 +1,7 @@
 package ballistix.common.blast;
 
 import java.util.Iterator;
+import java.util.List;
 
 import ballistix.common.blast.thread.ThreadRaycastBlast;
 import ballistix.common.block.SubtypeBlast;
@@ -10,13 +11,17 @@ import electrodynamics.common.packet.PacketSpawnSmokeParticle;
 import electrodynamics.prefab.utilities.object.Location;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.Explosion.Mode;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.network.NetworkDirection;
 
 public class BlastNuclear extends Blast implements IHasCustomRenderer {
@@ -106,6 +111,16 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 		if (thread.results.isEmpty()) {
 		    attackEntities((float) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2);
 		    return true;
+		}
+		if (ModList.get().isLoaded("nuclearscience")) {
+		    Location source = new Location(position);
+		    double range = Constants.EXPLOSIVE_NUCLEAR_SIZE * 4;
+		    AxisAlignedBB bb = AxisAlignedBB.withSizeAtOrigin(range, range, range);
+		    bb = bb.offset(new Vector3d(source.x(), source.y(), source.z()));
+		    List<LivingEntity> list = world.getEntitiesWithinAABB(LivingEntity.class, bb);
+		    for (LivingEntity living : list) {
+			nuclearscience.api.radiation.RadiationSystem.applyRadiation(living, source, 150000);
+		    }
 		}
 	    }
 	}

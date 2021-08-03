@@ -3,12 +3,18 @@ package ballistix.common.packet;
 import java.util.function.Supplier;
 
 import ballistix.common.tile.TileMissileSilo;
+import electrodynamics.api.tile.IPacketServerUpdateTile;
 import electrodynamics.prefab.utilities.object.Location;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 
+/**
+ * @author aurilisdev Will be removed and dependents will be updated to use
+ *         {@link IPacketServerUpdateTile}k
+ */
+@Deprecated
 public class PacketSetMissileData {
 
     private final BlockPos target;

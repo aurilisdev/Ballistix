@@ -46,7 +46,7 @@ public class WarheadRecipeCategory extends ElectrodynamicsRecipeCategory<PsuedoD
     private static String RECIPE_GROUP = "warhead_template";
     private static String GUI_TEXTURE = "textures/gui/jei/warhead_template_gui.png";
 
-    private static ItemStack INPUT_MACHINE = new ItemStack(ballistix.DeferredRegisters.blockMissileSilo);
+    public static ItemStack INPUT_MACHINE = new ItemStack(ballistix.DeferredRegisters.blockMissileSilo);
 
     private static IDrawableAnimated.StartDirection START_DIRECTION = IDrawableAnimated.StartDirection.LEFT;
     private LoadingCache<Integer, IDrawableAnimated> CACHED_ARROWS;

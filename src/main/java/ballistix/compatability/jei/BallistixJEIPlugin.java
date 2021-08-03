@@ -27,7 +27,7 @@ public class BallistixJEIPlugin implements IModPlugin {
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
 	// Warhead Template
-	registration.addRecipeCatalyst(new ItemStack(ballistix.DeferredRegisters.ITEM_MISSILELONGRANGE.get()), WarheadRecipeCategory.UID);
+	registration.addRecipeCatalyst(WarheadRecipeCategory.INPUT_MACHINE, WarheadRecipeCategory.UID);
     }
 
     @Override
@@ -36,7 +36,6 @@ public class BallistixJEIPlugin implements IModPlugin {
 
 	// Warhead Template
 	Set<PsuedoDO2ORecipe> warheadTemplateRecipes = new HashSet<>(BallistixPsuedoRecipes.WARHEAD_RECIPES);
-
 	registration.addRecipes(warheadTemplateRecipes, WarheadRecipeCategory.UID);
 
 	ballistixInfoTabs(registration);

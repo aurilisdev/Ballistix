@@ -98,7 +98,7 @@ public class TileMissileSilo extends GenericTileTicking implements IMultiblockTi
 		    }
 		    if (hasSignal) {
 			double dist = Math.sqrt(
-				Math.pow(pos.getX() - target.x(), 2) + Math.pow(pos.getY() - target.y(), 2) + Math.pow(pos.getZ() - target.x(), 2));
+				Math.pow(pos.getX() - target.x(), 2) + Math.pow(pos.getY() - target.y(), 2) + Math.pow(pos.getZ() - target.z(), 2));
 			if (range == 0 && dist < 3000 || range == 1 && dist < 10000 || range == 2) {
 			    EntityMissile missile = new EntityMissile(world);
 			    missile.setPosition(getPos().getX() + 1.0, getPos().getY(), getPos().getZ() + 1.0);

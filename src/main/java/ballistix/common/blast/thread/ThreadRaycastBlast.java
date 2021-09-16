@@ -44,6 +44,7 @@ public class ThreadRaycastBlast extends ThreadBlast {
     }
 
     @Override
+    @SuppressWarnings("java:S2184")
     public void run() {
 	int steps = (int) Math.ceil(Math.PI / Math.atan(1.0D / explosionRadius));
 	for (int phi_n = 0; phi_n < 2 * steps; phi_n++) {

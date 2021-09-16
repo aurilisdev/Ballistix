@@ -31,6 +31,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
     }
 
     @Override
+    @Deprecated
     public void doPreExplode() {
 	if (!world.isRemote) {
 	    thread = new ThreadRaycastBlast(world, position, (int) Constants.EXPLOSIVE_NUCLEAR_SIZE, (float) Constants.EXPLOSIVE_NUCLEAR_ENERGY,
@@ -71,12 +72,10 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 
 		    BlockState state = Blocks.AIR.getDefaultState();
 		    double dis = new Location(p.getX(), 0, p.getZ()).distance(new Location(position.getX(), 0, position.getZ()));
-		    if (world.rand.nextFloat() < 1 / 5.0) {
-			if (dis < 15) {
-			    BlockPos offset = p.offset(Direction.DOWN);
-			    if (!thread.results.contains(offset) && world.rand.nextFloat() < (15.0f - dis) / 15.0f) {
-				state = Blocks.FIRE.getDefaultState();
-			    }
+		    if (world.rand.nextFloat() < 1 / 5.0 && dis < 15) {
+			BlockPos offset = p.offset(Direction.DOWN);
+			if (!thread.results.contains(offset) && world.rand.nextFloat() < (15.0f - dis) / 15.0f) {
+			    state = Blocks.FIRE.getDefaultState();
 			}
 		    }
 		    world.getBlockState(p).getBlock().onExplosionDestroy(world, p, ex);

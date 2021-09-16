@@ -13,6 +13,7 @@ public class ThreadSimpleBlast extends ThreadBlast {
     }
 
     @Override
+    @SuppressWarnings("java:S2184")
     public void run() {
 	int explosionRadius = this.explosionRadius;
 	for (int i = -explosionRadius; i <= explosionRadius; i++) {

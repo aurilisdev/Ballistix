@@ -12,6 +12,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -45,6 +46,11 @@ public class EntityMissile extends Entity {
     protected void registerData() {
 	dataManager.register(TYPE, -1);
 	dataManager.register(RANGE, -1);
+    }
+
+    @Override
+    public AxisAlignedBB getRenderBoundingBox() {
+	return super.getRenderBoundingBox().expand(20, 20, 20);
     }
 
     @Override

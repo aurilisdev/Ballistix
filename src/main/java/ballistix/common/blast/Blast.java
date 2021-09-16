@@ -58,6 +58,7 @@ public abstract class Blast {
     public void doPostExplode() {
     }
 
+    @Deprecated
     public final void preExplode() {
 	PreBlastEvent evt = new PreBlastEvent(world, this);
 	MinecraftForge.EVENT_BUS.post(evt);
@@ -67,6 +68,7 @@ public abstract class Blast {
 	}
     }
 
+    @Deprecated
     public final boolean explode(int callcount) {
 	BlastEvent evt = new BlastEvent(world, this);
 	MinecraftForge.EVENT_BUS.post(evt);
@@ -76,6 +78,7 @@ public abstract class Blast {
 	return true;
     }
 
+    @Deprecated
     public final void postExplode() {
 	PostBlastEvent evt = new PostBlastEvent(world, this);
 	MinecraftForge.EVENT_BUS.post(evt);
@@ -85,6 +88,7 @@ public abstract class Blast {
 	}
     }
 
+    @SuppressWarnings("java:S1874")
     public void performExplosion() {
 	ConstructBlastEvent evt = new ConstructBlastEvent(world, this);
 	MinecraftForge.EVENT_BUS.post(evt);

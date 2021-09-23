@@ -17,7 +17,10 @@ public class ThreadSimpleBlast extends ThreadBlast {
     public void run() {
 	int explosionRadius = this.explosionRadius;
 	for (int i = -explosionRadius; i <= explosionRadius; i++) {
-	    for (int j = -explosionRadius; j <= explosionRadius; j++) {
+	    int smallest = position.getY() - explosionRadius < 0 ? -explosionRadius - (position.getY() - explosionRadius) : -explosionRadius;
+	    int largest = position.getY() + explosionRadius > 255 ? explosionRadius - (explosionRadius + position.getY() - 255) : explosionRadius;
+	    System.out.println(smallest);
+	    for (int j = smallest; j <= largest; j++) {
 		for (int k = -explosionRadius; k <= explosionRadius; k++) {
 		    int idistance = i * i + j * j + k * k;
 		    if (idistance <= explosionRadius * explosionRadius

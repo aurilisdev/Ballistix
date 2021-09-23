@@ -47,7 +47,6 @@ public class TileMissileSilo extends GenericTileTicking implements IMultiblockTi
     }
 
     protected void tickServer(ComponentTickable tickable) {
-
 	ComponentInventory inv = getComponent(ComponentType.Inventory);
 	ComponentPacketHandler packet = getComponent(ComponentType.PacketHandler);
 	if (tickable.getTicks() % 20 == 1) {

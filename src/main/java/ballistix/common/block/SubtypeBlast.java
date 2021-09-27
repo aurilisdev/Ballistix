@@ -29,7 +29,7 @@ public enum SubtypeBlast implements ISubtype {
     public final int fuse;
     public final boolean hasGrenade;
 
-    private SubtypeBlast(Class<?> blastClass, int fuse, boolean hasGrenade) {
+    SubtypeBlast(Class<?> blastClass, int fuse, boolean hasGrenade) {
 	this.blastClass = blastClass;
 	this.fuse = fuse;
 	this.hasGrenade = hasGrenade;

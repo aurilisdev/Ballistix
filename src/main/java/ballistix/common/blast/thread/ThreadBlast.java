@@ -8,7 +8,7 @@ import net.minecraft.world.World;
 
 public abstract class ThreadBlast extends Thread {
 
-    public final HashSet<BlockPos> results = new HashSet<>();
+    public HashSet<BlockPos> results = new HashSet<>();
 
     public final BlockPos position;
     public World world;

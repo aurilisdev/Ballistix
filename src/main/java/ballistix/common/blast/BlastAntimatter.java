@@ -54,7 +54,7 @@ public class BlastAntimatter extends Blast implements IHasCustomRenderer {
 		    }
 		    BlockPos p = new BlockPos(iterator.next());
 		    world.getBlockState(p).getBlock().onExplosionDestroy(world, p, ex);
-		    world.setBlockState(p, Blocks.AIR.getDefaultState(), 2 | 16 | 32);
+		    world.setBlockState(p.add(position), Blocks.AIR.getDefaultState(), 2 | 16 | 32);
 		    iterator.remove();
 		}
 		if (thread.results.isEmpty()) {

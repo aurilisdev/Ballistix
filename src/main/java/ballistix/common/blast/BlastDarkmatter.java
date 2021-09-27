@@ -31,7 +31,7 @@ public class BlastDarkmatter extends Blast {
     @Deprecated
     public void doPreExplode() {
 	if (!world.isRemote) {
-	    thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null);
+	    thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null, true);
 	    thread.start();
 	}
     }
@@ -63,7 +63,7 @@ public class BlastDarkmatter extends Blast {
 		    }
 		    BlockPos p = new BlockPos(iterator.next());
 		    world.getBlockState(p).getBlock().onExplosionDestroy(world, p, ex);
-		    world.setBlockState(p, Blocks.AIR.getDefaultState(), 2 | 16 | 32);
+		    world.setBlockState(p.add(position), Blocks.AIR.getDefaultState(), 2 | 16 | 32);
 		    iterator.remove();
 		}
 		if (thread.results.isEmpty()) {

@@ -4,11 +4,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import ballistix.common.blast.thread.ThreadRaycastBlast;
+import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.SubtypeBlast;
 import ballistix.common.settings.Constants;
 import electrodynamics.common.packet.NetworkHandler;
 import electrodynamics.common.packet.PacketSpawnSmokeParticle;
 import electrodynamics.prefab.utilities.object.Location;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.LivingEntity;
@@ -23,6 +25,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.network.NetworkDirection;
+import nuclearscience.DeferredRegisters;
 
 public class BlastNuclear extends Blast implements IHasCustomRenderer {
 
@@ -34,14 +37,18 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
     @Deprecated
     public void doPreExplode() {
 	if (!world.isRemote) {
-	    thread = new ThreadRaycastBlast(world, position, (int) Constants.EXPLOSIVE_NUCLEAR_SIZE, (float) Constants.EXPLOSIVE_NUCLEAR_ENERGY,
+	    threadRay = new ThreadRaycastBlast(world, position, (int) Constants.EXPLOSIVE_NUCLEAR_SIZE, (float) Constants.EXPLOSIVE_NUCLEAR_ENERGY,
 		    null);
-	    thread.start();
+	    threadSimple = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_NUCLEAR_SIZE, (float) Constants.EXPLOSIVE_NUCLEAR_ENERGY,
+		    null, true);
+	    threadRay.start();
+	    threadSimple.start();
 	}
 
     }
 
-    private ThreadRaycastBlast thread;
+    private ThreadRaycastBlast threadRay;
+    private ThreadSimpleBlast threadSimple;
     private int pertick = -1;
     private int particleHeight = 0;
 
@@ -53,17 +60,17 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
     @Override
     public boolean doExplode(int callCount) {
 	if (!world.isRemote) {
-	    if (thread == null) {
+	    if (threadRay == null) {
 		return true;
 	    }
 	    Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
 		    (float) Constants.EXPLOSIVE_NUCLEAR_SIZE, false, Mode.BREAK);
-	    if (thread.isComplete) {
+	    if (threadRay.isComplete) {
 		if (pertick == -1) {
-		    pertick = (int) (thread.results.size() / Constants.EXPLOSIVE_NUCLEAR_DURATION + 1);
+		    pertick = (int) (threadRay.results.size() / Constants.EXPLOSIVE_NUCLEAR_DURATION + 1);
 		}
 		int finished = pertick;
-		Iterator<BlockPos> iterator = thread.results.iterator();
+		Iterator<BlockPos> iterator = threadRay.results.iterator();
 		while (iterator.hasNext()) {
 		    if (finished-- < 0) {
 			break;
@@ -74,7 +81,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 		    double dis = new Location(p.getX(), 0, p.getZ()).distance(new Location(position.getX(), 0, position.getZ()));
 		    if (world.rand.nextFloat() < 1 / 5.0 && dis < 15) {
 			BlockPos offset = p.offset(Direction.DOWN);
-			if (!thread.results.contains(offset) && world.rand.nextFloat() < (15.0f - dis) / 15.0f) {
+			if (!threadRay.results.contains(offset) && world.rand.nextFloat() < (15.0f - dis) / 15.0f) {
 			    state = Blocks.FIRE.getDefaultState();
 			}
 		    }
@@ -107,7 +114,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 		    }
 		    particleHeight++;
 		}
-		if (thread.results.isEmpty()) {
+		if (threadRay.results.isEmpty()) {
 		    attackEntities((float) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2);
 		    return true;
 		}
@@ -120,6 +127,24 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 		    for (LivingEntity living : list) {
 			nuclearscience.api.radiation.RadiationSystem.applyRadiation(living, source, 150000);
 		    }
+		}
+	    }
+	    if (threadSimple.isComplete) {
+		if (pertick == -1) {
+		    pertick = (int) (threadSimple.results.size() * 1.5 / Constants.EXPLOSIVE_NUCLEAR_DURATION + 1);
+		}
+		int finished = pertick;
+		Iterator<BlockPos> iterator = threadSimple.results.iterator();
+		while (iterator.hasNext()) {
+		    if (finished-- < 0) {
+			break;
+		    }
+		    BlockPos p = new BlockPos(iterator.next());
+		    Block b = world.getBlockState(p).getBlock();
+		    if ((b == Blocks.GRASS || b == Blocks.DIRT) && world.rand.nextFloat() < 0.7) {
+			world.setBlockState(p.add(position), DeferredRegisters.blockRadioactiveSoil.getDefaultState(), 2 | 16 | 32);
+		    }
+		    iterator.remove();
 		}
 	    }
 	}

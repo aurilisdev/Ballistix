@@ -25,7 +25,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.network.NetworkDirection;
-import nuclearscience.DeferredRegisters;
 
 public class BlastNuclear extends Blast implements IHasCustomRenderer {
 
@@ -41,7 +40,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 		    null);
 	    threadSimple = new ThreadSimpleBlast(world, position, (int) (Constants.EXPLOSIVE_NUCLEAR_SIZE * 1.5),
 		    (float) Constants.EXPLOSIVE_NUCLEAR_ENERGY, null, true);
-	    threadSimple.strictnessAtEdges = 1.0;
+	    threadSimple.strictnessAtEdges = 1.7;
 	    threadRay.start();
 	    threadSimple.start();
 	}
@@ -132,29 +131,30 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 		    }
 		}
 	    }
-	    if (threadSimple.isComplete && rayDone) {
-		if (perticksimple == -1) {
-		    perticksimple = (int) (threadSimple.results.size() * 1.5 / Constants.EXPLOSIVE_NUCLEAR_DURATION + 1);
-		}
-		int finished = perticksimple;
-		Iterator<BlockPos> iterator = threadSimple.results.iterator();
-		while (iterator.hasNext()) {
-		    if (finished-- < 0) {
-			break;
+	    if (ModList.get().isLoaded("nuclearscience")) {
+		if (threadSimple.isComplete && rayDone) {
+		    if (perticksimple == -1) {
+			perticksimple = (int) (threadSimple.results.size() * 1.5 / Constants.EXPLOSIVE_NUCLEAR_DURATION + 1);
 		    }
-		    BlockPos p = new BlockPos(iterator.next()).add(position);
-		    BlockState state = world.getBlockState(p);
-		    Block block = state.getBlock();
-		    if ((block == Blocks.GRASS_BLOCK || block == Blocks.DIRT) && world.rand.nextFloat() < 0.7) {
-			world.setBlockState(p, DeferredRegisters.blockRadioactiveSoil.getDefaultState(), 2 | 16 | 32);
+		    int finished = perticksimple;
+		    Iterator<BlockPos> iterator = threadSimple.results.iterator();
+		    while (iterator.hasNext()) {
+			if (finished-- < 0) {
+			    break;
+			}
+			BlockPos p = new BlockPos(iterator.next()).add(position);
+			BlockState state = world.getBlockState(p);
+			Block block = state.getBlock();
+			if ((block == Blocks.GRASS_BLOCK || block == Blocks.DIRT) && world.rand.nextFloat() < 0.7) {
+			    world.setBlockState(p, nuclearscience.DeferredRegisters.blockRadioactiveSoil.getDefaultState(), 2 | 16 | 32);
+			}
+			iterator.remove();
 		    }
-		    iterator.remove();
-		}
-		if (threadSimple.results.isEmpty()) {
-		    return true;
+		    if (threadSimple.results.isEmpty()) {
+			return true;
+		    }
 		}
 	    }
-
 	}
 	return false;
     }

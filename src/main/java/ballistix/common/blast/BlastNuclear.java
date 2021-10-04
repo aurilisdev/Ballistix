@@ -39,8 +39,9 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 	if (!world.isRemote) {
 	    threadRay = new ThreadRaycastBlast(world, position, (int) Constants.EXPLOSIVE_NUCLEAR_SIZE, (float) Constants.EXPLOSIVE_NUCLEAR_ENERGY,
 		    null);
-	    threadSimple = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_NUCLEAR_SIZE, (float) Constants.EXPLOSIVE_NUCLEAR_ENERGY,
-		    null, true);
+	    threadSimple = new ThreadSimpleBlast(world, position, (int) (Constants.EXPLOSIVE_NUCLEAR_SIZE * 1.5),
+		    (float) Constants.EXPLOSIVE_NUCLEAR_ENERGY, null, true);
+	    threadSimple.strictnessAtEdges = 1.0;
 	    threadRay.start();
 	    threadSimple.start();
 	}
@@ -50,6 +51,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
     private ThreadRaycastBlast threadRay;
     private ThreadSimpleBlast threadSimple;
     private int pertick = -1;
+    private int perticksimple = -1;
     private int particleHeight = 0;
 
     @Override
@@ -65,7 +67,8 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 	    }
 	    Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
 		    (float) Constants.EXPLOSIVE_NUCLEAR_SIZE, false, Mode.BREAK);
-	    if (threadRay.isComplete) {
+	    boolean rayDone = false;
+	    if (threadRay.isComplete && !rayDone) {
 		if (pertick == -1) {
 		    pertick = (int) (threadRay.results.size() / Constants.EXPLOSIVE_NUCLEAR_DURATION + 1);
 		}
@@ -116,7 +119,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 		}
 		if (threadRay.results.isEmpty()) {
 		    attackEntities((float) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2);
-		    return true;
+		    rayDone = true;
 		}
 		if (ModList.get().isLoaded("nuclearscience")) {
 		    Location source = new Location(position);
@@ -129,24 +132,29 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 		    }
 		}
 	    }
-	    if (threadSimple.isComplete) {
-		if (pertick == -1) {
-		    pertick = (int) (threadSimple.results.size() * 1.5 / Constants.EXPLOSIVE_NUCLEAR_DURATION + 1);
+	    if (threadSimple.isComplete && rayDone) {
+		if (perticksimple == -1) {
+		    perticksimple = (int) (threadSimple.results.size() * 1.5 / Constants.EXPLOSIVE_NUCLEAR_DURATION + 1);
 		}
-		int finished = pertick;
+		int finished = perticksimple;
 		Iterator<BlockPos> iterator = threadSimple.results.iterator();
 		while (iterator.hasNext()) {
 		    if (finished-- < 0) {
 			break;
 		    }
-		    BlockPos p = new BlockPos(iterator.next());
-		    Block b = world.getBlockState(p).getBlock();
-		    if ((b == Blocks.GRASS || b == Blocks.DIRT) && world.rand.nextFloat() < 0.7) {
-			world.setBlockState(p.add(position), DeferredRegisters.blockRadioactiveSoil.getDefaultState(), 2 | 16 | 32);
+		    BlockPos p = new BlockPos(iterator.next()).add(position);
+		    BlockState state = world.getBlockState(p);
+		    Block block = state.getBlock();
+		    if ((block == Blocks.GRASS_BLOCK || block == Blocks.DIRT) && world.rand.nextFloat() < 0.7) {
+			world.setBlockState(p, DeferredRegisters.blockRadioactiveSoil.getDefaultState(), 2 | 16 | 32);
 		    }
 		    iterator.remove();
 		}
+		if (threadSimple.results.isEmpty()) {
+		    return true;
+		}
 	    }
+
 	}
 	return false;
     }

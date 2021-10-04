@@ -5,6 +5,8 @@ import java.util.Iterator;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.SubtypeBlast;
 import ballistix.common.settings.Constants;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
@@ -52,9 +54,15 @@ public class BlastAntimatter extends Blast implements IHasCustomRenderer {
 		    if (finished-- < 0) {
 			break;
 		    }
-		    BlockPos p = new BlockPos(iterator.next());
-		    world.getBlockState(p).getBlock().onExplosionDestroy(world, p, ex);
-		    world.setBlockState(p.add(position), Blocks.AIR.getDefaultState(), 2 | 16 | 32);
+		    BlockPos p = new BlockPos(iterator.next()).add(position);
+		    BlockState state = world.getBlockState(p);
+		    Block block = state.getBlock();
+
+		    if (state != Blocks.AIR.getDefaultState() && state != Blocks.VOID_AIR.getDefaultState()
+			    && state.getBlockHardness(world, p) >= 0) {
+			block.onExplosionDestroy(world, p, ex);
+			world.setBlockState(p, Blocks.AIR.getDefaultState(), 2 | 16 | 32);
+		    }
 		    iterator.remove();
 		}
 		if (thread.results.isEmpty()) {

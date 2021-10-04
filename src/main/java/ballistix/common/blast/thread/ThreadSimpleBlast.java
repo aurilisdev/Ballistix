@@ -16,6 +16,7 @@ public class ThreadSimpleBlast extends ThreadBlast {
 	super(world, position, range, energy, source);
 	this.useHashedResults = useHashedResults;
     }
+    public double strictnessAtEdges = 1.85;
 
     @Override
     @SuppressWarnings("java:S2184")
@@ -25,10 +26,10 @@ public class ThreadSimpleBlast extends ThreadBlast {
 	    HashSet<BlockPos> positions = new HashSet<>();
 	    for (int i = -explosionRadius; i <= explosionRadius; i++) {
 		for (int j = -explosionRadius; j <= explosionRadius; j++) {
-		    for (int k = -explosionRadius; k <= explosionRadius; k++) {
+		    for (int k = -explosionRadius; k <= explosionRadius; k++) {	
 			int idistance = i * i + j * j + k * k;
 			if (idistance <= explosionRadius * explosionRadius && world.rand.nextFloat()
-				* (explosionRadius * explosionRadius) < explosionRadius * explosionRadius * 1.85 - idistance) {
+				* (explosionRadius * explosionRadius) < explosionRadius * explosionRadius * strictnessAtEdges - idistance) {
 			    positions.add(useHashedResults ? new HashDistanceBlockPos(i, j, k, idistance) : new BlockPos(i, j, k));
 			}
 		    }

@@ -145,8 +145,12 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 			BlockPos p = new BlockPos(iterator.next()).add(position);
 			BlockState state = world.getBlockState(p);
 			Block block = state.getBlock();
-			if ((block == Blocks.GRASS_BLOCK || block == Blocks.DIRT) && world.rand.nextFloat() < 0.7) {
-			    world.setBlockState(p, nuclearscience.DeferredRegisters.blockRadioactiveSoil.getDefaultState(), 2 | 16 | 32);
+			if (block == Blocks.GRASS_BLOCK || block == Blocks.DIRT) {
+			    if (world.rand.nextFloat() < 0.7) {
+				world.setBlockState(p, nuclearscience.DeferredRegisters.blockRadioactiveSoil.getDefaultState(), 2 | 16 | 32);
+			    }
+			} else if (!state.isSolid()) {
+			    world.setBlockState(p, Blocks.AIR.getDefaultState(), 2 | 16 | 32);
 			}
 			iterator.remove();
 		    }

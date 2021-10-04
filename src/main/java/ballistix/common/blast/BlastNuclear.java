@@ -13,6 +13,7 @@ import electrodynamics.prefab.utilities.object.Location;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -149,7 +150,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 			    if (world.rand.nextFloat() < 0.7) {
 				world.setBlockState(p, nuclearscience.DeferredRegisters.blockRadioactiveSoil.getDefaultState(), 2 | 16 | 32);
 			    }
-			} else if (!state.isSolid()) {
+			} else if (state.getMaterial() == Material.LEAVES) {
 			    world.setBlockState(p, Blocks.AIR.getDefaultState(), 2 | 16 | 32);
 			}
 			iterator.remove();
@@ -161,6 +162,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 	    }
 	}
 	return false;
+
     }
 
     @Override

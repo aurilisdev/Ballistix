@@ -2,6 +2,8 @@ package ballistix.common.entity;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import ballistix.DeferredRegisters;
 import ballistix.api.damage.DamageSourceShrapnel;
 import net.minecraft.block.BlockState;
@@ -69,7 +71,7 @@ public class EntityShrapnel extends ThrowableEntity {
     }
 
     @Override
-    public void func_234612_a_(Entity entity, float pitch, float yaw, float par4, float force, float par6) {
+    public void func_234612_a_(@Nullable Entity entity, float pitch, float yaw, float par4, float force, float par6) {
 	float f = -MathHelper.sin(yaw * ((float) Math.PI / 180F)) * MathHelper.cos(pitch * ((float) Math.PI / 180F));
 	float f1 = -MathHelper.sin((pitch + par4) * ((float) Math.PI / 180F));
 	float f2 = MathHelper.cos(yaw * ((float) Math.PI / 180F)) * MathHelper.cos(pitch * ((float) Math.PI / 180F));

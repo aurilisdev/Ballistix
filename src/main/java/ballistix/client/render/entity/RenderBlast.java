@@ -56,18 +56,17 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 	    RenderSystem.multMatrix(matrixStackIn.getLast().getMatrix());
 	    matrixStackIn.rotate(Minecraft.getInstance().getRenderManager().getCameraOrientation());
 	    matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F));
-	    double pi = 3.141592;
 	    double di = 0.02;
 	    double dj = 0.04;
-	    double du = di * 2 * pi;
-	    double dv = dj * pi;
+	    double du = di * 2 * Math.PI;
+	    double dv = dj * Math.PI;
 	    float scale = (entityIn.ticksExisted - entityIn.ticksWhenCustomRender) / 2.0f;
 	    GL11.glScalef(scale, scale, scale);
 	    for (double i = 0; i < 1.0; i += di) {// horizonal
 		for (double j = 0; j < 1.0; j += dj) // vertical
 		{
-		    double u = i * 2 * pi; // 0 to 2pi
-		    double v = (j - 0.5) * pi; // -pi/2 to pi/2
+		    double u = i * 2 * Math.PI; // 0 to 2 Math.PI
+		    double v = (j - 0.5) * Math.PI; // - Math.PI/2 to Math.PI/2
 
 		    double[][] p = new double[][] { { Math.cos(v) * Math.cos(u), Math.cos(v) * Math.sin(u), Math.sin(v) },
 			    { Math.cos(v) * Math.cos(u + du), Math.cos(v) * Math.sin(u + du), Math.sin(v) },
@@ -93,7 +92,7 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 	    GlStateManager.enableLighting();
 	    GlStateManager.disableBlend();
 	    if (entityIn.ticksExisted - entityIn.ticksWhenCustomRender < 10) {
-		scale = (entityIn.ticksExisted - entityIn.ticksWhenCustomRender) * 5000;
+		scale = (entityIn.ticksExisted - entityIn.ticksWhenCustomRender) * 5000f;
 		matrixStackIn.scale(scale, scale, scale);
 		UtilitiesRendering.renderStar(entityIn.ticksExisted, 500, 1, 1, 1, 0.7f, true);
 	    }
@@ -109,19 +108,18 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 	    RenderSystem.multMatrix(matrixStackIn.getLast().getMatrix());
 	    matrixStackIn.rotate(Minecraft.getInstance().getRenderManager().getCameraOrientation());
 	    matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F));
-	    double pi = 3.141592;
 	    double di = 0.02;
 	    double dj = 0.04;
-	    double du = di * 2 * pi;
-	    double dv = dj * pi;
+	    double du = di * 2 * Math.PI;
+	    double dv = dj * Math.PI;
 	    float scale = (float) ((entityIn.ticksExisted - entityIn.ticksWhenCustomRender) / Constants.EXPLOSIVE_ANTIMATTER_DURATION
 		    * Constants.EXPLOSIVE_ANTIMATTER_RADIUS * 1.5);
 	    GL11.glScalef(scale, scale, scale);
 	    for (double i = 0; i < 1.0; i += di) {// horizonal
 		for (double j = 0; j < 1.0; j += dj) // vertical
 		{
-		    double u = i * 2 * pi; // 0 to 2pi
-		    double v = (j - 0.5) * pi; // -pi/2 to pi/2
+		    double u = i * 2 * Math.PI; // 0 to 2 Math.PI
+		    double v = (j - 0.5) * Math.PI; // - Math.PI/2 to Math.PI/2
 
 		    double[][] p = new double[][] { { Math.cos(v) * Math.cos(u), Math.cos(v) * Math.sin(u), Math.sin(v) },
 			    { Math.cos(v) * Math.cos(u + du), Math.cos(v) * Math.sin(u + du), Math.sin(v) },

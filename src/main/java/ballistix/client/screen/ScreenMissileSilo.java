@@ -21,11 +21,13 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 	components.add(new ScreenComponentTextInputBar(this, 122, 14).small());
 	components.add(new ScreenComponentTextInputBar(this, 122, 32).small());
 	components.add(new ScreenComponentTextInputBar(this, 122, 50).small());
+	components.add(new ScreenComponentTextInputBar(this, 122, 68).small());
     }
 
     private TextFieldWidget xCoordField;
     private TextFieldWidget yCoordField;
     private TextFieldWidget zCoordField;
+    private TextFieldWidget frequencyField;
 
     @Override
     public void tick() {
@@ -33,6 +35,7 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 	xCoordField.tick();
 	yCoordField.tick();
 	zCoordField.tick();
+	frequencyField.tick();
     }
 
     @Override
@@ -45,38 +48,57 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 	minecraft.keyboardListener.enableRepeatEvents(true);
 	int i = (width - xSize) / 2;
 	int j = (height - ySize) / 2;
-	xCoordField = new TextFieldWidget(font, i + 127, j + 18, 46, 13, new TranslationTextComponent("container.missilesilo.xCoord"));
+	xCoordField = new TextFieldWidget(font, i + 127, j + 18, 46, 13,
+		new TranslationTextComponent("container.missilesilo.xCoord"));
 	xCoordField.setTextColor(-1);
 	xCoordField.setDisabledTextColour(-1);
 	xCoordField.setEnableBackgroundDrawing(false);
 	xCoordField.setMaxStringLength(6);
 	xCoordField.setResponder(this::setX);
 
-	yCoordField = new TextFieldWidget(font, i + 127, j + 18 + 18, 46, 13, new TranslationTextComponent("container.missilesilo.yCoord"));
+	yCoordField = new TextFieldWidget(font, i + 127, j + 18 + 18, 46, 13,
+		new TranslationTextComponent("container.missilesilo.yCoord"));
 	yCoordField.setTextColor(-1);
 	yCoordField.setDisabledTextColour(-1);
 	yCoordField.setEnableBackgroundDrawing(false);
 	yCoordField.setMaxStringLength(6);
 	yCoordField.setResponder(this::setY);
 
-	zCoordField = new TextFieldWidget(font, i + 127, j + 18 + 18 * 2, 46, 13, new TranslationTextComponent("container.missilesilo.zCoord"));
+	zCoordField = new TextFieldWidget(font, i + 127, j + 18 + 18 * 2, 46, 13,
+		new TranslationTextComponent("container.missilesilo.zCoord"));
 	zCoordField.setTextColor(-1);
 	zCoordField.setDisabledTextColour(-1);
 	zCoordField.setEnableBackgroundDrawing(false);
 	zCoordField.setMaxStringLength(6);
 	zCoordField.setResponder(this::setZ);
+	frequencyField = new TextFieldWidget(font, i + 127, j + 18 + 18 * 3, 46, 13,
+		new TranslationTextComponent("container.missilesilo.frequency"));
+	frequencyField.setTextColor(-1);
+	zCoordField.setDisabledTextColour(-1);
+	frequencyField.setEnableBackgroundDrawing(false);
+	frequencyField.setMaxStringLength(6);
+	frequencyField.setResponder(this::setFrequency);
 	children.add(xCoordField);
 	children.add(yCoordField);
 	children.add(zCoordField);
-	setFocusedDefault(zCoordField);
+	children.add(frequencyField);
+	setFocusedDefault(frequencyField);
     }
 
     private boolean needsUpdate = true;
 
     private void setCoord(String coord) {
 	if (!coord.isEmpty()) {
-	    container.setCoord(xCoordField.getText(), yCoordField.getText(), zCoordField.getText());
+	    container.setCoord(xCoordField.getText(), yCoordField.getText(), zCoordField.getText(),
+		    frequencyField.getText());
 	}
+    }
+
+    private void setFrequency(String val) {
+	frequencyField.setFocused2(true);
+	xCoordField.setFocused2(false);
+	yCoordField.setFocused2(false);
+	zCoordField.setFocused2(false);
     }
 
     private void setX(String val) {
@@ -105,10 +127,12 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 	String s = xCoordField.getText();
 	String s1 = yCoordField.getText();
 	String s2 = zCoordField.getText();
+	String s3 = frequencyField.getText();
 	init(minecraft, width, height);
 	xCoordField.setText(s);
 	yCoordField.setText(s1);
 	zCoordField.setText(s2);
+	frequencyField.setText(s3);
     }
 
     @Override
@@ -127,21 +151,23 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 		xCoordField.setText("" + silo.target.intX());
 		yCoordField.setText("" + silo.target.intY());
 		zCoordField.setText("" + silo.target.intZ());
+		frequencyField.setText("" + silo.frequency);
 	    }
 	}
 	xCoordField.render(matrixStack, mouseX, mouseY, partialTicks);
 	yCoordField.render(matrixStack, mouseX, mouseY, partialTicks);
 	zCoordField.render(matrixStack, mouseX, mouseY, partialTicks);
+	frequencyField.render(matrixStack, mouseX, mouseY, partialTicks);
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
 	super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
 	font.func_243248_b(matrixStack, title, titleX, titleY, 4210752);
-	font.func_243248_b(matrixStack, new TranslationTextComponent("gui.missilesilo.missile"), playerInventoryTitleX, playerInventoryTitleY - 55.0f,
-		4210752);
-	font.func_243248_b(matrixStack, new TranslationTextComponent("gui.missilesilo.explosive"), playerInventoryTitleX,
-		playerInventoryTitleY - 20.0f, 4210752);
+	font.func_243248_b(matrixStack, new TranslationTextComponent("gui.missilesilo.missile"), playerInventoryTitleX,
+		playerInventoryTitleY - 55.0f, 4210752);
+	font.func_243248_b(matrixStack, new TranslationTextComponent("gui.missilesilo.explosive"),
+		playerInventoryTitleX, playerInventoryTitleY - 20.0f, 4210752);
     }
 
 }

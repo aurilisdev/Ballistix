@@ -33,16 +33,20 @@ public class TileMissileSilo extends GenericTileTicking implements IMultiblockTi
     protected CachedTileOutput output2;
     public int range = -1;
     private int cooldown = 100;
+    public int frequency = -1;
     public Location target;
 
     public TileMissileSilo() {
 	super(DeferredRegisters.TILE_MISSILESILO.get());
 	addComponent(new ComponentTickable().tickServer(this::tickServer));
-	addComponent(new ComponentInventory(this).size(2).faceSlots(Direction.UP, 0, 1).valid(this::isItemValidForSlot));
-	addComponent(new ComponentPacketHandler().customPacketWriter(this::writePacket).customPacketReader(this::readPacket)
-		.guiPacketReader(this::readPacket).guiPacketWriter(this::writePacket));
+	addComponent(
+		new ComponentInventory(this).size(2).faceSlots(Direction.UP, 0, 1).valid(this::isItemValidForSlot));
+	addComponent(
+		new ComponentPacketHandler().customPacketWriter(this::writePacket).customPacketReader(this::readPacket)
+			.guiPacketReader(this::readPacket).guiPacketWriter(this::writePacket));
 	addComponent(new ComponentContainerProvider("container.missilesilo")
-		.createMenu((id, player) -> new ContainerMissileSilo(id, player, getComponent(ComponentType.Inventory), getCoordsArray())));
+		.createMenu((id, player) -> new ContainerMissileSilo(id, player, getComponent(ComponentType.Inventory),
+			getCoordsArray())));
 
     }
 
@@ -96,8 +100,8 @@ public class TileMissileSilo extends GenericTileTicking implements IMultiblockTi
 			}
 		    }
 		    if (hasSignal) {
-			double dist = Math.sqrt(
-				Math.pow(pos.getX() - target.x(), 2) + Math.pow(pos.getY() - target.y(), 2) + Math.pow(pos.getZ() - target.z(), 2));
+			double dist = Math.sqrt(Math.pow(pos.getX() - target.x(), 2)
+				+ Math.pow(pos.getY() - target.y(), 2) + Math.pow(pos.getZ() - target.z(), 2));
 			if (range == 0 && dist < 3000 || range == 1 && dist < 10000 || range == 2) {
 			    EntityMissile missile = new EntityMissile(world);
 			    missile.setPosition(getPos().getX() + 1.0, getPos().getY(), getPos().getZ() + 1.0);
@@ -118,10 +122,12 @@ public class TileMissileSilo extends GenericTileTicking implements IMultiblockTi
     protected void readPacket(CompoundNBT nbt) {
 	range = nbt.getInt("range");
 	target = Location.readFromNBT(nbt, "target");
+	frequency = nbt.getInt("frequency");
     }
 
     protected void writePacket(CompoundNBT tag) {
 	tag.putInt("range", range);
+	tag.putInt("frequency", frequency);
 	if (target != null) {
 	    target.writeToNBT(tag, "target");
 	}
@@ -149,7 +155,8 @@ public class TileMissileSilo extends GenericTileTicking implements IMultiblockTi
 		}
 	    }
 	} else if (index == 0) {
-	    return it == DeferredRegisters.ITEM_MISSILECLOSERANGE.get() || it == DeferredRegisters.ITEM_MISSILELONGRANGE.get()
+	    return it == DeferredRegisters.ITEM_MISSILECLOSERANGE.get()
+		    || it == DeferredRegisters.ITEM_MISSILELONGRANGE.get()
 		    || it == DeferredRegisters.ITEM_MISSILEMEDIUMRANGE.get();
 	}
 	return false;

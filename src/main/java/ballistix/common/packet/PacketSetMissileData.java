@@ -19,10 +19,12 @@ public class PacketSetMissileData {
 
     private final BlockPos target;
     private final BlockPos pos;
+    private final int frequency;
 
-    public PacketSetMissileData(BlockPos pos, BlockPos target) {
+    public PacketSetMissileData(BlockPos pos, BlockPos target, Integer frequency) {
 	this.pos = pos;
 	this.target = target;
+	this.frequency = frequency;
     }
 
     public static void handle(PacketSetMissileData message, Supplier<Context> context) {
@@ -33,6 +35,7 @@ public class PacketSetMissileData {
 		TileMissileSilo tile = (TileMissileSilo) world.getTileEntity(message.pos);
 		if (tile != null) {
 		    tile.target = new Location(message.target);
+		    tile.frequency = message.frequency;
 		}
 	    }
 	});
@@ -42,9 +45,10 @@ public class PacketSetMissileData {
     public static void encode(PacketSetMissileData pkt, PacketBuffer buf) {
 	buf.writeBlockPos(pkt.pos);
 	buf.writeBlockPos(pkt.target);
+	buf.writeInt(pkt.frequency);
     }
 
     public static PacketSetMissileData decode(PacketBuffer buf) {
-	return new PacketSetMissileData(buf.readBlockPos(), buf.readBlockPos());
+	return new PacketSetMissileData(buf.readBlockPos(), buf.readBlockPos(), buf.readInt());
     }
 }

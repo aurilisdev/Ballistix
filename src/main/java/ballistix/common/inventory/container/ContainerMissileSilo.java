@@ -53,7 +53,7 @@ public class ContainerMissileSilo extends GenericContainer<TileMissileSilo> {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public void setCoord(String valX, String valY, String valZ) {
+    public void setCoord(String valX, String valY, String valZ, String valFrequency) {
 	Integer triedX = 0;
 	try {
 	    triedX = Integer.parseInt(valX);
@@ -72,8 +72,15 @@ public class ContainerMissileSilo extends GenericContainer<TileMissileSilo> {
 	} catch (Exception e) {
 	    // Filler
 	}
+	Integer frequency = -1;
+	try {
+	    frequency = Integer.parseInt(valFrequency);
+	} catch (Exception e) {
+	    // Filler
+	}
 	if (getHostFromIntArray() != null) {
-	    NetworkHandler.CHANNEL.sendToServer(new PacketSetMissileData(getHostFromIntArray().getPos(), new BlockPos(triedX, triedY, triedZ)));
+	    NetworkHandler.CHANNEL.sendToServer(new PacketSetMissileData(getHostFromIntArray().getPos(),
+		    new BlockPos(triedX, triedY, triedZ), frequency));
 	}
     }
 

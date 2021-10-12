@@ -27,8 +27,7 @@ import net.minecraft.world.server.ServerWorld;
 public class ItemRadarGun extends ItemElectric {
 
     public ItemRadarGun() {
-	super((ElectricItemProperties) new ElectricItemProperties().capacity(10000)
-		.extract(TransferPack.joulesVoltage(500, 120)).maxStackSize(1));
+	super((ElectricItemProperties) new ElectricItemProperties().capacity(10000).extract(TransferPack.joulesVoltage(500, 120)).maxStackSize(1));
     }
 
     @Override
@@ -95,8 +94,7 @@ public class ItemRadarGun extends ItemElectric {
 	    int y = nbt.getInt("yCoord");
 	    int z = nbt.getInt("zCoord");
 	    String world = nbt.getString("world");
-	    tooltip.add(
-		    new TranslationTextComponent("tooltip.radargun.linked", world + ", " + x + ", " + y + ", " + z));
+	    tooltip.add(new TranslationTextComponent("tooltip.radargun.linked", world + ", " + x + ", " + y + ", " + z));
 	} else {
 	    tooltip.add(new TranslationTextComponent("tooltip.radargun.notag"));
 	}

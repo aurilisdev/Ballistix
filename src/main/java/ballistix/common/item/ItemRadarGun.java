@@ -13,6 +13,7 @@ import electrodynamics.prefab.utilities.object.TransferPack;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
@@ -57,11 +58,14 @@ public class ItemRadarGun extends ItemElectric {
     public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
 	Location trace = UtilitiesMath.getRaytracedBlock(playerIn);
 	if (trace != null) {
-	    CompoundNBT nbt = playerIn.getActiveItemStack().getOrCreateTag();
+	    CompoundNBT nbt = playerIn.getItemStackFromSlot(handIn == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND)
+		    .getOrCreateTag();
 	    nbt.putInt("xCoord", trace.intX());
 	    nbt.putInt("yCoord", trace.intY());
 	    nbt.putInt("zCoord", trace.intZ());
 	    nbt.putString("world", worldIn.getDimensionKey().getLocation().getPath());
+	    extractPower(playerIn.getItemStackFromSlot(handIn == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND), 150,
+		    false);
 	}
 	return super.onItemRightClick(worldIn, playerIn, handIn);
     }
@@ -81,7 +85,7 @@ public class ItemRadarGun extends ItemElectric {
 	Location trace = UtilitiesMath.getRaytracedBlock(entityIn);
 	if (!worldIn.isRemote && entityIn instanceof PlayerEntity) {
 	    PlayerEntity player = (PlayerEntity) entityIn;
-	    if (isSelected) {
+	    if (isSelected && trace != null) {
 		player.sendStatusMessage(new TranslationTextComponent("message.radargun.text", trace.toString()), true);
 	    }
 	}

@@ -2,6 +2,7 @@ package ballistix.common.item;
 
 import java.util.List;
 
+import ballistix.References;
 import ballistix.common.tile.TileMissileSilo;
 import electrodynamics.common.tile.TileMultiSubnode;
 import electrodynamics.prefab.item.ElectricItemProperties;
@@ -27,7 +28,8 @@ import net.minecraft.world.server.ServerWorld;
 public class ItemRadarGun extends ItemElectric {
 
     public ItemRadarGun() {
-	super((ElectricItemProperties) new ElectricItemProperties().capacity(10000).extract(TransferPack.joulesVoltage(500, 120)).maxStackSize(1));
+	super((ElectricItemProperties) new ElectricItemProperties().capacity(10000).extract(TransferPack.joulesVoltage(500, 120)).maxStackSize(1)
+		.group(References.BALLISTIXTAB));
     }
 
     @Override

@@ -7,6 +7,7 @@ import ballistix.common.block.BlockExplosive;
 import ballistix.common.block.BlockMissileSilo;
 import ballistix.common.entity.EntityMissile;
 import ballistix.common.inventory.container.ContainerMissileSilo;
+import ballistix.common.network.SiloRegistry;
 import electrodynamics.common.blockitem.BlockItemDescriptable;
 import electrodynamics.common.multiblock.IMultiblockTileNode;
 import electrodynamics.common.multiblock.Subnode;
@@ -97,29 +98,39 @@ public class TileMissileSilo extends GenericTileTicking implements IMultiblockTi
 			}
 		    }
 		    if (hasSignal) {
-			double dist = Math.sqrt(
-				Math.pow(pos.getX() - target.x(), 2) + Math.pow(pos.getY() - target.y(), 2) + Math.pow(pos.getZ() - target.z(), 2));
-			if (range == 0 && dist < 3000 || range == 1 && dist < 10000 || range == 2) {
-			    EntityMissile missile = new EntityMissile(world);
-			    missile.setPosition(getPos().getX() + 1.0, getPos().getY(), getPos().getZ() + 1.0);
-			    missile.range = range;
-			    missile.target = target.toBlockPos();
-			    missile.blastOrdinal = ((BlockExplosive) des.getBlock()).explosive.ordinal();
-			    exp.shrink(1);
-			    it.shrink(1);
-			    world.addEntity(missile);
-			}
-			cooldown = 100;
+			launch();
 		    }
 		}
 	    }
 	}
     }
 
+    public void launch() {
+	ComponentInventory inv = getComponent(ComponentType.Inventory);
+	ItemStack exp = inv.getStackInSlot(1);
+	ItemStack it = inv.getStackInSlot(0);
+	if (exp.getItem() instanceof BlockItemDescriptable) {
+	    BlockItemDescriptable des = (BlockItemDescriptable) exp.getItem();
+	    double dist = Math
+		    .sqrt(Math.pow(pos.getX() - target.x(), 2) + Math.pow(pos.getY() - target.y(), 2) + Math.pow(pos.getZ() - target.z(), 2));
+	    if (range == 0 && dist < 3000 || range == 1 && dist < 10000 || range == 2) {
+		EntityMissile missile = new EntityMissile(world);
+		missile.setPosition(getPos().getX() + 1.0, getPos().getY(), getPos().getZ() + 1.0);
+		missile.range = range;
+		missile.target = target.toBlockPos();
+		missile.blastOrdinal = ((BlockExplosive) des.getBlock()).explosive.ordinal();
+		exp.shrink(1);
+		it.shrink(1);
+		world.addEntity(missile);
+	    }
+	    cooldown = 100;
+	}
+    }
+
     protected void readPacket(CompoundNBT nbt) {
 	range = nbt.getInt("range");
 	target = Location.readFromNBT(nbt, "target");
-	frequency = nbt.getInt("frequency");
+	setFrequency(nbt.getInt("frequency"));
     }
 
     protected void writePacket(CompoundNBT tag) {
@@ -156,6 +167,18 @@ public class TileMissileSilo extends GenericTileTicking implements IMultiblockTi
 		    || it == DeferredRegisters.ITEM_MISSILEMEDIUMRANGE.get();
 	}
 	return false;
+    }
+
+    @Override
+    public void remove() {
+	super.remove();
+	SiloRegistry.unregisterSilo(this);
+    }
+
+    public void setFrequency(int frequency) {
+	SiloRegistry.unregisterSilo(this);
+	this.frequency = frequency;
+	SiloRegistry.registerSilo(this);
     }
 
     @Override

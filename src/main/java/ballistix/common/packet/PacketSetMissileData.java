@@ -35,7 +35,7 @@ public class PacketSetMissileData {
 		TileMissileSilo tile = (TileMissileSilo) world.getTileEntity(message.pos);
 		if (tile != null) {
 		    tile.target = new Location(message.target);
-		    tile.frequency = message.frequency;
+		    tile.setFrequency(message.frequency);
 		}
 	    }
 	});

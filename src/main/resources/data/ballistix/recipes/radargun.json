@@ -1,0 +1,26 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"gcs",
+		" bs",
+		"  s"
+	],
+	"key": {
+		"c": {
+			"tag": "forge:circuits/basic"
+		},
+		"g": {
+			"tag": "forge:glass"
+		},
+		"b": {
+			"item": "minecraft:stone_button"
+		},
+		"s": {
+			"tag": "forge:ingots/steel"
+		}
+	},
+	"result": {
+		"item": "ballistix:radargun",
+		"count": 1
+	}
+}

@@ -45,13 +45,13 @@ public class BlastDarkmatter extends Blast {
     @Override
     public boolean doExplode(int callCount) {
 	if (!world.isRemote) {
+	    hasStarted = true;
 	    if (thread == null) {
 		return true;
 	    }
 	    Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
 		    (float) Constants.EXPLOSIVE_DARKMATTER_RADIUS, false, Mode.BREAK);
 	    if (thread.isComplete) {
-		hasStarted = true;
 		if (callAtStart == -1) {
 		    callAtStart = callCount;
 		}

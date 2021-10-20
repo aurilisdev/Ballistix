@@ -36,6 +36,7 @@ public class TileMissileSilo extends GenericTileTicking implements IMultiblockTi
     private int cooldown = 100;
     public int frequency = -1;
     public Location target;
+    public boolean shouldLaunch;
 
     public TileMissileSilo() {
 	super(DeferredRegisters.TILE_MISSILESILO.get());
@@ -79,7 +80,7 @@ public class TileMissileSilo extends GenericTileTicking implements IMultiblockTi
 	    packet.sendCustomPacket();
 	}
 	cooldown--;
-	if ( cooldown < 0 && world.getWorldInfo().getDayTime() % 20 == 0) {
+	if (cooldown < 0 && world.getWorldInfo().getDayTime() % 20 == 0) {
 	    ItemStack exp = inv.getStackInSlot(1);
 	    if (exp.getItem() instanceof BlockItemDescriptable) {
 		BlockItemDescriptable des = (BlockItemDescriptable) exp.getItem();
@@ -97,15 +98,16 @@ public class TileMissileSilo extends GenericTileTicking implements IMultiblockTi
 			    }
 			}
 		    }
-		    if (hasSignal) {
+		    if (hasSignal || shouldLaunch) {
 			launch();
+			shouldLaunch = false;
 		    }
 		}
 	    }
 	}
     }
 
-    public void launch() {
+    private void launch() {
 	ComponentInventory inv = getComponent(ComponentType.Inventory);
 	ItemStack exp = inv.getStackInSlot(1);
 	ItemStack it = inv.getStackInSlot(0);
@@ -176,9 +178,13 @@ public class TileMissileSilo extends GenericTileTicking implements IMultiblockTi
     }
 
     public void setFrequency(int frequency) {
-	SiloRegistry.unregisterSilo(this);
-	this.frequency = frequency;
-	SiloRegistry.registerSilo(this);
+	if (!world.isRemote) {
+	    SiloRegistry.unregisterSilo(this);
+	    this.frequency = frequency;
+	    SiloRegistry.registerSilo(this);
+	} else {
+	    this.frequency = frequency;
+	}
     }
 
     @Override

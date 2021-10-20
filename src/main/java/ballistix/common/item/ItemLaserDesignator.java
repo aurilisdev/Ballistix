@@ -57,14 +57,15 @@ public class ItemLaserDesignator extends ItemElectric {
 	if (!worldIn.isRemote) {
 	    Location trace = UtilitiesMath.getRaytracedBlock(playerIn);
 	    if (trace != null) {
-		CompoundNBT nbt = playerIn.getItemStackFromSlot(handIn == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND)
+		CompoundNBT nbt = playerIn
+			.getItemStackFromSlot(handIn == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND)
 			.getOrCreateTag();
 		if (nbt.contains("freq")) {
 		    int freq = nbt.getInt("freq");
 		    if (freq != 0) {
 			for (TileMissileSilo silo : SiloRegistry.getSilos(freq)) {
 			    silo.target = new Location(trace);
-			    silo.launch();
+			    silo.shouldLaunch = true;
 			}
 		    }
 		}

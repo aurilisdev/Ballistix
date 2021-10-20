@@ -15,6 +15,7 @@ public class BlastIncendiary extends Blast {
 
     @Override
     public boolean doExplode(int callCount) {
+	hasStarted = true;
 	if (!world.isRemote) {
 	    int radius = (int) Constants.EXPLOSIVE_INCENDIARY_RADIUS;
 	    for (int x = -radius; x <= radius; x++) {

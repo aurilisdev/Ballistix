@@ -69,6 +69,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 		    (float) Constants.EXPLOSIVE_NUCLEAR_SIZE, false, Mode.BREAK);
 	    boolean rayDone = false;
 	    if (threadRay.isComplete && !rayDone) {
+		hasStarted = true;
 		if (pertick == -1) {
 		    pertick = (int) (threadRay.results.size() / Constants.EXPLOSIVE_NUCLEAR_DURATION + 1);
 		}

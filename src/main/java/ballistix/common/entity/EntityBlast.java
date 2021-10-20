@@ -102,4 +102,8 @@ public class EntityBlast extends Entity {
     public IPacket<?> createSpawnPacket() {
 	return NetworkHooks.getEntitySpawningPacket(this);
     }
+
+    public Blast getBlast() {
+	return blast;
+    }
 }

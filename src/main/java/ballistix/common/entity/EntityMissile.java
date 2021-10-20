@@ -20,10 +20,15 @@ import net.minecraftforge.fml.network.NetworkHooks;
 public class EntityMissile extends Entity {
     private static final DataParameter<Integer> TYPE = EntityDataManager.createKey(EntityMissile.class, DataSerializers.VARINT);
     private static final DataParameter<Integer> RANGE = EntityDataManager.createKey(EntityMissile.class, DataSerializers.VARINT);
+    private static final DataParameter<Integer> ISSTUCK = EntityDataManager.createKey(EntityMissile.class, DataSerializers.VARINT);
     public BlockPos target;
     public int blastOrdinal = -1;
     public int range = -1;
     public boolean isItem = false;
+    private EntityBlast blastEntity = null;
+    private float oldRotationPitch = 0;
+    private float oldRotationYaw = 0;
+    private boolean isStuck = false;
 
     public EntityMissile(EntityType<? extends EntityMissile> type, World worldIn) {
 	super(type, worldIn);
@@ -46,6 +51,7 @@ public class EntityMissile extends Entity {
     protected void registerData() {
 	dataManager.register(TYPE, -1);
 	dataManager.register(RANGE, -1);
+	dataManager.register(ISSTUCK, -1);
     }
 
     @Override
@@ -55,60 +61,76 @@ public class EntityMissile extends Entity {
 
     @Override
     public void tick() {
-	if (getMotion().length() > 0) {
-	    rotationPitch = (float) (Math
-		    .atan(getMotion().getY() / Math.sqrt(getMotion().getX() * getMotion().getX() + getMotion().getZ() * getMotion().getZ())) * 180.0D
-		    / Math.PI);
-	    rotationYaw = (float) (Math.atan2(getMotion().getX(), getMotion().getZ()) * 180.0D / Math.PI);
-	} else {
-	    rotationPitch = rotationYaw = 90;
-	}
-	if (ticksExisted < 10 && !isItem) {
-	    setPosition(getPosX() + getMotion().x, getPosY() + getMotion().y, getPosZ() + getMotion().z);
-	} else {
-	    move(MoverType.SELF, getMotion());
-	}
-	if (!world.isRemote) {
-	    dataManager.set(TYPE, blastOrdinal);
-	    dataManager.set(RANGE, range);
-	} else {
-	    blastOrdinal = dataManager.get(TYPE);
-	    range = dataManager.get(RANGE);
-	}
-	if (!world.isRemote) {
-	    if (onGround || collidedHorizontally || collidedVertically
-		    || !isItem && target != null && getPosY() < target.getY() && getMotion().getY() < 0) {
+	if (isStuck) {
+	    if (!world.isRemote && blastEntity.getBlast().hasStarted) {
 		setDead();
-		if (blastOrdinal != -1) {
-		    SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
-		    Blast b = Blast.createFromSubtype(explosive, world, getPosition());
-		    if (b != null) {
-			b.performExplosion();
+	    }
+	    rotationYaw = oldRotationYaw;
+	    rotationPitch = oldRotationPitch;
+	    return;
+	}
+	if (blastEntity == null) {
+	    if (getMotion().length() > 0) {
+		rotationPitch = (float) (Math
+			.atan(getMotion().getY() / Math.sqrt(getMotion().getX() * getMotion().getX() + getMotion().getZ() * getMotion().getZ()))
+			* 180.0D / Math.PI);
+		rotationYaw = (float) (Math.atan2(getMotion().getX(), getMotion().getZ()) * 180.0D / Math.PI);
+	    } else {
+		rotationPitch = rotationYaw = 90;
+	    }
+	    if (ticksExisted < 10 && !isItem) {
+		setPosition(getPosX() + getMotion().x, getPosY() + getMotion().y, getPosZ() + getMotion().z);
+	    } else {
+		move(MoverType.SELF, getMotion());
+	    }
+	    if (!world.isRemote) {
+		if (onGround || collidedHorizontally || collidedVertically
+			|| !isItem && target != null && getPosY() < target.getY() && getMotion().getY() < 0) {
+		    if (blastOrdinal != -1) {
+			SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
+			Blast b = Blast.createFromSubtype(explosive, world, getPosition());
+			if (b != null) {
+			    blastEntity = b.performExplosion();
+			    if (blastEntity == null) {
+				setDead();
+			    } else {
+				isStuck = true;
+			    }
+			}
+		    }
+		}
+		if (!isItem && getPosY() > 500) {
+		    if (target == null) {
+			setDead();
+		    } else {
+			setPosition(target.getX(), 499, target.getZ());
+			setMotion(0, -3f, 0);
 		    }
 		}
 	    }
-	    if (!isItem && getPosY() > 500) {
-		if (target == null) {
-		    setDead();
-		} else {
-		    setPosition(target.getX(), 499, target.getZ());
-		    setMotion(0, -3f, 0);
-		}
+	    if (!world.isRemote) {
+		dataManager.set(TYPE, blastOrdinal);
+		dataManager.set(RANGE, range);
+		dataManager.set(ISSTUCK, isStuck ? 999 : -1);
+	    } else {
+		blastOrdinal = dataManager.get(TYPE);
+		range = dataManager.get(RANGE);
+		isStuck = dataManager.get(ISSTUCK) > 0;
 	    }
-	}
-	if (!isItem && target != null && getMotion().y < 3 && getMotion().y >= 0) {
-	    setMotion(getMotion().add(0, 0.02, 0));
-	}
-	for (int i = 0; i < 5; i++) {
-	    float str = world.rand.nextFloat() * 0.25f;
-	    float ranX = str * (world.rand.nextFloat() - 0.5f);
-	    float ranY = str * (world.rand.nextFloat() - 0.5f);
-	    float ranZ = str * (world.rand.nextFloat() - 0.5f);
-	    float x = (float) (getPosX() - getSize(getPose()).width / 1.0f);
-	    float y = (float) (getPosY() + getSize(getPose()).height / 1.0f);
-	    float z = (float) (getPosZ() - getSize(getPose()).width / 1.0f);
-	    world.addParticle(ParticleTypes.LARGE_SMOKE, x + ranX, y + ranY, z + ranZ, -getMotion().x + ranX, -getMotion().y - 0.075f + ranY,
-		    -getMotion().z + ranZ);
+	    if (!isItem && target != null && getMotion().y < 3 && getMotion().y >= 0) {
+		setMotion(getMotion().add(0, 0.02, 0));
+	    }
+	    for (int i = 0; i < 5; i++) {
+		float str = world.rand.nextFloat() * 0.25f;
+		float ranX = str * (world.rand.nextFloat() - 0.5f);
+		float ranY = str * (world.rand.nextFloat() - 0.5f);
+		float ranZ = str * (world.rand.nextFloat() - 0.5f);
+		float x = (float) (getPosX() - getSize(getPose()).width / 1.0f);
+		float y = (float) (getPosY() + getSize(getPose()).height / 1.0f);
+		float z = (float) (getPosZ() - getSize(getPose()).width / 1.0f);
+		world.addParticle(ParticleTypes.LARGE_SMOKE, x + ranX, y + ranY, z + ranZ, -getMotion().x + ranX, -getMotion().y - 0.075f + ranY,
+			-getMotion().z + ranZ);
+	    }
 	}
     }
 

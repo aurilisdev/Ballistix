@@ -45,6 +45,7 @@ public class BlastAntimatter extends Blast implements IHasCustomRenderer {
 	    Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
 		    (float) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, false, Mode.BREAK);
 	    if (thread.isComplete) {
+		hasStarted = true;
 		if (pertick == -1) {
 		    pertick = (int) (thread.results.size() * 1.5 / Constants.EXPLOSIVE_ANTIMATTER_DURATION + 1);
 		}

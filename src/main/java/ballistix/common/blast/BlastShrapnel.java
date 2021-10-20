@@ -14,6 +14,7 @@ public class BlastShrapnel extends Blast {
 
     @Override
     public boolean doExplode(int callCount) {
+	hasStarted = true;
 	for (int i = 0; i < Constants.EXPLOSIVE_SHRAPNEL_SHRAPNEL_COUNT; i++) {
 	    EntityShrapnel shrapnel = new EntityShrapnel(world);
 	    float yaw = world.rand.nextFloat() * 360;

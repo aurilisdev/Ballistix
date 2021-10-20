@@ -35,6 +35,7 @@ import net.minecraftforge.event.ForgeEventFactory;
 public abstract class Blast {
     public BlockPos position;
     public World world;
+    public boolean hasStarted;
 
     protected Blast(World world, BlockPos position) {
 	this.world = world;
@@ -89,14 +90,11 @@ public abstract class Blast {
     }
 
     @SuppressWarnings("java:S1874")
-    public void performExplosion() {
+    public EntityBlast performExplosion() {
 	ConstructBlastEvent evt = new ConstructBlastEvent(world, this);
 	MinecraftForge.EVENT_BUS.post(evt);
 	Explosion explosion = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), 3, true, Mode.BREAK);
-	if (ForgeEventFactory.onExplosionStart(world, explosion)) {
-	    return;
-	}
-	if (!evt.isCanceled()) {
+	if (!ForgeEventFactory.onExplosionStart(world, explosion) && !evt.isCanceled()) {
 	    if (isInstantaneous()) {
 		doPreExplode();
 		doExplode(0);
@@ -106,8 +104,10 @@ public abstract class Blast {
 		entity.setPosition(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5);
 		entity.setBlastType(getBlastType());
 		world.addEntity(entity);
+		return entity;
 	    }
 	}
+	return null;
     }
 
     protected void attackEntities(float size) {

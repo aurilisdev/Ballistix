@@ -14,6 +14,7 @@ public class BlastCondensive extends Blast {
 
     @Override
     public boolean doExplode(int callCount) {
+	hasStarted = true;
 	if (!world.isRemote) {
 	    world.createExplosion(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5,
 		    (float) Constants.EXPLOSIVE_CONDENSIVE_SIZE, Mode.BREAK);

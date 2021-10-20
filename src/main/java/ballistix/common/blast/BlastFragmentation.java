@@ -14,6 +14,7 @@ public class BlastFragmentation extends Blast {
 
     @Override
     public boolean doExplode(int callCount) {
+	hasStarted = true;
 	for (int i = 0; i < Constants.EXPLOSIVE_FRAGMENTATION_SHRAPNEL_COUNT; i++) {
 	    EntityShrapnel shrapnel = new EntityShrapnel(world);
 	    float yaw = world.rand.nextFloat() * 360;

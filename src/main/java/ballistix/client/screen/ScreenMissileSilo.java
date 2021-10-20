@@ -94,6 +94,7 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 	xCoordField.setFocused2(false);
 	yCoordField.setFocused2(false);
 	zCoordField.setFocused2(false);
+	setCoord(val);
     }
 
     private void setX(String val) {

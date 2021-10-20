@@ -54,21 +54,23 @@ public class ItemLaserDesignator extends ItemElectric {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-	Location trace = UtilitiesMath.getRaytracedBlock(playerIn);
-	if (trace != null) {
-	    CompoundNBT nbt = playerIn.getItemStackFromSlot(handIn == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND)
-		    .getOrCreateTag();
-	    if (nbt.contains("freq")) {
-		int freq = nbt.getInt("freq");
-		if (freq != 0) {
-		    for (TileMissileSilo silo : SiloRegistry.getSilos(freq)) {
-			silo.target = new Location(trace);
-			silo.launch();
+	if (!worldIn.isRemote) {
+	    Location trace = UtilitiesMath.getRaytracedBlock(playerIn);
+	    if (trace != null) {
+		CompoundNBT nbt = playerIn.getItemStackFromSlot(handIn == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND)
+			.getOrCreateTag();
+		if (nbt.contains("freq")) {
+		    int freq = nbt.getInt("freq");
+		    if (freq != 0) {
+			for (TileMissileSilo silo : SiloRegistry.getSilos(freq)) {
+			    silo.target = new Location(trace);
+			    silo.launch();
+			}
 		    }
 		}
+		extractPower(playerIn.getItemStackFromSlot(handIn == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND), 150,
+			false);
 	    }
-	    extractPower(playerIn.getItemStackFromSlot(handIn == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND), 150,
-		    false);
 	}
 	return super.onItemRightClick(worldIn, playerIn, handIn);
     }

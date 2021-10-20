@@ -79,7 +79,7 @@ public class TileMissileSilo extends GenericTileTicking implements IMultiblockTi
 	    packet.sendCustomPacket();
 	}
 	cooldown--;
-	if (target != null && cooldown < 0 && world.getWorldInfo().getDayTime() % 20 == 0) {
+	if ( cooldown < 0 && world.getWorldInfo().getDayTime() % 20 == 0) {
 	    ItemStack exp = inv.getStackInSlot(1);
 	    if (exp.getItem() instanceof BlockItemDescriptable) {
 		BlockItemDescriptable des = (BlockItemDescriptable) exp.getItem();

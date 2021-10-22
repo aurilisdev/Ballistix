@@ -1,0 +1,23 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"g  ",
+		" c ",
+		"  b"
+	],
+	"key": {
+		"c": {
+			"tag": "forge:circuits/elite"
+		},
+		"g": {
+			"item": "ballistix:radargun"
+		},
+		"b": {
+			"item": "electrodynamics:battery"
+		}
+	},
+	"result": {
+		"item": "ballistix:laserdesignator",
+		"count": 1
+	}
+}

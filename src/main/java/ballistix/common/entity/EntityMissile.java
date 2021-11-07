@@ -3,19 +3,19 @@ package ballistix.common.entity;
 import ballistix.DeferredRegisters;
 import ballistix.common.blast.Blast;
 import ballistix.common.block.SubtypeBlast;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MoverType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraft.world.phys.AABB;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 public class EntityMissile extends Entity {
     private static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
@@ -72,7 +72,8 @@ public class EntityMissile extends Entity {
 	if (blastEntity == null) {
 	    if (getDeltaMovement().length() > 0) {
 		xRot = (float) (Math
-			.atan(getDeltaMovement().y() / Math.sqrt(getDeltaMovement().x() * getDeltaMovement().x() + getDeltaMovement().z() * getDeltaMovement().z()))
+			.atan(getDeltaMovement().y()
+				/ Math.sqrt(getDeltaMovement().x() * getDeltaMovement().x() + getDeltaMovement().z() * getDeltaMovement().z()))
 			* 180.0D / Math.PI);
 		yRot = (float) (Math.atan2(getDeltaMovement().x(), getDeltaMovement().z()) * 180.0D / Math.PI);
 	    } else {
@@ -128,8 +129,8 @@ public class EntityMissile extends Entity {
 		float x = (float) (getX() - getDimensions(getPose()).width / 1.0f);
 		float y = (float) (getY() + getDimensions(getPose()).height / 1.0f);
 		float z = (float) (getZ() - getDimensions(getPose()).width / 1.0f);
-		level.addParticle(ParticleTypes.LARGE_SMOKE, x + ranX, y + ranY, z + ranZ, -getDeltaMovement().x + ranX, -getDeltaMovement().y - 0.075f + ranY,
-			-getDeltaMovement().z + ranZ);
+		level.addParticle(ParticleTypes.LARGE_SMOKE, x + ranX, y + ranY, z + ranZ, -getDeltaMovement().x + ranX,
+			-getDeltaMovement().y - 0.075f + ranY, -getDeltaMovement().z + ranZ);
 	    }
 	}
     }

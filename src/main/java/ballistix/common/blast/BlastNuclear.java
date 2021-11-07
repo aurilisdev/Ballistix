@@ -10,22 +10,22 @@ import ballistix.common.settings.Constants;
 import electrodynamics.common.packet.NetworkHandler;
 import electrodynamics.common.packet.PacketSpawnSmokeParticle;
 import electrodynamics.prefab.utilities.object.Location;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.core.Direction;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fmllegacy.network.NetworkDirection;
 
 public class BlastNuclear extends Blast implements IHasCustomRenderer {
 
@@ -92,9 +92,8 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 		    world.getBlockState(p).getBlock().wasExploded(world, p, ex);
 		    world.setBlock(p, state, 2 | 16 | 32);
 		    if (world.random.nextFloat() < 1 / 20.0 && world instanceof ServerLevel) {
-			((ServerLevel) world).getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false)
-				.forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getConnection(),
-					NetworkDirection.PLAY_TO_CLIENT));
+			((ServerLevel) world).getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL
+				.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT));
 		    }
 		    iterator.remove();
 		}
@@ -111,8 +110,8 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 			    if (i * i + k * k < radius * radius && world.random.nextFloat() < (particleHeight > 18 ? 0.1 : 0.3)) {
 				BlockPos p = position.offset(i, particleHeight, k);
 				((ServerLevel) world).getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false)
-					.forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p),
-						pl.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT));
+					.forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getConnection(),
+						NetworkDirection.PLAY_TO_CLIENT));
 			    }
 			}
 		    }

@@ -19,13 +19,13 @@ import electrodynamics.prefab.tile.components.type.ComponentPacketHandler;
 import electrodynamics.prefab.tile.components.type.ComponentTickable;
 import electrodynamics.prefab.utilities.object.CachedTileOutput;
 import electrodynamics.prefab.utilities.object.Location;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.core.BlockPos;
 
 public class TileMissileSilo extends GenericTileTicking implements IMultiblockTileNode {
     public static final int[] SLOTS_INPUT = new int[] { 0, 1 };
@@ -38,8 +38,8 @@ public class TileMissileSilo extends GenericTileTicking implements IMultiblockTi
     public Location target;
     public boolean shouldLaunch;
 
-    public TileMissileSilo() {
-	super(DeferredRegisters.TILE_MISSILESILO.get());
+    public TileMissileSilo(BlockPos pos, BlockState state) {
+	super(DeferredRegisters.TILE_MISSILESILO.get(), pos, state);
 	addComponent(new ComponentTickable().tickServer(this::tickServer));
 	addComponent(new ComponentInventory(this).size(2).faceSlots(Direction.UP, 0, 1).valid(this::isItemValidForSlot));
 	addComponent(new ComponentPacketHandler().customPacketWriter(this::writePacket).customPacketReader(this::readPacket)
@@ -113,8 +113,8 @@ public class TileMissileSilo extends GenericTileTicking implements IMultiblockTi
 	ItemStack it = inv.getItem(0);
 	if (exp.getItem() instanceof BlockItemDescriptable) {
 	    BlockItemDescriptable des = (BlockItemDescriptable) exp.getItem();
-	    double dist = Math
-		    .sqrt(Math.pow(worldPosition.getX() - target.x(), 2) + Math.pow(worldPosition.getY() - target.y(), 2) + Math.pow(worldPosition.getZ() - target.z(), 2));
+	    double dist = Math.sqrt(Math.pow(worldPosition.getX() - target.x(), 2) + Math.pow(worldPosition.getY() - target.y(), 2)
+		    + Math.pow(worldPosition.getZ() - target.z(), 2));
 	    if (range == 0 && dist < 3000 || range == 1 && dist < 10000 || range == 2) {
 		EntityMissile missile = new EntityMissile(level);
 		missile.setPos(getBlockPos().getX() + 1.0, getBlockPos().getY(), getBlockPos().getZ() + 1.0);
@@ -150,8 +150,8 @@ public class TileMissileSilo extends GenericTileTicking implements IMultiblockTi
     }
 
     @Override
-    public void load(BlockState state, CompoundTag compound) {
-	super.load(state, compound);
+    public void load(CompoundTag compound) {
+	super.load(compound);
 	save(compound);
     }
 

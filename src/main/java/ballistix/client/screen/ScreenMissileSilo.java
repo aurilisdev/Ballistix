@@ -8,9 +8,9 @@ import electrodynamics.prefab.screen.GenericScreen;
 import electrodynamics.prefab.screen.component.ScreenComponentTextInputBar;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -159,10 +159,8 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
     @Override
     protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
 	super.renderLabels(matrixStack, mouseX, mouseY);
-	font.draw(matrixStack, new TranslatableComponent("gui.missilesilo.missile"), inventoryLabelX, inventoryLabelY - 55.0f,
-		4210752);
-	font.draw(matrixStack, new TranslatableComponent("gui.missilesilo.explosive"), inventoryLabelX,
-		inventoryLabelY - 20.0f, 4210752);
+	font.draw(matrixStack, new TranslatableComponent("gui.missilesilo.missile"), inventoryLabelX, inventoryLabelY - 55.0f, 4210752);
+	font.draw(matrixStack, new TranslatableComponent("gui.missilesilo.explosive"), inventoryLabelX, inventoryLabelY - 20.0f, 4210752);
     }
 
 }

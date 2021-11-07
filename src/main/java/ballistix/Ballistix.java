@@ -13,7 +13,6 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(References.ID)
@@ -40,9 +39,4 @@ public class Ballistix {
     public static void onCommonSetup(FMLCommonSetupEvent event) {
 	NetworkHandler.init();
     }
-
-    @SubscribeEvent
-    public static void onLoadEvent(FMLLoadCompleteEvent event) {
-    }
-
 }

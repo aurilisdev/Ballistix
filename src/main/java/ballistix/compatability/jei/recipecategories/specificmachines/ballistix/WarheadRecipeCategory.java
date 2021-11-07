@@ -21,9 +21,9 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 public class WarheadRecipeCategory extends ElectrodynamicsRecipeCategory<PsuedoDO2ORecipe> {
 
@@ -103,8 +103,7 @@ public class WarheadRecipeCategory extends ElectrodynamicsRecipeCategory<PsuedoD
     protected void drawSmeltTime(PsuedoDO2ORecipe recipe, PoseStack matrixStack, int y) {
 	int smeltTimeSeconds = getArrowSmeltTime() / 20;
 
-	TranslatableComponent missileString = new TranslatableComponent("gui.jei.category." + getRecipeGroup() + ".info.missile",
-		smeltTimeSeconds);
+	TranslatableComponent missileString = new TranslatableComponent("gui.jei.category." + getRecipeGroup() + ".info.missile", smeltTimeSeconds);
 	TranslatableComponent explosiveString = new TranslatableComponent("gui.jei.category." + getRecipeGroup() + ".info.explosive",
 		smeltTimeSeconds);
 

@@ -2,8 +2,8 @@ package ballistix.common.blast.thread;
 
 import java.util.HashSet;
 
-import net.minecraft.world.entity.Entity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 
 public abstract class ThreadBlast extends Thread {

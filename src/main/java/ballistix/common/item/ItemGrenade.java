@@ -3,16 +3,16 @@ package ballistix.common.item;
 import ballistix.References;
 import ballistix.common.block.SubtypeBlast;
 import ballistix.common.entity.EntityGrenade;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.Level;
 
 public class ItemGrenade extends Item {
@@ -43,14 +43,14 @@ public class ItemGrenade extends Item {
     @Override
     public void releaseUsing(ItemStack itemStack, Level world, LivingEntity entityLiving, int timeLeft) {
 	if (!world.isClientSide) {
-	    world.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), SoundEvents.TNT_PRIMED,
-		    SoundSource.BLOCKS, 0.5F, 0.4F / (random.nextFloat() * 0.4F + 0.8F));
+	    world.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), SoundEvents.TNT_PRIMED, SoundSource.BLOCKS, 0.5F,
+		    0.4F / (random.nextFloat() * 0.4F + 0.8F));
 
 	    float throwEnergy = (float) (getUseDuration(itemStack) - timeLeft) / (float) getUseDuration(itemStack) + 0.7f;
 
 	    EntityGrenade grenade = new EntityGrenade(world);
-	    grenade.moveTo(entityLiving.getX(), entityLiving.getY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getZ(),
-		    entityLiving.yRot, entityLiving.xRot);
+	    grenade.moveTo(entityLiving.getX(), entityLiving.getY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getZ(), entityLiving.yRot,
+		    entityLiving.xRot);
 	    grenade.setShrapnelType(explosive);
 	    grenade.shootFromRotation(entityLiving, entityLiving.xRot - 20, entityLiving.yRot, 0.0F, throwEnergy, 1.0F);
 	    world.addFreshEntity(grenade);

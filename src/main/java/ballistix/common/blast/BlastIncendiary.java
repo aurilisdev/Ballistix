@@ -2,10 +2,10 @@ package ballistix.common.blast;
 
 import ballistix.common.block.SubtypeBlast;
 import ballistix.common.settings.Constants;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 
 public class BlastIncendiary extends Blast {
 

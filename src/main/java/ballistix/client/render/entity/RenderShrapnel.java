@@ -1,20 +1,20 @@
 package ballistix.client.render.entity;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.math.Vector3f;
 
 import ballistix.client.ClientRegister;
 import ballistix.common.entity.EntityShrapnel;
 import net.minecraft.client.Minecraft;
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import net.minecraft.client.renderer.MultiBufferSource;
-import com.mojang.blaze3d.vertex.Tesselator;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.resources.ResourceLocation;
-import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -29,7 +29,8 @@ public class RenderShrapnel extends EntityRenderer<EntityShrapnel> {
     @Deprecated
     public void render(EntityShrapnel entity, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn,
 	    int packedLightIn) {
-	matrixStackIn.translate(entity.getDeltaMovement().x * partialTicks, entity.getDeltaMovement().y * partialTicks, entity.getDeltaMovement().z * partialTicks);
+	matrixStackIn.translate(entity.getDeltaMovement().x * partialTicks, entity.getDeltaMovement().y * partialTicks,
+		entity.getDeltaMovement().z * partialTicks);
 	matrixStackIn.pushPose();
 	GlStateManager._pushMatrix();
 	Minecraft.getInstance().textureManager.bind(getTextureLocation(entity));

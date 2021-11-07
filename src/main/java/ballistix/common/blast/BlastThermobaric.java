@@ -7,14 +7,14 @@ import ballistix.common.block.SubtypeBlast;
 import ballistix.common.settings.Constants;
 import electrodynamics.common.packet.NetworkHandler;
 import electrodynamics.common.packet.PacketSpawnSmokeParticle;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.fmllegacy.network.NetworkDirection;
 
 public class BlastThermobaric extends Blast {
 
@@ -58,9 +58,8 @@ public class BlastThermobaric extends Blast {
 		    world.getBlockState(p).getBlock().wasExploded(world, p, ex);
 		    world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
 		    if (world.random.nextFloat() < 1 / 10.0 && world instanceof ServerLevel) {
-			((ServerLevel) world).getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false)
-				.forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getConnection(),
-					NetworkDirection.PLAY_TO_CLIENT));
+			((ServerLevel) world).getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL
+				.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT));
 		    }
 		    iterator.remove();
 		}

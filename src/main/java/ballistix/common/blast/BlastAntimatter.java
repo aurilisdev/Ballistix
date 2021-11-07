@@ -5,13 +5,13 @@ import java.util.Iterator;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.SubtypeBlast;
 import ballistix.common.settings.Constants;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class BlastAntimatter extends Blast implements IHasCustomRenderer {
 

@@ -14,21 +14,21 @@ import ballistix.api.event.BlastEvent.PostBlastEvent;
 import ballistix.api.event.BlastEvent.PreBlastEvent;
 import ballistix.common.block.SubtypeBlast;
 import ballistix.common.entity.EntityBlast;
-import net.minecraft.world.item.enchantment.ProtectionEnchantment;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.protocol.game.ClientboundExplodePacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.network.protocol.game.ClientboundExplodePacket;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.item.enchantment.ProtectionEnchantment;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 
@@ -93,7 +93,8 @@ public abstract class Blast {
     public EntityBlast performExplosion() {
 	ConstructBlastEvent evt = new ConstructBlastEvent(world, this);
 	MinecraftForge.EVENT_BUS.post(evt);
-	Explosion explosion = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), 3, true, BlockInteraction.BREAK);
+	Explosion explosion = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), 3, true,
+		BlockInteraction.BREAK);
 	if (!ForgeEventFactory.onExplosionStart(world, explosion) && !evt.isCanceled()) {
 	    if (isInstantaneous()) {
 		doPreExplode();
@@ -136,8 +137,7 @@ public abstract class Blast {
 			d9 = d9 / d13;
 			double d14 = Explosion.getSeenPercent(vector3d, entity);
 			double d10 = (1.0D - d12) * d14;
-			entity.hurt(DamageSource.explosion((LivingEntity) null),
-				(int) ((d10 * d10 + d10) / 2.0D * 7.0D * f2 + 1.0D));
+			entity.hurt(DamageSource.explosion((LivingEntity) null), (int) ((d10 * d10 + d10) / 2.0D * 7.0D * f2 + 1.0D));
 			double d11 = d10;
 			if (entity instanceof LivingEntity) {
 			    d11 = ProtectionEnchantment.getExplosionKnockbackAfterDampener((LivingEntity) entity, d10);

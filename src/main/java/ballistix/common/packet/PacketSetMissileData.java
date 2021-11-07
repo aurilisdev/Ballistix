@@ -8,6 +8,7 @@ import electrodynamics.prefab.utilities.object.Location;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
 
 /**
  * @author aurilisdev Will be removed and dependents will be updated to use

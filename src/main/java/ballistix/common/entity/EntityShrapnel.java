@@ -54,18 +54,18 @@ public class EntityShrapnel extends ThrowableProjectile {
 	if (!isNoGravity()) {
 	    this.setDeltaMovement(getDeltaMovement().add(0.0D, -0.04D, 0.0D));
 	}
-	setPosAndOldPos(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z);
+	setPos(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z);
 	EntityDimensions size = getDimensions(Pose.STANDING);
 	setBoundingBox(new AABB(getX() - size.width * 2, getY() - size.height * 2, getZ() - size.width * 2, getX() + size.width * 2,
 		getY() + size.height * 2, getZ() + size.width * 2));
 	if (onGround || tickCount > (isExplosive ? 400 : 100) || level.getBlockState(blockPosition()).getMaterial().blocksMotion()) {
-	    remove();
+	    remove(RemovalReason.DISCARDED);
 	}
 	if (!level.isClientSide) {
 	    List<LivingEntity> livings = level.getEntitiesOfClass(LivingEntity.class, getBoundingBox());
 	    for (LivingEntity living : livings) {
 		living.hurt(DamageSourceShrapnel.INSTANCE, 10);
-		remove();
+		remove(RemovalReason.DISCARDED);
 	    }
 	}
     }
@@ -84,7 +84,7 @@ public class EntityShrapnel extends ThrowableProjectile {
     }
 
     @Override
-    public void remove() {
+    public void remove(RemovalReason reason) {
 	if (isExplosive) {
 	    Explosion ex = new Explosion(level, this, DamageSourceShrapnel.INSTANCE, null, getX(), getY(), getZ(), 2, true, BlockInteraction.DESTROY);
 	    if (!level.isClientSide) {
@@ -108,7 +108,7 @@ public class EntityShrapnel extends ThrowableProjectile {
 	    }
 	    ex.finalizeExplosion(true);
 	}
-	super.remove();
+	super.remove(reason);
     }
 
     @Override

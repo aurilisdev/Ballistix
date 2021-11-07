@@ -65,19 +65,20 @@ public class EntityMissile extends Entity {
 	    if (!level.isClientSide && blastEntity.getBlast().hasStarted) {
 		removeAfterChangingDimensions();
 	    }
-	    yRot = oldRotationYaw;
-	    xRot = oldRotationPitch;
+	    setXRot(oldRotationPitch);
+	    setYRot(oldRotationYaw);
 	    return;
 	}
 	if (blastEntity == null) {
 	    if (getDeltaMovement().length() > 0) {
-		xRot = (float) (Math
+		setXRot((float) (Math
 			.atan(getDeltaMovement().y()
 				/ Math.sqrt(getDeltaMovement().x() * getDeltaMovement().x() + getDeltaMovement().z() * getDeltaMovement().z()))
-			* 180.0D / Math.PI);
-		yRot = (float) (Math.atan2(getDeltaMovement().x(), getDeltaMovement().z()) * 180.0D / Math.PI);
+			* 180.0D / Math.PI));
+		setYRot((float) (Math.atan2(getDeltaMovement().x(), getDeltaMovement().z()) * 180.0D / Math.PI));
 	    } else {
-		xRot = yRot = 90;
+		setXRot(90);
+		setYRot(90);
 	    }
 	    if (tickCount < 10 && !isItem) {
 		setPos(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z);

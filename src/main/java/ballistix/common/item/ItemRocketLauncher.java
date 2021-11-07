@@ -14,7 +14,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 
 public class ItemRocketLauncher extends Item {
 
@@ -41,19 +40,17 @@ public class ItemRocketLauncher extends Item {
 
     @Override
     public void releaseUsing(ItemStack stack, Level world, LivingEntity entityLiving, int timeLeft) {
-	if (!world.isClientSide && entityLiving instanceof Player) {
-	    Player pl = (Player) entityLiving;
+	if (!world.isClientSide && entityLiving instanceof Player pl) {
 	    int blastOrdinal = 0;
 	    boolean hasExplosive = false;
 	    boolean hasRange = false;
 	    ItemStack ex = ItemStack.EMPTY;
 	    ItemStack missile = ex;
-	    for (ItemStack st : pl.inventory.items) {
+	    for (ItemStack st : pl.getInventory().items) {
 		Item it = st.getItem();
-		if (!hasExplosive && it instanceof BlockItemDescriptable) {
-		    Block bl = ((BlockItemDescriptable) it).getBlock();
-		    if (bl instanceof BlockExplosive) {
-			blastOrdinal = ((BlockExplosive) bl).explosive.ordinal();
+		if (!hasExplosive && it instanceof BlockItemDescriptable bl) {
+		    if (bl.getBlock()instanceof BlockExplosive exs) {
+			blastOrdinal = exs.explosive.ordinal();
 			hasExplosive = true;
 			ex = st;
 		    }
@@ -70,8 +67,8 @@ public class ItemRocketLauncher extends Item {
 		ex.shrink(1);
 		missile.shrink(1);
 		EntityMissile miss = new EntityMissile(world);
-		miss.moveTo(entityLiving.getX(), entityLiving.getY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getZ(), entityLiving.yRot,
-			entityLiving.xRot);
+		miss.moveTo(entityLiving.getX(), entityLiving.getY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getZ(), entityLiving.getYRot(),
+			entityLiving.getXRot());
 		miss.setDeltaMovement(entityLiving.getLookAngle().x * 2, entityLiving.getLookAngle().y * 2, entityLiving.getLookAngle().z * 2);
 		miss.blastOrdinal = blastOrdinal;
 		miss.range = 0;

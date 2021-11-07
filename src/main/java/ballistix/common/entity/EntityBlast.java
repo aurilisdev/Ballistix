@@ -70,13 +70,13 @@ public class EntityBlast extends Entity {
 		blast.preExplode();
 	    } else if (blast.explode(callcount)) {
 		blast.postExplode();
-		remove();
+		remove(RemovalReason.DISCARDED);
 	    }
 	    callcount++;
 	} else {
 	    if (blastOrdinal == -1) {
 		if (tickCount > 60) {
-		    remove();
+		    remove(RemovalReason.DISCARDED);
 		}
 	    } else {
 		blast = Blast.createFromSubtype(getBlastType(), level, blockPosition());

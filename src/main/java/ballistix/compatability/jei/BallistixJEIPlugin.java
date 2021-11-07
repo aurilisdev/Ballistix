@@ -13,6 +13,7 @@ import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -60,14 +61,14 @@ public class BallistixJEIPlugin implements IModPlugin {
 
 	for (ItemStack itemStack : ballistixInfoItems) {
 	    temp = itemStack.getItem().toString();
-	    registration.addIngredientInfo(itemStack, VanillaTypes.ITEM, "info.jei.item." + temp);
+	    registration.addIngredientInfo(itemStack, VanillaTypes.ITEM, new TranslatableComponent("info.jei.item." + temp));
 	}
 
 	ballistixInfoItems = BallistixPsuedoRecipes.BALLISTIX_ITEMS.get(2);
 
 	for (ItemStack itemStack : ballistixInfoItems) {
 	    temp = itemStack.getItem().toString();
-	    registration.addIngredientInfo(itemStack, VanillaTypes.ITEM, "info.jei.item." + temp);
+	    registration.addIngredientInfo(itemStack, VanillaTypes.ITEM, new TranslatableComponent("info.jei.item." + temp));
 	}
 
     }

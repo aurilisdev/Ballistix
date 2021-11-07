@@ -30,8 +30,8 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
     private EditBox frequencyField;
 
     @Override
-    public void tick() {
-	super.tick();
+    public void containerTick() {
+	super.containerTick();
 	xCoordField.tick();
 	yCoordField.tick();
 	zCoordField.tick();
@@ -74,10 +74,10 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 	frequencyField.setBordered(false);
 	frequencyField.setMaxLength(6);
 	frequencyField.setResponder(this::setFrequency);
-	children.add(xCoordField);
-	children.add(yCoordField);
-	children.add(zCoordField);
-	children.add(frequencyField);
+	addWidget(xCoordField);
+	addWidget(yCoordField);
+	addWidget(zCoordField);
+	addWidget(frequencyField);
 	setInitialFocus(frequencyField);
     }
 

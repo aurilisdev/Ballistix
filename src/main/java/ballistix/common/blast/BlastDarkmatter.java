@@ -31,7 +31,7 @@ public class BlastDarkmatter extends Blast {
     }
 
     @Override
-    @Deprecated
+    @Deprecated(since = "Overriden method!", forRemoval = false)
     public void doPreExplode() {
 	if (!world.isClientSide) {
 	    thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null, true);
@@ -104,8 +104,7 @@ public class BlastDarkmatter extends Blast {
 		    d9 = d9 / d13;
 		    double d11 = (-0.2 - (callCount - callAtStart) / 150.0) / d13;
 		    entity.setDeltaMovement(entity.getDeltaMovement().add(d5 * d11, d7 * d11, d9 * d11));
-		    if (entity instanceof ServerPlayer) {
-			ServerPlayer serverplayerentity = (ServerPlayer) entity;
+		    if (entity instanceof ServerPlayer serverplayerentity) {
 			if (!serverplayerentity.isCreative()) {
 			    serverplayerentity.connection
 				    .send(new ClientboundExplodePacket(x, y, z, size, new ArrayList<>(), new Vec3(d5 * d11, d7 * d11, d9 * d11)));

@@ -47,7 +47,6 @@ public class RenderGrenade extends EntityRenderer<EntityGrenade> {
     }
 
     @Override
-    @Deprecated
     public ResourceLocation getTextureLocation(EntityGrenade entity) {
 	return InventoryMenu.BLOCK_ATLAS;
     }

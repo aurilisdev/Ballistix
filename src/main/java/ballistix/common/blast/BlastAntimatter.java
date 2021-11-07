@@ -20,7 +20,7 @@ public class BlastAntimatter extends Blast implements IHasCustomRenderer {
     }
 
     @Override
-    @Deprecated
+    @Deprecated(since = "Overriden method!", forRemoval = false)
     public void doPreExplode() {
 	if (!world.isClientSide) {
 	    thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, false);

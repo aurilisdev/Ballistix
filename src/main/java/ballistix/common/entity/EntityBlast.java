@@ -52,11 +52,12 @@ public class EntityBlast extends Entity {
     }
 
     @Override
+    @Deprecated(since = "Uses deprecated methods", forRemoval = false)
     public void tick() {
 	if (!level.isClientSide) {
 	    entityData.set(TYPE, blastOrdinal);
 	    entityData.set(CALLCOUNT, callcount);
-	    entityData.set(SHOULDSTARTCUSTOMRENDER, blast instanceof IHasCustomRenderer && ((IHasCustomRenderer) blast).shouldRender());
+	    entityData.set(SHOULDSTARTCUSTOMRENDER, blast instanceof IHasCustomRenderer has && has.shouldRender());
 	} else {
 	    blastOrdinal = entityData.get(TYPE);
 	    callcount = entityData.get(CALLCOUNT);

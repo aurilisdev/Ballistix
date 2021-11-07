@@ -19,7 +19,6 @@ public class RenderShrapnel extends EntityRenderer<EntityShrapnel> {
     }
 
     @Override
-    @Deprecated
     public void render(EntityShrapnel entity, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn,
 	    int packedLightIn) {
 	matrixStackIn.translate(entity.getDeltaMovement().x * partialTicks, entity.getDeltaMovement().y * partialTicks,

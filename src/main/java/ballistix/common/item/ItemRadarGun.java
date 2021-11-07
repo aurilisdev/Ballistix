@@ -36,12 +36,11 @@ public class ItemRadarGun extends ItemElectric {
     @Override
     public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
 	BlockEntity ent = context.getLevel().getBlockEntity(context.getClickedPos());
-	TileMissileSilo silo = ent instanceof TileMissileSilo ? (TileMissileSilo) ent : null;
-	if (ent instanceof TileMultiSubnode) {
-	    TileMultiSubnode node = (TileMultiSubnode) ent;
+	TileMissileSilo silo = ent instanceof TileMissileSilo s ? s : null;
+	if (ent instanceof TileMultiSubnode node) {
 	    BlockEntity core = node.nodePos.getTile(node.getLevel());
-	    if (core instanceof TileMissileSilo) {
-		silo = (TileMissileSilo) core;
+	    if (core instanceof TileMissileSilo c) {
+		silo = c;
 	    }
 	}
 	if (silo != null) {
@@ -82,8 +81,7 @@ public class ItemRadarGun extends ItemElectric {
     public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 	super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
 	Location trace = UtilitiesMath.getRaytracedBlock(entityIn);
-	if (!worldIn.isClientSide && entityIn instanceof Player) {
-	    Player player = (Player) entityIn;
+	if (!worldIn.isClientSide && entityIn instanceof Player player) {
 	    if (isSelected && trace != null) {
 		player.displayClientMessage(new TranslatableComponent("message.radargun.text", trace.toString()), true);
 	    }

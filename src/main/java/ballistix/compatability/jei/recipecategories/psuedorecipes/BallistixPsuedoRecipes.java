@@ -21,8 +21,6 @@ public class BallistixPsuedoRecipes {
 	PsuedoRecipes.addElectrodynamicsFluids();
 	PsuedoRecipes.addElectrodynamicsItems();
 
-	addBallistixMachines();
-	addBallistixFluids();
 	addBallistixItems();
 
 	/* SILO RECIPES */
@@ -31,14 +29,6 @@ public class BallistixPsuedoRecipes {
 
 	/* WARHEAD RECIPES */
 	WARHEAD_RECIPES.add(new PsuedoDO2ORecipe(BALLISTIX_ITEMS.get(0).get(0), BALLISTIX_ITEMS.get(1).get(0), BALLISTIX_ITEMS.get(1).get(0)));
-
-    }
-
-    private static void addBallistixMachines() {
-
-    }
-
-    private static void addBallistixFluids() {
 
     }
 

@@ -48,18 +48,18 @@ public abstract class Blast {
 
     public abstract SubtypeBlast getBlastType();
 
-    @Deprecated
+    @Deprecated(since = "Should not be called externally!", forRemoval = false)
     public void doPreExplode() {
     }
 
-    @Deprecated
+    @Deprecated(since = "Should not be called externally!", forRemoval = false)
     public abstract boolean doExplode(int callCount);
 
-    @Deprecated
+    @Deprecated(since = "Should not be called externally!", forRemoval = false)
     public void doPostExplode() {
     }
 
-    @Deprecated
+    @Deprecated(since = "Should not be called externally!", forRemoval = false)
     public final void preExplode() {
 	PreBlastEvent evt = new PreBlastEvent(world, this);
 	MinecraftForge.EVENT_BUS.post(evt);
@@ -69,7 +69,7 @@ public abstract class Blast {
 	}
     }
 
-    @Deprecated
+    @Deprecated(since = "Should not be called externally!", forRemoval = false)
     public final boolean explode(int callcount) {
 	BlastEvent evt = new BlastEvent(world, this);
 	MinecraftForge.EVENT_BUS.post(evt);
@@ -79,7 +79,7 @@ public abstract class Blast {
 	return true;
     }
 
-    @Deprecated
+    @Deprecated(since = "Should not be called externally!", forRemoval = false)
     public final void postExplode() {
 	PostBlastEvent evt = new PostBlastEvent(world, this);
 	MinecraftForge.EVENT_BUS.post(evt);
@@ -139,13 +139,12 @@ public abstract class Blast {
 			double d10 = (1.0D - d12) * d14;
 			entity.hurt(DamageSource.explosion((LivingEntity) null), (int) ((d10 * d10 + d10) / 2.0D * 7.0D * f2 + 1.0D));
 			double d11 = d10;
-			if (entity instanceof LivingEntity) {
-			    d11 = ProtectionEnchantment.getExplosionKnockbackAfterDampener((LivingEntity) entity, d10);
+			if (entity instanceof LivingEntity le) {
+			    d11 = ProtectionEnchantment.getExplosionKnockbackAfterDampener(le, d10);
 			}
 
 			entity.setDeltaMovement(entity.getDeltaMovement().add(d5 * d11, d7 * d11, d9 * d11));
-			if (entity instanceof Player) {
-			    Player playerentity = (Player) entity;
+			if (entity instanceof Player playerentity) {
 			    if (!playerentity.isSpectator() && (!playerentity.isCreative() || !playerentity.getAbilities().flying)) {
 				playerKnockbackMap.put(playerentity, new Vec3(d5 * d10, d7 * d10, d9 * d10));
 			    }
@@ -155,8 +154,7 @@ public abstract class Blast {
 	    }
 	}
 	for (Entry<Player, Vec3> entry : playerKnockbackMap.entrySet()) {
-	    if (entry.getKey() instanceof ServerPlayer) {
-		ServerPlayer serverplayerentity = (ServerPlayer) entry.getKey();
+	    if (entry.getKey()instanceof ServerPlayer serverplayerentity) {
 		serverplayerentity.connection.send(
 			new ClientboundExplodePacket(position.getX(), position.getY(), position.getZ(), size, new ArrayList<>(), entry.getValue()));
 	    }

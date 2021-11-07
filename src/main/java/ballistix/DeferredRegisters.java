@@ -91,10 +91,10 @@ public class DeferredRegisters {
     }
 
     private static <T extends IForgeRegistryEntry<T>> Supplier<? extends T> supplier(T entry, ISubtype en) {
-	if (entry instanceof Block) {
-	    SUBTYPEBLOCK_MAPPINGS.put(en, (Block) entry);
-	} else if (entry instanceof Item) {
-	    SUBTYPEITEM_MAPPINGS.put(en, (Item) entry);
+	if (entry instanceof Block bl) {
+	    SUBTYPEBLOCK_MAPPINGS.put(en, bl);
+	} else if (entry instanceof Item it) {
+	    SUBTYPEITEM_MAPPINGS.put(en, it);
 	}
 	return supplier(entry);
     }

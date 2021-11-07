@@ -34,7 +34,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
     }
 
     @Override
-    @Deprecated
+    @Deprecated(since = "Overriden method!", forRemoval = false)
     public void doPreExplode() {
 	if (!world.isClientSide) {
 	    threadRay = new ThreadRaycastBlast(world, position, (int) Constants.EXPLOSIVE_NUCLEAR_SIZE, (float) Constants.EXPLOSIVE_NUCLEAR_ENERGY,
@@ -91,8 +91,8 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 		    }
 		    world.getBlockState(p).getBlock().wasExploded(world, p, ex);
 		    world.setBlock(p, state, 2 | 16 | 32);
-		    if (world.random.nextFloat() < 1 / 20.0 && world instanceof ServerLevel) {
-			((ServerLevel) world).getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL
+		    if (world.random.nextFloat() < 1 / 20.0 && world instanceof ServerLevel serverlevel) {
+			serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL
 				.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT));
 		    }
 		    iterator.remove();

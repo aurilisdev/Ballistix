@@ -53,8 +53,7 @@ public class BlastRepulsive extends Blast {
 		d9 = d9 / d13;
 		double d11 = Constants.EXPLOSIVE_ATTRACTIVE_REPULSIVE_PUSH_STRENGTH;
 		entity.setDeltaMovement(entity.getDeltaMovement().add(d5 * d11, d7 * d11, d9 * d11));
-		if (entity instanceof ServerPlayer) {
-		    ServerPlayer serverplayerentity = (ServerPlayer) entity;
+		if (entity instanceof ServerPlayer serverplayerentity) {
 		    serverplayerentity.connection
 			    .send(new ClientboundExplodePacket(x, y, z, size, new ArrayList<>(), new Vec3(d5 * d11, d7 * d11, d9 * d11)));
 		}

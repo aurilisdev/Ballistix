@@ -14,7 +14,7 @@ import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
  * @author aurilisdev Will be removed and dependents will be updated to use
  *         {@link IPacketServerUpdateTile}k
  */
-@Deprecated
+@Deprecated(since = "Will be removed.", forRemoval = true)
 public class PacketSetMissileData {
 
     private final BlockPos target;

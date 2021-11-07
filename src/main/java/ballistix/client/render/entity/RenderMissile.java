@@ -13,9 +13,9 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
@@ -31,7 +31,7 @@ public class RenderMissile extends EntityRenderer<EntityMissile> {
     }
 
     @Override
-    @Deprecated
+    @Deprecated(since = "Using deprecated method", forRemoval = false)
     public void render(EntityMissile entity, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn,
 	    int packedLightIn) {
 	int type = entity.range;
@@ -67,8 +67,7 @@ public class RenderMissile extends EntityRenderer<EntityMissile> {
     }
 
     @Override
-    @Deprecated
     public ResourceLocation getTextureLocation(EntityMissile entity) {
-	return TextureAtlas.LOCATION_BLOCKS;
+	return InventoryMenu.BLOCK_ATLAS;
     }
 }

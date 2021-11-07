@@ -42,13 +42,13 @@ public class BlockMissileSilo extends BlockGenericMachine implements IMultiblock
     }
 
     @Override
-    @Deprecated
+    @Deprecated(since = "Overriden method!", forRemoval = false)
     public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos) {
 	return isValidMultiblockPlacement(state, worldIn, pos, subnodes);
     }
 
-    @Deprecated
     @Override
+    @Deprecated(since = "Overriden method!", forRemoval = false)
     public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
 	BlockEntity tile = worldIn.getBlockEntity(pos);
 	if (tile instanceof IMultiblockTileNode multi) {
@@ -58,7 +58,7 @@ public class BlockMissileSilo extends BlockGenericMachine implements IMultiblock
     }
 
     @Override
-    @Deprecated
+    @Deprecated(since = "Overriden method!", forRemoval = false)
     public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
 	super.setPlacedBy(worldIn, pos, state, placer, stack);
 	BlockEntity tile = worldIn.getBlockEntity(pos);

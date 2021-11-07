@@ -23,6 +23,7 @@ public class BlastThermobaric extends Blast {
     }
 
     @Override
+    @Deprecated(since = "Overriden method!", forRemoval = false)
     public void doPreExplode() {
 	hasStarted = true;
 	if (!world.isClientSide) {
@@ -57,8 +58,8 @@ public class BlastThermobaric extends Blast {
 		    BlockPos p = new BlockPos(iterator.next());
 		    world.getBlockState(p).getBlock().wasExploded(world, p, ex);
 		    world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
-		    if (world.random.nextFloat() < 1 / 10.0 && world instanceof ServerLevel) {
-			((ServerLevel) world).getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL
+		    if (world.random.nextFloat() < 1 / 10.0 && world instanceof ServerLevel serverlevel) {
+			serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL
 				.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT));
 		    }
 		    iterator.remove();

@@ -59,8 +59,7 @@ public class BlastChemical extends Blast {
 	    int j1 = Mth.floor(z + (double) radius + 1.0D);
 	    List<Entity> list = world.getEntities(null, new AABB(k1, i2, j2, l1, i1, j1));
 	    for (Entity entity : list) {
-		if (entity instanceof LivingEntity) {
-		    LivingEntity living = (LivingEntity) entity;
+		if (entity instanceof LivingEntity living) {
 		    living.addEffect(new MobEffectInstance(MobEffects.POISON, 360));
 		    living.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 360));
 		    living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 360, 2));

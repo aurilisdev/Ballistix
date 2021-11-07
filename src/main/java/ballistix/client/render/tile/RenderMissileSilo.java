@@ -18,7 +18,7 @@ public class RenderMissileSilo implements BlockEntityRenderer<TileMissileSilo> {
     }
 
     @Override
-    @Deprecated
+    @Deprecated(since = "Using deprecated method", forRemoval = false)
     public void render(TileMissileSilo tileEntityIn, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn,
 	    int combinedOverlayIn) {
 	int type = tileEntityIn.range;

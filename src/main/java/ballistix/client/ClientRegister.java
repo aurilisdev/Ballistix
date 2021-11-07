@@ -46,7 +46,6 @@ public class ClientRegister {
 	ItemBlockRenderTypes.setRenderLayer(DeferredRegisters.blockMissileSilo, RenderType.cutout());
     }
 
-    
     @SubscribeEvent
     public static void registerEntities(EntityRenderersEvent.RegisterRenderers event) {
 	event.registerEntityRenderer(DeferredRegisters.ENTITY_EXPLOSIVE.get(), RenderExplosive::new);

@@ -14,13 +14,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class RenderShrapnel extends EntityRenderer<EntityShrapnel> {
-    public RenderShrapnel(EntityRenderDispatcher renderManagerIn) {
+    public RenderShrapnel(Context renderManagerIn) {
 	super(renderManagerIn);
 	shadowRadius = 0.1F;
     }

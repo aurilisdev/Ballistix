@@ -11,8 +11,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.culling.Frustum;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
@@ -24,7 +24,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class RenderMissile extends EntityRenderer<EntityMissile> {
 
-    public RenderMissile(EntityRenderDispatcher renderManagerIn) {
+    public RenderMissile(Context renderManagerIn) {
 	super(renderManagerIn);
 	shadowRadius = 0.15F;
 	shadowStrength = 0.75F;
@@ -37,8 +37,8 @@ public class RenderMissile extends EntityRenderer<EntityMissile> {
 	int type = entity.range;
 	Level world = entity.level;
 	matrixStackIn.pushPose();
-	matrixStackIn.mulPose(new Quaternion(new Vector3f(0, 1, 0), entity.yRot + 90.0F, true));
-	matrixStackIn.mulPose(new Quaternion(new Vector3f(0, 0, 1), 90 - entity.xRot, true));
+	matrixStackIn.mulPose(new Quaternion(new Vector3f(0, 1, 0), entity.getYRot() + 90.0F, true));
+	matrixStackIn.mulPose(new Quaternion(new Vector3f(0, 0, 1), 90 - entity.getXRot(), true));
 	if (type == 1) {
 	    BakedModel closerange = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILEMEDIUMRANGE);
 	    matrixStackIn.translate(0.5f, 2.6f, 0.5f);

@@ -8,8 +8,8 @@ import ballistix.common.block.SubtypeBlast;
 import ballistix.common.entity.EntityExplosive;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
@@ -20,7 +20,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class RenderExplosive extends EntityRenderer<EntityExplosive> {
-    public RenderExplosive(EntityRenderDispatcher renderManagerIn) {
+    public RenderExplosive(Context renderManagerIn) {
 	super(renderManagerIn);
 	shadowRadius = 0.5F;
     }

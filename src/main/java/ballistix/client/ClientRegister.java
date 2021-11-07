@@ -15,13 +15,12 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.fmlclient.registry.ClientRegistry;
 
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(modid = References.ID, bus = Bus.MOD, value = { Dist.CLIENT })
@@ -43,17 +42,20 @@ public class ClientRegister {
     public static final ResourceLocation TEXTURE_FIREBALL = new ResourceLocation(References.ID + ":textures/model/fireball.png");
 
     public static void setup() {
-
-	ClientRegistry.bindTileEntityRenderer(DeferredRegisters.TILE_MISSILESILO.get(), RenderMissileSilo::new);
-
 	MenuScreens.register(DeferredRegisters.CONTAINER_MISSILESILO.get(), ScreenMissileSilo::new);
-
-	RenderingRegistry.registerEntityRenderingHandler(DeferredRegisters.ENTITY_EXPLOSIVE.get(), RenderExplosive::new);
-	RenderingRegistry.registerEntityRenderingHandler(DeferredRegisters.ENTITY_GRENADE.get(), RenderGrenade::new);
-	RenderingRegistry.registerEntityRenderingHandler(DeferredRegisters.ENTITY_BLAST.get(), RenderBlast::new);
-	RenderingRegistry.registerEntityRenderingHandler(DeferredRegisters.ENTITY_SHRAPNEL.get(), RenderShrapnel::new);
-	RenderingRegistry.registerEntityRenderingHandler(DeferredRegisters.ENTITY_MISSILE.get(), RenderMissile::new);
 	ItemBlockRenderTypes.setRenderLayer(DeferredRegisters.blockMissileSilo, RenderType.cutout());
+    }
+
+    
+    @SubscribeEvent
+    public static void registerEntities(EntityRenderersEvent.RegisterRenderers event) {
+	event.registerEntityRenderer(DeferredRegisters.ENTITY_EXPLOSIVE.get(), RenderExplosive::new);
+	event.registerEntityRenderer(DeferredRegisters.ENTITY_GRENADE.get(), RenderGrenade::new);
+	event.registerEntityRenderer(DeferredRegisters.ENTITY_BLAST.get(), RenderBlast::new);
+	event.registerEntityRenderer(DeferredRegisters.ENTITY_SHRAPNEL.get(), RenderShrapnel::new);
+	event.registerEntityRenderer(DeferredRegisters.ENTITY_MISSILE.get(), RenderMissile::new);
+	event.registerBlockEntityRenderer(DeferredRegisters.TILE_MISSILESILO.get(), RenderMissileSilo::new);
+
     }
 
     public static boolean shouldMultilayerRender(RenderType type) {

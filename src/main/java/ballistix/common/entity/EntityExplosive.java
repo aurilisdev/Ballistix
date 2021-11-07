@@ -72,7 +72,7 @@ public class EntityExplosive extends Entity {
 
 	--fuse;
 	if (fuse <= 0) {
-	    this.remove();
+	    remove();
 	    if (blastOrdinal != -1) {
 		SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
 		Blast b = Blast.createFromSubtype(explosive, level, blockPosition());

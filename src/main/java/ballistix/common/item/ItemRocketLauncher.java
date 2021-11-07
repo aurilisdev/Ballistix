@@ -5,26 +5,26 @@ import ballistix.References;
 import ballistix.common.block.BlockExplosive;
 import ballistix.common.entity.EntityMissile;
 import electrodynamics.common.blockitem.BlockItemDescriptable;
-import net.minecraft.block.Block;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.UseAction;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.Level;
 
 public class ItemRocketLauncher extends Item {
 
     public ItemRocketLauncher() {
-	super(new Item.Properties().group(References.BALLISTIXTAB).maxStackSize(1));
+	super(new Item.Properties().tab(References.BALLISTIXTAB).stacksTo(1));
     }
 
     @Override
-    public UseAction getUseAction(ItemStack stack) {
-	return UseAction.NONE;
+    public UseAnim getUseAnimation(ItemStack stack) {
+	return UseAnim.NONE;
     }
 
     @Override
@@ -33,22 +33,22 @@ public class ItemRocketLauncher extends Item {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-	ItemStack itemstack = playerIn.getHeldItem(handIn);
-	playerIn.setActiveHand(handIn);
-	return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
+    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+	ItemStack itemstack = playerIn.getItemInHand(handIn);
+	playerIn.startUsingItem(handIn);
+	return new InteractionResultHolder<>(InteractionResult.SUCCESS, itemstack);
     }
 
     @Override
-    public void onPlayerStoppedUsing(ItemStack stack, World world, LivingEntity entityLiving, int timeLeft) {
-	if (!world.isRemote && entityLiving instanceof PlayerEntity) {
-	    PlayerEntity pl = (PlayerEntity) entityLiving;
+    public void releaseUsing(ItemStack stack, Level world, LivingEntity entityLiving, int timeLeft) {
+	if (!world.isClientSide && entityLiving instanceof Player) {
+	    Player pl = (Player) entityLiving;
 	    int blastOrdinal = 0;
 	    boolean hasExplosive = false;
 	    boolean hasRange = false;
 	    ItemStack ex = ItemStack.EMPTY;
 	    ItemStack missile = ex;
-	    for (ItemStack st : pl.inventory.mainInventory) {
+	    for (ItemStack st : pl.inventory.items) {
 		Item it = st.getItem();
 		if (!hasExplosive && it instanceof BlockItemDescriptable) {
 		    Block bl = ((BlockItemDescriptable) it).getBlock();
@@ -70,13 +70,13 @@ public class ItemRocketLauncher extends Item {
 		ex.shrink(1);
 		missile.shrink(1);
 		EntityMissile miss = new EntityMissile(world);
-		miss.setLocationAndAngles(entityLiving.getPosX(), entityLiving.getPosY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getPosZ(),
-			entityLiving.rotationYaw, entityLiving.rotationPitch);
-		miss.setMotion(entityLiving.getLookVec().x * 2, entityLiving.getLookVec().y * 2, entityLiving.getLookVec().z * 2);
+		miss.moveTo(entityLiving.getX(), entityLiving.getY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getZ(),
+			entityLiving.yRot, entityLiving.xRot);
+		miss.setDeltaMovement(entityLiving.getLookAngle().x * 2, entityLiving.getLookAngle().y * 2, entityLiving.getLookAngle().z * 2);
 		miss.blastOrdinal = blastOrdinal;
 		miss.range = 0;
 		miss.isItem = true;
-		world.addEntity(miss);
+		world.addFreshEntity(miss);
 	    }
 	}
     }

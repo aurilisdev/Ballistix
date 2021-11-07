@@ -1,38 +1,38 @@
 package ballistix.common.blast.thread;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.Explosion;
-import net.minecraft.world.Explosion.Mode;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Explosion.BlockInteraction;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.IFluidBlock;
 
 public class ThreadRaycastBlast extends ThreadBlast {
 
     public interface IResistanceCallback {
-	float getResistance(World world, BlockPos position, BlockPos targetPosition, Entity source, BlockState block);
+	float getResistance(Level world, BlockPos position, BlockPos targetPosition, Entity source, BlockState block);
     }
 
     public IResistanceCallback callBack;
 
-    public ThreadRaycastBlast(World world, BlockPos position, int range, float energy, Entity source, IResistanceCallback cb) {
+    public ThreadRaycastBlast(Level world, BlockPos position, int range, float energy, Entity source, IResistanceCallback cb) {
 	super(world, position, range, energy, source);
 	callBack = cb;
     }
 
-    public ThreadRaycastBlast(World world, BlockPos position, int range, float energy, Entity source) {
+    public ThreadRaycastBlast(Level world, BlockPos position, int range, float energy, Entity source) {
 	this(world, position, range, energy, source, (world1, pos, targetPosition, source1, block) -> {
 	    float resistance = 0;
 
-	    if (block.getFluidState() != Fluids.EMPTY.getDefaultState() || block instanceof IFluidBlock) {
+	    if (block.getFluidState() != Fluids.EMPTY.defaultFluidState() || block instanceof IFluidBlock) {
 		resistance = 0.25f;
 	    } else {
 		resistance = block.getExplosionResistance(world1, position,
-			new Explosion(world, source, null, null, position.getX(), position.getY(), position.getZ(), range, false, Mode.BREAK));
+			new Explosion(world, source, null, null, position.getX(), position.getY(), position.getZ(), range, false, BlockInteraction.BREAK));
 		if (resistance > 200) {
 		    resistance = 0.75f * (float) Math.sqrt(resistance);
 		}
@@ -52,13 +52,13 @@ public class ThreadRaycastBlast extends ThreadBlast {
 		double phi = Math.PI * 2 / steps * phi_n;
 		double theta = Math.PI / steps * theta_n;
 
-		Vector3d delta = new Vector3d(Math.sin(theta) * Math.cos(phi), Math.cos(theta), Math.sin(theta) * Math.sin(phi));
-		float power = explosionEnergy - explosionEnergy * world.rand.nextFloat() / 2;
-		Vector3d t = new Vector3d(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5);
+		Vec3 delta = new Vec3(Math.sin(theta) * Math.cos(phi), Math.cos(theta), Math.sin(theta) * Math.sin(phi));
+		float power = explosionEnergy - explosionEnergy * world.random.nextFloat() / 2;
+		Vec3 t = new Vec3(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5);
 		BlockPos tt = new BlockPos(t);
 		for (float d = 0.3F; power > 0f; power -= d * 0.75F * 10) {
-		    double distancesq = Math.pow(t.getX() - position.getX(), 2) + Math.pow(t.getY() - position.getY(), 2)
-			    + Math.pow(t.getZ() - position.getZ(), 2);
+		    double distancesq = Math.pow(t.x() - position.getX(), 2) + Math.pow(t.y() - position.getY(), 2)
+			    + Math.pow(t.z() - position.getZ(), 2);
 		    if (distancesq > explosionRadius * explosionRadius) {
 			break;
 		    }
@@ -66,8 +66,8 @@ public class ThreadRaycastBlast extends ThreadBlast {
 		    if (!next.equals(tt)) {
 			tt = next;
 			BlockState block = world.getBlockState(tt);
-			if (block != Blocks.AIR.getDefaultState() && block != Blocks.VOID_AIR.getDefaultState()
-				&& block.getBlockHardness(world, tt) >= 0) {
+			if (block != Blocks.AIR.defaultBlockState() && block != Blocks.VOID_AIR.defaultBlockState()
+				&& block.getDestroySpeed(world, tt) >= 0) {
 			    power -= callBack.getResistance(world, position, tt, explosionSource, block);
 			    if (power > 0f) {
 				int idistancesq = (int) (Math.pow(tt.getX() - position.getX(), 2) + Math.pow(tt.getY() - position.getY(), 2)
@@ -76,7 +76,7 @@ public class ThreadRaycastBlast extends ThreadBlast {
 			    }
 			}
 		    }
-		    t = new Vector3d(t.x + delta.x, t.y + delta.y, t.z + delta.z);
+		    t = new Vec3(t.x + delta.x, t.y + delta.y, t.z + delta.z);
 		}
 	    }
 	}

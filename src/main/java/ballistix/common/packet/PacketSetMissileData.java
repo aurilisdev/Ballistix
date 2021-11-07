@@ -5,9 +5,9 @@ import java.util.function.Supplier;
 import ballistix.common.tile.TileMissileSilo;
 import electrodynamics.api.tile.IPacketServerUpdateTile;
 import electrodynamics.prefab.utilities.object.Location;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 
 /**
@@ -30,9 +30,9 @@ public class PacketSetMissileData {
     public static void handle(PacketSetMissileData message, Supplier<Context> context) {
 	Context ctx = context.get();
 	ctx.enqueueWork(() -> {
-	    ServerWorld world = context.get().getSender().getServerWorld();
+	    ServerLevel world = context.get().getSender().getLevel();
 	    if (world != null) {
-		TileMissileSilo tile = (TileMissileSilo) world.getTileEntity(message.pos);
+		TileMissileSilo tile = (TileMissileSilo) world.getBlockEntity(message.pos);
 		if (tile != null) {
 		    tile.target = new Location(message.target);
 		    tile.setFrequency(message.frequency);
@@ -42,13 +42,13 @@ public class PacketSetMissileData {
 	ctx.setPacketHandled(true);
     }
 
-    public static void encode(PacketSetMissileData pkt, PacketBuffer buf) {
+    public static void encode(PacketSetMissileData pkt, FriendlyByteBuf buf) {
 	buf.writeBlockPos(pkt.pos);
 	buf.writeBlockPos(pkt.target);
 	buf.writeInt(pkt.frequency);
     }
 
-    public static PacketSetMissileData decode(PacketBuffer buf) {
+    public static PacketSetMissileData decode(FriendlyByteBuf buf) {
 	return new PacketSetMissileData(buf.readBlockPos(), buf.readBlockPos(), buf.readInt());
     }
 }

@@ -7,15 +7,15 @@ import electrodynamics.common.block.BlockGenericMachine;
 import electrodynamics.common.multiblock.IMultiblockNode;
 import electrodynamics.common.multiblock.IMultiblockTileNode;
 import electrodynamics.common.multiblock.Subnode;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.Level;
 
 public class BlockMissileSilo extends BlockGenericMachine implements IMultiblockNode {
     public static final HashSet<Subnode> subnodes = new HashSet<>();
@@ -25,7 +25,7 @@ public class BlockMissileSilo extends BlockGenericMachine implements IMultiblock
 	    for (int k = 0; k <= 1; k++) {
 		for (int j = -radius; j <= radius; j++) {
 		    if (!(i == 0 && j == 0 && k == 0)) {
-			subnodes.add(new Subnode(new BlockPos(i, k, j), VoxelShapes.fullCube()));
+			subnodes.add(new Subnode(new BlockPos(i, k, j), Shapes.block()));
 		    }
 		}
 	    }
@@ -33,7 +33,7 @@ public class BlockMissileSilo extends BlockGenericMachine implements IMultiblock
     }
 
     @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+    public BlockEntity createTileEntity(BlockState state, BlockGetter world) {
 	return new TileMissileSilo();
     }
 
@@ -44,26 +44,26 @@ public class BlockMissileSilo extends BlockGenericMachine implements IMultiblock
 
     @Override
     @Deprecated
-    public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos) {
+    public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos) {
 	return isValidMultiblockPlacement(state, worldIn, pos, subnodes);
     }
 
     @Deprecated
     @Override
-    public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-	TileEntity tile = worldIn.getTileEntity(pos);
+    public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+	BlockEntity tile = worldIn.getBlockEntity(pos);
 	if (tile instanceof IMultiblockTileNode) {
 	    IMultiblockTileNode multi = (IMultiblockTileNode) tile;
 	    multi.onNodeReplaced(worldIn, pos, false);
 	}
-	super.onReplaced(state, worldIn, pos, newState, isMoving);
+	super.onRemove(state, worldIn, pos, newState, isMoving);
     }
 
     @Override
     @Deprecated
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-	super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-	TileEntity tile = worldIn.getTileEntity(pos);
+    public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+	super.setPlacedBy(worldIn, pos, state, placer, stack);
+	BlockEntity tile = worldIn.getBlockEntity(pos);
 	if (tile instanceof IMultiblockTileNode) {
 	    IMultiblockTileNode multi = (IMultiblockTileNode) tile;
 	    multi.onNodePlaced(worldIn, pos, state, placer, stack);

@@ -10,42 +10,42 @@ import electrodynamics.prefab.item.ItemElectric;
 import electrodynamics.prefab.utilities.UtilitiesMath;
 import electrodynamics.prefab.utilities.object.Location;
 import electrodynamics.prefab.utilities.object.TransferPack;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 
 public class ItemRadarGun extends ItemElectric {
 
     public ItemRadarGun() {
 	super((ElectricItemProperties) new ElectricItemProperties().capacity(10000).receive(TransferPack.joulesVoltage(500, 120))
-		.extract(TransferPack.joulesVoltage(500, 120)).maxStackSize(1).group(References.BALLISTIXTAB));
+		.extract(TransferPack.joulesVoltage(500, 120)).stacksTo(1).tab(References.BALLISTIXTAB));
     }
 
     @Override
-    public ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext context) {
-	TileEntity ent = context.getWorld().getTileEntity(context.getPos());
+    public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
+	BlockEntity ent = context.getLevel().getBlockEntity(context.getClickedPos());
 	TileMissileSilo silo = ent instanceof TileMissileSilo ? (TileMissileSilo) ent : null;
 	if (ent instanceof TileMultiSubnode) {
 	    TileMultiSubnode node = (TileMultiSubnode) ent;
-	    TileEntity core = node.nodePos.getTile(node.getWorld());
+	    BlockEntity core = node.nodePos.getTile(node.getLevel());
 	    if (core instanceof TileMissileSilo) {
 		silo = (TileMissileSilo) core;
 	    }
 	}
 	if (silo != null) {
-	    CompoundNBT nbt = stack.getOrCreateTag();
+	    CompoundTag nbt = stack.getOrCreateTag();
 	    int x = nbt.getInt("xCoord");
 	    int y = nbt.getInt("yCoord");
 	    int z = nbt.getInt("zCoord");
@@ -55,24 +55,24 @@ public class ItemRadarGun extends ItemElectric {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
+    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 	Location trace = UtilitiesMath.getRaytracedBlock(playerIn);
 	if (trace != null) {
-	    CompoundNBT nbt = playerIn.getItemStackFromSlot(handIn == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND)
+	    CompoundTag nbt = playerIn.getItemBySlot(handIn == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND)
 		    .getOrCreateTag();
 	    nbt.putInt("xCoord", trace.intX());
 	    nbt.putInt("yCoord", trace.intY());
 	    nbt.putInt("zCoord", trace.intZ());
-	    nbt.putString("world", worldIn.getDimensionKey().getLocation().getPath());
-	    extractPower(playerIn.getItemStackFromSlot(handIn == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND), 150,
+	    nbt.putString("world", worldIn.dimension().location().getPath());
+	    extractPower(playerIn.getItemBySlot(handIn == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND), 150,
 		    false);
 	}
-	return super.onItemRightClick(worldIn, playerIn, handIn);
+	return super.use(worldIn, playerIn, handIn);
     }
 
-    public static ServerWorld getFromNBT(ServerWorld base, String str) {
-	for (ServerWorld world : base.getWorld().getServer().getWorlds()) {
-	    if (world.getDimensionKey().getLocation().getPath().equalsIgnoreCase(str)) {
+    public static ServerLevel getFromNBT(ServerLevel base, String str) {
+	for (ServerLevel world : base.getLevel().getServer().getAllLevels()) {
+	    if (world.dimension().location().getPath().equalsIgnoreCase(str)) {
 		return world;
 	    }
 	}
@@ -80,29 +80,29 @@ public class ItemRadarGun extends ItemElectric {
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+    public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 	super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
 	Location trace = UtilitiesMath.getRaytracedBlock(entityIn);
-	if (!worldIn.isRemote && entityIn instanceof PlayerEntity) {
-	    PlayerEntity player = (PlayerEntity) entityIn;
+	if (!worldIn.isClientSide && entityIn instanceof Player) {
+	    Player player = (Player) entityIn;
 	    if (isSelected && trace != null) {
-		player.sendStatusMessage(new TranslationTextComponent("message.radargun.text", trace.toString()), true);
+		player.displayClientMessage(new TranslatableComponent("message.radargun.text", trace.toString()), true);
 	    }
 	}
     }
 
     @Override
-    public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-	super.addInformation(stack, worldIn, tooltip, flagIn);
+    public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	super.appendHoverText(stack, worldIn, tooltip, flagIn);
 	if (stack.hasTag()) {
-	    CompoundNBT nbt = stack.getTag();
+	    CompoundTag nbt = stack.getTag();
 	    int x = nbt.getInt("xCoord");
 	    int y = nbt.getInt("yCoord");
 	    int z = nbt.getInt("zCoord");
 	    String world = nbt.getString("world");
-	    tooltip.add(new TranslationTextComponent("tooltip.radargun.linked", world + ", " + x + ", " + y + ", " + z));
+	    tooltip.add(new TranslatableComponent("tooltip.radargun.linked", world + ", " + x + ", " + y + ", " + z));
 	} else {
-	    tooltip.add(new TranslationTextComponent("tooltip.radargun.notag"));
+	    tooltip.add(new TranslatableComponent("tooltip.radargun.notag"));
 	}
     }
 }

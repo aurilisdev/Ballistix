@@ -2,7 +2,7 @@ package ballistix.client.render.entity;
 
 import org.lwjgl.opengl.GL11;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 
@@ -12,55 +12,55 @@ import ballistix.common.entity.EntityBlast;
 import ballistix.common.settings.Constants;
 import electrodynamics.prefab.utilities.UtilitiesRendering;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.MultiBufferSource;
+import com.mojang.blaze3d.platform.Lighting;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.texture.AtlasTexture;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.resources.ResourceLocation;
+import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class RenderBlast extends EntityRenderer<EntityBlast> {
-    public RenderBlast(EntityRendererManager renderManagerIn) {
+    public RenderBlast(EntityRenderDispatcher renderManagerIn) {
 	super(renderManagerIn);
-	shadowSize = 0.5F;
+	shadowRadius = 0.5F;
     }
 
     @Override
     @Deprecated
-    public void render(EntityBlast entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn,
+    public void render(EntityBlast entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn,
 	    int packedLightIn) {
 	SubtypeBlast subtype = entityIn.getBlastType();
 	if (subtype == SubtypeBlast.darkmatter) {
 
-	    GlStateManager.pushMatrix();
-	    RenderSystem.multMatrix(matrixStackIn.getLast().getMatrix());
-	    matrixStackIn.rotate(Minecraft.getInstance().getRenderManager().getCameraOrientation());
-	    matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F));
-	    float scale = entityIn.ticksExisted / 1200.0f;
-	    GlStateManager.scalef(scale, scale, scale);
+	    GlStateManager._pushMatrix();
+	    RenderSystem.multMatrix(matrixStackIn.last().pose());
+	    matrixStackIn.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+	    matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(180.0F));
+	    float scale = entityIn.tickCount / 1200.0f;
+	    GlStateManager._scalef(scale, scale, scale);
 
-	    UtilitiesRendering.renderStar(entityIn.ticksExisted, 100, 1, 1, 1, 0.3f, true);
+	    UtilitiesRendering.renderStar(entityIn.tickCount, 100, 1, 1, 1, 0.3f, true);
 
-	    GlStateManager.popMatrix();
+	    GlStateManager._popMatrix();
 	} else if (subtype == SubtypeBlast.nuclear && entityIn.shouldRenderCustom) {
-	    GlStateManager.pushMatrix();
-	    GlStateManager.enableBlend();
-	    GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA.param, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.param);
-	    GlStateManager.disableLighting();
-	    GlStateManager.enableDepthTest();
-	    GlStateManager.color4f(0.0F, 0.0F, 0.2F, 0.8f);
-	    RenderSystem.multMatrix(matrixStackIn.getLast().getMatrix());
-	    matrixStackIn.rotate(Minecraft.getInstance().getRenderManager().getCameraOrientation());
-	    matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F));
+	    GlStateManager._pushMatrix();
+	    GlStateManager._enableBlend();
+	    GlStateManager._blendFunc(GlStateManager.SourceFactor.SRC_ALPHA.value, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.value);
+	    GlStateManager._disableLighting();
+	    GlStateManager._enableDepthTest();
+	    GlStateManager._color4f(0.0F, 0.0F, 0.2F, 0.8f);
+	    RenderSystem.multMatrix(matrixStackIn.last().pose());
+	    matrixStackIn.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+	    matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(180.0F));
 	    double di = 0.02;
 	    double dj = 0.04;
 	    double du = di * 2 * Math.PI;
 	    double dv = dj * Math.PI;
-	    float scale = (entityIn.ticksExisted - entityIn.ticksWhenCustomRender) / 2.0f;
+	    float scale = (entityIn.tickCount - entityIn.ticksWhenCustomRender) / 2.0f;
 	    GL11.glScalef(scale, scale, scale);
 	    for (double i = 0; i < 1.0; i += di) {// horizonal
 		for (double j = 0; j < 1.0; j += dj) // vertical
@@ -73,10 +73,10 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 			    { Math.cos(v + dv) * Math.cos(u + du), Math.cos(v + dv) * Math.sin(u + du), Math.sin(v + dv) },
 			    { Math.cos(v + dv) * Math.cos(u), Math.cos(v + dv) * Math.sin(u), Math.sin(v + dv) } };
 		    GL11.glNormal3d(Math.cos(v + dv / 2) * Math.cos(u + du / 2), Math.cos(v + dv / 2) * Math.sin(u + du / 2), Math.sin(v + dv / 2));
-		    Minecraft.getInstance().textureManager.bindTexture(ClientRegister.TEXTURE_FIREBALL);
+		    Minecraft.getInstance().textureManager.bind(ClientRegister.TEXTURE_FIREBALL);
 		    GL11.glBegin(GL11.GL_POLYGON);
 		    GL11.glColor4f(1, 1, 1,
-			    (float) (1.25f - (entityIn.ticksExisted - entityIn.ticksWhenCustomRender) / Constants.EXPLOSIVE_NUCLEAR_DURATION));
+			    (float) (1.25f - (entityIn.tickCount - entityIn.ticksWhenCustomRender) / Constants.EXPLOSIVE_NUCLEAR_DURATION));
 		    GL11.glTexCoord2d(i, j);
 		    GL11.glVertex3dv(p[0]);
 		    GL11.glTexCoord2d(i + di, j);
@@ -88,31 +88,31 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 		    GL11.glEnd();
 		}
 	    }
-	    GlStateManager.disableDepthTest();
-	    GlStateManager.enableLighting();
-	    GlStateManager.disableBlend();
-	    if (entityIn.ticksExisted - entityIn.ticksWhenCustomRender < 10) {
-		scale = (entityIn.ticksExisted - entityIn.ticksWhenCustomRender) * 5000f;
+	    GlStateManager._disableDepthTest();
+	    GlStateManager._enableLighting();
+	    GlStateManager._disableBlend();
+	    if (entityIn.tickCount - entityIn.ticksWhenCustomRender < 10) {
+		scale = (entityIn.tickCount - entityIn.ticksWhenCustomRender) * 5000f;
 		matrixStackIn.scale(scale, scale, scale);
-		UtilitiesRendering.renderStar(entityIn.ticksExisted, 500, 1, 1, 1, 0.7f, true);
+		UtilitiesRendering.renderStar(entityIn.tickCount, 500, 1, 1, 1, 0.7f, true);
 	    }
-	    GlStateManager.popMatrix();
-	    RenderHelper.enableStandardItemLighting();
+	    GlStateManager._popMatrix();
+	    Lighting.turnBackOn();
 	} else if (subtype == SubtypeBlast.antimatter && entityIn.shouldRenderCustom) {
-	    GlStateManager.pushMatrix();
-	    GlStateManager.enableBlend();
-	    GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA.param, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.param);
-	    GlStateManager.disableLighting();
-	    GlStateManager.enableDepthTest();
-	    GlStateManager.color4f(0.0F, 0.0F, 0.2F, 0.8f);
-	    RenderSystem.multMatrix(matrixStackIn.getLast().getMatrix());
-	    matrixStackIn.rotate(Minecraft.getInstance().getRenderManager().getCameraOrientation());
-	    matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F));
+	    GlStateManager._pushMatrix();
+	    GlStateManager._enableBlend();
+	    GlStateManager._blendFunc(GlStateManager.SourceFactor.SRC_ALPHA.value, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.value);
+	    GlStateManager._disableLighting();
+	    GlStateManager._enableDepthTest();
+	    GlStateManager._color4f(0.0F, 0.0F, 0.2F, 0.8f);
+	    RenderSystem.multMatrix(matrixStackIn.last().pose());
+	    matrixStackIn.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+	    matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(180.0F));
 	    double di = 0.02;
 	    double dj = 0.04;
 	    double du = di * 2 * Math.PI;
 	    double dv = dj * Math.PI;
-	    float scale = (float) ((entityIn.ticksExisted - entityIn.ticksWhenCustomRender) / Constants.EXPLOSIVE_ANTIMATTER_DURATION
+	    float scale = (float) ((entityIn.tickCount - entityIn.ticksWhenCustomRender) / Constants.EXPLOSIVE_ANTIMATTER_DURATION
 		    * Constants.EXPLOSIVE_ANTIMATTER_RADIUS * 1.5);
 	    GL11.glScalef(scale, scale, scale);
 	    for (double i = 0; i < 1.0; i += di) {// horizonal
@@ -126,10 +126,10 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 			    { Math.cos(v + dv) * Math.cos(u + du), Math.cos(v + dv) * Math.sin(u + du), Math.sin(v + dv) },
 			    { Math.cos(v + dv) * Math.cos(u), Math.cos(v + dv) * Math.sin(u), Math.sin(v + dv) } };
 		    GL11.glNormal3d(Math.cos(v + dv / 2) * Math.cos(u + du / 2), Math.cos(v + dv / 2) * Math.sin(u + du / 2), Math.sin(v + dv / 2));
-		    Minecraft.getInstance().textureManager.bindTexture(ClientRegister.TEXTURE_FIREBALL);
+		    Minecraft.getInstance().textureManager.bind(ClientRegister.TEXTURE_FIREBALL);
 		    GL11.glBegin(GL11.GL_POLYGON);
 		    GL11.glColor4f(1, 1, 1,
-			    (float) (1.25f - (entityIn.ticksExisted - entityIn.ticksWhenCustomRender) / Constants.EXPLOSIVE_ANTIMATTER_DURATION));
+			    (float) (1.25f - (entityIn.tickCount - entityIn.ticksWhenCustomRender) / Constants.EXPLOSIVE_ANTIMATTER_DURATION));
 		    GL11.glTexCoord2d(i, j);
 		    GL11.glVertex3dv(p[0]);
 		    GL11.glTexCoord2d(i + di, j);
@@ -141,18 +141,18 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 		    GL11.glEnd();
 		}
 	    }
-	    GlStateManager.disableDepthTest();
-	    GlStateManager.enableLighting();
-	    GlStateManager.disableBlend();
-	    GlStateManager.popMatrix();
-	    RenderHelper.enableStandardItemLighting();
+	    GlStateManager._disableDepthTest();
+	    GlStateManager._enableLighting();
+	    GlStateManager._disableBlend();
+	    GlStateManager._popMatrix();
+	    Lighting.turnBackOn();
 	}
 	super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
     }
 
     @Override
     @Deprecated
-    public ResourceLocation getEntityTexture(EntityBlast entity) {
-	return AtlasTexture.LOCATION_BLOCKS_TEXTURE;
+    public ResourceLocation getTextureLocation(EntityBlast entity) {
+	return TextureAtlas.LOCATION_BLOCKS;
     }
 }

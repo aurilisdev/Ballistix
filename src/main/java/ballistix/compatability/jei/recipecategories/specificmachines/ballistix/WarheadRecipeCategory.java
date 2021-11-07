@@ -6,7 +6,7 @@ import java.util.List;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import ballistix.References;
 import ballistix.compatability.jei.recipecategories.psuedorecipes.BallistixPsuedoRecipes;
@@ -20,10 +20,10 @@ import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.Font;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.TranslatableComponent;
 
 public class WarheadRecipeCategory extends ElectrodynamicsRecipeCategory<PsuedoDO2ORecipe> {
 
@@ -93,29 +93,29 @@ public class WarheadRecipeCategory extends ElectrodynamicsRecipeCategory<PsuedoD
 
     @Override
 
-    public void draw(PsuedoDO2ORecipe recipe, MatrixStack matrixStack, double mouseX, double mouseY) {
+    public void draw(PsuedoDO2ORecipe recipe, PoseStack matrixStack, double mouseX, double mouseY) {
 	IDrawableAnimated arrow = getArrow(recipe);
 	arrow.draw(matrixStack, PROCESSING_ARROW_OFFSET[0], PROCESSING_ARROW_OFFSET[1]);
 
 	drawSmeltTime(recipe, matrixStack, getYHeight());
     }
 
-    protected void drawSmeltTime(PsuedoDO2ORecipe recipe, MatrixStack matrixStack, int y) {
+    protected void drawSmeltTime(PsuedoDO2ORecipe recipe, PoseStack matrixStack, int y) {
 	int smeltTimeSeconds = getArrowSmeltTime() / 20;
 
-	TranslationTextComponent missileString = new TranslationTextComponent("gui.jei.category." + getRecipeGroup() + ".info.missile",
+	TranslatableComponent missileString = new TranslatableComponent("gui.jei.category." + getRecipeGroup() + ".info.missile",
 		smeltTimeSeconds);
-	TranslationTextComponent explosiveString = new TranslationTextComponent("gui.jei.category." + getRecipeGroup() + ".info.explosive",
+	TranslatableComponent explosiveString = new TranslatableComponent("gui.jei.category." + getRecipeGroup() + ".info.explosive",
 		smeltTimeSeconds);
 
 	Minecraft minecraft = Minecraft.getInstance();
-	FontRenderer fontRenderer = minecraft.fontRenderer;
+	Font fontRenderer = minecraft.font;
 
-	int missileWidth = fontRenderer.getStringPropertyWidth(missileString);
-	int explosiveWidth = fontRenderer.getStringPropertyWidth(explosiveString);
+	int missileWidth = fontRenderer.width(missileString);
+	int explosiveWidth = fontRenderer.width(explosiveString);
 
-	fontRenderer.func_243248_b(matrixStack, missileString, GUI_BACKGROUND[2] - missileWidth - 46, y - 37, 0xFF333333);
-	fontRenderer.func_243248_b(matrixStack, explosiveString, GUI_BACKGROUND[2] - explosiveWidth - 46, y - 10, 0xFF333333);
+	fontRenderer.draw(matrixStack, missileString, GUI_BACKGROUND[2] - missileWidth - 46, y - 37, 0xFF333333);
+	fontRenderer.draw(matrixStack, explosiveString, GUI_BACKGROUND[2] - explosiveWidth - 46, y - 10, 0xFF333333);
     }
 
     protected IDrawableAnimated getArrow(DO2ORecipe recipe) {

@@ -5,24 +5,24 @@ import java.util.Iterator;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.SubtypeBlast;
 import ballistix.common.settings.Constants;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Explosion;
-import net.minecraft.world.Explosion.Mode;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Explosion.BlockInteraction;
+import net.minecraft.world.level.Level;
 
 public class BlastAntimatter extends Blast implements IHasCustomRenderer {
 
-    public BlastAntimatter(World world, BlockPos position) {
+    public BlastAntimatter(Level world, BlockPos position) {
 	super(world, position);
     }
 
     @Override
     @Deprecated
     public void doPreExplode() {
-	if (!world.isRemote) {
+	if (!world.isClientSide) {
 	    thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, false);
 	    thread.start();
 	}
@@ -38,12 +38,12 @@ public class BlastAntimatter extends Blast implements IHasCustomRenderer {
 
     @Override
     public boolean doExplode(int callCount) {
-	if (!world.isRemote) {
+	if (!world.isClientSide) {
 	    if (thread == null) {
 		return true;
 	    }
 	    Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
-		    (float) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, false, Mode.BREAK);
+		    (float) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, false, BlockInteraction.BREAK);
 	    if (thread.isComplete) {
 		hasStarted = true;
 		if (pertick == -1) {
@@ -55,14 +55,14 @@ public class BlastAntimatter extends Blast implements IHasCustomRenderer {
 		    if (finished-- < 0) {
 			break;
 		    }
-		    BlockPos p = new BlockPos(iterator.next()).add(position);
+		    BlockPos p = new BlockPos(iterator.next()).offset(position);
 		    BlockState state = world.getBlockState(p);
 		    Block block = state.getBlock();
 
-		    if (state != Blocks.AIR.getDefaultState() && state != Blocks.VOID_AIR.getDefaultState()
-			    && state.getBlockHardness(world, p) >= 0) {
-			block.onExplosionDestroy(world, p, ex);
-			world.setBlockState(p, Blocks.AIR.getDefaultState(), 2 | 16 | 32);
+		    if (state != Blocks.AIR.defaultBlockState() && state != Blocks.VOID_AIR.defaultBlockState()
+			    && state.getDestroySpeed(world, p) >= 0) {
+			block.wasExploded(world, p, ex);
+			world.setBlock(p, Blocks.AIR.defaultBlockState(), 2 | 16 | 32);
 		    }
 		    iterator.remove();
 		}

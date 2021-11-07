@@ -9,10 +9,10 @@ import ballistix.client.render.entity.RenderMissile;
 import ballistix.client.render.entity.RenderShrapnel;
 import ballistix.client.render.tile.RenderMissileSilo;
 import ballistix.client.screen.ScreenMissileSilo;
-import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -46,18 +46,18 @@ public class ClientRegister {
 
 	ClientRegistry.bindTileEntityRenderer(DeferredRegisters.TILE_MISSILESILO.get(), RenderMissileSilo::new);
 
-	ScreenManager.registerFactory(DeferredRegisters.CONTAINER_MISSILESILO.get(), ScreenMissileSilo::new);
+	MenuScreens.register(DeferredRegisters.CONTAINER_MISSILESILO.get(), ScreenMissileSilo::new);
 
 	RenderingRegistry.registerEntityRenderingHandler(DeferredRegisters.ENTITY_EXPLOSIVE.get(), RenderExplosive::new);
 	RenderingRegistry.registerEntityRenderingHandler(DeferredRegisters.ENTITY_GRENADE.get(), RenderGrenade::new);
 	RenderingRegistry.registerEntityRenderingHandler(DeferredRegisters.ENTITY_BLAST.get(), RenderBlast::new);
 	RenderingRegistry.registerEntityRenderingHandler(DeferredRegisters.ENTITY_SHRAPNEL.get(), RenderShrapnel::new);
 	RenderingRegistry.registerEntityRenderingHandler(DeferredRegisters.ENTITY_MISSILE.get(), RenderMissile::new);
-	RenderTypeLookup.setRenderLayer(DeferredRegisters.blockMissileSilo, RenderType.getCutout());
+	ItemBlockRenderTypes.setRenderLayer(DeferredRegisters.blockMissileSilo, RenderType.cutout());
     }
 
     public static boolean shouldMultilayerRender(RenderType type) {
-	return type == RenderType.getTranslucent() || type == RenderType.getSolid();
+	return type == RenderType.translucent() || type == RenderType.solid();
     }
 
 }

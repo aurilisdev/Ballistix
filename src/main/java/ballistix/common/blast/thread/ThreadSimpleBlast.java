@@ -3,16 +3,16 @@ package ballistix.common.blast.thread;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 public class ThreadSimpleBlast extends ThreadBlast {
     private static final HashMap<Integer, HashSet<BlockPos>> cachedResults = new HashMap<>();
     private static final HashMap<Integer, HashSet<BlockPos>> cachedHashedResults = new HashMap<>();
     private boolean useHashedResults;
 
-    public ThreadSimpleBlast(World world, BlockPos position, int range, float energy, Entity source, boolean useHashedResults) {
+    public ThreadSimpleBlast(Level world, BlockPos position, int range, float energy, Entity source, boolean useHashedResults) {
 	super(world, position, range, energy, source);
 	this.useHashedResults = useHashedResults;
     }
@@ -29,7 +29,7 @@ public class ThreadSimpleBlast extends ThreadBlast {
 		for (int j = -explosionRadius; j <= explosionRadius; j++) {
 		    for (int k = -explosionRadius; k <= explosionRadius; k++) {
 			int idistance = i * i + j * j + k * k;
-			if (idistance <= explosionRadius * explosionRadius && world.rand.nextFloat()
+			if (idistance <= explosionRadius * explosionRadius && world.random.nextFloat()
 				* (explosionRadius * explosionRadius) < explosionRadius * explosionRadius * strictnessAtEdges - idistance) {
 			    positions.add(useHashedResults ? new HashDistanceBlockPos(i, j, k, idistance) : new BlockPos(i, j, k));
 			}

@@ -3,29 +3,29 @@ package ballistix.common.entity;
 import ballistix.DeferredRegisters;
 import ballistix.common.blast.Blast;
 import ballistix.common.block.SubtypeBlast;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.MoverType;
-import net.minecraft.entity.projectile.ThrowableEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.IPacket;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.projectile.ThrowableProjectile;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.network.NetworkHooks;
 
-public class EntityGrenade extends ThrowableEntity {
-    private static final DataParameter<Integer> FUSE = EntityDataManager.createKey(EntityGrenade.class, DataSerializers.VARINT);
-    private static final DataParameter<Integer> TYPE = EntityDataManager.createKey(EntityGrenade.class, DataSerializers.VARINT);
+public class EntityGrenade extends ThrowableProjectile {
+    private static final EntityDataAccessor<Integer> FUSE = SynchedEntityData.defineId(EntityGrenade.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(EntityGrenade.class, EntityDataSerializers.INT);
     public int blastOrdinal = -1;
     public int fuse = 80;
 
-    public EntityGrenade(EntityType<? extends EntityGrenade> type, World worldIn) {
+    public EntityGrenade(EntityType<? extends EntityGrenade> type, Level worldIn) {
 	super(type, worldIn);
     }
 
-    public EntityGrenade(World worldIn) {
+    public EntityGrenade(Level worldIn) {
 	this(DeferredRegisters.ENTITY_GRENADE.get(), worldIn);
     }
 
@@ -39,61 +39,61 @@ public class EntityGrenade extends ThrowableEntity {
     }
 
     @Override
-    protected void registerData() {
-	dataManager.register(FUSE, 80);
-	dataManager.register(TYPE, -1);
+    protected void defineSynchedData() {
+	entityData.define(FUSE, 80);
+	entityData.define(TYPE, -1);
     }
 
     @Override
     public void tick() {
-	if (!world.isRemote) {
-	    dataManager.set(TYPE, blastOrdinal);
-	    dataManager.set(FUSE, fuse);
+	if (!level.isClientSide) {
+	    entityData.set(TYPE, blastOrdinal);
+	    entityData.set(FUSE, fuse);
 	} else {
-	    blastOrdinal = dataManager.get(TYPE);
-	    fuse = dataManager.get(FUSE);
+	    blastOrdinal = entityData.get(TYPE);
+	    fuse = entityData.get(FUSE);
 	}
-	if (!hasNoGravity()) {
-	    this.setMotion(getMotion().add(0.0D, -0.04D, 0.0D));
+	if (!isNoGravity()) {
+	    this.setDeltaMovement(getDeltaMovement().add(0.0D, -0.04D, 0.0D));
 	}
 
-	move(MoverType.SELF, getMotion());
-	this.setMotion(getMotion().scale(0.98D));
+	move(MoverType.SELF, getDeltaMovement());
+	this.setDeltaMovement(getDeltaMovement().scale(0.98D));
 	if (onGround) {
-	    this.setMotion(getMotion().mul(0.7D, -0.5D, 0.7D));
+	    this.setDeltaMovement(getDeltaMovement().multiply(0.7D, -0.5D, 0.7D));
 	}
 	--fuse;
 	if (fuse <= 0) {
 	    this.remove();
 	    if (blastOrdinal != -1) {
 		SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
-		Blast b = Blast.createFromSubtype(explosive, world, getPosition());
+		Blast b = Blast.createFromSubtype(explosive, level, blockPosition());
 		if (b != null) {
 		    b.performExplosion();
 		}
 	    }
 	} else {
-	    func_233566_aG_();
-	    if (world.isRemote) {
-		world.addParticle(ParticleTypes.SMOKE, getPosX(), getPosY() + 0.5D, getPosZ(), 0.0D, 0.0D, 0.0D);
+	    updateInWaterStateAndDoFluidPushing();
+	    if (level.isClientSide) {
+		level.addParticle(ParticleTypes.SMOKE, getX(), getY() + 0.5D, getZ(), 0.0D, 0.0D, 0.0D);
 	    }
 	}
     }
 
     @Override
-    protected void writeAdditional(CompoundNBT compound) {
+    protected void addAdditionalSaveData(CompoundTag compound) {
 	compound.putInt("Fuse", fuse);
 	compound.putInt("type", blastOrdinal);
     }
 
     @Override
-    protected void readAdditional(CompoundNBT compound) {
+    protected void readAdditionalSaveData(CompoundTag compound) {
 	fuse = compound.getInt("Fuse");
 	blastOrdinal = compound.getInt("type");
     }
 
     @Override
-    public IPacket<?> createSpawnPacket() {
+    public Packet<?> getAddEntityPacket() {
 	return NetworkHooks.getEntitySpawningPacket(this);
     }
 }

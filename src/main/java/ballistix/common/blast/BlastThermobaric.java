@@ -7,25 +7,25 @@ import ballistix.common.block.SubtypeBlast;
 import ballistix.common.settings.Constants;
 import electrodynamics.common.packet.NetworkHandler;
 import electrodynamics.common.packet.PacketSpawnSmokeParticle;
-import net.minecraft.block.Blocks;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.Explosion;
-import net.minecraft.world.Explosion.Mode;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Explosion.BlockInteraction;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.fml.network.NetworkDirection;
 
 public class BlastThermobaric extends Blast {
 
-    public BlastThermobaric(World world, BlockPos position) {
+    public BlastThermobaric(Level world, BlockPos position) {
 	super(world, position);
     }
 
     @Override
     public void doPreExplode() {
 	hasStarted = true;
-	if (!world.isRemote) {
+	if (!world.isClientSide) {
 	    thread = new ThreadRaycastBlast(world, position, (int) Constants.EXPLOSIVE_THERMOBARIC_SIZE,
 		    (float) Constants.EXPLOSIVE_THERMOBARIC_ENERGY, null);
 	    thread.start();
@@ -38,12 +38,12 @@ public class BlastThermobaric extends Blast {
 
     @Override
     public boolean doExplode(int callCount) {
-	if (!world.isRemote) {
+	if (!world.isClientSide) {
 	    if (thread == null) {
 		return true;
 	    }
 	    Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
-		    (float) Constants.EXPLOSIVE_THERMOBARIC_SIZE, false, Mode.BREAK);
+		    (float) Constants.EXPLOSIVE_THERMOBARIC_SIZE, false, BlockInteraction.BREAK);
 	    if (thread.isComplete) {
 		if (pertick == -1) {
 		    pertick = (int) (thread.results.size() / Constants.EXPLOSIVE_THERMOBARIC_DURATION + 1);
@@ -55,11 +55,11 @@ public class BlastThermobaric extends Blast {
 			break;
 		    }
 		    BlockPos p = new BlockPos(iterator.next());
-		    world.getBlockState(p).getBlock().onExplosionDestroy(world, p, ex);
-		    world.setBlockState(p, Blocks.AIR.getDefaultState(), 2);
-		    if (world.rand.nextFloat() < 1 / 10.0 && world instanceof ServerWorld) {
-			((ServerWorld) world).getChunkProvider().chunkManager.getTrackingPlayers(new ChunkPos(p), false)
-				.forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getNetworkManager(),
+		    world.getBlockState(p).getBlock().wasExploded(world, p, ex);
+		    world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
+		    if (world.random.nextFloat() < 1 / 10.0 && world instanceof ServerLevel) {
+			((ServerLevel) world).getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false)
+				.forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getConnection(),
 					NetworkDirection.PLAY_TO_CLIENT));
 		    }
 		    iterator.remove();

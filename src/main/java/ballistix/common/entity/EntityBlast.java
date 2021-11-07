@@ -4,20 +4,20 @@ import ballistix.DeferredRegisters;
 import ballistix.common.blast.Blast;
 import ballistix.common.blast.IHasCustomRenderer;
 import ballistix.common.block.SubtypeBlast;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.IPacket;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 public class EntityBlast extends Entity {
-    private static final DataParameter<Integer> CALLCOUNT = EntityDataManager.createKey(EntityBlast.class, DataSerializers.VARINT);
-    private static final DataParameter<Integer> TYPE = EntityDataManager.createKey(EntityBlast.class, DataSerializers.VARINT);
-    private static final DataParameter<Boolean> SHOULDSTARTCUSTOMRENDER = EntityDataManager.createKey(EntityBlast.class, DataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> CALLCOUNT = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> SHOULDSTARTCUSTOMRENDER = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.BOOLEAN);
 
     private Blast blast;
     public int blastOrdinal = -1;
@@ -25,18 +25,18 @@ public class EntityBlast extends Entity {
     public boolean shouldRenderCustom = false;
     public int ticksWhenCustomRender;
 
-    public EntityBlast(EntityType<? extends EntityBlast> type, World worldIn) {
+    public EntityBlast(EntityType<? extends EntityBlast> type, Level worldIn) {
 	super(type, worldIn);
-	preventEntitySpawning = true;
+	blocksBuilding = true;
     }
 
-    public EntityBlast(World worldIn) {
+    public EntityBlast(Level worldIn) {
 	this(DeferredRegisters.ENTITY_BLAST.get(), worldIn);
     }
 
     public void setBlastType(SubtypeBlast explosive) {
 	blastOrdinal = explosive.ordinal();
-	blast = Blast.createFromSubtype(getBlastType(), world, getPosition());
+	blast = Blast.createFromSubtype(getBlastType(), level, blockPosition());
     }
 
     public SubtypeBlast getBlastType() {
@@ -44,25 +44,25 @@ public class EntityBlast extends Entity {
     }
 
     @Override
-    protected void registerData() {
-	dataManager.register(CALLCOUNT, 80);
-	dataManager.register(TYPE, -1);
-	dataManager.register(SHOULDSTARTCUSTOMRENDER, false);
+    protected void defineSynchedData() {
+	entityData.define(CALLCOUNT, 80);
+	entityData.define(TYPE, -1);
+	entityData.define(SHOULDSTARTCUSTOMRENDER, false);
     }
 
     @Override
     public void tick() {
-	if (!world.isRemote) {
-	    dataManager.set(TYPE, blastOrdinal);
-	    dataManager.set(CALLCOUNT, callcount);
-	    dataManager.set(SHOULDSTARTCUSTOMRENDER, blast instanceof IHasCustomRenderer && ((IHasCustomRenderer) blast).shouldRender());
+	if (!level.isClientSide) {
+	    entityData.set(TYPE, blastOrdinal);
+	    entityData.set(CALLCOUNT, callcount);
+	    entityData.set(SHOULDSTARTCUSTOMRENDER, blast instanceof IHasCustomRenderer && ((IHasCustomRenderer) blast).shouldRender());
 	} else {
-	    blastOrdinal = dataManager.get(TYPE);
-	    callcount = dataManager.get(CALLCOUNT);
-	    if (!shouldRenderCustom && dataManager.get(SHOULDSTARTCUSTOMRENDER) == Boolean.TRUE) {
-		ticksWhenCustomRender = ticksExisted;
+	    blastOrdinal = entityData.get(TYPE);
+	    callcount = entityData.get(CALLCOUNT);
+	    if (!shouldRenderCustom && entityData.get(SHOULDSTARTCUSTOMRENDER) == Boolean.TRUE) {
+		ticksWhenCustomRender = tickCount;
 	    }
-	    shouldRenderCustom = dataManager.get(SHOULDSTARTCUSTOMRENDER);
+	    shouldRenderCustom = entityData.get(SHOULDSTARTCUSTOMRENDER);
 	}
 	if (blast != null) {
 	    if (callcount == 0) {
@@ -74,23 +74,23 @@ public class EntityBlast extends Entity {
 	    callcount++;
 	} else {
 	    if (blastOrdinal == -1) {
-		if (ticksExisted > 60) {
+		if (tickCount > 60) {
 		    remove();
 		}
 	    } else {
-		blast = Blast.createFromSubtype(getBlastType(), world, getPosition());
+		blast = Blast.createFromSubtype(getBlastType(), level, blockPosition());
 	    }
 	}
     }
 
     @Override
-    protected void writeAdditional(CompoundNBT compound) {
+    protected void addAdditionalSaveData(CompoundTag compound) {
 	compound.putInt("type", blastOrdinal);
 	compound.putInt("callcount", callcount);
     }
 
     @Override
-    protected void readAdditional(CompoundNBT compound) {
+    protected void readAdditionalSaveData(CompoundTag compound) {
 	blastOrdinal = compound.getInt("type");
 	callcount = compound.getInt("callcount");
 	if (blastOrdinal != -1) {
@@ -99,7 +99,7 @@ public class EntityBlast extends Entity {
     }
 
     @Override
-    public IPacket<?> createSpawnPacket() {
+    public Packet<?> getAddEntityPacket() {
 	return NetworkHooks.getEntitySpawningPacket(this);
     }
 

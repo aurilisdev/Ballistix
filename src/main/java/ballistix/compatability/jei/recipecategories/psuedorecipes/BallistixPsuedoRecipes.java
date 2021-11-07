@@ -6,8 +6,8 @@ import ballistix.common.block.SubtypeBlast;
 import electrodynamics.compatability.jei.recipecategories.psuedorecipes.PsuedoDO2ORecipe;
 import electrodynamics.compatability.jei.recipecategories.psuedorecipes.PsuedoO2ORecipe;
 import electrodynamics.compatability.jei.recipecategories.psuedorecipes.PsuedoRecipes;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 public class BallistixPsuedoRecipes {
 

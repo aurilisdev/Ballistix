@@ -1,7 +1,7 @@
 package ballistix.api.damage;
 
-import net.minecraft.util.DamageSource;
+import net.minecraft.world.damagesource.DamageSource;
 
 public class DamageSourceChemicalGas {
-    public static DamageSource INSTANCE = new DamageSource("chemicalgas").setDamageBypassesArmor().setDamageIsAbsolute();
+    public static DamageSource INSTANCE = new DamageSource("chemicalgas").bypassArmor().bypassMagic();
 }

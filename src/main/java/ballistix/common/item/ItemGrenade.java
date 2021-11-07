@@ -3,29 +3,29 @@ package ballistix.common.item;
 import ballistix.References;
 import ballistix.common.block.SubtypeBlast;
 import ballistix.common.entity.EntityGrenade;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.UseAction;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.level.Level;
 
 public class ItemGrenade extends Item {
     private SubtypeBlast explosive;
 
     public ItemGrenade(SubtypeBlast explosive) {
-	super(new Item.Properties().group(References.BALLISTIXTAB).maxStackSize(16));
+	super(new Item.Properties().tab(References.BALLISTIXTAB).stacksTo(16));
 	this.explosive = explosive;
     }
 
     @Override
-    public UseAction getUseAction(ItemStack stack) {
-	return UseAction.BOW;
+    public UseAnim getUseAnimation(ItemStack stack) {
+	return UseAnim.BOW;
     }
 
     @Override
@@ -34,27 +34,27 @@ public class ItemGrenade extends Item {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-	ItemStack itemstack = playerIn.getHeldItem(handIn);
-	playerIn.setActiveHand(handIn);
-	return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
+    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+	ItemStack itemstack = playerIn.getItemInHand(handIn);
+	playerIn.startUsingItem(handIn);
+	return new InteractionResultHolder<>(InteractionResult.SUCCESS, itemstack);
     }
 
     @Override
-    public void onPlayerStoppedUsing(ItemStack itemStack, World world, LivingEntity entityLiving, int timeLeft) {
-	if (!world.isRemote) {
-	    world.playSound(null, entityLiving.getPosX(), entityLiving.getPosY(), entityLiving.getPosZ(), SoundEvents.ENTITY_TNT_PRIMED,
-		    SoundCategory.BLOCKS, 0.5F, 0.4F / (random.nextFloat() * 0.4F + 0.8F));
+    public void releaseUsing(ItemStack itemStack, Level world, LivingEntity entityLiving, int timeLeft) {
+	if (!world.isClientSide) {
+	    world.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), SoundEvents.TNT_PRIMED,
+		    SoundSource.BLOCKS, 0.5F, 0.4F / (random.nextFloat() * 0.4F + 0.8F));
 
 	    float throwEnergy = (float) (getUseDuration(itemStack) - timeLeft) / (float) getUseDuration(itemStack) + 0.7f;
 
 	    EntityGrenade grenade = new EntityGrenade(world);
-	    grenade.setLocationAndAngles(entityLiving.getPosX(), entityLiving.getPosY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getPosZ(),
-		    entityLiving.rotationYaw, entityLiving.rotationPitch);
+	    grenade.moveTo(entityLiving.getX(), entityLiving.getY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getZ(),
+		    entityLiving.yRot, entityLiving.xRot);
 	    grenade.setShrapnelType(explosive);
-	    grenade.func_234612_a_(entityLiving, entityLiving.rotationPitch - 20, entityLiving.rotationYaw, 0.0F, throwEnergy, 1.0F);
-	    world.addEntity(grenade);
-	    if (!(entityLiving instanceof PlayerEntity) || !((PlayerEntity) entityLiving).isCreative()) {
+	    grenade.shootFromRotation(entityLiving, entityLiving.xRot - 20, entityLiving.yRot, 0.0F, throwEnergy, 1.0F);
+	    world.addFreshEntity(grenade);
+	    if (!(entityLiving instanceof Player) || !((Player) entityLiving).isCreative()) {
 		itemStack.shrink(1);
 	    }
 	}

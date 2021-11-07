@@ -1,56 +1,56 @@
 package ballistix.client.render.entity;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import ballistix.DeferredRegisters;
 import ballistix.common.block.SubtypeBlast;
 import ballistix.common.entity.EntityGrenade;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.renderer.texture.AtlasTexture;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.ItemEntityRenderer;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class RenderGrenade extends EntityRenderer<EntityGrenade> {
     private ItemEntity itemEntity;
-    private ItemRenderer itemRenderer;
+    private ItemEntityRenderer itemRenderer;
 
-    public RenderGrenade(EntityRendererManager renderManagerIn) {
+    public RenderGrenade(EntityRenderDispatcher renderManagerIn) {
 	super(renderManagerIn);
-	itemRenderer = new ItemRenderer(renderManagerIn, Minecraft.getInstance().getItemRenderer());
-	shadowSize = 0.15F;
-	shadowOpaque = 0.75F;
+	itemRenderer = new ItemEntityRenderer(renderManagerIn, Minecraft.getInstance().getItemRenderer());
+	shadowRadius = 0.15F;
+	shadowStrength = 0.75F;
     }
 
     @Override
-    public void render(EntityGrenade entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn,
+    public void render(EntityGrenade entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn,
 	    int packedLightIn) {
 	SubtypeBlast subtype = entityIn.getExplosiveType();
 	if (subtype != null) {
-	    matrixStackIn.push();
+	    matrixStackIn.pushPose();
 	    if (itemEntity == null) {
-		itemEntity = new ItemEntity(EntityType.ITEM, entityIn.world);
+		itemEntity = new ItemEntity(EntityType.ITEM, entityIn.level);
 	    }
-	    itemEntity.setWorld(entityIn.world);
-	    itemEntity.setPosition(entityIn.getPosX(), entityIn.getPosY(), entityIn.getPosZ());
+	    itemEntity.setLevel(entityIn.level);
+	    itemEntity.setPos(entityIn.getX(), entityIn.getY(), entityIn.getZ());
 	    itemEntity.setItem(new ItemStack(DeferredRegisters.SUBTYPEITEM_MAPPINGS.get(subtype)));
 	    itemRenderer.render(itemEntity, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
-	    matrixStackIn.pop();
+	    matrixStackIn.popPose();
 	}
 	super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
     }
 
     @Override
     @Deprecated
-    public ResourceLocation getEntityTexture(EntityGrenade entity) {
-	return AtlasTexture.LOCATION_BLOCKS_TEXTURE;
+    public ResourceLocation getTextureLocation(EntityGrenade entity) {
+	return TextureAtlas.LOCATION_BLOCKS;
     }
 }

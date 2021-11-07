@@ -1,6 +1,6 @@
 package ballistix.common.blast.thread;
 
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 
 public class HashDistanceBlockPos extends BlockPos {
     public int hash = 0;

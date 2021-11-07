@@ -7,32 +7,32 @@ import java.util.List;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.SubtypeBlast;
 import ballistix.common.settings.Constants;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.FallingBlockEntity;
-import net.minecraft.entity.item.TNTEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.play.server.SExplosionPacket;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.Explosion;
-import net.minecraft.world.Explosion.Mode;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.entity.item.PrimedTnt;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.protocol.game.ClientboundExplodePacket;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Explosion.BlockInteraction;
+import net.minecraft.world.level.Level;
 
 public class BlastDarkmatter extends Blast {
 
-    public BlastDarkmatter(World world, BlockPos position) {
+    public BlastDarkmatter(Level world, BlockPos position) {
 	super(world, position);
     }
 
     @Override
     @Deprecated
     public void doPreExplode() {
-	if (!world.isRemote) {
+	if (!world.isClientSide) {
 	    thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null, true);
 	    thread.start();
 	}
@@ -44,13 +44,13 @@ public class BlastDarkmatter extends Blast {
 
     @Override
     public boolean doExplode(int callCount) {
-	if (!world.isRemote) {
+	if (!world.isClientSide) {
 	    hasStarted = true;
 	    if (thread == null) {
 		return true;
 	    }
 	    Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
-		    (float) Constants.EXPLOSIVE_DARKMATTER_RADIUS, false, Mode.BREAK);
+		    (float) Constants.EXPLOSIVE_DARKMATTER_RADIUS, false, BlockInteraction.BREAK);
 	    if (thread.isComplete) {
 		if (callAtStart == -1) {
 		    callAtStart = callCount;
@@ -64,14 +64,14 @@ public class BlastDarkmatter extends Blast {
 		    if (finished-- < 0) {
 			break;
 		    }
-		    BlockPos p = new BlockPos(iterator.next()).add(position);
+		    BlockPos p = new BlockPos(iterator.next()).offset(position);
 		    BlockState state = world.getBlockState(p);
 		    Block block = state.getBlock();
 
-		    if (state != Blocks.AIR.getDefaultState() && state != Blocks.VOID_AIR.getDefaultState()
-			    && state.getBlockHardness(world, p) >= 0) {
-			block.onExplosionDestroy(world, p, ex);
-			world.setBlockState(p, Blocks.AIR.getDefaultState(), 2 | 16 | 32);
+		    if (state != Blocks.AIR.defaultBlockState() && state != Blocks.VOID_AIR.defaultBlockState()
+			    && state.getDestroySpeed(world, p) >= 0) {
+			block.wasExploded(world, p, ex);
+			world.setBlock(p, Blocks.AIR.defaultBlockState(), 2 | 16 | 32);
 		    }
 		    iterator.remove();
 		}
@@ -84,30 +84,30 @@ public class BlastDarkmatter extends Blast {
 	    float z = position.getZ();
 	    float size = (float) Constants.EXPLOSIVE_DARKMATTER_RADIUS;
 	    float f2 = size * 2.0F;
-	    int k1 = MathHelper.floor(x - (double) f2 - 1.0D);
-	    int l1 = MathHelper.floor(x + (double) f2 + 1.0D);
-	    int i2 = MathHelper.floor(y - (double) f2 - 1.0D);
-	    int i1 = MathHelper.floor(y + (double) f2 + 1.0D);
-	    int j2 = MathHelper.floor(z - (double) f2 - 1.0D);
-	    int j1 = MathHelper.floor(z + (double) f2 + 1.0D);
-	    List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(k1, i2, j2, l1, i1, j1));
+	    int k1 = Mth.floor(x - (double) f2 - 1.0D);
+	    int l1 = Mth.floor(x + (double) f2 + 1.0D);
+	    int i2 = Mth.floor(y - (double) f2 - 1.0D);
+	    int i1 = Mth.floor(y + (double) f2 + 1.0D);
+	    int j2 = Mth.floor(z - (double) f2 - 1.0D);
+	    int j1 = Mth.floor(z + (double) f2 + 1.0D);
+	    List<Entity> list = world.getEntities(null, new AABB(k1, i2, j2, l1, i1, j1));
 
 	    for (Entity entity : list) {
-		double d5 = entity.getPosX() - x;
-		double d7 = (entity instanceof TNTEntity ? entity.getPosY() : entity.getPosYEye()) - y;
-		double d9 = entity.getPosZ() - z;
-		double d13 = MathHelper.sqrt(d5 * d5 + d7 * d7 + d9 * d9);
+		double d5 = entity.getX() - x;
+		double d7 = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - y;
+		double d9 = entity.getZ() - z;
+		double d13 = Mth.sqrt(d5 * d5 + d7 * d7 + d9 * d9);
 		if (d13 != 0.0D) {
 		    d5 = d5 / d13;
 		    d7 = d7 / d13;
 		    d9 = d9 / d13;
 		    double d11 = (-0.2 - (callCount - callAtStart) / 150.0) / d13;
-		    entity.setMotion(entity.getMotion().add(d5 * d11, d7 * d11, d9 * d11));
-		    if (entity instanceof ServerPlayerEntity) {
-			ServerPlayerEntity serverplayerentity = (ServerPlayerEntity) entity;
+		    entity.setDeltaMovement(entity.getDeltaMovement().add(d5 * d11, d7 * d11, d9 * d11));
+		    if (entity instanceof ServerPlayer) {
+			ServerPlayer serverplayerentity = (ServerPlayer) entity;
 			if (!serverplayerentity.isCreative()) {
 			    serverplayerentity.connection
-				    .sendPacket(new SExplosionPacket(x, y, z, size, new ArrayList<>(), new Vector3d(d5 * d11, d7 * d11, d9 * d11)));
+				    .send(new ClientboundExplodePacket(x, y, z, size, new ArrayList<>(), new Vec3(d5 * d11, d7 * d11, d9 * d11)));
 			}
 		    } else if (entity instanceof FallingBlockEntity) {
 			entity.remove();

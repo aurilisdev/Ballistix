@@ -8,38 +8,38 @@ import ballistix.common.tile.TileMissileSilo;
 import electrodynamics.common.blockitem.BlockItemDescriptable;
 import electrodynamics.prefab.inventory.container.GenericContainer;
 import electrodynamics.prefab.inventory.container.slot.SlotRestricted;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIntArray;
-import net.minecraft.util.IntArray;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.SimpleContainerData;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ContainerMissileSilo extends GenericContainer<TileMissileSilo> {
 
-    public ContainerMissileSilo(int id, PlayerInventory playerinv) {
-	this(id, playerinv, new Inventory(2));
+    public ContainerMissileSilo(int id, Inventory playerinv) {
+	this(id, playerinv, new SimpleContainer(2));
     }
 
-    public ContainerMissileSilo(int id, PlayerInventory playerinv, IInventory inventory) {
-	this(id, playerinv, inventory, new IntArray(7));
+    public ContainerMissileSilo(int id, Inventory playerinv, Container inventory) {
+	this(id, playerinv, inventory, new SimpleContainerData(7));
     }
 
-    public ContainerMissileSilo(int id, PlayerInventory playerinv, IInventory inventory, IIntArray inventorydata) {
+    public ContainerMissileSilo(int id, Inventory playerinv, Container inventory, ContainerData inventorydata) {
 	super(DeferredRegisters.CONTAINER_MISSILESILO.get(), id, playerinv, inventory, inventorydata);
     }
 
     @Override
-    public void addInventorySlots(IInventory inv, PlayerInventory playerinv) {
+    public void addInventorySlots(Container inv, Inventory playerinv) {
 	addSlot(new SlotRestricted(inv, nextIndex(), 103, 14, DeferredRegisters.ITEM_MISSILECLOSERANGE.get(),
 		DeferredRegisters.ITEM_MISSILEMEDIUMRANGE.get(), DeferredRegisters.ITEM_MISSILELONGRANGE.get()));
 	addSlot(new SlotRestricted(inv, nextIndex(), 103, 50) {
 	    @Override
-	    public boolean isItemValid(ItemStack stack) {
+	    public boolean mayPlace(ItemStack stack) {
 		Item it = stack.getItem();
 		if (it instanceof BlockItemDescriptable) {
 		    BlockItemDescriptable des = (BlockItemDescriptable) it;
@@ -47,7 +47,7 @@ public class ContainerMissileSilo extends GenericContainer<TileMissileSilo> {
 			return true;
 		    }
 		}
-		return super.isItemValid(stack);
+		return super.mayPlace(stack);
 	    }
 	});
     }
@@ -80,7 +80,7 @@ public class ContainerMissileSilo extends GenericContainer<TileMissileSilo> {
 	}
 	if (getHostFromIntArray() != null) {
 	    NetworkHandler.CHANNEL
-		    .sendToServer(new PacketSetMissileData(getHostFromIntArray().getPos(), new BlockPos(triedX, triedY, triedZ), frequency));
+		    .sendToServer(new PacketSetMissileData(getHostFromIntArray().getBlockPos(), new BlockPos(triedX, triedY, triedZ), frequency));
 	}
     }
 

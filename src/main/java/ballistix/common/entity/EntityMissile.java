@@ -3,24 +3,24 @@ package ballistix.common.entity;
 import ballistix.DeferredRegisters;
 import ballistix.common.blast.Blast;
 import ballistix.common.block.SubtypeBlast;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.MoverType;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.IPacket;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 public class EntityMissile extends Entity {
-    private static final DataParameter<Integer> TYPE = EntityDataManager.createKey(EntityMissile.class, DataSerializers.VARINT);
-    private static final DataParameter<Integer> RANGE = EntityDataManager.createKey(EntityMissile.class, DataSerializers.VARINT);
-    private static final DataParameter<Integer> ISSTUCK = EntityDataManager.createKey(EntityMissile.class, DataSerializers.VARINT);
+    private static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> RANGE = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> ISSTUCK = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
     public BlockPos target;
     public int blastOrdinal = -1;
     public int range = -1;
@@ -30,12 +30,12 @@ public class EntityMissile extends Entity {
     private float oldRotationYaw = 0;
     private boolean isStuck = false;
 
-    public EntityMissile(EntityType<? extends EntityMissile> type, World worldIn) {
+    public EntityMissile(EntityType<? extends EntityMissile> type, Level worldIn) {
 	super(type, worldIn);
-	preventEntitySpawning = true;
+	blocksBuilding = true;
     }
 
-    public EntityMissile(World worldIn) {
+    public EntityMissile(Level worldIn) {
 	this(DeferredRegisters.ENTITY_MISSILE.get(), worldIn);
     }
 
@@ -48,99 +48,99 @@ public class EntityMissile extends Entity {
     }
 
     @Override
-    protected void registerData() {
-	dataManager.register(TYPE, -1);
-	dataManager.register(RANGE, -1);
-	dataManager.register(ISSTUCK, -1);
+    protected void defineSynchedData() {
+	entityData.define(TYPE, -1);
+	entityData.define(RANGE, -1);
+	entityData.define(ISSTUCK, -1);
     }
 
     @Override
-    public AxisAlignedBB getRenderBoundingBox() {
-	return super.getRenderBoundingBox().expand(20, 20, 20);
+    public AABB getBoundingBoxForCulling() {
+	return super.getBoundingBoxForCulling().expandTowards(20, 20, 20);
     }
 
     @Override
     public void tick() {
 	if (isStuck) {
-	    if (!world.isRemote && blastEntity.getBlast().hasStarted) {
-		setDead();
+	    if (!level.isClientSide && blastEntity.getBlast().hasStarted) {
+		removeAfterChangingDimensions();
 	    }
-	    rotationYaw = oldRotationYaw;
-	    rotationPitch = oldRotationPitch;
+	    yRot = oldRotationYaw;
+	    xRot = oldRotationPitch;
 	    return;
 	}
 	if (blastEntity == null) {
-	    if (getMotion().length() > 0) {
-		rotationPitch = (float) (Math
-			.atan(getMotion().getY() / Math.sqrt(getMotion().getX() * getMotion().getX() + getMotion().getZ() * getMotion().getZ()))
+	    if (getDeltaMovement().length() > 0) {
+		xRot = (float) (Math
+			.atan(getDeltaMovement().y() / Math.sqrt(getDeltaMovement().x() * getDeltaMovement().x() + getDeltaMovement().z() * getDeltaMovement().z()))
 			* 180.0D / Math.PI);
-		rotationYaw = (float) (Math.atan2(getMotion().getX(), getMotion().getZ()) * 180.0D / Math.PI);
+		yRot = (float) (Math.atan2(getDeltaMovement().x(), getDeltaMovement().z()) * 180.0D / Math.PI);
 	    } else {
-		rotationPitch = rotationYaw = 90;
+		xRot = yRot = 90;
 	    }
-	    if (ticksExisted < 10 && !isItem) {
-		setPosition(getPosX() + getMotion().x, getPosY() + getMotion().y, getPosZ() + getMotion().z);
+	    if (tickCount < 10 && !isItem) {
+		setPos(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z);
 	    } else {
-		move(MoverType.SELF, getMotion());
+		move(MoverType.SELF, getDeltaMovement());
 	    }
-	    if (!world.isRemote) {
-		if (onGround || collidedHorizontally || collidedVertically
-			|| !isItem && target != null && getPosY() < target.getY() && getMotion().getY() < 0) {
+	    if (!level.isClientSide) {
+		if (onGround || horizontalCollision || verticalCollision
+			|| !isItem && target != null && getY() < target.getY() && getDeltaMovement().y() < 0) {
 		    if (blastOrdinal != -1) {
 			SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
-			Blast b = Blast.createFromSubtype(explosive, world, getPosition());
+			Blast b = Blast.createFromSubtype(explosive, level, blockPosition());
 			if (b != null) {
 			    blastEntity = b.performExplosion();
 			    if (blastEntity == null) {
-				setDead();
+				removeAfterChangingDimensions();
 			    } else {
 				isStuck = true;
 			    }
 			}
 		    }
 		}
-		if (!isItem && getPosY() > 500) {
+		if (!isItem && getY() > 500) {
 		    if (target == null) {
-			setDead();
+			removeAfterChangingDimensions();
 		    } else {
-			setPosition(target.getX(), 499, target.getZ());
-			setMotion(0, -3f, 0);
+			setPos(target.getX(), 499, target.getZ());
+			setDeltaMovement(0, -3f, 0);
 		    }
 		}
 	    }
-	    if (!world.isRemote) {
-		dataManager.set(TYPE, blastOrdinal);
-		dataManager.set(RANGE, range);
-		dataManager.set(ISSTUCK, isStuck ? 999 : -1);
+	    if (!level.isClientSide) {
+		entityData.set(TYPE, blastOrdinal);
+		entityData.set(RANGE, range);
+		entityData.set(ISSTUCK, isStuck ? 999 : -1);
 	    } else {
-		blastOrdinal = dataManager.get(TYPE);
-		range = dataManager.get(RANGE);
-		isStuck = dataManager.get(ISSTUCK) > 0;
+		blastOrdinal = entityData.get(TYPE);
+		range = entityData.get(RANGE);
+		isStuck = entityData.get(ISSTUCK) > 0;
 	    }
-	    if (!isItem && target != null && getMotion().y < 3 && getMotion().y >= 0) {
-		setMotion(getMotion().add(0, 0.02, 0));
+	    if (!isItem && target != null && getDeltaMovement().y < 3 && getDeltaMovement().y >= 0) {
+		setDeltaMovement(getDeltaMovement().add(0, 0.02, 0));
 	    }
 	    for (int i = 0; i < 5; i++) {
-		float str = world.rand.nextFloat() * 0.25f;
-		float ranX = str * (world.rand.nextFloat() - 0.5f);
-		float ranY = str * (world.rand.nextFloat() - 0.5f);
-		float ranZ = str * (world.rand.nextFloat() - 0.5f);
-		float x = (float) (getPosX() - getSize(getPose()).width / 1.0f);
-		float y = (float) (getPosY() + getSize(getPose()).height / 1.0f);
-		float z = (float) (getPosZ() - getSize(getPose()).width / 1.0f);
-		world.addParticle(ParticleTypes.LARGE_SMOKE, x + ranX, y + ranY, z + ranZ, -getMotion().x + ranX, -getMotion().y - 0.075f + ranY,
-			-getMotion().z + ranZ);
+		float str = level.random.nextFloat() * 0.25f;
+		float ranX = str * (level.random.nextFloat() - 0.5f);
+		float ranY = str * (level.random.nextFloat() - 0.5f);
+		float ranZ = str * (level.random.nextFloat() - 0.5f);
+		float x = (float) (getX() - getDimensions(getPose()).width / 1.0f);
+		float y = (float) (getY() + getDimensions(getPose()).height / 1.0f);
+		float z = (float) (getZ() - getDimensions(getPose()).width / 1.0f);
+		level.addParticle(ParticleTypes.LARGE_SMOKE, x + ranX, y + ranY, z + ranZ, -getDeltaMovement().x + ranX, -getDeltaMovement().y - 0.075f + ranY,
+			-getDeltaMovement().z + ranZ);
 	    }
 	}
     }
 
     @Override
-    protected boolean canBeRidden(Entity entityIn) {
+    protected boolean canRide(Entity entityIn) {
 	return true;
     }
 
     @Override
-    protected void writeAdditional(CompoundNBT compound) {
+    protected void addAdditionalSaveData(CompoundTag compound) {
 	compound.putInt("type", blastOrdinal);
 	compound.putInt("range", range);
 	compound.putBoolean("isItem", isItem);
@@ -157,7 +157,7 @@ public class EntityMissile extends Entity {
     }
 
     @Override
-    protected void readAdditional(CompoundNBT compound) {
+    protected void readAdditionalSaveData(CompoundTag compound) {
 	blastOrdinal = compound.getInt("type");
 	range = compound.getInt("range");
 	isItem = compound.getBoolean("isItem");
@@ -168,7 +168,7 @@ public class EntityMissile extends Entity {
     }
 
     @Override
-    public IPacket<?> createSpawnPacket() {
+    public Packet<?> getAddEntityPacket() {
 	return NetworkHooks.getEntitySpawningPacket(this);
     }
 }

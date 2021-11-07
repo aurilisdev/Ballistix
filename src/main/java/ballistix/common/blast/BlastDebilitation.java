@@ -2,6 +2,8 @@ package ballistix.common.blast;
 
 import java.util.List;
 
+import com.mojang.math.Vector3f;
+
 import ballistix.common.block.SubtypeBlast;
 import ballistix.common.settings.Constants;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -35,7 +37,8 @@ public class BlastDebilitation extends Blast {
 		for (int y = -radius; y <= radius; y++) {
 		    for (int z = -radius; z <= radius; z++) {
 			if (x * x + y * y + z * z < radius * radius && world.random.nextDouble() < 1 / 20.0) {
-			    world.addParticle(new DustParticleOptions(1, 1, 1, 5), position.getX() + x + 0.5 + world.random.nextDouble() - 1.0,
+			    world.addParticle(new DustParticleOptions(new Vector3f(1, 1, 1), 5),
+				    position.getX() + x + 0.5 + world.random.nextDouble() - 1.0,
 				    position.getY() + y + 0.5 + world.random.nextDouble() - 1.0,
 				    position.getZ() + z + 0.5 + world.random.nextDouble() - 1.0, 0.0D, 0.0D, 0.0D);
 			}

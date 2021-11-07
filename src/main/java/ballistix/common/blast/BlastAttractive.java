@@ -46,15 +46,14 @@ public class BlastAttractive extends Blast {
 	    double d5 = entity.getX() - x;
 	    double d7 = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - y;
 	    double d9 = entity.getZ() - z;
-	    double d13 = Mth.sqrt(d5 * d5 + d7 * d7 + d9 * d9);
+	    double d13 = Mth.sqrt((float) (d5 * d5 + d7 * d7 + d9 * d9));
 	    if (d13 != 0.0D) {
 		d5 = d5 / d13;
 		d7 = d7 / d13;
 		d9 = d9 / d13;
 		double d11 = -Constants.EXPLOSIVE_ATTRACTIVE_REPULSIVE_PUSH_STRENGTH;
 		entity.setDeltaMovement(entity.getDeltaMovement().add(d5 * d11, d7 * d11, d9 * d11));
-		if (entity instanceof ServerPlayer) {
-		    ServerPlayer serverplayerentity = (ServerPlayer) entity;
+		if (entity instanceof ServerPlayer serverplayerentity) {
 		    serverplayerentity.connection
 			    .send(new ClientboundExplodePacket(x, y, z, size, new ArrayList<>(), new Vec3(d5 * d11, d7 * d11, d9 * d11)));
 		}

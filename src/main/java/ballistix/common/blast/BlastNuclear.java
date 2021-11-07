@@ -124,8 +124,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 		if (ModList.get().isLoaded("nuclearscience")) {
 		    Location source = new Location(position);
 		    double range = Constants.EXPLOSIVE_NUCLEAR_SIZE * 4;
-		    AABB bb = AABB.ofSize(range, range, range);
-		    bb = bb.move(new Vec3(source.x(), source.y(), source.z()));
+		    AABB bb = AABB.ofSize(new Vec3(source.x(), source.y(), source.z()), range, range, range);
 		    List<LivingEntity> list = world.getEntitiesOfClass(LivingEntity.class, bb);
 		    for (LivingEntity living : list) {
 			nuclearscience.api.radiation.RadiationSystem.applyRadiation(living, source, 150000);

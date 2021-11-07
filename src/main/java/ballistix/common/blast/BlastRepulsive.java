@@ -46,7 +46,7 @@ public class BlastRepulsive extends Blast {
 	    double d5 = entity.getX() - x;
 	    double d7 = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - y;
 	    double d9 = entity.getZ() - z;
-	    double d13 = Mth.sqrt(d5 * d5 + d7 * d7 + d9 * d9);
+	    double d13 = Mth.sqrt((float) (d5 * d5 + d7 * d7 + d9 * d9));
 	    if (d13 != 0.0D) {
 		d5 = d5 / d13;
 		d7 = d7 / d13;

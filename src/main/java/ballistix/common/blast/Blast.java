@@ -125,12 +125,12 @@ public abstract class Blast {
 
 	for (Entity entity : list) {
 	    if (!entity.ignoreExplosion()) {
-		double d12 = Mth.sqrt(entity.distanceToSqr(vector3d)) / f2;
+		double d12 = Mth.sqrt((float) entity.distanceToSqr(vector3d)) / f2;
 		if (d12 <= 1.0D) {
 		    double d5 = entity.getX() - position.getX();
 		    double d7 = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - position.getY();
 		    double d9 = entity.getZ() - position.getZ();
-		    double d13 = Mth.sqrt(d5 * d5 + d7 * d7 + d9 * d9);
+		    double d13 = Mth.sqrt((float) (d5 * d5 + d7 * d7 + d9 * d9));
 		    if (d13 != 0.0D) {
 			d5 = d5 / d13;
 			d7 = d7 / d13;
@@ -146,7 +146,7 @@ public abstract class Blast {
 			entity.setDeltaMovement(entity.getDeltaMovement().add(d5 * d11, d7 * d11, d9 * d11));
 			if (entity instanceof Player) {
 			    Player playerentity = (Player) entity;
-			    if (!playerentity.isSpectator() && (!playerentity.isCreative() || !playerentity.abilities.flying)) {
+			    if (!playerentity.isSpectator() && (!playerentity.isCreative() || !playerentity.getAbilities().flying)) {
 				playerKnockbackMap.put(playerentity, new Vec3(d5 * d10, d7 * d10, d9 * d10));
 			    }
 			}

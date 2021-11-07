@@ -12,6 +12,7 @@ import net.minecraft.network.protocol.game.ClientboundExplodePacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.level.Explosion;
@@ -96,7 +97,7 @@ public class BlastDarkmatter extends Blast {
 		double d5 = entity.getX() - x;
 		double d7 = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - y;
 		double d9 = entity.getZ() - z;
-		double d13 = Mth.sqrt(d5 * d5 + d7 * d7 + d9 * d9);
+		double d13 = Mth.sqrt((float) (d5 * d5 + d7 * d7 + d9 * d9));
 		if (d13 != 0.0D) {
 		    d5 = d5 / d13;
 		    d7 = d7 / d13;
@@ -110,7 +111,7 @@ public class BlastDarkmatter extends Blast {
 				    .send(new ClientboundExplodePacket(x, y, z, size, new ArrayList<>(), new Vec3(d5 * d11, d7 * d11, d9 * d11)));
 			}
 		    } else if (entity instanceof FallingBlockEntity) {
-			entity.remove();
+			entity.remove(RemovalReason.DISCARDED);
 		    }
 		}
 	    }

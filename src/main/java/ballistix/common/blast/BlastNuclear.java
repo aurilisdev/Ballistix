@@ -34,7 +34,6 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
     }
 
     @Override
-    @Deprecated(since = "Overriden method!", forRemoval = false)
     public void doPreExplode() {
 	if (!world.isClientSide) {
 	    threadRay = new ThreadRaycastBlast(world, position, (int) Constants.EXPLOSIVE_NUCLEAR_SIZE, (float) Constants.EXPLOSIVE_NUCLEAR_ENERGY,

@@ -36,7 +36,6 @@ public class Ballistix {
     }
 
     @SubscribeEvent
-    @Deprecated(since = "Uses deprecated method!", forRemoval = false)
     public static void onCommonSetup(FMLCommonSetupEvent event) {
 	NetworkHandler.init();
     }

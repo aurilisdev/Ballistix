@@ -19,7 +19,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-@Deprecated(since = "Uses deprecated class for removal", forRemoval = false)
 public class ContainerMissileSilo extends GenericContainer<TileMissileSilo> {
 
     public ContainerMissileSilo(int id, Inventory playerinv) {
@@ -53,7 +52,6 @@ public class ContainerMissileSilo extends GenericContainer<TileMissileSilo> {
     }
 
     @OnlyIn(Dist.CLIENT)
-    @Deprecated(since = "Uses deprecated class!", forRemoval = false)
     public void setCoord(String valX, String valY, String valZ, String valFrequency) {
 	Integer triedX = 0;
 	try {

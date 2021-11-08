@@ -48,14 +48,11 @@ public abstract class Blast {
 
     public abstract SubtypeBlast getBlastType();
 
-    @Deprecated(since = "Should not be called externally!", forRemoval = false)
     public void doPreExplode() {
     }
 
-    @Deprecated(since = "Should not be called externally!", forRemoval = false)
     public abstract boolean doExplode(int callCount);
 
-    @Deprecated(since = "Should not be called externally!", forRemoval = false)
     public void doPostExplode() {
     }
 
@@ -89,7 +86,6 @@ public abstract class Blast {
 	}
     }
 
-    @SuppressWarnings("java:S1874")
     public EntityBlast performExplosion() {
 	ConstructBlastEvent evt = new ConstructBlastEvent(world, this);
 	MinecraftForge.EVENT_BUS.post(evt);

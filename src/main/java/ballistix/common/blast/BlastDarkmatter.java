@@ -31,7 +31,6 @@ public class BlastDarkmatter extends Blast {
     }
 
     @Override
-    @Deprecated(since = "Overriden method!", forRemoval = false)
     public void doPreExplode() {
 	if (!world.isClientSide) {
 	    thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null, true);

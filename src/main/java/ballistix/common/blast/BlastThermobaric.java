@@ -23,7 +23,6 @@ public class BlastThermobaric extends Blast {
     }
 
     @Override
-    @Deprecated(since = "Overriden method!", forRemoval = false)
     public void doPreExplode() {
 	hasStarted = true;
 	if (!world.isClientSide) {

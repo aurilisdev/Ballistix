@@ -31,7 +31,6 @@ public class RenderMissile extends EntityRenderer<EntityMissile> {
     }
 
     @Override
-    @Deprecated(since = "Using deprecated method", forRemoval = false)
     public void render(EntityMissile entity, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn,
 	    int packedLightIn) {
 	int type = entity.range;

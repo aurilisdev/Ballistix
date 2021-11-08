@@ -14,7 +14,6 @@ public class NetworkHandler {
 	    PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
     private static int disc = 0;
 
-    @Deprecated(since = "Uses deprecated method!", forRemoval = false)
     public static void init() {
 	CHANNEL.registerMessage(disc++, PacketSetMissileData.class, PacketSetMissileData::encode, PacketSetMissileData::decode,
 		PacketSetMissileData::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER));

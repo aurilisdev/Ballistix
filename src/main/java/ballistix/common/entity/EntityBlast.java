@@ -52,7 +52,6 @@ public class EntityBlast extends Entity {
     }
 
     @Override
-    @Deprecated(since = "Uses deprecated methods", forRemoval = false)
     public void tick() {
 	if (!level.isClientSide) {
 	    entityData.set(TYPE, blastOrdinal);

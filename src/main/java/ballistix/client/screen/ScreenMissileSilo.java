@@ -39,13 +39,11 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
     }
 
     @Override
-    @Deprecated(since = "Uses deprecated method!", forRemoval = false)
     protected void init() {
 	super.init();
 	initFields();
     }
 
-    @Deprecated(since = "Uses deprecated method!", forRemoval = false)
     protected void initFields() {
 	minecraft.keyboardHandler.setSendRepeatsToGui(true);
 	int i = (width - imageWidth) / 2;
@@ -85,14 +83,12 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 
     private boolean needsUpdate = true;
 
-    @Deprecated(since = "Uses deprecated method!", forRemoval = false)
     private void setCoord(String coord) {
 	if (!coord.isEmpty()) {
 	    menu.setCoord(xCoordField.getValue(), yCoordField.getValue(), zCoordField.getValue(), frequencyField.getValue());
 	}
     }
 
-    @Deprecated(since = "Uses deprecated method!", forRemoval = false)
     private void setFrequency(String val) {
 	frequencyField.setFocus(true);
 	xCoordField.setFocus(false);
@@ -101,7 +97,6 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 	setCoord(val);
     }
 
-    @Deprecated(since = "Uses deprecated method!", forRemoval = false)
     private void setX(String val) {
 	xCoordField.setFocus(true);
 	yCoordField.setFocus(false);
@@ -109,7 +104,6 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 	setCoord(val);
     }
 
-    @Deprecated(since = "Uses deprecated method!", forRemoval = false)
     private void setY(String val) {
 	yCoordField.setFocus(true);
 	xCoordField.setFocus(false);
@@ -117,7 +111,6 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 	setCoord(val);
     }
 
-    @Deprecated(since = "Uses deprecated method!", forRemoval = false)
     private void setZ(String val) {
 	zCoordField.setFocus(true);
 	yCoordField.setFocus(false);

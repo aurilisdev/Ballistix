@@ -26,7 +26,6 @@ public class RenderExplosive extends EntityRenderer<EntityExplosive> {
     }
 
     @Override
-    @Deprecated(since = "Using deprecated method", forRemoval = false)
     public void render(EntityExplosive entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn,
 	    int packedLightIn) {
 	SubtypeBlast subtype = entityIn.getBlastType();
@@ -52,7 +51,6 @@ public class RenderExplosive extends EntityRenderer<EntityExplosive> {
 	super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
     }
 
-    @Deprecated(since = "Using deprecated method", forRemoval = false)
     public static void renderTntFlash(BlockState blockStateIn, PoseStack matrixStackIn, MultiBufferSource renderTypeBuffer, int combinedLight,
 	    boolean doFullBright) {
 	int i;

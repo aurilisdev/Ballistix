@@ -50,7 +50,6 @@ public class BlockExplosive extends Block {
     }
 
     @Override
-    @Deprecated(since = "Overriden method!", forRemoval = false)
     public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
 	if (!oldState.is(state.getBlock()) && worldIn.hasNeighborSignal(pos)) {
 	    catchFire(state, worldIn, pos, null, null);
@@ -59,7 +58,6 @@ public class BlockExplosive extends Block {
     }
 
     @Override
-    @Deprecated(since = "Overriden method!", forRemoval = false)
     public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
 	if (worldIn.hasNeighborSignal(pos)) {
 	    catchFire(state, worldIn, pos, null, null);
@@ -86,13 +84,11 @@ public class BlockExplosive extends Block {
     }
 
     @Override
-    @Deprecated(since = "Overriden method!", forRemoval = false)
     public List<ItemStack> getDrops(BlockState state, Builder builder) {
 	return Arrays.asList(new ItemStack(DeferredRegisters.SUBTYPEBLOCK_MAPPINGS.get(explosive)));
     }
 
     @Override
-    @Deprecated(since = "Overriden method!", forRemoval = false)
     public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
 	ItemStack itemstack = player.getItemInHand(handIn);
 	Item item = itemstack.getItem();
@@ -112,7 +108,6 @@ public class BlockExplosive extends Block {
     }
 
     @Override
-    @Deprecated(since = "Overriden method!", forRemoval = false)
     public void onProjectileHit(Level worldIn, BlockState state, BlockHitResult hit, Projectile projectile) {
 	if (!worldIn.isClientSide) {
 	    Entity entity = projectile.getOwner();
@@ -125,7 +120,6 @@ public class BlockExplosive extends Block {
     }
 
     @Override
-    @Deprecated(since = "Overriden method!", forRemoval = false)
     public boolean dropFromExplosion(Explosion explosionIn) {
 	return false;
     }

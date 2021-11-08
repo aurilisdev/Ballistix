@@ -112,8 +112,11 @@ public class BlastDarkmatter extends Blast {
 			entity.remove(RemovalReason.DISCARDED);
 		    }
 		}
+		attackEntities((float) ((callCount - callAtStart) / 75.0));
 	    }
-	    attackEntities((float) ((callCount - callAtStart) / 75.0));
+	    if (world.random.nextFloat() < 0.5) {
+		world.explode(null, position.getX(), position.getY(), position.getZ(), 2, BlockInteraction.NONE);
+	    }
 	}
 	return false;
     }

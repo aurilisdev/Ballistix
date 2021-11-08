@@ -72,7 +72,7 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 //		    GL11.glTexCoord2d(i + di, j + dj);
 //		    GL11.glVertex3dv(p[2]);
 //		    GL11.glTexCoord2d(i, j + dj);
-//		    GL11.glVertex3dv(p[3]);
+//		    GL11.glVertex3dvzx(p[3]);
 //		    GL11.glEnd();
 //		}
 //	    }

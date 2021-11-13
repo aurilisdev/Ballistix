@@ -54,7 +54,7 @@ public class ItemGrenade extends Item {
 	    grenade.setShrapnelType(explosive);
 	    grenade.shootFromRotation(entityLiving, entityLiving.getXRot() - 20, entityLiving.getYRot(), 0.0F, throwEnergy, 1.0F);
 	    world.addFreshEntity(grenade);
-	    if (entityLiving instanceof Player pl && pl.isCreative() || !(entityLiving instanceof Player)) {
+	    if (entityLiving instanceof Player pl && !pl.isCreative() || !(entityLiving instanceof Player)) {
 		itemStack.shrink(1);
 	    }
 	}

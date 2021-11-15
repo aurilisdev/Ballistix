@@ -1,5 +1,7 @@
 package ballistix.common.item;
 
+import java.util.HashMap;
+
 import ballistix.DeferredRegisters;
 import ballistix.References;
 import ballistix.common.block.BlockExplosive;
@@ -16,6 +18,7 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 
 public class ItemRocketLauncher extends Item {
+    private static HashMap<Player, Long> millisecondMap = new HashMap<>();
 
     public ItemRocketLauncher() {
 	super(new Item.Properties().tab(References.BALLISTIXTAB).stacksTo(1));
@@ -41,39 +44,43 @@ public class ItemRocketLauncher extends Item {
     @Override
     public void releaseUsing(ItemStack stack, Level world, LivingEntity entityLiving, int timeLeft) {
 	if (!world.isClientSide && entityLiving instanceof Player pl) {
-	    int blastOrdinal = 0;
-	    boolean hasExplosive = false;
-	    boolean hasRange = false;
-	    ItemStack ex = ItemStack.EMPTY;
-	    ItemStack missile = ex;
-	    for (ItemStack st : pl.getInventory().items) {
-		Item it = st.getItem();
-		if (!hasExplosive && it instanceof BlockItemDescriptable bl) {
-		    if (bl.getBlock()instanceof BlockExplosive exs) {
-			blastOrdinal = exs.explosive.ordinal();
-			hasExplosive = true;
-			ex = st;
+	    long millisecond = System.currentTimeMillis();
+	    if (millisecond - millisecondMap.getOrDefault(pl, 0L) > 3000) {
+		millisecondMap.put(pl, millisecond);
+		int blastOrdinal = 0;
+		boolean hasExplosive = false;
+		boolean hasRange = false;
+		ItemStack ex = ItemStack.EMPTY;
+		ItemStack missile = ex;
+		for (ItemStack st : pl.getInventory().items) {
+		    Item it = st.getItem();
+		    if (!hasExplosive && it instanceof BlockItemDescriptable bl) {
+			if (bl.getBlock()instanceof BlockExplosive exs) {
+			    blastOrdinal = exs.explosive.ordinal();
+			    hasExplosive = true;
+			    ex = st;
+			}
+		    }
+		    if (!hasRange && it == DeferredRegisters.ITEM_MISSILECLOSERANGE.get()) {
+			hasRange = true;
+			missile = st;
+		    }
+		    if (hasRange && hasExplosive) {
+			break;
 		    }
 		}
-		if (!hasRange && it == DeferredRegisters.ITEM_MISSILECLOSERANGE.get()) {
-		    hasRange = true;
-		    missile = st;
+		if (hasExplosive && hasRange) {
+		    ex.shrink(1);
+		    missile.shrink(1);
+		    EntityMissile miss = new EntityMissile(world);
+		    miss.moveTo(entityLiving.getX(), entityLiving.getY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getZ(),
+			    entityLiving.getYRot(), entityLiving.getXRot());
+		    miss.setDeltaMovement(entityLiving.getLookAngle().x * 2, entityLiving.getLookAngle().y * 2, entityLiving.getLookAngle().z * 2);
+		    miss.blastOrdinal = blastOrdinal;
+		    miss.range = 0;
+		    miss.isItem = true;
+		    world.addFreshEntity(miss);
 		}
-		if (hasRange && hasExplosive) {
-		    break;
-		}
-	    }
-	    if (hasExplosive && hasRange) {
-		ex.shrink(1);
-		missile.shrink(1);
-		EntityMissile miss = new EntityMissile(world);
-		miss.moveTo(entityLiving.getX(), entityLiving.getY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getZ(), entityLiving.getYRot(),
-			entityLiving.getXRot());
-		miss.setDeltaMovement(entityLiving.getLookAngle().x * 2, entityLiving.getLookAngle().y * 2, entityLiving.getLookAngle().z * 2);
-		miss.blastOrdinal = blastOrdinal;
-		miss.range = 0;
-		miss.isItem = true;
-		world.addFreshEntity(miss);
 	    }
 	}
     }

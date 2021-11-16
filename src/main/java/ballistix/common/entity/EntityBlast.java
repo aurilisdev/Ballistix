@@ -73,14 +73,12 @@ public class EntityBlast extends Entity {
 		remove(RemovalReason.DISCARDED);
 	    }
 	    callcount++;
-	} else {
-	    if (blastOrdinal == -1) {
-		if (tickCount > 60) {
-		    remove(RemovalReason.DISCARDED);
-		}
-	    } else {
-		blast = Blast.createFromSubtype(getBlastType(), level, blockPosition());
+	} else if (blastOrdinal == -1) {
+	    if (tickCount > 60) {
+		remove(RemovalReason.DISCARDED);
 	    }
+	} else {
+	    blast = Blast.createFromSubtype(getBlastType(), level, blockPosition());
 	}
     }
 

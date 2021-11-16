@@ -3,10 +3,10 @@ package ballistix.common.block;
 import java.util.HashSet;
 
 import ballistix.common.tile.TileMissileSilo;
-import electrodynamics.common.block.BlockGenericMachine;
 import electrodynamics.common.multiblock.IMultiblockNode;
 import electrodynamics.common.multiblock.IMultiblockTileNode;
 import electrodynamics.common.multiblock.Subnode;
+import electrodynamics.prefab.block.GenericMachineBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -16,7 +16,11 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.Shapes;
 
-public class BlockMissileSilo extends BlockGenericMachine implements IMultiblockNode {
+public class BlockMissileSilo extends GenericMachineBlock implements IMultiblockNode {
+    public BlockMissileSilo() {
+	super(TileMissileSilo::new);
+    }
+
     public static final HashSet<Subnode> subnodes = new HashSet<>();
     static {
 	int radius = 1;
@@ -29,11 +33,6 @@ public class BlockMissileSilo extends BlockGenericMachine implements IMultiblock
 		}
 	    }
 	}
-    }
-
-    @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-	return new TileMissileSilo(pos, state);
     }
 
     @Override

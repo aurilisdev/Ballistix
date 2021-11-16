@@ -11,7 +11,7 @@ import ballistix.common.network.SiloRegistry;
 import electrodynamics.common.blockitem.BlockItemDescriptable;
 import electrodynamics.common.multiblock.IMultiblockTileNode;
 import electrodynamics.common.multiblock.Subnode;
-import electrodynamics.prefab.tile.GenericTileTicking;
+import electrodynamics.prefab.tile.GenericTile;
 import electrodynamics.prefab.tile.components.ComponentType;
 import electrodynamics.prefab.tile.components.type.ComponentContainerProvider;
 import electrodynamics.prefab.tile.components.type.ComponentInventory;
@@ -27,7 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
-public class TileMissileSilo extends GenericTileTicking implements IMultiblockTileNode {
+public class TileMissileSilo extends GenericTile implements IMultiblockTileNode {
     public static final int[] SLOTS_INPUT = new int[] { 0, 1 };
 
     protected CachedTileOutput output1;

@@ -12,7 +12,6 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.fmllegacy.network.NetworkHooks;
@@ -26,9 +25,7 @@ public class EntityMissile extends Entity {
     public int range = -1;
     public boolean isItem = false;
     private EntityBlast blastEntity = null;
-    private float oldRotationPitch = 0;
-    private float oldRotationYaw = 0;
-    private boolean isStuck = false;
+    public boolean isStuck = false;
 
     public EntityMissile(EntityType<? extends EntityMissile> type, Level worldIn) {
 	super(type, worldIn);
@@ -65,28 +62,21 @@ public class EntityMissile extends Entity {
 	    if (!level.isClientSide && blastEntity.getBlast().hasStarted) {
 		removeAfterChangingDimensions();
 	    }
-	    setXRot(oldRotationPitch);
-	    setYRot(oldRotationYaw);
 	    return;
 	}
+	if (!level.isClientSide || level.getBlockState(blockPosition()).isAir()) {
+	    setPos(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z);
+	}
 	if (blastEntity == null) {
-	    if (getDeltaMovement().length() > 0) {
+	    if (getDeltaMovement().length() > 0 && !isStuck) {
 		setXRot((float) (Math
 			.atan(getDeltaMovement().y()
 				/ Math.sqrt(getDeltaMovement().x() * getDeltaMovement().x() + getDeltaMovement().z() * getDeltaMovement().z()))
 			* 180.0D / Math.PI));
 		setYRot((float) (Math.atan2(getDeltaMovement().x(), getDeltaMovement().z()) * 180.0D / Math.PI));
-	    } else {
-		setXRot(90);
-		setYRot(90);
-	    }
-	    if (tickCount < 10 && !isItem) {
-		setPos(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z);
-	    } else {
-		move(MoverType.SELF, getDeltaMovement());
 	    }
 	    if (!level.isClientSide) {
-		if (onGround || horizontalCollision || verticalCollision
+		if (!level.getBlockState(blockPosition()).isAir()
 			|| !isItem && target != null && getY() < target.getY() && getDeltaMovement().y() < 0) {
 		    if (blastOrdinal != -1) {
 			SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
@@ -97,6 +87,7 @@ public class EntityMissile extends Entity {
 				removeAfterChangingDimensions();
 			    } else {
 				isStuck = true;
+				setPos(getX() - getDeltaMovement().x * 1, getY() - getDeltaMovement().y * 1, getZ() - getDeltaMovement().z * 1);
 			    }
 			}
 		    }
@@ -113,11 +104,15 @@ public class EntityMissile extends Entity {
 	    if (!level.isClientSide) {
 		entityData.set(TYPE, blastOrdinal);
 		entityData.set(RANGE, range);
-		entityData.set(ISSTUCK, isStuck ? 999 : -1);
+		entityData.set(ISSTUCK, isStuck ? 1 : -1);
 	    } else {
 		blastOrdinal = entityData.get(TYPE);
 		range = entityData.get(RANGE);
+		boolean old = isStuck;
 		isStuck = entityData.get(ISSTUCK) > 0;
+		if (isStuck != old) {
+		    setPos(getX() - getDeltaMovement().x * 1, getY() - getDeltaMovement().y * 1, getZ() - getDeltaMovement().z * 1);
+		}
 	    }
 	    if (!isItem && target != null && getDeltaMovement().y < 3 && getDeltaMovement().y >= 0) {
 		setDeltaMovement(getDeltaMovement().add(0, 0.02, 0));

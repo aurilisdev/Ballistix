@@ -71,7 +71,7 @@ public class BlastDarkmatter extends Blast {
 		    if (state != Blocks.AIR.defaultBlockState() && state != Blocks.VOID_AIR.defaultBlockState()
 			    && state.getDestroySpeed(world, p) >= 0) {
 			block.wasExploded(world, p, ex);
-			world.setBlock(p, Blocks.AIR.defaultBlockState(), 2 | 16 | 32);
+			world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
 		    }
 		    iterator.remove();
 		}

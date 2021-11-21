@@ -24,7 +24,6 @@ public class BlastThermobaric extends Blast {
 
     @Override
     public void doPreExplode() {
-	hasStarted = true;
 	if (!world.isClientSide) {
 	    thread = new ThreadRaycastBlast(world, position, (int) Constants.EXPLOSIVE_THERMOBARIC_SIZE,
 		    (float) Constants.EXPLOSIVE_THERMOBARIC_ENERGY, null);
@@ -46,6 +45,7 @@ public class BlastThermobaric extends Blast {
 		    (float) Constants.EXPLOSIVE_THERMOBARIC_SIZE, false, BlockInteraction.BREAK);
 	    if (thread.isComplete) {
 		if (pertick == -1) {
+		    hasStarted = true;
 		    pertick = (int) (thread.results.size() / Constants.EXPLOSIVE_THERMOBARIC_DURATION + 1);
 		}
 		int finished = pertick;

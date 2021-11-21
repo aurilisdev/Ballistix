@@ -13,6 +13,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
@@ -64,7 +65,8 @@ public class EntityMissile extends Entity {
 	    }
 	    return;
 	}
-	if (!level.isClientSide || level.getBlockState(blockPosition()).isAir()) {
+	BlockState state = level.getBlockState(blockPosition());
+	if (!level.isClientSide || state.getCollisionShape(level, blockPosition()).isEmpty()) {
 	    setPos(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z);
 	}
 	if (blastEntity == null) {
@@ -76,7 +78,7 @@ public class EntityMissile extends Entity {
 		setYRot((float) (Math.atan2(getDeltaMovement().x(), getDeltaMovement().z()) * 180.0D / Math.PI));
 	    }
 	    if (!level.isClientSide) {
-		if (!level.getBlockState(blockPosition()).isAir()
+		if (!state.getCollisionShape(level, blockPosition()).isEmpty()
 			|| !isItem && target != null && getY() < target.getY() && getDeltaMovement().y() < 0) {
 		    if (blastOrdinal != -1) {
 			SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];

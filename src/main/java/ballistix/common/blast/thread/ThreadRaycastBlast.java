@@ -46,17 +46,18 @@ public class ThreadRaycastBlast extends ThreadBlast {
     @Override
     @SuppressWarnings("java:S2184")
     public void run() {
+	results.add(new HashDistanceBlockPos(position.getX(), position.getY(), position.getZ(), 1));
 	int steps = (int) Math.ceil(Math.PI / Math.atan(1.0D / explosionRadius));
 	for (int phi_n = 0; phi_n < 2 * steps; phi_n++) {
 	    for (int theta_n = 0; theta_n < steps; theta_n++) {
 		double phi = Math.PI * 2 / steps * phi_n;
 		double theta = Math.PI / steps * theta_n;
 
-		Vec3 delta = new Vec3(Math.sin(theta) * Math.cos(phi), Math.cos(theta), Math.sin(theta) * Math.sin(phi));
+		Vec3 delta = new Vec3(Math.sin(theta) * Math.cos(phi), Math.cos(theta), Math.sin(theta) * Math.sin(phi)).multiply(0.5, 0.5, 0.5);
 		float power = explosionEnergy - explosionEnergy * world.random.nextFloat() / 2;
 		Vec3 t = new Vec3(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5);
 		BlockPos tt = new BlockPos(t);
-		for (float d = 0.3F; power > 0f; power -= d * 0.75F * 10) {
+		for (float d = 0.3F; power > 0f; power -= d * 0.75F * 5) {
 		    double distancesq = Math.pow(t.x() - position.getX(), 2) + Math.pow(t.y() - position.getY(), 2)
 			    + Math.pow(t.z() - position.getZ(), 2);
 		    if (distancesq > explosionRadius * explosionRadius) {

@@ -89,7 +89,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 			}
 		    }
 		    world.getBlockState(p).getBlock().wasExploded(world, p, ex);
-		    world.setBlock(p, state, 2 | 16 | 32);
+		    world.setBlock(p, state, 2);
 		    if (world.random.nextFloat() < 1 / 20.0 && world instanceof ServerLevel serverlevel) {
 			serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL
 				.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT));
@@ -146,7 +146,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 			Block block = state.getBlock();
 			if (block == Blocks.GRASS_BLOCK || block == Blocks.DIRT) {
 			    if (world.random.nextFloat() < 0.7) {
-				world.setBlock(p, nuclearscience.DeferredRegisters.blockRadioactiveSoil.defaultBlockState(), 2 | 16 | 32);
+				world.setBlock(p, nuclearscience.DeferredRegisters.blockRadioactiveSoil.defaultBlockState(), 2);
 			    }
 			} else if (state.getMaterial() == Material.LEAVES) {
 			    world.setBlock(p, Blocks.AIR.defaultBlockState(), 2 | 16 | 32);

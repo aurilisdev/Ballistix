@@ -48,7 +48,7 @@ public class WarheadRecipeCategory implements IRecipeCategory<PsuedoItem2ItemRec
     private static String GUI_TEXTURE = "textures/gui/jei/warhead_template_gui.png";
 
     public static ItemStack INPUT_MACHINE = new ItemStack(ballistix.DeferredRegisters.blockMissileSilo);
-    
+
     private IDrawable BACKGROUND;
     private IDrawable ICON;
 
@@ -59,81 +59,81 @@ public class WarheadRecipeCategory implements IRecipeCategory<PsuedoItem2ItemRec
 
     public WarheadRecipeCategory(IGuiHelper guiHelper) {
 
-    	ICON = guiHelper.createDrawableIngredient(INPUT_MACHINE);
-		BACKGROUND = guiHelper.createDrawable(new ResourceLocation(MOD_ID, GUI_TEXTURE), GUI_BACKGROUND[0], GUI_BACKGROUND[1], GUI_BACKGROUND[2], GUI_BACKGROUND[3]);
-    	
-		cachedArrows = CacheBuilder.newBuilder().maximumSize(25).build(new CacheLoader<Integer, IDrawableAnimated>() {
-		    @Override
-		    public IDrawableAnimated load(Integer cookTime) {
-			return guiHelper.drawableBuilder(new ResourceLocation(MOD_ID, GUI_TEXTURE), PROCESSING_ARROW_COORDS[0], PROCESSING_ARROW_COORDS[1], PROCESSING_ARROW_COORDS[2],
-				PROCESSING_ARROW_COORDS[3]).buildAnimated(cookTime, START_DIRECTION, false);
-		    }
-		});
+	ICON = guiHelper.createDrawableIngredient(INPUT_MACHINE);
+	BACKGROUND = guiHelper.createDrawable(new ResourceLocation(MOD_ID, GUI_TEXTURE), GUI_BACKGROUND[0], GUI_BACKGROUND[1], GUI_BACKGROUND[2],
+		GUI_BACKGROUND[3]);
+
+	cachedArrows = CacheBuilder.newBuilder().maximumSize(25).build(new CacheLoader<Integer, IDrawableAnimated>() {
+	    @Override
+	    public IDrawableAnimated load(Integer cookTime) {
+		return guiHelper.drawableBuilder(new ResourceLocation(MOD_ID, GUI_TEXTURE), PROCESSING_ARROW_COORDS[0], PROCESSING_ARROW_COORDS[1],
+			PROCESSING_ARROW_COORDS[2], PROCESSING_ARROW_COORDS[3]).buildAnimated(cookTime, START_DIRECTION, false);
+	    }
+	});
 
     }
 
     @Override
     public ResourceLocation getUid() {
-    	return UID;
+	return UID;
     }
-    
-    @Override
-	public Class<? extends PsuedoItem2ItemRecipe> getRecipeClass() {
-		return PsuedoItem2ItemRecipe.class;
-	}
 
     @Override
-	public Component getTitle() {
-		return new TranslatableComponent("gui.jei.category." + RECIPE_GROUP);
-	}
+    public Class<? extends PsuedoItem2ItemRecipe> getRecipeClass() {
+	return PsuedoItem2ItemRecipe.class;
+    }
 
-	@Override
-	public IDrawable getBackground() {
-		return BACKGROUND;
-	}
+    @Override
+    public Component getTitle() {
+	return new TranslatableComponent("gui.jei.category." + RECIPE_GROUP);
+    }
 
-	@Override
-	public IDrawable getIcon() {
-		return ICON;
-	}
+    @Override
+    public IDrawable getBackground() {
+	return BACKGROUND;
+    }
+
+    @Override
+    public IDrawable getIcon() {
+	return ICON;
+    }
 
     @Override
     public void setIngredients(PsuedoItem2ItemRecipe recipe, IIngredients ingredients) {
-    	List<List<ItemStack>> inputSlots = new ArrayList<>();
-    	inputSlots.add(BallistixPsuedoRecipes.BALLISTIX_ITEMS.get(0));
-    	inputSlots.add(BallistixPsuedoRecipes.BALLISTIX_ITEMS.get(1));
-    	ingredients.setInputLists(VanillaTypes.ITEM, inputSlots);
+	List<List<ItemStack>> inputSlots = new ArrayList<>();
+	inputSlots.add(BallistixPsuedoRecipes.BALLISTIX_ITEMS.get(0));
+	inputSlots.add(BallistixPsuedoRecipes.BALLISTIX_ITEMS.get(1));
+	ingredients.setInputLists(VanillaTypes.ITEM, inputSlots);
     }
 
     @Override
     public void setRecipe(IRecipeLayout recipeLayout, PsuedoItem2ItemRecipe recipe, IIngredients ingredients) {
-		IGuiItemStackGroup guiItemStacks = recipeLayout.getItemStacks();
-	
-		guiItemStacks.init(INPUT_2_SLOT, true, INPUT_1_OFFSET[0], INPUT_1_OFFSET[1]);
-		guiItemStacks.init(INPUT_1_SLOT, true, INPUT_2_OFFSET[0], INPUT_2_OFFSET[1]);
-	
-		guiItemStacks.set(ingredients);
+	IGuiItemStackGroup guiItemStacks = recipeLayout.getItemStacks();
+
+	guiItemStacks.init(INPUT_2_SLOT, true, INPUT_1_OFFSET[0], INPUT_1_OFFSET[1]);
+	guiItemStacks.init(INPUT_1_SLOT, true, INPUT_2_OFFSET[0], INPUT_2_OFFSET[1]);
+
+	guiItemStacks.set(ingredients);
     }
 
     @Override
     public void draw(PsuedoItem2ItemRecipe recipe, PoseStack matrixStack, double mouseX, double mouseY) {
-		IDrawableAnimated arrow = cachedArrows.getUnchecked(ANIM_TIME);
-		arrow.draw(matrixStack, PROCESSING_ARROW_OFFSET[0], PROCESSING_ARROW_OFFSET[1]);
-	
-		int animTimeSeconds = ANIM_TIME / 20;
-	
-		TranslatableComponent missileString = new TranslatableComponent("gui.jei.category." + RECIPE_GROUP + ".info.missile", animTimeSeconds);
-		TranslatableComponent explosiveString = new TranslatableComponent("gui.jei.category." + RECIPE_GROUP + ".info.explosive",
-			animTimeSeconds);
-	
-		Minecraft minecraft = Minecraft.getInstance();
-		Font fontRenderer = minecraft.font;
-	
-		int missileWidth = fontRenderer.width(missileString);
-		int explosiveWidth = fontRenderer.width(explosiveString);
-	
-		fontRenderer.draw(matrixStack, missileString, GUI_BACKGROUND[2] - missileWidth - 46f, DESC_Y_HEIGHT - 37f, 0xFF333333);
-		fontRenderer.draw(matrixStack, explosiveString, GUI_BACKGROUND[2] - explosiveWidth - 46f, DESC_Y_HEIGHT - 10f, 0xFF333333);
+	IDrawableAnimated arrow = cachedArrows.getUnchecked(ANIM_TIME);
+	arrow.draw(matrixStack, PROCESSING_ARROW_OFFSET[0], PROCESSING_ARROW_OFFSET[1]);
+
+	int animTimeSeconds = ANIM_TIME / 20;
+
+	TranslatableComponent missileString = new TranslatableComponent("gui.jei.category." + RECIPE_GROUP + ".info.missile", animTimeSeconds);
+	TranslatableComponent explosiveString = new TranslatableComponent("gui.jei.category." + RECIPE_GROUP + ".info.explosive", animTimeSeconds);
+
+	Minecraft minecraft = Minecraft.getInstance();
+	Font fontRenderer = minecraft.font;
+
+	int missileWidth = fontRenderer.width(missileString);
+	int explosiveWidth = fontRenderer.width(explosiveString);
+
+	fontRenderer.draw(matrixStack, missileString, GUI_BACKGROUND[2] - missileWidth - 46f, DESC_Y_HEIGHT - 37f, 0xFF333333);
+	fontRenderer.draw(matrixStack, explosiveString, GUI_BACKGROUND[2] - explosiveWidth - 46f, DESC_Y_HEIGHT - 10f, 0xFF333333);
     }
 
 }

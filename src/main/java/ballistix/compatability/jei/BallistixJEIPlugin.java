@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import ballistix.compatability.jei.recipecategories.psuedorecipes.BallistixPsuedoRecipes;
-import ballistix.compatability.jei.recipecategories.specificmachines.ballistix.WarheadRecipeCategory;
-import electrodynamics.compatability.jei.recipecategories.psuedorecipes.PsuedoDO2ORecipe;
+import ballistix.compatability.jei.recipecategories.psuedo.specificmachines.WarheadRecipeCategory;
+import ballistix.compatability.jei.util.psuedorecipes.BallistixPsuedoRecipes;
+import electrodynamics.compatability.jei.recipecategories.psuedo.PsuedoItem2ItemRecipe;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
@@ -36,7 +36,7 @@ public class BallistixJEIPlugin implements IModPlugin {
 	BallistixPsuedoRecipes.addBallistixRecipes();
 
 	// Warhead Template
-	Set<PsuedoDO2ORecipe> warheadTemplateRecipes = new HashSet<>(BallistixPsuedoRecipes.WARHEAD_RECIPES);
+	Set<PsuedoItem2ItemRecipe> warheadTemplateRecipes = new HashSet<>(BallistixPsuedoRecipes.WARHEAD_RECIPES);
 	registration.addRecipes(warheadTemplateRecipes, WarheadRecipeCategory.UID);
 
 	ballistixInfoTabs(registration);

@@ -1,9 +1,12 @@
 {
     "type":"electrodynamics:mineral_grinder_recipe",
 
-    "input":{
-        "item":"minecraft:rotten_flesh",
-        "count":1
+    "iteminputs":{
+    	"count" : 1,
+    	"0" : {
+    		"item":"minecraft:rotten_flesh",
+        	"count":1
+    	}
     },
     "output":{
         "item":"ballistix:dustpoison",

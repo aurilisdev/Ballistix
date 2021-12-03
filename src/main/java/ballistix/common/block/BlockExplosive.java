@@ -3,11 +3,10 @@ package ballistix.common.block;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import ballistix.DeferredRegisters;
 import ballistix.common.entity.EntityExplosive;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -45,14 +44,14 @@ public class BlockExplosive extends Block {
     }
 
     @Override
-    public void catchFire(BlockState state, Level world, BlockPos pos, @Nullable net.minecraft.core.Direction face, @Nullable LivingEntity igniter) {
+    public void onCaughtFire(BlockState state, Level world, BlockPos pos, Direction face, LivingEntity igniter) {
 	explode(world, pos, explosive);
     }
 
     @Override
     public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
 	if (!oldState.is(state.getBlock()) && worldIn.hasNeighborSignal(pos)) {
-	    catchFire(state, worldIn, pos, null, null);
+	    onCaughtFire(state, worldIn, pos, null, null);
 	    worldIn.removeBlock(pos, false);
 	}
     }
@@ -60,7 +59,7 @@ public class BlockExplosive extends Block {
     @Override
     public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
 	if (worldIn.hasNeighborSignal(pos)) {
-	    catchFire(state, worldIn, pos, null, null);
+	    onCaughtFire(state, worldIn, pos, null, null);
 	    worldIn.removeBlock(pos, false);
 	}
 
@@ -95,7 +94,7 @@ public class BlockExplosive extends Block {
 	if (item != Items.FLINT_AND_STEEL && item != Items.FIRE_CHARGE) {
 	    return super.use(state, worldIn, pos, player, handIn, hit);
 	}
-	catchFire(state, worldIn, pos, hit.getDirection(), player);
+	onCaughtFire(state, worldIn, pos, hit.getDirection(), player);
 	worldIn.setBlock(pos, Blocks.AIR.defaultBlockState(), 11);
 	if (!player.isCreative()) {
 	    if (item == Items.FLINT_AND_STEEL) {
@@ -113,7 +112,7 @@ public class BlockExplosive extends Block {
 	    Entity entity = projectile.getOwner();
 	    if (projectile.isOnFire()) {
 		BlockPos blockpos = hit.getBlockPos();
-		catchFire(state, worldIn, blockpos, null, entity instanceof LivingEntity l ? l : null);
+		onCaughtFire(state, worldIn, blockpos, null, entity instanceof LivingEntity l ? l : null);
 		worldIn.removeBlock(blockpos, false);
 	    }
 	}

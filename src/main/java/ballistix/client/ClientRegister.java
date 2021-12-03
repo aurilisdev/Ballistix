@@ -17,7 +17,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -27,9 +27,9 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 public class ClientRegister {
     @SubscribeEvent
     public static void onModelEvent(ModelRegistryEvent event) {
-	ModelLoader.addSpecialModel(MODEL_MISSILECLOSERANGE);
-	ModelLoader.addSpecialModel(MODEL_MISSILEMEDIUMRANGE);
-	ModelLoader.addSpecialModel(MODEL_MISSILELONGRANGE);
+	ForgeModelBakery.addSpecialModel(MODEL_MISSILECLOSERANGE);
+	ForgeModelBakery.addSpecialModel(MODEL_MISSILEMEDIUMRANGE);
+	ForgeModelBakery.addSpecialModel(MODEL_MISSILELONGRANGE);
     }
 
     public static final ResourceLocation TEXTURE_SHRAPNEL = new ResourceLocation(References.ID + ":textures/model/shrapnel.png");

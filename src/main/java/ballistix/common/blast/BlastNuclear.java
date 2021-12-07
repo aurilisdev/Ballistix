@@ -3,16 +3,19 @@ package ballistix.common.blast;
 import java.util.Iterator;
 import java.util.List;
 
+import ballistix.SoundRegister;
 import ballistix.common.blast.thread.ThreadRaycastBlast;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.SubtypeBlast;
 import ballistix.common.settings.Constants;
+import electrodynamics.api.sound.SoundAPI;
 import electrodynamics.common.packet.NetworkHandler;
 import electrodynamics.common.packet.PacketSpawnSmokeParticle;
 import electrodynamics.prefab.utilities.object.Location;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
@@ -44,7 +47,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 	    threadRay.start();
 	    threadSimple.start();
 	}
-
+	SoundAPI.playSound(SoundRegister.SOUND_NUCLEAREXPLOSION.get(), SoundSource.BLOCKS, 1, 1, position);
     }
 
     private ThreadRaycastBlast threadRay;

@@ -22,6 +22,7 @@ public class Ballistix {
     public Ballistix() {
 	ConfigurationHandler.registerConfig(Constants.class);
 	IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+	SoundRegister.SOUNDS.register(bus);
 	DeferredRegisters.BLOCKS.register(bus);
 	DeferredRegisters.ITEMS.register(bus);
 	DeferredRegisters.TILES.register(bus);

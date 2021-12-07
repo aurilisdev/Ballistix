@@ -1,0 +1,23 @@
+{
+	"antimatterexplosion": {
+		"category": "entities",
+		"subtitle": "subtitles.ballistix.antimatterexplosion",
+		"sounds": [
+			"ballistix:antimatterexplosion"
+		]
+	},
+	"darkmatter": {
+		"category": "entities",
+		"subtitle": "subtitles.ballistix.darkmatter",
+		"sounds": [
+			"ballistix:darkmatter"
+		]
+	},
+	"nuclearexplosion": {
+		"category": "entities",
+		"subtitle": "subtitles.ballistix.nuclearexplosion",
+		"sounds": [
+			"ballistix:nuclear"
+		]
+	}
+}

@@ -2,10 +2,13 @@ package ballistix.common.blast;
 
 import java.util.Iterator;
 
+import ballistix.SoundRegister;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.SubtypeBlast;
 import ballistix.common.settings.Constants;
+import electrodynamics.api.sound.SoundAPI;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
@@ -25,6 +28,7 @@ public class BlastAntimatter extends Blast implements IHasCustomRenderer {
 	    thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, false);
 	    thread.start();
 	}
+	SoundAPI.playSound(SoundRegister.SOUND_ANTIMATTEREXPLOSION.get(), SoundSource.BLOCKS, 10, 1, position);
     }
 
     private ThreadSimpleBlast thread;

@@ -10,6 +10,7 @@ import ballistix.common.blast.BlastDarkmatter;
 import ballistix.common.blast.BlastDebilitation;
 import ballistix.common.blast.BlastFragmentation;
 import ballistix.common.blast.BlastIncendiary;
+import ballistix.common.blast.BlastLandmine;
 import ballistix.common.blast.BlastNuclear;
 import ballistix.common.blast.BlastObsidian;
 import ballistix.common.blast.BlastRepulsive;
@@ -30,6 +31,7 @@ public enum SubtypeBlast implements ISubtype {
     thermobaric(BlastThermobaric.class, 100, false),
     contagious(BlastContagious.class, 100, false),
     fragmentation(BlastFragmentation.class, 100, false),
+    landmine(BlastLandmine.class, 5, false),
     nuclear(BlastNuclear.class, 200, false),
     antimatter(BlastAntimatter.class, 400, false),
     darkmatter(BlastDarkmatter.class, 400, false);

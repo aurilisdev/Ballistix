@@ -6,7 +6,6 @@ import javax.annotation.Nullable;
 
 import ballistix.DeferredRegisters;
 import ballistix.api.damage.DamageSourceShrapnel;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -19,11 +18,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.network.NetworkHooks;
 
@@ -86,27 +82,7 @@ public class EntityShrapnel extends ThrowableProjectile {
     @Override
     public void remove(RemovalReason reason) {
 	if (isExplosive) {
-	    Explosion ex = new Explosion(level, this, DamageSourceShrapnel.INSTANCE, null, getX(), getY(), getZ(), 2, true, BlockInteraction.DESTROY);
-	    if (!level.isClientSide) {
-		int explosionRadius = 2;
-		for (int i = -explosionRadius; i <= explosionRadius; i++) {
-		    for (int j = -explosionRadius; j <= explosionRadius; j++) {
-			for (int k = -explosionRadius; k <= explosionRadius; k++) {
-			    int idistance = i * i + j * j + k * k;
-			    if (idistance <= explosionRadius * explosionRadius && level.random.nextFloat()
-				    * (explosionRadius * explosionRadius) < explosionRadius * explosionRadius * 1.85 - idistance) {
-				BlockPos pos = new BlockPos(getX() + i, getY() + j, getZ() + k);
-				BlockState block = level.getBlockState(pos);
-				if (block != Blocks.AIR.defaultBlockState() && block != Blocks.VOID_AIR.defaultBlockState()
-					&& block.getExplosionResistance(level, pos, ex) < explosionRadius * 2 * level.random.nextFloat()) {
-				    block.onBlockExploded(level, pos, ex);
-				}
-			    }
-			}
-		    }
-		}
-	    }
-	    ex.finalizeExplosion(true);
+	    level.explode(this, DamageSourceShrapnel.INSTANCE, null, getX(), getY(), getZ(), 3, true, BlockInteraction.DESTROY);
 	}
 	super.remove(reason);
     }

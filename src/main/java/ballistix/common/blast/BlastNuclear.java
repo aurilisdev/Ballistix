@@ -6,7 +6,7 @@ import java.util.List;
 import ballistix.SoundRegister;
 import ballistix.common.blast.thread.ThreadRaycastBlast;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
-import ballistix.common.block.SubtypeBlast;
+import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
 import electrodynamics.api.sound.SoundAPI;
 import electrodynamics.common.packet.NetworkHandler;

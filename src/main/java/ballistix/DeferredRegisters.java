@@ -7,7 +7,7 @@ import com.google.common.collect.Sets;
 
 import ballistix.common.block.BlockExplosive;
 import ballistix.common.block.BlockMissileSilo;
-import ballistix.common.block.SubtypeBlast;
+import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityBlast;
 import ballistix.common.entity.EntityExplosive;
 import ballistix.common.entity.EntityGrenade;

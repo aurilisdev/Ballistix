@@ -1,4 +1,4 @@
-package ballistix.common.block;
+package ballistix.common.block.subtype;
 
 import ballistix.common.blast.BlastAntimatter;
 import ballistix.common.blast.BlastAttractive;
@@ -17,6 +17,7 @@ import ballistix.common.blast.BlastRepulsive;
 import ballistix.common.blast.BlastShrapnel;
 import ballistix.common.blast.BlastThermobaric;
 import electrodynamics.api.ISubtype;
+import net.minecraft.world.phys.shapes.Shapes;
 
 public enum SubtypeBlast implements ISubtype {
     obsidian(BlastObsidian.class, 120, false),
@@ -31,7 +32,7 @@ public enum SubtypeBlast implements ISubtype {
     thermobaric(BlastThermobaric.class, 100, false),
     contagious(BlastContagious.class, 100, false),
     fragmentation(BlastFragmentation.class, 100, false),
-    landmine(BlastLandmine.class, 5, false),
+    landmine(BlastLandmine.class, 5, false, (a, b, c, d) -> Shapes.create(0, 0, 0, 1, 3 / 16.0, 1)),
     nuclear(BlastNuclear.class, 200, false),
     antimatter(BlastAntimatter.class, 400, false),
     darkmatter(BlastDarkmatter.class, 400, false);
@@ -39,11 +40,17 @@ public enum SubtypeBlast implements ISubtype {
     public final Class<?> blastClass;
     public final int fuse;
     public final boolean hasGrenade;
+    public final VoxelShapeSupplier shape;
 
-    SubtypeBlast(Class<?> blastClass, int fuse, boolean hasGrenade) {
+    private SubtypeBlast(Class<?> blastClass, int fuse, boolean hasGrenade, VoxelShapeSupplier shape) {
 	this.blastClass = blastClass;
 	this.fuse = fuse;
 	this.hasGrenade = hasGrenade;
+	this.shape = shape;
+    }
+
+    private SubtypeBlast(Class<?> blastClass, int fuse, boolean hasGrenade) {
+	this(blastClass, fuse, hasGrenade, (a, b, c, d) -> Shapes.block());
     }
 
     @Override

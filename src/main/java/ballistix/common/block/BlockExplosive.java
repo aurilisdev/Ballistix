@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import ballistix.DeferredRegisters;
+import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityExplosive;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -29,6 +30,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.LootContext.Builder;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BlockExplosive extends Block {
     public final SubtypeBlast explosive;
@@ -41,6 +44,11 @@ public class BlockExplosive extends Block {
 
     private static boolean isntSolid(BlockState state, BlockGetter reader, BlockPos pos) {
 	return false;
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+	return explosive.shape.supply(state, level, pos, context);
     }
 
     @Override

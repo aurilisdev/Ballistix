@@ -1,7 +1,7 @@
 package ballistix.common.item;
 
 import ballistix.References;
-import ballistix.common.block.SubtypeBlast;
+import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityGrenade;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;

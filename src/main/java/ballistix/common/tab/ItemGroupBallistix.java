@@ -1,7 +1,7 @@
 package ballistix.common.tab;
 
 import ballistix.DeferredRegisters;
-import ballistix.common.block.SubtypeBlast;
+import ballistix.common.block.subtype.SubtypeBlast;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 

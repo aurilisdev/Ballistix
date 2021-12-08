@@ -3,7 +3,7 @@ package ballistix.client.render.entity;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import ballistix.DeferredRegisters;
-import ballistix.common.block.SubtypeBlast;
+import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityGrenade;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;

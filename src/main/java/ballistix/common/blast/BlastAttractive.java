@@ -3,7 +3,7 @@ package ballistix.common.blast;
 import java.util.ArrayList;
 import java.util.List;
 
-import ballistix.common.block.SubtypeBlast;
+import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;

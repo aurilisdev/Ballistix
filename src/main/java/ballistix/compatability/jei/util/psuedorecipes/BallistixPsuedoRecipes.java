@@ -3,7 +3,7 @@ package ballistix.compatability.jei.util.psuedorecipes;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import ballistix.common.block.SubtypeBlast;
+import ballistix.common.block.subtype.SubtypeBlast;
 import electrodynamics.compatability.jei.recipecategories.psuedo.PsuedoItem2ItemRecipe;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;

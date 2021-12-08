@@ -5,7 +5,7 @@ import java.util.List;
 import com.mojang.math.Vector3f;
 
 import ballistix.api.damage.DamageSourceChemicalGas;
-import ballistix.common.block.SubtypeBlast;
+import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;

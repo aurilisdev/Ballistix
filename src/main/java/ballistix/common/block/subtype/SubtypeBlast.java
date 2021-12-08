@@ -17,7 +17,13 @@ import ballistix.common.blast.BlastRepulsive;
 import ballistix.common.blast.BlastShrapnel;
 import ballistix.common.blast.BlastThermobaric;
 import electrodynamics.api.ISubtype;
+import electrodynamics.prefab.utilities.object.FunctionalInterfaces.QuadFunction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public enum SubtypeBlast implements ISubtype {
     obsidian(BlastObsidian.class, 120, false),
@@ -40,16 +46,17 @@ public enum SubtypeBlast implements ISubtype {
     public final Class<?> blastClass;
     public final int fuse;
     public final boolean hasGrenade;
-    public final VoxelShapeSupplier shape;
+    public final QuadFunction<VoxelShape, BlockState, BlockGetter, BlockPos, CollisionContext> shape;
 
-    private SubtypeBlast(Class<?> blastClass, int fuse, boolean hasGrenade, VoxelShapeSupplier shape) {
+    SubtypeBlast(Class<?> blastClass, int fuse, boolean hasGrenade,
+	    QuadFunction<VoxelShape, BlockState, BlockGetter, BlockPos, CollisionContext> shape) {
 	this.blastClass = blastClass;
 	this.fuse = fuse;
 	this.hasGrenade = hasGrenade;
 	this.shape = shape;
     }
 
-    private SubtypeBlast(Class<?> blastClass, int fuse, boolean hasGrenade) {
+    SubtypeBlast(Class<?> blastClass, int fuse, boolean hasGrenade) {
 	this(blastClass, fuse, hasGrenade, (a, b, c, d) -> Shapes.block());
     }
 

@@ -48,7 +48,7 @@ public class BlockExplosive extends Block {
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-	return explosive.shape.supply(state, level, pos, context);
+	return explosive.shape.apply(state, level, pos, context);
     }
 
     @Override

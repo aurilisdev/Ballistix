@@ -1,0 +1,18 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"ingredients": [
+		{
+			"item": "ballistix:repulsive"
+		},
+		{
+			"item": "ballistix:fragmentation"
+		},
+		{
+			"item": "minecraft:redstone"
+		}
+	],
+	"result": {
+		"item": "ballistix:landmine",
+		"count": 1
+	}
+}

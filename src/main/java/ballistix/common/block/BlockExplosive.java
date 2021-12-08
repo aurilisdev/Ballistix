@@ -38,12 +38,8 @@ public class BlockExplosive extends Block {
 
     public BlockExplosive(SubtypeBlast explosive) {
 	super(BlockBehaviour.Properties.of(Material.EXPLOSIVE).instabreak().sound(SoundType.GRASS).noOcclusion()
-		.isRedstoneConductor(BlockExplosive::isntSolid));
+		.isRedstoneConductor((a, b, c) -> false));
 	this.explosive = explosive;
-    }
-
-    private static boolean isntSolid(BlockState state, BlockGetter reader, BlockPos pos) {
-	return false;
     }
 
     @Override

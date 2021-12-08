@@ -80,7 +80,7 @@ public class EntityMissile extends Entity {
 	    if (!level.isClientSide) {
 		if (!state.getCollisionShape(level, blockPosition()).isEmpty()
 			|| !isItem && target != null && getY() < target.getY() && getDeltaMovement().y() < 0) {
-		    if (blastOrdinal != -1 && tickCount > 20) {
+		    if (blastOrdinal != -1 && (target == null || tickCount > 20)) {
 			SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
 			Blast b = Blast.createFromSubtype(explosive, level, blockPosition());
 			if (b != null) {

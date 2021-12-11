@@ -1,0 +1,8 @@
+{
+	"credit": "aurilisdev",
+	"parent": "ballistix:block/explosivemodelone",
+	"textures": {
+		"3": "ballistix:block/largeantimatterbase",
+		"particle": "ballistix:block/largeantimatterbase"
+	}
+}

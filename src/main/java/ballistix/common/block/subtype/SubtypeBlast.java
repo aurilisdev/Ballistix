@@ -11,6 +11,7 @@ import ballistix.common.blast.BlastDebilitation;
 import ballistix.common.blast.BlastFragmentation;
 import ballistix.common.blast.BlastIncendiary;
 import ballistix.common.blast.BlastLandmine;
+import ballistix.common.blast.BlastLargeAntimatter;
 import ballistix.common.blast.BlastNuclear;
 import ballistix.common.blast.BlastObsidian;
 import ballistix.common.blast.BlastRepulsive;
@@ -41,6 +42,7 @@ public enum SubtypeBlast implements ISubtype {
     landmine(BlastLandmine.class, 5, false, (a, b, c, d) -> Shapes.create(0, 0, 0, 1, 3 / 16.0, 1)),
     nuclear(BlastNuclear.class, 200, false),
     antimatter(BlastAntimatter.class, 400, false),
+    largeantimatter(BlastLargeAntimatter.class, 600, false),
     darkmatter(BlastDarkmatter.class, 400, false);
 
     public final Class<?> blastClass;

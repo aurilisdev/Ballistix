@@ -1,0 +1,16 @@
+{
+  "type" : "minecraft:crafting_shaped",
+  "pattern" : [ "aaa", "ana", "aaa" ],
+  "key" : {
+    "n" : {
+      "item" : "ballistix:nuclear"
+    },
+    "a" : {
+      "tag" : "forge:cells/antimatterverylarge"
+    }
+  },
+  "result" : {
+    "item" : "ballistix:largeantimatter",
+    "count" : 1
+  }
+}

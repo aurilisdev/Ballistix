@@ -7,8 +7,12 @@ import electrodynamics.api.configuration.DoubleValue;
 public class Constants {
     @DoubleValue(def = 36.0)
     public static double EXPLOSIVE_ANTIMATTER_RADIUS = 36.0;
-    @DoubleValue(def = 70.0, comment = "Value is in ticks.")
+    @DoubleValue(def = 20.0, comment = "Value is in ticks.")
     public static double EXPLOSIVE_ANTIMATTER_DURATION = 20.0;
+    @DoubleValue(def = 80.0)
+    public static double EXPLOSIVE_LARGEANTIMATTER_RADIUS = 80.0;
+    @DoubleValue(def = 200.0, comment = "Value is in ticks.")
+    public static double EXPLOSIVE_LARGEANTIMATTER_DURATION = 200.0;
     @DoubleValue(def = 1.0)
     public static double EXPLOSIVE_ATTRACTIVE_SIZE = 1.0;
     @DoubleValue(def = 1.0)

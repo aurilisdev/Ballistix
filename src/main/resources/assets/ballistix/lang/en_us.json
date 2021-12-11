@@ -14,6 +14,7 @@
   "block.ballistix.emp" : "Emp Explosive",
   "block.ballistix.nuclear" : "Nuclear Explosive",
   "block.ballistix.antimatter" : "Antimatter Explosive",
+  "block.ballistix.largeantimatter" : "Large Antimatter Explosive",
   "block.ballistix.darkmatter" : "Darkmatter Explosive",
   "block.ballistix.landmine" : "Landmine",
   "block.ballistix.missilesilo" : "Missile Silo",

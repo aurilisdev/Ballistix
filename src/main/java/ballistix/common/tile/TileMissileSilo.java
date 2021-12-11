@@ -154,7 +154,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 	readPacket(compound);
     }
 
-    protected boolean isItemValidForSlot(int index, ItemStack stack) {
+    protected boolean isItemValidForSlot(int index, ItemStack stack, ComponentInventory inv) {
 	Item it = stack.getItem();
 	if (index == 1) {
 	    if (it instanceof BlockItemDescriptable des) {
@@ -178,10 +178,8 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
     public void setFrequency(int frequency) {
 	if (!level.isClientSide) {
 	    SiloRegistry.unregisterSilo(this);
-	    this.frequency = frequency;
-	} else {
-	    this.frequency = frequency;
 	}
+	this.frequency = frequency;
     }
 
     @Override

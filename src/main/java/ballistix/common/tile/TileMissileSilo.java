@@ -143,14 +143,14 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 
     @Override
     public void saveAdditional(CompoundTag compound) {
-	readPacket(compound);
+	writePacket(compound);
 	super.saveAdditional(compound);
     }
 
     @Override
     public void load(CompoundTag compound) {
 	super.load(compound);
-	save(compound);
+	readPacket(compound);
     }
 
     protected boolean isItemValidForSlot(int index, ItemStack stack) {

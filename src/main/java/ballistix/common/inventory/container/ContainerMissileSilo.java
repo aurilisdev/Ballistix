@@ -35,9 +35,9 @@ public class ContainerMissileSilo extends GenericContainer<TileMissileSilo> {
 
     @Override
     public void addInventorySlots(Container inv, Inventory playerinv) {
-	addSlot(new SlotRestricted(inv, nextIndex(), 103, 14, DeferredRegisters.ITEM_MISSILECLOSERANGE.get(),
+	addSlot(new SlotRestricted(inv, nextIndex(), 60, 17, DeferredRegisters.ITEM_MISSILECLOSERANGE.get(),
 		DeferredRegisters.ITEM_MISSILEMEDIUMRANGE.get(), DeferredRegisters.ITEM_MISSILELONGRANGE.get()));
-	addSlot(new SlotRestricted(inv, nextIndex(), 103, 50) {
+	addSlot(new SlotRestricted(inv, nextIndex(), 60, 50) {
 	    @Override
 	    public boolean mayPlace(ItemStack stack) {
 		Item it = stack.getItem();

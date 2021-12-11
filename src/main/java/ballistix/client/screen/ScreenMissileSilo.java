@@ -161,6 +161,10 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 	super.renderLabels(matrixStack, mouseX, mouseY);
 	font.draw(matrixStack, new TranslatableComponent("gui.missilesilo.missile"), inventoryLabelX, inventoryLabelY - 55.0f, 4210752);
 	font.draw(matrixStack, new TranslatableComponent("gui.missilesilo.explosive"), inventoryLabelX, inventoryLabelY - 20.0f, 4210752);
+	font.draw(matrixStack, new TranslatableComponent("gui.missilesilo.x"), 79, 13f, 4210752);
+	font.draw(matrixStack, new TranslatableComponent("gui.missilesilo.y"), 79, 13f + 18, 4210752);
+	font.draw(matrixStack, new TranslatableComponent("gui.missilesilo.z"), 79, 13f + 18 * 2, 4210752);
+	font.draw(matrixStack, new TranslatableComponent("gui.missilesilo.freq"), 79, 13f + 18 * 3, 4210752);
     }
 
 }

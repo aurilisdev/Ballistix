@@ -104,6 +104,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 		}
 	    }
 	}
+	SiloRegistry.registerSilo(this);
     }
 
     private void launch() {
@@ -178,7 +179,6 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 	if (!level.isClientSide) {
 	    SiloRegistry.unregisterSilo(this);
 	    this.frequency = frequency;
-	    SiloRegistry.registerSilo(this);
 	} else {
 	    this.frequency = frequency;
 	}

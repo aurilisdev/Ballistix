@@ -1,6 +1,7 @@
 package ballistix.common.item;
 
 import java.util.List;
+import java.util.UUID;
 
 import ballistix.References;
 import ballistix.common.network.SiloRegistry;
@@ -47,6 +48,7 @@ public class ItemLaserDesignator extends ItemElectric {
 	if (silo != null) {
 	    CompoundTag nbt = stack.getOrCreateTag();
 	    nbt.putInt("freq", silo.frequency);
+	    context.getPlayer().sendMessage(new TranslatableComponent("message.laserdesignator.setfrequency", silo.frequency), UUID.randomUUID());
 	}
 	return super.onItemUseFirst(stack, context);
     }
@@ -64,6 +66,8 @@ public class ItemLaserDesignator extends ItemElectric {
 			for (TileMissileSilo silo : SiloRegistry.getSilos(freq)) {
 			    silo.target = new Location(trace);
 			    silo.shouldLaunch = true;
+			    playerIn.sendMessage(new TranslatableComponent("message.laserdesignator.launch",
+				    new Location(silo.getBlockPos()) + " -> " + silo.target), UUID.randomUUID());
 			}
 		    }
 		}

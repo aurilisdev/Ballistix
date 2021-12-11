@@ -120,7 +120,6 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 		    particleHeight++;
 		}
 		if (threadRay.results.isEmpty()) {
-		    attackEntities((float) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2);
 		    rayDone = true;
 		}
 		if (ModList.get().isLoaded("nuclearscience")) {
@@ -157,6 +156,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 			iterator.remove();
 		    }
 		    if (threadSimple.results.isEmpty()) {
+			attackEntities((float) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2);
 			return true;
 		    }
 		}

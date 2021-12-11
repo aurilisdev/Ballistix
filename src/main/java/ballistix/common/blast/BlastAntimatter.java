@@ -70,6 +70,7 @@ public class BlastAntimatter extends Blast implements IHasCustomRenderer {
 		    iterator.remove();
 		}
 		if (thread.results.isEmpty()) {
+		    position = position.above().above();
 		    attackEntities((float) Constants.EXPLOSIVE_ANTIMATTER_RADIUS * 2);
 		    return true;
 		}

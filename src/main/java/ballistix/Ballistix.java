@@ -1,9 +1,11 @@
 package ballistix;
 
 import ballistix.client.ClientRegister;
+import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.packet.NetworkHandler;
 import ballistix.common.settings.Constants;
 import electrodynamics.prefab.configuration.ConfigurationHandler;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -28,7 +30,8 @@ public class Ballistix {
 	DeferredRegisters.TILES.register(bus);
 	DeferredRegisters.CONTAINERS.register(bus);
 	DeferredRegisters.ENTITIES.register(bus);
-// TODO: call base hashable explosion threads.
+	new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, true).start();
+	new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, Integer.MAX_VALUE, null, true).start();
     }
 
     @SubscribeEvent

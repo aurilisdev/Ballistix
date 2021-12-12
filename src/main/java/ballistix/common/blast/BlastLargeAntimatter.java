@@ -47,8 +47,7 @@ public class BlastLargeAntimatter extends Blast implements IHasCustomRenderer {
 	    if (thread == null) {
 		return true;
 	    }
-	    Explosion ex = new Explosion(world, null, null, null,
-		    position.getX(), position.getY(), position.getZ(),
+	    Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
 		    (float) Constants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, false, BlockInteraction.BREAK);
 	    if (thread.isComplete) {
 		hasStarted = true;

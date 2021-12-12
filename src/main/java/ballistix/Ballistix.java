@@ -28,6 +28,7 @@ public class Ballistix {
 	DeferredRegisters.TILES.register(bus);
 	DeferredRegisters.CONTAINERS.register(bus);
 	DeferredRegisters.ENTITIES.register(bus);
+// TODO: call base hashable explosion threads.
     }
 
     @SubscribeEvent

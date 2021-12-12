@@ -34,6 +34,7 @@ public class BlastThermobaric extends Blast {
 
     private ThreadRaycastBlast thread;
     private int pertick = -1;
+    private Iterator<BlockPos> forJDAWGRay;
 
     @Override
     public boolean doExplode(int callCount) {
@@ -47,23 +48,22 @@ public class BlastThermobaric extends Blast {
 		if (pertick == -1) {
 		    hasStarted = true;
 		    pertick = (int) (thread.results.size() / Constants.EXPLOSIVE_THERMOBARIC_DURATION + 1);
+		    forJDAWGRay = thread.results.iterator();
 		}
 		int finished = pertick;
-		Iterator<BlockPos> iterator = thread.results.iterator();
-		while (iterator.hasNext()) {
+		while (forJDAWGRay.hasNext()) {
 		    if (finished-- < 0) {
 			break;
 		    }
-		    BlockPos p = new BlockPos(iterator.next());
+		    BlockPos p = new BlockPos(forJDAWGRay.next());
 		    world.getBlockState(p).getBlock().wasExploded(world, p, ex);
 		    world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
 		    if (world.random.nextFloat() < 1 / 10.0 && world instanceof ServerLevel serverlevel) {
 			serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL
 				.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT));
 		    }
-		    iterator.remove();
 		}
-		if (thread.results.isEmpty()) {
+		if (!forJDAWGRay.hasNext()) {
 		    attackEntities((float) Constants.EXPLOSIVE_THERMOBARIC_SIZE * 2);
 		    return true;
 		}

@@ -25,7 +25,7 @@ public class BlastLargeAntimatter extends Blast implements IHasCustomRenderer {
     @Override
     public void doPreExplode() {
 	if (!world.isClientSide) {
-	    thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, Integer.MAX_VALUE, null, false);
+	    thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, Integer.MAX_VALUE, null, true);
 	    thread.start();
 	}
 	SoundAPI.playSound(SoundRegister.SOUND_ANTIMATTEREXPLOSION.get(), SoundSource.BLOCKS, 10, 1, position);
@@ -39,6 +39,8 @@ public class BlastLargeAntimatter extends Blast implements IHasCustomRenderer {
 	return pertick > 0;
     }
 
+    private Iterator<BlockPos> forJDAWG;
+
     @Override
     public boolean doExplode(int callCount) {
 	if (!world.isClientSide) {
@@ -51,14 +53,14 @@ public class BlastLargeAntimatter extends Blast implements IHasCustomRenderer {
 		hasStarted = true;
 		if (pertick == -1) {
 		    pertick = (int) (thread.results.size() * 1.5 / Constants.EXPLOSIVE_LARGEANTIMATTER_DURATION + 1);
+		    forJDAWG = thread.results.iterator();
 		}
 		int finished = pertick;
-		Iterator<BlockPos> iterator = thread.results.iterator();
-		while (iterator.hasNext()) {
+		while (forJDAWG.hasNext()) {
 		    if (finished-- < 0) {
 			break;
 		    }
-		    BlockPos p = new BlockPos(iterator.next()).offset(position);
+		    BlockPos p = new BlockPos(forJDAWG.next()).offset(position);
 		    BlockState state = world.getBlockState(p);
 		    Block block = state.getBlock();
 
@@ -67,9 +69,8 @@ public class BlastLargeAntimatter extends Blast implements IHasCustomRenderer {
 			block.wasExploded(world, p, ex);
 			world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
 		    }
-		    iterator.remove();
 		}
-		if (thread.results.isEmpty()) {
+		if (!forJDAWG.hasNext()) {
 		    position = position.above().above();
 		    attackEntities((float) Constants.EXPLOSIVE_LARGEANTIMATTER_RADIUS * 2);
 		    return true;

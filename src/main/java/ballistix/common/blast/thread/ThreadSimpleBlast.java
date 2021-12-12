@@ -38,7 +38,7 @@ public class ThreadSimpleBlast extends ThreadBlast {
 	    }
 	    (useHashedResults ? cachedHashedResults : cachedResults).put(explosionRadius, positions);
 	}
-	results = (HashSet<BlockPos>) (useHashedResults ? cachedHashedResults : cachedResults).get(explosionRadius).clone();
+	results = (useHashedResults ? cachedHashedResults : cachedResults).get(explosionRadius);
 	super.run();
     }
 }

@@ -50,6 +50,9 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 	SoundAPI.playSound(SoundRegister.SOUND_NUCLEAREXPLOSION.get(), SoundSource.BLOCKS, 1, 1, position);
     }
 
+    private Iterator<BlockPos> forJDAWGRay;
+    private Iterator<BlockPos> forJDAWGSimple;
+
     private ThreadRaycastBlast threadRay;
     private ThreadSimpleBlast threadSimple;
     private int pertick = -1;
@@ -74,14 +77,14 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 		hasStarted = true;
 		if (pertick == -1) {
 		    pertick = (int) (threadRay.results.size() / Constants.EXPLOSIVE_NUCLEAR_DURATION + 1);
+		    forJDAWGRay = threadRay.results.iterator();
 		}
 		int finished = pertick;
-		Iterator<BlockPos> iterator = threadRay.results.iterator();
-		while (iterator.hasNext()) {
+		while (forJDAWGRay.hasNext()) {
 		    if (finished-- < 0) {
 			break;
 		    }
-		    BlockPos p = new BlockPos(iterator.next());
+		    BlockPos p = new BlockPos(forJDAWGRay.next());
 
 		    BlockState state = Blocks.AIR.defaultBlockState();
 		    double dis = new Location(p.getX(), 0, p.getZ()).distance(new Location(position.getX(), 0, position.getZ()));
@@ -97,7 +100,6 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 			serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL
 				.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT));
 		    }
-		    iterator.remove();
 		}
 		if (particleHeight < 23) {
 		    int radius = 2;
@@ -119,7 +121,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 		    }
 		    particleHeight++;
 		}
-		if (threadRay.results.isEmpty()) {
+		if (!forJDAWGRay.hasNext()) {
 		    rayDone = true;
 		}
 		if (ModList.get().isLoaded("nuclearscience")) {
@@ -135,15 +137,15 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 	    if (ModList.get().isLoaded("nuclearscience")) {
 		if (threadSimple.isComplete && rayDone) {
 		    if (perticksimple == -1) {
+			forJDAWGSimple = threadSimple.results.iterator();
 			perticksimple = (int) (threadSimple.results.size() * 1.5 / Constants.EXPLOSIVE_NUCLEAR_DURATION + 1);
 		    }
 		    int finished = perticksimple;
-		    Iterator<BlockPos> iterator = threadSimple.results.iterator();
-		    while (iterator.hasNext()) {
+		    while (forJDAWGSimple.hasNext()) {
 			if (finished-- < 0) {
 			    break;
 			}
-			BlockPos p = new BlockPos(iterator.next()).offset(position);
+			BlockPos p = new BlockPos(forJDAWGSimple.next()).offset(position);
 			BlockState state = world.getBlockState(p);
 			Block block = state.getBlock();
 			if (block == Blocks.GRASS_BLOCK || block == Blocks.DIRT) {
@@ -153,9 +155,8 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 			} else if (state.getMaterial() == Material.LEAVES) {
 			    world.setBlock(p, Blocks.AIR.defaultBlockState(), 2 | 16 | 32);
 			}
-			iterator.remove();
 		    }
-		    if (threadSimple.results.isEmpty()) {
+		    if (!forJDAWGSimple.hasNext()) {
 			attackEntities((float) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2);
 			return true;
 		    }

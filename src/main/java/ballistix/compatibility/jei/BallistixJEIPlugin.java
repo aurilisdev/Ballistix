@@ -1,12 +1,12 @@
-package ballistix.compatability.jei;
+package ballistix.compatibility.jei;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import ballistix.compatability.jei.recipecategories.psuedo.specificmachines.WarheadRecipeCategory;
-import ballistix.compatability.jei.util.psuedorecipes.BallistixPsuedoRecipes;
-import electrodynamics.compatability.jei.recipecategories.psuedo.PsuedoItem2ItemRecipe;
+import ballistix.compatibility.jei.recipecategories.psuedo.specificmachines.WarheadRecipeCategory;
+import ballistix.compatibility.jei.util.psuedorecipes.BallistixPsuedoRecipes;
+import electrodynamics.compatibility.jei.recipecategories.psuedo.PsuedoItem2ItemRecipe;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;

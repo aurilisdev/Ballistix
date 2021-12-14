@@ -1,4 +1,4 @@
-package ballistix.compatability.jei.recipecategories.psuedo.specificmachines;
+package ballistix.compatibility.jei.recipecategories.psuedo.specificmachines;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +9,8 @@ import com.google.common.cache.LoadingCache;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import ballistix.References;
-import ballistix.compatability.jei.util.psuedorecipes.BallistixPsuedoRecipes;
-import electrodynamics.compatability.jei.recipecategories.psuedo.PsuedoItem2ItemRecipe;
+import ballistix.compatibility.jei.util.psuedorecipes.BallistixPsuedoRecipes;
+import electrodynamics.compatibility.jei.recipecategories.psuedo.PsuedoItem2ItemRecipe;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.drawable.IDrawable;

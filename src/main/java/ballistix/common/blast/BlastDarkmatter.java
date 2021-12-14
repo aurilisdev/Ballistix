@@ -38,8 +38,9 @@ public class BlastDarkmatter extends Blast {
 	if (!world.isClientSide) {
 	    thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null, true);
 	    thread.start();
+	} else {
+	    SoundAPI.playSound(SoundRegister.SOUND_DARKMATTER.get(), SoundSource.BLOCKS, 1, 1, position);
 	}
-	SoundAPI.playSound(SoundRegister.SOUND_DARKMATTER.get(), SoundSource.BLOCKS, 1, 1, position);
     }
 
     private ThreadSimpleBlast thread;

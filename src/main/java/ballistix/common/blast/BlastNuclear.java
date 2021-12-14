@@ -46,8 +46,9 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 	    threadSimple.strictnessAtEdges = 1.7;
 	    threadRay.start();
 	    threadSimple.start();
+	} else {
+	    SoundAPI.playSound(SoundRegister.SOUND_NUCLEAREXPLOSION.get(), SoundSource.BLOCKS, 1, 1, position);
 	}
-	SoundAPI.playSound(SoundRegister.SOUND_NUCLEAREXPLOSION.get(), SoundSource.BLOCKS, 1, 1, position);
     }
 
     private Iterator<BlockPos> forJDAWGRay;

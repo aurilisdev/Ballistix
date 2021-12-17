@@ -2,7 +2,7 @@ package ballistix.common.blast;
 
 import java.util.Iterator;
 
-import ballistix.common.blast.thread.ThreadRaycastBlast;
+import ballistix.common.blast.thread.raycast.ThreadRaycastBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
 import electrodynamics.common.packet.NetworkHandler;

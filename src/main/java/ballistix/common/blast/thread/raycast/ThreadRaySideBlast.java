@@ -48,29 +48,26 @@ public class ThreadRaySideBlast extends Thread {
 				}
 				Vec3 delta = new Vec3(x, y, z).normalize();
 				float power = mainBlast.explosionEnergy - mainBlast.explosionEnergy * world.random.nextFloat() / 2;
-				Vec3 t = new Vec3(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5);
-				BlockPos tt = new BlockPos(t);
+				Vec3 currentVector = new Vec3(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5);
+				BlockPos currentBlockPos = new BlockPos(currentVector);
 				for (float d = 0.3F; power > 0f; power -= d * 0.75F * 5) {
-					double distancesq = Math.pow(t.x() - position.getX(), 2) + Math.pow(t.y() - position.getY(), 2)
-							+ Math.pow(t.z() - position.getZ(), 2);
-					if (distancesq > explosionRadius * explosionRadius) {
-						break;
-					}
-					BlockPos next = new BlockPos(t);
-					if (!next.equals(tt)) {
-						tt = next;
-						BlockState block = world.getBlockState(tt);
+					BlockPos next = new BlockPos(currentVector);
+					if (!next.equals(currentBlockPos)) {
+						currentBlockPos = next;
+						BlockState block = world.getBlockState(currentBlockPos);
 						if (block != Blocks.AIR.defaultBlockState() && block != Blocks.VOID_AIR.defaultBlockState()
-								&& block.getDestroySpeed(world, tt) >= 0) {
-							power -= mainBlast.callBack.getResistance(world, position, tt, mainBlast.explosionSource, block);
+								&& block.getDestroySpeed(world, currentBlockPos) >= 0) {
+							power -= mainBlast.callBack.getResistance(world, position, currentBlockPos, mainBlast.explosionSource, block);
 							if (power > 0f) {
-								int idistancesq = (int) (Math.pow(tt.getX() - position.getX(), 2) + Math.pow(tt.getY() - position.getY(), 2)
-										+ Math.pow(tt.getZ() - position.getZ(), 2));
-								mainBlast.results.add(new HashDistanceBlockPos(tt.getX(), tt.getY(), tt.getZ(), idistancesq));
+								int idistancesq = (int) (Math.pow(currentBlockPos.getX() - position.getX(), 2)
+										+ Math.pow(currentBlockPos.getY() - position.getY(), 2)
+										+ Math.pow(currentBlockPos.getZ() - position.getZ(), 2));
+								mainBlast.results.add(new HashDistanceBlockPos(currentBlockPos.getX(), currentBlockPos.getY(), currentBlockPos.getZ(),
+										idistancesq));
 							}
 						}
 					}
-					t = new Vec3(t.x + delta.x, t.y + delta.y, t.z + delta.z);
+					currentVector = new Vec3(currentVector.x + delta.x, currentVector.y + delta.y, currentVector.z + delta.z);
 				}
 			}
 		}

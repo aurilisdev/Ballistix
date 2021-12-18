@@ -16,84 +16,84 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkHooks;
 
 public class EntityGrenade extends ThrowableProjectile {
-    private static final EntityDataAccessor<Integer> FUSE = SynchedEntityData.defineId(EntityGrenade.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(EntityGrenade.class, EntityDataSerializers.INT);
-    public int blastOrdinal = -1;
-    public int fuse = 80;
+	private static final EntityDataAccessor<Integer> FUSE = SynchedEntityData.defineId(EntityGrenade.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(EntityGrenade.class, EntityDataSerializers.INT);
+	public int blastOrdinal = -1;
+	public int fuse = 80;
 
-    public EntityGrenade(EntityType<? extends EntityGrenade> type, Level worldIn) {
-	super(type, worldIn);
-    }
-
-    public EntityGrenade(Level worldIn) {
-	this(DeferredRegisters.ENTITY_GRENADE.get(), worldIn);
-    }
-
-    public void setShrapnelType(SubtypeBlast explosive) {
-	blastOrdinal = explosive.ordinal();
-	fuse = explosive.fuse;
-    }
-
-    public SubtypeBlast getExplosiveType() {
-	return blastOrdinal == -1 ? null : SubtypeBlast.values()[blastOrdinal];
-    }
-
-    @Override
-    protected void defineSynchedData() {
-	entityData.define(FUSE, 80);
-	entityData.define(TYPE, -1);
-    }
-
-    @Override
-    public void tick() {
-	if (!level.isClientSide) {
-	    entityData.set(TYPE, blastOrdinal);
-	    entityData.set(FUSE, fuse);
-	} else {
-	    blastOrdinal = entityData.get(TYPE);
-	    fuse = entityData.get(FUSE);
-	}
-	if (!isNoGravity()) {
-	    this.setDeltaMovement(getDeltaMovement().add(0.0D, -0.04D, 0.0D));
+	public EntityGrenade(EntityType<? extends EntityGrenade> type, Level worldIn) {
+		super(type, worldIn);
 	}
 
-	move(MoverType.SELF, getDeltaMovement());
-	this.setDeltaMovement(getDeltaMovement().scale(0.98D));
-	if (onGround) {
-	    this.setDeltaMovement(getDeltaMovement().multiply(0.7D, -0.5D, 0.7D));
+	public EntityGrenade(Level worldIn) {
+		this(DeferredRegisters.ENTITY_GRENADE.get(), worldIn);
 	}
-	--fuse;
-	if (fuse <= 0) {
-	    remove(RemovalReason.DISCARDED);
-	    if (blastOrdinal != -1) {
-		SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
-		Blast b = Blast.createFromSubtype(explosive, level, blockPosition());
-		if (b != null) {
-		    b.performExplosion();
+
+	public void setShrapnelType(SubtypeBlast explosive) {
+		blastOrdinal = explosive.ordinal();
+		fuse = explosive.fuse;
+	}
+
+	public SubtypeBlast getExplosiveType() {
+		return blastOrdinal == -1 ? null : SubtypeBlast.values()[blastOrdinal];
+	}
+
+	@Override
+	protected void defineSynchedData() {
+		entityData.define(FUSE, 80);
+		entityData.define(TYPE, -1);
+	}
+
+	@Override
+	public void tick() {
+		if (!level.isClientSide) {
+			entityData.set(TYPE, blastOrdinal);
+			entityData.set(FUSE, fuse);
+		} else {
+			blastOrdinal = entityData.get(TYPE);
+			fuse = entityData.get(FUSE);
 		}
-	    }
-	} else {
-	    updateInWaterStateAndDoFluidPushing();
-	    if (level.isClientSide) {
-		level.addParticle(ParticleTypes.SMOKE, getX(), getY() + 0.5D, getZ(), 0.0D, 0.0D, 0.0D);
-	    }
+		if (!isNoGravity()) {
+			this.setDeltaMovement(getDeltaMovement().add(0.0D, -0.04D, 0.0D));
+		}
+
+		move(MoverType.SELF, getDeltaMovement());
+		this.setDeltaMovement(getDeltaMovement().scale(0.98D));
+		if (onGround) {
+			this.setDeltaMovement(getDeltaMovement().multiply(0.7D, -0.5D, 0.7D));
+		}
+		--fuse;
+		if (fuse <= 0) {
+			remove(RemovalReason.DISCARDED);
+			if (blastOrdinal != -1) {
+				SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
+				Blast b = Blast.createFromSubtype(explosive, level, blockPosition());
+				if (b != null) {
+					b.performExplosion();
+				}
+			}
+		} else {
+			updateInWaterStateAndDoFluidPushing();
+			if (level.isClientSide) {
+				level.addParticle(ParticleTypes.SMOKE, getX(), getY() + 0.5D, getZ(), 0.0D, 0.0D, 0.0D);
+			}
+		}
 	}
-    }
 
-    @Override
-    protected void addAdditionalSaveData(CompoundTag compound) {
-	compound.putInt("Fuse", fuse);
-	compound.putInt("type", blastOrdinal);
-    }
+	@Override
+	protected void addAdditionalSaveData(CompoundTag compound) {
+		compound.putInt("Fuse", fuse);
+		compound.putInt("type", blastOrdinal);
+	}
 
-    @Override
-    protected void readAdditionalSaveData(CompoundTag compound) {
-	fuse = compound.getInt("Fuse");
-	blastOrdinal = compound.getInt("type");
-    }
+	@Override
+	protected void readAdditionalSaveData(CompoundTag compound) {
+		fuse = compound.getInt("Fuse");
+		blastOrdinal = compound.getInt("type");
+	}
 
-    @Override
-    public Packet<?> getAddEntityPacket() {
-	return NetworkHooks.getEntitySpawningPacket(this);
-    }
+	@Override
+	public Packet<?> getAddEntityPacket() {
+		return NetworkHooks.getEntitySpawningPacket(this);
+	}
 }

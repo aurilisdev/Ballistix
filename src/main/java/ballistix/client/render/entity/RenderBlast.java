@@ -13,14 +13,14 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class RenderBlast extends EntityRenderer<EntityBlast> {
-    public RenderBlast(Context renderManagerIn) {
-	super(renderManagerIn);
-	shadowRadius = 0.5F;
-    }
+	public RenderBlast(Context renderManagerIn) {
+		super(renderManagerIn);
+		shadowRadius = 0.5F;
+	}
 
-    @Override
-    public void render(EntityBlast entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn,
-	    int packedLightIn) {
+	@Override
+	public void render(EntityBlast entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn,
+			int packedLightIn) {
 //	SubtypeBlast subtype = entityIn.getBlastType();
 //	if (subtype == SubtypeBlast.darkmatter) {
 //
@@ -135,12 +135,12 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 //	    GlStateManager._popMatrix();
 //	    Lighting.turnBackOn();
 //	}
-	// TODO: Fix this rendering
-	super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
-    }
+		// TODO: Fix this rendering
+		super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+	}
 
-    @Override
-    public ResourceLocation getTextureLocation(EntityBlast entity) {
-	return InventoryMenu.BLOCK_ATLAS;
-    }
+	@Override
+	public ResourceLocation getTextureLocation(EntityBlast entity) {
+		return InventoryMenu.BLOCK_ATLAS;
+	}
 }

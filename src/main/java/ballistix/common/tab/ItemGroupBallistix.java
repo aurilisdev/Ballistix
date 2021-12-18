@@ -7,12 +7,12 @@ import net.minecraft.world.item.ItemStack;
 
 public class ItemGroupBallistix extends CreativeModeTab {
 
-    public ItemGroupBallistix(String label) {
-	super(label);
-    }
+	public ItemGroupBallistix(String label) {
+		super(label);
+	}
 
-    @Override
-    public ItemStack makeIcon() {
-	return new ItemStack(DeferredRegisters.SUBTYPEBLOCK_MAPPINGS.get(SubtypeBlast.condensive));
-    }
+	@Override
+	public ItemStack makeIcon() {
+		return new ItemStack(DeferredRegisters.SUBTYPEBLOCK_MAPPINGS.get(SubtypeBlast.condensive));
+	}
 }

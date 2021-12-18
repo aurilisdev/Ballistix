@@ -17,49 +17,49 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.Shapes;
 
 public class BlockMissileSilo extends GenericMachineBlock implements IMultiblockNode {
-    public BlockMissileSilo() {
-	super(TileMissileSilo::new);
-    }
+	public BlockMissileSilo() {
+		super(TileMissileSilo::new);
+	}
 
-    public static final HashSet<Subnode> subnodes = new HashSet<>();
-    static {
-	int radius = 1;
-	for (int i = -radius; i <= radius; i++) {
-	    for (int k = 0; k <= 1; k++) {
-		for (int j = -radius; j <= radius; j++) {
-		    if (!(i == 0 && j == 0 && k == 0)) {
-			subnodes.add(new Subnode(new BlockPos(i, k, j), Shapes.block()));
-		    }
+	public static final HashSet<Subnode> subnodes = new HashSet<>();
+	static {
+		int radius = 1;
+		for (int i = -radius; i <= radius; i++) {
+			for (int k = 0; k <= 1; k++) {
+				for (int j = -radius; j <= radius; j++) {
+					if (!(i == 0 && j == 0 && k == 0)) {
+						subnodes.add(new Subnode(new BlockPos(i, k, j), Shapes.block()));
+					}
+				}
+			}
 		}
-	    }
 	}
-    }
 
-    @Override
-    public boolean hasMultiBlock() {
-	return true;
-    }
-
-    @Override
-    public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos) {
-	return isValidMultiblockPlacement(state, worldIn, pos, subnodes);
-    }
-
-    @Override
-    public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-	BlockEntity tile = worldIn.getBlockEntity(pos);
-	if (tile instanceof IMultiblockTileNode multi) {
-	    multi.onNodeReplaced(worldIn, pos, false);
+	@Override
+	public boolean hasMultiBlock() {
+		return true;
 	}
-	super.onRemove(state, worldIn, pos, newState, isMoving);
-    }
 
-    @Override
-    public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-	super.setPlacedBy(worldIn, pos, state, placer, stack);
-	BlockEntity tile = worldIn.getBlockEntity(pos);
-	if (tile instanceof IMultiblockTileNode multi) {
-	    multi.onNodePlaced(worldIn, pos, state, placer, stack);
+	@Override
+	public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos) {
+		return isValidMultiblockPlacement(state, worldIn, pos, subnodes);
 	}
-    }
+
+	@Override
+	public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+		BlockEntity tile = worldIn.getBlockEntity(pos);
+		if (tile instanceof IMultiblockTileNode multi) {
+			multi.onNodeReplaced(worldIn, pos, false);
+		}
+		super.onRemove(state, worldIn, pos, newState, isMoving);
+	}
+
+	@Override
+	public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+		super.setPlacedBy(worldIn, pos, state, placer, stack);
+		BlockEntity tile = worldIn.getBlockEntity(pos);
+		if (tile instanceof IMultiblockTileNode multi) {
+			multi.onNodePlaced(worldIn, pos, state, placer, stack);
+		}
+	}
 }

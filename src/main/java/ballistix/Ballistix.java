@@ -21,27 +21,27 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @EventBusSubscriber(modid = References.ID, bus = Bus.MOD)
 public class Ballistix {
 
-    public Ballistix() {
-	ConfigurationHandler.registerConfig(Constants.class);
-	IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-	SoundRegister.SOUNDS.register(bus);
-	DeferredRegisters.BLOCKS.register(bus);
-	DeferredRegisters.ITEMS.register(bus);
-	DeferredRegisters.TILES.register(bus);
-	DeferredRegisters.CONTAINERS.register(bus);
-	DeferredRegisters.ENTITIES.register(bus);
-	new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, true).start();
-	new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, Integer.MAX_VALUE, null, true).start();
-    }
+	public Ballistix() {
+		ConfigurationHandler.registerConfig(Constants.class);
+		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+		SoundRegister.SOUNDS.register(bus);
+		DeferredRegisters.BLOCKS.register(bus);
+		DeferredRegisters.ITEMS.register(bus);
+		DeferredRegisters.TILES.register(bus);
+		DeferredRegisters.CONTAINERS.register(bus);
+		DeferredRegisters.ENTITIES.register(bus);
+		new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, true).start();
+		new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, Integer.MAX_VALUE, null, true).start();
+	}
 
-    @SubscribeEvent
-    @OnlyIn(Dist.CLIENT)
-    public static void onClientSetup(FMLClientSetupEvent event) {
-	ClientRegister.setup();
-    }
+	@SubscribeEvent
+	@OnlyIn(Dist.CLIENT)
+	public static void onClientSetup(FMLClientSetupEvent event) {
+		ClientRegister.setup();
+	}
 
-    @SubscribeEvent
-    public static void onCommonSetup(FMLCommonSetupEvent event) {
-	NetworkHandler.init();
-    }
+	@SubscribeEvent
+	public static void onCommonSetup(FMLCommonSetupEvent event) {
+		NetworkHandler.init();
+	}
 }

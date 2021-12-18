@@ -8,39 +8,39 @@ import net.minecraftforge.eventbus.api.Event;
 @Cancelable
 public class BlastEvent extends Event {
 
-    public Level world;
-    public Blast iExplosion;
+	public Level world;
+	public Blast iExplosion;
 
-    public BlastEvent(Level world, Blast iExplosion) {
-	this.world = world;
-	this.iExplosion = iExplosion;
-    }
-
-    public static class ConstructBlastEvent extends BlastEvent {
-
-	public ConstructBlastEvent(Level world, Blast explosion) {
-	    super(world, explosion);
+	public BlastEvent(Level world, Blast iExplosion) {
+		this.world = world;
+		this.iExplosion = iExplosion;
 	}
-    }
 
-    public static class PreBlastEvent extends BlastEvent {
+	public static class ConstructBlastEvent extends BlastEvent {
 
-	public PreBlastEvent(Level world, Blast explosion) {
-	    super(world, explosion);
+		public ConstructBlastEvent(Level world, Blast explosion) {
+			super(world, explosion);
+		}
 	}
-    }
 
-    public static class DoExplosionEvent extends BlastEvent {
+	public static class PreBlastEvent extends BlastEvent {
 
-	public DoExplosionEvent(Level world, Blast explosion) {
-	    super(world, explosion);
+		public PreBlastEvent(Level world, Blast explosion) {
+			super(world, explosion);
+		}
 	}
-    }
 
-    public static class PostBlastEvent extends BlastEvent {
+	public static class DoExplosionEvent extends BlastEvent {
 
-	public PostBlastEvent(Level world, Blast explosion) {
-	    super(world, explosion);
+		public DoExplosionEvent(Level world, Blast explosion) {
+			super(world, explosion);
+		}
 	}
-    }
+
+	public static class PostBlastEvent extends BlastEvent {
+
+		public PostBlastEvent(Level world, Blast explosion) {
+			super(world, explosion);
+		}
+	}
 }

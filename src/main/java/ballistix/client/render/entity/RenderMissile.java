@@ -24,49 +24,49 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class RenderMissile extends EntityRenderer<EntityMissile> {
 
-    public RenderMissile(Context renderManagerIn) {
-	super(renderManagerIn);
-	shadowRadius = 0.15F;
-	shadowStrength = 0.75F;
-    }
-
-    @Override
-    public void render(EntityMissile entity, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn,
-	    int packedLightIn) {
-	int type = entity.range;
-	Level world = entity.level;
-	matrixStackIn.pushPose();
-	matrixStackIn.mulPose(new Quaternion(new Vector3f(0, 1, 0), entity.getYRot() + 90.0F, true));
-	matrixStackIn.mulPose(new Quaternion(new Vector3f(0, 0, 1), 90 - entity.getXRot(), true));
-	if (type == 1) {
-	    BakedModel closerange = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILEMEDIUMRANGE);
-	    matrixStackIn.translate(0.5f, 2.6f, 0.5f);
-	    matrixStackIn.scale(1.5f, 2.5f, 1.5f);
-	    Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateWithoutAO(world, closerange, Blocks.AIR.defaultBlockState(),
-		    entity.blockPosition(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, world.random, new Random().nextLong(), 0);
-	} else if (type == 0) {
-	    BakedModel closerange = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILECLOSERANGE);
-	    matrixStackIn.translate(0.5f, 1.5f, 0.5f);
-	    matrixStackIn.scale(1.25f, 1.5f, 1.25f);
-	    Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateWithoutAO(world, closerange, Blocks.AIR.defaultBlockState(),
-		    entity.blockPosition(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, world.random, new Random().nextLong(), 0);
-	} else if (type == 2) {
-	    BakedModel closerange = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILELONGRANGE);
-	    matrixStackIn.translate(0.5f, 4, 0.5f);
-	    matrixStackIn.scale(2f, 4f, 2f);
-	    Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateWithoutAO(world, closerange, Blocks.AIR.defaultBlockState(),
-		    entity.blockPosition(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, world.random, new Random().nextLong(), 0);
+	public RenderMissile(Context renderManagerIn) {
+		super(renderManagerIn);
+		shadowRadius = 0.15F;
+		shadowStrength = 0.75F;
 	}
-	matrixStackIn.popPose();
-    }
 
-    @Override
-    public boolean shouldRender(EntityMissile livingEntityIn, Frustum camera, double camX, double camY, double camZ) {
-	return true;
-    }
+	@Override
+	public void render(EntityMissile entity, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn,
+			int packedLightIn) {
+		int type = entity.range;
+		Level world = entity.level;
+		matrixStackIn.pushPose();
+		matrixStackIn.mulPose(new Quaternion(new Vector3f(0, 1, 0), entity.getYRot() + 90.0F, true));
+		matrixStackIn.mulPose(new Quaternion(new Vector3f(0, 0, 1), 90 - entity.getXRot(), true));
+		if (type == 1) {
+			BakedModel closerange = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILEMEDIUMRANGE);
+			matrixStackIn.translate(0.5f, 2.6f, 0.5f);
+			matrixStackIn.scale(1.5f, 2.5f, 1.5f);
+			Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateWithoutAO(world, closerange, Blocks.AIR.defaultBlockState(),
+					entity.blockPosition(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, world.random, new Random().nextLong(), 0);
+		} else if (type == 0) {
+			BakedModel closerange = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILECLOSERANGE);
+			matrixStackIn.translate(0.5f, 1.5f, 0.5f);
+			matrixStackIn.scale(1.25f, 1.5f, 1.25f);
+			Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateWithoutAO(world, closerange, Blocks.AIR.defaultBlockState(),
+					entity.blockPosition(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, world.random, new Random().nextLong(), 0);
+		} else if (type == 2) {
+			BakedModel closerange = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILELONGRANGE);
+			matrixStackIn.translate(0.5f, 4, 0.5f);
+			matrixStackIn.scale(2f, 4f, 2f);
+			Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateWithoutAO(world, closerange, Blocks.AIR.defaultBlockState(),
+					entity.blockPosition(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, world.random, new Random().nextLong(), 0);
+		}
+		matrixStackIn.popPose();
+	}
 
-    @Override
-    public ResourceLocation getTextureLocation(EntityMissile entity) {
-	return InventoryMenu.BLOCK_ATLAS;
-    }
+	@Override
+	public boolean shouldRender(EntityMissile livingEntityIn, Frustum camera, double camX, double camY, double camZ) {
+		return true;
+	}
+
+	@Override
+	public ResourceLocation getTextureLocation(EntityMissile entity) {
+		return InventoryMenu.BLOCK_ATLAS;
+	}
 }

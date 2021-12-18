@@ -25,40 +25,40 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(modid = References.ID, bus = Bus.MOD, value = { Dist.CLIENT })
 public class ClientRegister {
-    @SubscribeEvent
-    public static void onModelEvent(ModelRegistryEvent event) {
-	ForgeModelBakery.addSpecialModel(MODEL_MISSILECLOSERANGE);
-	ForgeModelBakery.addSpecialModel(MODEL_MISSILEMEDIUMRANGE);
-	ForgeModelBakery.addSpecialModel(MODEL_MISSILELONGRANGE);
-    }
+	@SubscribeEvent
+	public static void onModelEvent(ModelRegistryEvent event) {
+		ForgeModelBakery.addSpecialModel(MODEL_MISSILECLOSERANGE);
+		ForgeModelBakery.addSpecialModel(MODEL_MISSILEMEDIUMRANGE);
+		ForgeModelBakery.addSpecialModel(MODEL_MISSILELONGRANGE);
+	}
 
-    public static final ResourceLocation TEXTURE_SHRAPNEL = new ResourceLocation(References.ID + ":textures/model/shrapnel.png");
-    public static final ResourceLocation MODEL_MISSILECLOSERANGE = new ResourceLocation(References.ID + ":entity/missilecloserange");
-    public static final ResourceLocation MODEL_MISSILEMEDIUMRANGE = new ResourceLocation(References.ID + ":entity/missilemediumrange");
-    public static final ResourceLocation MODEL_MISSILELONGRANGE = new ResourceLocation(References.ID + ":entity/missilelongrange");
-    public static final ResourceLocation TEXTURE_MISSILECLOSERANGE = new ResourceLocation(References.ID + ":textures/model/missilecloserange.png");
-    public static final ResourceLocation TEXTURE_MISSILEMEDIUMRANGE = new ResourceLocation(References.ID + ":textures/model/missilemediumrange.png");
-    public static final ResourceLocation TEXTURE_MISSILELONGRANGE = new ResourceLocation(References.ID + ":textures/model/missilelongrange.png");
-    public static final ResourceLocation TEXTURE_FIREBALL = new ResourceLocation(References.ID + ":textures/model/fireball.png");
+	public static final ResourceLocation TEXTURE_SHRAPNEL = new ResourceLocation(References.ID + ":textures/model/shrapnel.png");
+	public static final ResourceLocation MODEL_MISSILECLOSERANGE = new ResourceLocation(References.ID + ":entity/missilecloserange");
+	public static final ResourceLocation MODEL_MISSILEMEDIUMRANGE = new ResourceLocation(References.ID + ":entity/missilemediumrange");
+	public static final ResourceLocation MODEL_MISSILELONGRANGE = new ResourceLocation(References.ID + ":entity/missilelongrange");
+	public static final ResourceLocation TEXTURE_MISSILECLOSERANGE = new ResourceLocation(References.ID + ":textures/model/missilecloserange.png");
+	public static final ResourceLocation TEXTURE_MISSILEMEDIUMRANGE = new ResourceLocation(References.ID + ":textures/model/missilemediumrange.png");
+	public static final ResourceLocation TEXTURE_MISSILELONGRANGE = new ResourceLocation(References.ID + ":textures/model/missilelongrange.png");
+	public static final ResourceLocation TEXTURE_FIREBALL = new ResourceLocation(References.ID + ":textures/model/fireball.png");
 
-    public static void setup() {
-	MenuScreens.register(DeferredRegisters.CONTAINER_MISSILESILO.get(), ScreenMissileSilo::new);
-	ItemBlockRenderTypes.setRenderLayer(DeferredRegisters.blockMissileSilo, RenderType.cutout());
-    }
+	public static void setup() {
+		MenuScreens.register(DeferredRegisters.CONTAINER_MISSILESILO.get(), ScreenMissileSilo::new);
+		ItemBlockRenderTypes.setRenderLayer(DeferredRegisters.blockMissileSilo, RenderType.cutout());
+	}
 
-    @SubscribeEvent
-    public static void registerEntities(EntityRenderersEvent.RegisterRenderers event) {
-	event.registerEntityRenderer(DeferredRegisters.ENTITY_EXPLOSIVE.get(), RenderExplosive::new);
-	event.registerEntityRenderer(DeferredRegisters.ENTITY_GRENADE.get(), RenderGrenade::new);
-	event.registerEntityRenderer(DeferredRegisters.ENTITY_BLAST.get(), RenderBlast::new);
-	event.registerEntityRenderer(DeferredRegisters.ENTITY_SHRAPNEL.get(), RenderShrapnel::new);
-	event.registerEntityRenderer(DeferredRegisters.ENTITY_MISSILE.get(), RenderMissile::new);
-	event.registerBlockEntityRenderer(DeferredRegisters.TILE_MISSILESILO.get(), RenderMissileSilo::new);
+	@SubscribeEvent
+	public static void registerEntities(EntityRenderersEvent.RegisterRenderers event) {
+		event.registerEntityRenderer(DeferredRegisters.ENTITY_EXPLOSIVE.get(), RenderExplosive::new);
+		event.registerEntityRenderer(DeferredRegisters.ENTITY_GRENADE.get(), RenderGrenade::new);
+		event.registerEntityRenderer(DeferredRegisters.ENTITY_BLAST.get(), RenderBlast::new);
+		event.registerEntityRenderer(DeferredRegisters.ENTITY_SHRAPNEL.get(), RenderShrapnel::new);
+		event.registerEntityRenderer(DeferredRegisters.ENTITY_MISSILE.get(), RenderMissile::new);
+		event.registerBlockEntityRenderer(DeferredRegisters.TILE_MISSILESILO.get(), RenderMissileSilo::new);
 
-    }
+	}
 
-    public static boolean shouldMultilayerRender(RenderType type) {
-	return type == RenderType.translucent() || type == RenderType.solid();
-    }
+	public static boolean shouldMultilayerRender(RenderType type) {
+		return type == RenderType.translucent() || type == RenderType.solid();
+	}
 
 }

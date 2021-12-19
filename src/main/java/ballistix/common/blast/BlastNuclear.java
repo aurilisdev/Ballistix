@@ -155,6 +155,8 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 							}
 						} else if (state.getMaterial() == Material.LEAVES) {
 							world.setBlock(p, Blocks.AIR.defaultBlockState(), 2 | 16 | 32);
+						} else if (state.getBlock() == Blocks.AIR || state.getBlock() == Blocks.CAVE_AIR) {
+							world.setBlock(p, nuclearscience.DeferredRegisters.blockRadioactiveAir.defaultBlockState(), 2);
 						}
 					}
 					if (!forJDAWGSimple.hasNext()) {

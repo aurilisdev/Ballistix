@@ -41,8 +41,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 		if (!world.isClientSide) {
 			threadRay = new ThreadRaycastBlast(world, position, (int) Constants.EXPLOSIVE_NUCLEAR_SIZE, (float) Constants.EXPLOSIVE_NUCLEAR_ENERGY,
 					null);
-			threadSimple = new ThreadSimpleBlast(world, position, (int) (Constants.EXPLOSIVE_NUCLEAR_SIZE * 1.5),
-					(float) Constants.EXPLOSIVE_NUCLEAR_ENERGY, null, true);
+			threadSimple = new ThreadSimpleBlast(world, position, (int) (Constants.EXPLOSIVE_NUCLEAR_SIZE * 2), Integer.MAX_VALUE, null, true);
 			threadSimple.strictnessAtEdges = 1.7;
 			threadRay.start();
 			threadSimple.start();
@@ -151,12 +150,12 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 						Block block = state.getBlock();
 						if (block == Blocks.GRASS_BLOCK || block == Blocks.DIRT) {
 							if (world.random.nextFloat() < 0.7) {
-								world.setBlock(p, nuclearscience.DeferredRegisters.blockRadioactiveSoil.defaultBlockState(), 2);
+								world.setBlock(p, nuclearscience.DeferredRegisters.blockRadioactiveSoil.defaultBlockState(), 2 | 16 | 32);
 							}
 						} else if (state.getMaterial() == Material.LEAVES) {
 							world.setBlock(p, Blocks.AIR.defaultBlockState(), 2 | 16 | 32);
 						} else if (state.getBlock() == Blocks.AIR || state.getBlock() == Blocks.CAVE_AIR) {
-							world.setBlock(p, nuclearscience.DeferredRegisters.blockRadioactiveAir.defaultBlockState(), 2);
+							world.setBlock(p, nuclearscience.DeferredRegisters.blockRadioactiveAir.defaultBlockState(), 2 | 16 | 32);
 						}
 					}
 					if (!forJDAWGSimple.hasNext()) {

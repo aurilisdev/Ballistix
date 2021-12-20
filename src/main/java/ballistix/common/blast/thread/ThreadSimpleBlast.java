@@ -16,6 +16,7 @@ public class ThreadSimpleBlast extends ThreadBlast {
 	public ThreadSimpleBlast(Level world, BlockPos position, int range, float energy, Entity source, boolean euclideanDistanceBased) {
 		super(world, position, range, energy, source);
 		this.euclideanDistanceBased = euclideanDistanceBased;
+		setName("Simple blast thread");
 	}
 
 	public double strictnessAtEdges = 1.85;

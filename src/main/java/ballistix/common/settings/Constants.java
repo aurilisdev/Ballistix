@@ -5,8 +5,8 @@ import electrodynamics.api.configuration.DoubleValue;
 
 @Configuration(name = "Ballistix")
 public class Constants {
-	@DoubleValue(def = 36.0)
-	public static double EXPLOSIVE_ANTIMATTER_RADIUS = 36.0;
+	@DoubleValue(def = 45.0)
+	public static double EXPLOSIVE_ANTIMATTER_RADIUS = 45.0;
 	@DoubleValue(def = 20.0, comment = "Value is in ticks.")
 	public static double EXPLOSIVE_ANTIMATTER_DURATION = 40.0;
 	@DoubleValue(def = 80.0)

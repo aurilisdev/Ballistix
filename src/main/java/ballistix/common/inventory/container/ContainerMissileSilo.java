@@ -6,7 +6,7 @@ import ballistix.common.packet.NetworkHandler;
 import ballistix.common.packet.PacketSetMissileData;
 import ballistix.common.tile.TileMissileSilo;
 import electrodynamics.common.blockitem.BlockItemDescriptable;
-import electrodynamics.prefab.inventory.container.GenericContainer;
+import electrodynamics.prefab.inventory.container.GenericContainerBlockEntity;
 import electrodynamics.prefab.inventory.container.slot.SlotRestricted;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
@@ -19,7 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class ContainerMissileSilo extends GenericContainer<TileMissileSilo> {
+public class ContainerMissileSilo extends GenericContainerBlockEntity<TileMissileSilo> {
 
 	public ContainerMissileSilo(int id, Inventory playerinv) {
 		this(id, playerinv, new SimpleContainer(2));

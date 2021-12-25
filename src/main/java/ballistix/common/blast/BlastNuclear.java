@@ -1,7 +1,6 @@
 package ballistix.common.blast;
 
 import java.util.Iterator;
-import java.util.List;
 
 import ballistix.SoundRegister;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
@@ -16,7 +15,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
@@ -25,10 +23,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.network.NetworkDirection;
+import nuclearscience.api.radiation.RadiationSystem;
 
 public class BlastNuclear extends Blast implements IHasCustomRenderer {
 
@@ -125,13 +122,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 					rayDone = true;
 				}
 				if (ModList.get().isLoaded("nuclearscience")) {
-					Location source = new Location(position);
-					double range = Constants.EXPLOSIVE_NUCLEAR_SIZE * 4;
-					AABB bb = AABB.ofSize(new Vec3(source.x(), source.y(), source.z()), range, range, range);
-					List<LivingEntity> list = world.getEntitiesOfClass(LivingEntity.class, bb);
-					for (LivingEntity living : list) {
-						nuclearscience.api.radiation.RadiationSystem.applyRadiation(living, source, 150000);
-					}
+					RadiationSystem.emitRadiationFromLocation(world, new Location(position), Constants.EXPLOSIVE_NUCLEAR_SIZE * 4, 150000);
 				}
 			}
 			if (ModList.get().isLoaded("nuclearscience")) {

@@ -9,7 +9,7 @@ import ballistix.common.tile.TileMissileSilo;
 import electrodynamics.common.tile.TileMultiSubnode;
 import electrodynamics.prefab.item.ElectricItemProperties;
 import electrodynamics.prefab.item.ItemElectric;
-import electrodynamics.prefab.utilities.UtilitiesMath;
+import electrodynamics.prefab.utilities.MathUtils;
 import electrodynamics.prefab.utilities.object.Location;
 import electrodynamics.prefab.utilities.object.TransferPack;
 import net.minecraft.nbt.CompoundTag;
@@ -56,7 +56,7 @@ public class ItemLaserDesignator extends ItemElectric {
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		if (!worldIn.isClientSide) {
-			Location trace = UtilitiesMath.getRaytracedBlock(playerIn);
+			Location trace = MathUtils.getRaytracedBlock(playerIn);
 			if (trace != null) {
 				CompoundTag nbt = playerIn.getItemBySlot(handIn == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND)
 						.getOrCreateTag();
@@ -90,7 +90,7 @@ public class ItemLaserDesignator extends ItemElectric {
 	@Override
 	public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
-		Location trace = UtilitiesMath.getRaytracedBlock(entityIn);
+		Location trace = MathUtils.getRaytracedBlock(entityIn);
 		if (!worldIn.isClientSide && entityIn instanceof Player player) {
 			if (isSelected && trace != null) {
 				player.displayClientMessage(new TranslatableComponent("message.radargun.text", trace.toString()), true);

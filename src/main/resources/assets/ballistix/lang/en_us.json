@@ -51,12 +51,12 @@
   "subtitles.ballistix.antimatterexplosion" : "Antimatter bomb explodes",
   "subtitles.ballistix.darkmatter" : "Dark matter bomb ignites and explodes",
   "subtitles.ballistix.nuclearexplosion" : "Nuclear bomb explodes",
-  "gui.jei.category.warhead_template" : "Launch Silo Layout",
-  "gui.jei.category.warhead_template.info.missile" : "Any Missile",
-  "gui.jei.category.warhead_template.info.explosive" : "Any Explosive",
-  "info.jei.item.missilesilo" : "Can launch any missile loaded with any warhead. Enter the coordiantes by hand or using a radar gun, and launch using a redstone signal!",
-  "info.jei.item.missilecloserange" : "Specs:\n    Range: 3,000 Blocks",
-  "info.jei.item.missilemediumrange" : "Specs:\n    Range: 10,000 Blocks",
-  "info.jei.item.missilelongrange" : "Specs:\n    Range: Unlimited",
-  "info.jei.item.rocketlauncher" : "Hold the Rocket Launcher in your hand. You will also need a Close-Range Missile and any type of Ballistix explosive in your inventory (or on your hotbar). Then, fire away!"
+  "jei.gui.warheadtemplate" : "Launch Silo Layout",
+  "jei.gui.warheadtemplate.info.missile" : "Any Missile",
+  "jei.gui.warheadtemplate.info.explosive" : "Any Explosive",
+  "jei.info.item.missilesilo" : "Can launch any missile loaded with any warhead. Enter the coordiantes by hand or using a radar gun, and launch using a redstone signal!",
+  "jei.info.item.missilecloserange" : "Specs:\n    Range: 3,000 Blocks",
+  "jei.info.item.missilemediumrange" : "Specs:\n    Range: 10,000 Blocks",
+  "jei.info.item.missilelongrange" : "Specs:\n    Range: Unlimited",
+  "jei.info.item.rocketlauncher" : "Hold the Rocket Launcher in your hand. You will also need a Close-Range Missile and any type of Ballistix explosive in your inventory (or on your hotbar). Then, fire away!"
 }

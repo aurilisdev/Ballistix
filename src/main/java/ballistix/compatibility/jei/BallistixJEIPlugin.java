@@ -1,6 +1,5 @@
 package ballistix.compatibility.jei;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,14 +19,17 @@ import net.minecraft.world.item.ItemStack;
 @JeiPlugin
 public class BallistixJEIPlugin implements IModPlugin {
 
+	private static final String INFO_ITEM = "jei.info.item.";
+	private static final String INFO_BLOCK = "jei.info.block.";
+	private static final String INFO_FLUID = "jei.info.fluid.";
+	
 	@Override
 	public ResourceLocation getPluginUid() {
-		return new ResourceLocation(electrodynamics.api.References.ID, "balx_jei_plugin");
+		return new ResourceLocation(electrodynamics.api.References.ID, "jei");
 	}
 
 	@Override
 	public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-		// Warhead Template
 		registration.addRecipeCatalyst(WarheadRecipeCategory.INPUT_MACHINE, WarheadRecipeCategory.UID);
 	}
 
@@ -45,30 +47,17 @@ public class BallistixJEIPlugin implements IModPlugin {
 
 	@Override
 	public void registerCategories(IRecipeCategoryRegistration registration) {
-		// Warhead Template
 		registration.addRecipeCategories(new WarheadRecipeCategory(registration.getJeiHelpers().getGuiHelper()));
 	}
 
 	private static void ballistixInfoTabs(IRecipeRegistration registration) {
-		/*
-		 * Items currently with tabs:
-		 * 
-		 * Close Range Missile Medium Range Missile Long Range Missile Missile Silo
-		 * 
-		 */
-		ArrayList<ItemStack> ballistixInfoItems = BallistixPsuedoRecipes.BALLISTIX_ITEMS.get(1);
-		String temp;
 
-		for (ItemStack itemStack : ballistixInfoItems) {
-			temp = itemStack.getItem().toString();
-			registration.addIngredientInfo(itemStack, VanillaTypes.ITEM, new TranslatableComponent("info.jei.item." + temp));
+		for (ItemStack itemStack : BallistixPsuedoRecipes.BALLISTIX_ITEMS.get(1)) {
+			registration.addIngredientInfo(itemStack, VanillaTypes.ITEM, new TranslatableComponent(INFO_ITEM + itemStack.getItem().toString()));
 		}
 
-		ballistixInfoItems = BallistixPsuedoRecipes.BALLISTIX_ITEMS.get(2);
-
-		for (ItemStack itemStack : ballistixInfoItems) {
-			temp = itemStack.getItem().toString();
-			registration.addIngredientInfo(itemStack, VanillaTypes.ITEM, new TranslatableComponent("info.jei.item." + temp));
+		for (ItemStack itemStack : BallistixPsuedoRecipes.BALLISTIX_ITEMS.get(2)) {
+			registration.addIngredientInfo(itemStack, VanillaTypes.ITEM, new TranslatableComponent(INFO_ITEM + itemStack.getItem().toString()));
 		}
 
 	}

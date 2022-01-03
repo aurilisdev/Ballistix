@@ -7,7 +7,7 @@ import ballistix.common.packet.PacketSetMissileData;
 import ballistix.common.tile.TileMissileSilo;
 import electrodynamics.common.blockitem.BlockItemDescriptable;
 import electrodynamics.prefab.inventory.container.GenericContainerBlockEntity;
-import electrodynamics.prefab.inventory.container.slot.SlotRestricted;
+import electrodynamics.prefab.inventory.container.slot.item.type.SlotRestricted;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;

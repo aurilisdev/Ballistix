@@ -20,9 +20,7 @@ import net.minecraft.world.item.ItemStack;
 public class BallistixJEIPlugin implements IModPlugin {
 
 	private static final String INFO_ITEM = "jei.info.item.";
-	private static final String INFO_BLOCK = "jei.info.block.";
-	private static final String INFO_FLUID = "jei.info.fluid.";
-	
+
 	@Override
 	public ResourceLocation getPluginUid() {
 		return new ResourceLocation(electrodynamics.api.References.ID, "jei");

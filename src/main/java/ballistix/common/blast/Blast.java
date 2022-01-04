@@ -150,7 +150,7 @@ public abstract class Blast {
 			}
 		}
 		for (Entry<Player, Vec3> entry : playerKnockbackMap.entrySet()) {
-			if (entry.getKey() instanceof ServerPlayer serverplayerentity) {
+			if (entry.getKey()instanceof ServerPlayer serverplayerentity) {
 				serverplayerentity.connection.send(
 						new ClientboundExplodePacket(position.getX(), position.getY(), position.getZ(), size, new ArrayList<>(), entry.getValue()));
 			}

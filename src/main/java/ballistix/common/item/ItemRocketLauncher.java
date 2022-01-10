@@ -55,7 +55,7 @@ public class ItemRocketLauncher extends Item {
 				for (ItemStack st : pl.getInventory().items) {
 					Item it = st.getItem();
 					if (!hasExplosive && it instanceof BlockItemDescriptable bl) {
-						if (bl.getBlock()instanceof BlockExplosive exs) {
+						if (bl.getBlock() instanceof BlockExplosive exs) {
 							blastOrdinal = exs.explosive.ordinal();
 							hasExplosive = true;
 							ex = st;

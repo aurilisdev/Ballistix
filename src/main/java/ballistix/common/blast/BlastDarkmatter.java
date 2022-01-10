@@ -47,6 +47,8 @@ public class BlastDarkmatter extends Blast {
 	private int callAtStart = -1;
 	private int pertick = -1;
 
+	private Iterator<BlockPos> forJDAWG;
+
 	@Override
 	public boolean doExplode(int callCount) {
 		if (!world.isClientSide) {
@@ -62,14 +64,14 @@ public class BlastDarkmatter extends Blast {
 				}
 				if (pertick == -1) {
 					pertick = (int) (thread.results.size() / Constants.EXPLOSIVE_DARKMATTER_DURATION);
+					forJDAWG = thread.results.iterator();
 				}
 				int finished = pertick;
-				Iterator<BlockPos> iterator = thread.results.iterator();
-				while (iterator.hasNext()) {
+				while (forJDAWG.hasNext()) {
 					if (finished-- < 0) {
 						break;
 					}
-					BlockPos p = new BlockPos(iterator.next()).offset(position);
+					BlockPos p = new BlockPos(forJDAWG.next()).offset(position);
 					BlockState state = world.getBlockState(p);
 					Block block = state.getBlock();
 
@@ -78,9 +80,8 @@ public class BlastDarkmatter extends Blast {
 						block.wasExploded(world, p, ex);
 						world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
 					}
-					iterator.remove();
 				}
-				if (thread.results.isEmpty()) {
+				if (!forJDAWG.hasNext()) {
 					return true;
 				}
 			}

@@ -1,11 +1,20 @@
 package ballistix.client.render.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
 
+import ballistix.client.ClientRegister;
+import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityBlast;
+import electrodynamics.prefab.utilities.RenderingUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraftforge.api.distmarker.Dist;
@@ -19,10 +28,21 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 	}
 
 	@Override
-	public void render(EntityBlast entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn,
+	public void render(EntityBlast entityIn, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource bufferIn,
 			int packedLightIn) {
-//	SubtypeBlast subtype = entityIn.getBlastType();
-//	if (subtype == SubtypeBlast.darkmatter) {
+		SubtypeBlast subtype = entityIn.getBlastType();
+		if (subtype == SubtypeBlast.darkmatter) {
+			BakedModel modelDisk = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_DARKMATTERDISK);
+			BakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_DARKMATTERSPHERE);
+
+			float animationRadians = (entityIn.tickCount + partialTicks) * 0.05f;
+
+			matrixStack.pushPose();
+			matrixStack.translate(0D, 0.5D, 0D);
+			RenderingUtils.renderModel(modelSphere, null, RenderType.solid(), matrixStack, bufferIn, packedLightIn, packedLightIn);
+			matrixStack.mulPose(new Quaternion(new Vector3f(0, 1, 0), -animationRadians, false));
+			RenderingUtils.renderModel(modelDisk, null, RenderType.translucent(), matrixStack, bufferIn, packedLightIn, packedLightIn);
+			matrixStack.popPose();
 //
 //	    GlStateManager._pushMatrix();
 //	    RenderSystem.multMatrix(matrixStackIn.last().pose());
@@ -34,7 +54,8 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 //	    UtilitiesRendering.renderStar(entityIn.tickCount, 100, 1, 1, 1, 0.3f, true);
 //
 //	    GlStateManager._popMatrix();
-//	} else if (subtype == SubtypeBlast.nuclear && entityIn.shouldRenderCustom) {
+		}
+//	else if (subtype == SubtypeBlast.nuclear && entityIn.shouldRenderCustom) {
 //	    GlStateManager._pushMatrix();
 //	    GlStateManager._enableBlend();
 //	    GlStateManager._blendFunc(GlStateManager.SourceFactor.SRC_ALPHA.value, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.value);
@@ -136,7 +157,12 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 //	    Lighting.turnBackOn();
 //	}
 		// TODO: Fix this rendering
-		super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+		super.render(entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn);
+	}
+
+	@Override
+	public boolean shouldRender(EntityBlast b, Frustum f, double x, double y, double z) {
+		return true;
 	}
 
 	@Override

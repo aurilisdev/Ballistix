@@ -82,7 +82,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 		cooldown--;
 		if (cooldown < 0 && level.getLevelData().getDayTime() % 20 == 0) {
 			ItemStack exp = inv.getItem(1);
-			if (exp.getItem()instanceof BlockItemDescriptable des) {
+			if (exp.getItem() instanceof BlockItemDescriptable des) {
 				if (des.getBlock() instanceof BlockExplosive && range >= 0 && exp.getCount() > 0) {
 					boolean hasSignal = false;
 					if (level.getBestNeighborSignal(getBlockPos()) > 0) {
@@ -111,7 +111,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 		ComponentInventory inv = getComponent(ComponentType.Inventory);
 		ItemStack exp = inv.getItem(1);
 		ItemStack it = inv.getItem(0);
-		if (exp.getItem()instanceof BlockItemDescriptable des) {
+		if (exp.getItem() instanceof BlockItemDescriptable des) {
 			double dist = Math.sqrt(Math.pow(worldPosition.getX() - target.x(), 2) + Math.pow(worldPosition.getY() - target.y(), 2)
 					+ Math.pow(worldPosition.getZ() - target.z(), 2));
 			if (range == 0 && dist < 3000 || range == 1 && dist < 10000 || range == 2) {

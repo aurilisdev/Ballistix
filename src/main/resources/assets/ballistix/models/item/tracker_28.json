@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "minecraft:item/tracker_28"
+    "layer0": "ballistix:item/tracker_28"
   }
 }

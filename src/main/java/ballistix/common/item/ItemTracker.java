@@ -39,9 +39,6 @@ public class ItemTracker extends ItemElectric {
 				if (ent != null) {
 					tag.putDouble("target_x", ent.position().x);
 					tag.putDouble("target_z", ent.position().z);
-				} else {
-					tag.remove("target_x");
-					tag.remove("target_z");
 				}
 			}
 		}

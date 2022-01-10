@@ -13,6 +13,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -34,6 +35,8 @@ public class ItemScanner extends ItemElectric {
 				if (uuid == playerIn.getUUID()) {
 					it.remove();
 					action = true;
+					extractPower(playerIn.getItemBySlot(handIn == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND), 150,
+							false);
 				}
 			}
 		}

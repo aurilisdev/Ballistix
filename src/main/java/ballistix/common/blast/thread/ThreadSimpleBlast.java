@@ -34,7 +34,8 @@ public class ThreadSimpleBlast extends ThreadBlast {
 						int idistance = i * i + j * j + k * k;
 						if (idistance <= explosionRadius * explosionRadius && random.nextFloat()
 								* (explosionRadius * explosionRadius) < explosionRadius * explosionRadius * strictnessAtEdges - idistance) {
-							positions.add(euclideanDistanceBased ? new HashDistanceBlockPos(i, j, k, idistance) : new BlockPos(i, j, k));
+							positions.add(euclideanDistanceBased ? new HashDistanceBlockPos(i, j, k, (int) (idistance - 5 + random.nextFloat() * 10))
+									: new BlockPos(i, j, k));
 						}
 					}
 				}

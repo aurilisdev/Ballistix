@@ -135,14 +135,13 @@ public class EntityMissile extends Entity {
 			float motionY = (float) -getDeltaMovement().y;
 			float motionZ = (float) -getDeltaMovement().z;
 			for (int i = 0; i < 4; i++) {
-				this.level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, false, this.getX(), this.getY(), this.getZ(),
+				level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, false, this.getX(), this.getY(), this.getZ(),
 						random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY,
 						random.nextDouble() / 1.5 - 0.3333 + motionZ);
 			}
 			for (int i = 0; i < 4; i++) {
-				this.level.addParticle(ParticleTypes.CLOUD, false, this.getX(), this.getY(), this.getZ(),
-						random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY,
-						random.nextDouble() / 1.5 - 0.3333 + motionZ);
+				level.addParticle(ParticleTypes.CLOUD, false, this.getX(), this.getY(), this.getZ(), random.nextDouble() / 1.5 - 0.3333 + motionX,
+						random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
 			}
 		}
 	}

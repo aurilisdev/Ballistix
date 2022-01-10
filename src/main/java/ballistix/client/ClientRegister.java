@@ -9,9 +9,11 @@ import ballistix.client.render.entity.RenderMissile;
 import ballistix.client.render.entity.RenderShrapnel;
 import ballistix.client.render.tile.RenderMissileSilo;
 import ballistix.client.screen.ScreenMissileSilo;
+import ballistix.common.item.ItemTracker;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -48,6 +50,7 @@ public class ClientRegister {
 	public static void setup() {
 		MenuScreens.register(DeferredRegisters.CONTAINER_MISSILESILO.get(), ScreenMissileSilo::new);
 		ItemBlockRenderTypes.setRenderLayer(DeferredRegisters.blockMissileSilo, RenderType.cutout());
+		ItemProperties.register(DeferredRegisters.ITEM_TRACKER.get(), new ResourceLocation("angle"), ItemTracker::getAngle);
 	}
 
 	@SubscribeEvent

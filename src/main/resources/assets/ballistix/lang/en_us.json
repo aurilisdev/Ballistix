@@ -33,6 +33,7 @@
   "item.ballistix.radargun" : "Radar Gun",
   "item.ballistix.laserdesignator" : "Laser Designator",
   "item.ballistix.tracker" : "Tracker",
+  "item.ballistix.scanner" : "Scanner",
   "gui.missilesilo.missile" : "Missile",
   "gui.missilesilo.explosive" : "Explosive",
   "gui.missilesilo.x" : "X-Coord",

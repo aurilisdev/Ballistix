@@ -43,7 +43,7 @@ public class ItemScanner extends ItemElectric {
 		if (action) {
 			playerIn.displayClientMessage(new TranslatableComponent("message.scanner.cleared"), true);
 		} else {
-			playerIn.displayClientMessage(new TranslatableComponent("message.scannernone"), true);
+			playerIn.displayClientMessage(new TranslatableComponent("message.scanner.none"), true);
 		}
 		return super.use(worldIn, playerIn, handIn);
 	}

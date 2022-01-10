@@ -46,6 +46,8 @@
   "message.radargun.text" : "Coordinates: %s",
   "message.laserdesignator.launch" : "Launching missile from: %s",
   "message.laserdesignator.setfrequency" : "Set frequency to: %s",
+  "message.scanner.cleared" : "Cleared trackers!",
+  "message.scanner.none" : "There were no trackers!",
   "tooltip.radargun.linked" : "Linked to %s",
   "tooltip.radargun.notag" : "No link",
   "tooltip.laserdesignator.frequency" : "Frequency: %s",

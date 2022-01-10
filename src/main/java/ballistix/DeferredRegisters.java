@@ -18,6 +18,7 @@ import ballistix.common.item.ItemGrenade;
 import ballistix.common.item.ItemLaserDesignator;
 import ballistix.common.item.ItemRadarGun;
 import ballistix.common.item.ItemRocketLauncher;
+import ballistix.common.item.ItemScanner;
 import ballistix.common.item.ItemTracker;
 import ballistix.common.tile.TileMissileSilo;
 import electrodynamics.api.ISubtype;
@@ -72,6 +73,7 @@ public class DeferredRegisters {
 	public static final RegistryObject<Item> ITEM_ROCKETLAUNCHER = ITEMS.register("rocketlauncher", supplier(new ItemRocketLauncher()));
 	public static final RegistryObject<Item> ITEM_RADARGUN = ITEMS.register("radargun", supplier(new ItemRadarGun()));
 	public static final RegistryObject<Item> ITEM_TRACKER = ITEMS.register("tracker", supplier(new ItemTracker()));
+	public static final RegistryObject<Item> ITEM_SCANNER = ITEMS.register("scanner", supplier(new ItemScanner()));
 	public static final RegistryObject<Item> ITEM_LASERDESIGNATOR = ITEMS.register("laserdesignator", supplier(new ItemLaserDesignator()));
 	public static final RegistryObject<BlockEntityType<TileMissileSilo>> TILE_MISSILESILO = TILES.register("missilesilo",
 			() -> new BlockEntityType<>(TileMissileSilo::new, Sets.newHashSet(blockMissileSilo), null));

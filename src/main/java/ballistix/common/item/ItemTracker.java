@@ -1,5 +1,11 @@
 package ballistix.common.item;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.UUID;
+
 import javax.annotation.Nullable;
 
 import ballistix.References;
@@ -14,6 +20,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -21,8 +28,14 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.event.TickEvent.ServerTickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
+@EventBusSubscriber(modid = References.ID, bus = Bus.FORGE)
 public class ItemTracker extends ItemElectric {
+	public static HashMap<ServerLevel, HashSet<UUID>> validuuids = new HashMap<>();
 
 	public ItemTracker() {
 		super((ElectricItemProperties) new ElectricItemProperties().capacity(10000).receive(TransferPack.joulesVoltage(500, 120))
@@ -35,10 +48,17 @@ public class ItemTracker extends ItemElectric {
 		if (level instanceof ServerLevel slevel) {
 			CompoundTag tag = stack.getOrCreateTag();
 			if ((selected || entity instanceof Player player && player.getOffhandItem() == stack) && tag.contains("uuid")) {
-				Entity ent = slevel.getEntity(tag.getUUID("uuid"));
-				if (ent != null) {
-					tag.putDouble("target_x", ent.position().x);
-					tag.putDouble("target_z", ent.position().z);
+				UUID uuid = tag.getUUID("uuid");
+				if (validuuids.containsKey(level) && validuuids.get(level).contains(uuid)) {
+					Entity ent = slevel.getEntity(uuid);
+					if (ent != null) {
+						tag.putDouble("target_x", ent.position().x);
+						tag.putDouble("target_z", ent.position().z);
+					}
+				} else {
+					tag.remove("target_x");
+					tag.remove("target_z");
+					tag.remove("uuid");
 				}
 			}
 		}
@@ -46,15 +66,19 @@ public class ItemTracker extends ItemElectric {
 
 	@Override
 	public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity entity, InteractionHand hand) {
-		if (player != null && !player.level.isClientSide) {
+		if (player != null && player.level instanceof ServerLevel server) {
 			Inventory inv = player.getInventory();
 			inv.removeItem(stack);
 			stack.getOrCreateTag().putUUID("uuid", entity.getUUID());
+			HashSet<UUID> set = validuuids.getOrDefault(server, new HashSet<>());
+			set.add(entity.getUUID());
+			validuuids.put(server, set);
 			if (hand == InteractionHand.MAIN_HAND) {
 				inv.setItem(inv.selected, stack);
 			} else {
 				inv.offhand.set(0, stack);
 			}
+			extractPower(player.getItemBySlot(hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND), 150, false);
 		}
 		return InteractionResult.PASS;
 	}
@@ -96,5 +120,19 @@ public class ItemTracker extends ItemElectric {
 	@Override
 	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
 		return slotChanged || !oldStack.getItem().equals(newStack.getItem());
+	}
+
+	@SubscribeEvent
+	public static void tick(ServerTickEvent event) {
+		for (Entry<ServerLevel, HashSet<UUID>> en : validuuids.entrySet()) {
+			Iterator<UUID> it = en.getValue().iterator();
+			while (it.hasNext()) {
+				UUID uuid = it.next();
+				Entity ent = en.getKey().getEntity(uuid);
+				if (ent == null || ent.isRemoved()) {
+					it.remove();
+				}
+			}
+		}
 	}
 }

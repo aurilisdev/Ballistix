@@ -28,6 +28,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -88,6 +90,7 @@ public class ItemTracker extends ItemElectric {
 		return tag.contains("target_x") && tag.contains("target_z");
 	}
 
+	@OnlyIn(Dist.CLIENT)
 	public static float getAngle(ItemStack itemStack, @Nullable ClientLevel level, @Nullable LivingEntity livingEntity, int par) {
 		Entity sourceEntity = livingEntity != null ? (Entity) livingEntity : itemStack.getEntityRepresentation();
 		if (sourceEntity == null) {

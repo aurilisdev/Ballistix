@@ -1,0 +1,20 @@
+{
+	"type": "minecraft:crafting_shaped",
+    "pattern": [
+        " a ",
+        "ata",
+        " a "
+    ],
+    "key": {
+        "a": {
+            "item": "minecraft:amethyst_shard"
+        },
+        "t": {
+            "item": "ballistix:tracker"
+        }
+    },
+	"result": {
+		"item": "ballistix:scanner",
+		"count": 1
+	}
+}

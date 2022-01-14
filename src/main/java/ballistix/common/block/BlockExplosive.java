@@ -65,6 +65,7 @@ public class BlockExplosive extends Block {
 		super.entityInside(state, level, pos, ent);
 		if (explosive == SubtypeBlast.landmine) {
 			explode(level, pos, explosive);
+			worldIn.removeBlock(pos, false);
 		}
 	}
 

@@ -34,8 +34,8 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 		SubtypeBlast subtype = entityIn.getBlastType();
 		if (subtype == SubtypeBlast.darkmatter) {
 			double x = entityIn.tickCount;
-			double time = (4.0 / 3.0) * Math.PI * Math.pow(Constants.EXPLOSIVE_DARKMATTER_RADIUS, 3) / Constants.EXPLOSIVE_DARKMATTER_DURATION;
-			float scale = (float) (0.1 * Math.log(x * x) + x/ (time * 2));
+			double time = 4.0 / 3.0 * Math.PI * Math.pow(Constants.EXPLOSIVE_DARKMATTER_RADIUS, 3) / Constants.EXPLOSIVE_DARKMATTER_DURATION;
+			float scale = (float) (0.1 * Math.log(x * x) + x / (time * 2));
 			BakedModel modelDisk = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_DARKMATTERDISK);
 			BakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_DARKMATTERSPHERE);
 

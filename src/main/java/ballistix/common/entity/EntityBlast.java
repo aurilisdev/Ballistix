@@ -26,6 +26,11 @@ public class EntityBlast extends Entity {
 	public boolean shouldRenderCustom = false;
 	public int ticksWhenCustomRender;
 
+	@Override
+	public boolean shouldRender(double x, double y, double z) {
+		return true;
+	}
+
 	public EntityBlast(EntityType<? extends EntityBlast> type, Level worldIn) {
 		super(type, worldIn);
 		blocksBuilding = true;

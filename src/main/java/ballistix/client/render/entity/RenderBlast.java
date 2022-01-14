@@ -7,6 +7,7 @@ import com.mojang.math.Vector3f;
 import ballistix.client.ClientRegister;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityBlast;
+import ballistix.common.settings.Constants;
 import electrodynamics.prefab.utilities.RenderingUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -32,6 +33,9 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 			int packedLightIn) {
 		SubtypeBlast subtype = entityIn.getBlastType();
 		if (subtype == SubtypeBlast.darkmatter) {
+			double x = entityIn.tickCount;
+			double time = (4.0 / 3.0) * Math.PI * Math.pow(Constants.EXPLOSIVE_DARKMATTER_RADIUS, 3) / Constants.EXPLOSIVE_DARKMATTER_DURATION;
+			float scale = (float) (0.1 * Math.log(x * x) + x/ (time * 2));
 			BakedModel modelDisk = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_DARKMATTERDISK);
 			BakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_DARKMATTERSPHERE);
 
@@ -39,21 +43,17 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 
 			matrixStack.pushPose();
 			matrixStack.translate(0D, 0.5D, 0D);
+			matrixStack.scale(scale, scale, scale);
 			RenderingUtils.renderModel(modelSphere, null, RenderType.solid(), matrixStack, bufferIn, packedLightIn, packedLightIn);
 			matrixStack.mulPose(new Quaternion(new Vector3f(0, 1, 0), -animationRadians, false));
+			matrixStack.scale(1.25f, 1.25f, 1.25f);
 			RenderingUtils.renderModel(modelDisk, null, RenderType.translucent(), matrixStack, bufferIn, packedLightIn, packedLightIn);
 			matrixStack.popPose();
-//
-//	    GlStateManager._pushMatrix();
-//	    RenderSystem.multMatrix(matrixStackIn.last().pose());
-//	    matrixStackIn.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
-//	    matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(180.0F));
-//	    float scale = entityIn.tickCount / 1200.0f;
-//	    GlStateManager._scalef(scale, scale, scale);
-//
-//	    UtilitiesRendering.renderStar(entityIn.tickCount, 100, 1, 1, 1, 0.3f, true);
-//
-//	    GlStateManager._popMatrix();
+
+			matrixStack.pushPose();
+			matrixStack.scale(scale, scale, scale);
+			RenderingUtils.renderStar(matrixStack, bufferIn, entityIn.tickCount + partialTicks, 60, 1, 1, 1, 0.3f, true);
+			matrixStack.popPose();
 		}
 //	else if (subtype == SubtypeBlast.nuclear && entityIn.shouldRenderCustom) {
 //	    GlStateManager._pushMatrix();

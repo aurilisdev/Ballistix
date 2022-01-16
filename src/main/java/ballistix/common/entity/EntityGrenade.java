@@ -29,7 +29,7 @@ public class EntityGrenade extends ThrowableProjectile {
 		this(DeferredRegisters.ENTITY_GRENADE.get(), worldIn);
 	}
 
-	public void setShrapnelType(SubtypeBlast explosive) {
+	public void setExplosiveType(SubtypeBlast explosive) {
 		blastOrdinal = explosive.ordinal();
 		fuse = explosive.fuse;
 	}

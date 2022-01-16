@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
 
+import ballistix.DeferredRegisters;
 import ballistix.common.entity.EntityMinecart;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.MinecartModel;
@@ -80,14 +81,18 @@ public class RenderMinecart extends EntityRenderer<EntityMinecart> {
 		}
 
 		int j = entity.getDisplayOffset();
-		BlockState blockstate = entity.getDisplayBlockState();
-		if (blockstate.getRenderShape() != RenderShape.INVISIBLE) {
-			stack.pushPose();
-			stack.scale(0.75F, 0.75F, 0.75F);
-			stack.translate(-0.5D, (j - 8) / 16.0F, 0.5D);
-			stack.mulPose(Vector3f.YP.rotationDegrees(90.0F));
-			renderMinecartContents(entity, partial, blockstate, stack, source, light);
-			stack.popPose();
+		if (entity.getExplosiveType() != null) {
+			BlockState blockstate = DeferredRegisters.SUBTYPEBLOCK_MAPPINGS.get(entity.getExplosiveType()).defaultBlockState();
+			if (blockstate != null) {
+				if (blockstate.getRenderShape() != RenderShape.INVISIBLE) {
+					stack.pushPose();
+					stack.scale(0.75F, 0.75F, 0.75F);
+					stack.translate(-0.5D, (j - 8) / 16.0F, 0.5D);
+					stack.mulPose(Vector3f.YP.rotationDegrees(90.0F));
+					renderMinecartContents(entity, partial, blockstate, stack, source, light);
+					stack.popPose();
+				}
+			}
 		}
 
 		stack.scale(-1.0F, -1.0F, 1.0F);

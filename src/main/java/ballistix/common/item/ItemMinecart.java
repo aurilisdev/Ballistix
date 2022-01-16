@@ -51,6 +51,7 @@ public class ItemMinecart extends Item {
 			if (itemstack.hasCustomHoverName()) {
 				cart.setCustomName(itemstack.getHoverName());
 			}
+			cart.setExplosiveType(explosive);
 
 			level.addFreshEntity(cart);
 			level.gameEvent(context.getPlayer(), GameEvent.ENTITY_PLACE, blockpos);
@@ -105,6 +106,7 @@ public class ItemMinecart extends Item {
 			if (stack.hasCustomHoverName()) {
 				cart.setCustomName(stack.getHoverName());
 			}
+			cart.setExplosiveType(((ItemMinecart) stack.getItem()).explosive);
 			level.addFreshEntity(cart);
 			stack.shrink(1);
 			return stack;

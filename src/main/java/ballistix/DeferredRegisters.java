@@ -38,6 +38,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class DeferredRegisters {
 	public static final HashMap<ISubtype, Item> SUBTYPEITEM_MAPPINGS = new HashMap<>();
+	public static final HashMap<ISubtype, Item> SUBTYPEMINECARTMAPPINGS = new HashMap<>();
 	public static final HashMap<ISubtype, Block> SUBTYPEBLOCK_MAPPINGS = new HashMap<>();
 	public static final HashMap<ISubtype, RegistryObject<Block>> SUBTYPEBLOCKREGISTER_MAPPINGS = new HashMap<>();
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, References.ID);
@@ -62,6 +63,7 @@ public class DeferredRegisters {
 			if (subtype.hasMinecart) {
 				ItemMinecart cart = new ItemMinecart(subtype);
 				ITEMS.register("minecart" + subtype.tag(), supplier(cart));
+				SUBTYPEMINECARTMAPPINGS.put(subtype, cart);
 			}
 		}
 		BLOCKS.register("missilesilo", supplier(blockMissileSilo));

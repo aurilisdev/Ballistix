@@ -16,9 +16,11 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.GameRules;
@@ -32,7 +34,8 @@ public class EntityMinecart extends AbstractMinecart {
 	private static final EntityDataAccessor<Integer> FUSE = SynchedEntityData.defineId(EntityMinecart.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(EntityMinecart.class, EntityDataSerializers.INT);
 	public int blastOrdinal = -1;
-	public int fuse = 80;
+	public int fuse = -1;
+	private boolean exploded;
 
 	public EntityMinecart(EntityType<? extends EntityMinecart> type, Level worldIn) {
 		super(type, worldIn);
@@ -47,9 +50,8 @@ public class EntityMinecart extends AbstractMinecart {
 		this(DeferredRegisters.ENTITY_MINECART.get(), worldIn);
 	}
 
-	public void setShrapnelType(SubtypeBlast explosive) {
+	public void setExplosiveType(SubtypeBlast explosive) {
 		blastOrdinal = explosive.ordinal();
-		fuse = explosive.fuse;
 	}
 
 	public SubtypeBlast getExplosiveType() {
@@ -58,7 +60,8 @@ public class EntityMinecart extends AbstractMinecart {
 
 	@Override
 	protected void defineSynchedData() {
-		entityData.define(FUSE, 80);
+		super.defineSynchedData();
+		entityData.define(FUSE, -1);
 		entityData.define(TYPE, -1);
 	}
 
@@ -114,6 +117,7 @@ public class EntityMinecart extends AbstractMinecart {
 
 	protected void explode(double val) {
 		if (!level.isClientSide) {
+			exploded = true;
 			remove(RemovalReason.DISCARDED);
 			if (blastOrdinal != -1) {
 				SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
@@ -121,6 +125,19 @@ public class EntityMinecart extends AbstractMinecart {
 				if (b != null) {
 					b.performExplosion();
 				}
+			}
+		}
+	}
+
+	@Override
+	public void remove(RemovalReason reason) {
+		super.remove(reason);
+		if (!exploded) {
+			if (blastOrdinal != -1) {
+				SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
+				ItemEntity item = new ItemEntity(level, getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5,
+						new ItemStack(DeferredRegisters.SUBTYPEMINECARTMAPPINGS.get(explosive)));
+				level.addFreshEntity(item);
 			}
 		}
 	}

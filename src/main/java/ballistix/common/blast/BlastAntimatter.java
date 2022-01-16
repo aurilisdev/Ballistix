@@ -28,7 +28,7 @@ public class BlastAntimatter extends Blast implements IHasCustomRenderer {
 			thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, true);
 			thread.start();
 		} else {
-			SoundAPI.playSound(SoundRegister.SOUND_ANTIMATTEREXPLOSION.get(), SoundSource.BLOCKS, 10, 1, position);
+			SoundAPI.playSound(SoundRegister.SOUND_ANTIMATTEREXPLOSION.get(), SoundSource.BLOCKS, 25, 1, position);
 		}
 	}
 

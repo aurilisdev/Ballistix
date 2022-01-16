@@ -1,0 +1,15 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"ingredients": [
+		{
+			"item": "ballistix:contagious"
+		},
+		{
+			"item": "minecraft:minecart"
+		}
+	],
+	"result": {
+		"item": "ballistix:minecartcontagious",
+		"count": 1
+	}
+}

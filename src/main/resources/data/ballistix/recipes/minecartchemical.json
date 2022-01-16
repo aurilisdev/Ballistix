@@ -1,0 +1,15 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"ingredients": [
+		{
+			"item": "ballistix:chemical"
+		},
+		{
+			"item": "minecraft:minecart"
+		}
+	],
+	"result": {
+		"item": "ballistix:minecartchemical",
+		"count": 1
+	}
+}

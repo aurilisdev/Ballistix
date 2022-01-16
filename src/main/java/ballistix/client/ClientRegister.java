@@ -5,6 +5,7 @@ import ballistix.References;
 import ballistix.client.render.entity.RenderBlast;
 import ballistix.client.render.entity.RenderExplosive;
 import ballistix.client.render.entity.RenderGrenade;
+import ballistix.client.render.entity.RenderMinecart;
 import ballistix.client.render.entity.RenderMissile;
 import ballistix.client.render.entity.RenderShrapnel;
 import ballistix.client.render.tile.RenderMissileSilo;
@@ -61,6 +62,7 @@ public class ClientRegister {
 		event.registerEntityRenderer(DeferredRegisters.ENTITY_BLAST.get(), RenderBlast::new);
 		event.registerEntityRenderer(DeferredRegisters.ENTITY_SHRAPNEL.get(), RenderShrapnel::new);
 		event.registerEntityRenderer(DeferredRegisters.ENTITY_MISSILE.get(), RenderMissile::new);
+		event.registerEntityRenderer(DeferredRegisters.ENTITY_MINECART.get(), RenderMinecart::new);
 		event.registerBlockEntityRenderer(DeferredRegisters.TILE_MISSILESILO.get(), RenderMissileSilo::new);
 
 	}

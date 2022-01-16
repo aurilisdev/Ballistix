@@ -11,6 +11,7 @@ import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityBlast;
 import ballistix.common.entity.EntityExplosive;
 import ballistix.common.entity.EntityGrenade;
+import ballistix.common.entity.EntityMinecart;
 import ballistix.common.entity.EntityMissile;
 import ballistix.common.entity.EntityShrapnel;
 import ballistix.common.inventory.container.ContainerMissileSilo;
@@ -88,6 +89,8 @@ public class DeferredRegisters {
 			.<EntityExplosive>of(EntityExplosive::new, MobCategory.MISC).fireImmune().sized(1, 1).build(References.ID + ".explosive"));
 	public static final RegistryObject<EntityType<EntityGrenade>> ENTITY_GRENADE = ENTITIES.register("grenade", () -> EntityType.Builder
 			.<EntityGrenade>of(EntityGrenade::new, MobCategory.MISC).fireImmune().sized(0.25f, 0.25f).build(References.ID + ".grenade"));
+	public static final RegistryObject<EntityType<EntityMinecart>> ENTITY_MINECART = ENTITIES.register("minecart", () -> EntityType.Builder
+			.<EntityMinecart>of(EntityMinecart::new, MobCategory.MISC).fireImmune().sized(1, 1).build(References.ID + ".minecart"));
 	public static final RegistryObject<EntityType<EntityBlast>> ENTITY_BLAST = ENTITIES.register("blast",
 			() -> EntityType.Builder.<EntityBlast>of(EntityBlast::new, MobCategory.MISC).fireImmune().build(References.ID + ".blast"));
 	public static final RegistryObject<EntityType<EntityShrapnel>> ENTITY_SHRAPNEL = ENTITIES.register("shrapnel", () -> EntityType.Builder

@@ -1,13 +1,20 @@
 package ballistix.client.render.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix3f;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
 
 import ballistix.client.ClientRegister;
 import ballistix.common.entity.EntityShrapnel;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -19,65 +26,41 @@ public class RenderShrapnel extends EntityRenderer<EntityShrapnel> {
 	}
 
 	@Override
-	public void render(EntityShrapnel entity, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn,
-			int packedLightIn) {
-		matrixStackIn.translate(entity.getDeltaMovement().x * partialTicks, entity.getDeltaMovement().y * partialTicks,
-				entity.getDeltaMovement().z * partialTicks);
-		matrixStackIn.pushPose();
-		// GlStateManager._pushMatrix();
-		// Minecraft.getInstance().textureManager.bind(getTextureLocation(entity));
-		// GlStateManager._color4f(1.0F, 1.0F, 1.0F, 1.0F);
-		// GlStateManager._enableDepthTest();
-		// GlStateManager._disableLighting();
-		// RenderSystem.multMatrix(matrixStackIn.last().pose());
-		// matrixStackIn.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
-		// matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(180.0F));
-		// GlStateManager._rotatef(entity.yRotO + (entity.yRot - entity.yRotO) *
-		// partialTicks - 90.0F, 0.0F, 1.0F, 0.0F);
-		// GlStateManager._rotatef(entity.xRotO + (entity.xRot - entity.xRotO) *
-		// partialTicks, 0.0F, 0.0F, 1.0F);
-		// Tesselator tessellator = Tesselator.getInstance();
-		// BufferBuilder bufferbuilder = tessellator.getBuilder();
-		//
-		// GlStateManager._enableRescaleNormal();
-		//
-		// GlStateManager._rotatef(45.0F, 1.0F, 0.0F, 0.0F);
-		// GlStateManager._scalef(0.015625F, 0.015625F, 0.015625F);
-		// GlStateManager._translatef(-4.0F, 0.0F, 0.0F);
-		//
-		// GlStateManager._normal3f(0.05625F, 0.0F, 0.0F);
-		// bufferbuilder.begin(7, DefaultVertexFormat.POSITION_TEX);
-		// bufferbuilder.vertex(-7.0D, -2.0D, -2.0D).uv(0.0f, 0.15625f).endVertex();
-		// bufferbuilder.vertex(-7.0D, -2.0D, 2.0D).uv(0.15625f, 0.15625f).endVertex();
-		// bufferbuilder.vertex(-7.0D, 2.0D, 2.0D).uv(0.15625f, 0.3125f).endVertex();
-		// bufferbuilder.vertex(-7.0D, 2.0D, -2.0D).uv(0.0f, 0.3125f).endVertex();
-		// tessellator.end();
-		//
-		// GlStateManager._normal3f(-0.05625F, 0.0F, 0.0F);
-		// bufferbuilder.begin(7, DefaultVertexFormat.POSITION_TEX);
-		// bufferbuilder.vertex(-7.0D, 2.0D, -2.0D).uv(0.0f, 0.15625f).endVertex();
-		// bufferbuilder.vertex(-7.0D, 2.0D, 2.0D).uv(0.15625f, 0.15625f).endVertex();
-		// bufferbuilder.vertex(-7.0D, -2.0D, 2.0D).uv(0.15625f, 0.3125f).endVertex();
-		// bufferbuilder.vertex(-7.0D, -2.0D, -2.0D).uv(0.0f, 0.3125f).endVertex();
-		// tessellator.end();
-		//
-		// for (int j = 0; j < 4; ++j) {
-		// GlStateManager._rotatef(90.0F, 1.0F, 0.0F, 0.0F);
-		// GlStateManager._normal3f(0.0F, 0.0F, 0.05625F);
-		// bufferbuilder.begin(7, DefaultVertexFormat.POSITION_TEX);
-		// bufferbuilder.vertex(-8.0D, -2.0D, 0.0D).uv(0.0f, 0.0f).endVertex();
-		// bufferbuilder.vertex(8.0D, -2.0D, 0.0D).uv(0.5f, 0.0f).endVertex();
-		// bufferbuilder.vertex(8.0D, 2.0D, 0.0D).uv(0.5f, 0.15625f).endVertex();
-		// bufferbuilder.vertex(-8.0D, 2.0D, 0.0D).uv(0.0f, 0.15625f).endVertex();
-		// tessellator.end();
-		// }
-		//
-		// GlStateManager._disableRescaleNormal();
-		// GlStateManager._enableLighting();
-		// GlStateManager._disableDepthTest();
-		// GlStateManager._popMatrix();
-		// TODO: Fix this rendering
-		matrixStackIn.popPose();
+	public void render(EntityShrapnel entityShrapnel, float yaw, float partialticks, PoseStack stack, MultiBufferSource buffer, int light) {
+		stack.pushPose();
+		stack.mulPose(Vector3f.YP.rotationDegrees(Mth.lerp(partialticks, entityShrapnel.yRotO, entityShrapnel.getYRot()) - 90.0F));
+		stack.mulPose(Vector3f.ZP.rotationDegrees(Mth.lerp(partialticks, entityShrapnel.xRotO, entityShrapnel.getXRot())));
+		stack.mulPose(Vector3f.XP.rotationDegrees(45.0F));
+		stack.scale(0.05625F, 0.05625F, 0.05625F);
+		stack.translate(-4.0D, 0.0D, 0.0D);
+		VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.entityCutout(this.getTextureLocation(entityShrapnel)));
+		PoseStack.Pose pose = stack.last();
+		Matrix4f matrix4f = pose.pose();
+		Matrix3f matrix3f = pose.normal();
+		this.vertex(matrix4f, matrix3f, vertexconsumer, -7, -2, -2, 0.0F, 0.15625F, -1, 0, 0, light);
+		this.vertex(matrix4f, matrix3f, vertexconsumer, -7, -2, 2, 0.15625F, 0.15625F, -1, 0, 0, light);
+		this.vertex(matrix4f, matrix3f, vertexconsumer, -7, 2, 2, 0.15625F, 0.3125F, -1, 0, 0, light);
+		this.vertex(matrix4f, matrix3f, vertexconsumer, -7, 2, -2, 0.0F, 0.3125F, -1, 0, 0, light);
+		this.vertex(matrix4f, matrix3f, vertexconsumer, -7, 2, -2, 0.0F, 0.15625F, 1, 0, 0, light);
+		this.vertex(matrix4f, matrix3f, vertexconsumer, -7, 2, 2, 0.15625F, 0.15625F, 1, 0, 0, light);
+		this.vertex(matrix4f, matrix3f, vertexconsumer, -7, -2, 2, 0.15625F, 0.3125F, 1, 0, 0, light);
+		this.vertex(matrix4f, matrix3f, vertexconsumer, -7, -2, -2, 0.0F, 0.3125F, 1, 0, 0, light);
+		for (int j = 0; j < 4; ++j) {
+			stack.mulPose(Vector3f.XP.rotationDegrees(90.0F));
+			this.vertex(matrix4f, matrix3f, vertexconsumer, -8, -2, 0, 0.0F, 0.0F, 0, 1, 0, light);
+			this.vertex(matrix4f, matrix3f, vertexconsumer, 8, -2, 0, 0.5F, 0.0F, 0, 1, 0, light);
+			this.vertex(matrix4f, matrix3f, vertexconsumer, 8, 2, 0, 0.5F, 0.15625F, 0, 1, 0, light);
+			this.vertex(matrix4f, matrix3f, vertexconsumer, -8, 2, 0, 0.0F, 0.15625F, 0, 1, 0, light);
+		}
+
+		stack.popPose();
+		super.render(entityShrapnel, yaw, partialticks, stack, buffer, light);
+	}
+
+	public void vertex(Matrix4f matrix, Matrix3f normals, VertexConsumer consumer, int pOffsetX, int pOffsetY, int pOffsetZ, float pTextureX,
+			float pTextureY, int pNormalX, int ny, int nx, int pPackedLight) {
+		consumer.vertex(matrix, pOffsetX, pOffsetY, pOffsetZ).color(255, 255, 255, 255).uv(pTextureX, pTextureY)
+				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(pPackedLight).normal(normals, pNormalX, nx, ny).endVertex();
 	}
 
 	@Override

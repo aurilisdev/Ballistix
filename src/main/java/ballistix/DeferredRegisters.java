@@ -16,6 +16,7 @@ import ballistix.common.entity.EntityShrapnel;
 import ballistix.common.inventory.container.ContainerMissileSilo;
 import ballistix.common.item.ItemGrenade;
 import ballistix.common.item.ItemLaserDesignator;
+import ballistix.common.item.ItemMinecart;
 import ballistix.common.item.ItemRadarGun;
 import ballistix.common.item.ItemRocketLauncher;
 import ballistix.common.item.ItemScanner;
@@ -56,6 +57,10 @@ public class DeferredRegisters {
 				ItemGrenade grenade = new ItemGrenade(subtype);
 				ITEMS.register("grenade" + subtype.tag(), supplier(grenade, subtype));
 				SUBTYPEITEM_MAPPINGS.put(subtype, grenade);
+			}
+			if (subtype.hasMinecart) {
+				ItemMinecart cart = new ItemMinecart(subtype);
+				ITEMS.register("minecart" + subtype.tag(), supplier(cart));
 			}
 		}
 		BLOCKS.register("missilesilo", supplier(blockMissileSilo));

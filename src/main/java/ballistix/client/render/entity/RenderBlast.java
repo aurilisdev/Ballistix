@@ -56,11 +56,12 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 			RenderingUtils.renderStar(matrixStack, bufferIn, entityIn.tickCount + partialTicks, 60, 1, 1, 1, 0.3f, true);
 			matrixStack.popPose();
 		} else if (subtype == SubtypeBlast.nuclear && entityIn.shouldRenderCustom) {
-			float scale = (entityIn.tickCount - entityIn.ticksWhenCustomRender) / 2.0f;
+			float scale = (entityIn.tickCount - entityIn.ticksWhenCustomRender) / 20.0f;
 			matrixStack.scale(scale, scale, scale);
 			BakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_FIREBALL);
 			RenderingUtils.renderModel(modelSphere, null, RenderType.solid(), matrixStack, bufferIn, packedLightIn, packedLightIn);
 			if (entityIn.tickCount - entityIn.ticksWhenCustomRender < 10) {
+				matrixStack.scale(5, 5, 5);
 				RenderingUtils.renderStar(matrixStack, bufferIn, entityIn.tickCount + partialTicks, 500, 1, 1, 1, 0.7f, false);
 			}
 		} else if (subtype == SubtypeBlast.antimatter && entityIn.shouldRenderCustom) {

@@ -1,0 +1,8 @@
+{
+  "loader" : "forge:obj",
+  "model" : "ballistix:models/entity/explosionsphere.obj",
+  "detectCullableFaces" : false,
+  "diffuseLighting" : false,
+  "flip-v" : true,
+  "ambientToFullbright" : false
+}

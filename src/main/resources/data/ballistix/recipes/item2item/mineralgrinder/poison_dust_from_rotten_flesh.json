@@ -11,5 +11,6 @@
     "output":{
         "item":"ballistix:dustpoison",
         "count":2
-    }
+    },
+    "experience" : 0.1
 }

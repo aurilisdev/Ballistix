@@ -46,3 +46,4 @@ public class ThreadSimpleBlast extends ThreadBlast {
 		super.run();
 	}
 }
+//TODO: Create a thread manager pool thingy so u cant spam threads.

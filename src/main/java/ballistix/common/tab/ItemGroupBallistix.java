@@ -13,6 +13,6 @@ public class ItemGroupBallistix extends CreativeModeTab {
 
 	@Override
 	public ItemStack makeIcon() {
-		return new ItemStack(DeferredRegisters.SUBTYPEBLOCK_MAPPINGS.get(SubtypeBlast.condensive));
+		return new ItemStack(DeferredRegisters.SUBTYPEBLOCK_MAPPINGS.get(SubtypeBlast.antimatter));
 	}
 }

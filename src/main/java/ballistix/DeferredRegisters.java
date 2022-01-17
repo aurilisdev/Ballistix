@@ -60,6 +60,8 @@ public class DeferredRegisters {
 				ITEMS.register("grenade" + subtype.tag(), supplier(grenade, subtype));
 				SUBTYPEITEM_MAPPINGS.put(subtype, grenade);
 			}
+		}
+		for (SubtypeBlast subtype : SubtypeBlast.values()) {
 			if (subtype.hasMinecart) {
 				ItemMinecart cart = new ItemMinecart(subtype);
 				ITEMS.register("minecart" + subtype.tag(), supplier(cart));

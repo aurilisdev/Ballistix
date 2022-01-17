@@ -9,6 +9,7 @@ import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
 import electrodynamics.api.sound.SoundAPI;
+import electrodynamics.prefab.utilities.WorldUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,10 +19,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -47,7 +46,7 @@ public class BlastDarkmatter extends Blast {
 	private int callAtStart = -1;
 	private int pertick = -1;
 
-	private Iterator<BlockPos> forJDAWG;
+	private Iterator<BlockPos> cachedIterator;
 
 	@Override
 	public boolean doExplode(int callCount) {
@@ -56,32 +55,28 @@ public class BlastDarkmatter extends Blast {
 			if (thread == null) {
 				return true;
 			}
-			Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
-					(float) Constants.EXPLOSIVE_DARKMATTER_RADIUS, false, BlockInteraction.BREAK);
 			if (thread.isComplete) {
 				if (callAtStart == -1) {
 					callAtStart = callCount;
 				}
 				if (pertick == -1) {
 					pertick = (int) (thread.results.size() / Constants.EXPLOSIVE_DARKMATTER_DURATION);
-					forJDAWG = thread.results.iterator();
+					cachedIterator = thread.results.iterator();
 				}
 				int finished = pertick;
-				while (forJDAWG.hasNext()) {
+				while (cachedIterator.hasNext()) {
 					if (finished-- < 0) {
 						break;
 					}
-					BlockPos p = new BlockPos(forJDAWG.next()).offset(position);
+					BlockPos p = new BlockPos(cachedIterator.next()).offset(position);
 					BlockState state = world.getBlockState(p);
-					Block block = state.getBlock();
-
 					if (state != Blocks.AIR.defaultBlockState() && state != Blocks.VOID_AIR.defaultBlockState()
 							&& state.getDestroySpeed(world, p) >= 0) {
-						block.wasExploded(world, p, ex);
 						world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
 					}
 				}
-				if (!forJDAWG.hasNext()) {
+				if (!cachedIterator.hasNext()) {
+					WorldUtils.clearChunkCache();
 					return true;
 				}
 			}

@@ -8,11 +8,11 @@ public class Constants {
 	@DoubleValue(def = 45.0)
 	public static double EXPLOSIVE_ANTIMATTER_RADIUS = 45.0;
 	@DoubleValue(def = 20.0, comment = "Value is in ticks.")
-	public static double EXPLOSIVE_ANTIMATTER_DURATION = 40.0;
+	public static double EXPLOSIVE_ANTIMATTER_DURATION = 10.0;
 	@DoubleValue(def = 80.0)
 	public static double EXPLOSIVE_LARGEANTIMATTER_RADIUS = 80.0;
 	@DoubleValue(def = 200.0, comment = "Value is in ticks.")
-	public static double EXPLOSIVE_LARGEANTIMATTER_DURATION = 300.0;
+	public static double EXPLOSIVE_LARGEANTIMATTER_DURATION = 30.0;
 	@DoubleValue(def = 1.0)
 	public static double EXPLOSIVE_ATTRACTIVE_SIZE = 1.0;
 	@DoubleValue(def = 1.0)

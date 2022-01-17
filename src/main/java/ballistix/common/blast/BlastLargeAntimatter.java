@@ -7,14 +7,11 @@ import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
 import electrodynamics.api.sound.SoundAPI;
+import electrodynamics.prefab.utilities.WorldUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 
 public class BlastLargeAntimatter extends Blast implements IHasCustomRenderer {
 
@@ -40,7 +37,7 @@ public class BlastLargeAntimatter extends Blast implements IHasCustomRenderer {
 		return pertick > 0;
 	}
 
-	private Iterator<BlockPos> forJDAWG;
+	private Iterator<BlockPos> cachedIterator;
 
 	@Override
 	public boolean doExplode(int callCount) {
@@ -48,30 +45,22 @@ public class BlastLargeAntimatter extends Blast implements IHasCustomRenderer {
 			if (thread == null) {
 				return true;
 			}
-			Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
-					(float) Constants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, false, BlockInteraction.BREAK);
 			if (thread.isComplete) {
 				hasStarted = true;
 				if (pertick == -1) {
-					pertick = (int) (thread.results.size() * 1.5 / Constants.EXPLOSIVE_LARGEANTIMATTER_DURATION + 1);
-					forJDAWG = thread.results.iterator();
+					pertick = (int) (thread.results.size() / Constants.EXPLOSIVE_LARGEANTIMATTER_DURATION + 1);
+					cachedIterator = thread.results.iterator();
 				}
 				int finished = pertick;
-				while (forJDAWG.hasNext()) {
+				while (cachedIterator.hasNext()) {
 					if (finished-- < 0) {
 						break;
 					}
-					BlockPos p = new BlockPos(forJDAWG.next()).offset(position);
-					BlockState state = world.getBlockState(p);
-					Block block = state.getBlock();
-
-					if (state != Blocks.AIR.defaultBlockState() && state != Blocks.VOID_AIR.defaultBlockState()
-							&& state.getDestroySpeed(world, p) >= 0) {
-						block.wasExploded(world, p, ex);
-						world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
-					}
+					BlockPos p = new BlockPos(cachedIterator.next()).offset(position);
+					WorldUtils.fastRemoveBlockExplosion((ServerLevel) world, p);
 				}
-				if (!forJDAWG.hasNext()) {
+				if (!cachedIterator.hasNext()) {
+					WorldUtils.clearChunkCache();
 					position = position.above().above();
 					attackEntities((float) Constants.EXPLOSIVE_LARGEANTIMATTER_RADIUS * 2);
 					return true;

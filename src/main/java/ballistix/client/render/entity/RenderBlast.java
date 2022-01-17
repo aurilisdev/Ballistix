@@ -64,12 +64,6 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 				matrixStack.scale(5, 5, 5);
 				RenderingUtils.renderStar(matrixStack, bufferIn, entityIn.tickCount + partialTicks, 500, 1, 1, 1, 0.7f, false);
 			}
-		} else if (subtype == SubtypeBlast.antimatter && entityIn.shouldRenderCustom) {
-			float scale = (float) ((entityIn.tickCount + partialTicks - entityIn.ticksWhenCustomRender) / Constants.EXPLOSIVE_ANTIMATTER_DURATION
-					* Constants.EXPLOSIVE_ANTIMATTER_RADIUS * 1.2) / 8.0f;
-			matrixStack.scale(scale, scale, scale);
-			BakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_FIREBALL);
-			RenderingUtils.renderModel(modelSphere, null, RenderType.solid(), matrixStack, bufferIn, packedLightIn, packedLightIn);
 		}
 		matrixStack.popPose();
 		super.render(entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn);

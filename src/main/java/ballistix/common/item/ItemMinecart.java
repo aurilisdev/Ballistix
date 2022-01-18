@@ -88,11 +88,11 @@ public class ItemMinecart extends Item {
 				}
 			} else {
 				if (!blockstate.isAir() || !level.getBlockState(blockpos.below()).is(BlockTags.RAILS)) {
-					return this.defaultDispenseItemBehavior.dispense(source, stack);
+					return defaultDispenseItemBehavior.dispense(source, stack);
 				}
 
 				BlockState blockstate1 = level.getBlockState(blockpos.below());
-				RailShape railshape1 = blockstate1.getBlock() instanceof BaseRailBlock rail ? blockstate1.getValue((rail).getShapeProperty())
+				RailShape railshape1 = blockstate1.getBlock() instanceof BaseRailBlock rail ? blockstate1.getValue(rail.getShapeProperty())
 						: RailShape.NORTH_SOUTH;
 				if (direction != Direction.DOWN && railshape1.isAscending()) {
 					d3 = -0.4D;

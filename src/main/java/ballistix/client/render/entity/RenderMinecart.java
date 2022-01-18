@@ -28,8 +28,8 @@ public class RenderMinecart extends EntityRenderer<EntityMinecart> {
 
 	public RenderMinecart(EntityRendererProvider.Context context) {
 		super(context);
-		this.shadowRadius = 0.7F;
-		this.model = new MinecartModel<>(context.bakeLayer(ModelLayers.MINECART));
+		shadowRadius = 0.7F;
+		model = new MinecartModel<>(context.bakeLayer(ModelLayers.MINECART));
 	}
 
 	@Override

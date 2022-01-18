@@ -81,6 +81,6 @@ public class BlastThermobaric extends Blast {
 	public SubtypeBlast getBlastType() {
 		return SubtypeBlast.thermobaric;
 	}
-	//TODO: Finish block model
+	// TODO: Finish block model
 
 }

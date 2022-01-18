@@ -169,5 +169,5 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 	public SubtypeBlast getBlastType() {
 		return SubtypeBlast.nuclear;
 	}
-	//TODO: Finish block model
+	// TODO: Finish block model
 }

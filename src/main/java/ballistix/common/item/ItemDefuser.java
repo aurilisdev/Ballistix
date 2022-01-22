@@ -22,8 +22,9 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
-@EventBusSubscriber
+@EventBusSubscriber(modid = References.ID, bus = Bus.FORGE)
 public class ItemDefuser extends ItemElectric {
 
 	public ItemDefuser() {

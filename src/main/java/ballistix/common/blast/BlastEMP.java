@@ -58,13 +58,15 @@ public class BlastEMP extends Blast implements IHasCustomRenderer {
 					}
 					BlockPos p = new BlockPos(cachedIterator.next()).offset(position);
 					BlockEntity entity = world.getBlockEntity(p);
-					for (Direction dir : Direction.values()) {
-						if (entity.getCapability(ElectrodynamicsCapabilities.ELECTRODYNAMIC, dir).isPresent()) {
-							LazyOptional<ICapabilityElectrodynamic> c = entity.getCapability(ElectrodynamicsCapabilities.ELECTRODYNAMIC, dir);
-							c.resolve().get().setJoulesStored(0);
-						} else if (entity.getCapability(CapabilityEnergy.ENERGY, dir).isPresent()) {
-							LazyOptional<IEnergyStorage> c = entity.getCapability(CapabilityEnergy.ENERGY, dir);
-							c.resolve().get().extractEnergy(Integer.MAX_VALUE, true);
+					if (entity != null) {
+						for (Direction dir : Direction.values()) {
+							if (entity.getCapability(ElectrodynamicsCapabilities.ELECTRODYNAMIC, dir).isPresent()) {
+								LazyOptional<ICapabilityElectrodynamic> c = entity.getCapability(ElectrodynamicsCapabilities.ELECTRODYNAMIC, dir);
+								c.resolve().get().setJoulesStored(0);
+							} else if (entity.getCapability(CapabilityEnergy.ENERGY, dir).isPresent()) {
+								LazyOptional<IEnergyStorage> c = entity.getCapability(CapabilityEnergy.ENERGY, dir);
+								c.resolve().get().extractEnergy(Integer.MAX_VALUE, false);
+							}
 						}
 					}
 				}

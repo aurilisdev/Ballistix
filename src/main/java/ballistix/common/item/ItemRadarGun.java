@@ -58,8 +58,7 @@ public class ItemRadarGun extends ItemElectric {
 		Location trace = MathUtils.getRaytracedBlock(playerIn);
 		ItemStack stack = playerIn.getItemBySlot(handIn == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
 		if (trace != null && getJoulesStored(stack) >= 150) {
-			CompoundTag nbt =stack
-					.getOrCreateTag();
+			CompoundTag nbt = stack.getOrCreateTag();
 			nbt.putInt("xCoord", trace.intX());
 			nbt.putInt("yCoord", trace.intY());
 			nbt.putInt("zCoord", trace.intZ());

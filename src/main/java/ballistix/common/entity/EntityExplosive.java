@@ -39,6 +39,11 @@ public class EntityExplosive extends Entity implements IDefusable {
 		zo = z;
 	}
 
+	@Override
+	public boolean canBeCollidedWith() {
+		return true;
+	}
+
 	public void setBlastType(SubtypeBlast explosive) {
 		blastOrdinal = explosive.ordinal();
 		fuse = explosive.fuse;

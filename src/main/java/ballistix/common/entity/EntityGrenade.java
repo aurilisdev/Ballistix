@@ -59,6 +59,11 @@ public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 	}
 
 	@Override
+	public boolean canBeCollidedWith() {
+		return true;
+	}
+
+	@Override
 	public void tick() {
 		if (!level.isClientSide) {
 			entityData.set(TYPE, blastOrdinal);

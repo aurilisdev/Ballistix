@@ -74,7 +74,9 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 					* Constants.EXPLOSIVE_EMP_RADIUS * 1.2) / 8.0f;
 			matrixStack.scale(scale, scale, scale);
 			BakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_EMP);
-			RenderingUtils.renderModel(modelSphere, null, RenderType.translucent(), matrixStack, bufferIn, packedLightIn, packedLightIn);
+			Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(matrixStack.last(),
+					bufferIn.getBuffer(Sheets.translucentCullBlockSheet()), Blocks.BLACK_STAINED_GLASS.defaultBlockState(), modelSphere, 1, 1, 1, 0,
+					OverlayTexture.NO_OVERLAY, net.minecraftforge.client.model.data.EmptyModelData.INSTANCE);
 		}
 		matrixStack.popPose();
 		super.render(entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn);

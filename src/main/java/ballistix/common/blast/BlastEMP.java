@@ -68,7 +68,7 @@ public class BlastEMP extends Blast implements IHasCustomRenderer {
 								c.resolve().get().extractEnergy(Integer.MAX_VALUE, false);
 							}
 						}
-					}
+					} // TODO: Implement player inventory energy clearing
 				}
 				if (!cachedIterator.hasNext()) {
 					return true;

@@ -19,7 +19,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteractSpecific;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -54,7 +54,7 @@ public class ItemDefuser extends ItemElectric {
 	}
 
 	@SubscribeEvent
-	public static void onInteractWithEntity(EntityInteract event) {
+	public static void onInteractWithEntity(EntityInteractSpecific event) {
 		if (!event.getWorld().isClientSide) {
 			Entity entity = event.getEntity();
 			if (entity instanceof IDefusable defuse) {

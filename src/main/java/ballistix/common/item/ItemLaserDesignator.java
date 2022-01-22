@@ -55,11 +55,11 @@ public class ItemLaserDesignator extends ItemElectric {
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-		if (!worldIn.isClientSide) {
+		ItemStack stack = playerIn.getItemBySlot(handIn == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
+		if (!worldIn.isClientSide && getJoulesStored(stack) >= 150) {
 			Location trace = MathUtils.getRaytracedBlock(playerIn);
 			if (trace != null) {
-				CompoundTag nbt = playerIn.getItemBySlot(handIn == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND)
-						.getOrCreateTag();
+				CompoundTag nbt = stack.getOrCreateTag();
 				if (nbt.contains("freq")) {
 					int freq = nbt.getInt("freq");
 					if (freq != 0) {
@@ -71,8 +71,7 @@ public class ItemLaserDesignator extends ItemElectric {
 						}
 					}
 				}
-				extractPower(playerIn.getItemBySlot(handIn == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND), 150,
-						false);
+				extractPower(stack, 150, false);
 			}
 		}
 		return super.use(worldIn, playerIn, handIn);

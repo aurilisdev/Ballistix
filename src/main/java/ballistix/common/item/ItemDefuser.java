@@ -41,8 +41,6 @@ public class ItemDefuser extends ItemElectric {
 				if (uuid == playerIn.getUUID()) {
 					it.remove();
 					action = true;
-					extractPower(playerIn.getItemBySlot(handIn == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND), 150,
-							false);
 				}
 			}
 		}
@@ -59,7 +57,14 @@ public class ItemDefuser extends ItemElectric {
 		if (!event.getWorld().isClientSide) {
 			Entity entity = event.getEntity();
 			if (entity instanceof IDefusable defuse) {
-				defuse.defuse();
+				Player playerIn = event.getPlayer();
+				InteractionHand handIn = event.getHand();
+				ItemStack stack = playerIn.getItemBySlot(handIn == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
+				if (stack.getItem() instanceof ItemDefuser defuser && defuser.getJoulesStored(stack) >= 150) {
+					defuser.extractPower(stack, 150, false);
+					defuse.defuse();
+				}
+
 			}
 		}
 	}

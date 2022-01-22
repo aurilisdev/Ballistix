@@ -20,7 +20,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -68,7 +67,7 @@ public class ItemTracker extends ItemElectric {
 
 	@Override
 	public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity entity, InteractionHand hand) {
-		if (player != null && player.level instanceof ServerLevel server) {
+		if (player != null && player.level instanceof ServerLevel server && getJoulesStored(stack) >= 150) {
 			Inventory inv = player.getInventory();
 			inv.removeItem(stack);
 			stack.getOrCreateTag().putUUID("uuid", entity.getUUID());
@@ -80,7 +79,7 @@ public class ItemTracker extends ItemElectric {
 			} else {
 				inv.offhand.set(0, stack);
 			}
-			extractPower(player.getItemBySlot(hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND), 150, false);
+			extractPower(stack, 150, false);
 		}
 		return InteractionResult.PASS;
 	}

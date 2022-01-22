@@ -1,6 +1,7 @@
 package ballistix.common.entity;
 
 import ballistix.DeferredRegisters;
+import ballistix.api.entity.IDefusable;
 import ballistix.common.blast.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import net.minecraft.core.BlockPos;
@@ -30,7 +31,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.network.NetworkHooks;
 
-public class EntityMinecart extends AbstractMinecart {
+public class EntityMinecart extends AbstractMinecart implements IDefusable {
 	private static final EntityDataAccessor<Integer> FUSE = SynchedEntityData.defineId(EntityMinecart.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(EntityMinecart.class, EntityDataSerializers.INT);
 	public int blastOrdinal = -1;
@@ -139,6 +140,15 @@ public class EntityMinecart extends AbstractMinecart {
 						new ItemStack(DeferredRegisters.SUBTYPEMINECARTMAPPINGS.get(explosive)));
 				level.addFreshEntity(item);
 			}
+		}
+	}
+
+	@Override
+	public void defuse() {
+		super.remove(RemovalReason.DISCARDED);
+		if (!exploded) {
+			fuse = -1;
+			entityData.set(FUSE, fuse);
 		}
 	}
 

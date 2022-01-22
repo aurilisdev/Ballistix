@@ -1,6 +1,7 @@
 package ballistix.common.entity;
 
 import ballistix.DeferredRegisters;
+import ballistix.api.entity.IDefusable;
 import ballistix.common.blast.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import net.minecraft.core.particles.ParticleTypes;
@@ -11,11 +12,13 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkHooks;
 
-public class EntityGrenade extends ThrowableProjectile {
+public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 	private static final EntityDataAccessor<Integer> FUSE = SynchedEntityData.defineId(EntityGrenade.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(EntityGrenade.class, EntityDataSerializers.INT);
 	public int blastOrdinal = -1;
@@ -42,6 +45,17 @@ public class EntityGrenade extends ThrowableProjectile {
 	protected void defineSynchedData() {
 		entityData.define(FUSE, 80);
 		entityData.define(TYPE, -1);
+	}
+
+	@Override
+	public void defuse() {
+		remove(RemovalReason.DISCARDED);
+		if (blastOrdinal != -1) {
+			SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
+			ItemEntity item = new ItemEntity(level, getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5,
+					new ItemStack(DeferredRegisters.SUBTYPEITEM_MAPPINGS.get(explosive)));
+			level.addFreshEntity(item);
+		}
 	}
 
 	@Override

@@ -1,0 +1,23 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"w ",
+		" s ",
+		"  c"
+	],
+	"key": {
+		"w": {
+			"item": "electrodynamics:wirecopper"
+		},
+		"s": {
+			"item": "minecraft:shears"
+		},
+		"c": {
+			"tag": "forge:circuits/basic"
+		}
+	},
+	"result": {
+		"item": "ballistix:defuser",
+		"count": 1
+	}
+}

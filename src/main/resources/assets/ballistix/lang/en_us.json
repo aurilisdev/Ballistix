@@ -50,6 +50,7 @@
   "item.ballistix.laserdesignator" : "Laser Designator",
   "item.ballistix.tracker" : "Tracker",
   "item.ballistix.scanner" : "Scanner",
+  "item.ballistix.defuser" : "Defuser",
   "gui.missilesilo.missile" : "Missile",
   "gui.missilesilo.explosive" : "Explosive",
   "gui.missilesilo.x" : "X-Coord",

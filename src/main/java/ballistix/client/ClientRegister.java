@@ -36,6 +36,7 @@ public class ClientRegister {
 		ForgeModelBakery.addSpecialModel(MODEL_DARKMATTERSPHERE);
 		ForgeModelBakery.addSpecialModel(MODEL_DARKMATTERDISK);
 		ForgeModelBakery.addSpecialModel(MODEL_FIREBALL);
+		ForgeModelBakery.addSpecialModel(MODEL_EMP);
 	}
 
 	public static final ResourceLocation TEXTURE_SHRAPNEL = new ResourceLocation(References.ID + ":textures/model/shrapnel.png");
@@ -45,6 +46,7 @@ public class ClientRegister {
 	public static final ResourceLocation MODEL_DARKMATTERSPHERE = new ResourceLocation(References.ID + ":entity/darkmattersphere");
 	public static final ResourceLocation MODEL_DARKMATTERDISK = new ResourceLocation(References.ID + ":entity/darkmatterdisk");
 	public static final ResourceLocation MODEL_FIREBALL = new ResourceLocation(References.ID + ":entity/explosionsphere");
+	public static final ResourceLocation MODEL_EMP = new ResourceLocation(References.ID + ":entity/emp");
 	public static final ResourceLocation TEXTURE_MISSILECLOSERANGE = new ResourceLocation(References.ID + ":textures/model/missilecloserange.png");
 	public static final ResourceLocation TEXTURE_MISSILEMEDIUMRANGE = new ResourceLocation(References.ID + ":textures/model/missilemediumrange.png");
 	public static final ResourceLocation TEXTURE_MISSILELONGRANGE = new ResourceLocation(References.ID + ":textures/model/missilelongrange.png");

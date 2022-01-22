@@ -45,7 +45,7 @@ public class ThreadRaycastBlast extends ThreadBlast {
 	@Override
 	@SuppressWarnings("java:S2184")
 	public void run() {
-		results.add(new HashDistanceBlockPos(position.getX(), position.getY(), position.getZ(), 1));
+		results.add(new HashDistanceBlockPos(position.getX(), position.getY(), position.getZ(), 0));
 		for (Direction dir : Direction.values()) {
 			ThreadRaySideBlast sideBlast = new ThreadRaySideBlast(this, dir);
 			sideBlast.start();

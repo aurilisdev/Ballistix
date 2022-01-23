@@ -59,8 +59,8 @@ public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 	}
 
 	@Override
-	public boolean canBeCollidedWith() {
-		return true;
+	public boolean isPickable() {
+		return !isRemoved();
 	}
 
 	@Override

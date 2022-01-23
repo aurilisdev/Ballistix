@@ -49,8 +49,8 @@ public class Constants {
 	public static double EXPLOSIVE_NUCLEAR_SIZE = 35.0;
 	@DoubleValue(def = 30.0, comment = "Value is in ticks.")
 	public static double EXPLOSIVE_NUCLEAR_DURATION = 30.0;
-	@DoubleValue(def = 100.0)
-	public static double EXPLOSIVE_NUCLEAR_ENERGY = 100.0;
+	@DoubleValue(def = 80.0)
+	public static double EXPLOSIVE_NUCLEAR_ENERGY = 80.0;
 	@DoubleValue(def = 10.0)
 	public static double EXPLOSIVE_OBSIDIAN_SIZE = 10.0;
 	@DoubleValue(def = 25.0)

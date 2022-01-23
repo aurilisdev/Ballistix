@@ -18,7 +18,6 @@ public class ThreadRaySideBlast extends Thread {
 	public ThreadRaySideBlast(ThreadRaycastBlast threadRaycastBlast, Direction dir) {
 		mainBlast = threadRaycastBlast;
 		direction = dir;
-		setPriority(MAX_PRIORITY);
 		setName("Raycast Blast Side Thread");
 	}
 
@@ -57,7 +56,8 @@ public class ThreadRaySideBlast extends Thread {
 						BlockState block = world.getBlockState(currentBlockPos);
 						if (block != Blocks.AIR.defaultBlockState() && block != Blocks.CAVE_AIR.defaultBlockState()
 								&& block != Blocks.VOID_AIR.defaultBlockState() && block.getDestroySpeed(world, currentBlockPos) >= 0) {
-							power -= mainBlast.callBack.getResistance(world, position, currentBlockPos, mainBlast.explosionSource, block);
+							power -= Math.max(1,
+									mainBlast.callBack.getResistance(world, position, currentBlockPos, mainBlast.explosionSource, block));
 							if (power > 0f) {
 								int idistancesq = (int) (Math.pow(currentBlockPos.getX() - position.getX(), 2)
 										+ Math.pow(currentBlockPos.getY() - position.getY(), 2)

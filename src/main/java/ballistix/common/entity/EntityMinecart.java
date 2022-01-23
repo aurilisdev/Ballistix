@@ -145,7 +145,6 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable {
 
 	@Override
 	public void defuse() {
-		super.remove(RemovalReason.DISCARDED);
 		if (!exploded) {
 			fuse = -1;
 			entityData.set(FUSE, fuse);

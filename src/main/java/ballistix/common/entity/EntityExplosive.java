@@ -40,8 +40,8 @@ public class EntityExplosive extends Entity implements IDefusable {
 	}
 
 	@Override
-	public boolean canBeCollidedWith() {
-		return true;
+	public boolean isPickable() {
+		return !isRemoved();
 	}
 
 	public void setBlastType(SubtypeBlast explosive) {

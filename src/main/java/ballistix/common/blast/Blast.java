@@ -108,6 +108,10 @@ public abstract class Blast {
 	}
 
 	protected void attackEntities(float size) {
+		this.attackEntities(size, true);
+	}
+
+	protected void attackEntities(float size, boolean useRaytrace) {
 		Map<Player, Vec3> playerKnockbackMap = Maps.newHashMap();
 		float f2 = size * 2.0F;
 		int k1 = Mth.floor(position.getX() - (double) f2 - 1.0D);
@@ -131,7 +135,7 @@ public abstract class Blast {
 						d5 = d5 / d13;
 						d7 = d7 / d13;
 						d9 = d9 / d13;
-						double d14 = Explosion.getSeenPercent(vector3d, entity);
+						double d14 = useRaytrace ? Explosion.getSeenPercent(vector3d, entity) : 1;
 						double d10 = (1.0D - d12) * d14;
 						entity.hurt(DamageSource.explosion((LivingEntity) null), (int) ((d10 * d10 + d10) / 2.0D * 7.0D * f2 + 1.0D));
 						double d11 = d10;

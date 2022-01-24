@@ -71,8 +71,8 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 			if (threadRay.isComplete && !rayDone) {
 				hasStarted = true;
 				if (pertick == -1) {
-					pertick = (int) (threadRay.results.size() / Constants.EXPLOSIVE_NUCLEAR_DURATION + 1);
-					cachedIteratorRay = threadRay.results.iterator();
+					pertick = (int) (threadRay.resultsSync.size() / Constants.EXPLOSIVE_NUCLEAR_DURATION + 1);
+					cachedIteratorRay = threadRay.resultsSync.iterator();
 				}
 				int finished = pertick;
 				while (cachedIteratorRay.hasNext()) {

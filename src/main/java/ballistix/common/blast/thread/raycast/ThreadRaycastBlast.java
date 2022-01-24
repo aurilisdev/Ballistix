@@ -1,6 +1,8 @@
 package ballistix.common.blast.thread.raycast;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 import ballistix.common.blast.thread.HashDistanceBlockPos;
 import ballistix.common.blast.thread.ThreadBlast;
@@ -16,6 +18,8 @@ import net.minecraftforge.fluids.IFluidBlock;
 public class ThreadRaycastBlast extends ThreadBlast {
 	public IResistanceCallback callBack;
 	public HashSet<ThreadRaySideBlast> underBlasts = new HashSet<>();
+	public Set<BlockPos> resultsSync = Collections.synchronizedSet(new HashSet<BlockPos>());
+	public boolean locked = false;
 
 	public ThreadRaycastBlast(Level world, BlockPos position, int range, float energy, Entity source, IResistanceCallback cb) {
 		super(world, position, range, energy, source);

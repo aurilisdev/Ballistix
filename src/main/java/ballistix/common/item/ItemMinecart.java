@@ -39,8 +39,7 @@ public class ItemMinecart extends Item {
 		}
 		ItemStack itemstack = context.getItemInHand();
 		if (!level.isClientSide) {
-			RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock rail ? rail.getRailDirection(blockstate, level, blockpos, null)
-					: RailShape.NORTH_SOUTH;
+			RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock rail ? rail.getRailDirection(blockstate, level, blockpos, null) : RailShape.NORTH_SOUTH;
 			double d0 = 0.0D;
 			if (railshape.isAscending()) {
 				d0 = 0.5D;
@@ -77,8 +76,7 @@ public class ItemMinecart extends Item {
 			double d2 = source.z() + direction.getStepZ() * 1.125D;
 			BlockPos blockpos = source.getPos().relative(direction);
 			BlockState blockstate = level.getBlockState(blockpos);
-			RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock rail ? rail.getRailDirection(blockstate, level, blockpos, null)
-					: RailShape.NORTH_SOUTH;
+			RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock rail ? rail.getRailDirection(blockstate, level, blockpos, null) : RailShape.NORTH_SOUTH;
 			double d3;
 			if (blockstate.is(BlockTags.RAILS)) {
 				if (railshape.isAscending()) {
@@ -92,8 +90,7 @@ public class ItemMinecart extends Item {
 				}
 
 				BlockState blockstate1 = level.getBlockState(blockpos.below());
-				RailShape railshape1 = blockstate1.getBlock() instanceof BaseRailBlock rail ? blockstate1.getValue(rail.getShapeProperty())
-						: RailShape.NORTH_SOUTH;
+				RailShape railshape1 = blockstate1.getBlock() instanceof BaseRailBlock rail ? blockstate1.getValue(rail.getShapeProperty()) : RailShape.NORTH_SOUTH;
 				if (direction != Direction.DOWN && railshape1.isAscending()) {
 					d3 = -0.4D;
 				} else {

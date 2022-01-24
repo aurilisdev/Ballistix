@@ -19,8 +19,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 public class ItemDefuser extends ItemElectric {
 
 	public ItemDefuser() {
-		super((ElectricItemProperties) new ElectricItemProperties().capacity(10000).receive(TransferPack.joulesVoltage(500, 120))
-				.extract(TransferPack.joulesVoltage(500, 120)).stacksTo(1).tab(References.BALLISTIXTAB));
+		super((ElectricItemProperties) new ElectricItemProperties().capacity(10000).receive(TransferPack.joulesVoltage(500, 120)).extract(TransferPack.joulesVoltage(500, 120)).stacksTo(1).tab(References.BALLISTIXTAB));
 	}
 
 	@SubscribeEvent

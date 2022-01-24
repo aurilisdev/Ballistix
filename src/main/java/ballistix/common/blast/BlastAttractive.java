@@ -26,8 +26,7 @@ public class BlastAttractive extends Blast {
 	public boolean doExplode(int callCount) {
 		hasStarted = true;
 		if (!world.isClientSide) {
-			world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) Constants.EXPLOSIVE_ATTRACTIVE_SIZE,
-					BlockInteraction.BREAK);
+			world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) Constants.EXPLOSIVE_ATTRACTIVE_SIZE, BlockInteraction.BREAK);
 		}
 		float x = position.getX();
 		float y = position.getY();
@@ -54,8 +53,7 @@ public class BlastAttractive extends Blast {
 				double d11 = -Constants.EXPLOSIVE_ATTRACTIVE_REPULSIVE_PUSH_STRENGTH;
 				entity.setDeltaMovement(entity.getDeltaMovement().add(d5 * d11, d7 * d11, d9 * d11));
 				if (entity instanceof ServerPlayer serverplayerentity) {
-					serverplayerentity.connection
-							.send(new ClientboundExplodePacket(x, y, z, size, new ArrayList<>(), new Vec3(d5 * d11, d7 * d11, d9 * d11)));
+					serverplayerentity.connection.send(new ClientboundExplodePacket(x, y, z, size, new ArrayList<>(), new Vec3(d5 * d11, d7 * d11, d9 * d11)));
 				}
 			}
 		}

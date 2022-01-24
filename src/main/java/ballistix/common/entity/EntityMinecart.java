@@ -136,8 +136,7 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable {
 		if (!exploded) {
 			if (blastOrdinal != -1) {
 				SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
-				ItemEntity item = new ItemEntity(level, getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5,
-						new ItemStack(DeferredRegisters.SUBTYPEMINECARTMAPPINGS.get(explosive)));
+				ItemEntity item = new ItemEntity(level, getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(DeferredRegisters.SUBTYPEMINECARTMAPPINGS.get(explosive)));
 				level.addFreshEntity(item);
 			}
 		}
@@ -197,15 +196,12 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable {
 
 	@Override
 	public float getBlockExplosionResistance(Explosion ex, BlockGetter getter, BlockPos pos, BlockState state, FluidState fluidState, float val) {
-		return !isPrimed() || !state.is(BlockTags.RAILS) && !getter.getBlockState(pos.above()).is(BlockTags.RAILS)
-				? super.getBlockExplosionResistance(ex, getter, pos, state, fluidState, val)
-				: 0.0F;
+		return !isPrimed() || !state.is(BlockTags.RAILS) && !getter.getBlockState(pos.above()).is(BlockTags.RAILS) ? super.getBlockExplosionResistance(ex, getter, pos, state, fluidState, val) : 0.0F;
 	}
 
 	@Override
 	public boolean shouldBlockExplode(Explosion ex, BlockGetter getter, BlockPos pos, BlockState state, float val) {
-		return !isPrimed() || !state.is(BlockTags.RAILS) && !getter.getBlockState(pos.above()).is(BlockTags.RAILS)
-				&& super.shouldBlockExplode(ex, getter, pos, state, val);
+		return !isPrimed() || !state.is(BlockTags.RAILS) && !getter.getBlockState(pos.above()).is(BlockTags.RAILS) && super.shouldBlockExplode(ex, getter, pos, state, val);
 	}
 
 	@Override

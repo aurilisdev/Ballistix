@@ -71,15 +71,11 @@ public class EntityMissile extends Entity {
 		}
 		if (blastEntity == null) {
 			if (getDeltaMovement().length() > 0 && !isStuck) {
-				setXRot((float) (Math
-						.atan(getDeltaMovement().y()
-								/ Math.sqrt(getDeltaMovement().x() * getDeltaMovement().x() + getDeltaMovement().z() * getDeltaMovement().z()))
-						* 180.0D / Math.PI));
+				setXRot((float) (Math.atan(getDeltaMovement().y() / Math.sqrt(getDeltaMovement().x() * getDeltaMovement().x() + getDeltaMovement().z() * getDeltaMovement().z())) * 180.0D / Math.PI));
 				setYRot((float) (Math.atan2(getDeltaMovement().x(), getDeltaMovement().z()) * 180.0D / Math.PI));
 			}
 			if (!level.isClientSide) {
-				if (!state.getCollisionShape(level, blockPosition()).isEmpty()
-						|| !isItem && target != null && getY() < target.getY() && getDeltaMovement().y() < 0) {
+				if (!state.getCollisionShape(level, blockPosition()).isEmpty() || !isItem && target != null && getY() < target.getY() && getDeltaMovement().y() < 0) {
 					if (blastOrdinal != -1 && (target == null || tickCount > 20)) {
 						SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
 						Blast b = Blast.createFromSubtype(explosive, level, blockPosition());
@@ -127,21 +123,17 @@ public class EntityMissile extends Entity {
 				float x = (float) (getX() - getDimensions(getPose()).width / 1.0f);
 				float y = (float) (getY() + getDimensions(getPose()).height / 1.0f);
 				float z = (float) (getZ() - getDimensions(getPose()).width / 1.0f);
-				level.addParticle(ParticleTypes.LARGE_SMOKE, x + ranX, y + ranY, z + ranZ, -getDeltaMovement().x + ranX,
-						-getDeltaMovement().y - 0.075f + ranY, -getDeltaMovement().z + ranZ);
+				level.addParticle(ParticleTypes.LARGE_SMOKE, x + ranX, y + ranY, z + ranZ, -getDeltaMovement().x + ranX, -getDeltaMovement().y - 0.075f + ranY, -getDeltaMovement().z + ranZ);
 
 			}
 			float motionX = (float) -getDeltaMovement().x;
 			float motionY = (float) -getDeltaMovement().y;
 			float motionZ = (float) -getDeltaMovement().z;
 			for (int i = 0; i < 4; i++) {
-				level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, false, this.getX(), this.getY(), this.getZ(),
-						random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY,
-						random.nextDouble() / 1.5 - 0.3333 + motionZ);
+				level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, false, this.getX(), this.getY(), this.getZ(), random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
 			}
 			for (int i = 0; i < 4; i++) {
-				level.addParticle(ParticleTypes.CLOUD, false, this.getX(), this.getY(), this.getZ(), random.nextDouble() / 1.5 - 0.3333 + motionX,
-						random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
+				level.addParticle(ParticleTypes.CLOUD, false, this.getX(), this.getY(), this.getZ(), random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
 			}
 		}
 	}

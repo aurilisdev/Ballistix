@@ -37,8 +37,7 @@ public class BlockExplosive extends Block {
 	public final SubtypeBlast explosive;
 
 	public BlockExplosive(SubtypeBlast explosive) {
-		super(BlockBehaviour.Properties.of(Material.EXPLOSIVE).instabreak().sound(SoundType.GRASS).noOcclusion()
-				.isRedstoneConductor((a, b, c) -> false));
+		super(BlockBehaviour.Properties.of(Material.EXPLOSIVE).instabreak().sound(SoundType.GRASS).noOcclusion().isRedstoneConductor((a, b, c) -> false));
 		this.explosive = explosive;
 	}
 
@@ -90,8 +89,7 @@ public class BlockExplosive extends Block {
 			EntityExplosive explosiveEntity = new EntityExplosive(worldIn, pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D);
 			explosiveEntity.setBlastType(explosive);
 			worldIn.addFreshEntity(explosiveEntity);
-			worldIn.playSound((Player) null, explosiveEntity.getX(), explosiveEntity.getY(), explosiveEntity.getZ(), SoundEvents.TNT_PRIMED,
-					SoundSource.BLOCKS, 1.0F, 1.0F);
+			worldIn.playSound((Player) null, explosiveEntity.getX(), explosiveEntity.getY(), explosiveEntity.getZ(), SoundEvents.TNT_PRIMED, SoundSource.BLOCKS, 1.0F, 1.0F);
 		}
 	}
 

@@ -25,8 +25,7 @@ public class BlastThermobaric extends Blast {
 	@Override
 	public void doPreExplode() {
 		if (!world.isClientSide) {
-			thread = new ThreadRaycastBlast(world, position, (int) Constants.EXPLOSIVE_THERMOBARIC_SIZE,
-					(float) Constants.EXPLOSIVE_THERMOBARIC_ENERGY, null);
+			thread = new ThreadRaycastBlast(world, position, (int) Constants.EXPLOSIVE_THERMOBARIC_SIZE, (float) Constants.EXPLOSIVE_THERMOBARIC_ENERGY, null);
 			thread.start();
 		}
 
@@ -42,8 +41,7 @@ public class BlastThermobaric extends Blast {
 			if (thread == null) {
 				return true;
 			}
-			Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
-					(float) Constants.EXPLOSIVE_THERMOBARIC_SIZE, false, BlockInteraction.BREAK);
+			Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) Constants.EXPLOSIVE_THERMOBARIC_SIZE, false, BlockInteraction.BREAK);
 			if (thread.isComplete) {
 				if (pertick == -1) {
 					hasStarted = true;
@@ -59,8 +57,7 @@ public class BlastThermobaric extends Blast {
 					world.getBlockState(p).getBlock().wasExploded(world, p, ex);
 					world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
 					if (world.random.nextFloat() < 1 / 10.0 && world instanceof ServerLevel serverlevel) {
-						serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL
-								.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT));
+						serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT));
 					}
 				}
 				if (!cachedIterator.hasNext()) {

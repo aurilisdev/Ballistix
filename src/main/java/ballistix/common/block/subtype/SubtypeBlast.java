@@ -28,15 +28,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public enum SubtypeBlast implements ISubtype {
-	obsidian(BlastObsidian.class, 120, false, true), condensive(BlastCondensive.class, 30, true, true),
-	attractive(BlastAttractive.class, 30, true, true), repulsive(BlastRepulsive.class, 30, true, true),
-	incendiary(BlastIncendiary.class, 80, true, true), shrapnel(BlastShrapnel.class, 40, true, true),
-	debilitation(BlastDebilitation.class, 80, true, true), chemical(BlastChemical.class, 100, true, true), emp(BlastEMP.class, 80, false, true),
-	breaching(BlastBreaching.class, 5, false, true), thermobaric(BlastThermobaric.class, 100, false, true),
-	contagious(BlastContagious.class, 100, false, true), fragmentation(BlastFragmentation.class, 100, false, true),
-	landmine(BlastLandmine.class, 5, false, false, (a, b, c, d) -> Shapes.create(0, 0, 0, 1, 3 / 16.0, 1)),
-	nuclear(BlastNuclear.class, 200, false, true), antimatter(BlastAntimatter.class, 400, false, true),
-	largeantimatter(BlastLargeAntimatter.class, 600, false, true), darkmatter(BlastDarkmatter.class, 400, false, true);
+	obsidian(BlastObsidian.class, 120, false, true), condensive(BlastCondensive.class, 30, true, true), attractive(BlastAttractive.class, 30, true, true), repulsive(BlastRepulsive.class, 30, true, true), incendiary(BlastIncendiary.class, 80, true, true), shrapnel(BlastShrapnel.class, 40, true, true), debilitation(BlastDebilitation.class, 80, true, true), chemical(BlastChemical.class, 100, true, true), emp(BlastEMP.class, 80, false, true), breaching(BlastBreaching.class, 5, false, true), thermobaric(BlastThermobaric.class, 100, false, true), contagious(BlastContagious.class, 100, false, true), fragmentation(BlastFragmentation.class, 100, false, true), landmine(BlastLandmine.class, 5, false, false, (a, b, c, d) -> Shapes.create(0, 0, 0, 1, 3 / 16.0, 1)), nuclear(BlastNuclear.class, 200, false, true), antimatter(BlastAntimatter.class, 400, false, true), largeantimatter(BlastLargeAntimatter.class, 600, false, true), darkmatter(BlastDarkmatter.class, 400, false, true);
 
 	public final Class<?> blastClass;
 	public final int fuse;
@@ -44,8 +36,7 @@ public enum SubtypeBlast implements ISubtype {
 	public final boolean hasMinecart;
 	public final QuadFunction<VoxelShape, BlockState, BlockGetter, BlockPos, CollisionContext> shape;
 
-	SubtypeBlast(Class<?> blastClass, int fuse, boolean hasGrenade, boolean hasMinecart,
-			QuadFunction<VoxelShape, BlockState, BlockGetter, BlockPos, CollisionContext> shape) {
+	SubtypeBlast(Class<?> blastClass, int fuse, boolean hasGrenade, boolean hasMinecart, QuadFunction<VoxelShape, BlockState, BlockGetter, BlockPos, CollisionContext> shape) {
 		this.blastClass = blastClass;
 		this.fuse = fuse;
 		this.hasGrenade = hasGrenade;

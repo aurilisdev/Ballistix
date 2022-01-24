@@ -36,8 +36,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 	@Override
 	public void doPreExplode() {
 		if (!world.isClientSide) {
-			threadRay = new ThreadRaycastBlast(world, position, (int) Constants.EXPLOSIVE_NUCLEAR_SIZE, (float) Constants.EXPLOSIVE_NUCLEAR_ENERGY,
-					null);
+			threadRay = new ThreadRaycastBlast(world, position, (int) Constants.EXPLOSIVE_NUCLEAR_SIZE, (float) Constants.EXPLOSIVE_NUCLEAR_ENERGY, null);
 			threadSimple = new ThreadSimpleBlast(world, position, (int) (Constants.EXPLOSIVE_NUCLEAR_SIZE * 2), Integer.MAX_VALUE, null, true);
 			threadSimple.strictnessAtEdges = 1.7;
 			threadRay.start();
@@ -67,8 +66,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 			if (threadRay == null) {
 				return true;
 			}
-			Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
-					(float) Constants.EXPLOSIVE_NUCLEAR_SIZE, false, BlockInteraction.BREAK);
+			Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) Constants.EXPLOSIVE_NUCLEAR_SIZE, false, BlockInteraction.BREAK);
 			boolean rayDone = false;
 			if (threadRay.isComplete && !rayDone) {
 				hasStarted = true;
@@ -94,8 +92,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 					world.getBlockState(p).getBlock().wasExploded(world, p, ex);
 					world.setBlock(p, state, 2);
 					if (world.random.nextFloat() < 1 / 20.0 && world instanceof ServerLevel serverlevel) {
-						serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL
-								.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT));
+						serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT));
 					}
 				}
 				if (particleHeight < 23) {
@@ -110,9 +107,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 						for (int k = -radius; k <= radius; k++) {
 							if (i * i + k * k < radius * radius && world.random.nextFloat() < (particleHeight > 18 ? 0.1 : 0.3)) {
 								BlockPos p = position.offset(i, particleHeight, k);
-								((ServerLevel) world).getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false)
-										.forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getConnection(),
-												NetworkDirection.PLAY_TO_CLIENT));
+								((ServerLevel) world).getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT));
 							}
 						}
 					}

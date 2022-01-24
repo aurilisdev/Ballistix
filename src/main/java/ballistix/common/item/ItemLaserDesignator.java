@@ -31,8 +31,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 public class ItemLaserDesignator extends ItemElectric {
 
 	public ItemLaserDesignator() {
-		super((ElectricItemProperties) new ElectricItemProperties().capacity(10000).receive(TransferPack.joulesVoltage(500, 120))
-				.extract(TransferPack.joulesVoltage(500, 120)).stacksTo(1).tab(References.BALLISTIXTAB));
+		super((ElectricItemProperties) new ElectricItemProperties().capacity(10000).receive(TransferPack.joulesVoltage(500, 120)).extract(TransferPack.joulesVoltage(500, 120)).stacksTo(1).tab(References.BALLISTIXTAB));
 	}
 
 	@Override
@@ -66,8 +65,7 @@ public class ItemLaserDesignator extends ItemElectric {
 						for (TileMissileSilo silo : SiloRegistry.getSilos(freq)) {
 							silo.target = new Location(trace);
 							silo.shouldLaunch = true;
-							playerIn.sendMessage(new TranslatableComponent("message.laserdesignator.launch",
-									new Location(silo.getBlockPos()) + " -> " + silo.target), UUID.randomUUID());
+							playerIn.sendMessage(new TranslatableComponent("message.laserdesignator.launch", new Location(silo.getBlockPos()) + " -> " + silo.target), UUID.randomUUID());
 						}
 					}
 				}

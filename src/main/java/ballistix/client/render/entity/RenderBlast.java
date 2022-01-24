@@ -32,8 +32,7 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 	}
 
 	@Override
-	public void render(EntityBlast entityIn, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource bufferIn,
-			int packedLightIn) {
+	public void render(EntityBlast entityIn, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource bufferIn, int packedLightIn) {
 		matrixStack.pushPose();
 		SubtypeBlast subtype = entityIn.getBlastType();
 		if (subtype == SubtypeBlast.darkmatter) {
@@ -69,21 +68,16 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 			float scale = (entityIn.tickCount - entityIn.ticksWhenCustomRender) / 20.0f;
 			matrixStack.scale(scale, scale, scale);
 			BakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_FIREBALL);
-			Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(matrixStack.last(),
-					bufferIn.getBuffer(Sheets.translucentItemSheet()), Blocks.BLACK_STAINED_GLASS.defaultBlockState(), modelSphere, 1, 1, 1, 0,
-					OverlayTexture.NO_OVERLAY, net.minecraftforge.client.model.data.EmptyModelData.INSTANCE);
+			Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(matrixStack.last(), bufferIn.getBuffer(Sheets.translucentItemSheet()), Blocks.BLACK_STAINED_GLASS.defaultBlockState(), modelSphere, 1, 1, 1, 0, OverlayTexture.NO_OVERLAY, net.minecraftforge.client.model.data.EmptyModelData.INSTANCE);
 			if (entityIn.tickCount - entityIn.ticksWhenCustomRender < 10) {
 				matrixStack.scale(5, 5, 5);
 				RenderingUtils.renderStar(matrixStack, bufferIn, entityIn.tickCount + partialTicks, 500, 1, 1, 1, 0.7f, false);
 			}
 		} else if (subtype == SubtypeBlast.emp && entityIn.shouldRenderCustom) {
-			float scale = (float) ((entityIn.tickCount + partialTicks - entityIn.ticksWhenCustomRender) / Constants.EXPLOSIVE_ANTIMATTER_DURATION
-					* Constants.EXPLOSIVE_EMP_RADIUS * 1.2) / 8.0f;
+			float scale = (float) ((entityIn.tickCount + partialTicks - entityIn.ticksWhenCustomRender) / Constants.EXPLOSIVE_ANTIMATTER_DURATION * Constants.EXPLOSIVE_EMP_RADIUS * 1.2) / 8.0f;
 			matrixStack.scale(scale, scale, scale);
 			BakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_EMP);
-			Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(matrixStack.last(),
-					bufferIn.getBuffer(Sheets.translucentCullBlockSheet()), Blocks.BLACK_STAINED_GLASS.defaultBlockState(), modelSphere, 1, 1, 1, 0,
-					OverlayTexture.NO_OVERLAY, net.minecraftforge.client.model.data.EmptyModelData.INSTANCE);
+			Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(matrixStack.last(), bufferIn.getBuffer(Sheets.translucentCullBlockSheet()), Blocks.BLACK_STAINED_GLASS.defaultBlockState(), modelSphere, 1, 1, 1, 0, OverlayTexture.NO_OVERLAY, net.minecraftforge.client.model.data.EmptyModelData.INSTANCE);
 		}
 		matrixStack.popPose();
 		super.render(entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn);

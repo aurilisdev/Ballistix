@@ -30,8 +30,7 @@ public class RenderGrenade extends EntityRenderer<EntityGrenade> {
 	}
 
 	@Override
-	public void render(EntityGrenade entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn,
-			int packedLightIn) {
+	public void render(EntityGrenade entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
 		SubtypeBlast subtype = entityIn.getExplosiveType();
 		if (subtype != null) {
 			matrixStackIn.pushPose();

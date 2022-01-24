@@ -16,8 +16,7 @@ public class BlastBreaching extends Blast {
 	public boolean doExplode(int callCount) {
 		hasStarted = true;
 		if (!world.isClientSide) {
-			world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) Constants.EXPLOSIVE_BREACHING_SIZE,
-					BlockInteraction.BREAK);
+			world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) Constants.EXPLOSIVE_BREACHING_SIZE, BlockInteraction.BREAK);
 		}
 		return true;
 	}

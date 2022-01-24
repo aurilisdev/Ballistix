@@ -89,8 +89,7 @@ public abstract class Blast {
 	public EntityBlast performExplosion() {
 		ConstructBlastEvent evt = new ConstructBlastEvent(world, this);
 		MinecraftForge.EVENT_BUS.post(evt);
-		Explosion explosion = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), 3, true,
-				BlockInteraction.BREAK);
+		Explosion explosion = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), 3, true, BlockInteraction.BREAK);
 		if (!ForgeEventFactory.onExplosionStart(world, explosion) && !evt.isCanceled()) {
 			if (isInstantaneous()) {
 				doPreExplode();
@@ -155,8 +154,7 @@ public abstract class Blast {
 		}
 		for (Entry<Player, Vec3> entry : playerKnockbackMap.entrySet()) {
 			if (entry.getKey() instanceof ServerPlayer serverplayerentity) {
-				serverplayerentity.connection.send(
-						new ClientboundExplodePacket(position.getX(), position.getY(), position.getZ(), size, new ArrayList<>(), entry.getValue()));
+				serverplayerentity.connection.send(new ClientboundExplodePacket(position.getX(), position.getY(), position.getZ(), size, new ArrayList<>(), entry.getValue()));
 			}
 		}
 	}
@@ -164,8 +162,7 @@ public abstract class Blast {
 	public static Blast createFromSubtype(SubtypeBlast explosive, Level world, BlockPos pos) {
 		try {
 			return (Blast) explosive.blastClass.getConstructor(Level.class, BlockPos.class).newInstance(world, pos);
-		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e) {
+		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
 		return null;

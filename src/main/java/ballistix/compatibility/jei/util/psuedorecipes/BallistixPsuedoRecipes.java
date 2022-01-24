@@ -18,8 +18,7 @@ public class BallistixPsuedoRecipes {
 
 		addBallistixItems();
 
-		WARHEAD_RECIPES.add(new PsuedoItem2ItemRecipe(Arrays.asList(new ItemStack[] { BALLISTIX_ITEMS.get(0).get(0), BALLISTIX_ITEMS.get(1).get(0) }),
-				BALLISTIX_ITEMS.get(1).get(0)));
+		WARHEAD_RECIPES.add(new PsuedoItem2ItemRecipe(Arrays.asList(new ItemStack[] { BALLISTIX_ITEMS.get(0).get(0), BALLISTIX_ITEMS.get(1).get(0) }), BALLISTIX_ITEMS.get(1).get(0)));
 
 	}
 
@@ -35,8 +34,7 @@ public class BallistixPsuedoRecipes {
 		BALLISTIX_ITEMS.add(formItemStacks(explosiveItems, 1));
 
 		/* MISSILES */
-		Item[] missiles = { ballistix.DeferredRegisters.ITEM_MISSILECLOSERANGE.get(), ballistix.DeferredRegisters.ITEM_MISSILEMEDIUMRANGE.get(),
-				ballistix.DeferredRegisters.ITEM_MISSILELONGRANGE.get() };
+		Item[] missiles = { ballistix.DeferredRegisters.ITEM_MISSILECLOSERANGE.get(), ballistix.DeferredRegisters.ITEM_MISSILEMEDIUMRANGE.get(), ballistix.DeferredRegisters.ITEM_MISSILELONGRANGE.get() };
 		BALLISTIX_ITEMS.add(formItemStacks(missiles, 1));
 
 		/* MISC */

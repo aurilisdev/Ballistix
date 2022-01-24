@@ -57,10 +57,8 @@ public class RenderShrapnel extends EntityRenderer<EntityShrapnel> {
 		super.render(entityShrapnel, yaw, partialticks, stack, buffer, light);
 	}
 
-	public void vertex(Matrix4f matrix, Matrix3f normals, VertexConsumer consumer, int pOffsetX, int pOffsetY, int pOffsetZ, float pTextureX,
-			float pTextureY, int pNormalX, int ny, int nx, int pPackedLight) {
-		consumer.vertex(matrix, pOffsetX, pOffsetY, pOffsetZ).color(255, 255, 255, 255).uv(pTextureX, pTextureY)
-				.overlayCoords(OverlayTexture.NO_OVERLAY).uv2(pPackedLight).normal(normals, pNormalX, nx, ny).endVertex();
+	public void vertex(Matrix4f matrix, Matrix3f normals, VertexConsumer consumer, int pOffsetX, int pOffsetY, int pOffsetZ, float pTextureX, float pTextureY, int pNormalX, int ny, int nx, int pPackedLight) {
+		consumer.vertex(matrix, pOffsetX, pOffsetY, pOffsetZ).color(255, 255, 255, 255).uv(pTextureX, pTextureY).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(pPackedLight).normal(normals, pNormalX, nx, ny).endVertex();
 	}
 
 	@Override

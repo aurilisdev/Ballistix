@@ -70,54 +70,56 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 			boolean rayDone = false;
 			if (threadRay.isComplete && !rayDone) {
 				hasStarted = true;
-				if (pertick == -1) {
-					pertick = (int) (threadRay.resultsSync.size() / Constants.EXPLOSIVE_NUCLEAR_DURATION + 1);
-					cachedIteratorRay = threadRay.resultsSync.iterator();
-				}
-				int finished = pertick;
-				while (cachedIteratorRay.hasNext()) {
-					if (finished-- < 0) {
-						break;
+				synchronized (threadRay.resultsSync) {
+					if (pertick == -1) {
+						pertick = (int) (threadRay.resultsSync.size() / Constants.EXPLOSIVE_NUCLEAR_DURATION + 1);
+						cachedIteratorRay = threadRay.resultsSync.iterator();
 					}
-					BlockPos p = new BlockPos(cachedIteratorRay.next());
-
-					BlockState state = Blocks.AIR.defaultBlockState();
-					double dis = new Location(p.getX(), 0, p.getZ()).distance(new Location(position.getX(), 0, position.getZ()));
-					if (world.random.nextFloat() < 1 / 5.0 && dis < 15) {
-						BlockPos offset = p.relative(Direction.DOWN);
-						if (!threadRay.results.contains(offset) && world.random.nextFloat() < (15.0f - dis) / 15.0f) {
-							state = Blocks.FIRE.defaultBlockState();
+					int finished = pertick;
+					while (cachedIteratorRay.hasNext()) {
+						if (finished-- < 0) {
+							break;
 						}
-					}
-					world.getBlockState(p).getBlock().wasExploded(world, p, ex);
-					world.setBlock(p, state, 2);
-					if (world.random.nextFloat() < 1 / 20.0 && world instanceof ServerLevel serverlevel) {
-						serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT));
-					}
-				}
-				if (particleHeight < 23) {
-					int radius = 2;
-					if (particleHeight > 18) {
-						radius = 25 + 20 - particleHeight;
-					}
-					if (particleHeight > 20) {
-						radius = 25 - 20 + particleHeight;
-					}
-					for (int i = -radius; i <= radius; i++) {
-						for (int k = -radius; k <= radius; k++) {
-							if (i * i + k * k < radius * radius && world.random.nextFloat() < (particleHeight > 18 ? 0.1 : 0.3)) {
-								BlockPos p = position.offset(i, particleHeight, k);
-								((ServerLevel) world).getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT));
+						BlockPos p = new BlockPos(cachedIteratorRay.next());
+
+						BlockState state = Blocks.AIR.defaultBlockState();
+						double dis = new Location(p.getX(), 0, p.getZ()).distance(new Location(position.getX(), 0, position.getZ()));
+						if (world.random.nextFloat() < 1 / 5.0 && dis < 15) {
+							BlockPos offset = p.relative(Direction.DOWN);
+							if (!threadRay.results.contains(offset) && world.random.nextFloat() < (15.0f - dis) / 15.0f) {
+								state = Blocks.FIRE.defaultBlockState();
 							}
 						}
+						world.getBlockState(p).getBlock().wasExploded(world, p, ex);
+						world.setBlock(p, state, 2);
+						if (world.random.nextFloat() < 1 / 20.0 && world instanceof ServerLevel serverlevel) {
+							serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT));
+						}
 					}
-					particleHeight++;
-				}
-				if (!cachedIteratorRay.hasNext()) {
-					rayDone = true;
-				}
-				if (ModList.get().isLoaded("nuclearscience")) {
-					RadiationSystem.emitRadiationFromLocation(world, new Location(position), Constants.EXPLOSIVE_NUCLEAR_SIZE * 4, 150000);
+					if (particleHeight < 23) {
+						int radius = 2;
+						if (particleHeight > 18) {
+							radius = 25 + 20 - particleHeight;
+						}
+						if (particleHeight > 20) {
+							radius = 25 - 20 + particleHeight;
+						}
+						for (int i = -radius; i <= radius; i++) {
+							for (int k = -radius; k <= radius; k++) {
+								if (i * i + k * k < radius * radius && world.random.nextFloat() < (particleHeight > 18 ? 0.1 : 0.3)) {
+									BlockPos p = position.offset(i, particleHeight, k);
+									((ServerLevel) world).getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT));
+								}
+							}
+						}
+						particleHeight++;
+					}
+					if (!cachedIteratorRay.hasNext()) {
+						rayDone = true;
+					}
+					if (ModList.get().isLoaded("nuclearscience")) {
+						RadiationSystem.emitRadiationFromLocation(world, new Location(position), Constants.EXPLOSIVE_NUCLEAR_SIZE * 4, 150000);
+					}
 				}
 			}
 			if (ModList.get().isLoaded("nuclearscience")) {

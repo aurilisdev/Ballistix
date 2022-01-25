@@ -1,6 +1,6 @@
 package ballistix.common.blast.thread.raycast;
 
-import ballistix.common.blast.thread.HashDistanceBlockPos;
+import electrodynamics.prefab.block.HashDistanceBlockPos;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;

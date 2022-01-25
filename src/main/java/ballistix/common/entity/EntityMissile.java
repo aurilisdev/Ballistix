@@ -78,6 +78,7 @@ public class EntityMissile extends Entity {
 				if (!state.getCollisionShape(level, blockPosition()).isEmpty() || !isItem && target != null && getY() < target.getY() && getDeltaMovement().y() < 0) {
 					if (blastOrdinal != -1 && (target == null || tickCount > 20)) {
 						SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
+						setPos(getX() - getDeltaMovement().x * 2, getY() - getDeltaMovement().y * 2, getZ() - getDeltaMovement().z * 2);
 						Blast b = Blast.createFromSubtype(explosive, level, blockPosition());
 						if (b != null) {
 							blastEntity = b.performExplosion();
@@ -85,7 +86,6 @@ public class EntityMissile extends Entity {
 								removeAfterChangingDimensions();
 							} else {
 								isStuck = true;
-								setPos(getX() - getDeltaMovement().x * 1, getY() - getDeltaMovement().y * 1, getZ() - getDeltaMovement().z * 1);
 							}
 						}
 					}

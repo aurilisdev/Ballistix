@@ -59,6 +59,7 @@ public class ThreadRaycastBlast extends ThreadBlast {
 				sleep(50);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
+				break;
 			}
 		}
 		super.run();

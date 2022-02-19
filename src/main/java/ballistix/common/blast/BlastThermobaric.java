@@ -25,8 +25,7 @@ public class BlastThermobaric extends Blast {
 	@Override
 	public void doPreExplode() {
 		if (!world.isClientSide) {
-			thread = new ThreadRaycastBlast(world, position, (int) Constants.EXPLOSIVE_THERMOBARIC_SIZE,
-					(float) Constants.EXPLOSIVE_THERMOBARIC_ENERGY, null);
+			thread = new ThreadRaycastBlast(world, position, (int) Constants.EXPLOSIVE_THERMOBARIC_SIZE, (float) Constants.EXPLOSIVE_THERMOBARIC_ENERGY, null);
 			thread.start();
 		}
 
@@ -42,30 +41,30 @@ public class BlastThermobaric extends Blast {
 			if (thread == null) {
 				return true;
 			}
-			Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
-					(float) Constants.EXPLOSIVE_THERMOBARIC_SIZE, false, BlockInteraction.BREAK);
+			Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) Constants.EXPLOSIVE_THERMOBARIC_SIZE, false, BlockInteraction.BREAK);
 			if (thread.isComplete) {
-				if (pertick == -1) {
-					hasStarted = true;
-					pertick = (int) (thread.results.size() / Constants.EXPLOSIVE_THERMOBARIC_DURATION + 1);
-					cachedIterator = thread.results.iterator();
-				}
-				int finished = pertick;
-				while (cachedIterator.hasNext()) {
-					if (finished-- < 0) {
-						break;
+				synchronized (thread.resultsSync) {
+					if (pertick == -1) {
+						hasStarted = true;
+						pertick = (int) (thread.resultsSync.size() / Constants.EXPLOSIVE_THERMOBARIC_DURATION + 1);
+						cachedIterator = thread.resultsSync.iterator();
 					}
-					BlockPos p = new BlockPos(cachedIterator.next());
-					world.getBlockState(p).getBlock().wasExploded(world, p, ex);
-					world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
-					if (world.random.nextFloat() < 1 / 10.0 && world instanceof ServerLevel serverlevel) {
-						serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL
-								.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT));
+					int finished = pertick;
+					while (cachedIterator.hasNext()) {
+						if (finished-- < 0) {
+							break;
+						}
+						BlockPos p = new BlockPos(cachedIterator.next());
+						world.getBlockState(p).getBlock().wasExploded(world, p, ex);
+						world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
+						if (world.random.nextFloat() < 1 / 10.0 && world instanceof ServerLevel serverlevel) {
+							serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT));
+						}
 					}
-				}
-				if (!cachedIterator.hasNext()) {
-					attackEntities((float) Constants.EXPLOSIVE_THERMOBARIC_SIZE * 2);
-					return true;
+					if (!cachedIterator.hasNext()) {
+						attackEntities((float) Constants.EXPLOSIVE_THERMOBARIC_SIZE * 2);
+						return true;
+					}
 				}
 			}
 		}

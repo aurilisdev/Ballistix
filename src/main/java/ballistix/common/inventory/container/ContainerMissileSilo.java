@@ -35,8 +35,7 @@ public class ContainerMissileSilo extends GenericContainerBlockEntity<TileMissil
 
 	@Override
 	public void addInventorySlots(Container inv, Inventory playerinv) {
-		addSlot(new SlotRestricted(inv, nextIndex(), 60, 17, DeferredRegisters.ITEM_MISSILECLOSERANGE.get(),
-				DeferredRegisters.ITEM_MISSILEMEDIUMRANGE.get(), DeferredRegisters.ITEM_MISSILELONGRANGE.get()));
+		addSlot(new SlotRestricted(inv, nextIndex(), 60, 17, DeferredRegisters.ITEM_MISSILECLOSERANGE.get(), DeferredRegisters.ITEM_MISSILEMEDIUMRANGE.get(), DeferredRegisters.ITEM_MISSILELONGRANGE.get()));
 		addSlot(new SlotRestricted(inv, nextIndex(), 60, 50) {
 			@Override
 			public boolean mayPlace(ItemStack stack) {
@@ -78,8 +77,7 @@ public class ContainerMissileSilo extends GenericContainerBlockEntity<TileMissil
 			// Filler
 		}
 		if (getHostFromIntArray() != null) {
-			NetworkHandler.CHANNEL
-					.sendToServer(new PacketSetMissileData(getHostFromIntArray().getBlockPos(), new BlockPos(triedX, triedY, triedZ), frequency));
+			NetworkHandler.CHANNEL.sendToServer(new PacketSetMissileData(getHostFromIntArray().getBlockPos(), new BlockPos(triedX, triedY, triedZ), frequency));
 		}
 	}
 

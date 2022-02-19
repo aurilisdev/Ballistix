@@ -42,10 +42,8 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 		super(DeferredRegisters.TILE_MISSILESILO.get(), pos, state);
 		addComponent(new ComponentTickable().tickServer(this::tickServer));
 		addComponent(new ComponentInventory(this).size(2).faceSlots(Direction.UP, 0, 1).valid(this::isItemValidForSlot));
-		addComponent(new ComponentPacketHandler().customPacketWriter(this::writePacket).customPacketReader(this::readPacket)
-				.guiPacketReader(this::readPacket).guiPacketWriter(this::writePacket));
-		addComponent(new ComponentContainerProvider("container.missilesilo")
-				.createMenu((id, player) -> new ContainerMissileSilo(id, player, getComponent(ComponentType.Inventory), getCoordsArray())));
+		addComponent(new ComponentPacketHandler().customPacketWriter(this::writePacket).customPacketReader(this::readPacket).guiPacketReader(this::readPacket).guiPacketWriter(this::writePacket));
+		addComponent(new ComponentContainerProvider("container.missilesilo").createMenu((id, player) -> new ContainerMissileSilo(id, player, getComponent(ComponentType.Inventory), getCoordsArray())));
 
 	}
 
@@ -112,8 +110,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 		ItemStack exp = inv.getItem(1);
 		ItemStack it = inv.getItem(0);
 		if (exp.getItem() instanceof BlockItemDescriptable des) {
-			double dist = Math.sqrt(Math.pow(worldPosition.getX() - target.x(), 2) + Math.pow(worldPosition.getY() - target.y(), 2)
-					+ Math.pow(worldPosition.getZ() - target.z(), 2));
+			double dist = Math.sqrt(Math.pow(worldPosition.getX() - target.x(), 2) + Math.pow(worldPosition.getY() - target.y(), 2) + Math.pow(worldPosition.getZ() - target.z(), 2));
 			if (range == 0 && dist < 3000 || range == 1 && dist < 10000 || range == 2) {
 				EntityMissile missile = new EntityMissile(level);
 				missile.setPos(getBlockPos().getX() + 1.0, getBlockPos().getY(), getBlockPos().getZ() + 1.0);
@@ -163,8 +160,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 				}
 			}
 		} else if (index == 0) {
-			return it == DeferredRegisters.ITEM_MISSILECLOSERANGE.get() || it == DeferredRegisters.ITEM_MISSILELONGRANGE.get()
-					|| it == DeferredRegisters.ITEM_MISSILEMEDIUMRANGE.get();
+			return it == DeferredRegisters.ITEM_MISSILECLOSERANGE.get() || it == DeferredRegisters.ITEM_MISSILELONGRANGE.get() || it == DeferredRegisters.ITEM_MISSILEMEDIUMRANGE.get();
 		}
 		return false;
 	}

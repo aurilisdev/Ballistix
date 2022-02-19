@@ -1,6 +1,6 @@
 package ballistix.common.blast.thread.raycast;
 
-import ballistix.common.blast.thread.HashDistanceBlockPos;
+import electrodynamics.prefab.block.HashDistanceBlockPos;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -18,7 +18,6 @@ public class ThreadRaySideBlast extends Thread {
 	public ThreadRaySideBlast(ThreadRaycastBlast threadRaycastBlast, Direction dir) {
 		mainBlast = threadRaycastBlast;
 		direction = dir;
-		setPriority(MAX_PRIORITY);
 		setName("Raycast Blast Side Thread");
 	}
 
@@ -55,15 +54,17 @@ public class ThreadRaySideBlast extends Thread {
 					if (!next.equals(currentBlockPos)) {
 						currentBlockPos = next;
 						BlockState block = world.getBlockState(currentBlockPos);
-						if (block != Blocks.AIR.defaultBlockState() && block != Blocks.CAVE_AIR.defaultBlockState()
-								&& block != Blocks.VOID_AIR.defaultBlockState() && block.getDestroySpeed(world, currentBlockPos) >= 0) {
-							power -= mainBlast.callBack.getResistance(world, position, currentBlockPos, mainBlast.explosionSource, block);
-							if (power > 0f) {
-								int idistancesq = (int) (Math.pow(currentBlockPos.getX() - position.getX(), 2)
-										+ Math.pow(currentBlockPos.getY() - position.getY(), 2)
-										+ Math.pow(currentBlockPos.getZ() - position.getZ(), 2));
-								mainBlast.results.add(new HashDistanceBlockPos(currentBlockPos.getX(), currentBlockPos.getY(), currentBlockPos.getZ(),
-										idistancesq));
+						if (block != Blocks.AIR.defaultBlockState() && block != Blocks.CAVE_AIR.defaultBlockState() && block != Blocks.VOID_AIR.defaultBlockState()) {
+							if (block.getDestroySpeed(world, currentBlockPos) >= 0) {
+								power -= Math.max(1, mainBlast.callBack.getResistance(world, position, currentBlockPos, mainBlast.explosionSource, block));
+								if (power > 0f) {
+									int idistancesq = (int) (Math.pow(currentBlockPos.getX() - position.getX(), 2) + Math.pow(currentBlockPos.getY() - position.getY(), 2) + Math.pow(currentBlockPos.getZ() - position.getZ(), 2));
+									synchronized (mainBlast.resultsSync) {
+										mainBlast.resultsSync.add(new HashDistanceBlockPos(currentBlockPos.getX(), currentBlockPos.getY(), currentBlockPos.getZ(), idistancesq));
+									}
+								}
+							} else {
+								power = 0;
 							}
 						}
 					}

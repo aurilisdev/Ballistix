@@ -89,8 +89,7 @@ public abstract class Blast {
 	public EntityBlast performExplosion() {
 		ConstructBlastEvent evt = new ConstructBlastEvent(world, this);
 		MinecraftForge.EVENT_BUS.post(evt);
-		Explosion explosion = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), 3, true,
-				BlockInteraction.BREAK);
+		Explosion explosion = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), 3, true, BlockInteraction.BREAK);
 		if (!ForgeEventFactory.onExplosionStart(world, explosion) && !evt.isCanceled()) {
 			if (isInstantaneous()) {
 				doPreExplode();
@@ -108,6 +107,10 @@ public abstract class Blast {
 	}
 
 	protected void attackEntities(float size) {
+		this.attackEntities(size, true);
+	}
+
+	protected void attackEntities(float size, boolean useRaytrace) {
 		Map<Player, Vec3> playerKnockbackMap = Maps.newHashMap();
 		float f2 = size * 2.0F;
 		int k1 = Mth.floor(position.getX() - (double) f2 - 1.0D);
@@ -131,7 +134,7 @@ public abstract class Blast {
 						d5 = d5 / d13;
 						d7 = d7 / d13;
 						d9 = d9 / d13;
-						double d14 = Explosion.getSeenPercent(vector3d, entity);
+						double d14 = useRaytrace ? Explosion.getSeenPercent(vector3d, entity) : 1;
 						double d10 = (1.0D - d12) * d14;
 						entity.hurt(DamageSource.explosion((LivingEntity) null), (int) ((d10 * d10 + d10) / 2.0D * 7.0D * f2 + 1.0D));
 						double d11 = d10;
@@ -151,8 +154,7 @@ public abstract class Blast {
 		}
 		for (Entry<Player, Vec3> entry : playerKnockbackMap.entrySet()) {
 			if (entry.getKey() instanceof ServerPlayer serverplayerentity) {
-				serverplayerentity.connection.send(
-						new ClientboundExplodePacket(position.getX(), position.getY(), position.getZ(), size, new ArrayList<>(), entry.getValue()));
+				serverplayerentity.connection.send(new ClientboundExplodePacket(position.getX(), position.getY(), position.getZ(), size, new ArrayList<>(), entry.getValue()));
 			}
 		}
 	}
@@ -160,8 +162,7 @@ public abstract class Blast {
 	public static Blast createFromSubtype(SubtypeBlast explosive, Level world, BlockPos pos) {
 		try {
 			return (Blast) explosive.blastClass.getConstructor(Level.class, BlockPos.class).newInstance(world, pos);
-		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e) {
+		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
 		return null;

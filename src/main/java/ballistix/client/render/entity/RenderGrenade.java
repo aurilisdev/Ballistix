@@ -30,8 +30,7 @@ public class RenderGrenade extends EntityRenderer<EntityGrenade> {
 	}
 
 	@Override
-	public void render(EntityGrenade entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn,
-			int packedLightIn) {
+	public void render(EntityGrenade entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
 		SubtypeBlast subtype = entityIn.getExplosiveType();
 		if (subtype != null) {
 			matrixStackIn.pushPose();
@@ -40,6 +39,7 @@ public class RenderGrenade extends EntityRenderer<EntityGrenade> {
 			}
 			itemEntity.setPos(entityIn.getX(), entityIn.getY(), entityIn.getZ());
 			itemEntity.setItem(new ItemStack(DeferredRegisters.SUBTYPEITEM_MAPPINGS.get(subtype)));
+			matrixStackIn.translate(0, -0.5 / 16.0, 0);
 			itemRenderer.render(itemEntity, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 			matrixStackIn.popPose();
 		}

@@ -26,8 +26,7 @@ public class RenderExplosive extends EntityRenderer<EntityExplosive> {
 	}
 
 	@Override
-	public void render(EntityExplosive entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn,
-			int packedLightIn) {
+	public void render(EntityExplosive entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
 		SubtypeBlast subtype = entityIn.getBlastType();
 		if (subtype != null) {
 			matrixStackIn.pushPose();
@@ -44,15 +43,13 @@ public class RenderExplosive extends EntityRenderer<EntityExplosive> {
 			matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(-90.0F));
 			matrixStackIn.translate(-0.5D, -0.5D, 0.5D);
 			matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(90.0F));
-			renderTntFlash(DeferredRegisters.SUBTYPEBLOCK_MAPPINGS.get(subtype).defaultBlockState(), matrixStackIn, bufferIn, packedLightIn,
-					entityIn.fuse / 5 % 2 == 0);
+			renderTntFlash(DeferredRegisters.SUBTYPEBLOCK_MAPPINGS.get(subtype).defaultBlockState(), matrixStackIn, bufferIn, packedLightIn, entityIn.fuse / 5 % 2 == 0);
 			matrixStackIn.popPose();
 		}
 		super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 	}
 
-	public static void renderTntFlash(BlockState blockStateIn, PoseStack matrixStackIn, MultiBufferSource renderTypeBuffer, int combinedLight,
-			boolean doFullBright) {
+	public static void renderTntFlash(BlockState blockStateIn, PoseStack matrixStackIn, MultiBufferSource renderTypeBuffer, int combinedLight, boolean doFullBright) {
 		int i;
 		if (doFullBright) {
 			i = OverlayTexture.pack(OverlayTexture.u(1.0F), 10);

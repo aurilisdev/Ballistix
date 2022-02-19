@@ -43,14 +43,12 @@ public class ItemGrenade extends Item {
 	@Override
 	public void releaseUsing(ItemStack itemStack, Level world, LivingEntity entityLiving, int timeLeft) {
 		if (!world.isClientSide) {
-			world.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), SoundEvents.TNT_PRIMED, SoundSource.BLOCKS, 0.5F,
-					0.4F / (world.random.nextFloat() * 0.4F + 0.8F));
+			world.playSound(null, entityLiving.getX(), entityLiving.getY(), entityLiving.getZ(), SoundEvents.TNT_PRIMED, SoundSource.BLOCKS, 0.5F, 0.4F / (world.random.nextFloat() * 0.4F + 0.8F));
 
 			float throwEnergy = (float) (getUseDuration(itemStack) - timeLeft) / (float) getUseDuration(itemStack) + 0.7f;
 
 			EntityGrenade grenade = new EntityGrenade(world);
-			grenade.moveTo(entityLiving.getX(), entityLiving.getY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getZ(), entityLiving.getYRot(),
-					entityLiving.getXRot());
+			grenade.moveTo(entityLiving.getX(), entityLiving.getY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getZ(), entityLiving.getYRot(), entityLiving.getXRot());
 			grenade.setExplosiveType(explosive);
 			grenade.shootFromRotation(entityLiving, entityLiving.getXRot() - 20, entityLiving.getYRot(), 0.0F, throwEnergy, 1.0F);
 			world.addFreshEntity(grenade);

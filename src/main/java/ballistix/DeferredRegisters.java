@@ -15,6 +15,7 @@ import ballistix.common.entity.EntityMinecart;
 import ballistix.common.entity.EntityMissile;
 import ballistix.common.entity.EntityShrapnel;
 import ballistix.common.inventory.container.ContainerMissileSilo;
+import ballistix.common.item.ItemDefuser;
 import ballistix.common.item.ItemGrenade;
 import ballistix.common.item.ItemLaserDesignator;
 import ballistix.common.item.ItemMinecart;
@@ -51,8 +52,7 @@ public class DeferredRegisters {
 	static {
 		for (SubtypeBlast subtype : SubtypeBlast.values()) {
 			SUBTYPEBLOCKREGISTER_MAPPINGS.put(subtype, BLOCKS.register(subtype.tag(), supplier(new BlockExplosive(subtype), subtype)));
-			ITEMS.register(subtype.tag(), supplier(
-					new BlockItemDescriptable(SUBTYPEBLOCK_MAPPINGS.get(subtype), new Item.Properties().tab(References.BALLISTIXTAB)), subtype));
+			ITEMS.register(subtype.tag(), supplier(new BlockItemDescriptable(SUBTYPEBLOCK_MAPPINGS.get(subtype), new Item.Properties().tab(References.BALLISTIXTAB)), subtype));
 		}
 		for (SubtypeBlast subtype : SubtypeBlast.values()) {
 			if (subtype.hasGrenade) {
@@ -72,35 +72,24 @@ public class DeferredRegisters {
 		ITEMS.register("missilesilo", supplier(new BlockItemDescriptable(blockMissileSilo, new Item.Properties().tab(References.BALLISTIXTAB))));
 
 	}
-	public static final RegistryObject<Item> ITEM_DUSTPOISON = ITEMS.register("dustpoison",
-			supplier(new Item(new Item.Properties().tab(References.BALLISTIXTAB))));
-	public static final RegistryObject<Item> ITEM_MISSILECLOSERANGE = ITEMS.register("missilecloserange",
-			supplier(new Item(new Item.Properties().tab(References.BALLISTIXTAB))));
-	public static final RegistryObject<Item> ITEM_MISSILEMEDIUMRANGE = ITEMS.register("missilemediumrange",
-			supplier(new Item(new Item.Properties().tab(References.BALLISTIXTAB))));
-	public static final RegistryObject<Item> ITEM_MISSILELONGRANGE = ITEMS.register("missilelongrange",
-			supplier(new Item(new Item.Properties().tab(References.BALLISTIXTAB))));
+	public static final RegistryObject<Item> ITEM_DUSTPOISON = ITEMS.register("dustpoison", supplier(new Item(new Item.Properties().tab(References.BALLISTIXTAB))));
+	public static final RegistryObject<Item> ITEM_MISSILECLOSERANGE = ITEMS.register("missilecloserange", supplier(new Item(new Item.Properties().tab(References.BALLISTIXTAB))));
+	public static final RegistryObject<Item> ITEM_MISSILEMEDIUMRANGE = ITEMS.register("missilemediumrange", supplier(new Item(new Item.Properties().tab(References.BALLISTIXTAB))));
+	public static final RegistryObject<Item> ITEM_MISSILELONGRANGE = ITEMS.register("missilelongrange", supplier(new Item(new Item.Properties().tab(References.BALLISTIXTAB))));
 	public static final RegistryObject<Item> ITEM_ROCKETLAUNCHER = ITEMS.register("rocketlauncher", supplier(new ItemRocketLauncher()));
 	public static final RegistryObject<Item> ITEM_RADARGUN = ITEMS.register("radargun", supplier(new ItemRadarGun()));
 	public static final RegistryObject<Item> ITEM_TRACKER = ITEMS.register("tracker", supplier(new ItemTracker()));
 	public static final RegistryObject<Item> ITEM_SCANNER = ITEMS.register("scanner", supplier(new ItemScanner()));
 	public static final RegistryObject<Item> ITEM_LASERDESIGNATOR = ITEMS.register("laserdesignator", supplier(new ItemLaserDesignator()));
-	public static final RegistryObject<BlockEntityType<TileMissileSilo>> TILE_MISSILESILO = TILES.register("missilesilo",
-			() -> new BlockEntityType<>(TileMissileSilo::new, Sets.newHashSet(blockMissileSilo), null));
-	public static final RegistryObject<MenuType<ContainerMissileSilo>> CONTAINER_MISSILESILO = CONTAINERS.register("missilesilo",
-			() -> new MenuType<>(ContainerMissileSilo::new));
-	public static final RegistryObject<EntityType<EntityExplosive>> ENTITY_EXPLOSIVE = ENTITIES.register("explosive", () -> EntityType.Builder
-			.<EntityExplosive>of(EntityExplosive::new, MobCategory.MISC).fireImmune().sized(1, 1).build(References.ID + ".explosive"));
-	public static final RegistryObject<EntityType<EntityGrenade>> ENTITY_GRENADE = ENTITIES.register("grenade", () -> EntityType.Builder
-			.<EntityGrenade>of(EntityGrenade::new, MobCategory.MISC).fireImmune().sized(0.25f, 0.25f).build(References.ID + ".grenade"));
-	public static final RegistryObject<EntityType<EntityMinecart>> ENTITY_MINECART = ENTITIES.register("minecart", () -> EntityType.Builder
-			.<EntityMinecart>of(EntityMinecart::new, MobCategory.MISC).fireImmune().sized(1, 1).build(References.ID + ".minecart"));
-	public static final RegistryObject<EntityType<EntityBlast>> ENTITY_BLAST = ENTITIES.register("blast",
-			() -> EntityType.Builder.<EntityBlast>of(EntityBlast::new, MobCategory.MISC).fireImmune().build(References.ID + ".blast"));
-	public static final RegistryObject<EntityType<EntityShrapnel>> ENTITY_SHRAPNEL = ENTITIES.register("shrapnel", () -> EntityType.Builder
-			.<EntityShrapnel>of(EntityShrapnel::new, MobCategory.MISC).fireImmune().sized(0.5f, 0.5f).build(References.ID + ".shrapnel"));
-	public static final RegistryObject<EntityType<EntityMissile>> ENTITY_MISSILE = ENTITIES.register("missile", () -> EntityType.Builder
-			.<EntityMissile>of(EntityMissile::new, MobCategory.MISC).fireImmune().sized(0, 0).build(References.ID + ".missile"));
+	public static final RegistryObject<Item> ITEM_DEFUSER = ITEMS.register("defuser", supplier(new ItemDefuser()));
+	public static final RegistryObject<BlockEntityType<TileMissileSilo>> TILE_MISSILESILO = TILES.register("missilesilo", () -> new BlockEntityType<>(TileMissileSilo::new, Sets.newHashSet(blockMissileSilo), null));
+	public static final RegistryObject<MenuType<ContainerMissileSilo>> CONTAINER_MISSILESILO = CONTAINERS.register("missilesilo", () -> new MenuType<>(ContainerMissileSilo::new));
+	public static final RegistryObject<EntityType<EntityExplosive>> ENTITY_EXPLOSIVE = ENTITIES.register("explosive", () -> EntityType.Builder.<EntityExplosive>of(EntityExplosive::new, MobCategory.MISC).fireImmune().sized(1, 1).clientTrackingRange(10).build(References.ID + ".explosive"));
+	public static final RegistryObject<EntityType<EntityGrenade>> ENTITY_GRENADE = ENTITIES.register("grenade", () -> EntityType.Builder.<EntityGrenade>of(EntityGrenade::new, MobCategory.MISC).fireImmune().sized(0.25f, 0.55f).build(References.ID + ".grenade"));
+	public static final RegistryObject<EntityType<EntityMinecart>> ENTITY_MINECART = ENTITIES.register("minecart", () -> EntityType.Builder.<EntityMinecart>of(EntityMinecart::new, MobCategory.MISC).fireImmune().clientTrackingRange(8).sized(0.98F, 0.7F).build(References.ID + ".minecart"));
+	public static final RegistryObject<EntityType<EntityBlast>> ENTITY_BLAST = ENTITIES.register("blast", () -> EntityType.Builder.<EntityBlast>of(EntityBlast::new, MobCategory.MISC).fireImmune().build(References.ID + ".blast"));
+	public static final RegistryObject<EntityType<EntityShrapnel>> ENTITY_SHRAPNEL = ENTITIES.register("shrapnel", () -> EntityType.Builder.<EntityShrapnel>of(EntityShrapnel::new, MobCategory.MISC).fireImmune().sized(0.5f, 0.5f).build(References.ID + ".shrapnel"));
+	public static final RegistryObject<EntityType<EntityMissile>> ENTITY_MISSILE = ENTITIES.register("missile", () -> EntityType.Builder.<EntityMissile>of(EntityMissile::new, MobCategory.MISC).fireImmune().sized(0, 0).build(References.ID + ".missile"));
 
 	private static <T extends IForgeRegistryEntry<T>> Supplier<? extends T> supplier(T entry) {
 		return () -> entry;

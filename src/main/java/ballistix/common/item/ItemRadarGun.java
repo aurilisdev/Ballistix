@@ -29,8 +29,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 public class ItemRadarGun extends ItemElectric {
 
 	public ItemRadarGun() {
-		super((ElectricItemProperties) new ElectricItemProperties().capacity(10000).receive(TransferPack.joulesVoltage(500, 120))
-				.extract(TransferPack.joulesVoltage(500, 120)).stacksTo(1).tab(References.BALLISTIXTAB));
+		super((ElectricItemProperties) new ElectricItemProperties().capacity(10000).receive(TransferPack.joulesVoltage(500, 120)).extract(TransferPack.joulesVoltage(500, 120)).stacksTo(1).tab(References.BALLISTIXTAB));
 	}
 
 	@Override
@@ -56,14 +55,14 @@ public class ItemRadarGun extends ItemElectric {
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		Location trace = MathUtils.getRaytracedBlock(playerIn);
-		if (trace != null) {
-			CompoundTag nbt = playerIn.getItemBySlot(handIn == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND)
-					.getOrCreateTag();
+		ItemStack stack = playerIn.getItemBySlot(handIn == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
+		if (trace != null && getJoulesStored(stack) >= 150) {
+			CompoundTag nbt = stack.getOrCreateTag();
 			nbt.putInt("xCoord", trace.intX());
 			nbt.putInt("yCoord", trace.intY());
 			nbt.putInt("zCoord", trace.intZ());
 			nbt.putString("world", worldIn.dimension().location().getPath());
-			extractPower(playerIn.getItemBySlot(handIn == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND), 150, false);
+			extractPower(stack, 150, false);
 		}
 		return super.use(worldIn, playerIn, handIn);
 	}

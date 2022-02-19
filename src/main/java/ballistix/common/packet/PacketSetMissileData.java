@@ -9,7 +9,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.network.NetworkEvent.Context;
 
-// TODO: Could be removed
 public class PacketSetMissileData {
 
 	private final BlockPos target;

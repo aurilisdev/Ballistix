@@ -31,8 +31,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 public class ItemLaserDesignator extends ItemElectric {
 
 	public ItemLaserDesignator() {
-		super((ElectricItemProperties) new ElectricItemProperties().capacity(10000).receive(TransferPack.joulesVoltage(500, 120))
-				.extract(TransferPack.joulesVoltage(500, 120)).stacksTo(1).tab(References.BALLISTIXTAB));
+		super((ElectricItemProperties) new ElectricItemProperties().capacity(10000).receive(TransferPack.joulesVoltage(500, 120)).extract(TransferPack.joulesVoltage(500, 120)).stacksTo(1).tab(References.BALLISTIXTAB));
 	}
 
 	@Override
@@ -55,24 +54,22 @@ public class ItemLaserDesignator extends ItemElectric {
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-		if (!worldIn.isClientSide) {
+		ItemStack stack = playerIn.getItemBySlot(handIn == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
+		if (!worldIn.isClientSide && getJoulesStored(stack) >= 150) {
 			Location trace = MathUtils.getRaytracedBlock(playerIn);
 			if (trace != null) {
-				CompoundTag nbt = playerIn.getItemBySlot(handIn == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND)
-						.getOrCreateTag();
+				CompoundTag nbt = stack.getOrCreateTag();
 				if (nbt.contains("freq")) {
 					int freq = nbt.getInt("freq");
 					if (freq != 0) {
 						for (TileMissileSilo silo : SiloRegistry.getSilos(freq)) {
 							silo.target = new Location(trace);
 							silo.shouldLaunch = true;
-							playerIn.sendMessage(new TranslatableComponent("message.laserdesignator.launch",
-									new Location(silo.getBlockPos()) + " -> " + silo.target), UUID.randomUUID());
+							playerIn.sendMessage(new TranslatableComponent("message.laserdesignator.launch", new Location(silo.getBlockPos()) + " -> " + silo.target), UUID.randomUUID());
 						}
 					}
 				}
-				extractPower(playerIn.getItemBySlot(handIn == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND), 150,
-						false);
+				extractPower(stack, 150, false);
 			}
 		}
 		return super.use(worldIn, playerIn, handIn);

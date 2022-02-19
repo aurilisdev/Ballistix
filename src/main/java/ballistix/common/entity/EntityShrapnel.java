@@ -52,8 +52,7 @@ public class EntityShrapnel extends ThrowableProjectile {
 		}
 		setPos(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z);
 		EntityDimensions size = getDimensions(Pose.STANDING);
-		setBoundingBox(new AABB(getX() - size.width * 2, getY() - size.height * 2, getZ() - size.width * 2, getX() + size.width * 2,
-				getY() + size.height * 2, getZ() + size.width * 2));
+		setBoundingBox(new AABB(getX() - size.width * 2, getY() - size.height * 2, getZ() - size.width * 2, getX() + size.width * 2, getY() + size.height * 2, getZ() + size.width * 2));
 		if (onGround || tickCount > (isExplosive ? 400 : 100) || level.getBlockState(blockPosition()).getMaterial().blocksMotion()) {
 			remove(RemovalReason.DISCARDED);
 		}

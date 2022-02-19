@@ -17,8 +17,7 @@ import net.minecraftforge.network.NetworkHooks;
 public class EntityBlast extends Entity {
 	private static final EntityDataAccessor<Integer> CALLCOUNT = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.INT);
-	private static final EntityDataAccessor<Boolean> SHOULDSTARTCUSTOMRENDER = SynchedEntityData.defineId(EntityBlast.class,
-			EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Boolean> SHOULDSTARTCUSTOMRENDER = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.BOOLEAN);
 
 	private Blast blast;
 	public int blastOrdinal = -1;

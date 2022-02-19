@@ -21,22 +21,21 @@ import net.minecraft.world.level.Level;
 public class ItemScanner extends ItemElectric {
 
 	public ItemScanner() {
-		super((ElectricItemProperties) new ElectricItemProperties().capacity(10000).receive(TransferPack.joulesVoltage(500, 120))
-				.extract(TransferPack.joulesVoltage(500, 120)).stacksTo(1).tab(References.BALLISTIXTAB));
+		super((ElectricItemProperties) new ElectricItemProperties().capacity(10000).receive(TransferPack.joulesVoltage(500, 120)).extract(TransferPack.joulesVoltage(500, 120)).stacksTo(1).tab(References.BALLISTIXTAB));
 	}
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		boolean action = false;
+		ItemStack stack = playerIn.getItemBySlot(handIn == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
 		for (Entry<ServerLevel, HashSet<UUID>> en : ItemTracker.validuuids.entrySet()) {
 			Iterator<UUID> it = en.getValue().iterator();
 			while (it.hasNext()) {
 				UUID uuid = it.next();
-				if (uuid == playerIn.getUUID()) {
+				if (uuid == playerIn.getUUID() && getJoulesStored(stack) >= 150) {
 					it.remove();
 					action = true;
-					extractPower(playerIn.getItemBySlot(handIn == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND), 150,
-							false);
+					extractPower(stack, 150, false);
 				}
 			}
 		}

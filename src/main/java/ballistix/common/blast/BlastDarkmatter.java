@@ -70,8 +70,7 @@ public class BlastDarkmatter extends Blast {
 					}
 					BlockPos p = new BlockPos(cachedIterator.next()).offset(position);
 					BlockState state = world.getBlockState(p);
-					if (state != Blocks.AIR.defaultBlockState() && state != Blocks.VOID_AIR.defaultBlockState()
-							&& state.getDestroySpeed(world, p) >= 0) {
+					if (state != Blocks.AIR.defaultBlockState() && state != Blocks.VOID_AIR.defaultBlockState() && state.getDestroySpeed(world, p) >= 0) {
 						world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
 					}
 				}
@@ -106,8 +105,7 @@ public class BlastDarkmatter extends Blast {
 					entity.setDeltaMovement(entity.getDeltaMovement().add(d5 * d11, d7 * d11, d9 * d11));
 					if (entity instanceof ServerPlayer serverplayerentity) {
 						if (!serverplayerentity.isCreative()) {
-							serverplayerentity.connection
-									.send(new ClientboundExplodePacket(x, y, z, size, new ArrayList<>(), new Vec3(d5 * d11, d7 * d11, d9 * d11)));
+							serverplayerentity.connection.send(new ClientboundExplodePacket(x, y, z, size, new ArrayList<>(), new Vec3(d5 * d11, d7 * d11, d9 * d11)));
 						}
 					} else if (entity instanceof FallingBlockEntity) {
 						entity.remove(RemovalReason.DISCARDED);

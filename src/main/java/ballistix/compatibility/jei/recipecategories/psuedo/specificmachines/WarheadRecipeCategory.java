@@ -60,14 +60,12 @@ public class WarheadRecipeCategory implements IRecipeCategory<PsuedoItem2ItemRec
 	public WarheadRecipeCategory(IGuiHelper guiHelper) {
 
 		ICON = guiHelper.createDrawableIngredient(INPUT_MACHINE);
-		BACKGROUND = guiHelper.createDrawable(new ResourceLocation(MOD_ID, GUI_TEXTURE), GUI_BACKGROUND[0], GUI_BACKGROUND[1], GUI_BACKGROUND[2],
-				GUI_BACKGROUND[3]);
+		BACKGROUND = guiHelper.createDrawable(new ResourceLocation(MOD_ID, GUI_TEXTURE), GUI_BACKGROUND[0], GUI_BACKGROUND[1], GUI_BACKGROUND[2], GUI_BACKGROUND[3]);
 
 		cachedArrows = CacheBuilder.newBuilder().maximumSize(25).build(new CacheLoader<Integer, IDrawableAnimated>() {
 			@Override
 			public IDrawableAnimated load(Integer cookTime) {
-				return guiHelper.drawableBuilder(new ResourceLocation(MOD_ID, GUI_TEXTURE), PROCESSING_ARROW_COORDS[0], PROCESSING_ARROW_COORDS[1],
-						PROCESSING_ARROW_COORDS[2], PROCESSING_ARROW_COORDS[3]).buildAnimated(cookTime, START_DIRECTION, false);
+				return guiHelper.drawableBuilder(new ResourceLocation(MOD_ID, GUI_TEXTURE), PROCESSING_ARROW_COORDS[0], PROCESSING_ARROW_COORDS[1], PROCESSING_ARROW_COORDS[2], PROCESSING_ARROW_COORDS[3]).buildAnimated(cookTime, START_DIRECTION, false);
 			}
 		});
 

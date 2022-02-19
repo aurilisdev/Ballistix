@@ -1,9 +1,11 @@
 package ballistix.common.blast.thread.raycast;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
-import ballistix.common.blast.thread.HashDistanceBlockPos;
 import ballistix.common.blast.thread.ThreadBlast;
+import electrodynamics.prefab.block.HashDistanceBlockPos;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
@@ -16,6 +18,8 @@ import net.minecraftforge.fluids.IFluidBlock;
 public class ThreadRaycastBlast extends ThreadBlast {
 	public IResistanceCallback callBack;
 	public HashSet<ThreadRaySideBlast> underBlasts = new HashSet<>();
+	public Set<BlockPos> resultsSync = Collections.synchronizedSet(new HashSet<BlockPos>());
+	public boolean locked = false;
 
 	public ThreadRaycastBlast(Level world, BlockPos position, int range, float energy, Entity source, IResistanceCallback cb) {
 		super(world, position, range, energy, source);
@@ -30,8 +34,7 @@ public class ThreadRaycastBlast extends ThreadBlast {
 			if (block.getFluidState() != Fluids.EMPTY.defaultFluidState() || block instanceof IFluidBlock) {
 				resistance = 0.25f;
 			} else {
-				resistance = block.getExplosionResistance(world1, position, new Explosion(world, source, null, null, position.getX(), position.getY(),
-						position.getZ(), range, false, BlockInteraction.BREAK));
+				resistance = block.getExplosionResistance(world1, position, new Explosion(world, source, null, null, position.getX(), position.getY(), position.getZ(), range, false, BlockInteraction.BREAK));
 				if (resistance > 200) {
 					resistance = 0.75f * (float) Math.sqrt(resistance);
 				}
@@ -45,7 +48,7 @@ public class ThreadRaycastBlast extends ThreadBlast {
 	@Override
 	@SuppressWarnings("java:S2184")
 	public void run() {
-		results.add(new HashDistanceBlockPos(position.getX(), position.getY(), position.getZ(), 1));
+		results.add(new HashDistanceBlockPos(position.getX(), position.getY(), position.getZ(), 0));
 		for (Direction dir : Direction.values()) {
 			ThreadRaySideBlast sideBlast = new ThreadRaySideBlast(this, dir);
 			sideBlast.start();
@@ -56,6 +59,7 @@ public class ThreadRaycastBlast extends ThreadBlast {
 				sleep(50);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
+				break;
 			}
 		}
 		super.run();

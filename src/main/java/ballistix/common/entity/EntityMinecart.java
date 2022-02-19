@@ -1,6 +1,7 @@
 package ballistix.common.entity;
 
 import ballistix.DeferredRegisters;
+import ballistix.api.entity.IDefusable;
 import ballistix.common.blast.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import net.minecraft.core.BlockPos;
@@ -30,7 +31,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.network.NetworkHooks;
 
-public class EntityMinecart extends AbstractMinecart {
+public class EntityMinecart extends AbstractMinecart implements IDefusable {
 	private static final EntityDataAccessor<Integer> FUSE = SynchedEntityData.defineId(EntityMinecart.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(EntityMinecart.class, EntityDataSerializers.INT);
 	public int blastOrdinal = -1;
@@ -135,10 +136,17 @@ public class EntityMinecart extends AbstractMinecart {
 		if (!exploded) {
 			if (blastOrdinal != -1) {
 				SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
-				ItemEntity item = new ItemEntity(level, getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5,
-						new ItemStack(DeferredRegisters.SUBTYPEMINECARTMAPPINGS.get(explosive)));
+				ItemEntity item = new ItemEntity(level, getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(DeferredRegisters.SUBTYPEMINECARTMAPPINGS.get(explosive)));
 				level.addFreshEntity(item);
 			}
+		}
+	}
+
+	@Override
+	public void defuse() {
+		if (!exploded) {
+			fuse = -1;
+			entityData.set(FUSE, fuse);
 		}
 	}
 
@@ -188,15 +196,12 @@ public class EntityMinecart extends AbstractMinecart {
 
 	@Override
 	public float getBlockExplosionResistance(Explosion ex, BlockGetter getter, BlockPos pos, BlockState state, FluidState fluidState, float val) {
-		return !isPrimed() || !state.is(BlockTags.RAILS) && !getter.getBlockState(pos.above()).is(BlockTags.RAILS)
-				? super.getBlockExplosionResistance(ex, getter, pos, state, fluidState, val)
-				: 0.0F;
+		return !isPrimed() || !state.is(BlockTags.RAILS) && !getter.getBlockState(pos.above()).is(BlockTags.RAILS) ? super.getBlockExplosionResistance(ex, getter, pos, state, fluidState, val) : 0.0F;
 	}
 
 	@Override
 	public boolean shouldBlockExplode(Explosion ex, BlockGetter getter, BlockPos pos, BlockState state, float val) {
-		return !isPrimed() || !state.is(BlockTags.RAILS) && !getter.getBlockState(pos.above()).is(BlockTags.RAILS)
-				&& super.shouldBlockExplode(ex, getter, pos, state, val);
+		return !isPrimed() || !state.is(BlockTags.RAILS) && !getter.getBlockState(pos.above()).is(BlockTags.RAILS) && super.shouldBlockExplode(ex, getter, pos, state, val);
 	}
 
 	@Override

@@ -1,0 +1,23 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"rbr",
+		"btb",
+		"rbr"
+	],
+	"key": {
+		"b": {
+			"item": "electrodynamics:battery"
+		},
+		"r": {
+			"item": "minecraft:redstone"
+		},
+		"t": {
+			"item": "minecraft:tnt"
+		}
+	},
+	"result": {
+		"item": "ballistix:emp",
+		"count": 1
+	}
+}

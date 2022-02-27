@@ -86,7 +86,7 @@ public class WarheadRecipeCategory implements IRecipeCategory<PsuedoItem2ItemRec
 	public IDrawable getIcon() {
 		return ICON;
 	}
-	
+
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, PsuedoItem2ItemRecipe recipe, IFocusGroup focuses) {
 		builder.addSlot(RecipeIngredientRole.CATALYST, 90, 8).addItemStacks(BallistixPsuedoRecipes.BALLISTIX_ITEMS.get(0));

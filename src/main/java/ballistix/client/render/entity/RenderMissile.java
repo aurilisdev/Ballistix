@@ -39,17 +39,17 @@ public class RenderMissile extends EntityRenderer<EntityMissile> {
 		matrixStackIn.mulPose(new Quaternion(new Vector3f(0, 0, 1), 90 - entity.getXRot(), true));
 		if (type == 1) {
 			BakedModel closerange = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILEMEDIUMRANGE);
-			matrixStackIn.translate(0.5f, 2.6f, 0.5f);
+			matrixStackIn.translate(0.0f, 2.6f, 0.0f);
 			matrixStackIn.scale(1.5f, 2.5f, 1.5f);
 			Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateWithoutAO(world, closerange, Blocks.AIR.defaultBlockState(), entity.blockPosition(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, world.random, new Random().nextLong(), 0);
 		} else if (type == 0) {
 			BakedModel closerange = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILECLOSERANGE);
-			matrixStackIn.translate(0.5f, 1.5f, 0.5f);
+			matrixStackIn.translate(0.0f, 1.5f, 0.0f);
 			matrixStackIn.scale(1.25f, 1.5f, 1.25f);
 			Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateWithoutAO(world, closerange, Blocks.AIR.defaultBlockState(), entity.blockPosition(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, world.random, new Random().nextLong(), 0);
 		} else if (type == 2) {
 			BakedModel closerange = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILELONGRANGE);
-			matrixStackIn.translate(0.5f, 4, 0.5f);
+			matrixStackIn.translate(0.0f, 4, 0.0f);
 			matrixStackIn.scale(2f, 4f, 2f);
 			Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateWithoutAO(world, closerange, Blocks.AIR.defaultBlockState(), entity.blockPosition(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, world.random, new Random().nextLong(), 0);
 		}

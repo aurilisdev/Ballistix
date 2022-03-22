@@ -2,6 +2,7 @@ package ballistix.client;
 
 import ballistix.DeferredRegisters;
 import ballistix.References;
+import ballistix.client.guidebook.ModuleBallistix;
 import ballistix.client.render.entity.RenderBlast;
 import ballistix.client.render.entity.RenderExplosive;
 import ballistix.client.render.entity.RenderGrenade;
@@ -11,6 +12,7 @@ import ballistix.client.render.entity.RenderShrapnel;
 import ballistix.client.render.tile.RenderMissileSilo;
 import ballistix.client.screen.ScreenMissileSilo;
 import ballistix.common.item.ItemTracker;
+import electrodynamics.client.guidebook.ScreenGuidebook;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -57,6 +59,8 @@ public class ClientRegister {
 		MenuScreens.register(DeferredRegisters.CONTAINER_MISSILESILO.get(), ScreenMissileSilo::new);
 		ItemBlockRenderTypes.setRenderLayer(DeferredRegisters.blockMissileSilo, RenderType.cutout());
 		ItemProperties.register(DeferredRegisters.ITEM_TRACKER.get(), new ResourceLocation("angle"), ItemTracker::getAngle);
+	
+		ScreenGuidebook.addGuidebookModule(new ModuleBallistix());
 	}
 
 	@SubscribeEvent

@@ -1,6 +1,5 @@
 package ballistix.compatibility.jei;
 
-
 import ballistix.compatibility.jei.util.psuedorecipes.BallistixPsuedoRecipes;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -23,7 +22,7 @@ public class BallistixJEIPlugin implements IModPlugin {
 	@Override
 	public void registerRecipes(IRecipeRegistration registration) {
 		BallistixPsuedoRecipes.addBallistixRecipes();
-		
+
 		ballistixInfoTabs(registration);
 
 	}

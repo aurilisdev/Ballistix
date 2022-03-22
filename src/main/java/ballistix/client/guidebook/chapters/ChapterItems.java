@@ -13,11 +13,11 @@ import net.minecraft.ChatFormatting;
 public class ChapterItems extends Chapter {
 
 	private static final ItemWrapperObject LOGO = new ItemWrapperObject(17, 60, 2.0F, DeferredRegisters.ITEM_ROCKETLAUNCHER.get());
-	
+
 	@Override
 	protected List<Page> genPages() {
 		List<Page> pages = new ArrayList<>();
-		
+
 		pages.add(new Page(new TextWrapperObject[] {
 				//
 				new TextWrapperObject(45, 53, 4210752, "guidebook.ballistix.chapter.items.rocketlaunchertitle").setTextStyles(ChatFormatting.UNDERLINE),
@@ -40,11 +40,11 @@ public class ChapterItems extends Chapter {
 				//
 				new TextWrapperObject(10, 160, 4210752, "guidebook.ballistix.chapter.items.p1l9"),
 				//
-				new TextWrapperObject(10, 170, 4210752, "guidebook.ballistix.chapter.items.p1l10")},
+				new TextWrapperObject(10, 170, 4210752, "guidebook.ballistix.chapter.items.p1l10") },
 				new ItemWrapperObject[] {
 						//
 						new ItemWrapperObject(17, 50, 2.0F, DeferredRegisters.ITEM_ROCKETLAUNCHER.get()) }));
-		
+
 		pages.add(new Page(new TextWrapperObject[] {
 				//
 				new TextWrapperObject(45, 53, 4210752, "guidebook.ballistix.chapter.items.radguntitle").setTextStyles(ChatFormatting.UNDERLINE),
@@ -65,11 +65,11 @@ public class ChapterItems extends Chapter {
 				//
 				new TextWrapperObject(10, 150, 4210752, "guidebook.ballistix.chapter.items.p2l8"),
 				//
-				new TextWrapperObject(10, 160, 4210752, "guidebook.ballistix.chapter.items.p2l9")},
+				new TextWrapperObject(10, 160, 4210752, "guidebook.ballistix.chapter.items.p2l9") },
 				new ItemWrapperObject[] {
 						//
 						new ItemWrapperObject(17, 50, 2.0F, DeferredRegisters.ITEM_RADARGUN.get()) }));
-		
+
 		pages.add(new Page(new TextWrapperObject[] {
 				//
 				new TextWrapperObject(45, 53, 4210752, "guidebook.ballistix.chapter.items.laserdestitle").setTextStyles(ChatFormatting.UNDERLINE),
@@ -98,7 +98,7 @@ public class ChapterItems extends Chapter {
 				new ItemWrapperObject[] {
 						//
 						new ItemWrapperObject(17, 50, 2.0F, DeferredRegisters.ITEM_LASERDESIGNATOR.get()) }));
-		
+
 		pages.add(new Page(new TextWrapperObject[] {
 				//
 				new TextWrapperObject(45, 53, 4210752, "guidebook.ballistix.chapter.items.defusertitle").setTextStyles(ChatFormatting.UNDERLINE),
@@ -123,7 +123,7 @@ public class ChapterItems extends Chapter {
 				new ItemWrapperObject[] {
 						//
 						new ItemWrapperObject(17, 50, 2.0F, DeferredRegisters.ITEM_DEFUSER.get()) }));
-		
+
 		pages.add(new Page(new TextWrapperObject[] {
 				//
 				new TextWrapperObject(45, 53, 4210752, "guidebook.ballistix.chapter.items.trackertitle").setTextStyles(ChatFormatting.UNDERLINE),
@@ -152,7 +152,7 @@ public class ChapterItems extends Chapter {
 				new ItemWrapperObject[] {
 						//
 						new ItemWrapperObject(17, 50, 2.0F, DeferredRegisters.ITEM_TRACKER.get()) }));
-		
+
 		pages.add(new Page(new TextWrapperObject[] {
 				//
 				new TextWrapperObject(45, 53, 4210752, "guidebook.ballistix.chapter.items.scannertitle").setTextStyles(ChatFormatting.UNDERLINE),
@@ -173,7 +173,7 @@ public class ChapterItems extends Chapter {
 				new ItemWrapperObject[] {
 						//
 						new ItemWrapperObject(17, 50, 2.0F, DeferredRegisters.ITEM_SCANNER.get()) }));
-		
+
 		return pages;
 	}
 

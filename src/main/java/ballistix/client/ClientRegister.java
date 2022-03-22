@@ -59,7 +59,7 @@ public class ClientRegister {
 		MenuScreens.register(DeferredRegisters.CONTAINER_MISSILESILO.get(), ScreenMissileSilo::new);
 		ItemBlockRenderTypes.setRenderLayer(DeferredRegisters.blockMissileSilo, RenderType.cutout());
 		ItemProperties.register(DeferredRegisters.ITEM_TRACKER.get(), new ResourceLocation("angle"), ItemTracker::getAngle);
-	
+
 		ScreenGuidebook.addGuidebookModule(new ModuleBallistix());
 	}
 

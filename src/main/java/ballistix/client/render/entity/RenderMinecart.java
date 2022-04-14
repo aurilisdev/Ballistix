@@ -82,7 +82,7 @@ public class RenderMinecart extends EntityRenderer<EntityMinecart> {
 
 		int j = entity.getDisplayOffset();
 		if (entity.getExplosiveType() != null) {
-			BlockState blockstate = DeferredRegisters.SUBTYPEBLOCK_MAPPINGS.get(entity.getExplosiveType()).defaultBlockState();
+			BlockState blockstate = DeferredRegisters.SUBTYPEBLOCKREGISTER_MAPPINGS.get(entity.getExplosiveType()).get().defaultBlockState();
 			if (blockstate != null) {
 				if (blockstate.getRenderShape() != RenderShape.INVISIBLE) {
 					stack.pushPose();

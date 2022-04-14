@@ -95,7 +95,7 @@ public class BlockExplosive extends Block {
 
 	@Override
 	public List<ItemStack> getDrops(BlockState state, Builder builder) {
-		return Arrays.asList(new ItemStack(DeferredRegisters.SUBTYPEBLOCK_MAPPINGS.get(explosive)));
+		return Arrays.asList(new ItemStack(DeferredRegisters.SUBTYPEBLOCKREGISTER_MAPPINGS.get(explosive).get()));
 	}
 
 	@Override

@@ -34,13 +34,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryObject;
 
 public class DeferredRegisters {
-	public static final HashMap<ISubtype, Item> SUBTYPEITEM_MAPPINGS = new HashMap<>();
-	public static final HashMap<ISubtype, Item> SUBTYPEMINECARTMAPPINGS = new HashMap<>();
-	public static final HashMap<ISubtype, Block> SUBTYPEBLOCK_MAPPINGS = new HashMap<>();
+	public static final HashMap<ISubtype, RegistryObject<Item>> SUBTYPEITEMREGISTER_MAPPINGS = new HashMap<>();
+	public static final HashMap<ISubtype, RegistryObject<Item>> SUBTYPEMINECARTMAPPINGS = new HashMap<>();
 	public static final HashMap<ISubtype, RegistryObject<Block>> SUBTYPEBLOCKREGISTER_MAPPINGS = new HashMap<>();
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, References.ID);
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, References.ID);
@@ -51,37 +50,33 @@ public class DeferredRegisters {
 
 	static {
 		for (SubtypeBlast subtype : SubtypeBlast.values()) {
-			SUBTYPEBLOCKREGISTER_MAPPINGS.put(subtype, BLOCKS.register(subtype.tag(), supplier(new BlockExplosive(subtype), subtype)));
-			ITEMS.register(subtype.tag(), supplier(new BlockItemDescriptable(SUBTYPEBLOCK_MAPPINGS.get(subtype), new Item.Properties().tab(References.BALLISTIXTAB)), subtype));
+			SUBTYPEBLOCKREGISTER_MAPPINGS.put(subtype, BLOCKS.register(subtype.tag(), supplier(() -> new BlockExplosive(subtype), subtype)));
+			ITEMS.register(subtype.tag(), supplier(() -> new BlockItemDescriptable(() -> getSafeBlock(subtype), new Item.Properties().tab(References.BALLISTIXTAB)), subtype));
 		}
 		for (SubtypeBlast subtype : SubtypeBlast.values()) {
 			if (subtype.hasGrenade) {
-				ItemGrenade grenade = new ItemGrenade(subtype);
-				ITEMS.register("grenade" + subtype.tag(), supplier(grenade, subtype));
-				SUBTYPEITEM_MAPPINGS.put(subtype, grenade);
+				SUBTYPEITEMREGISTER_MAPPINGS.put(subtype, ITEMS.register("grenade" + subtype.tag(), supplier(() -> new ItemGrenade(subtype), subtype)));
 			}
 		}
 		for (SubtypeBlast subtype : SubtypeBlast.values()) {
 			if (subtype.hasMinecart) {
-				ItemMinecart cart = new ItemMinecart(subtype);
-				ITEMS.register("minecart" + subtype.tag(), supplier(cart));
-				SUBTYPEMINECARTMAPPINGS.put(subtype, cart);
+				SUBTYPEMINECARTMAPPINGS.put(subtype, ITEMS.register("minecart" + subtype.tag(), supplier(() -> new ItemMinecart(subtype))));
 			}
 		}
-		BLOCKS.register("missilesilo", supplier(blockMissileSilo));
-		ITEMS.register("missilesilo", supplier(new BlockItemDescriptable(blockMissileSilo, new Item.Properties().tab(References.BALLISTIXTAB))));
+		BLOCKS.register("missilesilo", supplier(() -> blockMissileSilo));
+		ITEMS.register("missilesilo", supplier(() -> new BlockItemDescriptable(() -> blockMissileSilo, new Item.Properties().tab(References.BALLISTIXTAB))));
 
 	}
-	public static final RegistryObject<Item> ITEM_DUSTPOISON = ITEMS.register("dustpoison", supplier(new Item(new Item.Properties().tab(References.BALLISTIXTAB))));
-	public static final RegistryObject<Item> ITEM_MISSILECLOSERANGE = ITEMS.register("missilecloserange", supplier(new Item(new Item.Properties().tab(References.BALLISTIXTAB))));
-	public static final RegistryObject<Item> ITEM_MISSILEMEDIUMRANGE = ITEMS.register("missilemediumrange", supplier(new Item(new Item.Properties().tab(References.BALLISTIXTAB))));
-	public static final RegistryObject<Item> ITEM_MISSILELONGRANGE = ITEMS.register("missilelongrange", supplier(new Item(new Item.Properties().tab(References.BALLISTIXTAB))));
-	public static final RegistryObject<Item> ITEM_ROCKETLAUNCHER = ITEMS.register("rocketlauncher", supplier(new ItemRocketLauncher()));
-	public static final RegistryObject<Item> ITEM_RADARGUN = ITEMS.register("radargun", supplier(new ItemRadarGun()));
-	public static final RegistryObject<Item> ITEM_TRACKER = ITEMS.register("tracker", supplier(new ItemTracker()));
-	public static final RegistryObject<Item> ITEM_SCANNER = ITEMS.register("scanner", supplier(new ItemScanner()));
-	public static final RegistryObject<Item> ITEM_LASERDESIGNATOR = ITEMS.register("laserdesignator", supplier(new ItemLaserDesignator()));
-	public static final RegistryObject<Item> ITEM_DEFUSER = ITEMS.register("defuser", supplier(new ItemDefuser()));
+	public static final RegistryObject<Item> ITEM_DUSTPOISON = ITEMS.register("dustpoison", supplier(() -> new Item(new Item.Properties().tab(References.BALLISTIXTAB))));
+	public static final RegistryObject<Item> ITEM_MISSILECLOSERANGE = ITEMS.register("missilecloserange", supplier(() -> new Item(new Item.Properties().tab(References.BALLISTIXTAB))));
+	public static final RegistryObject<Item> ITEM_MISSILEMEDIUMRANGE = ITEMS.register("missilemediumrange", supplier(() -> new Item(new Item.Properties().tab(References.BALLISTIXTAB))));
+	public static final RegistryObject<Item> ITEM_MISSILELONGRANGE = ITEMS.register("missilelongrange", supplier(() -> new Item(new Item.Properties().tab(References.BALLISTIXTAB))));
+	public static final RegistryObject<Item> ITEM_ROCKETLAUNCHER = ITEMS.register("rocketlauncher", supplier(() -> new ItemRocketLauncher()));
+	public static final RegistryObject<Item> ITEM_RADARGUN = ITEMS.register("radargun", supplier(() -> new ItemRadarGun()));
+	public static final RegistryObject<Item> ITEM_TRACKER = ITEMS.register("tracker", supplier(() -> new ItemTracker()));
+	public static final RegistryObject<Item> ITEM_SCANNER = ITEMS.register("scanner", supplier(() -> new ItemScanner()));
+	public static final RegistryObject<Item> ITEM_LASERDESIGNATOR = ITEMS.register("laserdesignator", supplier(() -> new ItemLaserDesignator()));
+	public static final RegistryObject<Item> ITEM_DEFUSER = ITEMS.register("defuser", supplier(() -> new ItemDefuser()));
 	public static final RegistryObject<BlockEntityType<TileMissileSilo>> TILE_MISSILESILO = TILES.register("missilesilo", () -> new BlockEntityType<>(TileMissileSilo::new, Sets.newHashSet(blockMissileSilo), null));
 	public static final RegistryObject<MenuType<ContainerMissileSilo>> CONTAINER_MISSILESILO = CONTAINERS.register("missilesilo", () -> new MenuType<>(ContainerMissileSilo::new));
 	public static final RegistryObject<EntityType<EntityExplosive>> ENTITY_EXPLOSIVE = ENTITIES.register("explosive", () -> EntityType.Builder.<EntityExplosive>of(EntityExplosive::new, MobCategory.MISC).fireImmune().sized(1, 1).clientTrackingRange(10).build(References.ID + ".explosive"));
@@ -91,16 +86,15 @@ public class DeferredRegisters {
 	public static final RegistryObject<EntityType<EntityShrapnel>> ENTITY_SHRAPNEL = ENTITIES.register("shrapnel", () -> EntityType.Builder.<EntityShrapnel>of(EntityShrapnel::new, MobCategory.MISC).fireImmune().sized(0.5f, 0.5f).build(References.ID + ".shrapnel"));
 	public static final RegistryObject<EntityType<EntityMissile>> ENTITY_MISSILE = ENTITIES.register("missile", () -> EntityType.Builder.<EntityMissile>of(EntityMissile::new, MobCategory.MISC).fireImmune().sized(0, 0).build(References.ID + ".missile"));
 
-	private static <T extends IForgeRegistryEntry<T>> Supplier<? extends T> supplier(T entry) {
-		return () -> entry;
+	private static <T extends ForgeRegistryEntry<T>> Supplier<? extends T> supplier(Supplier<? extends T> entry) {
+		return entry;
 	}
 
-	private static <T extends IForgeRegistryEntry<T>> Supplier<? extends T> supplier(T entry, ISubtype en) {
-		if (entry instanceof Block bl) {
-			SUBTYPEBLOCK_MAPPINGS.put(en, bl);
-		} else if (entry instanceof Item it) {
-			SUBTYPEITEM_MAPPINGS.put(en, it);
-		}
-		return supplier(entry);
+	private static <T extends ForgeRegistryEntry<T>> Supplier<? extends T> supplier(Supplier<? extends T> entry, ISubtype en) {
+		return entry;
+	}
+
+	public static Block getSafeBlock(ISubtype type) {
+		return SUBTYPEBLOCKREGISTER_MAPPINGS.get(type).get();
 	}
 }

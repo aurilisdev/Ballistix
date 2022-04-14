@@ -43,7 +43,7 @@ public class RenderExplosive extends EntityRenderer<EntityExplosive> {
 			matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(-90.0F));
 			matrixStackIn.translate(-0.5D, -0.5D, 0.5D);
 			matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(90.0F));
-			renderTntFlash(DeferredRegisters.SUBTYPEBLOCK_MAPPINGS.get(subtype).defaultBlockState(), matrixStackIn, bufferIn, packedLightIn, entityIn.fuse / 5 % 2 == 0);
+			renderTntFlash(DeferredRegisters.SUBTYPEBLOCKREGISTER_MAPPINGS.get(subtype).get().defaultBlockState(), matrixStackIn, bufferIn, packedLightIn, entityIn.fuse / 5 % 2 == 0);
 			matrixStackIn.popPose();
 		}
 		super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);

@@ -46,7 +46,7 @@ public class DeferredRegisters {
 	public static final DeferredRegister<BlockEntityType<?>> TILES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, References.ID);
 	public static final DeferredRegister<MenuType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, References.ID);
 	public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, References.ID);
-	public static BlockMissileSilo blockMissileSilo = new BlockMissileSilo();
+	public static BlockMissileSilo blockMissileSilo;
 
 	static {
 		for (SubtypeBlast subtype : SubtypeBlast.values()) {
@@ -63,7 +63,7 @@ public class DeferredRegisters {
 				SUBTYPEMINECARTMAPPINGS.put(subtype, ITEMS.register("minecart" + subtype.tag(), supplier(() -> new ItemMinecart(subtype))));
 			}
 		}
-		BLOCKS.register("missilesilo", supplier(() -> blockMissileSilo));
+		BLOCKS.register("missilesilo", supplier(() -> blockMissileSilo = new BlockMissileSilo()));
 		ITEMS.register("missilesilo", supplier(() -> new BlockItemDescriptable(() -> blockMissileSilo, new Item.Properties().tab(References.BALLISTIXTAB))));
 
 	}

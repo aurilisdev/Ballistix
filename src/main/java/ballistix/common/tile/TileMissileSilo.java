@@ -41,7 +41,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 	public TileMissileSilo(BlockPos pos, BlockState state) {
 		super(DeferredRegisters.TILE_MISSILESILO.get(), pos, state);
 		addComponent(new ComponentTickable().tickServer(this::tickServer));
-		addComponent(new ComponentInventory(this).size(2).faceSlots(Direction.UP, 0, 1).valid(this::isItemValidForSlot));
+		addComponent(new ComponentInventory(this).size(2).faceSlots(Direction.UP, 0, 1).valid(this::isItemValidForSlot).shouldSendInfo());
 		addComponent(new ComponentPacketHandler().customPacketWriter(this::writePacket).customPacketReader(this::readPacket).guiPacketReader(this::readPacket).guiPacketWriter(this::writePacket));
 		addComponent(new ComponentContainerProvider("container.missilesilo").createMenu((id, player) -> new ContainerMissileSilo(id, player, getComponent(ComponentType.Inventory), getCoordsArray())));
 
@@ -147,8 +147,8 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 
 	@Override
 	public void load(CompoundTag compound) {
-		super.load(compound);
 		readPacket(compound);
+		super.load(compound);
 	}
 
 	protected boolean isItemValidForSlot(int index, ItemStack stack, ComponentInventory inv) {
@@ -172,8 +172,10 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 	}
 
 	public void setFrequency(int frequency) {
-		if (!level.isClientSide) {
-			SiloRegistry.unregisterSilo(this);
+		if (level != null) {
+			if (!level.isClientSide) {
+				SiloRegistry.unregisterSilo(this);
+			}
 		}
 		this.frequency = frequency;
 	}

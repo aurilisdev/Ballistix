@@ -1,9 +1,10 @@
 package ballistix.common.entity;
 
-import ballistix.DeferredRegisters;
 import ballistix.api.entity.IDefusable;
 import ballistix.common.blast.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.registers.BallistixBlocks;
+import ballistix.registers.BallistixEntities;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -29,7 +30,7 @@ public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 	}
 
 	public EntityGrenade(Level worldIn) {
-		this(DeferredRegisters.ENTITY_GRENADE.get(), worldIn);
+		this(BallistixEntities.ENTITY_GRENADE.get(), worldIn);
 	}
 
 	public void setExplosiveType(SubtypeBlast explosive) {
@@ -52,7 +53,7 @@ public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 		remove(RemovalReason.DISCARDED);
 		if (blastOrdinal != -1) {
 			SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
-			ItemEntity item = new ItemEntity(level, getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(DeferredRegisters.SUBTYPEBLOCKREGISTER_MAPPINGS.get(explosive).get()));
+			ItemEntity item = new ItemEntity(level, getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(BallistixBlocks.SUBTYPEBLOCKREGISTER_MAPPINGS.get(explosive).get()));
 			level.addFreshEntity(item);
 		}
 	}

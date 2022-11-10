@@ -24,10 +24,10 @@ public class ItemDefuser extends ItemElectric {
 
 	@SubscribeEvent
 	public static void onInteractWithEntity(EntityInteractSpecific event) {
-		if (!event.getWorld().isClientSide) {
+		if (!event.getLevel().isClientSide) {
 			Entity entity = event.getTarget();
 			if (entity instanceof IDefusable defuse) {
-				Player playerIn = event.getPlayer();
+				Player playerIn = event.getEntity();
 				InteractionHand handIn = event.getHand();
 				ItemStack stack = playerIn.getItemBySlot(handIn == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
 				if (stack.getItem() instanceof ItemDefuser defuser && defuser.getJoulesStored(stack) >= 150) {

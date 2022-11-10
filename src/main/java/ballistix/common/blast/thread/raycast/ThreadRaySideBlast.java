@@ -4,6 +4,7 @@ import electrodynamics.prefab.block.HashDistanceBlockPos;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -14,6 +15,7 @@ public class ThreadRaySideBlast extends Thread {
 	public ThreadRaycastBlast mainBlast;
 
 	public Direction direction;
+	private final RandomSource random = RandomSource.createThreadSafe();
 
 	public ThreadRaySideBlast(ThreadRaycastBlast threadRaycastBlast, Direction dir) {
 		mainBlast = threadRaycastBlast;
@@ -46,7 +48,7 @@ public class ThreadRaySideBlast extends Thread {
 					z = orientation.getZ() * explosionRadius;
 				}
 				Vec3 delta = new Vec3(x, y, z).normalize();
-				float power = mainBlast.explosionEnergy - mainBlast.explosionEnergy * world.random.nextFloat() / 2;
+				float power = mainBlast.explosionEnergy - mainBlast.explosionEnergy * random.nextFloat() / 2;
 				Vec3 currentVector = new Vec3(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5);
 				BlockPos currentBlockPos = new BlockPos(currentVector);
 				for (float d = 0.3F; power > 0f; power -= d * 0.75F * 5) {

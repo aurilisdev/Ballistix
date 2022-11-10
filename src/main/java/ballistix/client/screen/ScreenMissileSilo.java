@@ -9,7 +9,6 @@ import electrodynamics.prefab.screen.component.ScreenComponentTextInputBar;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -48,27 +47,27 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 		minecraft.keyboardHandler.setSendRepeatsToGui(true);
 		int i = (width - imageWidth) / 2;
 		int j = (height - imageHeight) / 2;
-		xCoordField = new EditBox(font, i + 127, j + 14, 46, 13, new TranslatableComponent("container.missilesilo.xCoord"));
+		xCoordField = new EditBox(font, i + 127, j + 14, 46, 13, Component.translatable("container.missilesilo.xCoord"));
 		xCoordField.setTextColor(-1);
 		xCoordField.setTextColorUneditable(-1);
 		xCoordField.setBordered(false);
 		xCoordField.setMaxLength(6);
 		xCoordField.setResponder(this::setX);
 
-		yCoordField = new EditBox(font, i + 127, j + 14 + 18, 46, 13, new TranslatableComponent("container.missilesilo.yCoord"));
+		yCoordField = new EditBox(font, i + 127, j + 14 + 18, 46, 13, Component.translatable("container.missilesilo.yCoord"));
 		yCoordField.setTextColor(-1);
 		yCoordField.setTextColorUneditable(-1);
 		yCoordField.setBordered(false);
 		yCoordField.setMaxLength(6);
 		yCoordField.setResponder(this::setY);
 
-		zCoordField = new EditBox(font, i + 127, j + 14 + 18 * 2, 46, 13, new TranslatableComponent("container.missilesilo.zCoord"));
+		zCoordField = new EditBox(font, i + 127, j + 14 + 18 * 2, 46, 13, Component.translatable("container.missilesilo.zCoord"));
 		zCoordField.setTextColor(-1);
 		zCoordField.setTextColorUneditable(-1);
 		zCoordField.setBordered(false);
 		zCoordField.setMaxLength(6);
 		zCoordField.setResponder(this::setZ);
-		frequencyField = new EditBox(font, i + 127, j + 14 + 18 * 3, 46, 13, new TranslatableComponent("container.missilesilo.frequency"));
+		frequencyField = new EditBox(font, i + 127, j + 14 + 18 * 3, 46, 13, Component.translatable("container.missilesilo.frequency"));
 		frequencyField.setTextColor(-1);
 		zCoordField.setTextColorUneditable(-1);
 		frequencyField.setBordered(false);
@@ -159,12 +158,12 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 	@Override
 	protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
 		super.renderLabels(matrixStack, mouseX, mouseY);
-		font.draw(matrixStack, new TranslatableComponent("gui.missilesilo.missile"), inventoryLabelX, inventoryLabelY - 55.0f, 4210752);
-		font.draw(matrixStack, new TranslatableComponent("gui.missilesilo.explosive"), inventoryLabelX, inventoryLabelY - 20.0f, 4210752);
-		font.draw(matrixStack, new TranslatableComponent("gui.missilesilo.x"), 79, 13f, 4210752);
-		font.draw(matrixStack, new TranslatableComponent("gui.missilesilo.y"), 79, 13f + 18, 4210752);
-		font.draw(matrixStack, new TranslatableComponent("gui.missilesilo.z"), 79, 13f + 18 * 2, 4210752);
-		font.draw(matrixStack, new TranslatableComponent("gui.missilesilo.freq"), 79, 13f + 18 * 3, 4210752);
+		font.draw(matrixStack, Component.translatable("gui.missilesilo.missile"), inventoryLabelX, inventoryLabelY - 55.0f, 4210752);
+		font.draw(matrixStack, Component.translatable("gui.missilesilo.explosive"), inventoryLabelX, inventoryLabelY - 20.0f, 4210752);
+		font.draw(matrixStack, Component.translatable("gui.missilesilo.x"), 79, 13f, 4210752);
+		font.draw(matrixStack, Component.translatable("gui.missilesilo.y"), 79, 13f + 18, 4210752);
+		font.draw(matrixStack, Component.translatable("gui.missilesilo.z"), 79, 13f + 18 * 2, 4210752);
+		font.draw(matrixStack, Component.translatable("gui.missilesilo.freq"), 79, 13f + 18 * 3, 4210752);
 	}
 
 }

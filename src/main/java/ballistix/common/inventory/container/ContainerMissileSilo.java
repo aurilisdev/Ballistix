@@ -1,10 +1,11 @@
 package ballistix.common.inventory.container;
 
-import ballistix.DeferredRegisters;
 import ballistix.common.block.BlockExplosive;
 import ballistix.common.packet.NetworkHandler;
 import ballistix.common.packet.PacketSetMissileData;
 import ballistix.common.tile.TileMissileSilo;
+import ballistix.registers.BallistixItems;
+import ballistix.registers.BallistixMenuTypes;
 import electrodynamics.common.blockitem.BlockItemDescriptable;
 import electrodynamics.prefab.inventory.container.GenericContainerBlockEntity;
 import electrodynamics.prefab.inventory.container.slot.item.type.SlotRestricted;
@@ -30,12 +31,12 @@ public class ContainerMissileSilo extends GenericContainerBlockEntity<TileMissil
 	}
 
 	public ContainerMissileSilo(int id, Inventory playerinv, Container inventory, ContainerData inventorydata) {
-		super(DeferredRegisters.CONTAINER_MISSILESILO.get(), id, playerinv, inventory, inventorydata);
+		super(BallistixMenuTypes.CONTAINER_MISSILESILO.get(), id, playerinv, inventory, inventorydata);
 	}
 
 	@Override
 	public void addInventorySlots(Container inv, Inventory playerinv) {
-		addSlot(new SlotRestricted(inv, nextIndex(), 60, 17, DeferredRegisters.ITEM_MISSILECLOSERANGE.get(), DeferredRegisters.ITEM_MISSILEMEDIUMRANGE.get(), DeferredRegisters.ITEM_MISSILELONGRANGE.get()));
+		addSlot(new SlotRestricted(inv, nextIndex(), 60, 17, BallistixItems.ITEM_MISSILECLOSERANGE.get(), BallistixItems.ITEM_MISSILEMEDIUMRANGE.get(), BallistixItems.ITEM_MISSILELONGRANGE.get()));
 		addSlot(new SlotRestricted(inv, nextIndex(), 60, 50) {
 			@Override
 			public boolean mayPlace(ItemStack stack) {

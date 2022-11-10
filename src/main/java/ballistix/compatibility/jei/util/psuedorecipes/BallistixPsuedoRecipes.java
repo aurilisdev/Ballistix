@@ -2,6 +2,7 @@ package ballistix.compatibility.jei.util.psuedorecipes;
 
 import java.util.ArrayList;
 
+import ballistix.registers.BallistixItems;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -17,7 +18,7 @@ public class BallistixPsuedoRecipes {
 
 	private static void addBallistixItems() {
 		/* MISSILES */
-		Item[] missiles = { ballistix.DeferredRegisters.ITEM_MISSILECLOSERANGE.get(), ballistix.DeferredRegisters.ITEM_MISSILEMEDIUMRANGE.get(), ballistix.DeferredRegisters.ITEM_MISSILELONGRANGE.get() };
+		Item[] missiles = { BallistixItems.ITEM_MISSILECLOSERANGE.get(), BallistixItems.ITEM_MISSILEMEDIUMRANGE.get(), BallistixItems.ITEM_MISSILELONGRANGE.get() };
 		BALLISTIX_ITEMS.addAll(formItemStacks(missiles, 1));
 
 	}

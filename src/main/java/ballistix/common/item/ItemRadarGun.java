@@ -12,7 +12,6 @@ import electrodynamics.prefab.utilities.object.Location;
 import electrodynamics.prefab.utilities.object.TransferPack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -82,7 +81,7 @@ public class ItemRadarGun extends ItemElectric {
 		Location trace = MathUtils.getRaytracedBlock(entityIn);
 		if (!worldIn.isClientSide && entityIn instanceof Player player) {
 			if (isSelected && trace != null) {
-				player.displayClientMessage(new TranslatableComponent("message.radargun.text", trace.toString()), true);
+				player.displayClientMessage(Component.translatable("message.radargun.text", trace.toString()), true);
 			}
 		}
 	}
@@ -96,9 +95,9 @@ public class ItemRadarGun extends ItemElectric {
 			int y = nbt.getInt("yCoord");
 			int z = nbt.getInt("zCoord");
 			String world = nbt.getString("world");
-			tooltip.add(new TranslatableComponent("tooltip.radargun.linked", world + ", " + x + ", " + y + ", " + z));
+			tooltip.add(Component.translatable("tooltip.radargun.linked", world + ", " + x + ", " + y + ", " + z));
 		} else {
-			tooltip.add(new TranslatableComponent("tooltip.radargun.notag"));
+			tooltip.add(Component.translatable("tooltip.radargun.notag"));
 		}
 	}
 }

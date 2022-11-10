@@ -9,7 +9,7 @@ import ballistix.References;
 import electrodynamics.prefab.item.ElectricItemProperties;
 import electrodynamics.prefab.item.ItemElectric;
 import electrodynamics.prefab.utilities.object.TransferPack;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -40,9 +40,9 @@ public class ItemScanner extends ItemElectric {
 			}
 		}
 		if (action) {
-			playerIn.displayClientMessage(new TranslatableComponent("message.scanner.cleared"), true);
+			playerIn.displayClientMessage(Component.translatable("message.scanner.cleared"), true);
 		} else {
-			playerIn.displayClientMessage(new TranslatableComponent("message.scanner.none"), true);
+			playerIn.displayClientMessage(Component.translatable("message.scanner.none"), true);
 		}
 		return super.use(worldIn, playerIn, handIn);
 	}

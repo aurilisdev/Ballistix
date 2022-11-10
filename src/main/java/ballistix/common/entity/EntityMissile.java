@@ -1,8 +1,8 @@
 package ballistix.common.entity;
 
-import ballistix.DeferredRegisters;
 import ballistix.common.blast.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.registers.BallistixEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -34,7 +34,7 @@ public class EntityMissile extends Entity {
 	}
 
 	public EntityMissile(Level worldIn) {
-		this(DeferredRegisters.ENTITY_MISSILE.get(), worldIn);
+		this(BallistixEntities.ENTITY_MISSILE.get(), worldIn);
 	}
 
 	public void setBlastType(SubtypeBlast explosive) {

@@ -2,10 +2,10 @@ package ballistix.common.item;
 
 import java.util.HashMap;
 
-import ballistix.DeferredRegisters;
 import ballistix.References;
 import ballistix.common.block.BlockExplosive;
 import ballistix.common.entity.EntityMissile;
+import ballistix.registers.BallistixItems;
 import electrodynamics.common.blockitem.BlockItemDescriptable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -61,7 +61,7 @@ public class ItemRocketLauncher extends Item {
 							ex = st;
 						}
 					}
-					if (!hasRange && it == DeferredRegisters.ITEM_MISSILECLOSERANGE.get()) {
+					if (!hasRange && it == BallistixItems.ITEM_MISSILECLOSERANGE.get()) {
 						hasRange = true;
 						missile = st;
 					}

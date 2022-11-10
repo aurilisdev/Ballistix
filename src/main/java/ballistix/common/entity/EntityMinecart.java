@@ -1,9 +1,10 @@
 package ballistix.common.entity;
 
-import ballistix.DeferredRegisters;
 import ballistix.api.entity.IDefusable;
 import ballistix.common.blast.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.registers.BallistixEntities;
+import ballistix.registers.BallistixItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -21,7 +22,9 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.GameRules;
@@ -48,7 +51,7 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable {
 	}
 
 	public EntityMinecart(Level worldIn) {
-		this(DeferredRegisters.ENTITY_MINECART.get(), worldIn);
+		this(BallistixEntities.ENTITY_MINECART.get(), worldIn);
 	}
 
 	public void setExplosiveType(SubtypeBlast explosive) {
@@ -136,7 +139,7 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable {
 		if (!exploded) {
 			if (blastOrdinal != -1) {
 				SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
-				ItemEntity item = new ItemEntity(level, getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(DeferredRegisters.SUBTYPEMINECARTMAPPINGS.get(explosive).get()));
+				ItemEntity item = new ItemEntity(level, getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(BallistixItems.SUBTYPEMINECARTMAPPINGS.get(explosive).get()));
 				level.addFreshEntity(item);
 			}
 		}
@@ -158,6 +161,15 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable {
 		}
 
 		return super.causeFallDamage(par1, par2, source);
+	}
+
+	@Override
+	protected Item getDropItem() {
+		if (blastOrdinal != -1) {
+			SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
+			return BallistixItems.SUBTYPEMINECARTMAPPINGS.get(explosive).get();
+		}
+		return Items.MINECART;
 	}
 
 	@Override

@@ -1,9 +1,10 @@
 package ballistix.common.entity;
 
-import ballistix.DeferredRegisters;
 import ballistix.api.entity.IDefusable;
 import ballistix.common.blast.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.registers.BallistixBlocks;
+import ballistix.registers.BallistixEntities;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -30,7 +31,7 @@ public class EntityExplosive extends Entity implements IDefusable {
 	}
 
 	public EntityExplosive(Level worldIn, double x, double y, double z) {
-		this(DeferredRegisters.ENTITY_EXPLOSIVE.get(), worldIn);
+		this(BallistixEntities.ENTITY_EXPLOSIVE.get(), worldIn);
 		setPos(x, y, z);
 		double d0 = worldIn.random.nextDouble() * ((float) Math.PI * 2F);
 		this.setDeltaMovement(-Math.sin(d0) * 0.02D, 0.2F, -Math.cos(d0) * 0.02D);
@@ -64,7 +65,7 @@ public class EntityExplosive extends Entity implements IDefusable {
 		remove(RemovalReason.DISCARDED);
 		if (blastOrdinal != -1) {
 			SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
-			ItemEntity item = new ItemEntity(level, getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(DeferredRegisters.SUBTYPEBLOCKREGISTER_MAPPINGS.get(explosive).get()));
+			ItemEntity item = new ItemEntity(level, getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(BallistixBlocks.SUBTYPEBLOCKREGISTER_MAPPINGS.get(explosive).get()));
 			level.addFreshEntity(item);
 		}
 	}

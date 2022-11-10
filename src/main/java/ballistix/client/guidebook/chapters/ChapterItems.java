@@ -3,7 +3,7 @@ package ballistix.client.guidebook.chapters;
 import java.util.ArrayList;
 import java.util.List;
 
-import ballistix.DeferredRegisters;
+import ballistix.registers.BallistixItems;
 import electrodynamics.client.guidebook.utils.ItemWrapperObject;
 import electrodynamics.client.guidebook.utils.TextWrapperObject;
 import electrodynamics.client.guidebook.utils.components.Chapter;
@@ -12,7 +12,7 @@ import net.minecraft.ChatFormatting;
 
 public class ChapterItems extends Chapter {
 
-	private static final ItemWrapperObject LOGO = new ItemWrapperObject(17, 60, 2.0F, DeferredRegisters.ITEM_ROCKETLAUNCHER.get());
+	private static final ItemWrapperObject LOGO = new ItemWrapperObject(17, 60, 2.0F, BallistixItems.ITEM_ROCKETLAUNCHER.get());
 
 	@Override
 	protected List<Page> genPages() {
@@ -43,7 +43,7 @@ public class ChapterItems extends Chapter {
 				new TextWrapperObject(10, 170, 4210752, "guidebook.ballistix.chapter.items.p1l10") },
 				new ItemWrapperObject[] {
 						//
-						new ItemWrapperObject(17, 50, 2.0F, DeferredRegisters.ITEM_ROCKETLAUNCHER.get()) }));
+						new ItemWrapperObject(17, 50, 2.0F, BallistixItems.ITEM_ROCKETLAUNCHER.get()) }));
 
 		pages.add(new Page(new TextWrapperObject[] {
 				//
@@ -68,7 +68,7 @@ public class ChapterItems extends Chapter {
 				new TextWrapperObject(10, 160, 4210752, "guidebook.ballistix.chapter.items.p2l9") },
 				new ItemWrapperObject[] {
 						//
-						new ItemWrapperObject(17, 50, 2.0F, DeferredRegisters.ITEM_RADARGUN.get()) }));
+						new ItemWrapperObject(17, 50, 2.0F, BallistixItems.ITEM_RADARGUN.get()) }));
 
 		pages.add(new Page(new TextWrapperObject[] {
 				//
@@ -97,7 +97,7 @@ public class ChapterItems extends Chapter {
 				new TextWrapperObject(10, 180, 4210752, "guidebook.ballistix.chapter.items.p3l11") },
 				new ItemWrapperObject[] {
 						//
-						new ItemWrapperObject(17, 50, 2.0F, DeferredRegisters.ITEM_LASERDESIGNATOR.get()) }));
+						new ItemWrapperObject(17, 50, 2.0F, BallistixItems.ITEM_LASERDESIGNATOR.get()) }));
 
 		pages.add(new Page(new TextWrapperObject[] {
 				//
@@ -122,7 +122,7 @@ public class ChapterItems extends Chapter {
 				new TextWrapperObject(10, 160, 4210752, "guidebook.ballistix.chapter.items.p4l9") },
 				new ItemWrapperObject[] {
 						//
-						new ItemWrapperObject(17, 50, 2.0F, DeferredRegisters.ITEM_DEFUSER.get()) }));
+						new ItemWrapperObject(17, 50, 2.0F, BallistixItems.ITEM_DEFUSER.get()) }));
 
 		pages.add(new Page(new TextWrapperObject[] {
 				//
@@ -151,7 +151,7 @@ public class ChapterItems extends Chapter {
 				new TextWrapperObject(10, 180, 4210752, "guidebook.ballistix.chapter.items.p5l11") },
 				new ItemWrapperObject[] {
 						//
-						new ItemWrapperObject(17, 50, 2.0F, DeferredRegisters.ITEM_TRACKER.get()) }));
+						new ItemWrapperObject(17, 50, 2.0F, BallistixItems.ITEM_TRACKER.get()) }));
 
 		pages.add(new Page(new TextWrapperObject[] {
 				//
@@ -172,7 +172,7 @@ public class ChapterItems extends Chapter {
 				new TextWrapperObject(10, 140, 4210752, "guidebook.ballistix.chapter.items.p6l7") },
 				new ItemWrapperObject[] {
 						//
-						new ItemWrapperObject(17, 50, 2.0F, DeferredRegisters.ITEM_SCANNER.get()) }));
+						new ItemWrapperObject(17, 50, 2.0F, BallistixItems.ITEM_SCANNER.get()) }));
 
 		return pages;
 	}

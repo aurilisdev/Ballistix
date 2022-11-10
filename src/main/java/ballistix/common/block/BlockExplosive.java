@@ -3,9 +3,9 @@ package ballistix.common.block;
 import java.util.Arrays;
 import java.util.List;
 
-import ballistix.DeferredRegisters;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityExplosive;
+import ballistix.registers.BallistixBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -95,7 +95,7 @@ public class BlockExplosive extends Block {
 
 	@Override
 	public List<ItemStack> getDrops(BlockState state, Builder builder) {
-		return Arrays.asList(new ItemStack(DeferredRegisters.SUBTYPEBLOCKREGISTER_MAPPINGS.get(explosive).get()));
+		return Arrays.asList(new ItemStack(BallistixBlocks.SUBTYPEBLOCKREGISTER_MAPPINGS.get(explosive).get()));
 	}
 
 	@Override

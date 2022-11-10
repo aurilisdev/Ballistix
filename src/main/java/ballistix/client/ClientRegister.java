@@ -1,6 +1,5 @@
 package ballistix.client;
 
-import ballistix.DeferredRegisters;
 import ballistix.References;
 import ballistix.client.guidebook.ModuleBallistix;
 import ballistix.client.render.entity.RenderBlast;
@@ -12,17 +11,19 @@ import ballistix.client.render.entity.RenderShrapnel;
 import ballistix.client.render.tile.RenderMissileSilo;
 import ballistix.client.screen.ScreenMissileSilo;
 import ballistix.common.item.ItemTracker;
+import ballistix.registers.BallistixBlockTypes;
+import ballistix.registers.BallistixEntities;
+import ballistix.registers.BallistixItems;
+import ballistix.registers.BallistixMenuTypes;
 import electrodynamics.client.guidebook.ScreenGuidebook;
 import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ForgeModelBakery;
+import net.minecraftforge.client.event.ModelEvent.RegisterAdditional;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -31,15 +32,15 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 @EventBusSubscriber(modid = References.ID, bus = Bus.MOD, value = { Dist.CLIENT })
 public class ClientRegister {
 	@SubscribeEvent
-	public static void onModelEvent(ModelRegistryEvent event) {
-		ForgeModelBakery.addSpecialModel(MODEL_MISSILECLOSERANGE);
-		ForgeModelBakery.addSpecialModel(MODEL_MISSILEMEDIUMRANGE);
-		ForgeModelBakery.addSpecialModel(MODEL_MISSILELONGRANGE);
-		ForgeModelBakery.addSpecialModel(MODEL_DARKMATTERSPHERE);
-		ForgeModelBakery.addSpecialModel(MODEL_DARKMATTERDISK);
-		ForgeModelBakery.addSpecialModel(MODEL_FIREBALL);
-		ForgeModelBakery.addSpecialModel(MODEL_EMP);
-		ForgeModelBakery.addSpecialModel(MODEL_BLACKHOLECUBE);
+	public static void onModelEvent(RegisterAdditional event) {
+		event.register(MODEL_MISSILECLOSERANGE);
+		event.register(MODEL_MISSILEMEDIUMRANGE);
+		event.register(MODEL_MISSILELONGRANGE);
+		event.register(MODEL_DARKMATTERSPHERE);
+		event.register(MODEL_DARKMATTERDISK);
+		event.register(MODEL_FIREBALL);
+		event.register(MODEL_EMP);
+		event.register(MODEL_BLACKHOLECUBE);
 	}
 
 	public static final ResourceLocation TEXTURE_SHRAPNEL = new ResourceLocation(References.ID + ":textures/model/shrapnel.png");
@@ -56,22 +57,21 @@ public class ClientRegister {
 	public static final ResourceLocation TEXTURE_MISSILELONGRANGE = new ResourceLocation(References.ID + ":textures/model/missilelongrange.png");
 
 	public static void setup() {
-		MenuScreens.register(DeferredRegisters.CONTAINER_MISSILESILO.get(), ScreenMissileSilo::new);
-		ItemBlockRenderTypes.setRenderLayer(DeferredRegisters.blockMissileSilo, RenderType.cutout());
-		ItemProperties.register(DeferredRegisters.ITEM_TRACKER.get(), new ResourceLocation("angle"), ItemTracker::getAngle);
+		MenuScreens.register(BallistixMenuTypes.CONTAINER_MISSILESILO.get(), ScreenMissileSilo::new);
+		ItemProperties.register(BallistixItems.ITEM_TRACKER.get(), new ResourceLocation("angle"), ItemTracker::getAngle);
 
 		ScreenGuidebook.addGuidebookModule(new ModuleBallistix());
 	}
 
 	@SubscribeEvent
 	public static void registerEntities(EntityRenderersEvent.RegisterRenderers event) {
-		event.registerEntityRenderer(DeferredRegisters.ENTITY_EXPLOSIVE.get(), RenderExplosive::new);
-		event.registerEntityRenderer(DeferredRegisters.ENTITY_GRENADE.get(), RenderGrenade::new);
-		event.registerEntityRenderer(DeferredRegisters.ENTITY_BLAST.get(), RenderBlast::new);
-		event.registerEntityRenderer(DeferredRegisters.ENTITY_SHRAPNEL.get(), RenderShrapnel::new);
-		event.registerEntityRenderer(DeferredRegisters.ENTITY_MISSILE.get(), RenderMissile::new);
-		event.registerEntityRenderer(DeferredRegisters.ENTITY_MINECART.get(), RenderMinecart::new);
-		event.registerBlockEntityRenderer(DeferredRegisters.TILE_MISSILESILO.get(), RenderMissileSilo::new);
+		event.registerEntityRenderer(BallistixEntities.ENTITY_EXPLOSIVE.get(), RenderExplosive::new);
+		event.registerEntityRenderer(BallistixEntities.ENTITY_GRENADE.get(), RenderGrenade::new);
+		event.registerEntityRenderer(BallistixEntities.ENTITY_BLAST.get(), RenderBlast::new);
+		event.registerEntityRenderer(BallistixEntities.ENTITY_SHRAPNEL.get(), RenderShrapnel::new);
+		event.registerEntityRenderer(BallistixEntities.ENTITY_MISSILE.get(), RenderMissile::new);
+		event.registerEntityRenderer(BallistixEntities.ENTITY_MINECART.get(), RenderMinecart::new);
+		event.registerBlockEntityRenderer(BallistixBlockTypes.TILE_MISSILESILO.get(), RenderMissileSilo::new);
 
 	}
 

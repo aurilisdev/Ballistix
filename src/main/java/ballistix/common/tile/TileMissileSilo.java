@@ -2,12 +2,13 @@ package ballistix.common.tile;
 
 import java.util.HashSet;
 
-import ballistix.DeferredRegisters;
 import ballistix.common.block.BlockExplosive;
 import ballistix.common.block.BlockMissileSilo;
 import ballistix.common.entity.EntityMissile;
 import ballistix.common.inventory.container.ContainerMissileSilo;
 import ballistix.common.network.SiloRegistry;
+import ballistix.registers.BallistixBlockTypes;
+import ballistix.registers.BallistixItems;
 import electrodynamics.common.blockitem.BlockItemDescriptable;
 import electrodynamics.common.multiblock.IMultiblockTileNode;
 import electrodynamics.common.multiblock.Subnode;
@@ -39,7 +40,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 	public boolean shouldLaunch;
 
 	public TileMissileSilo(BlockPos pos, BlockState state) {
-		super(DeferredRegisters.TILE_MISSILESILO.get(), pos, state);
+		super(BallistixBlockTypes.TILE_MISSILESILO.get(), pos, state);
 		addComponent(new ComponentTickable().tickServer(this::tickServer));
 		addComponent(new ComponentInventory(this).size(2).faceSlots(Direction.UP, 0, 1).valid(this::isItemValidForSlot).shouldSendInfo());
 		addComponent(new ComponentPacketHandler().customPacketWriter(this::writePacket).customPacketReader(this::readPacket).guiPacketReader(this::readPacket).guiPacketWriter(this::writePacket));
@@ -58,17 +59,17 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 			packet.sendCustomPacket();
 		}
 		ItemStack it = inv.getItem(0);
-		if (it.getItem() == DeferredRegisters.ITEM_MISSILECLOSERANGE.get()) {
+		if (it.getItem() == BallistixItems.ITEM_MISSILECLOSERANGE.get()) {
 			if (range != 0) {
 				range = 0;
 				packet.sendCustomPacket();
 			}
-		} else if (it.getItem() == DeferredRegisters.ITEM_MISSILEMEDIUMRANGE.get()) {
+		} else if (it.getItem() == BallistixItems.ITEM_MISSILEMEDIUMRANGE.get()) {
 			if (range != 1) {
 				range = 1;
 				packet.sendCustomPacket();
 			}
-		} else if (it.getItem() == DeferredRegisters.ITEM_MISSILELONGRANGE.get()) {
+		} else if (it.getItem() == BallistixItems.ITEM_MISSILELONGRANGE.get()) {
 			if (range != 2) {
 				range = 2;
 				packet.sendCustomPacket();
@@ -160,7 +161,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 				}
 			}
 		} else if (index == 0) {
-			return it == DeferredRegisters.ITEM_MISSILECLOSERANGE.get() || it == DeferredRegisters.ITEM_MISSILELONGRANGE.get() || it == DeferredRegisters.ITEM_MISSILEMEDIUMRANGE.get();
+			return it == BallistixItems.ITEM_MISSILECLOSERANGE.get() || it == BallistixItems.ITEM_MISSILELONGRANGE.get() || it == BallistixItems.ITEM_MISSILEMEDIUMRANGE.get();
 		}
 		return false;
 	}

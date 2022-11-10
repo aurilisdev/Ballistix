@@ -4,8 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
 
-import ballistix.DeferredRegisters;
 import ballistix.common.entity.EntityMinecart;
+import ballistix.registers.BallistixBlocks;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.MinecartModel;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -82,7 +82,7 @@ public class RenderMinecart extends EntityRenderer<EntityMinecart> {
 
 		int j = entity.getDisplayOffset();
 		if (entity.getExplosiveType() != null) {
-			BlockState blockstate = DeferredRegisters.SUBTYPEBLOCKREGISTER_MAPPINGS.get(entity.getExplosiveType()).get().defaultBlockState();
+			BlockState blockstate = BallistixBlocks.SUBTYPEBLOCKREGISTER_MAPPINGS.get(entity.getExplosiveType()).get().defaultBlockState();
 			if (blockstate != null) {
 				if (blockstate.getRenderShape() != RenderShape.INVISIBLE) {
 					stack.pushPose();

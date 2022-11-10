@@ -4,6 +4,7 @@ import ballistix.client.ClientRegister;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.packet.NetworkHandler;
 import ballistix.common.settings.Constants;
+import ballistix.registers.UnifiedBallistixRegister;
 import electrodynamics.prefab.configuration.ConfigurationHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
@@ -24,12 +25,7 @@ public class Ballistix {
 	public Ballistix() {
 		ConfigurationHandler.registerConfig(Constants.class);
 		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-		SoundRegister.SOUNDS.register(bus);
-		DeferredRegisters.BLOCKS.register(bus);
-		DeferredRegisters.ITEMS.register(bus);
-		DeferredRegisters.TILES.register(bus);
-		DeferredRegisters.CONTAINERS.register(bus);
-		DeferredRegisters.ENTITIES.register(bus);
+		UnifiedBallistixRegister.register(bus);
 		new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, true).start();
 		new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null, true).start();
 		new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, Integer.MAX_VALUE, null, true).start();

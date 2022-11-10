@@ -1,7 +1,6 @@
 package ballistix.common.item;
 
 import java.util.List;
-import java.util.UUID;
 
 import ballistix.References;
 import ballistix.common.network.SiloRegistry;
@@ -14,7 +13,6 @@ import electrodynamics.prefab.utilities.object.Location;
 import electrodynamics.prefab.utilities.object.TransferPack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -47,7 +45,8 @@ public class ItemLaserDesignator extends ItemElectric {
 		if (silo != null) {
 			CompoundTag nbt = stack.getOrCreateTag();
 			nbt.putInt("freq", silo.frequency);
-			context.getPlayer().sendMessage(new TranslatableComponent("message.laserdesignator.setfrequency", silo.frequency), UUID.randomUUID());
+			// TODO: Update method sendMessage
+			// context.getPlayer().sendMessage(Component.translatable("message.laserdesignator.setfrequency", silo.frequency), UUID.randomUUID());
 		}
 		return super.onItemUseFirst(stack, context);
 	}
@@ -65,7 +64,8 @@ public class ItemLaserDesignator extends ItemElectric {
 						for (TileMissileSilo silo : SiloRegistry.getSilos(freq)) {
 							silo.target = new Location(trace);
 							silo.shouldLaunch = true;
-							playerIn.sendMessage(new TranslatableComponent("message.laserdesignator.launch", new Location(silo.getBlockPos()) + " -> " + silo.target), UUID.randomUUID());
+							// TODO: Update method sendMessage
+							// playerIn.sendMessage(Component.translatable("message.laserdesignator.launch", new Location(silo.getBlockPos()) + " -> " + silo.target), UUID.randomUUID());
 						}
 					}
 				}
@@ -90,7 +90,7 @@ public class ItemLaserDesignator extends ItemElectric {
 		Location trace = MathUtils.getRaytracedBlock(entityIn);
 		if (!worldIn.isClientSide && entityIn instanceof Player player) {
 			if (isSelected && trace != null) {
-				player.displayClientMessage(new TranslatableComponent("message.radargun.text", trace.toString()), true);
+				player.displayClientMessage(Component.translatable("message.radargun.text", trace.toString()), true);
 			}
 		}
 	}
@@ -103,7 +103,7 @@ public class ItemLaserDesignator extends ItemElectric {
 			if (nbt.contains("freq")) {
 				int freq = nbt.getInt("freq");
 				if (freq != 0) {
-					tooltip.add(new TranslatableComponent("tooltip.laserdesignator.frequency", freq));
+					tooltip.add(Component.translatable("tooltip.laserdesignator.frequency", freq));
 				}
 			}
 		}

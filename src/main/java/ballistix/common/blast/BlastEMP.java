@@ -11,8 +11,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
 public class BlastEMP extends Blast implements IHasCustomRenderer {
@@ -63,8 +63,8 @@ public class BlastEMP extends Blast implements IHasCustomRenderer {
 							if (entity.getCapability(ElectrodynamicsCapabilities.ELECTRODYNAMIC, dir).isPresent()) {
 								LazyOptional<ICapabilityElectrodynamic> c = entity.getCapability(ElectrodynamicsCapabilities.ELECTRODYNAMIC, dir);
 								c.resolve().get().setJoulesStored(0);
-							} else if (entity.getCapability(CapabilityEnergy.ENERGY, dir).isPresent()) {
-								LazyOptional<IEnergyStorage> c = entity.getCapability(CapabilityEnergy.ENERGY, dir);
+							} else if (entity.getCapability(ForgeCapabilities.ENERGY, dir).isPresent()) {
+								LazyOptional<IEnergyStorage> c = entity.getCapability(ForgeCapabilities.ENERGY, dir);
 								c.resolve().get().extractEnergy(Integer.MAX_VALUE, false);
 							}
 						}

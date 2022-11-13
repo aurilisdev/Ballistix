@@ -2,19 +2,19 @@
 	"variants": {
 		"facing=west": {
 			"model": "ballistix:block/missilesilo",
-			"y": 180
+			"y": 270
 		},
 		"facing=south": {
 			"model": "ballistix:block/missilesilo",
-			"y": 90
+			"y": 180
 		},
 		"facing=north": {
 			"model": "ballistix:block/missilesilo",
-			"y": 270
+			"y": 0
 		},
 		"facing=east": {
 			"model": "ballistix:block/missilesilo",
-			"y": 0
+			"y": 90
 		}
 	}
 }

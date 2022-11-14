@@ -37,7 +37,7 @@ public class RenderMissileSilo implements BlockEntityRenderer<TileMissileSilo> {
 		}
 		case 2: {
 			BakedModel closerange = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILELONGRANGE);
-			matrixStackIn.translate(0.5f, 4.1f, 0.5f);
+			matrixStackIn.translate(0.5f, 0.05f, 0.5f);
 			matrixStackIn.scale(2f, 4f, 2f);
 			Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), closerange, tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(), 0);
 			break;

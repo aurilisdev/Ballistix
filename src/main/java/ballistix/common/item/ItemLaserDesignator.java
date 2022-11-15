@@ -36,8 +36,8 @@ public class ItemLaserDesignator extends ItemElectric {
 	public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
 		BlockEntity ent = context.getLevel().getBlockEntity(context.getClickedPos());
 		TileMissileSilo silo = ent instanceof TileMissileSilo s ? s : null;
-		if (ent instanceof TileMultiSubnode node && node.nodePos != null) {
-			BlockEntity core = node.nodePos.getTile(node.getLevel());
+		if (ent instanceof TileMultiSubnode node && node.nodePos.get() != null) {
+			BlockEntity core = node.getLevel().getBlockEntity(node.nodePos.get());
 			if (core instanceof TileMissileSilo c) {
 				silo = c;
 			}

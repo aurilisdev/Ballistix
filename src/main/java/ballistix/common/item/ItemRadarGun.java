@@ -36,7 +36,7 @@ public class ItemRadarGun extends ItemElectric {
 		BlockEntity ent = context.getLevel().getBlockEntity(context.getClickedPos());
 		TileMissileSilo silo = ent instanceof TileMissileSilo s ? s : null;
 		if (ent instanceof TileMultiSubnode node) {
-			BlockEntity core = node.nodePos.getTile(node.getLevel());
+			BlockEntity core = node.getLevel().getBlockEntity(node.nodePos.get());
 			if (core instanceof TileMissileSilo c) {
 				silo = c;
 			}

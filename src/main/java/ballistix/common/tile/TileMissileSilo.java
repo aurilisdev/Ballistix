@@ -12,6 +12,8 @@ import ballistix.registers.BallistixItems;
 import electrodynamics.common.blockitem.BlockItemDescriptable;
 import electrodynamics.common.multiblock.IMultiblockTileNode;
 import electrodynamics.common.multiblock.Subnode;
+import electrodynamics.prefab.properties.Property;
+import electrodynamics.prefab.properties.PropertyType;
 import electrodynamics.prefab.tile.GenericTile;
 import electrodynamics.prefab.tile.components.ComponentType;
 import electrodynamics.prefab.tile.components.type.ComponentContainerProvider;
@@ -19,10 +21,8 @@ import electrodynamics.prefab.tile.components.type.ComponentInventory;
 import electrodynamics.prefab.tile.components.type.ComponentPacketHandler;
 import electrodynamics.prefab.tile.components.type.ComponentTickable;
 import electrodynamics.prefab.utilities.object.CachedTileOutput;
-import electrodynamics.prefab.utilities.object.Location;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,56 +33,48 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 
 	protected CachedTileOutput output1;
 	protected CachedTileOutput output2;
-	public int range = -1;
+	public Property<Integer> range = property(new Property<Integer>(PropertyType.Integer, "range")).set(-1).save();
+	public Property<Integer> frequency = property(new Property<Integer>(PropertyType.Integer, "frequency")).set(-1).save();
+	public Property<BlockPos> target = property(new Property<BlockPos>(PropertyType.BlockPos, "target")).save();
+
 	private int cooldown = 100;
-	public int frequency = -1;
-	public Location target;
 	public boolean shouldLaunch;
 
 	public TileMissileSilo(BlockPos pos, BlockState state) {
 		super(BallistixBlockTypes.TILE_MISSILESILO.get(), pos, state);
 		addComponent(new ComponentTickable().tickServer(this::tickServer));
 		addComponent(new ComponentInventory(this).size(2).faceSlots(Direction.UP, 0, 1).valid(this::isItemValidForSlot).shouldSendInfo());
-		addComponent(new ComponentPacketHandler().customPacketWriter(this::writePacket).customPacketReader(this::readPacket).guiPacketReader(this::readPacket).guiPacketWriter(this::writePacket));
+		addComponent(new ComponentPacketHandler());
 		addComponent(new ComponentContainerProvider("container.missilesilo").createMenu((id, player) -> new ContainerMissileSilo(id, player, getComponent(ComponentType.Inventory), getCoordsArray())));
 
 	}
 
 	protected void tickServer(ComponentTickable tickable) {
 		ComponentInventory inv = getComponent(ComponentType.Inventory);
-		ComponentPacketHandler packet = getComponent(ComponentType.PacketHandler);
-		if (tickable.getTicks() % 20 == 1) {
-			packet.sendCustomPacket();
-		}
-		if (target == null) {
-			target = new Location(getBlockPos());
-			packet.sendCustomPacket();
+		if (target.get() == null) {
+			target.set(getBlockPos());
 		}
 		ItemStack it = inv.getItem(0);
 		if (it.getItem() == BallistixItems.ITEM_MISSILECLOSERANGE.get()) {
-			if (range != 0) {
-				range = 0;
-				packet.sendCustomPacket();
+			if (range.get() != 0) {
+				range.set(0);
 			}
 		} else if (it.getItem() == BallistixItems.ITEM_MISSILEMEDIUMRANGE.get()) {
-			if (range != 1) {
-				range = 1;
-				packet.sendCustomPacket();
+			if (range.get() != 1) {
+				range.set(1);
 			}
 		} else if (it.getItem() == BallistixItems.ITEM_MISSILELONGRANGE.get()) {
-			if (range != 2) {
-				range = 2;
-				packet.sendCustomPacket();
+			if (range.get() != 2) {
+				range.set(2);
 			}
-		} else if (range != -1) {
-			range = -1;
-			packet.sendCustomPacket();
+		} else if (range.get() != -1) {
+			range.set(-1);
 		}
 		cooldown--;
 		if (cooldown < 0 && level.getLevelData().getDayTime() % 20 == 0) {
 			ItemStack exp = inv.getItem(1);
 			if (exp.getItem() instanceof BlockItemDescriptable des) {
-				if (des.getBlock() instanceof BlockExplosive && range >= 0 && exp.getCount() > 0) {
+				if (des.getBlock() instanceof BlockExplosive && range.get() >= 0 && exp.getCount() > 0) {
 					boolean hasSignal = false;
 					if (level.getBestNeighborSignal(getBlockPos()) > 0) {
 						hasSignal = true;
@@ -111,12 +103,12 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 		ItemStack exp = inv.getItem(1);
 		ItemStack it = inv.getItem(0);
 		if (exp.getItem() instanceof BlockItemDescriptable des) {
-			double dist = Math.sqrt(Math.pow(worldPosition.getX() - target.x(), 2) + Math.pow(worldPosition.getY() - target.y(), 2) + Math.pow(worldPosition.getZ() - target.z(), 2));
-			if (range == 0 && dist < 3000 || range == 1 && dist < 10000 || range == 2) {
+			double dist = Math.sqrt(Math.pow(worldPosition.getX() - target.get().getX(), 2) + Math.pow(worldPosition.getY() - target.get().getY(), 2) + Math.pow(worldPosition.getZ() - target.get().getZ(), 2));
+			if (range.get() == 0 && dist < 3000 || range.get() == 1 && dist < 10000 || range.get() == 2) {
 				EntityMissile missile = new EntityMissile(level);
 				missile.setPos(getBlockPos().getX() + 1.0, getBlockPos().getY(), getBlockPos().getZ() + 1.0);
-				missile.range = range;
-				missile.target = target.toBlockPos();
+				missile.range = range.get();
+				missile.target = target.get();
 				missile.blastOrdinal = ((BlockExplosive) des.getBlock()).explosive.ordinal();
 				exp.shrink(1);
 				it.shrink(1);
@@ -124,32 +116,6 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 			}
 			cooldown = 100;
 		}
-	}
-
-	protected void readPacket(CompoundTag nbt) {
-		range = nbt.getInt("range");
-		target = Location.readFromNBT(nbt, "target");
-		setFrequency(nbt.getInt("frequency"));
-	}
-
-	protected void writePacket(CompoundTag tag) {
-		tag.putInt("range", range);
-		tag.putInt("frequency", frequency);
-		if (target != null) {
-			target.writeToNBT(tag, "target");
-		}
-	}
-
-	@Override
-	public void saveAdditional(CompoundTag compound) {
-		writePacket(compound);
-		super.saveAdditional(compound);
-	}
-
-	@Override
-	public void load(CompoundTag compound) {
-		readPacket(compound);
-		super.load(compound);
 	}
 
 	protected boolean isItemValidForSlot(int index, ItemStack stack, ComponentInventory inv) {
@@ -178,7 +144,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 				SiloRegistry.unregisterSilo(this);
 			}
 		}
-		this.frequency = frequency;
+		this.frequency.set(frequency);
 	}
 
 	@Override

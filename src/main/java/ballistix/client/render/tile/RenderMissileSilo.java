@@ -19,7 +19,7 @@ public class RenderMissileSilo implements BlockEntityRenderer<TileMissileSilo> {
 
 	@Override
 	public void render(TileMissileSilo tileEntityIn, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
-		int type = tileEntityIn.range;
+		int type = tileEntityIn.range.get();
 		switch (type) {
 		case 1: {
 			BakedModel closerange = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILEMEDIUMRANGE);

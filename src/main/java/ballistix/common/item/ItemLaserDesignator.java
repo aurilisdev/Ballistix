@@ -44,7 +44,7 @@ public class ItemLaserDesignator extends ItemElectric {
 		}
 		if (silo != null) {
 			CompoundTag nbt = stack.getOrCreateTag();
-			nbt.putInt("freq", silo.frequency);
+			nbt.putInt("freq", silo.frequency.get());
 			context.getPlayer().sendSystemMessage(Component.translatable("message.laserdesignator.setfrequency", silo.frequency));
 		}
 		return super.onItemUseFirst(stack, context);
@@ -61,7 +61,7 @@ public class ItemLaserDesignator extends ItemElectric {
 					int freq = nbt.getInt("freq");
 					if (freq != 0) {
 						for (TileMissileSilo silo : SiloRegistry.getSilos(freq)) {
-							silo.target = new Location(trace);
+							silo.target.set(trace.toBlockPos());
 							silo.shouldLaunch = true;
 							playerIn.sendSystemMessage(Component.translatable("message.laserdesignator.launch", new Location(silo.getBlockPos()) + " -> " + silo.target));
 						}

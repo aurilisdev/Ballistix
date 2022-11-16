@@ -9,14 +9,14 @@ public class SiloRegistry {
 	private static final HashMap<Integer, HashSet<TileMissileSilo>> silos = new HashMap<>();
 
 	public static void registerSilo(TileMissileSilo silo) {
-		if (!silos.containsKey(silo.frequency)) {
-			silos.put(silo.frequency, new HashSet<>());
+		if (!silos.containsKey(silo.frequency.get())) {
+			silos.put(silo.frequency.get(), new HashSet<>());
 		}
-		silos.get(silo.frequency).add(silo);
+		silos.get(silo.frequency.get()).add(silo);
 	}
 
 	public static void unregisterSilo(TileMissileSilo silo) {
-		silos.remove(silo.frequency);
+		silos.remove(silo.frequency.get());
 	}
 
 	public static HashSet<TileMissileSilo> getSilos(int freq) {

@@ -3,7 +3,6 @@ package ballistix.common.packet;
 import java.util.function.Supplier;
 
 import ballistix.common.tile.TileMissileSilo;
-import electrodynamics.prefab.utilities.object.Location;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
@@ -28,7 +27,7 @@ public class PacketSetMissileData {
 			if (world != null) {
 				TileMissileSilo tile = (TileMissileSilo) world.getBlockEntity(message.pos);
 				if (tile != null) {
-					tile.target = new Location(message.target);
+					tile.target.set(message.target);
 					tile.setFrequency(message.frequency);
 				}
 			}

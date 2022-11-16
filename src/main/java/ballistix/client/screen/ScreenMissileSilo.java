@@ -142,11 +142,11 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 		if (needsUpdate) {
 			needsUpdate = false;
 			TileMissileSilo silo = menu.getHostFromIntArray();
-			if (silo != null && silo.target != null) {
-				xCoordField.setValue("" + silo.target.intX());
-				yCoordField.setValue("" + silo.target.intY());
-				zCoordField.setValue("" + silo.target.intZ());
-				frequencyField.setValue("" + silo.frequency);
+			if (silo != null && silo.target.get() != null) {
+				xCoordField.setValue("" + silo.target.get().getX());
+				yCoordField.setValue("" + silo.target.get().getY());
+				zCoordField.setValue("" + silo.target.get().getZ());
+				frequencyField.setValue("" + silo.frequency.get());
 			}
 		}
 		xCoordField.render(matrixStack, mouseX, mouseY, partialTicks);

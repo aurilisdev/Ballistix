@@ -10,6 +10,7 @@ import electrodynamics.prefab.item.ItemElectric;
 import electrodynamics.prefab.utilities.MathUtils;
 import electrodynamics.prefab.utilities.object.Location;
 import electrodynamics.prefab.utilities.object.TransferPack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -46,7 +47,7 @@ public class ItemRadarGun extends ItemElectric {
 			int x = nbt.getInt("xCoord");
 			int y = nbt.getInt("yCoord");
 			int z = nbt.getInt("zCoord");
-			silo.target = new Location(x, y, z);
+			silo.target.set(new BlockPos(x, y, z));
 		}
 		return super.onItemUseFirst(stack, context);
 	}

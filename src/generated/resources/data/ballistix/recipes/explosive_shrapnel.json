@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": {
+      "tag": "minecraft:arrows"
+    },
+    "R": {
+      "item": "ballistix:repulsive"
+    }
+  },
+  "pattern": [
+    "AAA",
+    "ARA",
+    "AAA"
+  ],
+  "result": {
+    "item": "ballistix:shrapnel"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "L": {
+      "item": "minecraft:lava_bucket"
+    },
+    "R": {
+      "item": "ballistix:repulsive"
+    },
+    "S": {
+      "tag": "forge:dusts/sulfur"
+    }
+  },
+  "pattern": [
+    "SSS",
+    "SRS",
+    "SLS"
+  ],
+  "result": {
+    "item": "ballistix:incendiary"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "B": {
+      "item": "ballistix:breaching"
+    },
+    "C": {
+      "item": "ballistix:chemical"
+    },
+    "I": {
+      "item": "ballistix:incendiary"
+    },
+    "R": {
+      "item": "ballistix:repulsive"
+    }
+  },
+  "pattern": [
+    "CIC",
+    "BRB",
+    "CIC"
+  ],
+  "result": {
+    "item": "ballistix:thermobaric"
+  }
+}

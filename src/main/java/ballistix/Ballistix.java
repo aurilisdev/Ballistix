@@ -4,6 +4,7 @@ import ballistix.client.ClientRegister;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.packet.NetworkHandler;
 import ballistix.common.settings.Constants;
+import ballistix.common.tags.BallistixTags;
 import ballistix.registers.UnifiedBallistixRegister;
 import electrodynamics.prefab.configuration.ConfigurationHandler;
 import net.minecraft.core.BlockPos;
@@ -41,5 +42,6 @@ public class Ballistix {
 	@SubscribeEvent
 	public static void onCommonSetup(FMLCommonSetupEvent event) {
 		NetworkHandler.init();
+		BallistixTags.init();
 	}
 }

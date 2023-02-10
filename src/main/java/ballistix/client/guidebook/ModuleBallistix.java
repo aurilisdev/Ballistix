@@ -6,9 +6,11 @@ import java.util.List;
 import ballistix.References;
 import ballistix.client.guidebook.chapters.ChapterBlocks;
 import ballistix.client.guidebook.chapters.ChapterItems;
+import ballistix.prefab.utils.TextUtils;
 import electrodynamics.client.guidebook.utils.ImageWrapperObject;
 import electrodynamics.client.guidebook.utils.components.Chapter;
 import electrodynamics.client.guidebook.utils.components.Module;
+import net.minecraft.network.chat.MutableComponent;
 
 public class ModuleBallistix extends Module {
 
@@ -28,8 +30,8 @@ public class ModuleBallistix extends Module {
 	}
 
 	@Override
-	public String getTitleCat() {
-		return References.ID;
+	public MutableComponent getTitle() {
+		return TextUtils.guidebook(References.ID);
 	}
 
 	@Override

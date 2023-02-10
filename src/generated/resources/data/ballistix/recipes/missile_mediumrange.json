@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": {
+      "tag": "forge:circuits/advanced"
+    },
+    "G": {
+      "tag": "forge:gunpowder"
+    },
+    "M": {
+      "item": "ballistix:missilecloserange"
+    },
+    "P": {
+      "tag": "forge:plates/steel"
+    }
+  },
+  "pattern": [
+    " C ",
+    "PGP",
+    "PMP"
+  ],
+  "result": {
+    "item": "ballistix:missilemediumrange"
+  }
+}

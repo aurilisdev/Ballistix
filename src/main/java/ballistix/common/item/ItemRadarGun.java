@@ -4,10 +4,11 @@ import java.util.List;
 
 import ballistix.References;
 import ballistix.common.tile.TileMissileSilo;
+import ballistix.prefab.utils.TextUtils;
 import electrodynamics.common.tile.TileMultiSubnode;
 import electrodynamics.prefab.item.ElectricItemProperties;
 import electrodynamics.prefab.item.ItemElectric;
-import electrodynamics.prefab.utilities.MathUtils;
+import electrodynamics.prefab.utilities.math.MathUtils;
 import electrodynamics.prefab.utilities.object.Location;
 import electrodynamics.prefab.utilities.object.TransferPack;
 import net.minecraft.core.BlockPos;
@@ -82,7 +83,7 @@ public class ItemRadarGun extends ItemElectric {
 		Location trace = MathUtils.getRaytracedBlock(entityIn);
 		if (!worldIn.isClientSide && entityIn instanceof Player player) {
 			if (isSelected && trace != null) {
-				player.displayClientMessage(Component.translatable("message.radargun.text", trace.toString()), true);
+				player.displayClientMessage(TextUtils.chatMessage("radargun.text", trace.toString()), true);
 			}
 		}
 	}
@@ -96,9 +97,9 @@ public class ItemRadarGun extends ItemElectric {
 			int y = nbt.getInt("yCoord");
 			int z = nbt.getInt("zCoord");
 			String world = nbt.getString("world");
-			tooltip.add(Component.translatable("tooltip.radargun.linked", world + ", " + x + ", " + y + ", " + z));
+			tooltip.add(TextUtils.tooltip("radargun.linked", world + ", " + x + ", " + y + ", " + z));
 		} else {
-			tooltip.add(Component.translatable("tooltip.radargun.notag"));
+			tooltip.add(TextUtils.tooltip("radargun.notag"));
 		}
 	}
 }

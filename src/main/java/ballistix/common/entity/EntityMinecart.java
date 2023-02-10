@@ -3,6 +3,7 @@ package ballistix.common.entity;
 import ballistix.api.entity.IDefusable;
 import ballistix.common.blast.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.common.item.ItemMinecart.SubtypeMinecart;
 import ballistix.registers.BallistixEntities;
 import ballistix.registers.BallistixItems;
 import net.minecraft.core.BlockPos;
@@ -54,12 +55,12 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable {
 		this(BallistixEntities.ENTITY_MINECART.get(), worldIn);
 	}
 
-	public void setExplosiveType(SubtypeBlast explosive) {
+	public void setExplosiveType(SubtypeMinecart explosive) {
 		blastOrdinal = explosive.ordinal();
 	}
 
-	public SubtypeBlast getExplosiveType() {
-		return blastOrdinal == -1 ? null : SubtypeBlast.values()[blastOrdinal];
+	public SubtypeMinecart getExplosiveType() {
+		return blastOrdinal == -1 ? null : SubtypeMinecart.values()[blastOrdinal];
 	}
 
 	@Override
@@ -138,8 +139,7 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable {
 		super.remove(reason);
 		if (!exploded) {
 			if (blastOrdinal != -1) {
-				SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
-				ItemEntity item = new ItemEntity(level, getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(BallistixItems.SUBTYPEMINECARTMAPPINGS.get(explosive).get()));
+				ItemEntity item = new ItemEntity(level, getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(BallistixItems.getItem(getExplosiveType())));
 				level.addFreshEntity(item);
 			}
 		}
@@ -166,8 +166,7 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable {
 	@Override
 	protected Item getDropItem() {
 		if (blastOrdinal != -1) {
-			SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
-			return BallistixItems.SUBTYPEMINECARTMAPPINGS.get(explosive).get();
+			return BallistixItems.getItem(getExplosiveType());
 		}
 		return Items.MINECART;
 	}

@@ -33,9 +33,9 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 
 	protected CachedTileOutput output1;
 	protected CachedTileOutput output2;
-	public Property<Integer> range = property(new Property<Integer>(PropertyType.Integer, "range")).set(-1).save();
-	public Property<Integer> frequency = property(new Property<Integer>(PropertyType.Integer, "frequency")).set(-1).save();
-	public Property<BlockPos> target = property(new Property<BlockPos>(PropertyType.BlockPos, "target")).save();
+	public Property<Integer> range = property(new Property<Integer>(PropertyType.Integer, "range", -1));
+	public Property<Integer> frequency = property(new Property<Integer>(PropertyType.Integer, "frequency", -1));
+	public Property<BlockPos> target = property(new Property<BlockPos>(PropertyType.BlockPos, "target", BlockPos.ZERO));
 
 	private int cooldown = 100;
 	public boolean shouldLaunch;
@@ -43,7 +43,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 	public TileMissileSilo(BlockPos pos, BlockState state) {
 		super(BallistixBlockTypes.TILE_MISSILESILO.get(), pos, state);
 		addComponent(new ComponentTickable().tickServer(this::tickServer));
-		addComponent(new ComponentInventory(this).size(2).faceSlots(Direction.UP, 0, 1).valid(this::isItemValidForSlot).shouldSendInfo());
+		addComponent(new ComponentInventory(this).size(2).faceSlots(Direction.UP, 0, 1).valid(this::isItemValidForSlot));
 		addComponent(new ComponentPacketHandler());
 		addComponent(new ComponentContainerProvider("container.missilesilo").createMenu((id, player) -> new ContainerMissileSilo(id, player, getComponent(ComponentType.Inventory), getCoordsArray())));
 

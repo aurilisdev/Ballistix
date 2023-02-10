@@ -2,7 +2,9 @@ package ballistix.registers;
 
 import static electrodynamics.registers.UnifiedElectrodynamicsRegister.supplier;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import ballistix.References;
 import ballistix.common.block.BlockExplosive;
@@ -27,4 +29,17 @@ public class BallistixBlocks {
 			SUBTYPEBLOCKREGISTER_MAPPINGS.put(subtype, BLOCKS.register(subtype.tag(), supplier(() -> new BlockExplosive(subtype), subtype)));
 		}
 	}
+	
+	public static Block[] getAllBlockForSubtype(ISubtype[] values) {
+		List<Block> list = new ArrayList<>();
+		for (ISubtype value : values) {
+			list.add(SUBTYPEBLOCKREGISTER_MAPPINGS.get(value).get());
+		}
+		return list.toArray(new Block[] {});
+	}
+
+	public static Block getBlock(ISubtype value) {
+		return SUBTYPEBLOCKREGISTER_MAPPINGS.get(value).get();
+	}
+	
 }

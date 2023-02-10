@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "O": {
+      "tag": "forge:obsidian"
+    },
+    "R": {
+      "tag": "forge:dusts/redstone"
+    },
+    "T": {
+      "item": "minecraft:tnt"
+    }
+  },
+  "pattern": [
+    "OOO",
+    "TRT",
+    "OOO"
+  ],
+  "result": {
+    "item": "ballistix:obsidian"
+  }
+}

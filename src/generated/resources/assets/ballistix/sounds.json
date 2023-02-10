@@ -1,0 +1,20 @@
+{
+  "antimatterexplosion": {
+    "sounds": [
+      "ballistix:antimatterexplosion"
+    ],
+    "subtitle": "subtitles.ballistix.antimatterexplosion"
+  },
+  "darkmatter": {
+    "sounds": [
+      "ballistix:darkmatter"
+    ],
+    "subtitle": "subtitles.ballistix.darkmatter"
+  },
+  "nuclearexplosion": {
+    "sounds": [
+      "ballistix:nuclearexplosion"
+    ],
+    "subtitle": "subtitles.ballistix.nuclearexplosion"
+  }
+}

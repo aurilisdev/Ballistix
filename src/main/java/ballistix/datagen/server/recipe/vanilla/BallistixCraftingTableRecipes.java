@@ -207,7 +207,7 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
 				//
 				.addKey('D', NuclearScienceTags.Items.CELL_DARK_MATTER)
 				//
-				.addKey('A', BallistixBlocks.getBlock(SubtypeBlast.antimatter).asItem())
+				.addKey('A', BallistixBlocks.getBlock(SubtypeBlast.largeantimatter).asItem())
 				//
 				.complete(References.ID, "explosive_darkmatter", consumer);
 
@@ -293,7 +293,7 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
 				//
 				.complete(References.ID, "explosive_nuclear", consumer);
 
-		ElectrodynamicsShapedCraftingRecipe.start(BallistixBlocks.getBlock(SubtypeBlast.antimatter).asItem(), 1)
+		ElectrodynamicsShapedCraftingRecipe.start(BallistixBlocks.getBlock(SubtypeBlast.obsidian).asItem(), 1)
 				//
 				.addPattern("OOO")
 				//

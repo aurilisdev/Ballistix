@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "key": {
     "A": {
-      "item": "ballistix:antimatter"
+      "item": "ballistix:largeantimatter"
     },
     "D": {
       "tag": "forge:cells/dark_matter"

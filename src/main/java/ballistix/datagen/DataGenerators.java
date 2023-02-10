@@ -11,9 +11,9 @@ import ballistix.datagen.server.BallistixLootTablesProvider;
 import ballistix.datagen.server.recipe.BallistixRecipeProvider;
 import electrodynamics.datagen.client.ElectrodynamicsLangKeyProvider.Locale;
 import net.minecraft.data.DataGenerator;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.data.event.GatherDataEvent;
 
 @Mod.EventBusSubscriber(modid = References.ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class DataGenerators {
@@ -23,13 +23,13 @@ public class DataGenerators {
 
 		DataGenerator generator = event.getGenerator();
 		if (event.includeServer()) {
-			
+
 			BallistixBlockTagsProvider blockProvider = new BallistixBlockTagsProvider(generator, event.getExistingFileHelper());
 			generator.addProvider(true, blockProvider);
 			generator.addProvider(true, new BallistixItemTagsProvider(generator, blockProvider, event.getExistingFileHelper()));
 			generator.addProvider(true, new BallistixLootTablesProvider(generator));
 			generator.addProvider(true, new BallistixRecipeProvider(generator));
-			
+
 		}
 		if (event.includeClient()) {
 			generator.addProvider(true, new BallistixBlockStateProvider(generator, event.getExistingFileHelper()));

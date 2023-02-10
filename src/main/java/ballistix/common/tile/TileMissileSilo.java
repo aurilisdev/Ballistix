@@ -33,9 +33,9 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 
 	protected CachedTileOutput output1;
 	protected CachedTileOutput output2;
-	public Property<Integer> range = property(new Property<Integer>(PropertyType.Integer, "range", -1));
-	public Property<Integer> frequency = property(new Property<Integer>(PropertyType.Integer, "frequency", -1));
-	public Property<BlockPos> target = property(new Property<BlockPos>(PropertyType.BlockPos, "target", BlockPos.ZERO));
+	public Property<Integer> range = property(new Property<>(PropertyType.Integer, "range", -1));
+	public Property<Integer> frequency = property(new Property<>(PropertyType.Integer, "frequency", -1));
+	public Property<BlockPos> target = property(new Property<>(PropertyType.BlockPos, "target", BlockPos.ZERO));
 
 	private int cooldown = 100;
 	public boolean shouldLaunch;

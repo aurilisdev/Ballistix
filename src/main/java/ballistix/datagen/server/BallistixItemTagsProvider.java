@@ -10,8 +10,7 @@ import nuclearscience.References;
 
 public class BallistixItemTagsProvider extends ItemTagsProvider {
 
-	public BallistixItemTagsProvider(DataGenerator generator, BlockTagsProvider provider,
-			ExistingFileHelper existingFileHelper) {
+	public BallistixItemTagsProvider(DataGenerator generator, BlockTagsProvider provider, ExistingFileHelper existingFileHelper) {
 		super(generator, provider, References.ID, existingFileHelper);
 	}
 
@@ -19,7 +18,7 @@ public class BallistixItemTagsProvider extends ItemTagsProvider {
 	protected void addTags() {
 
 		tag(BallistixTags.Items.DUST_POISON).add(BallistixItems.ITEM_DUSTPOISON.get());
-		
+
 	}
 
 }

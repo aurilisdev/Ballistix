@@ -17,7 +17,7 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 
 public class ItemGrenade extends Item {
-	
+
 	private SubtypeGrenade grenade;
 
 	public ItemGrenade(SubtypeGrenade grenade) {
@@ -59,22 +59,22 @@ public class ItemGrenade extends Item {
 			}
 		}
 	}
-	
-	public static enum SubtypeGrenade implements ISubtype {
-		attractive(SubtypeBlast.attractive), 
-		chemical(SubtypeBlast.chemical), 
-		condensive(SubtypeBlast.condensive), 
-		debilitation(SubtypeBlast.debilitation), 
+
+	public enum SubtypeGrenade implements ISubtype {
+		attractive(SubtypeBlast.attractive),
+		chemical(SubtypeBlast.chemical),
+		condensive(SubtypeBlast.condensive),
+		debilitation(SubtypeBlast.debilitation),
 		incendiary(SubtypeBlast.incendiary),
 		repulsive(SubtypeBlast.repulsive),
 		shrapnel(SubtypeBlast.shrapnel);
 
 		public final SubtypeBlast explosiveType;
-		
-		private SubtypeGrenade(SubtypeBlast explosive) {
+
+		SubtypeGrenade(SubtypeBlast explosive) {
 			explosiveType = explosive;
 		}
-		
+
 		@Override
 		public String forgeTag() {
 			return "grenades/" + name();
@@ -89,8 +89,7 @@ public class ItemGrenade extends Item {
 		public String tag() {
 			return "grenade" + name();
 		}
-		
+
 	}
-	
-	
+
 }

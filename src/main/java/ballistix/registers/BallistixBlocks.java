@@ -29,7 +29,7 @@ public class BallistixBlocks {
 			SUBTYPEBLOCKREGISTER_MAPPINGS.put(subtype, BLOCKS.register(subtype.tag(), supplier(() -> new BlockExplosive(subtype), subtype)));
 		}
 	}
-	
+
 	public static Block[] getAllBlockForSubtype(ISubtype[] values) {
 		List<Block> list = new ArrayList<>();
 		for (ISubtype value : values) {
@@ -41,5 +41,5 @@ public class BallistixBlocks {
 	public static Block getBlock(ISubtype value) {
 		return SUBTYPEBLOCKREGISTER_MAPPINGS.get(value).get();
 	}
-	
+
 }

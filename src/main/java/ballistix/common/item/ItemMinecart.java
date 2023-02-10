@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.level.gameevent.GameEvent;
 
 public class ItemMinecart extends Item {
-	
+
 	private SubtypeMinecart minecart;
 
 	public ItemMinecart(SubtypeMinecart minecart) {
@@ -116,9 +116,8 @@ public class ItemMinecart extends Item {
 			source.getLevel().levelEvent(1000, source.getPos(), 0);
 		}
 	};
-	
-	
-	public static enum SubtypeMinecart implements ISubtype {
+
+	public enum SubtypeMinecart implements ISubtype {
 		obsidian(SubtypeBlast.obsidian),
 		condensive(SubtypeBlast.condensive),
 		attractive(SubtypeBlast.attractive),
@@ -138,11 +137,11 @@ public class ItemMinecart extends Item {
 		darkmatter(SubtypeBlast.darkmatter);
 
 		public final SubtypeBlast explosiveType;
-		
-		private SubtypeMinecart(SubtypeBlast explosive) {
+
+		SubtypeMinecart(SubtypeBlast explosive) {
 			explosiveType = explosive;
 		}
-		
+
 		@Override
 		public String forgeTag() {
 			return "explosive_minecarts/" + name();
@@ -157,9 +156,7 @@ public class ItemMinecart extends Item {
 		public String tag() {
 			return "minecart" + name();
 		}
-		
+
 	}
-	
-	
-	
+
 }

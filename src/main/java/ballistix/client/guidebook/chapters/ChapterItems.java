@@ -3,12 +3,12 @@ package ballistix.client.guidebook.chapters;
 import java.util.ArrayList;
 import java.util.List;
 
-import ballistix.prefab.utils.TextUtils;
 import ballistix.registers.BallistixItems;
 import electrodynamics.client.guidebook.utils.ItemWrapperObject;
 import electrodynamics.client.guidebook.utils.TextWrapperObject;
 import electrodynamics.client.guidebook.utils.components.Chapter;
 import electrodynamics.client.guidebook.utils.components.Page;
+import electrodynamics.prefab.utilities.TextUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
 

@@ -55,17 +55,17 @@ public class BallistixItems {
 		}
 		ITEMS.register("missilesilo", supplier(() -> new BlockItemDescriptable(() -> blockMissileSilo, new Item.Properties().tab(References.BALLISTIXTAB))));
 	}
-	
-	public static Item[] getAllItemForSubtype(ISubtype[] values){
+
+	public static Item[] getAllItemForSubtype(ISubtype[] values) {
 		List<Item> list = new ArrayList<>();
-		for(ISubtype value : values) {
+		for (ISubtype value : values) {
 			list.add(SUBTYPEITEMREGISTER_MAPPINGS.get(value).get());
 		}
 		return list.toArray(new Item[] {});
 	}
-	
+
 	public static Item getItem(ISubtype value) {
 		return SUBTYPEITEMREGISTER_MAPPINGS.get(value).get();
 	}
-	
+
 }

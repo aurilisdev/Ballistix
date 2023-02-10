@@ -6,9 +6,9 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import ballistix.References;
-import ballistix.prefab.utils.TextUtils;
 import electrodynamics.prefab.item.ElectricItemProperties;
 import electrodynamics.prefab.item.ItemElectric;
+import electrodynamics.prefab.utilities.TextUtils;
 import electrodynamics.prefab.utilities.object.TransferPack;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;

@@ -14,14 +14,13 @@ public class BallistixLootTablesProvider extends ElectrodynamicsLootTablesProvid
 
 	@Override
 	protected void addTables() {
-		
-		for(SubtypeBlast blast : SubtypeBlast.values()) {
+
+		for (SubtypeBlast blast : SubtypeBlast.values()) {
 			addSimpleBlock(BallistixBlocks.getBlock(blast));
 		}
-		
+
 		addITable(BallistixBlocks.blockMissileSilo, BallistixBlockTypes.TILE_MISSILESILO);
-		
+
 	}
-	
 
 }

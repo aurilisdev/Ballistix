@@ -30,7 +30,7 @@ public class BallistixItemModelsProvider extends ElectrodynamicsItemModelsProvid
 	@Override
 	protected void registerModels() {
 
-		for(SubtypeGrenade grenade : SubtypeGrenade.values()) {
+		for (SubtypeGrenade grenade : SubtypeGrenade.values()) {
 			layeredItem(BallistixItems.getItem(grenade), Parent.GENERATED, itemLoc("grenade/" + name(BallistixItems.getItem(grenade))));
 		}
 

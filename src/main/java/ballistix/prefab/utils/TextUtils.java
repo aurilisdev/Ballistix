@@ -17,8 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 public class TextUtils {
-	
-	
+
 	public static final DecimalFormat FORMATTER = new DecimalFormat("0.0##");
 
 	public static MutableComponent tooltip(String key, Object... additional) {
@@ -64,7 +63,7 @@ public class TextUtils {
 	public static boolean tooltipExists(String key) {
 		return translationExists(TOOLTIP_BASE, key);
 	}
-	
+
 	public static boolean translationExists(String base, String key) {
 		return I18n.exists(base + "." + References.ID + "." + key);
 	}

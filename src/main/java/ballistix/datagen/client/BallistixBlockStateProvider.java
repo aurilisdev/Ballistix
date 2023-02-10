@@ -18,7 +18,7 @@ public class BallistixBlockStateProvider extends ElectrodynamicsBlockStateProvid
 
 	@Override
 	protected void registerStatesAndModels() {
-		
+
 		simpleExplosive(BallistixBlocks.getBlock(SubtypeBlast.attractive), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
 		simpleExplosive(BallistixBlocks.getBlock(SubtypeBlast.breaching), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
 		simpleExplosive(BallistixBlocks.getBlock(SubtypeBlast.chemical), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
@@ -33,38 +33,33 @@ public class BallistixBlockStateProvider extends ElectrodynamicsBlockStateProvid
 		simpleExplosive(BallistixBlocks.getBlock(SubtypeBlast.repulsive), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
 		simpleExplosive(BallistixBlocks.getBlock(SubtypeBlast.shrapnel), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
 		simpleExplosive(BallistixBlocks.getBlock(SubtypeBlast.thermobaric), ExplosiveParent.EXPLOSIVE_MODEL_ONE, true);
-		
+
 		simpleBlock(BallistixBlocks.getBlock(SubtypeBlast.antimatter), existingBlock(BallistixBlocks.getBlock(SubtypeBlast.antimatter)), true);
 		simpleBlock(BallistixBlocks.getBlock(SubtypeBlast.darkmatter), existingBlock(BallistixBlocks.getBlock(SubtypeBlast.darkmatter)), true);
 		simpleBlock(BallistixBlocks.getBlock(SubtypeBlast.landmine), existingBlock(BallistixBlocks.getBlock(SubtypeBlast.landmine)), true);
 		simpleBlock(BallistixBlocks.getBlock(SubtypeBlast.largeantimatter), existingBlock(BallistixBlocks.getBlock(SubtypeBlast.largeantimatter)), true);
-		
+
 		horrRotatedBlock(BallistixBlocks.blockMissileSilo, existingBlock(BallistixBlocks.blockMissileSilo), 90, 0, false);
-		
-		
-	
+
 	}
-	
-	
+
 	private void simpleExplosive(Block block, ExplosiveParent parent, boolean registerItem) {
 		BlockModelBuilder builder = models().withExistingParent(name(block), blockLoc(parent.toString())).texture("3", blockLoc(name(block) + "base")).texture("particle", "#3");
 		getVariantBuilder(block).partialState().setModels(new ConfiguredModel(builder));
-		if(registerItem) {
+		if (registerItem) {
 			simpleBlockItem(block, builder);
 		}
 	}
-	
-	
-	public static enum ExplosiveParent {
-		
+
+	public enum ExplosiveParent {
+
 		EXPLOSIVE_MODEL_ONE;
-		
+
 		@Override
 		public String toString() {
 			return super.toString().toLowerCase().replaceAll("_", "");
 		}
-		
+
 	}
-	
-	
+
 }

@@ -31,6 +31,9 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(modid = References.ID, bus = Bus.MOD, value = { Dist.CLIENT })
 public class ClientRegister {
+	
+	public static final ResourceLocation ANGLE_PREDICATE = new ResourceLocation("angle");
+	
 	@SubscribeEvent
 	public static void onModelEvent(RegisterAdditional event) {
 		event.register(MODEL_MISSILECLOSERANGE);
@@ -58,7 +61,7 @@ public class ClientRegister {
 
 	public static void setup() {
 		MenuScreens.register(BallistixMenuTypes.CONTAINER_MISSILESILO.get(), ScreenMissileSilo::new);
-		ItemProperties.register(BallistixItems.ITEM_TRACKER.get(), new ResourceLocation("angle"), ItemTracker::getAngle);
+		ItemProperties.register(BallistixItems.ITEM_TRACKER.get(), ANGLE_PREDICATE, ItemTracker::getAngle);
 
 		ScreenGuidebook.addGuidebookModule(new ModuleBallistix());
 	}

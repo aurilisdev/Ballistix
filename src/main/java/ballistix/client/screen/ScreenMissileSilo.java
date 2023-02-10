@@ -4,8 +4,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import ballistix.common.inventory.container.ContainerMissileSilo;
 import ballistix.common.tile.TileMissileSilo;
+import ballistix.prefab.utils.TextUtils;
 import electrodynamics.prefab.screen.GenericScreen;
 import electrodynamics.prefab.screen.component.ScreenComponentTextInputBar;
+import electrodynamics.prefab.screen.component.ScreenComponentTextInputBar.TextInputTextures;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
@@ -17,10 +19,10 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 	public ScreenMissileSilo(ContainerMissileSilo container, Inventory playerInventory, Component title) {
 		super(container, playerInventory, title);
-		components.add(new ScreenComponentTextInputBar(this, 122, 10).small());
-		components.add(new ScreenComponentTextInputBar(this, 122, 28).small());
-		components.add(new ScreenComponentTextInputBar(this, 122, 46).small());
-		components.add(new ScreenComponentTextInputBar(this, 122, 64).small());
+		components.add(new ScreenComponentTextInputBar(TextInputTextures.TEXT_INPUT_SMALL, this, 122, 10));
+		components.add(new ScreenComponentTextInputBar(TextInputTextures.TEXT_INPUT_SMALL, this, 122, 28));
+		components.add(new ScreenComponentTextInputBar(TextInputTextures.TEXT_INPUT_SMALL, this, 122, 46));
+		components.add(new ScreenComponentTextInputBar(TextInputTextures.TEXT_INPUT_SMALL, this, 122, 64));
 	}
 
 	private EditBox xCoordField;
@@ -158,12 +160,12 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 	@Override
 	protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
 		super.renderLabels(matrixStack, mouseX, mouseY);
-		font.draw(matrixStack, Component.translatable("gui.missilesilo.missile"), inventoryLabelX, inventoryLabelY - 55.0f, 4210752);
-		font.draw(matrixStack, Component.translatable("gui.missilesilo.explosive"), inventoryLabelX, inventoryLabelY - 20.0f, 4210752);
-		font.draw(matrixStack, Component.translatable("gui.missilesilo.x"), 79, 13f, 4210752);
-		font.draw(matrixStack, Component.translatable("gui.missilesilo.y"), 79, 13f + 18, 4210752);
-		font.draw(matrixStack, Component.translatable("gui.missilesilo.z"), 79, 13f + 18 * 2, 4210752);
-		font.draw(matrixStack, Component.translatable("gui.missilesilo.freq"), 79, 13f + 18 * 3, 4210752);
+		font.draw(matrixStack, TextUtils.gui("missilesilo.missile"), inventoryLabelX, inventoryLabelY - 55.0f, 4210752);
+		font.draw(matrixStack, TextUtils.gui("missilesilo.explosive"), inventoryLabelX, inventoryLabelY - 20.0f, 4210752);
+		font.draw(matrixStack, TextUtils.gui("missilesilo.x"), 79, 13f, 4210752);
+		font.draw(matrixStack, TextUtils.gui("missilesilo.y"), 79, 13f + 18, 4210752);
+		font.draw(matrixStack, TextUtils.gui("missilesilo.z"), 79, 13f + 18 * 2, 4210752);
+		font.draw(matrixStack, TextUtils.gui("missilesilo.freq"), 79, 13f + 18 * 3, 4210752);
 	}
 
 }

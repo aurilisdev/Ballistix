@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "S": {
+      "tag": "forge:gems/amethyst"
+    },
+    "T": {
+      "item": "ballistix:tracker"
+    }
+  },
+  "pattern": [
+    " S ",
+    "STS",
+    " S "
+  ],
+  "result": {
+    "item": "ballistix:scanner"
+  }
+}

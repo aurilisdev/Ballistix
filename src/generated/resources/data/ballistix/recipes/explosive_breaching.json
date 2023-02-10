@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": {
+      "item": "ballistix:condensive"
+    },
+    "G": {
+      "tag": "forge:gunpowder"
+    }
+  },
+  "pattern": [
+    "GCG",
+    "GCG",
+    "GCG"
+  ],
+  "result": {
+    "item": "ballistix:breaching"
+  }
+}

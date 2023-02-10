@@ -6,10 +6,10 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import ballistix.References;
+import ballistix.prefab.utils.TextUtils;
 import electrodynamics.prefab.item.ElectricItemProperties;
 import electrodynamics.prefab.item.ItemElectric;
 import electrodynamics.prefab.utilities.object.TransferPack;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -40,9 +40,9 @@ public class ItemScanner extends ItemElectric {
 			}
 		}
 		if (action) {
-			playerIn.displayClientMessage(Component.translatable("message.scanner.cleared"), true);
+			playerIn.displayClientMessage(TextUtils.chatMessage("scanner.cleared"), true);
 		} else {
-			playerIn.displayClientMessage(Component.translatable("message.scanner.none"), true);
+			playerIn.displayClientMessage(TextUtils.chatMessage("scanner.none"), true);
 		}
 		return super.use(worldIn, playerIn, handIn);
 	}

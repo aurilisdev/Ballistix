@@ -36,7 +36,7 @@ public class ContainerMissileSilo extends GenericContainerBlockEntity<TileMissil
 
 	@Override
 	public void addInventorySlots(Container inv, Inventory playerinv) {
-		addSlot(new SlotRestricted(inv, nextIndex(), 60, 17, BallistixItems.ITEM_MISSILECLOSERANGE.get(), BallistixItems.ITEM_MISSILEMEDIUMRANGE.get(), BallistixItems.ITEM_MISSILELONGRANGE.get()));
+		addSlot(new SlotRestricted(inv, nextIndex(), 60, 17).setRestriction(BallistixItems.ITEM_MISSILECLOSERANGE.get(), BallistixItems.ITEM_MISSILEMEDIUMRANGE.get(), BallistixItems.ITEM_MISSILELONGRANGE.get()));
 		addSlot(new SlotRestricted(inv, nextIndex(), 60, 50) {
 			@Override
 			public boolean mayPlace(ItemStack stack) {

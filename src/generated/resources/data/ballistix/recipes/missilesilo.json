@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": {
+      "tag": "forge:circuits/elite"
+    },
+    "L": {
+      "item": "minecraft:lever"
+    },
+    "P": {
+      "tag": "forge:plates/steel"
+    }
+  },
+  "pattern": [
+    "P P",
+    "PCP",
+    "PLP"
+  ],
+  "result": {
+    "item": "ballistix:missilesilo"
+  }
+}

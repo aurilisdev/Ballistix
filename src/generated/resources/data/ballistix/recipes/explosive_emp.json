@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "B": {
+      "type": "forge:nbt",
+      "count": 1,
+      "item": "electrodynamics:battery",
+      "nbt": "{joules:1666666.0d}"
+    },
+    "D": {
+      "tag": "forge:dusts/redstone"
+    },
+    "T": {
+      "item": "minecraft:tnt"
+    }
+  },
+  "pattern": [
+    "DBD",
+    "BTB",
+    "DBD"
+  ],
+  "result": {
+    "item": "ballistix:emp"
+  }
+}

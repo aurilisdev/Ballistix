@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": {
+      "tag": "forge:cells/anti_matter_large"
+    },
+    "N": {
+      "item": "ballistix:nuclear"
+    }
+  },
+  "pattern": [
+    "CCC",
+    "CNC",
+    "CCC"
+  ],
+  "result": {
+    "item": "ballistix:antimatter"
+  }
+}

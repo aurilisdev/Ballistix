@@ -2,8 +2,8 @@ package ballistix.client.render.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityGrenade;
+import ballistix.common.item.ItemGrenade.SubtypeGrenade;
 import ballistix.registers.BallistixItems;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -31,7 +31,7 @@ public class RenderGrenade extends EntityRenderer<EntityGrenade> {
 
 	@Override
 	public void render(EntityGrenade entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
-		SubtypeBlast subtype = entityIn.getExplosiveType();
+		SubtypeGrenade subtype = entityIn.getExplosiveType();
 		if (subtype != null) {
 			matrixStackIn.pushPose();
 			if (itemEntity == null) {

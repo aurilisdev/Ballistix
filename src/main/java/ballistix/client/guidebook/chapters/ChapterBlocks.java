@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ballistix.References;
+import ballistix.prefab.utils.TextUtils;
 import ballistix.registers.BallistixBlocks;
 import electrodynamics.client.guidebook.utils.ImageWrapperObject;
 import electrodynamics.client.guidebook.utils.ItemWrapperObject;
@@ -11,7 +12,6 @@ import electrodynamics.client.guidebook.utils.TextWrapperObject;
 import electrodynamics.client.guidebook.utils.components.Chapter;
 import electrodynamics.client.guidebook.utils.components.Page;
 import electrodynamics.prefab.utilities.ItemUtils;
-import electrodynamics.prefab.utilities.TextUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
 

@@ -4,10 +4,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import ballistix.common.inventory.container.ContainerMissileSilo;
 import ballistix.common.tile.TileMissileSilo;
+import ballistix.prefab.utils.TextUtils;
 import electrodynamics.prefab.screen.GenericScreen;
 import electrodynamics.prefab.screen.component.ScreenComponentTextInputBar;
 import electrodynamics.prefab.screen.component.ScreenComponentTextInputBar.TextInputTextures;
-import electrodynamics.prefab.utilities.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;

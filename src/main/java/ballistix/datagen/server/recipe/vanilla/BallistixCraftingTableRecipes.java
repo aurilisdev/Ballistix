@@ -141,7 +141,7 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
 				//
 				.addKey('D', Tags.Items.DUSTS_REDSTONE)
 				//
-				.addKey('C', BallistixBlocks.getBlock(SubtypeBlast.nuclear).asItem())
+				.addKey('C', BallistixBlocks.getBlock(SubtypeBlast.condensive).asItem())
 				//
 				.complete(References.ID, "explosive_attractive", consumer);
 

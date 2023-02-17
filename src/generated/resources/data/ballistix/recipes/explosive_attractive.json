@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "key": {
     "C": {
-      "item": "ballistix:nuclear"
+      "item": "ballistix:condensive"
     },
     "D": {
       "tag": "forge:dusts/redstone"

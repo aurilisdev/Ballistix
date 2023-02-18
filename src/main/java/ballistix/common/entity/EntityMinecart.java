@@ -38,8 +38,8 @@ import net.minecraftforge.network.NetworkHooks;
 public class EntityMinecart extends AbstractMinecart implements IDefusable {
 	private static final EntityDataAccessor<Integer> FUSE = SynchedEntityData.defineId(EntityMinecart.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(EntityMinecart.class, EntityDataSerializers.INT);
-	public int blastOrdinal = -1;
-	public int fuse = -1;
+	private int blastOrdinal = -1;
+	private int fuse = -1;
 	private boolean exploded;
 
 	public EntityMinecart(EntityType<? extends EntityMinecart> type, Level worldIn) {
@@ -125,7 +125,7 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable {
 			exploded = true;
 			remove(RemovalReason.DISCARDED);
 			if (blastOrdinal != -1) {
-				SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
+				SubtypeBlast explosive = SubtypeMinecart.values()[blastOrdinal].explosiveType;
 				Blast b = Blast.createFromSubtype(explosive, level, blockPosition());
 				if (b != null) {
 					b.performExplosion();

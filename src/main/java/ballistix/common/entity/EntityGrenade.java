@@ -23,8 +23,8 @@ import net.minecraftforge.network.NetworkHooks;
 public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 	private static final EntityDataAccessor<Integer> FUSE = SynchedEntityData.defineId(EntityGrenade.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(EntityGrenade.class, EntityDataSerializers.INT);
-	public int grenadeOrdinal = -1;
-	public int fuse = 80;
+	private int grenadeOrdinal = -1;
+	private int fuse = 80;
 
 	public EntityGrenade(EntityType<? extends EntityGrenade> type, Level worldIn) {
 		super(type, worldIn);
@@ -53,7 +53,7 @@ public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 	public void defuse() {
 		remove(RemovalReason.DISCARDED);
 		if (grenadeOrdinal != -1) {
-			SubtypeBlast explosive = SubtypeBlast.values()[grenadeOrdinal];
+			SubtypeBlast explosive = SubtypeGrenade.values()[grenadeOrdinal].explosiveType;
 			ItemEntity item = new ItemEntity(level, getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(BallistixBlocks.SUBTYPEBLOCKREGISTER_MAPPINGS.get(explosive).get()));
 			level.addFreshEntity(item);
 		}

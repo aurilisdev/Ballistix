@@ -18,6 +18,7 @@ import electrodynamics.prefab.tile.GenericTile;
 import electrodynamics.prefab.tile.components.ComponentType;
 import electrodynamics.prefab.tile.components.type.ComponentContainerProvider;
 import electrodynamics.prefab.tile.components.type.ComponentInventory;
+import electrodynamics.prefab.tile.components.type.ComponentInventory.InventoryBuilder;
 import electrodynamics.prefab.tile.components.type.ComponentPacketHandler;
 import electrodynamics.prefab.tile.components.type.ComponentTickable;
 import electrodynamics.prefab.utilities.object.CachedTileOutput;
@@ -43,7 +44,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 	public TileMissileSilo(BlockPos pos, BlockState state) {
 		super(BallistixBlockTypes.TILE_MISSILESILO.get(), pos, state);
 		addComponent(new ComponentTickable().tickServer(this::tickServer));
-		addComponent(new ComponentInventory(this).size(2).faceSlots(Direction.UP, 0, 1).valid(this::isItemValidForSlot));
+		addComponent(new ComponentInventory(this, InventoryBuilder.newInv().inputs(2)).faceSlots(Direction.UP, 0, 1).valid(this::isItemValidForSlot));
 		addComponent(new ComponentPacketHandler());
 		addComponent(new ComponentContainerProvider("container.missilesilo").createMenu((id, player) -> new ContainerMissileSilo(id, player, getComponent(ComponentType.Inventory), getCoordsArray())));
 

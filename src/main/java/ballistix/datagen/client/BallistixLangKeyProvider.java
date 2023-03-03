@@ -112,103 +112,51 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 
 			addGuidebook(References.ID, "Ballistix");
 
-			addGuidebook("chapter.blocks", "Blocks");
-			addGuidebook("chapter.blocks.missilesilotitle", "Missile Silo");
-			addGuidebook("chapter.blocks.p1l1", "    The Missile Silo is used as");
-			addGuidebook("chapter.blocks.p1l2", "the name suggests to launch    ");
-			addGuidebook("chapter.blocks.p1l3", "various missiles with various  ");
-			addGuidebook("chapter.blocks.p1l4", "warheads. The Silo has 3       ");
-			addGuidebook("chapter.blocks.p1l5", "available missile types with   ");
-			addGuidebook("chapter.blocks.p1l6", "the following ranges:          ");
-			addGuidebook("chapter.blocks.p1l7", "  Close-Range");
-			addGuidebook("chapter.blocks.p1l8", "  Medium-Range");
-			addGuidebook("chapter.blocks.p1l9", "  Long-Range");
-			addGuidebook("chapter.blocks.p1l10", "Each missile type is capable   ");
-			addGuidebook("chapter.blocks.p1l11", "of carrying any explosive as   ");
-			addGuidebook("chapter.blocks.missileblocks", "Blocks");
-			addGuidebook("chapter.blocks.missileunlimited", "Unlimited");
-			addGuidebook("chapter.blocks.silorange", ": %1$s %2$s");
-
-			addGuidebook("chapter.blocks.p2l1", "a warhead.                     ");
-			addGuidebook("chapter.blocks.p2l2", "    To load an explosive into  ");
-			addGuidebook("chapter.blocks.p2l3", "a missile); place the missile of");
-			addGuidebook("chapter.blocks.p2l4", "your choice into the silo.     ");
-			addGuidebook("chapter.blocks.p2l5", "Place the explosive of choice  ");
-			addGuidebook("chapter.blocks.p2l6", "into the designated spot in the");
-			addGuidebook("chapter.blocks.p2l7", "silo. Next); program the target ");
-			addGuidebook("chapter.blocks.p2l8", "into the coordiante box. To    ");
-			addGuidebook("chapter.blocks.p2l9", "fire the missile); apply a      ");
-			addGuidebook("chapter.blocks.p2l10", "redstone signal to the silo.   ");
+			addGuidebook("chapter.missilesilo", "Missile Silo");
+			addGuidebook("chapter.missilesilo.l1", "The Missile Silo is used, as the name suggests, to launch various missiles with different types of warheads. The Silo has 3 available missile types with the following block ranges:");
+			addGuidebook("chapter.missilesilo.range", "%1$s : %2$s");
+			addGuidebook("chapter.missilesilo.close", "Close-Range");
+			addGuidebook("chapter.missilesilo.medium", "Medium-Range");
+			addGuidebook("chapter.missilesilo.long", "Long-Range");
+			addGuidebook("chapter.missilesilo.unlimited", "Unlimited");
+			addGuidebook("chapter.missilesilo.l2", "Each missile type is capable of carrying any explosive as warhead.");
+			
+			addGuidebook("chapter.missilesilo.l3", 
+					"To load an explosive into a missile, first place the missile of your choice into the silo in its designated slot. Next, choose an explosive type and place it into its designated spot in the GUI. Next, program the target destination into the coordiante box. This can either be done manually or with a "
+					+ 
+					"Radar Gun. Finally, once this is all completed, to fire the missile, apply a redstone signal to the silo.");
 
 			addGuidebook("chapter.items", "Items");
-			addGuidebook("chapter.items.rocketlaunchertitle", "Rocket Launcher");
-			addGuidebook("chapter.items.p1l1", "    The Rocket Launcher is     ");
-			addGuidebook("chapter.items.p1l2", "capable of firing Close-Range  ");
-			addGuidebook("chapter.items.p1l3", "missiles with any explosive.   ");
-			addGuidebook("chapter.items.p1l4", "To fire it); have a Close-Range ");
-			addGuidebook("chapter.items.p1l5", "missile in your inventory along");
-			addGuidebook("chapter.items.p1l6", "with the explosive type of your");
-			addGuidebook("chapter.items.p1l7", "choice. Note it must be a      ");
-			addGuidebook("chapter.items.p1l8", "Ballistix explosive); and it must");
-			addGuidebook("chapter.items.p1l9", "be the block form. Then); right-");
-			addGuidebook("chapter.items.p1l10", "click the Launcher to fire!    ");
+			addGuidebook("chapter.items.rocketlauncher1", 
+					"The Rocket Launcher is capable of firing Close-Range missiles with any explosive warhead attached as a projectile. To fire it, have a Close-Range missile in your inventory along with the explosive type of your choice. Note, it must be a Ballistix explosive, and it must be the block form. Once this is "
+					+ 
+					"done, hold the Launcher and Right-Click to fire!");
 
-			addGuidebook("chapter.items.radguntitle", "Radar Gun");
-			addGuidebook("chapter.items.p2l1", "    The Radar Gun is used to   ");
-			addGuidebook("chapter.items.p2l2", "collect coordiantes of a       ");
-			addGuidebook("chapter.items.p2l3", "target and feed them into the  ");
-			addGuidebook("chapter.items.p2l4", "Missile Silo. To use); simply right");
-			addGuidebook("chapter.items.p2l5", "-click on the target with the  ");
-			addGuidebook("chapter.items.p2l6", "Gun to store its coordinates.  ");
-			addGuidebook("chapter.items.p2l7", "Then right-click on the Missile");
-			addGuidebook("chapter.items.p2l8", "Silo with the Gun to feed in the");
-			addGuidebook("chapter.items.p2l9", "coordinates.                   ");
+			addGuidebook("chapter.items.radargun1", 
+					"The Radar Gun is used to collect coordiantes of a target and feed them into the Missile Silo instead of programming them manually. To use the Radar Gun, simply Right-Click on the target with the Gun to store its coordinates. This will expend 150 Joules and store the coordinates to the Gun. Then Right-Click "
+					+ 
+					"on the Missile Silo with the Gun to feed in the coordinates.");
 
-			addGuidebook("chapter.items.laserdestitle", "Laser Designator");
-			addGuidebook("chapter.items.p3l1", "    The Laser Designator is    ");
-			addGuidebook("chapter.items.p3l2", "used to launch missiles from   ");
-			addGuidebook("chapter.items.p3l3", "a Missile Silo remotely. To use");
-			addGuidebook("chapter.items.p3l4", "it); first place a silo and add a");
-			addGuidebook("chapter.items.p3l5", "missile with your choice of    ");
-			addGuidebook("chapter.items.p3l6", "explosive. Next); right-click the");
-			addGuidebook("chapter.items.p3l7", "Designator on the silo to link  ");
-			addGuidebook("chapter.items.p3l8", "the two. Then); find a target   ");
-			addGuidebook("chapter.items.p3l9", "and right-click on it with the ");
-			addGuidebook("chapter.items.p3l10", "designator. Make sure the it is");
-			addGuidebook("chapter.items.p3l11", "in range of the missile!       ");
+			addGuidebook("chapter.items.laserdesignator1", 
+					"The Laser Designator is used to launch missiles from a Missile Silo remotely instead of having to manually apply a redstone signal. To use it, first place a silo and prepare a missile with your choice of warhead. Next, Right-Click the Designator on the Silo to link the two. Note, another the benefit of the "
+					+ 
+					"Designator is that you will not need to pre-program coordinates to the Missile Silo.");
+			addGuidebook("chapter.items.laserdesignator2", 
+					"With the Silo prepared and the Designator linked to the Silo, all the remains is to find a suitable target. When you find one, simply Right-Click on it with the Designator. This will expend 150 Joules, automatically feed the target's coordinates into the Silo, and fire the missile. Note, make sure the "
+					+ 
+					"target is actually in range of the missile in the Silo!");
 
-			addGuidebook("chapter.items.defusertitle", "Defuser");
-			addGuidebook("chapter.items.p4l1", "    The Defuser is your last   ");
-			addGuidebook("chapter.items.p4l2", "line of defense against an     ");
-			addGuidebook("chapter.items.p4l3", "explosive that has been        ");
-			addGuidebook("chapter.items.p4l4", "activated. Right-click on the  ");
-			addGuidebook("chapter.items.p4l5", "explosive with the Defuser);    ");
-			addGuidebook("chapter.items.p4l6", "and it will); as the name       ");
-			addGuidebook("chapter.items.p4l7", "suggests); defuse it! Note); it  ");
-			addGuidebook("chapter.items.p4l8", "currently does not work on     ");
-			addGuidebook("chapter.items.p4l9", "Vanilla TNT.                   ");
+			addGuidebook("chapter.items.defuser1", 
+					"The Defuser is your only hope of stopping an explosive from detonating once it has been activated. Right-Click on the explosive with the Defuser, and it will, as the name suggests, defuse it! This will expend 150 Joules and drop the explosive that was defused on the ground. Note, the Defuser "
+					+ 
+					"currently does not work on Vanilla TNT.");
 
-			addGuidebook("chapter.items.trackertitle", "Tracker");
-			addGuidebook("chapter.items.p5l1", "    The Tracker is capable of  ");
-			addGuidebook("chapter.items.p5l2", "tracking the location of any   ");
-			addGuidebook("chapter.items.p5l3", "entity in the world. This is   ");
-			addGuidebook("chapter.items.p5l4", "especially useful); as it allows");
-			addGuidebook("chapter.items.p5l5", "you to track other players. To ");
-			addGuidebook("chapter.items.p5l6", "start tracking an entity); right");
-			addGuidebook("chapter.items.p5l7", "-click on it with the Tracker. ");
-			addGuidebook("chapter.items.p5l8", "Note); if the entity dies); or the");
-			addGuidebook("chapter.items.p5l9", "player disconnects from the    ");
-			addGuidebook("chapter.items.p5l10", "server); the Tracker will stop  ");
-			addGuidebook("chapter.items.p5l11", "tracking them!                 ");
+			addGuidebook("chapter.items.tracker1", 
+					"The Tracker is capable of tracking the location of any entity in the world, player or otherwise. This is especially useful, as it allows you to track other players and send them Thermonuclear War...care packages from afar. To start tracking an entity, simply Right-Click on it with the Tracker. "
+					+ 
+					"This will expend 150 Joules. The tracker only keeps tabs on the X and Z coordinates of the entity along with what dimension they're in. There is still a little guesswork involved. Note, if the entity dies or the player disconnects from the server, the Tracker will stop tracking them!");
 
-			addGuidebook("chapter.items.scannertitle", "Scanner");
-			addGuidebook("chapter.items.p6l1", "    The Scanner is every       ");
-			addGuidebook("chapter.items.p6l2", "paranoid player's best friend. ");
-			addGuidebook("chapter.items.p6l3", "Think someone has tagged you   ");
-			addGuidebook("chapter.items.p6l4", "with a Scanner? Fear not!      ");
-			addGuidebook("chapter.items.p6l5", "Simply right-click with the    ");
-			addGuidebook("chapter.items.p6l6", "Scanner); and it will jam any   ");
-			addGuidebook("chapter.items.p6l7", "tracking signals!              ");
+			addGuidebook("chapter.items.scanner1", "The Scanner is every paranoid player's best friend. Think someone has tagged you with a Tracker and is trying to nuke your prestigious dirt house? Fear not; Simply right-click with the Scanner. This will expend 150 Joules and jam any tracking signals if they are present!");
 
 			addJei("info.item.missilecloserange", "Specs:\n    Range: 3);000 Blocks");
 			addJei("info.item.missilemediumrange", "Specs:\n    Range: 10);000 Blocks");

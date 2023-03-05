@@ -119,10 +119,10 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 			addGuidebook("chapter.missilesilo.medium", "Medium-Range");
 			addGuidebook("chapter.missilesilo.long", "Long-Range");
 			addGuidebook("chapter.missilesilo.unlimited", "Unlimited");
-			addGuidebook("chapter.missilesilo.l2", "Each missile type is capable of carrying any explosive as warhead.");
+			addGuidebook("chapter.missilesilo.l2", "Each missile type is capable of carrying any explosive as a warhead.");
 			
 			addGuidebook("chapter.missilesilo.l3", 
-					"To load an explosive into a missile, first place the missile of your choice into the silo in its designated slot. Next, choose an explosive type and place it into its designated spot in the GUI. Next, program the target destination into the coordiante box. This can either be done manually or with a "
+					"To load an explosive into a missile, first place the missile of your choice into the silo in its designated slot. Next, choose an explosive type and place it into its designated spot in the GUI. Next, program the target destination into the coordiante boxes. This can either be done manually or with a "
 					+ 
 					"Radar Gun. Finally, once this is all completed, to fire the missile, apply a redstone signal to the silo.");
 

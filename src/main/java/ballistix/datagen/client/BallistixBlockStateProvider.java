@@ -1,5 +1,7 @@
 package ballistix.datagen.client;
 
+import java.util.Locale;
+
 import ballistix.References;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.registers.BallistixBlocks;
@@ -57,7 +59,7 @@ public class BallistixBlockStateProvider extends ElectrodynamicsBlockStateProvid
 
 		@Override
 		public String toString() {
-			return super.toString().toLowerCase().replaceAll("_", "");
+			return super.toString().toLowerCase(Locale.ROOT).replaceAll("_", "");
 		}
 
 	}

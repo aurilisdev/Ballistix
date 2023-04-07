@@ -1,6 +1,9 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
+    "B": {
+      "item": "electrodynamics:battery"
+    },
     "S": {
       "tag": "forge:gems/amethyst"
     },
@@ -11,7 +14,7 @@
   "pattern": [
     " S ",
     "STS",
-    " S "
+    " SB"
   ],
   "result": {
     "item": "ballistix:scanner"

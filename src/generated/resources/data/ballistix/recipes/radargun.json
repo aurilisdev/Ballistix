@@ -1,6 +1,9 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
+    "A": {
+      "item": "electrodynamics:battery"
+    },
     "B": {
       "item": "minecraft:stone_button"
     },
@@ -17,7 +20,7 @@
   "pattern": [
     "GCS",
     " BS",
-    "  S"
+    " AS"
   ],
   "result": {
     "item": "ballistix:radargun"

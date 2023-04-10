@@ -1,6 +1,9 @@
 {
   "type": "minecraft:crafting_shaped",
   "key": {
+    "B": {
+      "item": "electrodynamics:battery"
+    },
     "C": {
       "tag": "forge:circuits/basic"
     },
@@ -13,7 +16,7 @@
   },
   "pattern": [
     "W  ",
-    " S ",
+    " SB",
     "  C"
   ],
   "result": {

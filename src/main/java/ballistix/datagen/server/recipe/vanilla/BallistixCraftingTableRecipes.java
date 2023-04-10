@@ -399,7 +399,7 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
 				//
 				.addPattern("W  ")
 				//
-				.addPattern(" S ")
+				.addPattern(" SB")
 				//
 				.addPattern("  C")
 				//
@@ -408,6 +408,8 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
 				.addKey('S', Items.SHEARS)
 				//
 				.addKey('C', ElectrodynamicsTags.Items.CIRCUITS_BASIC)
+				//
+				.addKey('B', ElectrodynamicsItems.ITEM_BATTERY.get())
 				//
 				.complete(References.ID, "defuser", consumer);
 
@@ -433,7 +435,7 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
 				//
 				.addPattern(" BS")
 				//
-				.addPattern("  S")
+				.addPattern(" AS")
 				//
 				.addKey('G', Tags.Items.GLASS)
 				//
@@ -442,6 +444,8 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
 				.addKey('S', ElectrodynamicsTags.Items.INGOT_STEEL)
 				//
 				.addKey('B', Items.STONE_BUTTON)
+				//
+				.addKey('A', ElectrodynamicsItems.ITEM_BATTERY.get())
 				//
 				.complete(References.ID, "radargun", consumer);
 
@@ -469,11 +473,13 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
 				//
 				.addPattern("STS")
 				//
-				.addPattern(" S ")
+				.addPattern(" SB")
 				//
 				.addKey('S', Tags.Items.GEMS_AMETHYST)
 				//
 				.addKey('T', BallistixItems.ITEM_TRACKER.get())
+				//
+				.addKey('B', ElectrodynamicsItems.ITEM_BATTERY.get())
 				//
 				.complete(References.ID, "scanner", consumer);
 

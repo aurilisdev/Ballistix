@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 
 import ballistix.References;
 import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.common.block.subtype.SubtypeMissile;
 import ballistix.common.item.ItemGrenade.SubtypeGrenade;
 import ballistix.common.item.ItemMinecart.SubtypeMinecart;
 import ballistix.common.tags.BallistixTags;
@@ -46,7 +47,7 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
 				//
 				.complete(References.ID, "missilesilo", consumer);
 
-		ElectrodynamicsShapedCraftingRecipe.start(BallistixItems.ITEM_MISSILECLOSERANGE.get(), 1)
+		ElectrodynamicsShapedCraftingRecipe.start(BallistixItems.getItem(SubtypeMissile.closerange), 1)
 				//
 				.addPattern(" P ")
 				//
@@ -64,7 +65,7 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
 				//
 				.complete(References.ID, "missile_closerange", consumer);
 
-		ElectrodynamicsShapedCraftingRecipe.start(BallistixItems.ITEM_MISSILEMEDIUMRANGE.get(), 1)
+		ElectrodynamicsShapedCraftingRecipe.start(BallistixItems.getItem(SubtypeMissile.mediumrange), 1)
 				//
 				.addPattern(" C ")
 				//
@@ -78,11 +79,11 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
 				//
 				.addKey('G', Tags.Items.GUNPOWDER)
 				//
-				.addKey('M', BallistixItems.ITEM_MISSILECLOSERANGE.get())
+				.addKey('M', BallistixItems.getItem(SubtypeMissile.closerange))
 				//
 				.complete(References.ID, "missile_mediumrange", consumer);
 
-		ElectrodynamicsShapedCraftingRecipe.start(BallistixItems.ITEM_MISSILELONGRANGE.get(), 1)
+		ElectrodynamicsShapedCraftingRecipe.start(BallistixItems.getItem(SubtypeMissile.longrange), 1)
 				//
 				.addPattern(" C ")
 				//
@@ -96,7 +97,7 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
 				//
 				.addKey('G', Tags.Items.GUNPOWDER)
 				//
-				.addKey('M', BallistixItems.ITEM_MISSILEMEDIUMRANGE.get())
+				.addKey('M', BallistixItems.getItem(SubtypeMissile.mediumrange))
 				//
 				.complete(References.ID, "missile_longrange", consumer);
 

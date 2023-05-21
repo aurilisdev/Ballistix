@@ -5,11 +5,14 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import ballistix.common.inventory.container.ContainerMissileSilo;
 import ballistix.common.tile.TileMissileSilo;
 import ballistix.prefab.utils.TextUtils;
+import electrodynamics.common.packet.NetworkHandler;
+import electrodynamics.common.packet.types.PacketSendUpdatePropertiesServer;
 import electrodynamics.prefab.screen.GenericScreen;
 import electrodynamics.prefab.screen.component.ScreenComponentTextInputBar;
 import electrodynamics.prefab.screen.component.ScreenComponentTextInputBar.TextInputTextures;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.api.distmarker.Dist;
@@ -46,9 +49,11 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 	}
 
 	protected void initFields() {
+
 		minecraft.keyboardHandler.setSendRepeatsToGui(true);
 		int i = (width - imageWidth) / 2;
 		int j = (height - imageHeight) / 2;
+
 		xCoordField = new EditBox(font, i + 127, j + 14, 46, 13, Component.translatable("container.missilesilo.xCoord"));
 		xCoordField.setTextColor(-1);
 		xCoordField.setTextColorUneditable(-1);
@@ -69,25 +74,124 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 		zCoordField.setBordered(false);
 		zCoordField.setMaxLength(6);
 		zCoordField.setResponder(this::setZ);
+
 		frequencyField = new EditBox(font, i + 127, j + 14 + 18 * 3, 46, 13, Component.translatable("container.missilesilo.frequency"));
 		frequencyField.setTextColor(-1);
 		zCoordField.setTextColorUneditable(-1);
 		frequencyField.setBordered(false);
 		frequencyField.setMaxLength(6);
 		frequencyField.setResponder(this::setFrequency);
-		addWidget(xCoordField);
-		addWidget(yCoordField);
-		addWidget(zCoordField);
-		addWidget(frequencyField);
-		setInitialFocus(frequencyField);
+
+		addRenderableWidget(xCoordField);
+		addRenderableWidget(yCoordField);
+		addRenderableWidget(zCoordField);
+		addRenderableWidget(frequencyField);
 	}
 
 	private boolean needsUpdate = true;
 
-	private void setCoord(String coord) {
-		if (!coord.isEmpty()) {
-			menu.setCoord(xCoordField.getValue(), yCoordField.getValue(), zCoordField.getValue(), frequencyField.getValue());
+	private void setSiloTargetX(String coord) {
+
+		if (coord.isEmpty()) {
+			return;
 		}
+
+		TileMissileSilo silo = menu.getHostFromIntArray();
+
+		if (silo == null) {
+			return;
+		}
+
+		int x = 0;
+		try {
+			x = Integer.parseInt(coord);
+		} catch (Exception e) {
+			// Filler
+		}
+
+		updateSiloCoords(x, silo.target.get().getY(), silo.target.get().getZ(), silo);
+		
+
+	}
+	
+	private void setSiloTargetY(String coord) {
+		
+		if (coord.isEmpty()) {
+			return;
+		}
+
+		TileMissileSilo silo = menu.getHostFromIntArray();
+
+		if (silo == null) {
+			return;
+		}
+
+		int y = 0;
+		try {
+			y = Integer.parseInt(coord);
+		} catch (Exception e) {
+			// Filler
+		}
+
+		updateSiloCoords(silo.target.get().getX(), y, silo.target.get().getZ(), silo);
+		
+	}
+	
+	private void setSiloTargetZ(String coord) {
+		
+		if (coord.isEmpty()) {
+			return;
+		}
+
+		TileMissileSilo silo = menu.getHostFromIntArray();
+
+		if (silo == null) {
+			return;
+		}
+
+		int z = 0;
+		try {
+			z = Integer.parseInt(coord);
+		} catch (Exception e) {
+			// Filler
+		}
+
+		updateSiloCoords(silo.target.get().getX(), silo.target.get().getY(), z, silo);
+		
+	}
+	
+	private void updateSiloCoords(int x, int y, int z, TileMissileSilo silo) {
+		
+		silo.target.set(new BlockPos(x, y, z));
+
+		NetworkHandler.CHANNEL.sendToServer(new PacketSendUpdatePropertiesServer(silo.target.getPropertyManager().getProperties().indexOf(silo.target), silo.target, silo.getBlockPos()));
+		
+	}
+
+	private void setSiloFrequency(String val) {
+
+		if (val.isEmpty()) {
+			return;
+		}
+
+		TileMissileSilo silo = menu.getHostFromIntArray();
+
+		if (silo == null) {
+			return;
+		}
+
+		int frequency = 0;
+
+		try {
+			frequency = Integer.parseInt(val);
+		} catch (Exception e) {
+			// Filler
+		}
+
+		silo.frequency.set(frequency);
+
+		NetworkHandler.CHANNEL.sendToServer(new PacketSendUpdatePropertiesServer(silo.frequency.getPropertyManager().getProperties().indexOf(silo.frequency), silo.frequency, silo.getBlockPos()));
+
 	}
 
 	private void setFrequency(String val) {
@@ -95,28 +199,31 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 		xCoordField.setFocus(false);
 		yCoordField.setFocus(false);
 		zCoordField.setFocus(false);
-		setCoord(val);
+		setSiloFrequency(val);
 	}
 
 	private void setX(String val) {
 		xCoordField.setFocus(true);
 		yCoordField.setFocus(false);
 		zCoordField.setFocus(false);
-		setCoord(val);
+		frequencyField.setFocus(false);
+		setSiloTargetX(val);
 	}
 
 	private void setY(String val) {
 		yCoordField.setFocus(true);
 		xCoordField.setFocus(false);
 		zCoordField.setFocus(false);
-		setCoord(val);
+		frequencyField.setFocus(false);
+		setSiloTargetY(val);
 	}
 
 	private void setZ(String val) {
 		zCoordField.setFocus(true);
 		yCoordField.setFocus(false);
 		xCoordField.setFocus(false);
-		setCoord(val);
+		frequencyField.setFocus(false);
+		setSiloTargetZ(val);
 	}
 
 	@Override
@@ -144,17 +251,13 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 		if (needsUpdate) {
 			needsUpdate = false;
 			TileMissileSilo silo = menu.getHostFromIntArray();
-			if (silo != null && silo.target.get() != null) {
+			if (silo != null) {
 				xCoordField.setValue("" + silo.target.get().getX());
 				yCoordField.setValue("" + silo.target.get().getY());
 				zCoordField.setValue("" + silo.target.get().getZ());
 				frequencyField.setValue("" + silo.frequency.get());
 			}
 		}
-		xCoordField.render(matrixStack, mouseX, mouseY, partialTicks);
-		yCoordField.render(matrixStack, mouseX, mouseY, partialTicks);
-		zCoordField.render(matrixStack, mouseX, mouseY, partialTicks);
-		frequencyField.render(matrixStack, mouseX, mouseY, partialTicks);
 	}
 
 	@Override

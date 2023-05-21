@@ -10,11 +10,13 @@ import java.util.List;
 
 import ballistix.References;
 import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.common.block.subtype.SubtypeMissile;
 import ballistix.common.item.ItemDefuser;
 import ballistix.common.item.ItemGrenade;
 import ballistix.common.item.ItemGrenade.SubtypeGrenade;
 import ballistix.common.item.ItemLaserDesignator;
 import ballistix.common.item.ItemMinecart;
+import ballistix.common.item.ItemMissile;
 import ballistix.common.item.ItemMinecart.SubtypeMinecart;
 import ballistix.common.item.ItemRadarGun;
 import ballistix.common.item.ItemRocketLauncher;
@@ -33,9 +35,6 @@ public class BallistixItems {
 	public static final HashMap<ISubtype, RegistryObject<Item>> SUBTYPEITEMREGISTER_MAPPINGS = new HashMap<>();
 
 	public static final RegistryObject<Item> ITEM_DUSTPOISON = ITEMS.register("dustpoison", supplier(() -> new Item(new Item.Properties().tab(References.BALLISTIXTAB))));
-	public static final RegistryObject<Item> ITEM_MISSILECLOSERANGE = ITEMS.register("missilecloserange", supplier(() -> new Item(new Item.Properties().tab(References.BALLISTIXTAB))));
-	public static final RegistryObject<Item> ITEM_MISSILEMEDIUMRANGE = ITEMS.register("missilemediumrange", supplier(() -> new Item(new Item.Properties().tab(References.BALLISTIXTAB))));
-	public static final RegistryObject<Item> ITEM_MISSILELONGRANGE = ITEMS.register("missilelongrange", supplier(() -> new Item(new Item.Properties().tab(References.BALLISTIXTAB))));
 	public static final RegistryObject<Item> ITEM_ROCKETLAUNCHER = ITEMS.register("rocketlauncher", supplier(ItemRocketLauncher::new));
 	public static final RegistryObject<Item> ITEM_RADARGUN = ITEMS.register("radargun", supplier(ItemRadarGun::new));
 	public static final RegistryObject<Item> ITEM_TRACKER = ITEMS.register("tracker", supplier(ItemTracker::new));
@@ -52,6 +51,9 @@ public class BallistixItems {
 		}
 		for (SubtypeMinecart subtype : SubtypeMinecart.values()) {
 			SUBTYPEITEMREGISTER_MAPPINGS.put(subtype, ITEMS.register(subtype.tag(), supplier(() -> new ItemMinecart(subtype))));
+		}
+		for(SubtypeMissile missile : SubtypeMissile.values()) {
+			SUBTYPEITEMREGISTER_MAPPINGS.put(missile, ITEMS.register(missile.tag(), supplier(() -> new ItemMissile(missile))));
 		}
 		ITEMS.register("missilesilo", supplier(() -> new BlockItemDescriptable(() -> blockMissileSilo, new Item.Properties().tab(References.BALLISTIXTAB))));
 	}

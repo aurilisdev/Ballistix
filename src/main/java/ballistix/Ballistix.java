@@ -1,5 +1,6 @@
 package ballistix;
 
+import ballistix.api.capability.BallistixCapabilities;
 import ballistix.client.ClientRegister;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.packet.NetworkHandler;
@@ -10,6 +11,7 @@ import electrodynamics.prefab.configuration.ConfigurationHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -46,4 +48,10 @@ public class Ballistix {
 		NetworkHandler.init();
 		BallistixTags.init();
 	}
+
+	@SubscribeEvent
+	public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+		BallistixCapabilities.register(event);
+	}
+	
 }

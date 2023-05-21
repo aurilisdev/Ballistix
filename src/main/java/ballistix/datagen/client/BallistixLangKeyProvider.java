@@ -2,6 +2,7 @@ package ballistix.datagen.client;
 
 import ballistix.References;
 import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.common.block.subtype.SubtypeMissile;
 import ballistix.common.item.ItemGrenade.SubtypeGrenade;
 import ballistix.common.item.ItemMinecart.SubtypeMinecart;
 import ballistix.registers.BallistixBlocks;
@@ -73,9 +74,9 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 
 			addItem(BallistixItems.ITEM_DUSTPOISON, "Poison Dust");
 
-			addItem(BallistixItems.ITEM_MISSILECLOSERANGE, "Close-range Ballistic Missile");
-			addItem(BallistixItems.ITEM_MISSILEMEDIUMRANGE, "Medium-range Ballistic Missile");
-			addItem(BallistixItems.ITEM_MISSILELONGRANGE, "Long-range Ballistic Missile");
+			addItem(BallistixItems.getItem(SubtypeMissile.closerange), "Close-range Missile");
+			addItem(BallistixItems.getItem(SubtypeMissile.mediumrange), "Medium-range Missile");
+			addItem(BallistixItems.getItem(SubtypeMissile.longrange), "Long-range Missile");
 
 			addItem(BallistixItems.ITEM_ROCKETLAUNCHER, "Rocket Launcher");
 			addItem(BallistixItems.ITEM_RADARGUN, "Radar Gun");
@@ -102,9 +103,11 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 			addChatMessage("scanner.cleared", "Cleared trackers!");
 			addChatMessage("scanner.none", "There were no trackers!");
 
-			addTooltip("radargun.linked", "Linked to %s");
-			addTooltip("radargun.notag", "No link");
+			addTooltip("radargun.pos", "Stored: %s");
+			addTooltip("radargun.notag", "No Coordinates Stored");
 			addTooltip("laserdesignator.frequency", "Frequency: %s");
+			addTooltip("laserdesignator.nofrequency", "Unbound");
+			addTooltip("laserdesignator.invalidfreq", "Set a frequency for the silo");
 
 			addSubtitle("ballistix.antimatterexplosion", "Antimatter bomb explodes");
 			addSubtitle("ballistix.darkmatter", "Dark matter bomb ignites and explodes");

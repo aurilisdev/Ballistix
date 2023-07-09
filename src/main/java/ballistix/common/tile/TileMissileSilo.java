@@ -10,6 +10,7 @@ import ballistix.common.entity.EntityMissile;
 import ballistix.common.inventory.container.ContainerMissileSilo;
 import ballistix.common.item.ItemMissile;
 import ballistix.common.network.SiloRegistry;
+import ballistix.common.settings.Constants;
 import ballistix.registers.BallistixBlockTypes;
 import ballistix.registers.BallistixItems;
 import electrodynamics.common.blockitem.BlockItemDescriptable;
@@ -170,7 +171,23 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 			}
 
 			if (missile.getItem() instanceof ItemMissile item) {
-				range.set(item.missile.range);
+				
+				switch(item.missile) {
+				
+				case closerange:
+					range.set(Constants.CLOSERANGE_MISSILE_RANGE);
+					break;
+				case mediumrange:
+					range.set(Constants.MEDIUMRANGE_MISSILE_RANGE);
+					break;
+				case longrange:
+					range.set(Constants.LONGRANGE_MISSILE_RANGE);
+					break;
+				default:
+					range.set(0);
+					break;
+				}
+				
 			} else {
 				range.set(0);
 			}

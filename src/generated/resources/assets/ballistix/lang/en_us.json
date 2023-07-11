@@ -77,9 +77,9 @@
   "item.ballistix.minecartrepulsive": "Minecart with Repulsive Explosive",
   "item.ballistix.minecartshrapnel": "Minecart with Shrapnel Explosive",
   "item.ballistix.minecartthermobaric": "Minecart with Thermobaric Explosive",
-  "item.ballistix.missilecloserange": "Close-range Ballistic Missile",
-  "item.ballistix.missilelongrange": "Long-range Ballistic Missile",
-  "item.ballistix.missilemediumrange": "Medium-range Ballistic Missile",
+  "item.ballistix.missilecloserange": "Close-range Missile",
+  "item.ballistix.missilelongrange": "Long-range Missile",
+  "item.ballistix.missilemediumrange": "Medium-range Missile",
   "item.ballistix.radargun": "Radar Gun",
   "item.ballistix.rocketlauncher": "Rocket Launcher",
   "item.ballistix.scanner": "Scanner",
@@ -92,6 +92,8 @@
   "subtitles.ballistix.ballistix.darkmatter": "Dark matter bomb ignites and explodes",
   "subtitles.ballistix.ballistix.nuclearexplosion": "Nuclear bomb explodes",
   "tooltip.ballistix.laserdesignator.frequency": "Frequency: %s",
-  "tooltip.ballistix.radargun.linked": "Linked to %s",
-  "tooltip.ballistix.radargun.notag": "No link"
+  "tooltip.ballistix.laserdesignator.invalidfreq": "Set a frequency for the silo",
+  "tooltip.ballistix.laserdesignator.nofrequency": "Unbound",
+  "tooltip.ballistix.radargun.notag": "No Coordinates Stored",
+  "tooltip.ballistix.radargun.pos": "Stored: %s"
 }

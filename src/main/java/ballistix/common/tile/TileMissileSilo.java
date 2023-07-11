@@ -2,11 +2,15 @@ package ballistix.common.tile;
 
 import java.util.HashSet;
 
+import org.jetbrains.annotations.NotNull;
+
 import ballistix.common.block.BlockExplosive;
 import ballistix.common.block.BlockMissileSilo;
 import ballistix.common.entity.EntityMissile;
 import ballistix.common.inventory.container.ContainerMissileSilo;
+import ballistix.common.item.ItemMissile;
 import ballistix.common.network.SiloRegistry;
+import ballistix.common.settings.Constants;
 import ballistix.registers.BallistixBlockTypes;
 import ballistix.registers.BallistixItems;
 import electrodynamics.common.blockitem.BlockItemDescriptable;
@@ -21,26 +25,41 @@ import electrodynamics.prefab.tile.components.type.ComponentInventory;
 import electrodynamics.prefab.tile.components.type.ComponentInventory.InventoryBuilder;
 import electrodynamics.prefab.tile.components.type.ComponentPacketHandler;
 import electrodynamics.prefab.tile.components.type.ComponentTickable;
-import electrodynamics.prefab.tile.components.type.ComponentInventory.InventoryBuilder;
-import electrodynamics.prefab.utilities.object.CachedTileOutput;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 
 public class TileMissileSilo extends GenericTile implements IMultiblockTileNode {
-	public static final int[] SLOTS_INPUT = new int[] { 0, 1 };
 
-	protected CachedTileOutput output1;
-	protected CachedTileOutput output2;
-	public Property<Integer> range = property(new Property<>(PropertyType.Integer, "range", -1));
-	public Property<Integer> frequency = property(new Property<>(PropertyType.Integer, "frequency", -1));
+	public Property<Integer> range = property(new Property<>(PropertyType.Integer, "range", 0));
+	public Property<Integer> prevFrequency = property(new Property<>(PropertyType.Integer, "previousfrequency", 0));
+	public Property<Integer> frequency = property(new Property<>(PropertyType.Integer, "frequency", 0).onChange(prop -> {
+
+		if (level.isClientSide) {
+			return;
+		}
+
+		int currFreq = prop.get();
+		int prevFreq = prevFrequency.get();
+		
+		SiloRegistry.unregisterSilo(prevFreq, this);
+		SiloRegistry.registerSilo(currFreq, this);
+		
+		prevFrequency.set(prevFreq);
+
+	}));
 	public Property<BlockPos> target = property(new Property<>(PropertyType.BlockPos, "target", BlockPos.ZERO));
 
 	private int cooldown = 100;
-	public boolean shouldLaunch;
+	public boolean shouldLaunch = false;
 
 	public TileMissileSilo(BlockPos pos, BlockState state) {
 		super(BallistixBlockTypes.TILE_MISSILESILO.get(), pos, state);
@@ -56,27 +75,12 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 		if (target.get() == null) {
 			target.set(getBlockPos());
 		}
-		ItemStack it = inv.getItem(0);
-		if (it.getItem() == BallistixItems.ITEM_MISSILECLOSERANGE.get()) {
-			if (range.get() != 0) {
-				range.set(0);
-			}
-		} else if (it.getItem() == BallistixItems.ITEM_MISSILEMEDIUMRANGE.get()) {
-			if (range.get() != 1) {
-				range.set(1);
-			}
-		} else if (it.getItem() == BallistixItems.ITEM_MISSILELONGRANGE.get()) {
-			if (range.get() != 2) {
-				range.set(2);
-			}
-		} else if (range.get() != -1) {
-			range.set(-1);
-		}
-		cooldown--;
-		if (cooldown < 0 && level.getLevelData().getDayTime() % 20 == 0) {
+		if(cooldown > 0) {
+			cooldown --;
+		} else if(level.getLevelData().getDayTime() % 20 == 0) {
 			ItemStack exp = inv.getItem(1);
 			if (exp.getItem() instanceof BlockItemDescriptable des) {
-				if (des.getBlock() instanceof BlockExplosive && range.get() >= 0 && exp.getCount() > 0) {
+				if (des.getBlock() instanceof BlockExplosive && range.get() != 0 && exp.getCount() > 0) {
 					boolean hasSignal = false;
 					if (level.getBestNeighborSignal(getBlockPos()) > 0) {
 						hasSignal = true;
@@ -97,56 +101,53 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 				}
 			}
 		}
-		SiloRegistry.registerSilo(this);
 	}
 
 	private void launch() {
 		ComponentInventory inv = getComponent(ComponentType.Inventory);
-		ItemStack exp = inv.getItem(1);
-		ItemStack it = inv.getItem(0);
-		if (exp.getItem() instanceof BlockItemDescriptable des) {
+		ItemStack explosive = inv.getItem(1);
+		ItemStack mis = inv.getItem(0);
+
+		if (mis.isEmpty()) {
+			return;
+		}
+
+		if (explosive.getItem() instanceof BlockItemDescriptable des) {
 			double dist = Math.sqrt(Math.pow(worldPosition.getX() - target.get().getX(), 2) + Math.pow(worldPosition.getY() - target.get().getY(), 2) + Math.pow(worldPosition.getZ() - target.get().getZ(), 2));
-			if (range.get() == 0 && dist < 3000 || range.get() == 1 && dist < 10000 || range.get() == 2) {
+
+			if (range.get() < 0 || range.get() >= dist) {
+
 				EntityMissile missile = new EntityMissile(level);
 				missile.setPos(getBlockPos().getX() + 1.0, getBlockPos().getY(), getBlockPos().getZ() + 1.0);
-				missile.range = range.get();
+				missile.range = ((ItemMissile) mis.getItem()).missile.ordinal();
 				missile.target = target.get();
 				missile.blastOrdinal = ((BlockExplosive) des.getBlock()).explosive.ordinal();
-				exp.shrink(1);
-				it.shrink(1);
+				explosive.shrink(1);
+				mis.shrink(1);
 				level.addFreshEntity(missile);
+
 			}
 			cooldown = 100;
 		}
 	}
 
 	protected boolean isItemValidForSlot(int index, ItemStack stack, ComponentInventory inv) {
-		Item it = stack.getItem();
-		if (index == 1) {
-			if (it instanceof BlockItemDescriptable des) {
-				if (des.getBlock() instanceof BlockExplosive) {
-					return true;
-				}
-			}
-		} else if (index == 0) {
-			return it == BallistixItems.ITEM_MISSILECLOSERANGE.get() || it == BallistixItems.ITEM_MISSILELONGRANGE.get() || it == BallistixItems.ITEM_MISSILEMEDIUMRANGE.get();
+		Item item = stack.getItem();
+
+		if (index == 0) {
+			return item instanceof ItemMissile;
+		} else if (index == 1) {
+			return item instanceof BlockItemDescriptable des && des.getBlock() instanceof BlockExplosive;
 		}
 		return false;
 	}
 
 	@Override
-	public void setRemoved() {
-		super.setRemoved();
-		SiloRegistry.unregisterSilo(this);
-	}
-
-	public void setFrequency(int frequency) {
-		if (level != null) {
-			if (!level.isClientSide) {
-				SiloRegistry.unregisterSilo(this);
-			}
+	public void onBlockDestroyed() {
+		if(!level.isClientSide) {
+			SiloRegistry.unregisterSilo(frequency.get(), this);
 		}
-		this.frequency.set(frequency);
+		
 	}
 
 	@Override
@@ -157,5 +158,69 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 	@Override
 	public HashSet<Subnode> getSubNodes() {
 		return BlockMissileSilo.subnodes;
+	}
+
+	@Override
+	public void onInventoryChange(ComponentInventory inv, int index) {
+		if (index == 0 || index == -1) {
+
+			ItemStack missile = inv.getItem(0);
+
+			if (missile.isEmpty()) {
+				range.set(0);
+			}
+
+			if (missile.getItem() instanceof ItemMissile item) {
+				
+				switch(item.missile) {
+				
+				case closerange:
+					range.set(Constants.CLOSERANGE_MISSILE_RANGE);
+					break;
+				case mediumrange:
+					range.set(Constants.MEDIUMRANGE_MISSILE_RANGE);
+					break;
+				case longrange:
+					range.set(Constants.LONGRANGE_MISSILE_RANGE);
+					break;
+				default:
+					range.set(0);
+					break;
+				}
+				
+			} else {
+				range.set(0);
+			}
+
+		}
+	}
+
+	@Override
+	public void onLoad() {
+		super.onLoad();
+		if(!level.isClientSide) {
+			SiloRegistry.registerSilo(frequency.get(), this);
+		}
+	}
+
+	@Override
+	public void saveAdditional(@NotNull CompoundTag nbt) {
+		super.saveAdditional(nbt);
+		nbt.putInt("silocooldown", cooldown);
+	}
+
+	@Override
+	public void load(@NotNull CompoundTag nbt) {
+		super.load(nbt);
+		cooldown = nbt.getInt("silocooldown");
+	}
+
+	@Override
+	public InteractionResult use(Player player, InteractionHand hand, BlockHitResult result) {
+		ItemStack handStack = player.getItemInHand(hand);
+		if (handStack.getItem() == BallistixItems.ITEM_RADARGUN.get() || handStack.getItem() == BallistixItems.ITEM_LASERDESIGNATOR.get()) {
+			return InteractionResult.FAIL;
+		}
+		return super.use(player, hand, result);
 	}
 }

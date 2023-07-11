@@ -4,13 +4,17 @@ import java.util.Random;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import ballistix.common.item.ItemMissile;
 import ballistix.common.tile.TileMissileSilo;
+import electrodynamics.prefab.tile.components.ComponentType;
+import electrodynamics.prefab.tile.components.type.ComponentInventory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.world.item.ItemStack;
 
 public class RenderMissileSilo implements BlockEntityRenderer<TileMissileSilo> {
 
@@ -19,7 +23,16 @@ public class RenderMissileSilo implements BlockEntityRenderer<TileMissileSilo> {
 
 	@Override
 	public void render(TileMissileSilo tileEntityIn, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
-		int type = tileEntityIn.range.get();
+		
+		ItemStack stack = tileEntityIn.<ComponentInventory>getComponent(ComponentType.Inventory).getItem(0);
+		
+		if(stack.isEmpty()) {
+			return;
+		}
+		
+		int type = ((ItemMissile)stack.getItem()).missile.ordinal();
+		
+		
 		switch (type) {
 		case 1: {
 			BakedModel closerange = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILEMEDIUMRANGE);

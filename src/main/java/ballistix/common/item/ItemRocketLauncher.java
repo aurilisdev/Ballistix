@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import ballistix.References;
 import ballistix.common.block.BlockExplosive;
+import ballistix.common.block.subtype.SubtypeMissile;
 import ballistix.common.entity.EntityMissile;
 import ballistix.registers.BallistixItems;
 import electrodynamics.common.blockitem.BlockItemDescriptable;
@@ -61,7 +62,7 @@ public class ItemRocketLauncher extends Item {
 							ex = st;
 						}
 					}
-					if (!hasRange && it == BallistixItems.ITEM_MISSILECLOSERANGE.get()) {
+					if (!hasRange && it == BallistixItems.getItem(SubtypeMissile.closerange)) {
 						hasRange = true;
 						missile = st;
 					}

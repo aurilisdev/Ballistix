@@ -4,6 +4,7 @@ import java.util.HashSet;
 
 import org.jetbrains.annotations.NotNull;
 
+import ballistix.References;
 import ballistix.common.block.BlockExplosive;
 import ballistix.common.block.BlockMissileSilo;
 import ballistix.common.entity.EntityMissile;
@@ -28,14 +29,18 @@ import electrodynamics.prefab.tile.components.type.ComponentTickable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.common.world.ForgeChunkManager;
 
 public class TileMissileSilo extends GenericTile implements IMultiblockTileNode {
 
@@ -49,11 +54,11 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 
 		int currFreq = prop.get();
 		int prevFreq = prevFrequency.get();
-		
+
 		SiloRegistry.unregisterSilo(prevFreq, this);
 		SiloRegistry.registerSilo(currFreq, this);
-		
-		prevFrequency.set(prevFreq);
+
+		prevFrequency.set(currFreq);
 
 	}));
 	public Property<BlockPos> target = property(new Property<>(PropertyType.BlockPos, "target", BlockPos.ZERO));
@@ -75,9 +80,9 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 		if (target.get() == null) {
 			target.set(getBlockPos());
 		}
-		if(cooldown > 0) {
-			cooldown --;
-		} else if(level.getLevelData().getDayTime() % 20 == 0) {
+		if (cooldown > 0) {
+			cooldown--;
+		} else if (level.getLevelData().getDayTime() % 20 == 0) {
 			ItemStack exp = inv.getItem(1);
 			if (exp.getItem() instanceof BlockItemDescriptable des) {
 				if (des.getBlock() instanceof BlockExplosive && range.get() != 0 && exp.getCount() > 0) {
@@ -124,6 +129,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 				missile.blastOrdinal = ((BlockExplosive) des.getBlock()).explosive.ordinal();
 				explosive.shrink(1);
 				mis.shrink(1);
+				inv.setChanged();
 				level.addFreshEntity(missile);
 
 			}
@@ -144,10 +150,26 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 
 	@Override
 	public void onBlockDestroyed() {
-		if(!level.isClientSide) {
-			SiloRegistry.unregisterSilo(frequency.get(), this);
+		if (level.isClientSide) {
+			return;
 		}
-		
+		SiloRegistry.unregisterSilo(frequency.get(), this);
+
+		ChunkPos chunkPos = level.getChunk(worldPosition).getPos();
+
+		ForgeChunkManager.forceChunk((ServerLevel) level, References.ID, worldPosition, chunkPos.x, chunkPos.z, false, true);
+
+	}
+
+	@Override
+	public void onPlace(BlockState oldState, boolean isMoving) {
+		super.onPlace(oldState, isMoving);
+		if (level.isClientSide) {
+			return;
+		}
+		ChunkPos chunkPos = level.getChunk(worldPosition).getPos();
+
+		ForgeChunkManager.forceChunk((ServerLevel) level, References.ID, worldPosition, chunkPos.x, chunkPos.z, true, true);
 	}
 
 	@Override
@@ -171,9 +193,9 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 			}
 
 			if (missile.getItem() instanceof ItemMissile item) {
-				
-				switch(item.missile) {
-				
+
+				switch (item.missile) {
+
 				case closerange:
 					range.set(Constants.CLOSERANGE_MISSILE_RANGE);
 					break;
@@ -187,7 +209,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 					range.set(0);
 					break;
 				}
-				
+
 			} else {
 				range.set(0);
 			}
@@ -198,7 +220,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 	@Override
 	public void onLoad() {
 		super.onLoad();
-		if(!level.isClientSide) {
+		if (!level.isClientSide) {
 			SiloRegistry.registerSilo(frequency.get(), this);
 		}
 	}

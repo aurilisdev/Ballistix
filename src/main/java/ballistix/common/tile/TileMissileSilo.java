@@ -40,33 +40,32 @@ import net.minecraft.world.phys.BlockHitResult;
 public class TileMissileSilo extends GenericTile implements IMultiblockTileNode {
 
 	public Property<Integer> range = property(new Property<>(PropertyType.Integer, "range", 0));
-	public Property<Integer> prevFrequency = property(new Property<>(PropertyType.Integer, "previousfrequency", 0));
-	public Property<Integer> frequency = property(new Property<>(PropertyType.Integer, "frequency", 0).onChange(prop -> {
+	public Property<Boolean> hasExplosive = property(new Property<>(PropertyType.Boolean, "hasexplosive", false)); 
+	public Property<Integer> frequency = property(new Property<>(PropertyType.Integer, "frequency", 0).onChange((prop, prevFreq) -> {
 
 		if (level.isClientSide) {
 			return;
 		}
 
-		int currFreq = prop.get();
-		int prevFreq = prevFrequency.get();
+		int newFreq = prop.get();
 		
 		SiloRegistry.unregisterSilo(prevFreq, this);
-		SiloRegistry.registerSilo(currFreq, this);
+		SiloRegistry.registerSilo(newFreq, this);
 		
-		prevFrequency.set(prevFreq);
 
 	}));
 	public Property<BlockPos> target = property(new Property<>(PropertyType.BlockPos, "target", BlockPos.ZERO));
+	public Property<Boolean> hasRedstoneSignal = property(new Property<>(PropertyType.Boolean, "hasredstonesignal", false));
 
 	private int cooldown = 100;
 	public boolean shouldLaunch = false;
 
 	public TileMissileSilo(BlockPos pos, BlockState state) {
 		super(BallistixBlockTypes.TILE_MISSILESILO.get(), pos, state);
-		addComponent(new ComponentTickable().tickServer(this::tickServer));
+		addComponent(new ComponentTickable(this).tickServer(this::tickServer));
 		addComponent(new ComponentInventory(this, InventoryBuilder.newInv().inputs(2)).faceSlots(Direction.UP, 0, 1).valid(this::isItemValidForSlot));
-		addComponent(new ComponentPacketHandler());
-		addComponent(new ComponentContainerProvider("container.missilesilo").createMenu((id, player) -> new ContainerMissileSilo(id, player, getComponent(ComponentType.Inventory), getCoordsArray())));
+		addComponent(new ComponentPacketHandler(this));
+		addComponent(new ComponentContainerProvider("container.missilesilo", this).createMenu((id, player) -> new ContainerMissileSilo(id, player, getComponent(ComponentType.Inventory), getCoordsArray())));
 
 	}
 
@@ -77,27 +76,33 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 		}
 		if(cooldown > 0) {
 			cooldown --;
-		} else if(level.getLevelData().getDayTime() % 20 == 0) {
-			ItemStack exp = inv.getItem(1);
-			if (exp.getItem() instanceof BlockItemDescriptable des) {
-				if (des.getBlock() instanceof BlockExplosive && range.get() != 0 && exp.getCount() > 0) {
-					boolean hasSignal = false;
-					if (level.getBestNeighborSignal(getBlockPos()) > 0) {
-						hasSignal = true;
-					}
-					if (!hasSignal) {
-						for (Subnode node : getSubNodes()) {
-							BlockPos off = worldPosition.offset(node.pos);
-							if (level.getBestNeighborSignal(off) > 0) {
-								hasSignal = true;
-								break;
-							}
+			return;
+		} 
+		//ItemStack explosive = inv.getItem(1);
+		
+		if(range.get() == 0 || !hasExplosive.get()) {
+			return;
+		}
+		
+		
+		if (explosive.getItem() instanceof BlockItemDescriptable des) {
+			if (des.getBlock() instanceof BlockExplosive && range.get() != 0 && explosive.getCount() > 0) {
+				boolean hasSignal = false;
+				if (level.getBestNeighborSignal(getBlockPos()) > 0) {
+					hasSignal = true;
+				}
+				if (!hasSignal) {
+					for (Subnode node : getSubNodes()) {
+						BlockPos off = worldPosition.offset(node.pos);
+						if (level.getBestNeighborSignal(off) > 0) {
+							hasSignal = true;
+							break;
 						}
 					}
-					if (hasSignal || shouldLaunch) {
-						launch();
-						shouldLaunch = false;
-					}
+				}
+				if (hasSignal || shouldLaunch) {
+					launch();
+					shouldLaunch = false;
 				}
 			}
 		}
@@ -149,6 +154,18 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 		}
 		
 	}
+	
+	@Override
+	public void onPlace(BlockState oldState, boolean isMoving) {
+		// TODO Auto-generated method stub
+		super.onPlace(oldState, isMoving);
+	}
+	
+	@Override
+	public void onNeightborChanged(BlockPos neighbor) {
+		// TODO Auto-generated method stub
+		super.onNeightborChanged(neighbor);
+	}
 
 	@Override
 	public AABB getRenderBoundingBox() {
@@ -192,6 +209,18 @@ public class TileMissileSilo extends GenericTile implements IMultiblockTileNode 
 				range.set(0);
 			}
 
+		} 
+		
+		if(index == 1 || index == -1) {
+			
+			ItemStack explosive = inv.getItem(1);
+			
+			if (!explosive.isEmpty() && explosive.getItem() instanceof BlockItemDescriptable blockItem && blockItem.getBlock() instanceof BlockExplosive) {
+				hasExplosive.set(true);
+			} else {
+				hasExplosive.set(true);
+			}
+			
 		}
 	}
 

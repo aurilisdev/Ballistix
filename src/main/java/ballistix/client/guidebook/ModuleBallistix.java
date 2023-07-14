@@ -5,7 +5,7 @@ import ballistix.client.guidebook.chapters.ChapterMissileSilo;
 import ballistix.client.guidebook.chapters.ChapterItems;
 import ballistix.prefab.utils.TextUtils;
 import electrodynamics.client.guidebook.utils.components.Module;
-import electrodynamics.client.guidebook.utils.pagedata.ImageWrapperObject;
+import electrodynamics.client.guidebook.utils.pagedata.graphics.ImageWrapperObject;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 

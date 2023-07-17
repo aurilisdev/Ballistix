@@ -1,12 +1,12 @@
 package ballistix.datagen.server;
 
+import ballistix.References;
 import ballistix.common.tags.BallistixTags;
 import ballistix.registers.BallistixItems;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import nuclearscience.References;
 
 public class BallistixItemTagsProvider extends ItemTagsProvider {
 

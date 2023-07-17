@@ -1,13 +1,13 @@
 package ballistix.prefab.utils;
 
-import static electrodynamics.prefab.utilities.TextUtils.BLOCK_BASE;
-import static electrodynamics.prefab.utilities.TextUtils.GUIDEBOOK_BASE;
-import static electrodynamics.prefab.utilities.TextUtils.GUI_BASE;
-import static electrodynamics.prefab.utilities.TextUtils.JEI_BASE;
-import static electrodynamics.prefab.utilities.TextUtils.JEI_INFO_FLUID;
-import static electrodynamics.prefab.utilities.TextUtils.JEI_INFO_ITEM;
-import static electrodynamics.prefab.utilities.TextUtils.MESSAGE_BASE;
-import static electrodynamics.prefab.utilities.TextUtils.TOOLTIP_BASE;
+import static electrodynamics.prefab.utilities.ElectroTextUtils.BLOCK_BASE;
+import static electrodynamics.prefab.utilities.ElectroTextUtils.GUIDEBOOK_BASE;
+import static electrodynamics.prefab.utilities.ElectroTextUtils.GUI_BASE;
+import static electrodynamics.prefab.utilities.ElectroTextUtils.JEI_BASE;
+import static electrodynamics.prefab.utilities.ElectroTextUtils.JEI_INFO_FLUID;
+import static electrodynamics.prefab.utilities.ElectroTextUtils.JEI_INFO_ITEM;
+import static electrodynamics.prefab.utilities.ElectroTextUtils.MESSAGE_BASE;
+import static electrodynamics.prefab.utilities.ElectroTextUtils.TOOLTIP_BASE;
 
 import java.text.DecimalFormat;
 

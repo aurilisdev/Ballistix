@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import ballistix.common.inventory.container.ContainerMissileSilo;
 import ballistix.common.tile.TileMissileSilo;
-import ballistix.prefab.utils.TextUtils;
+import ballistix.prefab.utils.BallistixTextUtils;
 import electrodynamics.prefab.screen.GenericScreen;
 import electrodynamics.prefab.screen.component.editbox.ScreenComponentEditBox;
 import electrodynamics.prefab.screen.component.types.ScreenComponentSimpleLabel;
@@ -31,12 +31,12 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 		addEditBox(zCoordField = new ScreenComponentEditBox(122, 46, 48, 15, getFontRenderer()).setTextColor(-1).setTextColorUneditable(-1).setMaxLength(6).setResponder(this::setZ).setFilter(ScreenComponentEditBox.INTEGER));
 		addEditBox(frequencyField = new ScreenComponentEditBox(122, 64, 48, 15, getFontRenderer()).setTextColor(-1).setTextColorUneditable(-1).setMaxLength(6).setResponder(this::setFrequency).setFilter(ScreenComponentEditBox.INTEGER));
 		
-		addComponent(new ScreenComponentSimpleLabel(inventoryLabelX, inventoryLabelY - 55.0f, 10, 4210752, TextUtils.gui("missilesilo.missile")));
-		addComponent(new ScreenComponentSimpleLabel(inventoryLabelX, inventoryLabelY - 20.0f, 10, 4210752, TextUtils.gui("missilesilo.explosive")));
-		addComponent(new ScreenComponentSimpleLabel(79, 13, 10, 4210752, TextUtils.gui("missilesilo.x")));
-		addComponent(new ScreenComponentSimpleLabel(79, 31, 10, 4210752, TextUtils.gui("missilesilo.y")));
-		addComponent(new ScreenComponentSimpleLabel(79, 49, 10, 4210752, TextUtils.gui("missilesilo.z")));
-		addComponent(new ScreenComponentSimpleLabel(79, 67, 10, 4210752, TextUtils.gui("missilesilo.freq")));
+		addComponent(new ScreenComponentSimpleLabel(inventoryLabelX, inventoryLabelY - 55.0f, 10, 4210752, BallistixTextUtils.gui("missilesilo.missile")));
+		addComponent(new ScreenComponentSimpleLabel(inventoryLabelX, inventoryLabelY - 20.0f, 10, 4210752, BallistixTextUtils.gui("missilesilo.explosive")));
+		addComponent(new ScreenComponentSimpleLabel(79, 13, 10, 4210752, BallistixTextUtils.gui("missilesilo.x")));
+		addComponent(new ScreenComponentSimpleLabel(79, 31, 10, 4210752, BallistixTextUtils.gui("missilesilo.y")));
+		addComponent(new ScreenComponentSimpleLabel(79, 49, 10, 4210752, BallistixTextUtils.gui("missilesilo.z")));
+		addComponent(new ScreenComponentSimpleLabel(79, 67, 10, 4210752, BallistixTextUtils.gui("missilesilo.freq")));
 	}
 
 	private void setSiloTargetX(String coord) {
@@ -192,18 +192,5 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 			}
 		}
 	}
-
-	/*
-	@Override
-	protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
-		super.renderLabels(matrixStack, mouseX, mouseY);
-		font.draw(matrixStack, TextUtils.gui("missilesilo.missile"), inventoryLabelX, inventoryLabelY - 55.0f, 4210752);
-		font.draw(matrixStack, TextUtils.gui("missilesilo.explosive"), inventoryLabelX, inventoryLabelY - 20.0f, 4210752);
-		font.draw(matrixStack, TextUtils.gui("missilesilo.x"), 79, 13f, 4210752);
-		font.draw(matrixStack, TextUtils.gui("missilesilo.y"), 79, 13f + 18, 4210752);
-		font.draw(matrixStack, TextUtils.gui("missilesilo.z"), 79, 13f + 18 * 2, 4210752);
-		font.draw(matrixStack, TextUtils.gui("missilesilo.freq"), 79, 13f + 18 * 3, 4210752);
-	}
-	*/
 
 }

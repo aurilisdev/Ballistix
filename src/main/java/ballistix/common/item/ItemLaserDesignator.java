@@ -5,7 +5,7 @@ import java.util.List;
 import ballistix.References;
 import ballistix.common.network.SiloRegistry;
 import ballistix.common.tile.TileMissileSilo;
-import ballistix.prefab.utils.TextUtils;
+import ballistix.prefab.utils.BallistixTextUtils;
 import electrodynamics.common.tile.TileMultiSubnode;
 import electrodynamics.prefab.item.ElectricItemProperties;
 import electrodynamics.prefab.item.ItemElectric;
@@ -49,7 +49,7 @@ public class ItemLaserDesignator extends ItemElectric {
 		if (silo != null) {
 			
 			if(context.getLevel().isClientSide) {
-				context.getPlayer().displayClientMessage(TextUtils.chatMessage("laserdesignator.setfrequency", silo.frequency.get()), false);
+				context.getPlayer().displayClientMessage(BallistixTextUtils.chatMessage("laserdesignator.setfrequency", silo.frequency.get()), false);
 			} else {
 				CompoundTag nbt = stack.getOrCreateTag();
 				nbt.putInt(FREQUENCY_KEY, silo.frequency.get());
@@ -90,7 +90,7 @@ public class ItemLaserDesignator extends ItemElectric {
 		for(TileMissileSilo silo : SiloRegistry.getSilos(frequency, worldIn)) {
 			
 			silo.target.set(trace.toBlockPos());
-			playerIn.displayClientMessage(TextUtils.chatMessage("laserdesignator.launch", new Location(silo.getBlockPos()) + " -> " + new Location(silo.target.get())), false);
+			playerIn.displayClientMessage(BallistixTextUtils.chatMessage("laserdesignator.launch", new Location(silo.getBlockPos()) + " -> " + new Location(silo.target.get())), false);
 			silo.shouldLaunch = true;
 			extractPower(designator, USAGE, false);
 			
@@ -115,7 +115,7 @@ public class ItemLaserDesignator extends ItemElectric {
 		}
 		
 		if (entityIn instanceof Player player) {
-			player.displayClientMessage(TextUtils.chatMessage("radargun.text", trace.toBlockPos().toShortString()), true);
+			player.displayClientMessage(BallistixTextUtils.chatMessage("radargun.text", trace.toBlockPos().toShortString()), true);
 		}
 	}
 
@@ -126,9 +126,9 @@ public class ItemLaserDesignator extends ItemElectric {
 			CompoundTag nbt = stack.getTag();
 			if (nbt.contains(FREQUENCY_KEY)) {
 				int freq = getFrequency(stack);
-				tooltip.add(TextUtils.tooltip("laserdesignator.frequency", freq));
+				tooltip.add(BallistixTextUtils.tooltip("laserdesignator.frequency", freq));
 			} else {
-				tooltip.add(TextUtils.tooltip("laserdesignator.nofrequency"));
+				tooltip.add(BallistixTextUtils.tooltip("laserdesignator.nofrequency"));
 			}
 		}
 	}

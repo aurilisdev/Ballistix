@@ -42,7 +42,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraftforge.common.world.ForgeChunkManager;
 
 public class TileMissileSilo extends GenericTile implements IMultiblockParentTile {
@@ -88,7 +87,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 			return;
 		}
 
-		if (range.get() == 0 || !hasExplosive.get() || hasRedstoneSignal.get() == 0 || !shouldLaunch) {
+		if (range.get() == 0 || !hasExplosive.get() || (hasRedstoneSignal.get() == 0 && !shouldLaunch)) {
 			return;
 		}
 
@@ -116,35 +115,6 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 
 		cooldown = 100;
 
-	}
-
-	private void launch() {
-		ComponentInventory inv = getComponent(ComponentType.Inventory);
-		ItemStack explosive = inv.getItem(1);
-		ItemStack mis = inv.getItem(0);
-
-		if (mis.isEmpty()) {
-			return;
-		}
-
-		if (explosive.getItem() instanceof BlockItemDescriptable des) {
-			double dist = Math.sqrt(Math.pow(worldPosition.getX() - target.get().getX(), 2) + Math.pow(worldPosition.getY() - target.get().getY(), 2) + Math.pow(worldPosition.getZ() - target.get().getZ(), 2));
-
-			if (range.get() < 0 || range.get() >= dist) {
-
-				EntityMissile missile = new EntityMissile(level);
-				missile.setPos(getBlockPos().getX() + 1.0, getBlockPos().getY(), getBlockPos().getZ() + 1.0);
-				missile.range = ((ItemMissile) mis.getItem()).missile.ordinal();
-				missile.target = target.get();
-				missile.blastOrdinal = ((BlockExplosive) des.getBlock()).explosive.ordinal();
-				explosive.shrink(1);
-				mis.shrink(1);
-				inv.setChanged();
-				level.addFreshEntity(missile);
-
-			}
-			cooldown = 100;
-		}
 	}
 
 	protected boolean isItemValidForSlot(int index, ItemStack stack, ComponentInventory inv) {
@@ -184,6 +154,9 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 
 	@Override
 	public void onNeightborChanged(BlockPos neighbor) {
+		if(level.isClientSide) {
+			return;
+		}
 		if (level.hasNeighborSignal(getBlockPos())) {
 			setRedstoneSignal(0);
 		} else {
@@ -194,6 +167,9 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 
 	@Override
 	public void onSubnodeNeighborChange(TileMultiSubnode subnode, BlockPos subnodeChangingNeighbor) {
+		if(level.isClientSide || subnodeChangingNeighbor.equals(getBlockPos())) {
+			return;
+		}
 		if (level.hasNeighborSignal(subnode.getBlockPos())) {
 			setRedstoneSignal(subnode.nodeIndex.getIndex() + 1);
 		} else {

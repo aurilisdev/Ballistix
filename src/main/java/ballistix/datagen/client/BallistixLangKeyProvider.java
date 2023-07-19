@@ -9,6 +9,7 @@ import ballistix.registers.BallistixBlocks;
 import ballistix.registers.BallistixItems;
 import electrodynamics.datagen.client.ElectrodynamicsLangKeyProvider;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.world.level.Level;
 
 public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 
@@ -112,6 +113,10 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 			addSubtitle("ballistix.antimatterexplosion", "Antimatter bomb explodes");
 			addSubtitle("ballistix.darkmatter", "Dark matter bomb ignites and explodes");
 			addSubtitle("ballistix.nuclearexplosion", "Nuclear bomb explodes");
+			
+			addDimension(Level.OVERWORLD.location().getPath(), "The Overworld");
+			addDimension(Level.NETHER.location().getPath(), "The Nether");
+			addDimension(Level.END.location().getPath(), "The End");
 
 			addGuidebook(References.ID, "Ballistix");
 
@@ -166,7 +171,9 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 			addJei("info.item.missilelongrange", "Specs:\n    Range: Unlimited");
 
 		}
-
+		
 	}
+	
+
 
 }

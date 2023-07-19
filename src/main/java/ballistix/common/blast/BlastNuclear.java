@@ -9,7 +9,7 @@ import ballistix.common.settings.Constants;
 import ballistix.registers.BallistixSounds;
 import electrodynamics.api.sound.SoundAPI;
 import electrodynamics.common.packet.NetworkHandler;
-import electrodynamics.common.packet.types.PacketSpawnSmokeParticle;
+import electrodynamics.common.packet.types.client.PacketSpawnSmokeParticle;
 import electrodynamics.prefab.utilities.object.Location;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

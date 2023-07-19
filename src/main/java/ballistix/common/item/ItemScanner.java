@@ -6,7 +6,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import ballistix.References;
-import ballistix.prefab.utils.TextUtils;
+import ballistix.prefab.utils.BallistixTextUtils;
 import electrodynamics.prefab.item.ElectricItemProperties;
 import electrodynamics.prefab.item.ItemElectric;
 import electrodynamics.prefab.utilities.object.TransferPack;
@@ -44,9 +44,9 @@ public class ItemScanner extends ItemElectric {
 
 		if (worldIn.isClientSide) {
 			if (action) {
-				playerIn.displayClientMessage(TextUtils.chatMessage("scanner.cleared"), true);
+				playerIn.displayClientMessage(BallistixTextUtils.chatMessage("scanner.cleared"), true);
 			} else {
-				playerIn.displayClientMessage(TextUtils.chatMessage("scanner.none"), true);
+				playerIn.displayClientMessage(BallistixTextUtils.chatMessage("scanner.none"), true);
 			}
 		}
 

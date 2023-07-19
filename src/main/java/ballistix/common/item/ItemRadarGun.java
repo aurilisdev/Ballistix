@@ -4,18 +4,18 @@ import java.util.List;
 
 import ballistix.References;
 import ballistix.common.tile.TileMissileSilo;
-import ballistix.prefab.utils.TextUtils;
+import ballistix.prefab.utils.BallistixTextUtils;
 import electrodynamics.common.tile.TileMultiSubnode;
 import electrodynamics.prefab.item.ElectricItemProperties;
 import electrodynamics.prefab.item.ItemElectric;
+import electrodynamics.prefab.utilities.NBTUtils;
 import electrodynamics.prefab.utilities.math.MathUtils;
 import electrodynamics.prefab.utilities.object.Location;
 import electrodynamics.prefab.utilities.object.TransferPack;
 import electrodynamics.registers.ElectrodynamicsItems;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -43,7 +43,7 @@ public class ItemRadarGun extends ItemElectric {
 		BlockEntity ent = context.getLevel().getBlockEntity(context.getClickedPos());
 		TileMissileSilo silo = ent instanceof TileMissileSilo s ? s : null;
 		if (ent instanceof TileMultiSubnode node) {
-			BlockEntity core = node.getLevel().getBlockEntity(node.nodePos.get());
+			BlockEntity core = node.getLevel().getBlockEntity(node.parentPos.get());
 			if (core instanceof TileMissileSilo c) {
 				silo = c;
 			}
@@ -76,20 +76,9 @@ public class ItemRadarGun extends ItemElectric {
 		
 		storeCoordiantes(radarGun, trace.toBlockPos());
 		
-		radarGun.getOrCreateTag().putString("world", worldIn.dimension().location().getPath());
-		
 		extractPower(radarGun, USAGE, false);
 		
 		return super.use(worldIn, playerIn, handIn);
-	}
-
-	public static ServerLevel getFromNBT(ServerLevel base, String str) {
-		for (ServerLevel world : base.getLevel().getServer().getAllLevels()) {
-			if (world.dimension().location().getPath().equalsIgnoreCase(str)) {
-				return world;
-			}
-		}
-		return null;
 	}
 
 	@Override
@@ -107,33 +96,26 @@ public class ItemRadarGun extends ItemElectric {
 		}
 		
 		if (entityIn instanceof Player player) {
-			player.displayClientMessage(TextUtils.chatMessage("radargun.text", trace.toBlockPos().toShortString()), true);
+			player.displayClientMessage(BallistixTextUtils.chatMessage("radargun.text", trace.toBlockPos().toShortString()), true);
 		}
 	}
 
 	@Override
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		if (stack.hasTag() && stack.getTag().contains("xCoord")) {
-			tooltip.add(TextUtils.tooltip("radargun.pos", getCoordiantes(stack).toShortString()));
+		if (stack.hasTag() && stack.getTag().contains(NBTUtils.LOCATION)) {
+			tooltip.add(BallistixTextUtils.tooltip("radargun.pos", getCoordiantes(stack).toShortString()));
 		} else {
-			tooltip.add(TextUtils.tooltip("radargun.notag"));
+			tooltip.add(BallistixTextUtils.tooltip("radargun.notag"));
 		}
 	}
 	
 	public static void storeCoordiantes(ItemStack stack, BlockPos pos) {
-		CompoundTag nbt = stack.getOrCreateTag();
-		nbt.putInt("xCoord", pos.getX());
-		nbt.putInt("yCoord", pos.getY());
-		nbt.putInt("zCoord", pos.getZ());
+		stack.getOrCreateTag().put(NBTUtils.LOCATION, NbtUtils.writeBlockPos(pos));
 	}
 	
 	public static BlockPos getCoordiantes(ItemStack stack) {
-		CompoundTag tag = stack.getOrCreateTag();
-		int x = tag.getInt("xCoord");
-		int y = tag.getInt("yCoord");
-		int z = tag.getInt("zCoord");
-		return new BlockPos(x, y, z);
+		return NbtUtils.readBlockPos(stack.getOrCreateTag().getCompound(NBTUtils.LOCATION));
 	}
 	
 	

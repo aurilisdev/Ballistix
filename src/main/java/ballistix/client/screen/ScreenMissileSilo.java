@@ -4,14 +4,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import ballistix.common.inventory.container.ContainerMissileSilo;
 import ballistix.common.tile.TileMissileSilo;
-import ballistix.prefab.utils.TextUtils;
-import electrodynamics.common.packet.NetworkHandler;
-import electrodynamics.common.packet.types.PacketSendUpdatePropertiesServer;
+import ballistix.prefab.utils.BallistixTextUtils;
 import electrodynamics.prefab.screen.GenericScreen;
-import electrodynamics.prefab.screen.component.ScreenComponentTextInputBar;
-import electrodynamics.prefab.screen.component.ScreenComponentTextInputBar.TextInputTextures;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.EditBox;
+import electrodynamics.prefab.screen.component.editbox.ScreenComponentEditBox;
+import electrodynamics.prefab.screen.component.types.ScreenComponentSimpleLabel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -20,75 +16,28 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
+	
+	private boolean needsUpdate = true;
+	
+	private ScreenComponentEditBox xCoordField;
+	private ScreenComponentEditBox yCoordField;
+	private ScreenComponentEditBox zCoordField;
+	private ScreenComponentEditBox frequencyField;
+	
 	public ScreenMissileSilo(ContainerMissileSilo container, Inventory playerInventory, Component title) {
 		super(container, playerInventory, title);
-		components.add(new ScreenComponentTextInputBar(TextInputTextures.TEXT_INPUT_SMALL, this, 122, 10));
-		components.add(new ScreenComponentTextInputBar(TextInputTextures.TEXT_INPUT_SMALL, this, 122, 28));
-		components.add(new ScreenComponentTextInputBar(TextInputTextures.TEXT_INPUT_SMALL, this, 122, 46));
-		components.add(new ScreenComponentTextInputBar(TextInputTextures.TEXT_INPUT_SMALL, this, 122, 64));
+		addEditBox(xCoordField = new ScreenComponentEditBox(122, 10, 48, 15, getFontRenderer()).setTextColor(-1).setTextColorUneditable(-1).setMaxLength(6).setResponder(this::setX).setFilter(ScreenComponentEditBox.INTEGER));
+		addEditBox(yCoordField = new ScreenComponentEditBox(122, 28, 48, 15, getFontRenderer()).setTextColor(-1).setTextColorUneditable(-1).setMaxLength(6).setResponder(this::setY).setFilter(ScreenComponentEditBox.INTEGER));
+		addEditBox(zCoordField = new ScreenComponentEditBox(122, 46, 48, 15, getFontRenderer()).setTextColor(-1).setTextColorUneditable(-1).setMaxLength(6).setResponder(this::setZ).setFilter(ScreenComponentEditBox.INTEGER));
+		addEditBox(frequencyField = new ScreenComponentEditBox(122, 64, 48, 15, getFontRenderer()).setTextColor(-1).setTextColorUneditable(-1).setMaxLength(6).setResponder(this::setFrequency).setFilter(ScreenComponentEditBox.INTEGER));
+		
+		addComponent(new ScreenComponentSimpleLabel(inventoryLabelX, inventoryLabelY - 55.0f, 10, 4210752, BallistixTextUtils.gui("missilesilo.missile")));
+		addComponent(new ScreenComponentSimpleLabel(inventoryLabelX, inventoryLabelY - 20.0f, 10, 4210752, BallistixTextUtils.gui("missilesilo.explosive")));
+		addComponent(new ScreenComponentSimpleLabel(79, 13, 10, 4210752, BallistixTextUtils.gui("missilesilo.x")));
+		addComponent(new ScreenComponentSimpleLabel(79, 31, 10, 4210752, BallistixTextUtils.gui("missilesilo.y")));
+		addComponent(new ScreenComponentSimpleLabel(79, 49, 10, 4210752, BallistixTextUtils.gui("missilesilo.z")));
+		addComponent(new ScreenComponentSimpleLabel(79, 67, 10, 4210752, BallistixTextUtils.gui("missilesilo.freq")));
 	}
-
-	private EditBox xCoordField;
-	private EditBox yCoordField;
-	private EditBox zCoordField;
-	private EditBox frequencyField;
-
-	@Override
-	public void containerTick() {
-		super.containerTick();
-		xCoordField.tick();
-		yCoordField.tick();
-		zCoordField.tick();
-		frequencyField.tick();
-	}
-
-	@Override
-	protected void init() {
-		super.init();
-		initFields();
-	}
-
-	protected void initFields() {
-
-		minecraft.keyboardHandler.setSendRepeatsToGui(true);
-		int i = (width - imageWidth) / 2;
-		int j = (height - imageHeight) / 2;
-
-		xCoordField = new EditBox(font, i + 127, j + 14, 46, 13, Component.translatable("container.missilesilo.xCoord"));
-		xCoordField.setTextColor(-1);
-		xCoordField.setTextColorUneditable(-1);
-		xCoordField.setBordered(false);
-		xCoordField.setMaxLength(6);
-		xCoordField.setResponder(this::setX);
-
-		yCoordField = new EditBox(font, i + 127, j + 14 + 18, 46, 13, Component.translatable("container.missilesilo.yCoord"));
-		yCoordField.setTextColor(-1);
-		yCoordField.setTextColorUneditable(-1);
-		yCoordField.setBordered(false);
-		yCoordField.setMaxLength(6);
-		yCoordField.setResponder(this::setY);
-
-		zCoordField = new EditBox(font, i + 127, j + 14 + 18 * 2, 46, 13, Component.translatable("container.missilesilo.zCoord"));
-		zCoordField.setTextColor(-1);
-		zCoordField.setTextColorUneditable(-1);
-		zCoordField.setBordered(false);
-		zCoordField.setMaxLength(6);
-		zCoordField.setResponder(this::setZ);
-
-		frequencyField = new EditBox(font, i + 127, j + 14 + 18 * 3, 46, 13, Component.translatable("container.missilesilo.frequency"));
-		frequencyField.setTextColor(-1);
-		zCoordField.setTextColorUneditable(-1);
-		frequencyField.setBordered(false);
-		frequencyField.setMaxLength(6);
-		frequencyField.setResponder(this::setFrequency);
-
-		addRenderableWidget(xCoordField);
-		addRenderableWidget(yCoordField);
-		addRenderableWidget(zCoordField);
-		addRenderableWidget(frequencyField);
-	}
-
-	private boolean needsUpdate = true;
 
 	private void setSiloTargetX(String coord) {
 
@@ -102,7 +51,8 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 			return;
 		}
 
-		int x = 0;
+		int x = silo.target.get().getX();
+		
 		try {
 			x = Integer.parseInt(coord);
 		} catch (Exception e) {
@@ -126,7 +76,8 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 			return;
 		}
 
-		int y = 0;
+		int y = silo.target.get().getY();
+		
 		try {
 			y = Integer.parseInt(coord);
 		} catch (Exception e) {
@@ -149,7 +100,8 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 			return;
 		}
 
-		int z = 0;
+		int z = silo.target.get().getZ();
+		
 		try {
 			z = Integer.parseInt(coord);
 		} catch (Exception e) {
@@ -164,7 +116,7 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 		
 		silo.target.set(new BlockPos(x, y, z));
 
-		NetworkHandler.CHANNEL.sendToServer(new PacketSendUpdatePropertiesServer(silo.target.getPropertyManager().getProperties().indexOf(silo.target), silo.target, silo.getBlockPos()));
+		silo.target.updateServer();
 		
 	}
 
@@ -189,8 +141,8 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 		}
 
 		silo.frequency.set(frequency);
-
-		NetworkHandler.CHANNEL.sendToServer(new PacketSendUpdatePropertiesServer(silo.frequency.getPropertyManager().getProperties().indexOf(silo.frequency), silo.frequency, silo.getBlockPos()));
+		
+		silo.frequency.updateServer();
 
 	}
 
@@ -227,25 +179,6 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 	}
 
 	@Override
-	public void resize(Minecraft minecraft, int width, int height) {
-		String s = xCoordField.getValue();
-		String s1 = yCoordField.getValue();
-		String s2 = zCoordField.getValue();
-		String s3 = frequencyField.getValue();
-		init(minecraft, width, height);
-		xCoordField.setValue(s);
-		yCoordField.setValue(s1);
-		zCoordField.setValue(s2);
-		frequencyField.setValue(s3);
-	}
-
-	@Override
-	public void removed() {
-		super.removed();
-		minecraft.keyboardHandler.setSendRepeatsToGui(false);
-	}
-
-	@Override
 	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 		super.render(matrixStack, mouseX, mouseY, partialTicks);
 		if (needsUpdate) {
@@ -258,17 +191,6 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 				frequencyField.setValue("" + silo.frequency.get());
 			}
 		}
-	}
-
-	@Override
-	protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
-		super.renderLabels(matrixStack, mouseX, mouseY);
-		font.draw(matrixStack, TextUtils.gui("missilesilo.missile"), inventoryLabelX, inventoryLabelY - 55.0f, 4210752);
-		font.draw(matrixStack, TextUtils.gui("missilesilo.explosive"), inventoryLabelX, inventoryLabelY - 20.0f, 4210752);
-		font.draw(matrixStack, TextUtils.gui("missilesilo.x"), 79, 13f, 4210752);
-		font.draw(matrixStack, TextUtils.gui("missilesilo.y"), 79, 13f + 18, 4210752);
-		font.draw(matrixStack, TextUtils.gui("missilesilo.z"), 79, 13f + 18 * 2, 4210752);
-		font.draw(matrixStack, TextUtils.gui("missilesilo.freq"), 79, 13f + 18 * 3, 4210752);
 	}
 
 }

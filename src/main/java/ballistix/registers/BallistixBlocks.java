@@ -1,7 +1,5 @@
 package ballistix.registers;
 
-import static electrodynamics.registers.UnifiedElectrodynamicsRegister.supplier;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,9 +22,9 @@ public class BallistixBlocks {
 	public static BlockMissileSilo blockMissileSilo;
 
 	static {
-		BLOCKS.register("missilesilo", supplier(() -> blockMissileSilo = new BlockMissileSilo()));
+		BLOCKS.register("missilesilo", () -> blockMissileSilo = new BlockMissileSilo());
 		for (SubtypeBlast subtype : SubtypeBlast.values()) {
-			SUBTYPEBLOCKREGISTER_MAPPINGS.put(subtype, BLOCKS.register(subtype.tag(), supplier(() -> new BlockExplosive(subtype), subtype)));
+			SUBTYPEBLOCKREGISTER_MAPPINGS.put(subtype, BLOCKS.register(subtype.tag(), () -> new BlockExplosive(subtype)));
 		}
 	}
 

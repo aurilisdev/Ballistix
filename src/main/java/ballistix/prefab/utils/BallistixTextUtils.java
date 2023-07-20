@@ -31,7 +31,7 @@ public class BallistixTextUtils {
 	public static MutableComponent chatMessage(String key, Object... additional) {
 		return translated(MESSAGE_BASE, key, additional);
 	}
-	
+
 	public static MutableComponent dimension(String key, Object... additional) {
 		return translated("dimension", key, additional);
 	}
@@ -55,7 +55,7 @@ public class BallistixTextUtils {
 	public static MutableComponent translated(String base, String key, Object... additional) {
 		return Component.translatable(base + "." + References.ID + "." + key, additional);
 	}
-	
+
 	public static boolean dimensionExists(String key) {
 		return translationExists("dimension", key);
 	}

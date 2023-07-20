@@ -15,8 +15,8 @@ import ballistix.common.item.ItemGrenade;
 import ballistix.common.item.ItemGrenade.SubtypeGrenade;
 import ballistix.common.item.ItemLaserDesignator;
 import ballistix.common.item.ItemMinecart;
-import ballistix.common.item.ItemMissile;
 import ballistix.common.item.ItemMinecart.SubtypeMinecart;
+import ballistix.common.item.ItemMissile;
 import ballistix.common.item.ItemRadarGun;
 import ballistix.common.item.ItemRocketLauncher;
 import ballistix.common.item.ItemScanner;
@@ -51,11 +51,11 @@ public class BallistixItems {
 		for (SubtypeMinecart subtype : SubtypeMinecart.values()) {
 			SUBTYPEITEMREGISTER_MAPPINGS.put(subtype, ITEMS.register(subtype.tag(), () -> new ItemMinecart(subtype)));
 		}
-		for(SubtypeMissile missile : SubtypeMissile.values()) {
+		for (SubtypeMissile missile : SubtypeMissile.values()) {
 			SUBTYPEITEMREGISTER_MAPPINGS.put(missile, ITEMS.register(missile.tag(), () -> new ItemMissile(missile)));
 		}
 		ITEMS.register("missilesilo", () -> new BlockItemDescriptable(() -> blockMissileSilo, new Item.Properties().tab(References.BALLISTIXTAB)));
-		
+
 	}
 
 	public static Item[] getAllItemForSubtype(ISubtype[] values) {

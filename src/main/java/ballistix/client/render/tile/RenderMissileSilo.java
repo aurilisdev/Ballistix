@@ -23,16 +23,15 @@ public class RenderMissileSilo implements BlockEntityRenderer<TileMissileSilo> {
 
 	@Override
 	public void render(TileMissileSilo tileEntityIn, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
-		
+
 		ItemStack stack = tileEntityIn.<ComponentInventory>getComponent(ComponentType.Inventory).getItem(0);
-		
-		if(stack.isEmpty()) {
+
+		if (stack.isEmpty()) {
 			return;
 		}
-		
-		int type = ((ItemMissile)stack.getItem()).missile.ordinal();
-		
-		
+
+		int type = ((ItemMissile) stack.getItem()).missile.ordinal();
+
 		switch (type) {
 		case 1: {
 			BakedModel closerange = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILEMEDIUMRANGE);

@@ -11,6 +11,6 @@ public class NetworkHandler {
 	private static int disc = 0;
 
 	public static void init() {
-		
+
 	}
 }

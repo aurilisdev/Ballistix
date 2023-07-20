@@ -34,5 +34,4 @@ public class BallistixItemModelsProvider extends ElectrodynamicsItemModelsProvid
 
 	}
 
-
 }

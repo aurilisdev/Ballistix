@@ -16,21 +16,21 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
-	
+
 	private boolean needsUpdate = true;
-	
+
 	private ScreenComponentEditBox xCoordField;
 	private ScreenComponentEditBox yCoordField;
 	private ScreenComponentEditBox zCoordField;
 	private ScreenComponentEditBox frequencyField;
-	
+
 	public ScreenMissileSilo(ContainerMissileSilo container, Inventory playerInventory, Component title) {
 		super(container, playerInventory, title);
 		addEditBox(xCoordField = new ScreenComponentEditBox(122, 10, 48, 15, getFontRenderer()).setTextColor(-1).setTextColorUneditable(-1).setMaxLength(6).setResponder(this::setX).setFilter(ScreenComponentEditBox.INTEGER));
 		addEditBox(yCoordField = new ScreenComponentEditBox(122, 28, 48, 15, getFontRenderer()).setTextColor(-1).setTextColorUneditable(-1).setMaxLength(6).setResponder(this::setY).setFilter(ScreenComponentEditBox.INTEGER));
 		addEditBox(zCoordField = new ScreenComponentEditBox(122, 46, 48, 15, getFontRenderer()).setTextColor(-1).setTextColorUneditable(-1).setMaxLength(6).setResponder(this::setZ).setFilter(ScreenComponentEditBox.INTEGER));
 		addEditBox(frequencyField = new ScreenComponentEditBox(122, 64, 48, 15, getFontRenderer()).setTextColor(-1).setTextColorUneditable(-1).setMaxLength(6).setResponder(this::setFrequency).setFilter(ScreenComponentEditBox.INTEGER));
-		
+
 		addComponent(new ScreenComponentSimpleLabel(inventoryLabelX, inventoryLabelY - 55.0f, 10, 4210752, BallistixTextUtils.gui("missilesilo.missile")));
 		addComponent(new ScreenComponentSimpleLabel(inventoryLabelX, inventoryLabelY - 20.0f, 10, 4210752, BallistixTextUtils.gui("missilesilo.explosive")));
 		addComponent(new ScreenComponentSimpleLabel(79, 13, 10, 4210752, BallistixTextUtils.gui("missilesilo.x")));
@@ -52,7 +52,7 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 		}
 
 		int x = silo.target.get().getX();
-		
+
 		try {
 			x = Integer.parseInt(coord);
 		} catch (Exception e) {
@@ -60,12 +60,11 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 		}
 
 		updateSiloCoords(x, silo.target.get().getY(), silo.target.get().getZ(), silo);
-		
 
 	}
-	
+
 	private void setSiloTargetY(String coord) {
-		
+
 		if (coord.isEmpty()) {
 			return;
 		}
@@ -77,7 +76,7 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 		}
 
 		int y = silo.target.get().getY();
-		
+
 		try {
 			y = Integer.parseInt(coord);
 		} catch (Exception e) {
@@ -85,11 +84,11 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 		}
 
 		updateSiloCoords(silo.target.get().getX(), y, silo.target.get().getZ(), silo);
-		
+
 	}
-	
+
 	private void setSiloTargetZ(String coord) {
-		
+
 		if (coord.isEmpty()) {
 			return;
 		}
@@ -101,7 +100,7 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 		}
 
 		int z = silo.target.get().getZ();
-		
+
 		try {
 			z = Integer.parseInt(coord);
 		} catch (Exception e) {
@@ -109,15 +108,15 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 		}
 
 		updateSiloCoords(silo.target.get().getX(), silo.target.get().getY(), z, silo);
-		
+
 	}
-	
+
 	private void updateSiloCoords(int x, int y, int z, TileMissileSilo silo) {
-		
+
 		silo.target.set(new BlockPos(x, y, z));
 
 		silo.target.updateServer();
-		
+
 	}
 
 	private void setSiloFrequency(String val) {
@@ -141,7 +140,7 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 		}
 
 		silo.frequency.set(frequency);
-		
+
 		silo.frequency.updateServer();
 
 	}

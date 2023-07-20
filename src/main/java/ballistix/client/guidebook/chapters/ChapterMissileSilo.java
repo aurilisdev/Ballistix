@@ -39,7 +39,7 @@ public class ChapterMissileSilo extends Chapter {
 		pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missilesilo.l3")).setIndentions(1).setSeparateStart());
 		pageData.add(new ImageWrapperObject(0, 0, 0, 0, 150, 75, 150, 79, new ResourceLocation(References.ID, "textures/screen/guidebook/silo1.png")));
 		pageData.add(new ImageWrapperObject(0, 0, 0, 0, 150, 75, 150, 79, new ResourceLocation(References.ID, "textures/screen/guidebook/silo2.png")));
-		
+
 	}
 
 }

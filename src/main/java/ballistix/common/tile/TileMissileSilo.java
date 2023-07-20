@@ -122,7 +122,8 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 
 		if (index == 0) {
 			return item instanceof ItemMissile;
-		} else if (index == 1) {
+		}
+		if (index == 1) {
 			return item instanceof BlockItemDescriptable des && des.getBlock() instanceof BlockExplosive;
 		}
 		return false;
@@ -154,7 +155,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 
 	@Override
 	public void onNeightborChanged(BlockPos neighbor) {
-		if(level.isClientSide) {
+		if (level.isClientSide) {
 			return;
 		}
 		if (level.hasNeighborSignal(getBlockPos())) {
@@ -167,7 +168,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 
 	@Override
 	public void onSubnodeNeighborChange(TileMultiSubnode subnode, BlockPos subnodeChangingNeighbor) {
-		if(level.isClientSide || subnodeChangingNeighbor.equals(getBlockPos())) {
+		if (level.isClientSide || subnodeChangingNeighbor.equals(getBlockPos())) {
 			return;
 		}
 		if (level.hasNeighborSignal(subnode.getBlockPos())) {

@@ -4,7 +4,9 @@ import electrodynamics.api.ISubtype;
 
 public enum SubtypeMissile implements ISubtype {
 
-	closerange, mediumrange, longrange;
+	closerange,
+	mediumrange,
+	longrange;
 
 	@Override
 	public String forgeTag() {
@@ -20,5 +22,5 @@ public enum SubtypeMissile implements ISubtype {
 	public String tag() {
 		return "missile" + name();
 	}
-	
+
 }

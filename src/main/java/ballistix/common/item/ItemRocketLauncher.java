@@ -59,17 +59,17 @@ public class ItemRocketLauncher extends Item {
 		}
 
 		millisecondMap.put(player, millisecond);
-		
+
 		int blastOrdinal = 0;
-		
+
 		boolean hasExplosive = false;
-		
+
 		boolean hasRange = false;
-		
+
 		ItemStack ex = ItemStack.EMPTY;
-		
+
 		ItemStack missile = ex;
-		
+
 		for (ItemStack st : player.getInventory().items) {
 			Item it = st.getItem();
 			if (!hasExplosive && it instanceof BlockItemDescriptable bl) {

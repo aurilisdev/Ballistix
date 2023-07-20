@@ -53,5 +53,5 @@ public class Ballistix {
 	public static void registerCapabilities(RegisterCapabilitiesEvent event) {
 		BallistixCapabilities.register(event);
 	}
-	
+
 }

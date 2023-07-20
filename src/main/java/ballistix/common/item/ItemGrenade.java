@@ -62,7 +62,13 @@ public class ItemGrenade extends Item {
 	}
 
 	public enum SubtypeGrenade implements ISubtype {
-		attractive(SubtypeBlast.attractive), chemical(SubtypeBlast.chemical), condensive(SubtypeBlast.condensive), debilitation(SubtypeBlast.debilitation), incendiary(SubtypeBlast.incendiary), repulsive(SubtypeBlast.repulsive), shrapnel(SubtypeBlast.shrapnel);
+		attractive(SubtypeBlast.attractive),
+		chemical(SubtypeBlast.chemical),
+		condensive(SubtypeBlast.condensive),
+		debilitation(SubtypeBlast.debilitation),
+		incendiary(SubtypeBlast.incendiary),
+		repulsive(SubtypeBlast.repulsive),
+		shrapnel(SubtypeBlast.shrapnel);
 
 		public final SubtypeBlast explosiveType;
 

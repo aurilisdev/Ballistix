@@ -30,14 +30,14 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 public class ItemRadarGun extends ItemElectric {
 
 	public static final double USAGE = 150.0;
-	
+
 	public ItemRadarGun() {
 		super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1).tab(References.BALLISTIXTAB), item -> ElectrodynamicsItems.ITEM_BATTERY.get());
 	}
 
 	@Override
 	public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
-		if(context.getLevel().isClientSide) {
+		if (context.getLevel().isClientSide) {
 			return super.onItemUseFirst(stack, context);
 		}
 		BlockEntity ent = context.getLevel().getBlockEntity(context.getClickedPos());
@@ -57,44 +57,44 @@ public class ItemRadarGun extends ItemElectric {
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-		
-		if(worldIn.isClientSide) {
+
+		if (worldIn.isClientSide) {
 			return super.use(worldIn, playerIn, handIn);
 		}
-		
+
 		Location trace = MathUtils.getRaytracedBlock(playerIn);
-		
-		if(trace == null) {
+
+		if (trace == null) {
 			return super.use(worldIn, playerIn, handIn);
 		}
-		
+
 		ItemStack radarGun = playerIn.getItemInHand(handIn);
-		
-		if(getJoulesStored(radarGun) < USAGE) {
+
+		if (getJoulesStored(radarGun) < USAGE) {
 			return super.use(worldIn, playerIn, handIn);
 		}
-		
+
 		storeCoordiantes(radarGun, trace.toBlockPos());
-		
+
 		extractPower(radarGun, USAGE, false);
-		
+
 		return super.use(worldIn, playerIn, handIn);
 	}
 
 	@Override
 	public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
-		
-		if(!worldIn.isClientSide || !isSelected) {
+
+		if (!worldIn.isClientSide || !isSelected) {
 			return;
 		}
-		
+
 		Location trace = MathUtils.getRaytracedBlock(entityIn);
-		
-		if(trace == null) {
+
+		if (trace == null) {
 			return;
 		}
-		
+
 		if (entityIn instanceof Player player) {
 			player.displayClientMessage(BallistixTextUtils.chatMessage("radargun.text", trace.toBlockPos().toShortString()), true);
 		}
@@ -109,14 +109,13 @@ public class ItemRadarGun extends ItemElectric {
 			tooltip.add(BallistixTextUtils.tooltip("radargun.notag"));
 		}
 	}
-	
+
 	public static void storeCoordiantes(ItemStack stack, BlockPos pos) {
 		stack.getOrCreateTag().put(NBTUtils.LOCATION, NbtUtils.writeBlockPos(pos));
 	}
-	
+
 	public static BlockPos getCoordiantes(ItemStack stack) {
 		return NbtUtils.readBlockPos(stack.getOrCreateTag().getCompound(NBTUtils.LOCATION));
 	}
-	
-	
+
 }

@@ -34,19 +34,19 @@ public class SiloRegistry {
 		return ServerLifecycleHooks.getCurrentServer().overworld().getCapability(BallistixCapabilities.SILO_REGISTRY).map(cap -> {
 
 			HashSet<TileMissileSilo> silos = new HashSet<>();
-			
+
 			BlockEntity tile;
-			
-			for(BlockPos pos : cap.getSilosForFrequency(freq)) {
-				
+
+			for (BlockPos pos : cap.getSilosForFrequency(freq)) {
+
 				tile = world.getBlockEntity(pos);
-				
-				if(tile != null && tile instanceof TileMissileSilo silo) {
+
+				if (tile != null && tile instanceof TileMissileSilo silo) {
 					silos.add(silo);
 				}
-				
+
 			}
-			
+
 			return silos;
 
 		}).orElse(new HashSet<>());

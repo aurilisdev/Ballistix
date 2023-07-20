@@ -1,8 +1,8 @@
 package ballistix.client.guidebook;
 
 import ballistix.References;
-import ballistix.client.guidebook.chapters.ChapterMissileSilo;
 import ballistix.client.guidebook.chapters.ChapterItems;
+import ballistix.client.guidebook.chapters.ChapterMissileSilo;
 import ballistix.prefab.utils.BallistixTextUtils;
 import electrodynamics.client.guidebook.utils.components.Module;
 import electrodynamics.client.guidebook.utils.pagedata.graphics.ImageWrapperObject;

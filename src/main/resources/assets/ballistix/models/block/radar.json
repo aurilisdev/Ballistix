@@ -1,0 +1,37 @@
+{
+	"credit": "aurilisdev",
+	"parent": "block/cube_all",
+	"texture_size": [64, 64],
+	"textures": {
+		"0": "ballistix:block/radar",
+		"particle": "ballistix:block/radar"
+	},
+	"elements": [
+		{
+			"from": [-0.75, 0, 0.75],
+			"to": [15.25, 5, 16.75],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7.25, 9.25, 8]},
+			"faces": {
+				"north": {"uv": [9, 5.5, 13, 6.75], "texture": "#0"},
+				"east": {"uv": [7, 3, 11, 4.25], "texture": "#0"},
+				"south": {"uv": [7.5, 8, 11.5, 9.25], "texture": "#0"},
+				"west": {"uv": [9, 4.25, 13, 5.5], "texture": "#0"},
+				"up": {"uv": [4, 4, 0, 0], "rotation": 90, "texture": "#0"},
+				"down": {"uv": [4, 4, 0, 8], "rotation": 270, "texture": "#0"}
+			}
+		},
+		{
+			"from": [3.25, 5, 4.75],
+			"to": [11.25, 10, 13.75],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7.25, 9.25, 8]},
+			"faces": {
+				"north": {"uv": [0.75, 13.5, 2.75, 14.75], "texture": "#0"},
+				"east": {"uv": [0.75, 13.5, 2.75, 14.75], "texture": "#0"},
+				"south": {"uv": [0.75, 13.5, 2.75, 14.75], "texture": "#0"},
+				"west": {"uv": [0.75, 13.5, 2.75, 14.75], "texture": "#0"},
+				"up": {"uv": [7, 2.5, 4, 0], "rotation": 90, "texture": "#0"},
+				"down": {"uv": [7, 2.5, 4, 5], "rotation": 270, "texture": "#0"}
+			}
+		}
+	]
+}

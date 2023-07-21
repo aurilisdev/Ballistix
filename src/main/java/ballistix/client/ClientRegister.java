@@ -9,6 +9,7 @@ import ballistix.client.render.entity.RenderMinecart;
 import ballistix.client.render.entity.RenderMissile;
 import ballistix.client.render.entity.RenderShrapnel;
 import ballistix.client.render.tile.RenderMissileSilo;
+import ballistix.client.render.tile.RenderRadar;
 import ballistix.client.screen.ScreenMissileSilo;
 import ballistix.common.item.ItemTracker;
 import ballistix.registers.BallistixBlockTypes;
@@ -49,6 +50,7 @@ public class ClientRegister {
 	public static final ResourceLocation TEXTURE_SHRAPNEL = new ResourceLocation(References.ID + ":textures/model/shrapnel.png");
 	public static final ResourceLocation MODEL_MISSILECLOSERANGE = new ResourceLocation(References.ID + ":entity/missilecloserange");
 	public static final ResourceLocation MODEL_MISSILEMEDIUMRANGE = new ResourceLocation(References.ID + ":entity/missilemediumrange");
+	public static final ResourceLocation MODEL_RADARDISH = new ResourceLocation(References.ID + ":block/dish");
 	public static final ResourceLocation MODEL_MISSILELONGRANGE = new ResourceLocation(References.ID + ":entity/missilelongrange");
 	public static final ResourceLocation MODEL_DARKMATTERSPHERE = new ResourceLocation(References.ID + ":entity/darkmattersphere");
 	public static final ResourceLocation MODEL_DARKMATTERDISK = new ResourceLocation(References.ID + ":entity/darkmatterdisk");
@@ -75,6 +77,7 @@ public class ClientRegister {
 		event.registerEntityRenderer(BallistixEntities.ENTITY_MISSILE.get(), RenderMissile::new);
 		event.registerEntityRenderer(BallistixEntities.ENTITY_MINECART.get(), RenderMinecart::new);
 		event.registerBlockEntityRenderer(BallistixBlockTypes.TILE_MISSILESILO.get(), RenderMissileSilo::new);
+		event.registerBlockEntityRenderer(BallistixBlockTypes.TILE_RADAR.get(), RenderRadar::new);
 
 	}
 

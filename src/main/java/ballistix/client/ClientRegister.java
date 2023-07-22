@@ -37,6 +37,7 @@ public class ClientRegister {
 
 	@SubscribeEvent
 	public static void onModelEvent(RegisterAdditional event) {
+		event.register(MODEL_RADARDISH);
 		event.register(MODEL_MISSILECLOSERANGE);
 		event.register(MODEL_MISSILEMEDIUMRANGE);
 		event.register(MODEL_MISSILELONGRANGE);
@@ -48,9 +49,9 @@ public class ClientRegister {
 	}
 
 	public static final ResourceLocation TEXTURE_SHRAPNEL = new ResourceLocation(References.ID + ":textures/model/shrapnel.png");
+	public static final ResourceLocation MODEL_RADARDISH = new ResourceLocation(References.ID + ":block/dish");
 	public static final ResourceLocation MODEL_MISSILECLOSERANGE = new ResourceLocation(References.ID + ":entity/missilecloserange");
 	public static final ResourceLocation MODEL_MISSILEMEDIUMRANGE = new ResourceLocation(References.ID + ":entity/missilemediumrange");
-	public static final ResourceLocation MODEL_RADARDISH = new ResourceLocation(References.ID + ":block/dish");
 	public static final ResourceLocation MODEL_MISSILELONGRANGE = new ResourceLocation(References.ID + ":entity/missilelongrange");
 	public static final ResourceLocation MODEL_DARKMATTERSPHERE = new ResourceLocation(References.ID + ":entity/darkmattersphere");
 	public static final ResourceLocation MODEL_DARKMATTERDISK = new ResourceLocation(References.ID + ":entity/darkmatterdisk");

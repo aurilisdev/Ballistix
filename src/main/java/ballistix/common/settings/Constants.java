@@ -64,6 +64,8 @@ public class Constants {
 	public static double EXPLOSIVE_THERMOBARIC_ENERGY = 45.0;
 	@DoubleValue(def = 10000, comment = "Usage per launch in joules")
 	public static double MISSILESILO_USAGE = 10000;
+	@DoubleValue(def = 10000, comment = "Usage in watt for radar")
+	public static double RADAR_USAGE = 10000;
 
 	@IntValue(def = 3000, comment = "Set to -1 for unlimited range")
 	public static int CLOSERANGE_MISSILE_RANGE = 3000;

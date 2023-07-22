@@ -22,10 +22,9 @@ public class RenderRadar implements BlockEntityRenderer<TileRadar> {
 	public void render(TileRadar tileEntityIn, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 
 		BakedModel radardish = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_RADARDISH);
-//		matrixStackIn.translate(0.5f, 1.3f, 0.5f);
-//		matrixStackIn.scale(1.5f, 2.5f, 1.5f);		
 		float partial = (float) (partialTicks * tileEntityIn.rotationSpeed);
-		matrixStackIn.mulPose(new Quaternion((float) ((tileEntityIn.savedTickRotation + partial)), 0, 0, true));
+		matrixStackIn.translate(7.75/ 16.0, 11.0/16.0, 7.75 / 16.0);
+		matrixStackIn.mulPose(new Quaternion(0,(float) ((tileEntityIn.savedTickRotation + partial)), 0, true));
 		Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), radardish, tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(), 0);
 	}
 

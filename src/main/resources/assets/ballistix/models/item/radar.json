@@ -1,5 +1,5 @@
 {
-  "parent": "ballistix:block/radar",
+  "parent": "ballistix:block/radarfull",
     "display": {
         "gui": {
             "rotation": [ 30, 225, 0 ],

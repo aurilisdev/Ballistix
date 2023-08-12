@@ -50,7 +50,6 @@ public class ItemRadarGun extends ItemElectric {
 		}
 		if (silo != null) {
 			silo.target.set(getCoordiantes(stack));
-			silo.target.forceDirty();
 		}
 		return super.onItemUseFirst(stack, context);
 	}

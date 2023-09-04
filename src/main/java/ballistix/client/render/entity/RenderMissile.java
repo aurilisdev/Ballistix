@@ -3,10 +3,9 @@ package ballistix.client.render.entity;
 import java.util.Random;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 
 import ballistix.common.entity.EntityMissile;
+import electrodynamics.prefab.utilities.math.MathUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -33,10 +32,12 @@ public class RenderMissile extends EntityRenderer<EntityMissile> {
 	@Override
 	public void render(EntityMissile entity, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
 		int type = entity.range;
-		Level world = entity.level;
+		Level world = entity.level();
 		matrixStackIn.pushPose();
-		matrixStackIn.mulPose(new Quaternion(new Vector3f(0, 1, 0), entity.getYRot() + 90.0F, true));
-		matrixStackIn.mulPose(new Quaternion(new Vector3f(0, 0, 1), 90 - entity.getXRot(), true));
+		matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(entity.getYRot() + 90.0F, MathUtils.YP));
+		matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(90 - entity.getXRot(), MathUtils.ZP));
+		//matrixStackIn.mulPose(new Quaternion(new Vector3f(0, 1, 0), entity.getYRot() + 90.0F, true));
+		//matrixStackIn.mulPose(new Quaternion(new Vector3f(0, 0, 1), 90 - entity.getXRot(), true));
 		switch (type) {
 		case 1: {
 			BakedModel closerange = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILEMEDIUMRANGE);

@@ -8,6 +8,7 @@ import static electrodynamics.prefab.utilities.ElectroTextUtils.JEI_INFO_FLUID;
 import static electrodynamics.prefab.utilities.ElectroTextUtils.JEI_INFO_ITEM;
 import static electrodynamics.prefab.utilities.ElectroTextUtils.MESSAGE_BASE;
 import static electrodynamics.prefab.utilities.ElectroTextUtils.TOOLTIP_BASE;
+import static electrodynamics.prefab.utilities.ElectroTextUtils.CREATIVE_TAB;
 
 import ballistix.References;
 import net.minecraft.client.resources.language.I18n;
@@ -50,6 +51,10 @@ public class BallistixTextUtils {
 
 	public static MutableComponent block(String key, Object... additional) {
 		return translated(BLOCK_BASE, key, additional);
+	}
+	
+	public static MutableComponent creativeTab(String key, Object... additional) {
+		return translated(CREATIVE_TAB, key, additional);
 	}
 
 	public static MutableComponent translated(String base, String key, Object... additional) {

@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "C": {
       "item": "ballistix:condensive"
@@ -15,5 +16,6 @@
   ],
   "result": {
     "item": "ballistix:breaching"
-  }
+  },
+  "show_notification": false
 }

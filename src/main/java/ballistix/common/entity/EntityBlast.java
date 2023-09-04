@@ -6,6 +6,7 @@ import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.registers.BallistixEntities;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -41,7 +42,7 @@ public class EntityBlast extends Entity {
 
 	public void setBlastType(SubtypeBlast explosive) {
 		blastOrdinal = explosive.ordinal();
-		blast = Blast.createFromSubtype(getBlastType(), level, blockPosition());
+		blast = Blast.createFromSubtype(getBlastType(), level(), blockPosition());
 	}
 
 	public SubtypeBlast getBlastType() {
@@ -57,7 +58,7 @@ public class EntityBlast extends Entity {
 
 	@Override
 	public void tick() {
-		if (!level.isClientSide) {
+		if (!level().isClientSide) {
 			entityData.set(TYPE, blastOrdinal);
 			entityData.set(CALLCOUNT, callcount);
 			entityData.set(SHOULDSTARTCUSTOMRENDER, blast instanceof IHasCustomRenderer has && has.shouldRender());
@@ -82,7 +83,7 @@ public class EntityBlast extends Entity {
 				remove(RemovalReason.DISCARDED);
 			}
 		} else {
-			blast = Blast.createFromSubtype(getBlastType(), level, blockPosition());
+			blast = Blast.createFromSubtype(getBlastType(), level(), blockPosition());
 		}
 	}
 
@@ -102,7 +103,7 @@ public class EntityBlast extends Entity {
 	}
 
 	@Override
-	public Packet<?> getAddEntityPacket() {
+	public Packet<ClientGamePacketListener> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 

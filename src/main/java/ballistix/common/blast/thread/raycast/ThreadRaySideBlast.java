@@ -50,9 +50,9 @@ public class ThreadRaySideBlast extends Thread {
 				Vec3 delta = new Vec3(x, y, z).normalize();
 				float power = mainBlast.explosionEnergy - mainBlast.explosionEnergy * random.nextFloat() / 2;
 				Vec3 currentVector = new Vec3(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5);
-				BlockPos currentBlockPos = new BlockPos(currentVector);
+				BlockPos currentBlockPos = new BlockPos((int) Math.floor(currentVector.x()), (int) Math.floor(currentVector.y()), (int) Math.floor(currentVector.z()));
 				for (float d = 0.3F; power > 0f; power -= d * 0.75F * 5) {
-					BlockPos next = new BlockPos(currentVector);
+					BlockPos next = new BlockPos((int) Math.floor(currentVector.x()), (int) Math.floor(currentVector.y()), (int) Math.floor(currentVector.z()));
 					if (!next.equals(currentBlockPos)) {
 						currentBlockPos = next;
 						BlockState block = world.getBlockState(currentBlockPos);

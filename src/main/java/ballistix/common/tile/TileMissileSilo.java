@@ -16,7 +16,7 @@ import ballistix.registers.BallistixItems;
 import electrodynamics.api.multiblock.Subnode;
 import electrodynamics.api.multiblock.parent.IMultiblockParentTile;
 import electrodynamics.common.block.VoxelShapes;
-import electrodynamics.common.blockitem.BlockItemDescriptable;
+import electrodynamics.common.blockitem.types.BlockItemDescriptable;
 import electrodynamics.common.tile.TileMultiSubnode;
 import electrodynamics.prefab.properties.Property;
 import electrodynamics.prefab.properties.PropertyType;
@@ -248,7 +248,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 			if (!explosive.isEmpty() && explosive.getItem() instanceof BlockItemDescriptable blockItem && blockItem.getBlock() instanceof BlockExplosive) {
 				hasExplosive.set(true);
 			} else {
-				hasExplosive.set(true);
+				hasExplosive.set(false);
 			}
 
 		}

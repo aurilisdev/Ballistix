@@ -5,8 +5,8 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import ballistix.References;
 import ballistix.prefab.utils.BallistixTextUtils;
+import ballistix.registers.BallistixCreativeTabs;
 import electrodynamics.prefab.item.ElectricItemProperties;
 import electrodynamics.prefab.item.ItemElectric;
 import electrodynamics.prefab.utilities.object.TransferPack;
@@ -23,7 +23,7 @@ public class ItemScanner extends ItemElectric {
 	public static final double USAGE = 150.0;
 
 	public ItemScanner() {
-		super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1).tab(References.BALLISTIXTAB), item -> ElectrodynamicsItems.ITEM_BATTERY.get());
+		super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1), () -> BallistixCreativeTabs.MAIN.get(), item -> ElectrodynamicsItems.ITEM_BATTERY.get());
 	}
 
 	@Override

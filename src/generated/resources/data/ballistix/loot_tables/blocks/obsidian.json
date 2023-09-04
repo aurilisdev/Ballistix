@@ -12,5 +12,6 @@
       "name": "obsidian",
       "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "ballistix:blocks/obsidian"
 }

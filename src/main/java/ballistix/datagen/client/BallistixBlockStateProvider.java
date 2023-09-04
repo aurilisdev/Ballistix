@@ -6,7 +6,7 @@ import ballistix.References;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.registers.BallistixBlocks;
 import electrodynamics.datagen.client.ElectrodynamicsBlockStateProvider;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
@@ -14,8 +14,8 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 
 public class BallistixBlockStateProvider extends ElectrodynamicsBlockStateProvider {
 
-	public BallistixBlockStateProvider(DataGenerator gen, ExistingFileHelper exFileHelper) {
-		super(gen, exFileHelper, References.ID);
+	public BallistixBlockStateProvider(PackOutput output, ExistingFileHelper exFileHelper) {
+		super(output, exFileHelper, References.ID);
 	}
 
 	@Override

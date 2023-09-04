@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "D": {
       "item": "ballistix:debilitation"
@@ -15,5 +16,6 @@
   ],
   "result": {
     "item": "ballistix:chemical"
-  }
+  },
+  "show_notification": false
 }

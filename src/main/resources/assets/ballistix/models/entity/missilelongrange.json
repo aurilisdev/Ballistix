@@ -4,9 +4,9 @@
   "model" : "ballistix:models/entity/missiles/missilelongrange.obj",
   "flip_v" : true,
   "textures" : {
-    "texture0" : "ballistix:model/missilelongrange",
-    "texture1" : "ballistix:model/missilelongrange1",
-    "texture2" : "ballistix:model/missilelongrange2",
-    "particle" : "ballistix:model/missilelongrange"
+    "texture0" : "ballistix:block/model/missilelongrange",
+    "texture1" : "ballistix:block/model/missilelongrange1",
+    "texture2" : "ballistix:block/model/missilelongrange2",
+    "particle" : "ballistix:block/model/missilelongrange"
   }
 }

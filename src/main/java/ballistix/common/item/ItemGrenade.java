@@ -1,9 +1,10 @@
 package ballistix.common.item;
 
-import ballistix.References;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityGrenade;
+import ballistix.registers.BallistixCreativeTabs;
 import electrodynamics.api.ISubtype;
+import electrodynamics.common.item.ItemElectrodynamics;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -16,12 +17,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 
-public class ItemGrenade extends Item {
+public class ItemGrenade extends ItemElectrodynamics {
 
 	private SubtypeGrenade grenade;
 
 	public ItemGrenade(SubtypeGrenade grenade) {
-		super(new Item.Properties().tab(References.BALLISTIXTAB).stacksTo(16));
+		super(new Item.Properties().stacksTo(16), () -> BallistixCreativeTabs.MAIN.get());
 		this.grenade = grenade;
 	}
 

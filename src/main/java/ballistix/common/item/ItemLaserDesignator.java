@@ -2,10 +2,10 @@ package ballistix.common.item;
 
 import java.util.List;
 
-import ballistix.References;
 import ballistix.common.network.SiloRegistry;
 import ballistix.common.tile.TileMissileSilo;
 import ballistix.prefab.utils.BallistixTextUtils;
+import ballistix.registers.BallistixCreativeTabs;
 import electrodynamics.common.tile.TileMultiSubnode;
 import electrodynamics.prefab.item.ElectricItemProperties;
 import electrodynamics.prefab.item.ItemElectric;
@@ -33,7 +33,7 @@ public class ItemLaserDesignator extends ItemElectric {
 	public static final String FREQUENCY_KEY = "freq";
 
 	public ItemLaserDesignator() {
-		super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1).tab(References.BALLISTIXTAB), item -> ElectrodynamicsItems.ITEM_BATTERY.get());
+		super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1), () -> BallistixCreativeTabs.MAIN.get(), item -> ElectrodynamicsItems.ITEM_BATTERY.get());
 	}
 
 	@Override

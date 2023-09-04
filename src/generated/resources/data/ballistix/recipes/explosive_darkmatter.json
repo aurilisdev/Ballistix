@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "A": {
       "item": "ballistix:largeantimatter"
@@ -15,5 +16,6 @@
   ],
   "result": {
     "item": "ballistix:darkmatter"
-  }
+  },
+  "show_notification": false
 }

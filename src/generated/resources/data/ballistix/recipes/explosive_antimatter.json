@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "C": {
       "tag": "forge:cells/anti_matter_large"
@@ -15,5 +16,6 @@
   ],
   "result": {
     "item": "ballistix:antimatter"
-  }
+  },
+  "show_notification": false
 }

@@ -1,5 +1,6 @@
 package ballistix.compatibility.jei;
 
+import ballistix.References;
 import ballistix.compatibility.jei.util.psuedorecipes.BallistixPsuedoRecipes;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -16,7 +17,7 @@ public class BallistixJEIPlugin implements IModPlugin {
 
 	@Override
 	public ResourceLocation getPluginUid() {
-		return new ResourceLocation(electrodynamics.api.References.ID, "jei");
+		return new ResourceLocation(References.ID, "jei");
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "B": {
       "item": "ballistix:breaching"
@@ -21,5 +22,6 @@
   ],
   "result": {
     "item": "ballistix:thermobaric"
-  }
+  },
+  "show_notification": false
 }

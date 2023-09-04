@@ -1,19 +1,22 @@
 package ballistix.datagen.server;
 
+import java.util.List;
+
+import ballistix.References;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.registers.BallistixBlockTypes;
 import ballistix.registers.BallistixBlocks;
 import electrodynamics.datagen.server.ElectrodynamicsLootTablesProvider;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.world.level.block.Block;
 
 public class BallistixLootTablesProvider extends ElectrodynamicsLootTablesProvider {
 
-	public BallistixLootTablesProvider(DataGenerator generator) {
-		super(generator);
+	public BallistixLootTablesProvider() {
+		super(References.ID);
 	}
 
 	@Override
-	protected void addTables() {
+	protected void generate() {
 
 		for (SubtypeBlast blast : SubtypeBlast.values()) {
 			addSimpleBlock(BallistixBlocks.getBlock(blast));
@@ -21,6 +24,11 @@ public class BallistixLootTablesProvider extends ElectrodynamicsLootTablesProvid
 
 		addMachineTable(BallistixBlocks.blockMissileSilo, BallistixBlockTypes.TILE_MISSILESILO, true, false, false, false, false);
 
+	}
+	
+	@Override
+	public List<Block> getExcludedBlocks() {
+		return List.of(BallistixBlocks.blockRadar);
 	}
 
 }

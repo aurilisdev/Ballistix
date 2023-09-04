@@ -248,7 +248,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 			if (!explosive.isEmpty() && explosive.getItem() instanceof BlockItemDescriptable blockItem && blockItem.getBlock() instanceof BlockExplosive) {
 				hasExplosive.set(true);
 			} else {
-				hasExplosive.set(true);
+				hasExplosive.set(false);
 			}
 
 		}

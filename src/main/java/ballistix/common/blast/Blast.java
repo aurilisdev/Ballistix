@@ -18,7 +18,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
@@ -89,7 +88,7 @@ public abstract class Blast {
 	public EntityBlast performExplosion() {
 		ConstructBlastEvent evt = new ConstructBlastEvent(world, this);
 		MinecraftForge.EVENT_BUS.post(evt);
-		Explosion explosion = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), 3, true, BlockInteraction.BREAK);
+		Explosion explosion = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), 3, true, BlockInteraction.DESTROY);
 		if (!ForgeEventFactory.onExplosionStart(world, explosion) && !evt.isCanceled()) {
 			if (isInstantaneous()) {
 				doPreExplode();
@@ -136,7 +135,7 @@ public abstract class Blast {
 						d9 = d9 / d13;
 						double d14 = useRaytrace ? Explosion.getSeenPercent(vector3d, entity) : 1;
 						double d10 = (1.0D - d12) * d14;
-						entity.hurt(DamageSource.explosion((LivingEntity) null), (int) ((d10 * d10 + d10) / 2.0D * 7.0D * f2 + 1.0D));
+						entity.hurt(entity.damageSources().explosion(null, null), (int) ((d10 * d10 + d10) / 2.0D * 7.0D * f2 + 1.0D));
 						double d11 = d10;
 						if (entity instanceof LivingEntity le) {
 							d11 = ProtectionEnchantment.getExplosionKnockbackAfterDampener(le, d10);

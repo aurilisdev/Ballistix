@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "R": {
       "tag": "forge:dusts/redstone"
@@ -14,5 +15,6 @@
   "result": {
     "count": 3,
     "item": "ballistix:condensive"
-  }
+  },
+  "show_notification": false
 }

@@ -35,7 +35,7 @@ public class RenderGrenade extends EntityRenderer<EntityGrenade> {
 		if (subtype != null) {
 			matrixStackIn.pushPose();
 			if (itemEntity == null) {
-				itemEntity = new ItemEntity(EntityType.ITEM, entityIn.level);
+				itemEntity = new ItemEntity(EntityType.ITEM, entityIn.level());
 			}
 			itemEntity.setPos(entityIn.getX(), entityIn.getY(), entityIn.getZ());
 			itemEntity.setItem(new ItemStack(BallistixItems.SUBTYPEITEMREGISTER_MAPPINGS.get(subtype).get()));

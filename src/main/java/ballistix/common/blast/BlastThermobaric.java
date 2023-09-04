@@ -41,7 +41,7 @@ public class BlastThermobaric extends Blast {
 			if (thread == null) {
 				return true;
 			}
-			Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) Constants.EXPLOSIVE_THERMOBARIC_SIZE, false, BlockInteraction.BREAK);
+			Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) Constants.EXPLOSIVE_THERMOBARIC_SIZE, false, BlockInteraction.DESTROY);
 			if (thread.isComplete) {
 				synchronized (thread.resultsSync) {
 					if (pertick == -1) {
@@ -58,7 +58,7 @@ public class BlastThermobaric extends Blast {
 						world.getBlockState(p).getBlock().wasExploded(world, p, ex);
 						world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
 						if (world.random.nextFloat() < 1 / 10.0 && world instanceof ServerLevel serverlevel) {
-							serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT));
+							serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnSmokeParticle(p), pl.connection.connection, NetworkDirection.PLAY_TO_CLIENT));
 						}
 					}
 					if (!cachedIterator.hasNext()) {

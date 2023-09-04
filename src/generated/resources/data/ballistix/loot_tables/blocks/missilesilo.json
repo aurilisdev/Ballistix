@@ -44,5 +44,6 @@
       "name": "missilesilo",
       "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "ballistix:blocks/missilesilo"
 }

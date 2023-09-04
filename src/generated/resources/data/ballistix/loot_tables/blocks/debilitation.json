@@ -12,5 +12,6 @@
       "name": "debilitation",
       "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "ballistix:blocks/debilitation"
 }

@@ -4,8 +4,8 @@
 	"texture_size": [512, 384],
 	"render_type": "minecraft:cutout",
 	"textures": {
-		"10": "ballistix:model/missilesilo",
-		"particle": "ballistix:model/missilesilo"
+		"10": "ballistix:block/model/missilesilo",
+		"particle": "ballistix:block/model/missilesilo"
 	},
 	"elements": [
 		{

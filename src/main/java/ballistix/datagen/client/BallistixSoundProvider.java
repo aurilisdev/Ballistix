@@ -2,7 +2,7 @@ package ballistix.datagen.client;
 
 import ballistix.References;
 import ballistix.registers.BallistixSounds;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.SoundDefinition;
@@ -13,8 +13,8 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class BallistixSoundProvider extends SoundDefinitionsProvider {
 
-	public BallistixSoundProvider(DataGenerator generator, ExistingFileHelper helper) {
-		super(generator, References.ID, helper);
+	public BallistixSoundProvider(PackOutput output, ExistingFileHelper helper) {
+		super(output, References.ID, helper);
 	}
 
 	@Override

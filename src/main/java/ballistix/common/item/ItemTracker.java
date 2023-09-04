@@ -9,6 +9,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import ballistix.References;
+import ballistix.registers.BallistixCreativeTabs;
 import electrodynamics.prefab.item.ElectricItemProperties;
 import electrodynamics.prefab.item.ItemElectric;
 import electrodynamics.prefab.utilities.object.TransferPack;
@@ -40,7 +41,7 @@ public class ItemTracker extends ItemElectric {
 	public static HashMap<ServerLevel, HashSet<UUID>> validuuids = new HashMap<>();
 
 	public ItemTracker() {
-		super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1).tab(References.BALLISTIXTAB), item -> ElectrodynamicsItems.ITEM_BATTERY.get());
+		super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1), () -> BallistixCreativeTabs.MAIN.get(), item -> ElectrodynamicsItems.ITEM_BATTERY.get());
 	}
 
 	@Override
@@ -67,7 +68,7 @@ public class ItemTracker extends ItemElectric {
 
 	@Override
 	public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity entity, InteractionHand hand) {
-		if (player != null && player.level instanceof ServerLevel server && getJoulesStored(stack) >= 150) {
+		if (player != null && player.level() instanceof ServerLevel server && getJoulesStored(stack) >= 150) {
 			Inventory inv = player.getInventory();
 			inv.removeItem(stack);
 			stack.getOrCreateTag().putUUID("uuid", entity.getUUID());

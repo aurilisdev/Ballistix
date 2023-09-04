@@ -2,12 +2,13 @@ package ballistix.common.item;
 
 import java.util.HashMap;
 
-import ballistix.References;
 import ballistix.common.block.BlockExplosive;
 import ballistix.common.block.subtype.SubtypeMissile;
 import ballistix.common.entity.EntityMissile;
+import ballistix.registers.BallistixCreativeTabs;
 import ballistix.registers.BallistixItems;
-import electrodynamics.common.blockitem.BlockItemDescriptable;
+import electrodynamics.common.blockitem.types.BlockItemDescriptable;
+import electrodynamics.common.item.ItemElectrodynamics;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -18,12 +19,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 
-public class ItemRocketLauncher extends Item {
+public class ItemRocketLauncher extends ItemElectrodynamics {
 
 	private static HashMap<Player, Long> millisecondMap = new HashMap<>();
 
 	public ItemRocketLauncher() {
-		super(new Item.Properties().tab(References.BALLISTIXTAB).stacksTo(1));
+		super(new Item.Properties().stacksTo(1), () -> BallistixCreativeTabs.MAIN.get());
 	}
 
 	@Override

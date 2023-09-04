@@ -4,10 +4,11 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import ballistix.api.damage.DamageSourceShrapnel;
+import ballistix.registers.BallistixDamageTypes;
 import ballistix.registers.BallistixEntities;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -18,7 +19,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
-import net.minecraft.world.level.Explosion.BlockInteraction;
+import net.minecraft.world.level.Level.ExplosionInteraction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.network.NetworkHooks;
@@ -42,7 +43,7 @@ public class EntityShrapnel extends ThrowableProjectile {
 
 	@Override
 	public void tick() {
-		if (!level.isClientSide) {
+		if (!level().isClientSide) {
 			entityData.set(ISEXPLOSIVE, isExplosive);
 		} else {
 			isExplosive = entityData.get(ISEXPLOSIVE);
@@ -53,13 +54,13 @@ public class EntityShrapnel extends ThrowableProjectile {
 		setPos(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z);
 		EntityDimensions size = getDimensions(Pose.STANDING);
 		setBoundingBox(new AABB(getX() - size.width * 2, getY() - size.height * 2, getZ() - size.width * 2, getX() + size.width * 2, getY() + size.height * 2, getZ() + size.width * 2));
-		if (onGround || tickCount > (isExplosive ? 400 : 100) || level.getBlockState(blockPosition()).getMaterial().blocksMotion()) {
+		if (onGround() || tickCount > (isExplosive ? 400 : 100) || level().getBlockState(blockPosition()).blocksMotion()) {
 			remove(RemovalReason.DISCARDED);
 		}
-		if (!level.isClientSide) {
-			List<LivingEntity> livings = level.getEntitiesOfClass(LivingEntity.class, getBoundingBox());
+		if (!level().isClientSide) {
+			List<LivingEntity> livings = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox());
 			for (LivingEntity living : livings) {
-				living.hurt(DamageSourceShrapnel.INSTANCE, 10);
+				living.hurt(living.damageSources().source(BallistixDamageTypes.SHRAPNEL), 10);
 				remove(RemovalReason.DISCARDED);
 			}
 		}
@@ -81,7 +82,7 @@ public class EntityShrapnel extends ThrowableProjectile {
 	@Override
 	public void remove(RemovalReason reason) {
 		if (isExplosive) {
-			level.explode(this, DamageSourceShrapnel.INSTANCE, null, getX(), getY(), getZ(), 3, true, BlockInteraction.DESTROY);
+			level().explode(this, level().damageSources().source(BallistixDamageTypes.SHRAPNEL), null, getX(), getY(), getZ(), 3, true, ExplosionInteraction.BLOCK);
 		}
 		super.remove(reason);
 	}
@@ -92,7 +93,7 @@ public class EntityShrapnel extends ThrowableProjectile {
 	}
 
 	@Override
-	public Packet<?> getAddEntityPacket() {
+	public Packet<ClientGamePacketListener> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 }

@@ -10,12 +10,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -72,7 +74,7 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable {
 
 	@Override
 	public void tick() {
-		if (!level.isClientSide) {
+		if (!level().isClientSide) {
 			entityData.set(TYPE, blastOrdinal);
 			entityData.set(FUSE, fuse);
 		} else {
@@ -82,7 +84,7 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable {
 		super.tick();
 		if (fuse > 0) {
 			--fuse;
-			level.addParticle(ParticleTypes.SMOKE, this.getX(), this.getY() + 0.5D, this.getZ(), 0.0D, 0.0D, 0.0D);
+			level().addParticle(ParticleTypes.SMOKE, this.getX(), this.getY() + 0.5D, this.getZ(), 0.0D, 0.0D, 0.0D);
 		} else if (fuse == 0) {
 			explode(getDeltaMovement().horizontalDistanceSqr());
 		}
@@ -108,9 +110,9 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable {
 	@Override
 	public void destroy(DamageSource source) {
 		double d0 = getDeltaMovement().horizontalDistanceSqr();
-		if (!source.isFire() && !source.isExplosion() && d0 < 0.01F) {
+		if (!source.is(DamageTypeTags.IS_FIRE) && !source.is(DamageTypeTags.IS_EXPLOSION) && d0 < 0.01F) {
 			super.destroy(source);
-			if (!source.isExplosion() && level.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+			if (!source.is(DamageTypeTags.IS_EXPLOSION) && level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
 				this.spawnAtLocation(Blocks.TNT);
 			}
 
@@ -121,12 +123,12 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable {
 	}
 
 	protected void explode(double val) {
-		if (!level.isClientSide) {
+		if (!level().isClientSide) {
 			exploded = true;
 			remove(RemovalReason.DISCARDED);
 			if (blastOrdinal != -1) {
 				SubtypeBlast explosive = SubtypeMinecart.values()[blastOrdinal].explosiveType;
-				Blast b = Blast.createFromSubtype(explosive, level, blockPosition());
+				Blast b = Blast.createFromSubtype(explosive, level(), blockPosition());
 				if (b != null) {
 					b.performExplosion();
 				}
@@ -139,8 +141,8 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable {
 		super.remove(reason);
 		if (!exploded) {
 			if (blastOrdinal != -1) {
-				ItemEntity item = new ItemEntity(level, getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(BallistixItems.getItem(getExplosiveType())));
-				level.addFreshEntity(item);
+				ItemEntity item = new ItemEntity(level(), getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(BallistixItems.getItem(getExplosiveType())));
+				level().addFreshEntity(item);
 			}
 		}
 	}
@@ -189,10 +191,10 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable {
 
 	public void primeFuse() {
 		fuse = 80;
-		if (!level.isClientSide) {
-			level.broadcastEntityEvent(this, (byte) 10);
+		if (!level().isClientSide) {
+			level().broadcastEntityEvent(this, (byte) 10);
 			if (!isSilent()) {
-				level.playSound((Player) null, this.getX(), this.getY(), this.getZ(), SoundEvents.TNT_PRIMED, SoundSource.BLOCKS, 1.0F, 1.0F);
+				level().playSound((Player) null, this.getX(), this.getY(), this.getZ(), SoundEvents.TNT_PRIMED, SoundSource.BLOCKS, 1.0F, 1.0F);
 			}
 		}
 	}
@@ -228,7 +230,7 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable {
 	}
 
 	@Override
-	public Packet<?> getAddEntityPacket() {
+	public Packet<ClientGamePacketListener> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 }

@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "D": {
       "tag": "forge:dusts/sulfur"
@@ -18,5 +19,6 @@
   ],
   "result": {
     "item": "ballistix:debilitation"
-  }
+  },
+  "show_notification": false
 }

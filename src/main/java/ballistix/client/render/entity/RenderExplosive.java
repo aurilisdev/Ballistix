@@ -1,11 +1,11 @@
 package ballistix.client.render.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
 
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityExplosive;
 import ballistix.registers.BallistixBlocks;
+import electrodynamics.prefab.utilities.math.MathUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -40,9 +40,11 @@ public class RenderExplosive extends EntityRenderer<EntityExplosive> {
 				matrixStackIn.scale(f1, f1, f1);
 			}
 
-			matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(-90.0F));
+			matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(-90.0F, MathUtils.YP));
+			//matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(-90.0F));
 			matrixStackIn.translate(-0.5D, -0.5D, 0.5D);
-			matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(90.0F));
+			matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(90.0F, MathUtils.YP));
+			//matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(90.0F));
 			renderTntFlash(BallistixBlocks.SUBTYPEBLOCKREGISTER_MAPPINGS.get(subtype).get().defaultBlockState(), matrixStackIn, bufferIn, packedLightIn, entityIn.fuse / 5 % 2 == 0);
 			matrixStackIn.popPose();
 		}

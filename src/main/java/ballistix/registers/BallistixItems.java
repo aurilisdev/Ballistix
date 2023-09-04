@@ -2,7 +2,6 @@ package ballistix.registers;
 
 import static ballistix.registers.BallistixBlocks.blockMissileSilo;
 import static ballistix.registers.BallistixBlocks.blockRadar;
-import static ballistix.registers.UnifiedBallistixRegister.getSafeBlock;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,8 +22,15 @@ import ballistix.common.item.ItemRocketLauncher;
 import ballistix.common.item.ItemScanner;
 import ballistix.common.item.ItemTracker;
 import electrodynamics.api.ISubtype;
-import electrodynamics.common.blockitem.BlockItemDescriptable;
+import electrodynamics.api.creativetab.CreativeTabSupplier;
+import electrodynamics.common.item.ItemElectrodynamics;
+import electrodynamics.common.blockitem.types.BlockItemDescriptable;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -34,7 +40,7 @@ public class BallistixItems {
 
 	public static final HashMap<ISubtype, RegistryObject<Item>> SUBTYPEITEMREGISTER_MAPPINGS = new HashMap<>();
 
-	public static final RegistryObject<Item> ITEM_DUSTPOISON = ITEMS.register("dustpoison", () -> new Item(new Item.Properties().tab(References.BALLISTIXTAB)));
+	public static final RegistryObject<Item> ITEM_DUSTPOISON = ITEMS.register("dustpoison", () -> new ItemElectrodynamics(new Item.Properties(), () -> BallistixCreativeTabs.MAIN.get()));
 	public static final RegistryObject<Item> ITEM_ROCKETLAUNCHER = ITEMS.register("rocketlauncher", ItemRocketLauncher::new);
 	public static final RegistryObject<Item> ITEM_RADARGUN = ITEMS.register("radargun", ItemRadarGun::new);
 	public static final RegistryObject<Item> ITEM_TRACKER = ITEMS.register("tracker", ItemTracker::new);
@@ -44,7 +50,7 @@ public class BallistixItems {
 
 	static {
 		for (SubtypeBlast subtype : SubtypeBlast.values()) {
-			ITEMS.register(subtype.tag(), () -> new BlockItemDescriptable(() -> getSafeBlock(subtype), new Item.Properties().tab(References.BALLISTIXTAB)));
+			ITEMS.register(subtype.tag(), () -> new BlockItemDescriptable(() -> BallistixBlocks.getBlock(subtype), new Item.Properties(), () -> BallistixCreativeTabs.MAIN.get()));
 		}
 		for (SubtypeGrenade subtype : SubtypeGrenade.values()) {
 			SUBTYPEITEMREGISTER_MAPPINGS.put(subtype, ITEMS.register(subtype.tag(), () -> new ItemGrenade(subtype)));
@@ -55,8 +61,8 @@ public class BallistixItems {
 		for (SubtypeMissile missile : SubtypeMissile.values()) {
 			SUBTYPEITEMREGISTER_MAPPINGS.put(missile, ITEMS.register(missile.tag(), () -> new ItemMissile(missile)));
 		}
-		ITEMS.register("missilesilo", () -> new BlockItemDescriptable(() -> blockMissileSilo, new Item.Properties().tab(References.BALLISTIXTAB)));
-		ITEMS.register("radar", () -> new BlockItemDescriptable(() -> blockRadar, new Item.Properties().tab(References.BALLISTIXTAB)));
+		ITEMS.register("missilesilo", () -> new BlockItemDescriptable(() -> blockMissileSilo, new Item.Properties(), () -> BallistixCreativeTabs.MAIN.get()));
+		ITEMS.register("radar", () -> new BlockItemDescriptable(() -> blockRadar, new Item.Properties(), () -> BallistixCreativeTabs.MAIN.get()));
 
 	}
 
@@ -70,6 +76,28 @@ public class BallistixItems {
 
 	public static Item getItem(ISubtype value) {
 		return SUBTYPEITEMREGISTER_MAPPINGS.get(value).get();
+	}
+
+	@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = References.ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+	private static class ElectroCreativeRegistry {
+
+		@SubscribeEvent
+		public static void registerItems(BuildCreativeModeTabContentsEvent event) {
+
+			ITEMS.getEntries().forEach(reg -> {
+
+				CreativeTabSupplier supplier = (CreativeTabSupplier) reg.get();
+
+				if (supplier.hasCreativeTab() && supplier.isAllowedInCreativeTab(event.getTab())) {
+					List<ItemStack> toAdd = new ArrayList<>();
+					supplier.addCreativeModeItems(event.getTab(), toAdd);
+					event.acceptAll(toAdd);
+				}
+
+			});
+
+		}
+
 	}
 
 }

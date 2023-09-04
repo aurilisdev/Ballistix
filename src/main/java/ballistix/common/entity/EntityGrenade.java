@@ -9,6 +9,7 @@ import ballistix.registers.BallistixEntities;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -54,8 +55,8 @@ public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 		remove(RemovalReason.DISCARDED);
 		if (grenadeOrdinal != -1) {
 			SubtypeBlast explosive = SubtypeGrenade.values()[grenadeOrdinal].explosiveType;
-			ItemEntity item = new ItemEntity(level, getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(BallistixBlocks.SUBTYPEBLOCKREGISTER_MAPPINGS.get(explosive).get()));
-			level.addFreshEntity(item);
+			ItemEntity item = new ItemEntity(level(), getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(BallistixBlocks.SUBTYPEBLOCKREGISTER_MAPPINGS.get(explosive).get()));
+			level().addFreshEntity(item);
 		}
 	}
 
@@ -66,7 +67,7 @@ public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 
 	@Override
 	public void tick() {
-		if (!level.isClientSide) {
+		if (!level().isClientSide) {
 			entityData.set(TYPE, grenadeOrdinal);
 			entityData.set(FUSE, fuse);
 		} else {
@@ -79,7 +80,7 @@ public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 
 		move(MoverType.SELF, getDeltaMovement());
 		this.setDeltaMovement(getDeltaMovement().scale(0.98D));
-		if (onGround) {
+		if (onGround()) {
 			this.setDeltaMovement(getDeltaMovement().multiply(0.7D, -0.5D, 0.7D));
 		}
 		--fuse;
@@ -87,15 +88,15 @@ public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 			remove(RemovalReason.DISCARDED);
 			if (grenadeOrdinal != -1) {
 				SubtypeBlast explosive = SubtypeGrenade.values()[grenadeOrdinal].explosiveType;
-				Blast b = Blast.createFromSubtype(explosive, level, blockPosition());
+				Blast b = Blast.createFromSubtype(explosive, level(), blockPosition());
 				if (b != null) {
 					b.performExplosion();
 				}
 			}
 		} else {
 			updateInWaterStateAndDoFluidPushing();
-			if (level.isClientSide) {
-				level.addParticle(ParticleTypes.SMOKE, getX(), getY() + 0.5D, getZ(), 0.0D, 0.0D, 0.0D);
+			if (level().isClientSide) {
+				level().addParticle(ParticleTypes.SMOKE, getX(), getY() + 0.5D, getZ(), 0.0D, 0.0D, 0.0D);
 			}
 		}
 	}
@@ -113,7 +114,7 @@ public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 	}
 
 	@Override
-	public Packet<?> getAddEntityPacket() {
+	public Packet<ClientGamePacketListener> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 }

@@ -2,8 +2,8 @@
 	"credit": "aurilisdev",
 	"texture_size": [64, 64],
 	"textures": {
-		"0": "ballistix:model/blackhole",
-		"particle": "ballistix:model/blackhole"
+		"0": "ballistix:block/model/blackhole",
+		"particle": "ballistix:block/model/blackhole"
 	},
 	"elements": [
 		{

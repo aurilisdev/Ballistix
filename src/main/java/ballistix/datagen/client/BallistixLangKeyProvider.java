@@ -8,13 +8,13 @@ import ballistix.common.item.ItemMinecart.SubtypeMinecart;
 import ballistix.registers.BallistixBlocks;
 import ballistix.registers.BallistixItems;
 import electrodynamics.datagen.client.ElectrodynamicsLangKeyProvider;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.Level;
 
 public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 
-	public BallistixLangKeyProvider(DataGenerator gen, Locale locale) {
-		super(gen, locale, References.ID);
+	public BallistixLangKeyProvider(PackOutput output, Locale locale) {
+		super(output, locale, References.ID);
 	}
 
 	@Override
@@ -24,7 +24,7 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 		case EN_US:
 		default:
 
-			add("itemGroup.itemgroupballistix", "Ballistix");
+			addCreativeTab("main", "Ballistix");
 
 			addBlock(BallistixBlocks.getBlock(SubtypeBlast.obsidian), "Obsidian TNT");
 			addBlock(BallistixBlocks.getBlock(SubtypeBlast.condensive), "Condensive Explosive");
@@ -96,8 +96,8 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 			addGuiLabel("missilesilo.z", "Z-Coord");
 			addGuiLabel("missilesilo.freq", "Freq");
 
-			add("death.attack.chemicalgas", "%s opened the Zyklon-B without reading the instructions!");
-			add("death.attack.shrapnel", "%s was hit by shrapnel!");
+			addDamageSource("chemicalgas", "%s opened the Zyklon-B without reading the instructions!");
+			addDamageSource("shrapnel", "%s was hit by shrapnel!");
 
 			addChatMessage("radargun.text", "Coordinates: %s");
 			addChatMessage("laserdesignator.launch", "Launching missile from: %s");

@@ -2,8 +2,8 @@
 	"credit": "aurilisdev",
 	"texture_size": [32, 32],
 	"textures": {
-		"0": "ballistix:model/rocketlauncher",
-		"particle": "ballistix:model/rocketlauncher"
+		"0": "ballistix:block/model/rocketlauncher",
+		"particle": "ballistix:block/model/rocketlauncher"
 	},
 	"elements": [
 		{

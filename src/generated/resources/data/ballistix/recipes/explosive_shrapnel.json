@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "A": {
       "tag": "minecraft:arrows"
@@ -15,5 +16,6 @@
   ],
   "result": {
     "item": "ballistix:shrapnel"
-  }
+  },
+  "show_notification": false
 }

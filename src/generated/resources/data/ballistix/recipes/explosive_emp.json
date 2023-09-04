@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "B": {
       "type": "forge:nbt",
@@ -21,5 +22,6 @@
   ],
   "result": {
     "item": "ballistix:emp"
-  }
+  },
+  "show_notification": false
 }

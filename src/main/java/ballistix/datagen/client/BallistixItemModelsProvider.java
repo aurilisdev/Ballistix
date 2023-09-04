@@ -5,13 +5,13 @@ import ballistix.common.item.ItemGrenade.SubtypeGrenade;
 import ballistix.common.item.ItemMinecart.SubtypeMinecart;
 import ballistix.registers.BallistixItems;
 import electrodynamics.datagen.client.ElectrodynamicsItemModelsProvider;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 public class BallistixItemModelsProvider extends ElectrodynamicsItemModelsProvider {
 
-	public BallistixItemModelsProvider(DataGenerator generator, ExistingFileHelper existingFileHelper) {
-		super(generator, existingFileHelper, References.ID);
+	public BallistixItemModelsProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
+		super(output, existingFileHelper, References.ID);
 	}
 
 	@Override

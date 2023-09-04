@@ -12,5 +12,6 @@
       "name": "chemical",
       "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "ballistix:blocks/chemical"
 }

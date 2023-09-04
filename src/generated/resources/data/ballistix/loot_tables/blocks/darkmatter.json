@@ -12,5 +12,6 @@
       "name": "darkmatter",
       "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "ballistix:blocks/darkmatter"
 }

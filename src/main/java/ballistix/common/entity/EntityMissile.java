@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -60,13 +61,13 @@ public class EntityMissile extends Entity {
 	@Override
 	public void tick() {
 		if (isStuck) {
-			if (!level.isClientSide && blastEntity.getBlast().hasStarted) {
+			if (!level().isClientSide && blastEntity.getBlast().hasStarted) {
 				removeAfterChangingDimensions();
 			}
 			return;
 		}
-		BlockState state = level.getBlockState(blockPosition());
-		if (!level.isClientSide || state.getCollisionShape(level, blockPosition()).isEmpty()) {
+		BlockState state = level().getBlockState(blockPosition());
+		if (!level().isClientSide || state.getCollisionShape(level(), blockPosition()).isEmpty()) {
 			setPos(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z);
 		}
 		if (blastEntity == null) {
@@ -74,12 +75,12 @@ public class EntityMissile extends Entity {
 				setXRot((float) (Math.atan(getDeltaMovement().y() / Math.sqrt(getDeltaMovement().x() * getDeltaMovement().x() + getDeltaMovement().z() * getDeltaMovement().z())) * 180.0D / Math.PI));
 				setYRot((float) (Math.atan2(getDeltaMovement().x(), getDeltaMovement().z()) * 180.0D / Math.PI));
 			}
-			if (!level.isClientSide) {
-				if (!state.getCollisionShape(level, blockPosition()).isEmpty() || !isItem && target != null && getY() < target.getY() && getDeltaMovement().y() < 0) {
+			if (!level().isClientSide) {
+				if (!state.getCollisionShape(level(), blockPosition()).isEmpty() || !isItem && target != null && getY() < target.getY() && getDeltaMovement().y() < 0) {
 					if (blastOrdinal != -1 && (target == null || tickCount > 20)) {
 						SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
 						setPos(getX() - getDeltaMovement().x * 2, getY() - getDeltaMovement().y * 2, getZ() - getDeltaMovement().z * 2);
-						Blast b = Blast.createFromSubtype(explosive, level, blockPosition());
+						Blast b = Blast.createFromSubtype(explosive, level(), blockPosition());
 						if (b != null) {
 							blastEntity = b.performExplosion();
 							if (blastEntity == null) {
@@ -99,7 +100,7 @@ public class EntityMissile extends Entity {
 					}
 				}
 			}
-			if (!level.isClientSide) {
+			if (!level().isClientSide) {
 				entityData.set(TYPE, blastOrdinal);
 				entityData.set(RANGE, range);
 				entityData.set(ISSTUCK, isStuck ? 1 : -1);
@@ -116,24 +117,24 @@ public class EntityMissile extends Entity {
 				setDeltaMovement(getDeltaMovement().add(0, 0.02, 0));
 			}
 			for (int i = 0; i < 5; i++) {
-				float str = level.random.nextFloat() * 0.25f;
-				float ranX = str * (level.random.nextFloat() - 0.5f);
-				float ranY = str * (level.random.nextFloat() - 0.5f);
-				float ranZ = str * (level.random.nextFloat() - 0.5f);
+				float str = level().random.nextFloat() * 0.25f;
+				float ranX = str * (level().random.nextFloat() - 0.5f);
+				float ranY = str * (level().random.nextFloat() - 0.5f);
+				float ranZ = str * (level().random.nextFloat() - 0.5f);
 				float x = (float) (getX() - getDimensions(getPose()).width / 1.0f);
 				float y = (float) (getY() + getDimensions(getPose()).height / 1.0f);
 				float z = (float) (getZ() - getDimensions(getPose()).width / 1.0f);
-				level.addParticle(ParticleTypes.LARGE_SMOKE, x - 0.5 + ranX, y + ranY, z - 0.5 + ranZ, -getDeltaMovement().x + ranX, -getDeltaMovement().y - 0.075f + ranY, -getDeltaMovement().z + ranZ);
+				level().addParticle(ParticleTypes.LARGE_SMOKE, x - 0.5 + ranX, y + ranY, z - 0.5 + ranZ, -getDeltaMovement().x + ranX, -getDeltaMovement().y - 0.075f + ranY, -getDeltaMovement().z + ranZ);
 
 			}
 			float motionX = (float) -getDeltaMovement().x;
 			float motionY = (float) -getDeltaMovement().y;
 			float motionZ = (float) -getDeltaMovement().z;
 			for (int i = 0; i < 4; i++) {
-				level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, false, this.getX() - 0.5, this.getY(), this.getZ() - 0.5, random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
+				level().addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, false, this.getX() - 0.5, this.getY(), this.getZ() - 0.5, random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
 			}
 			for (int i = 0; i < 4; i++) {
-				level.addParticle(ParticleTypes.CLOUD, false, this.getX() - 0.5, this.getY(), this.getZ() - 0.5, random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
+				level().addParticle(ParticleTypes.CLOUD, false, this.getX() - 0.5, this.getY(), this.getZ() - 0.5, random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
 			}
 		}
 	}
@@ -172,7 +173,7 @@ public class EntityMissile extends Entity {
 	}
 
 	@Override
-	public Packet<?> getAddEntityPacket() {
+	public Packet<ClientGamePacketListener> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 }

@@ -12,5 +12,6 @@
       "name": "incendiary",
       "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "ballistix:blocks/incendiary"
 }

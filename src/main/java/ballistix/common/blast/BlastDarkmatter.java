@@ -19,7 +19,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
-import net.minecraft.world.level.Explosion.BlockInteraction;
+import net.minecraft.world.level.Level.ExplosionInteraction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -114,7 +114,7 @@ public class BlastDarkmatter extends Blast {
 			}
 			attackEntities((float) ((callCount - callAtStart) / 75.0));
 			if (world.random.nextFloat() < 0.5) {
-				world.explode(null, position.getX(), position.getY(), position.getZ(), 2, BlockInteraction.NONE);
+				world.explode(null, position.getX(), position.getY(), position.getZ(), 2, ExplosionInteraction.NONE);
 			}
 		}
 		return false;

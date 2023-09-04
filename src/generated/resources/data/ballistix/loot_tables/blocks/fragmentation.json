@@ -12,5 +12,6 @@
       "name": "fragmentation",
       "rolls": 1.0
     }
-  ]
+  ],
+  "random_sequence": "ballistix:blocks/fragmentation"
 }

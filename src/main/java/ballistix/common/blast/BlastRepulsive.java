@@ -11,7 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.PrimedTnt;
-import net.minecraft.world.level.Explosion.BlockInteraction;
+import net.minecraft.world.level.Level.ExplosionInteraction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -26,7 +26,7 @@ public class BlastRepulsive extends Blast {
 	public boolean doExplode(int callCount) {
 		hasStarted = true;
 		if (!world.isClientSide) {
-			world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) Constants.EXPLOSIVE_REPULSIVE_SIZE, BlockInteraction.BREAK);
+			world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) Constants.EXPLOSIVE_REPULSIVE_SIZE, ExplosionInteraction.BLOCK);
 		}
 		float x = position.getX();
 		float y = position.getY();

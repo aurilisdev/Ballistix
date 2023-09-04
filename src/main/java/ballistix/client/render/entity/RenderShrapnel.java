@@ -1,13 +1,14 @@
 package ballistix.client.render.entity;
 
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
 
 import ballistix.client.ClientRegister;
 import ballistix.common.entity.EntityShrapnel;
+import electrodynamics.prefab.utilities.math.MathUtils;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -28,9 +29,12 @@ public class RenderShrapnel extends EntityRenderer<EntityShrapnel> {
 	@Override
 	public void render(EntityShrapnel entityShrapnel, float yaw, float partialticks, PoseStack stack, MultiBufferSource buffer, int light) {
 		stack.pushPose();
-		stack.mulPose(Vector3f.YP.rotationDegrees(Mth.lerp(partialticks, entityShrapnel.yRotO, entityShrapnel.getYRot()) - 90.0F));
-		stack.mulPose(Vector3f.ZP.rotationDegrees(Mth.lerp(partialticks, entityShrapnel.xRotO, entityShrapnel.getXRot())));
-		stack.mulPose(Vector3f.XP.rotationDegrees(45.0F));
+		stack.mulPose(MathUtils.rotVectorQuaternionDeg(Mth.lerp(partialticks, entityShrapnel.yRotO, entityShrapnel.getYRot()) - 90.0F, MathUtils.YP));
+		stack.mulPose(MathUtils.rotVectorQuaternionDeg(Mth.lerp(partialticks, entityShrapnel.xRotO, entityShrapnel.getXRot()), MathUtils.ZP));
+		stack.mulPose(MathUtils.rotVectorQuaternionDeg(45.0F, MathUtils.XP));
+		//stack.mulPose(Vector3f.YP.rotationDegrees(Mth.lerp(partialticks, entityShrapnel.yRotO, entityShrapnel.getYRot()) - 90.0F));
+		//stack.mulPose(Vector3f.ZP.rotationDegrees(Mth.lerp(partialticks, entityShrapnel.xRotO, entityShrapnel.getXRot())));
+		//stack.mulPose(Vector3f.XP.rotationDegrees(45.0F));
 		stack.scale(0.05625F, 0.05625F, 0.05625F);
 		stack.translate(-4.0D, 0.0D, 0.0D);
 		VertexConsumer vertexconsumer = buffer.getBuffer(RenderType.entityCutout(getTextureLocation(entityShrapnel)));
@@ -46,7 +50,8 @@ public class RenderShrapnel extends EntityRenderer<EntityShrapnel> {
 		vertex(matrix4f, matrix3f, vertexconsumer, -7, -2, 2, 0.15625F, 0.3125F, 1, 0, 0, light);
 		vertex(matrix4f, matrix3f, vertexconsumer, -7, -2, -2, 0.0F, 0.3125F, 1, 0, 0, light);
 		for (int j = 0; j < 4; ++j) {
-			stack.mulPose(Vector3f.XP.rotationDegrees(90.0F));
+			stack.mulPose(MathUtils.rotVectorQuaternionDeg(90.0F, MathUtils.XP));
+			//stack.mulPose(Vector3f.XP.rotationDegrees(90.0F));
 			vertex(matrix4f, matrix3f, vertexconsumer, -8, -2, 0, 0.0F, 0.0F, 0, 1, 0, light);
 			vertex(matrix4f, matrix3f, vertexconsumer, 8, -2, 0, 0.5F, 0.0F, 0, 1, 0, light);
 			vertex(matrix4f, matrix3f, vertexconsumer, 8, 2, 0, 0.5F, 0.15625F, 0, 1, 0, light);

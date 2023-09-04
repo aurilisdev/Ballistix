@@ -1,14 +1,13 @@
 package ballistix.client.render.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 
 import ballistix.client.ClientRegister;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityBlast;
 import ballistix.common.settings.Constants;
 import electrodynamics.prefab.utilities.RenderingUtils;
+import electrodynamics.prefab.utilities.math.MathUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -46,16 +45,20 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 
 			matrixStack.pushPose();
 			matrixStack.scale(scale * 6, scale * 6, scale * 6);
-			matrixStack.mulPose(new Quaternion(new Vector3f(0, 1, 0), -animationRadians, false));
-			matrixStack.mulPose(new Quaternion(new Vector3f(1, 0, 0), -animationRadians, false));
-			matrixStack.mulPose(new Quaternion(new Vector3f(0, 0, 1), -animationRadians, false));
+			matrixStack.mulPose(MathUtils.rotVectorQuaternionRad( -animationRadians, MathUtils.YP));
+			matrixStack.mulPose(MathUtils.rotVectorQuaternionRad( -animationRadians, MathUtils.XP));
+			matrixStack.mulPose(MathUtils.rotVectorQuaternionRad( -animationRadians, MathUtils.ZP));
+			//matrixStack.mulPose(new Quaternion(new Vector3f(0, 1, 0), -animationRadians, false));
+			//matrixStack.mulPose(new Quaternion(new Vector3f(1, 0, 0), -animationRadians, false));
+			//matrixStack.mulPose(new Quaternion(new Vector3f(0, 0, 1), -animationRadians, false));
 			RenderingUtils.renderModel(modelSphere, null, RenderType.solid(), matrixStack, bufferIn, packedLightIn, packedLightIn);
 			matrixStack.popPose();
 
 			matrixStack.pushPose();
 			matrixStack.translate(0, 0.5, 0);
 			matrixStack.scale(scale, scale, scale);
-			matrixStack.mulPose(new Quaternion(new Vector3f(0, 1, 0), -animationRadians, false));
+			matrixStack.mulPose(MathUtils.rotVectorQuaternionRad(-animationRadians, MathUtils.YP));
+			//matrixStack.mulPose(new Quaternion(new Vector3f(0, 1, 0), -animationRadians, false));
 			matrixStack.scale(1.25f, 1.25f, 1.25f);
 			RenderingUtils.renderModel(modelDisk, null, RenderType.translucent(), matrixStack, bufferIn, packedLightIn, packedLightIn);
 			matrixStack.popPose();

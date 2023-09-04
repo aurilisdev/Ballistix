@@ -2,11 +2,11 @@ package ballistix.common.blast;
 
 import java.util.List;
 
-import com.mojang.math.Vector3f;
+import org.joml.Vector3f;
 
-import ballistix.api.damage.DamageSourceChemicalGas;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
+import ballistix.registers.BallistixDamageTypes;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -61,7 +61,7 @@ public class BlastContagious extends Blast {
 					living.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 360, 2));
 					living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 360, 3));
 					if (callCount % 10 == 0) {
-						living.hurt(DamageSourceChemicalGas.INSTANCE, 4);
+						living.hurt(living.damageSources().source(BallistixDamageTypes.CHEMICAL_GAS), 4);
 					}
 				}
 			}

@@ -97,9 +97,9 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 		ItemStack explosive = inv.getItem(1);
 		ItemStack mis = inv.getItem(0);
 
-		double dist = Math.sqrt(Math.pow(worldPosition.getX() - target.get().getX(), 2) + Math.pow(worldPosition.getY() - target.get().getY(), 2) + Math.pow(worldPosition.getZ() - target.get().getZ(), 2));
+		double dist = calculateDistance(worldPosition, target.get());
 
-		if (range.get() == 0 || range.get() < dist) {
+		if (range.get() == 0 || (range.get() > 0 && range.get() < dist)) {
 			return;
 		}
 
@@ -209,12 +209,21 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 
 	@Override
 	public void onInventoryChange(ComponentInventory inv, int index) {
+		
+		handleMissile(inv, index);
+		
+		handleExplosive(inv, index);
+		
+	}
+	
+	private void handleMissile(ComponentInventory inv, int index) {
 		if (index == 0 || index == -1) {
 
 			ItemStack missile = inv.getItem(0);
 
 			if (missile.isEmpty()) {
 				range.set(0);
+				return;
 			}
 
 			if (missile.getItem() instanceof ItemMissile item) {
@@ -240,7 +249,9 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 			}
 
 		}
-
+	}
+	
+	private void handleExplosive(ComponentInventory inv, int index) {
 		if (index == 1 || index == -1) {
 
 			ItemStack explosive = inv.getItem(1);
@@ -293,6 +304,14 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 	@Override
 	public InteractionResult onSubnodeUse(Player player, InteractionHand hand, BlockHitResult hit, TileMultiSubnode subnode) {
 		return use(player, hand, hit);
+	}
+	
+	public static double calculateDistance(BlockPos fromPos, BlockPos toPos) {
+		double deltaX = fromPos.getX() - toPos.getX();
+		double deltaY = fromPos.getY() - toPos.getY();
+		double deltaZ = fromPos.getZ() - toPos.getZ();
+		
+		return Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 	}
 
 	static {

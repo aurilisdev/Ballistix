@@ -99,5 +99,7 @@
   "tooltip.ballistix.laserdesignator.invalidfreq": "Set a frequency for the silo",
   "tooltip.ballistix.laserdesignator.nofrequency": "Unbound",
   "tooltip.ballistix.radargun.notag": "No Coordinates Stored",
-  "tooltip.ballistix.radargun.pos": "Stored: %s"
+  "tooltip.ballistix.radargun.pos": "Stored: %s",
+  "tooltip.ballistix.tracker.none": "NONE",
+  "tooltip.ballistix.tracker.tracking": "Tracking: %s"
 }

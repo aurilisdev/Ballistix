@@ -100,7 +100,7 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 			addDamageSource("shrapnel", "%s was hit by shrapnel!");
 
 			addChatMessage("radargun.text", "Coordinates: %s");
-			addChatMessage("laserdesignator.launch", "Launching missile from: %s");
+			addChatMessage("laserdesignator.launch", "Launching all missiles with frequency %s to targets: ");
 			addChatMessage("laserdesignator.setfrequency", "Set frequency to: %s");
 			addChatMessage("scanner.cleared", "Cleared trackers!");
 			addChatMessage("scanner.none", "There were no trackers!");

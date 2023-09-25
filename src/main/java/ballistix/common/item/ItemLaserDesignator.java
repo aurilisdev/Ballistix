@@ -89,30 +89,30 @@ public class ItemLaserDesignator extends ItemElectric {
 		int frequency = getFrequency(designator);
 
 		int range;
-		
+
 		BlockPos target = trace.toBlockPos();
-		
+
 		double distance;
-		
+
 		for (TileMissileSilo silo : SiloRegistry.getSilos(frequency, worldIn)) {
 
 			range = silo.range.get();
-			
+
 			distance = TileMissileSilo.calculateDistance(silo.getBlockPos(), target);
-			
-			if(range == 0 || (range > 0 && range < distance)) {
+
+			if (range == 0 || (range > 0 && range < distance)) {
 				continue;
 			}
-			
-			silo.target.set(trace.toBlockPos());
-			
-			silo.shouldLaunch = true;
-			
-			extractPower(designator, USAGE, false);
-			
-			playerIn.displayClientMessage(BallistixTextUtils.chatMessage("laserdesignator.launch", new Location(silo.getBlockPos()) + " -> " + new Location(silo.target.get())), false);
 
+			silo.target.set(trace.toBlockPos());
+
+			silo.shouldLaunch = true;
+
+			extractPower(designator, USAGE, false);
+
+			playerIn.displayClientMessage(BallistixTextUtils.chatMessage(" -> " + new Location(silo.target.get())), false);
 		}
+		playerIn.displayClientMessage(BallistixTextUtils.chatMessage("laserdesignator.launch", frequency), false);
 
 		return super.use(worldIn, playerIn, handIn);
 	}

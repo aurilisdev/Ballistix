@@ -111,9 +111,9 @@ public class ItemLaserDesignator extends ItemElectric {
 			extractPower(designator, USAGE, false);
 
 		}
-		playerIn.displayClientMessage(BallistixTextUtils.chatMessage("laserdesignator.launchsend", trace), false);
 
 		playerIn.displayClientMessage(BallistixTextUtils.chatMessage("laserdesignator.launch", frequency), false);
+		playerIn.displayClientMessage(BallistixTextUtils.chatMessage("laserdesignator.launchsend", trace), false);
 
 		return super.use(worldIn, playerIn, handIn);
 	}

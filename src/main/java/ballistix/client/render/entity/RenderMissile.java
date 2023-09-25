@@ -36,8 +36,8 @@ public class RenderMissile extends EntityRenderer<EntityMissile> {
 		matrixStackIn.pushPose();
 		matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(entity.getYRot() + 90.0F, MathUtils.YP));
 		matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(90 - entity.getXRot(), MathUtils.ZP));
-		//matrixStackIn.mulPose(new Quaternion(new Vector3f(0, 1, 0), entity.getYRot() + 90.0F, true));
-		//matrixStackIn.mulPose(new Quaternion(new Vector3f(0, 0, 1), 90 - entity.getXRot(), true));
+		// matrixStackIn.mulPose(new Quaternion(new Vector3f(0, 1, 0), entity.getYRot() + 90.0F, true));
+		// matrixStackIn.mulPose(new Quaternion(new Vector3f(0, 0, 1), 90 - entity.getXRot(), true));
 		switch (type) {
 		case 1: {
 			BakedModel closerange = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILEMEDIUMRANGE);

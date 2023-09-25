@@ -41,12 +41,12 @@ public class DataGenerators {
 		ExistingFileHelper helper = event.getExistingFileHelper();
 
 		CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
-		
+
 		if (event.includeServer()) {
 
 			generator.addProvider(true, new LootTableProvider(output, Collections.emptySet(), List.of(new LootTableProvider.SubProviderEntry(BallistixLootTablesProvider::new, LootContextParamSets.BLOCK))));
 			generator.addProvider(true, new BallistixRecipeProvider(output));
-			
+
 			DatapackBuiltinEntriesProvider datapacks = new DatapackBuiltinEntriesProvider(output, lookupProvider, new RegistrySetBuilder()
 					//
 					.add(Registries.DAMAGE_TYPE, BallistixDamageTypes::registerTypes),

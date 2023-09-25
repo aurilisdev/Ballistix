@@ -70,8 +70,8 @@ public class RenderMinecart extends EntityRenderer<EntityMinecart> {
 		stack.translate(0.0D, 0.375D, 0.0D);
 		stack.mulPose(MathUtils.rotVectorQuaternionDeg(180.0F - yaw, MathUtils.YP));
 		stack.mulPose(MathUtils.rotVectorQuaternionDeg(-f3, MathUtils.ZP));
-		//stack.mulPose(Vector3f.YP.rotationDegrees(180.0F - yaw));
-		//stack.mulPose(Vector3f.ZP.rotationDegrees(-f3));
+		// stack.mulPose(Vector3f.YP.rotationDegrees(180.0F - yaw));
+		// stack.mulPose(Vector3f.ZP.rotationDegrees(-f3));
 		float f5 = entity.getHurtTime() - partial;
 		float f6 = entity.getDamage() - partial;
 		if (f6 < 0.0F) {
@@ -80,7 +80,7 @@ public class RenderMinecart extends EntityRenderer<EntityMinecart> {
 
 		if (f5 > 0.0F) {
 			stack.mulPose(MathUtils.rotVectorQuaternionRad(Mth.sin(f5) * f5 * f6 / 10.0F * entity.getHurtDir(), MathUtils.XP));
-			//stack.mulPose(Vector3f.XP.rotationDegrees(Mth.sin(f5) * f5 * f6 / 10.0F * entity.getHurtDir()));
+			// stack.mulPose(Vector3f.XP.rotationDegrees(Mth.sin(f5) * f5 * f6 / 10.0F * entity.getHurtDir()));
 		}
 
 		int j = entity.getDisplayOffset();
@@ -92,7 +92,7 @@ public class RenderMinecart extends EntityRenderer<EntityMinecart> {
 					stack.scale(0.75F, 0.75F, 0.75F);
 					stack.translate(-0.5D, (j - 8) / 16.0F, 0.5D);
 					stack.mulPose(MathUtils.rotVectorQuaternionDeg(90.0F, MathUtils.YP));
-					//stack.mulPose(Vector3f.YP.rotationDegrees(90.0F));
+					// stack.mulPose(Vector3f.YP.rotationDegrees(90.0F));
 					renderMinecartContents(entity, partial, blockstate, stack, source, light);
 					stack.popPose();
 				}

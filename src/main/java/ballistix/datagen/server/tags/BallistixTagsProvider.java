@@ -18,5 +18,5 @@ public class BallistixTagsProvider {
 		generator.addProvider(true, new BallistixItemTagsProvider(output, lookupProvider, blockProvider, helper));
 		generator.addProvider(true, new BallistixDamageTagsProvider(output, lookupProvider, helper));
 	}
-	
+
 }

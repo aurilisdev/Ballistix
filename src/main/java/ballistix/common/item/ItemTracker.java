@@ -57,9 +57,9 @@ public class ItemTracker extends ItemElectric {
 	@Override
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		Component name = BallistixTextUtils.tooltip("tracker.none");
-		if(hasTarget(stack)) {
+		if (hasTarget(stack)) {
 			Entity entity = worldIn.getEntity(getUUID(stack));
-			if(entity != null) {
+			if (entity != null) {
 				name = entity.getName();
 			}
 		}

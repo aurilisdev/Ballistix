@@ -25,7 +25,7 @@ public class BallistixLootTablesProvider extends ElectrodynamicsLootTablesProvid
 		addMachineTable(BallistixBlocks.blockMissileSilo, BallistixBlockTypes.TILE_MISSILESILO, true, false, false, false, false);
 
 	}
-	
+
 	@Override
 	public List<Block> getExcludedBlocks() {
 		return List.of(BallistixBlocks.blockRadar);

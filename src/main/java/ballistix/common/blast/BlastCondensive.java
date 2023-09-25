@@ -3,8 +3,8 @@ package ballistix.common.blast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level.ExplosionInteraction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.Level.ExplosionInteraction;
 
 public class BlastCondensive extends Blast {
 

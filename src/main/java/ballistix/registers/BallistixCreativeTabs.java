@@ -1,8 +1,8 @@
 package ballistix.registers;
 
 import ballistix.References;
-import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.prefab.utils.BallistixTextUtils;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;

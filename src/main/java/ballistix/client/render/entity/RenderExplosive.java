@@ -41,10 +41,10 @@ public class RenderExplosive extends EntityRenderer<EntityExplosive> {
 			}
 
 			matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(-90.0F, MathUtils.YP));
-			//matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(-90.0F));
+			// matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(-90.0F));
 			matrixStackIn.translate(-0.5D, -0.5D, 0.5D);
 			matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(90.0F, MathUtils.YP));
-			//matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(90.0F));
+			// matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(90.0F));
 			renderTntFlash(BallistixBlocks.SUBTYPEBLOCKREGISTER_MAPPINGS.get(subtype).get().defaultBlockState(), matrixStackIn, bufferIn, packedLightIn, entityIn.fuse / 5 % 2 == 0);
 			matrixStackIn.popPose();
 		}

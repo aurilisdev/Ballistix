@@ -45,12 +45,12 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 
 			matrixStack.pushPose();
 			matrixStack.scale(scale * 6, scale * 6, scale * 6);
-			matrixStack.mulPose(MathUtils.rotVectorQuaternionRad( -animationRadians, MathUtils.YP));
-			matrixStack.mulPose(MathUtils.rotVectorQuaternionRad( -animationRadians, MathUtils.XP));
-			matrixStack.mulPose(MathUtils.rotVectorQuaternionRad( -animationRadians, MathUtils.ZP));
-			//matrixStack.mulPose(new Quaternion(new Vector3f(0, 1, 0), -animationRadians, false));
-			//matrixStack.mulPose(new Quaternion(new Vector3f(1, 0, 0), -animationRadians, false));
-			//matrixStack.mulPose(new Quaternion(new Vector3f(0, 0, 1), -animationRadians, false));
+			matrixStack.mulPose(MathUtils.rotVectorQuaternionRad(-animationRadians, MathUtils.YP));
+			matrixStack.mulPose(MathUtils.rotVectorQuaternionRad(-animationRadians, MathUtils.XP));
+			matrixStack.mulPose(MathUtils.rotVectorQuaternionRad(-animationRadians, MathUtils.ZP));
+			// matrixStack.mulPose(new Quaternion(new Vector3f(0, 1, 0), -animationRadians, false));
+			// matrixStack.mulPose(new Quaternion(new Vector3f(1, 0, 0), -animationRadians, false));
+			// matrixStack.mulPose(new Quaternion(new Vector3f(0, 0, 1), -animationRadians, false));
 			RenderingUtils.renderModel(modelSphere, null, RenderType.solid(), matrixStack, bufferIn, packedLightIn, packedLightIn);
 			matrixStack.popPose();
 
@@ -58,7 +58,7 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 			matrixStack.translate(0, 0.5, 0);
 			matrixStack.scale(scale, scale, scale);
 			matrixStack.mulPose(MathUtils.rotVectorQuaternionRad(-animationRadians, MathUtils.YP));
-			//matrixStack.mulPose(new Quaternion(new Vector3f(0, 1, 0), -animationRadians, false));
+			// matrixStack.mulPose(new Quaternion(new Vector3f(0, 1, 0), -animationRadians, false));
 			matrixStack.scale(1.25f, 1.25f, 1.25f);
 			RenderingUtils.renderModel(modelDisk, null, RenderType.translucent(), matrixStack, bufferIn, packedLightIn, packedLightIn);
 			matrixStack.popPose();

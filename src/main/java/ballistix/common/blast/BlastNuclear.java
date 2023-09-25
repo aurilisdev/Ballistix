@@ -124,34 +124,33 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 				}
 			}
 			if (threadSimple.isComplete && rayDone) {
-				if (ModList.get().isLoaded("nuclearscience")) {
-					if (perticksimple == -1) {
-						cachedIterator = threadSimple.results.iterator();
-						perticksimple = (int) (threadSimple.results.size() * 1.5 / Constants.EXPLOSIVE_NUCLEAR_DURATION + 1);
+				if (!ModList.get().isLoaded("nuclearscience")) {
+					attackEntities((float) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2);
+					return true;
+				}
+				if (perticksimple == -1) {
+					cachedIterator = threadSimple.results.iterator();
+					perticksimple = (int) (threadSimple.results.size() * 1.5 / Constants.EXPLOSIVE_NUCLEAR_DURATION + 1);
+				}
+				int finished = perticksimple;
+				while (cachedIterator.hasNext()) {
+					if (finished-- < 0) {
+						break;
 					}
-					int finished = perticksimple;
-					while (cachedIterator.hasNext()) {
-						if (finished-- < 0) {
-							break;
+					BlockPos p = new BlockPos(cachedIterator.next()).offset(position);
+					BlockState state = world.getBlockState(p);
+					Block block = state.getBlock();
+					if (block == Blocks.GRASS_BLOCK || block == Blocks.DIRT) {
+						if (world.random.nextFloat() < 0.7) {
+							world.setBlock(p, NuclearScienceBlocks.blockRadioactiveSoil.defaultBlockState(), 2 | 16 | 32);
 						}
-						BlockPos p = new BlockPos(cachedIterator.next()).offset(position);
-						BlockState state = world.getBlockState(p);
-						Block block = state.getBlock();
-						if (block == Blocks.GRASS_BLOCK || block == Blocks.DIRT) {
-							if (world.random.nextFloat() < 0.7) {
-								world.setBlock(p, NuclearScienceBlocks.blockRadioactiveSoil.defaultBlockState(), 2 | 16 | 32);
-							}
-						} else if (state.is(BlockTags.LEAVES)) {
-							world.setBlock(p, Blocks.AIR.defaultBlockState(), 2 | 16 | 32);
-						} else if (state.getBlock() == Blocks.AIR || state.getBlock() == Blocks.CAVE_AIR) {
-							world.setBlock(p, NuclearScienceBlocks.blockRadioactiveAir.defaultBlockState(), 2 | 16 | 32);
-						}
+					} else if (state.is(BlockTags.LEAVES)) {
+						world.setBlock(p, Blocks.AIR.defaultBlockState(), 2 | 16 | 32);
+					} else if (state.getBlock() == Blocks.AIR || state.getBlock() == Blocks.CAVE_AIR) {
+						world.setBlock(p, NuclearScienceBlocks.blockRadioactiveAir.defaultBlockState(), 2 | 16 | 32);
 					}
-					if (!cachedIterator.hasNext()) {
-						attackEntities((float) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2);
-						return true;
-					}
-				} else {
+				}
+				if (!cachedIterator.hasNext()) {
 					attackEntities((float) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2);
 					return true;
 				}

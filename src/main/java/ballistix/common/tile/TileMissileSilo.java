@@ -209,13 +209,13 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 
 	@Override
 	public void onInventoryChange(ComponentInventory inv, int index) {
-		
+
 		handleMissile(inv, index);
-		
+
 		handleExplosive(inv, index);
-		
+
 	}
-	
+
 	private void handleMissile(ComponentInventory inv, int index) {
 		if (index == 0 || index == -1) {
 
@@ -250,7 +250,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 
 		}
 	}
-	
+
 	private void handleExplosive(ComponentInventory inv, int index) {
 		if (index == 1 || index == -1) {
 
@@ -305,12 +305,12 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 	public InteractionResult onSubnodeUse(Player player, InteractionHand hand, BlockHitResult hit, TileMultiSubnode subnode) {
 		return use(player, hand, hit);
 	}
-	
+
 	public static double calculateDistance(BlockPos fromPos, BlockPos toPos) {
 		double deltaX = fromPos.getX() - toPos.getX();
 		double deltaY = fromPos.getY() - toPos.getY();
 		double deltaZ = fromPos.getZ() - toPos.getZ();
-		
+
 		return Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 	}
 

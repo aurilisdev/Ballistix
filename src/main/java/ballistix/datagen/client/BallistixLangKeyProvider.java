@@ -110,6 +110,8 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 			addTooltip("laserdesignator.frequency", "Frequency: %s");
 			addTooltip("laserdesignator.nofrequency", "Unbound");
 			addTooltip("laserdesignator.invalidfreq", "Set a frequency for the silo");
+			addTooltip("tracker.tracking", "Tracking: %s");
+			addTooltip("tracker.none", "NONE");
 
 			addSubtitle("ballistix.antimatterexplosion", "Antimatter bomb explodes");
 			addSubtitle("ballistix.darkmatter", "Dark matter bomb ignites and explodes");

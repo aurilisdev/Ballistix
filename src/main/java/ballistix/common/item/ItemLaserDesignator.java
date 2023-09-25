@@ -13,6 +13,7 @@ import electrodynamics.prefab.utilities.math.MathUtils;
 import electrodynamics.prefab.utilities.object.Location;
 import electrodynamics.prefab.utilities.object.TransferPack;
 import electrodynamics.registers.ElectrodynamicsItems;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -87,12 +88,29 @@ public class ItemLaserDesignator extends ItemElectric {
 
 		int frequency = getFrequency(designator);
 
+		int range;
+		
+		BlockPos target = trace.toBlockPos();
+		
+		double distance;
+		
 		for (TileMissileSilo silo : SiloRegistry.getSilos(frequency, worldIn)) {
 
+			range = silo.range.get();
+			
+			distance = TileMissileSilo.calculateDistance(silo.getBlockPos(), target);
+			
+			if(range == 0 || (range > 0 && range < distance)) {
+				continue;
+			}
+			
 			silo.target.set(trace.toBlockPos());
-			playerIn.displayClientMessage(BallistixTextUtils.chatMessage("laserdesignator.launch", new Location(silo.getBlockPos()) + " -> " + new Location(silo.target.get())), false);
+			
 			silo.shouldLaunch = true;
+			
 			extractPower(designator, USAGE, false);
+			
+			playerIn.displayClientMessage(BallistixTextUtils.chatMessage("laserdesignator.launch", new Location(silo.getBlockPos()) + " -> " + new Location(silo.target.get())), false);
 
 		}
 

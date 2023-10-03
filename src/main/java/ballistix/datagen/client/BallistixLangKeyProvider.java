@@ -149,8 +149,8 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 
 			addGuidebook("chapter.items.scanner1", "The Scanner is every paranoid player's best friend. Think someone has tagged you with a Tracker and is trying to nuke your prestigious dirt house? Fear not; Simply right-click with the Scanner. This will expend 150 Joules and jam any tracking signals if they are present!");
 
-			addJei("info.item.missilecloserange", "Specs:\n    Range: 3);000 Blocks");
-			addJei("info.item.missilemediumrange", "Specs:\n    Range: 10);000 Blocks");
+			addJei("info.item.missilecloserange", "Specs:\n    Range: 3000 Blocks");
+			addJei("info.item.missilemediumrange", "Specs:\n    Range: 10 000 Blocks");
 			addJei("info.item.missilelongrange", "Specs:\n    Range: Unlimited");
 
 		}

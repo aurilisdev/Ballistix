@@ -158,7 +158,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 	}
 
 	@Override
-	public void onNeightborChanged(BlockPos neighbor) {
+	public void onNeightborChanged(BlockPos neighbor, boolean blockStateChange) {
 		if (level.isClientSide) {
 			return;
 		}
@@ -171,7 +171,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 	}
 
 	@Override
-	public void onSubnodeNeighborChange(TileMultiSubnode subnode, BlockPos subnodeChangingNeighbor) {
+	public void onSubnodeNeighborChange(TileMultiSubnode subnode, BlockPos subnodeChangingNeighbor, boolean blockStateChange) {
 		if (level.isClientSide || subnodeChangingNeighbor.equals(getBlockPos())) {
 			return;
 		}

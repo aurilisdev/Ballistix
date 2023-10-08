@@ -46,6 +46,9 @@ import net.minecraftforge.common.world.ForgeChunkManager;
 
 public class TileMissileSilo extends GenericTile implements IMultiblockParentTile {
 
+	public static final int MISSILE_SLOT = 0;
+	public static final int EXPLOSIVE_SLOT = 1;
+	
 	public Property<Integer> range = property(new Property<>(PropertyType.Integer, "range", 0));
 	public Property<Boolean> hasExplosive = property(new Property<>(PropertyType.Boolean, "hasexplosive", false));
 	public Property<Integer> frequency = property(new Property<>(PropertyType.Integer, "frequency", 0).onChange((prop, prevFreq) -> {
@@ -93,24 +96,25 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 
 		shouldLaunch = false;
 
-		ComponentInventory inv = getComponent(ComponentType.Inventory);
-		ItemStack explosive = inv.getItem(1);
-		ItemStack mis = inv.getItem(0);
-
 		double dist = calculateDistance(worldPosition, target.get());
 
 		if (range.get() == 0 || (range.get() > 0 && range.get() < dist)) {
 			return;
 		}
 
+		ComponentInventory inv = getComponent(ComponentType.Inventory);
+		ItemStack explosive = inv.getItem(EXPLOSIVE_SLOT);
+		ItemStack mis = inv.getItem(MISSILE_SLOT);
+		
 		EntityMissile missile = new EntityMissile(level);
 		missile.setPos(getBlockPos().getX() + 1.0, getBlockPos().getY(), getBlockPos().getZ() + 1.0);
 		missile.range = ((ItemMissile) mis.getItem()).missile.ordinal();
 		missile.target = target.get();
 		missile.blastOrdinal = ((BlockExplosive) ((BlockItemDescriptable) explosive.getItem()).getBlock()).explosive.ordinal();
-		explosive.shrink(1);
-		mis.shrink(1);
-		inv.setChanged();
+		
+		inv.removeItem(MISSILE_SLOT, 1);
+		inv.removeItem(EXPLOSIVE_SLOT, 1);
+		
 		level.addFreshEntity(missile);
 
 		cooldown = 100;

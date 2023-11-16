@@ -11,25 +11,21 @@ import ballistix.common.item.ItemMissile;
 import ballistix.common.network.SiloRegistry;
 import ballistix.common.settings.Constants;
 import ballistix.registers.BallistixBlockTypes;
-import ballistix.registers.BallistixBlocks;
 import ballistix.registers.BallistixItems;
 import electrodynamics.api.multiblock.Subnode;
 import electrodynamics.api.multiblock.parent.IMultiblockParentTile;
-import electrodynamics.common.block.VoxelShapes;
 import electrodynamics.common.blockitem.types.BlockItemDescriptable;
 import electrodynamics.common.tile.TileMultiSubnode;
 import electrodynamics.prefab.properties.Property;
 import electrodynamics.prefab.properties.PropertyType;
 import electrodynamics.prefab.tile.GenericTile;
-import electrodynamics.prefab.tile.components.ComponentType;
+import electrodynamics.prefab.tile.components.IComponentType;
 import electrodynamics.prefab.tile.components.type.ComponentContainerProvider;
-import electrodynamics.prefab.tile.components.type.ComponentDirection;
 import electrodynamics.prefab.tile.components.type.ComponentInventory;
 import electrodynamics.prefab.tile.components.type.ComponentInventory.InventoryBuilder;
 import electrodynamics.prefab.tile.components.type.ComponentPacketHandler;
 import electrodynamics.prefab.tile.components.type.ComponentTickable;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -38,7 +34,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -71,11 +66,11 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 
 	public TileMissileSilo(BlockPos pos, BlockState state) {
 		super(BallistixBlockTypes.TILE_MISSILESILO.get(), pos, state);
-		addComponent(new ComponentDirection(this));
+
 		addComponent(new ComponentTickable(this).tickServer(this::tickServer));
-		addComponent(new ComponentInventory(this, InventoryBuilder.newInv().inputs(2)).faceSlots(Direction.UP, 0, 1).valid(this::isItemValidForSlot));
+		addComponent(new ComponentInventory(this, InventoryBuilder.newInv().inputs(2)).valid(this::isItemValidForSlot));
 		addComponent(new ComponentPacketHandler(this));
-		addComponent(new ComponentContainerProvider("container.missilesilo", this).createMenu((id, player) -> new ContainerMissileSilo(id, player, getComponent(ComponentType.Inventory), getCoordsArray())));
+		addComponent(new ComponentContainerProvider("container.missilesilo", this).createMenu((id, player) -> new ContainerMissileSilo(id, player, getComponent(IComponentType.Inventory), getCoordsArray())));
 
 	}
 
@@ -102,7 +97,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 			return;
 		}
 
-		ComponentInventory inv = getComponent(ComponentType.Inventory);
+		ComponentInventory inv = getComponent(IComponentType.Inventory);
 		ItemStack explosive = inv.getItem(EXPLOSIVE_SLOT);
 		ItemStack mis = inv.getItem(MISSILE_SLOT);
 		
@@ -201,7 +196,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 	@Override
 	public Subnode[] getSubNodes() {
 
-		return switch (this.<ComponentDirection>getComponent(ComponentType.Direction).getDirection()) {
+		return switch (getFacing()) {
 		case EAST -> BlockMissileSilo.SUBNODES_EAST;
 		case WEST -> BlockMissileSilo.SUBNODES_WEST;
 		case NORTH -> BlockMissileSilo.SUBNODES_NORTH;
@@ -316,10 +311,6 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 		double deltaZ = fromPos.getZ() - toPos.getZ();
 
 		return Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
-	}
-
-	static {
-		VoxelShapes.registerShape(BallistixBlocks.blockMissileSilo, Block.box(0, 0, 0, 16, 1, 16), Direction.SOUTH);
 	}
 
 }

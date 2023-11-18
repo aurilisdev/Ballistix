@@ -1,0 +1,2 @@
+* update to new Electrodynamics formatting
+* fix issue with VoxelShapes lagging game when block is placed

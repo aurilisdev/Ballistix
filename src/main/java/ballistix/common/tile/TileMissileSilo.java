@@ -25,6 +25,7 @@ import electrodynamics.prefab.tile.components.type.ComponentInventory;
 import electrodynamics.prefab.tile.components.type.ComponentInventory.InventoryBuilder;
 import electrodynamics.prefab.tile.components.type.ComponentPacketHandler;
 import electrodynamics.prefab.tile.components.type.ComponentTickable;
+import electrodynamics.registers.ElectrodynamicsBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -43,6 +44,8 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 
 	public static final int MISSILE_SLOT = 0;
 	public static final int EXPLOSIVE_SLOT = 1;
+	
+	public static final int COOLDOWN = 100;
 
 	public Property<Integer> range = property(new Property<>(PropertyType.Integer, "range", 0));
 	public Property<Boolean> hasExplosive = property(new Property<>(PropertyType.Boolean, "hasexplosive", false));
@@ -112,7 +115,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 
 		level.addFreshEntity(missile);
 
-		cooldown = 100;
+		cooldown = COOLDOWN;
 
 	}
 
@@ -168,6 +171,10 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 	@Override
 	public void onSubnodeNeighborChange(TileMultiSubnode subnode, BlockPos subnodeChangingNeighbor, boolean blockStateChange) {
 		if (level.isClientSide || subnodeChangingNeighbor.equals(getBlockPos())) {
+			return;
+		}
+		BlockState state = level.getBlockState(subnodeChangingNeighbor);
+		if(state.isAir() || state.is(ElectrodynamicsBlocks.multi)) {
 			return;
 		}
 		if (level.hasNeighborSignal(subnode.getBlockPos())) {

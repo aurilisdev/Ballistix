@@ -5,7 +5,7 @@ import java.util.List;
 import ballistix.References;
 import ballistix.common.network.SiloRegistry;
 import ballistix.common.tile.TileMissileSilo;
-import ballistix.prefab.utils.TextUtils;
+import ballistix.prefab.utils.BallistixTextUtils;
 import electrodynamics.common.tile.TileMultiSubnode;
 import electrodynamics.prefab.item.ElectricItemProperties;
 import electrodynamics.prefab.item.ItemElectric;
@@ -13,6 +13,7 @@ import electrodynamics.prefab.utilities.math.MathUtils;
 import electrodynamics.prefab.utilities.object.Location;
 import electrodynamics.prefab.utilities.object.TransferPack;
 import electrodynamics.registers.ElectrodynamicsItems;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -40,82 +41,99 @@ public class ItemLaserDesignator extends ItemElectric {
 	public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
 		BlockEntity ent = context.getLevel().getBlockEntity(context.getClickedPos());
 		TileMissileSilo silo = ent instanceof TileMissileSilo s ? s : null;
-		if (ent instanceof TileMultiSubnode node && node.nodePos.get() != null) {
-			BlockEntity core = node.getLevel().getBlockEntity(node.nodePos.get());
+		if (ent instanceof TileMultiSubnode node) {
+			BlockEntity core = node.getLevel().getBlockEntity(node.parentPos.get());
 			if (core instanceof TileMissileSilo c) {
 				silo = c;
 			}
 		}
 		if (silo != null) {
-			
-			if(context.getLevel().isClientSide) {
-				context.getPlayer().displayClientMessage(TextUtils.chatMessage("laserdesignator.setfrequency", silo.frequency.get()), false);
+
+			if (context.getLevel().isClientSide) {
+				context.getPlayer().displayClientMessage(BallistixTextUtils.chatMessage("laserdesignator.setfrequency", silo.frequency.get()), false);
 			} else {
 				CompoundTag nbt = stack.getOrCreateTag();
 				nbt.putInt(FREQUENCY_KEY, silo.frequency.get());
 			}
-			
+
 		}
 		return super.onItemUseFirst(stack, context);
 	}
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-		
+
 		if (worldIn.isClientSide) {
 			return super.use(worldIn, playerIn, handIn);
 		}
-		
+
 		ItemStack designator = playerIn.getItemInHand(handIn);
-		
-		if(getJoulesStored(designator) < USAGE || !designator.getOrCreateTag().contains(FREQUENCY_KEY)) {
+
+		if (getJoulesStored(designator) < USAGE || !designator.getOrCreateTag().contains(FREQUENCY_KEY)) {
 			return super.use(worldIn, playerIn, handIn);
 		}
-		
+
 		Location trace = MathUtils.getRaytracedBlock(playerIn);
-		
-		if(trace == null) {
+
+		if (trace == null) {
 			return super.use(worldIn, playerIn, handIn);
 		}
-		
+
 		BlockEntity tile = trace.getTile(worldIn);
-		
-		//fixes bug of blowing self up
-		if(tile instanceof TileMissileSilo || tile instanceof TileMultiSubnode) {
+
+		// fixes bug of blowing self up
+		if (tile instanceof TileMissileSilo || tile instanceof TileMultiSubnode) {
 			return InteractionResultHolder.pass(playerIn.getItemInHand(handIn));
 		}
-		
+
 		int frequency = getFrequency(designator);
-		
-		for(TileMissileSilo silo : SiloRegistry.getSilos(frequency, worldIn)) {
-			
+
+		int range;
+
+		BlockPos target = trace.toBlockPos();
+
+		double distance;
+
+		for (TileMissileSilo silo : SiloRegistry.getSilos(frequency, worldIn)) {
+
+			range = silo.range.get();
+
+			distance = TileMissileSilo.calculateDistance(silo.getBlockPos(), target);
+
+			if (range == 0 || (range > 0 && range < distance)) {
+				continue;
+			}
+
 			silo.target.set(trace.toBlockPos());
-			playerIn.displayClientMessage(TextUtils.chatMessage("laserdesignator.launch", new Location(silo.getBlockPos()) + " -> " + new Location(silo.target.get())), false);
+
 			silo.shouldLaunch = true;
+
 			extractPower(designator, USAGE, false);
-			
-			
+
 		}
-		
+
+		playerIn.displayClientMessage(BallistixTextUtils.chatMessage("laserdesignator.launch", frequency), false);
+		playerIn.displayClientMessage(BallistixTextUtils.chatMessage("laserdesignator.launchsend", trace), false);
+
 		return super.use(worldIn, playerIn, handIn);
 	}
 
 	@Override
 	public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
-		
-		if(!worldIn.isClientSide || !isSelected) {
+
+		if (!worldIn.isClientSide || !isSelected) {
 			return;
 		}
-		
+
 		Location trace = MathUtils.getRaytracedBlock(entityIn);
-		
-		if(trace == null) {
+
+		if (trace == null) {
 			return;
 		}
-		
+
 		if (entityIn instanceof Player player) {
-			player.displayClientMessage(TextUtils.chatMessage("radargun.text", trace.toBlockPos().toShortString()), true);
+			player.displayClientMessage(BallistixTextUtils.chatMessage("radargun.text", trace.toBlockPos().toShortString()), true);
 		}
 	}
 
@@ -126,13 +144,13 @@ public class ItemLaserDesignator extends ItemElectric {
 			CompoundTag nbt = stack.getTag();
 			if (nbt.contains(FREQUENCY_KEY)) {
 				int freq = getFrequency(stack);
-				tooltip.add(TextUtils.tooltip("laserdesignator.frequency", freq));
+				tooltip.add(BallistixTextUtils.tooltip("laserdesignator.frequency", freq));
 			} else {
-				tooltip.add(TextUtils.tooltip("laserdesignator.nofrequency"));
+				tooltip.add(BallistixTextUtils.tooltip("laserdesignator.nofrequency"));
 			}
 		}
 	}
-	
+
 	public static int getFrequency(ItemStack stack) {
 		return stack.getOrCreateTag().getInt(FREQUENCY_KEY);
 	}

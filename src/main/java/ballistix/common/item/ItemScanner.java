@@ -3,10 +3,9 @@ package ballistix.common.item;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
-import java.util.UUID;
 
 import ballistix.References;
-import ballistix.prefab.utils.TextUtils;
+import ballistix.prefab.utils.BallistixTextUtils;
 import electrodynamics.prefab.item.ElectricItemProperties;
 import electrodynamics.prefab.item.ItemElectric;
 import electrodynamics.prefab.utilities.object.TransferPack;
@@ -30,11 +29,11 @@ public class ItemScanner extends ItemElectric {
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		boolean action = false;
 		ItemStack stack = playerIn.getItemInHand(handIn);
-		for (Entry<ServerLevel, HashSet<UUID>> en : ItemTracker.validuuids.entrySet()) {
-			Iterator<UUID> it = en.getValue().iterator();
+		for (Entry<ServerLevel, HashSet<Integer>> en : ItemTracker.validuuids.entrySet()) {
+			Iterator<Integer> it = en.getValue().iterator();
 			while (it.hasNext()) {
-				UUID uuid = it.next();
-				if (uuid == playerIn.getUUID() && getJoulesStored(stack) >= USAGE) {
+				int uuid = it.next();
+				if (uuid == playerIn.getId() && getJoulesStored(stack) >= USAGE) {
 					it.remove();
 					action = true;
 					extractPower(stack, USAGE, false);
@@ -44,9 +43,9 @@ public class ItemScanner extends ItemElectric {
 
 		if (worldIn.isClientSide) {
 			if (action) {
-				playerIn.displayClientMessage(TextUtils.chatMessage("scanner.cleared"), true);
+				playerIn.displayClientMessage(BallistixTextUtils.chatMessage("scanner.cleared"), true);
 			} else {
-				playerIn.displayClientMessage(TextUtils.chatMessage("scanner.none"), true);
+				playerIn.displayClientMessage(BallistixTextUtils.chatMessage("scanner.none"), true);
 			}
 		}
 

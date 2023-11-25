@@ -9,6 +9,7 @@ import ballistix.registers.BallistixBlocks;
 import ballistix.registers.BallistixItems;
 import electrodynamics.datagen.client.ElectrodynamicsLangKeyProvider;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.world.level.Level;
 
 public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 
@@ -94,11 +95,12 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 			addGuiLabel("missilesilo.z", "Z-Coord");
 			addGuiLabel("missilesilo.freq", "Freq");
 
-			add("death.attack.chemicalgas", "%s opened the Zyklon-B without reading the instructions!");
-			add("death.attack.shrapnel", "%s was hit by shrapnel!");
+			addDamageSource("chemicalgas", "%s opened the Zyklon-B without reading the instructions!");
+			addDamageSource("shrapnel", "%s was hit by shrapnel!");
 
 			addChatMessage("radargun.text", "Coordinates: %s");
-			addChatMessage("laserdesignator.launch", "Launching missile from: %s");
+			addChatMessage("laserdesignator.launch", "Launching all missiles with frequency %s to targets: ");
+			addChatMessage("laserdesignator.launchsend", "-> %s");
 			addChatMessage("laserdesignator.setfrequency", "Set frequency to: %s");
 			addChatMessage("scanner.cleared", "Cleared trackers!");
 			addChatMessage("scanner.none", "There were no trackers!");
@@ -108,10 +110,16 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 			addTooltip("laserdesignator.frequency", "Frequency: %s");
 			addTooltip("laserdesignator.nofrequency", "Unbound");
 			addTooltip("laserdesignator.invalidfreq", "Set a frequency for the silo");
+			addTooltip("tracker.tracking", "Tracking: %s");
+			addTooltip("tracker.none", "NONE");
 
 			addSubtitle("ballistix.antimatterexplosion", "Antimatter bomb explodes");
 			addSubtitle("ballistix.darkmatter", "Dark matter bomb ignites and explodes");
 			addSubtitle("ballistix.nuclearexplosion", "Nuclear bomb explodes");
+
+			addDimension(Level.OVERWORLD.location().getPath(), "The Overworld");
+			addDimension(Level.NETHER.location().getPath(), "The Nether");
+			addDimension(Level.END.location().getPath(), "The End");
 
 			addGuidebook(References.ID, "Ballistix");
 
@@ -123,46 +131,25 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 			addGuidebook("chapter.missilesilo.long", "Long-Range");
 			addGuidebook("chapter.missilesilo.unlimited", "Unlimited");
 			addGuidebook("chapter.missilesilo.l2", "Each missile type is capable of carrying any explosive as a warhead.");
-			
-			addGuidebook("chapter.missilesilo.l3", 
-					"To load an explosive into a missile, first place the missile of your choice into the silo in its designated slot. Next, choose an explosive type and place it into its designated spot in the GUI. Next, program the target destination into the coordiante boxes. This can either be done manually or with a "
-					+ 
-					"Radar Gun. Finally, once this is all completed, to fire the missile, apply a redstone signal to the silo.");
+
+			addGuidebook("chapter.missilesilo.l3", "To load an explosive into a missile, first place the missile of your choice into the silo in its designated slot. Next, choose an explosive type and place it into its designated spot in the GUI. Next, program the target destination into the coordiante boxes. This can either be done manually or with a " + "Radar Gun. Finally, once this is all completed, to fire the missile, apply a redstone signal to the silo.");
 
 			addGuidebook("chapter.items", "Items");
-			addGuidebook("chapter.items.rocketlauncher1", 
-					"The Rocket Launcher is capable of firing Close-Range missiles with any explosive warhead attached as a projectile. To fire it, have a Close-Range missile in your inventory along with the explosive type of your choice. Note, it must be a Ballistix explosive, and it must be the block form. Once this is "
-					+ 
-					"done, hold the Launcher and Right-Click to fire!");
+			addGuidebook("chapter.items.rocketlauncher1", "The Rocket Launcher is capable of firing Close-Range missiles with any explosive warhead attached as a projectile. To fire it, have a Close-Range missile in your inventory along with the explosive type of your choice. Note, it must be a Ballistix explosive, and it must be the block form. Once this is " + "done, hold the Launcher and Right-Click to fire!");
 
-			addGuidebook("chapter.items.radargun1", 
-					"The Radar Gun is used to collect coordiantes of a target and feed them into the Missile Silo instead of programming them manually. To use the Radar Gun, simply Right-Click on the target with the Gun to store its coordinates. This will expend 150 Joules and store the coordinates to the Gun. Then Right-Click "
-					+ 
-					"on the Missile Silo with the Gun to feed in the coordinates.");
+			addGuidebook("chapter.items.radargun1", "The Radar Gun is used to collect coordiantes of a target and feed them into the Missile Silo instead of programming them manually. To use the Radar Gun, simply Right-Click on the target with the Gun to store its coordinates. This will expend 150 Joules and store the coordinates to the Gun. Then Right-Click " + "on the Missile Silo with the Gun to feed in the coordinates.");
 
-			addGuidebook("chapter.items.laserdesignator1", 
-					"The Laser Designator is used to launch missiles from a Missile Silo remotely instead of having to manually apply a redstone signal. To use it, first place a silo and prepare a missile with your choice of warhead. Next, Right-Click the Designator on the Silo to link the two. Note, another the benefit of the "
-					+ 
-					"Designator is that you will not need to pre-program coordinates to the Missile Silo.");
-			addGuidebook("chapter.items.laserdesignator2", 
-					"With the Silo prepared and the Designator linked to the Silo, all the remains is to find a suitable target. When you find one, simply Right-Click on it with the Designator. This will expend 150 Joules, automatically feed the target's coordinates into the Silo, and fire the missile. Note, make sure the "
-					+ 
-					"target is actually in range of the missile in the Silo!");
+			addGuidebook("chapter.items.laserdesignator1", "The Laser Designator is used to launch missiles from a Missile Silo remotely instead of having to manually apply a redstone signal. To use it, first place a silo and prepare a missile with your choice of warhead. Next, Right-Click the Designator on the Silo to link the two. Note, another the benefit of the " + "Designator is that you will not need to pre-program coordinates to the Missile Silo.");
+			addGuidebook("chapter.items.laserdesignator2", "With the Silo prepared and the Designator linked to the Silo, all the remains is to find a suitable target. When you find one, simply Right-Click on it with the Designator. This will expend 150 Joules, automatically feed the target's coordinates into the Silo, and fire the missile. Note, make sure the " + "target is actually in range of the missile in the Silo!");
 
-			addGuidebook("chapter.items.defuser1", 
-					"The Defuser is your only hope of stopping an explosive from detonating once it has been activated. Right-Click on the explosive with the Defuser, and it will, as the name suggests, defuse it! This will expend 150 Joules and drop the explosive that was defused on the ground. Note, the Defuser "
-					+ 
-					"currently does not work on Vanilla TNT.");
+			addGuidebook("chapter.items.defuser1", "The Defuser is your only hope of stopping an explosive from detonating once it has been activated. Right-Click on the explosive with the Defuser, and it will, as the name suggests, defuse it! This will expend 150 Joules and drop the explosive that was defused on the ground. Note, the Defuser " + "currently does not work on Vanilla TNT.");
 
-			addGuidebook("chapter.items.tracker1", 
-					"The Tracker is capable of tracking the location of any entity in the world, player or otherwise. This is especially useful, as it allows you to track other players and send them Thermonuclear War...care packages from afar. To start tracking an entity, simply Right-Click on it with the Tracker. "
-					+ 
-					"This will expend 150 Joules. The tracker only keeps tabs on the X and Z coordinates of the entity along with what dimension they're in. There is still a little guesswork involved. Note, if the entity dies or the player disconnects from the server, the Tracker will stop tracking them!");
+			addGuidebook("chapter.items.tracker1", "The Tracker is capable of tracking the location of any entity in the world, player or otherwise. This is especially useful, as it allows you to track other players and send them Thermonuclear War...care packages from afar. To start tracking an entity, simply Right-Click on it with the Tracker. " + "This will expend 150 Joules. The tracker only keeps tabs on the X and Z coordinates of the entity along with what dimension they're in. There is still a little guesswork involved. Note, if the entity dies or the player disconnects from the server, the Tracker will stop tracking them!");
 
 			addGuidebook("chapter.items.scanner1", "The Scanner is every paranoid player's best friend. Think someone has tagged you with a Tracker and is trying to nuke your prestigious dirt house? Fear not; Simply right-click with the Scanner. This will expend 150 Joules and jam any tracking signals if they are present!");
 
-			addJei("info.item.missilecloserange", "Specs:\n    Range: 3);000 Blocks");
-			addJei("info.item.missilemediumrange", "Specs:\n    Range: 10);000 Blocks");
+			addJei("info.item.missilecloserange", "Specs:\n    Range: 3000 Blocks");
+			addJei("info.item.missilemediumrange", "Specs:\n    Range: 10 000 Blocks");
 			addJei("info.item.missilelongrange", "Specs:\n    Range: Unlimited");
 
 		}

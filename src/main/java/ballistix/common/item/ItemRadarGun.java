@@ -4,7 +4,7 @@ import java.util.List;
 
 import ballistix.References;
 import ballistix.common.tile.TileMissileSilo;
-import ballistix.prefab.utils.TextUtils;
+import ballistix.prefab.utils.BallistixTextUtils;
 import electrodynamics.common.tile.TileMultiSubnode;
 import electrodynamics.prefab.item.ElectricItemProperties;
 import electrodynamics.prefab.item.ItemElectric;
@@ -15,7 +15,6 @@ import electrodynamics.registers.ElectrodynamicsItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -37,77 +36,65 @@ public class ItemRadarGun extends ItemElectric {
 
 	@Override
 	public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
-		if(context.getLevel().isClientSide) {
+		if (context.getLevel().isClientSide) {
 			return super.onItemUseFirst(stack, context);
 		}
 		BlockEntity ent = context.getLevel().getBlockEntity(context.getClickedPos());
 		TileMissileSilo silo = ent instanceof TileMissileSilo s ? s : null;
 		if (ent instanceof TileMultiSubnode node) {
-			BlockEntity core = node.getLevel().getBlockEntity(node.nodePos.get());
+			BlockEntity core = node.getLevel().getBlockEntity(node.parentPos.get());
 			if (core instanceof TileMissileSilo c) {
 				silo = c;
 			}
 		}
 		if (silo != null) {
 			silo.target.set(getCoordiantes(stack));
-			silo.target.forceDirty();
 		}
 		return super.onItemUseFirst(stack, context);
 	}
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-		
-		if(worldIn.isClientSide) {
-			return super.use(worldIn, playerIn, handIn);
-		}
-		
-		Location trace = MathUtils.getRaytracedBlock(playerIn);
-		
-		if(trace == null) {
-			return super.use(worldIn, playerIn, handIn);
-		}
-		
-		ItemStack radarGun = playerIn.getItemInHand(handIn);
-		
-		if(getJoulesStored(radarGun) < USAGE) {
-			return super.use(worldIn, playerIn, handIn);
-		}
-		
-		storeCoordiantes(radarGun, trace.toBlockPos());
-		
-		radarGun.getOrCreateTag().putString("world", worldIn.dimension().location().getPath());
-		
-		extractPower(radarGun, USAGE, false);
-		
-		return super.use(worldIn, playerIn, handIn);
-	}
 
-	public static ServerLevel getFromNBT(ServerLevel base, String str) {
-		for (ServerLevel world : base.getLevel().getServer().getAllLevels()) {
-			if (world.dimension().location().getPath().equalsIgnoreCase(str)) {
-				return world;
-			}
+		if (worldIn.isClientSide) {
+			return super.use(worldIn, playerIn, handIn);
 		}
-		return null;
+
+		Location trace = MathUtils.getRaytracedBlock(playerIn);
+
+		if (trace == null) {
+			return super.use(worldIn, playerIn, handIn);
+		}
+
+		ItemStack radarGun = playerIn.getItemInHand(handIn);
+
+		if (getJoulesStored(radarGun) < USAGE) {
+			return super.use(worldIn, playerIn, handIn);
+		}
+
+		storeCoordiantes(radarGun, trace.toBlockPos());
+
+		extractPower(radarGun, USAGE, false);
+
+		return super.use(worldIn, playerIn, handIn);
 	}
 
 	@Override
 	public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
-		
-		if(!worldIn.isClientSide || !isSelected) {
+
+		if (!worldIn.isClientSide || !isSelected) {
 			return;
 		}
-		
+
 		Location trace = MathUtils.getRaytracedBlock(entityIn);
-		
-		if(trace == null) {
+
+		if (trace == null) {
 			return;
 		}
-		
+
 		if (entityIn instanceof Player player) {
-			player.displayClientMessage(TextUtils.chatMessage("radargun.text", trace.toBlockPos().toShortString()), true);
+			player.displayClientMessage(BallistixTextUtils.chatMessage("radargun.text", trace.toBlockPos().toShortString()), true);
 		}
 	}
 
@@ -115,9 +102,9 @@ public class ItemRadarGun extends ItemElectric {
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
 		if (stack.hasTag() && stack.getTag().contains("xCoord")) {
-			tooltip.add(TextUtils.tooltip("radargun.pos", getCoordiantes(stack).toShortString()));
+			tooltip.add(BallistixTextUtils.tooltip("radargun.pos", getCoordiantes(stack).toShortString()));
 		} else {
-			tooltip.add(TextUtils.tooltip("radargun.notag"));
+			tooltip.add(BallistixTextUtils.tooltip("radargun.notag"));
 		}
 	}
 	

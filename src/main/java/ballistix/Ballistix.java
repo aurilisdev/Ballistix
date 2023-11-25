@@ -3,6 +3,7 @@ package ballistix;
 import ballistix.api.capability.BallistixCapabilities;
 import ballistix.client.ClientRegister;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
+import ballistix.common.block.BallistixVoxelShapesRegistry;
 import ballistix.common.packet.NetworkHandler;
 import ballistix.common.settings.Constants;
 import ballistix.common.tags.BallistixTags;
@@ -47,6 +48,7 @@ public class Ballistix {
 	public static void onCommonSetup(FMLCommonSetupEvent event) {
 		NetworkHandler.init();
 		BallistixTags.init();
+		BallistixVoxelShapesRegistry.init();
 	}
 
 	@SubscribeEvent

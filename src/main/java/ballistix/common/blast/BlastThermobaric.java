@@ -6,7 +6,7 @@ import ballistix.common.blast.thread.raycast.ThreadRaycastBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
 import electrodynamics.common.packet.NetworkHandler;
-import electrodynamics.common.packet.types.PacketSpawnSmokeParticle;
+import electrodynamics.common.packet.types.client.PacketSpawnSmokeParticle;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;

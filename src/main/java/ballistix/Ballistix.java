@@ -1,13 +1,18 @@
 package ballistix;
 
+import ballistix.api.capability.BallistixCapabilities;
 import ballistix.client.ClientRegister;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
+import ballistix.common.block.BallistixVoxelShapesRegistry;
 import ballistix.common.packet.NetworkHandler;
 import ballistix.common.settings.Constants;
+import ballistix.common.tags.BallistixTags;
+import ballistix.registers.UnifiedBallistixRegister;
 import electrodynamics.prefab.configuration.ConfigurationHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -24,12 +29,7 @@ public class Ballistix {
 	public Ballistix() {
 		ConfigurationHandler.registerConfig(Constants.class);
 		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-		SoundRegister.SOUNDS.register(bus);
-		DeferredRegisters.BLOCKS.register(bus);
-		DeferredRegisters.ITEMS.register(bus);
-		DeferredRegisters.TILES.register(bus);
-		DeferredRegisters.CONTAINERS.register(bus);
-		DeferredRegisters.ENTITIES.register(bus);
+		UnifiedBallistixRegister.register(bus);
 		new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, true).start();
 		new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null, true).start();
 		new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, Integer.MAX_VALUE, null, true).start();
@@ -39,11 +39,20 @@ public class Ballistix {
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
 	public static void onClientSetup(FMLClientSetupEvent event) {
-		ClientRegister.setup();
+		event.enqueueWork(() -> {
+			ClientRegister.setup();
+		});
 	}
 
 	@SubscribeEvent
 	public static void onCommonSetup(FMLCommonSetupEvent event) {
 		NetworkHandler.init();
+		BallistixTags.init();
+		BallistixVoxelShapesRegistry.init();
+	}
+
+	@SubscribeEvent
+	public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+		BallistixCapabilities.register(event);
 	}
 }

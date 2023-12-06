@@ -1,9 +1,9 @@
 package ballistix.common.entity;
 
-import ballistix.DeferredRegisters;
 import ballistix.common.blast.Blast;
 import ballistix.common.blast.IHasCustomRenderer;
 import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.registers.BallistixEntities;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -36,7 +36,7 @@ public class EntityBlast extends Entity {
 	}
 
 	public EntityBlast(Level worldIn) {
-		this(DeferredRegisters.ENTITY_BLAST.get(), worldIn);
+		this(BallistixEntities.ENTITY_BLAST.get(), worldIn);
 	}
 
 	public void setBlastType(SubtypeBlast explosive) {

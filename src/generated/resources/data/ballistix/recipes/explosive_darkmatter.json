@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "DDD",
+    "DAD",
+    "DDD"
+  ],
+  "key": {
+    "A": {
+      "item": "ballistix:largeantimatter"
+    },
+    "D": {
+      "tag": "forge:cells/dark_matter"
+    }
+  },
+  "result": {
+    "item": "ballistix:darkmatter"
+  }
+}

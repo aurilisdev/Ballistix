@@ -2,14 +2,14 @@ package ballistix.common.blast;
 
 import java.util.Iterator;
 
-import ballistix.SoundRegister;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.blast.thread.raycast.ThreadRaycastBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
+import ballistix.registers.BallistixSounds;
 import electrodynamics.api.sound.SoundAPI;
 import electrodynamics.common.packet.NetworkHandler;
-import electrodynamics.common.packet.types.PacketSpawnSmokeParticle;
+import electrodynamics.common.packet.types.client.PacketSpawnSmokeParticle;
 import electrodynamics.prefab.utilities.object.Location;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,6 +26,7 @@ import net.minecraft.world.level.material.Material;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.network.NetworkDirection;
 import nuclearscience.api.radiation.RadiationSystem;
+import nuclearscience.registers.NuclearScienceBlocks;
 
 public class BlastNuclear extends Blast implements IHasCustomRenderer {
 
@@ -42,7 +43,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 			threadRay.start();
 			threadSimple.start();
 		} else {
-			SoundAPI.playSound(SoundRegister.SOUND_NUCLEAREXPLOSION.get(), SoundSource.BLOCKS, 1, 1, position);
+			SoundAPI.playSound(BallistixSounds.SOUND_NUCLEAREXPLOSION.get(), SoundSource.BLOCKS, 1, 1, position);
 		}
 	}
 
@@ -138,12 +139,12 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 						Block block = state.getBlock();
 						if (block == Blocks.GRASS_BLOCK || block == Blocks.DIRT) {
 							if (world.random.nextFloat() < 0.7) {
-								world.setBlock(p, nuclearscience.DeferredRegisters.blockRadioactiveSoil.defaultBlockState(), 2 | 16 | 32);
+								world.setBlock(p, NuclearScienceBlocks.blockRadioactiveSoil.defaultBlockState(), 2 | 16 | 32);
 							}
 						} else if (state.getMaterial() == Material.LEAVES) {
 							world.setBlock(p, Blocks.AIR.defaultBlockState(), 2 | 16 | 32);
 						} else if (state.getBlock() == Blocks.AIR || state.getBlock() == Blocks.CAVE_AIR) {
-							world.setBlock(p, nuclearscience.DeferredRegisters.blockRadioactiveAir.defaultBlockState(), 2 | 16 | 32);
+							world.setBlock(p, NuclearScienceBlocks.blockRadioactiveAir.defaultBlockState(), 2 | 16 | 32);
 						}
 					}
 					if (!cachedIterator.hasNext()) {

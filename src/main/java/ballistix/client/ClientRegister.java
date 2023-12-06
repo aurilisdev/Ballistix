@@ -1,6 +1,5 @@
 package ballistix.client;
 
-import ballistix.DeferredRegisters;
 import ballistix.References;
 import ballistix.client.guidebook.ModuleBallistix;
 import ballistix.client.render.entity.RenderBlast;
@@ -12,6 +11,11 @@ import ballistix.client.render.entity.RenderShrapnel;
 import ballistix.client.render.tile.RenderMissileSilo;
 import ballistix.client.screen.ScreenMissileSilo;
 import ballistix.common.item.ItemTracker;
+import ballistix.registers.BallistixBlockTypes;
+import ballistix.registers.BallistixBlocks;
+import ballistix.registers.BallistixEntities;
+import ballistix.registers.BallistixItems;
+import ballistix.registers.BallistixMenuTypes;
 import electrodynamics.client.guidebook.ScreenGuidebook;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -30,6 +34,9 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(modid = References.ID, bus = Bus.MOD, value = { Dist.CLIENT })
 public class ClientRegister {
+	
+	public static final ResourceLocation ANGLE_PREDICATE = new ResourceLocation("angle");
+	
 	@SubscribeEvent
 	public static void onModelEvent(ModelRegistryEvent event) {
 		ForgeModelBakery.addSpecialModel(MODEL_MISSILECLOSERANGE);
@@ -43,6 +50,7 @@ public class ClientRegister {
 	}
 
 	public static final ResourceLocation TEXTURE_SHRAPNEL = new ResourceLocation(References.ID + ":textures/model/shrapnel.png");
+	public static final ResourceLocation MODEL_RADARDISH = new ResourceLocation(References.ID + ":block/dish");
 	public static final ResourceLocation MODEL_MISSILECLOSERANGE = new ResourceLocation(References.ID + ":entity/missilecloserange");
 	public static final ResourceLocation MODEL_MISSILEMEDIUMRANGE = new ResourceLocation(References.ID + ":entity/missilemediumrange");
 	public static final ResourceLocation MODEL_MISSILELONGRANGE = new ResourceLocation(References.ID + ":entity/missilelongrange");
@@ -56,22 +64,23 @@ public class ClientRegister {
 	public static final ResourceLocation TEXTURE_MISSILELONGRANGE = new ResourceLocation(References.ID + ":textures/model/missilelongrange.png");
 
 	public static void setup() {
-		MenuScreens.register(DeferredRegisters.CONTAINER_MISSILESILO.get(), ScreenMissileSilo::new);
-		ItemBlockRenderTypes.setRenderLayer(DeferredRegisters.blockMissileSilo, RenderType.cutout());
-		ItemProperties.register(DeferredRegisters.ITEM_TRACKER.get(), new ResourceLocation("angle"), ItemTracker::getAngle);
+		MenuScreens.register(BallistixMenuTypes.CONTAINER_MISSILESILO.get(), ScreenMissileSilo::new);
+		ItemProperties.register(BallistixItems.ITEM_TRACKER.get(), ANGLE_PREDICATE, ItemTracker::getAngle);
+		
+		ItemBlockRenderTypes.setRenderLayer(BallistixBlocks.blockMissileSilo, RenderType.cutout());
 
 		ScreenGuidebook.addGuidebookModule(new ModuleBallistix());
 	}
 
 	@SubscribeEvent
 	public static void registerEntities(EntityRenderersEvent.RegisterRenderers event) {
-		event.registerEntityRenderer(DeferredRegisters.ENTITY_EXPLOSIVE.get(), RenderExplosive::new);
-		event.registerEntityRenderer(DeferredRegisters.ENTITY_GRENADE.get(), RenderGrenade::new);
-		event.registerEntityRenderer(DeferredRegisters.ENTITY_BLAST.get(), RenderBlast::new);
-		event.registerEntityRenderer(DeferredRegisters.ENTITY_SHRAPNEL.get(), RenderShrapnel::new);
-		event.registerEntityRenderer(DeferredRegisters.ENTITY_MISSILE.get(), RenderMissile::new);
-		event.registerEntityRenderer(DeferredRegisters.ENTITY_MINECART.get(), RenderMinecart::new);
-		event.registerBlockEntityRenderer(DeferredRegisters.TILE_MISSILESILO.get(), RenderMissileSilo::new);
+		event.registerEntityRenderer(BallistixEntities.ENTITY_EXPLOSIVE.get(), RenderExplosive::new);
+		event.registerEntityRenderer(BallistixEntities.ENTITY_GRENADE.get(), RenderGrenade::new);
+		event.registerEntityRenderer(BallistixEntities.ENTITY_BLAST.get(), RenderBlast::new);
+		event.registerEntityRenderer(BallistixEntities.ENTITY_SHRAPNEL.get(), RenderShrapnel::new);
+		event.registerEntityRenderer(BallistixEntities.ENTITY_MISSILE.get(), RenderMissile::new);
+		event.registerEntityRenderer(BallistixEntities.ENTITY_MINECART.get(), RenderMinecart::new);
+		event.registerBlockEntityRenderer(BallistixBlockTypes.TILE_MISSILESILO.get(), RenderMissileSilo::new);
 
 	}
 

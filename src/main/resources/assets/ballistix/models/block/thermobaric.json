@@ -1,7 +1,0 @@
-{
-	"parent": "ballistix:block/explosivemodelone",
-	"textures": {
-		"particle": "ballistix:block/thermobaricbase",
-		"3": "ballistix:block/thermobaricbase"
-	}
-}

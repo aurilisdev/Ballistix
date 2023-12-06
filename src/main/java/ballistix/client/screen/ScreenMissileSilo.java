@@ -4,89 +4,145 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import ballistix.common.inventory.container.ContainerMissileSilo;
 import ballistix.common.tile.TileMissileSilo;
+import ballistix.prefab.utils.BallistixTextUtils;
 import electrodynamics.prefab.screen.GenericScreen;
-import electrodynamics.prefab.screen.component.ScreenComponentTextInputBar;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.EditBox;
+import electrodynamics.prefab.screen.component.editbox.ScreenComponentEditBox;
+import electrodynamics.prefab.screen.component.types.ScreenComponentSimpleLabel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
-	public ScreenMissileSilo(ContainerMissileSilo container, Inventory playerInventory, Component title) {
-		super(container, playerInventory, title);
-		components.add(new ScreenComponentTextInputBar(this, 122, 10).small());
-		components.add(new ScreenComponentTextInputBar(this, 122, 28).small());
-		components.add(new ScreenComponentTextInputBar(this, 122, 46).small());
-		components.add(new ScreenComponentTextInputBar(this, 122, 64).small());
-	}
-
-	private EditBox xCoordField;
-	private EditBox yCoordField;
-	private EditBox zCoordField;
-	private EditBox frequencyField;
-
-	@Override
-	public void containerTick() {
-		super.containerTick();
-		xCoordField.tick();
-		yCoordField.tick();
-		zCoordField.tick();
-		frequencyField.tick();
-	}
-
-	@Override
-	protected void init() {
-		super.init();
-		initFields();
-	}
-
-	protected void initFields() {
-		minecraft.keyboardHandler.setSendRepeatsToGui(true);
-		int i = (width - imageWidth) / 2;
-		int j = (height - imageHeight) / 2;
-		xCoordField = new EditBox(font, i + 127, j + 14, 46, 13, new TranslatableComponent("container.missilesilo.xCoord"));
-		xCoordField.setTextColor(-1);
-		xCoordField.setTextColorUneditable(-1);
-		xCoordField.setBordered(false);
-		xCoordField.setMaxLength(6);
-		xCoordField.setResponder(this::setX);
-
-		yCoordField = new EditBox(font, i + 127, j + 14 + 18, 46, 13, new TranslatableComponent("container.missilesilo.yCoord"));
-		yCoordField.setTextColor(-1);
-		yCoordField.setTextColorUneditable(-1);
-		yCoordField.setBordered(false);
-		yCoordField.setMaxLength(6);
-		yCoordField.setResponder(this::setY);
-
-		zCoordField = new EditBox(font, i + 127, j + 14 + 18 * 2, 46, 13, new TranslatableComponent("container.missilesilo.zCoord"));
-		zCoordField.setTextColor(-1);
-		zCoordField.setTextColorUneditable(-1);
-		zCoordField.setBordered(false);
-		zCoordField.setMaxLength(6);
-		zCoordField.setResponder(this::setZ);
-		frequencyField = new EditBox(font, i + 127, j + 14 + 18 * 3, 46, 13, new TranslatableComponent("container.missilesilo.frequency"));
-		frequencyField.setTextColor(-1);
-		zCoordField.setTextColorUneditable(-1);
-		frequencyField.setBordered(false);
-		frequencyField.setMaxLength(6);
-		frequencyField.setResponder(this::setFrequency);
-		addWidget(xCoordField);
-		addWidget(yCoordField);
-		addWidget(zCoordField);
-		addWidget(frequencyField);
-		setInitialFocus(frequencyField);
-	}
 
 	private boolean needsUpdate = true;
 
-	private void setCoord(String coord) {
-		if (!coord.isEmpty()) {
-			menu.setCoord(xCoordField.getValue(), yCoordField.getValue(), zCoordField.getValue(), frequencyField.getValue());
+	private ScreenComponentEditBox xCoordField;
+	private ScreenComponentEditBox yCoordField;
+	private ScreenComponentEditBox zCoordField;
+	private ScreenComponentEditBox frequencyField;
+
+	public ScreenMissileSilo(ContainerMissileSilo container, Inventory playerInventory, Component title) {
+		super(container, playerInventory, title);
+		addEditBox(xCoordField = new ScreenComponentEditBox(122, 10, 48, 15, getFontRenderer()).setTextColor(-1).setTextColorUneditable(-1).setMaxLength(6).setResponder(this::setX).setFilter(ScreenComponentEditBox.INTEGER));
+		addEditBox(yCoordField = new ScreenComponentEditBox(122, 28, 48, 15, getFontRenderer()).setTextColor(-1).setTextColorUneditable(-1).setMaxLength(6).setResponder(this::setY).setFilter(ScreenComponentEditBox.INTEGER));
+		addEditBox(zCoordField = new ScreenComponentEditBox(122, 46, 48, 15, getFontRenderer()).setTextColor(-1).setTextColorUneditable(-1).setMaxLength(6).setResponder(this::setZ).setFilter(ScreenComponentEditBox.INTEGER));
+		addEditBox(frequencyField = new ScreenComponentEditBox(122, 64, 48, 15, getFontRenderer()).setTextColor(-1).setTextColorUneditable(-1).setMaxLength(6).setResponder(this::setFrequency).setFilter(ScreenComponentEditBox.INTEGER));
+
+		addComponent(new ScreenComponentSimpleLabel(inventoryLabelX, inventoryLabelY - 55, 10, 4210752, BallistixTextUtils.gui("missilesilo.missile")));
+		addComponent(new ScreenComponentSimpleLabel(inventoryLabelX, inventoryLabelY - 20, 10, 4210752, BallistixTextUtils.gui("missilesilo.explosive")));
+		addComponent(new ScreenComponentSimpleLabel(79, 13, 10, 4210752, BallistixTextUtils.gui("missilesilo.x")));
+		addComponent(new ScreenComponentSimpleLabel(79, 31, 10, 4210752, BallistixTextUtils.gui("missilesilo.y")));
+		addComponent(new ScreenComponentSimpleLabel(79, 49, 10, 4210752, BallistixTextUtils.gui("missilesilo.z")));
+		addComponent(new ScreenComponentSimpleLabel(79, 67, 10, 4210752, BallistixTextUtils.gui("missilesilo.freq")));
+	}
+
+	private void setSiloTargetX(String coord) {
+
+		if (coord.isEmpty()) {
+			return;
 		}
+
+		TileMissileSilo silo = menu.getHostFromIntArray();
+
+		if (silo == null) {
+			return;
+		}
+
+		int x = silo.target.get().getX();
+
+		try {
+			x = Integer.parseInt(coord);
+		} catch (Exception e) {
+			// Filler
+		}
+
+		updateSiloCoords(x, silo.target.get().getY(), silo.target.get().getZ(), silo);
+
+	}
+
+	private void setSiloTargetY(String coord) {
+
+		if (coord.isEmpty()) {
+			return;
+		}
+
+		TileMissileSilo silo = menu.getHostFromIntArray();
+
+		if (silo == null) {
+			return;
+		}
+
+		int y = silo.target.get().getY();
+
+		try {
+			y = Integer.parseInt(coord);
+		} catch (Exception e) {
+			// Filler
+		}
+
+		updateSiloCoords(silo.target.get().getX(), y, silo.target.get().getZ(), silo);
+
+	}
+
+	private void setSiloTargetZ(String coord) {
+
+		if (coord.isEmpty()) {
+			return;
+		}
+
+		TileMissileSilo silo = menu.getHostFromIntArray();
+
+		if (silo == null) {
+			return;
+		}
+
+		int z = silo.target.get().getZ();
+
+		try {
+			z = Integer.parseInt(coord);
+		} catch (Exception e) {
+			// Filler
+		}
+
+		updateSiloCoords(silo.target.get().getX(), silo.target.get().getY(), z, silo);
+
+	}
+
+	private void updateSiloCoords(int x, int y, int z, TileMissileSilo silo) {
+
+		silo.target.set(new BlockPos(x, y, z));
+
+		silo.target.updateServer();
+
+	}
+
+	private void setSiloFrequency(String val) {
+
+		if (val.isEmpty()) {
+			return;
+		}
+
+		TileMissileSilo silo = menu.getHostFromIntArray();
+
+		if (silo == null) {
+			return;
+		}
+
+		int frequency = 0;
+
+		try {
+			frequency = Integer.parseInt(val);
+		} catch (Exception e) {
+			// Filler
+		}
+
+		silo.frequency.set(frequency);
+
+		silo.frequency.updateServer();
+
 	}
 
 	private void setFrequency(String val) {
@@ -94,77 +150,46 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 		xCoordField.setFocus(false);
 		yCoordField.setFocus(false);
 		zCoordField.setFocus(false);
-		setCoord(val);
+		setSiloFrequency(val);
 	}
 
 	private void setX(String val) {
 		xCoordField.setFocus(true);
 		yCoordField.setFocus(false);
 		zCoordField.setFocus(false);
-		setCoord(val);
+		frequencyField.setFocus(false);
+		setSiloTargetX(val);
 	}
 
 	private void setY(String val) {
 		yCoordField.setFocus(true);
 		xCoordField.setFocus(false);
 		zCoordField.setFocus(false);
-		setCoord(val);
+		frequencyField.setFocus(false);
+		setSiloTargetY(val);
 	}
 
 	private void setZ(String val) {
 		zCoordField.setFocus(true);
 		yCoordField.setFocus(false);
 		xCoordField.setFocus(false);
-		setCoord(val);
+		frequencyField.setFocus(false);
+		setSiloTargetZ(val);
 	}
 
 	@Override
-	public void resize(Minecraft minecraft, int width, int height) {
-		String s = xCoordField.getValue();
-		String s1 = yCoordField.getValue();
-		String s2 = zCoordField.getValue();
-		String s3 = frequencyField.getValue();
-		init(minecraft, width, height);
-		xCoordField.setValue(s);
-		yCoordField.setValue(s1);
-		zCoordField.setValue(s2);
-		frequencyField.setValue(s3);
-	}
-
-	@Override
-	public void removed() {
-		super.removed();
-		minecraft.keyboardHandler.setSendRepeatsToGui(false);
-	}
-
-	@Override
-	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-		super.render(matrixStack, mouseX, mouseY, partialTicks);
+	public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
+		super.render(stack, mouseX, mouseY, partialTicks);
 		if (needsUpdate) {
 			needsUpdate = false;
 			TileMissileSilo silo = menu.getHostFromIntArray();
-			if (silo != null && silo.target != null) {
-				xCoordField.setValue("" + silo.target.intX());
-				yCoordField.setValue("" + silo.target.intY());
-				zCoordField.setValue("" + silo.target.intZ());
-				frequencyField.setValue("" + silo.frequency);
+			if (silo != null) {
+				xCoordField.setValue("" + silo.target.get().getX());
+				yCoordField.setValue("" + silo.target.get().getY());
+				zCoordField.setValue("" + silo.target.get().getZ());
+				frequencyField.setValue("" + silo.frequency.get());
 			}
 		}
-		xCoordField.render(matrixStack, mouseX, mouseY, partialTicks);
-		yCoordField.render(matrixStack, mouseX, mouseY, partialTicks);
-		zCoordField.render(matrixStack, mouseX, mouseY, partialTicks);
-		frequencyField.render(matrixStack, mouseX, mouseY, partialTicks);
-	}
-
-	@Override
-	protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
-		super.renderLabels(matrixStack, mouseX, mouseY);
-		font.draw(matrixStack, new TranslatableComponent("gui.missilesilo.missile"), inventoryLabelX, inventoryLabelY - 55.0f, 4210752);
-		font.draw(matrixStack, new TranslatableComponent("gui.missilesilo.explosive"), inventoryLabelX, inventoryLabelY - 20.0f, 4210752);
-		font.draw(matrixStack, new TranslatableComponent("gui.missilesilo.x"), 79, 13f, 4210752);
-		font.draw(matrixStack, new TranslatableComponent("gui.missilesilo.y"), 79, 13f + 18, 4210752);
-		font.draw(matrixStack, new TranslatableComponent("gui.missilesilo.z"), 79, 13f + 18 * 2, 4210752);
-		font.draw(matrixStack, new TranslatableComponent("gui.missilesilo.freq"), 79, 13f + 18 * 3, 4210752);
 	}
 
 }

@@ -1,9 +1,5 @@
 package ballistix.common.block;
 
-import java.util.Arrays;
-import java.util.List;
-
-import ballistix.DeferredRegisters;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityExplosive;
 import net.minecraft.core.BlockPos;
@@ -27,8 +23,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.storage.loot.LootContext.Builder;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -37,7 +31,7 @@ public class BlockExplosive extends Block {
 	public final SubtypeBlast explosive;
 
 	public BlockExplosive(SubtypeBlast explosive) {
-		super(BlockBehaviour.Properties.of(Material.EXPLOSIVE).instabreak().sound(SoundType.GRASS).noOcclusion().isRedstoneConductor((a, b, c) -> false));
+		super(BlockBehaviour.Properties.copy(Blocks.TNT).instabreak().sound(SoundType.GRASS).noOcclusion().isRedstoneConductor((a, b, c) -> false));
 		this.explosive = explosive;
 	}
 
@@ -91,11 +85,6 @@ public class BlockExplosive extends Block {
 			worldIn.addFreshEntity(explosiveEntity);
 			worldIn.playSound((Player) null, explosiveEntity.getX(), explosiveEntity.getY(), explosiveEntity.getZ(), SoundEvents.TNT_PRIMED, SoundSource.BLOCKS, 1.0F, 1.0F);
 		}
-	}
-
-	@Override
-	public List<ItemStack> getDrops(BlockState state, Builder builder) {
-		return Arrays.asList(new ItemStack(DeferredRegisters.SUBTYPEBLOCKREGISTER_MAPPINGS.get(explosive).get()));
 	}
 
 	@Override

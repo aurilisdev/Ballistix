@@ -2,6 +2,7 @@ package ballistix.common.settings;
 
 import electrodynamics.api.configuration.Configuration;
 import electrodynamics.api.configuration.DoubleValue;
+import electrodynamics.api.configuration.IntValue;
 
 @Configuration(name = "Ballistix")
 public class Constants {
@@ -63,4 +64,13 @@ public class Constants {
 	public static double EXPLOSIVE_THERMOBARIC_ENERGY = 45.0;
 	@DoubleValue(def = 10000, comment = "Usage per launch in joules")
 	public static double MISSILESILO_USAGE = 10000;
+	
+	@IntValue(def = 3000, comment = "Set to -1 for unlimited range")
+	public static int CLOSERANGE_MISSILE_RANGE = 3000;
+	@IntValue(def = 10000, comment = "Set to -1 for unlimited range")
+	public static int MEDIUMRANGE_MISSILE_RANGE = 10000;
+	@IntValue(def = -1, comment = "Set to -1 for unlimited range")
+	public static int LONGRANGE_MISSILE_RANGE = -1;
+	
+	
 }

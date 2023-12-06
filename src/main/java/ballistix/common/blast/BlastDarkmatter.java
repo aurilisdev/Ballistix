@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import ballistix.SoundRegister;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
+import ballistix.registers.BallistixSounds;
 import electrodynamics.api.sound.SoundAPI;
 import electrodynamics.prefab.utilities.WorldUtils;
 import net.minecraft.core.BlockPos;
@@ -38,7 +38,7 @@ public class BlastDarkmatter extends Blast {
 			thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null, true);
 			thread.start();
 		} else {
-			SoundAPI.playSound(SoundRegister.SOUND_DARKMATTER.get(), SoundSource.BLOCKS, 1, 1, position);
+			SoundAPI.playSound(BallistixSounds.SOUND_DARKMATTER.get(), SoundSource.BLOCKS, 1, 1, position);
 		}
 	}
 

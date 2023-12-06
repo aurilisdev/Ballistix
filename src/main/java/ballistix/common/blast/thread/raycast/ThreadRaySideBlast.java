@@ -1,6 +1,7 @@
 package ballistix.common.blast.thread.raycast;
 
-import electrodynamics.prefab.block.HashDistanceBlockPos;
+import java.util.Random;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -8,6 +9,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import electrodynamics.prefab.block.HashDistanceBlockPos;
 
 public class ThreadRaySideBlast extends Thread {
 
@@ -46,7 +48,7 @@ public class ThreadRaySideBlast extends Thread {
 					z = orientation.getZ() * explosionRadius;
 				}
 				Vec3 delta = new Vec3(x, y, z).normalize();
-				float power = mainBlast.explosionEnergy - mainBlast.explosionEnergy * world.random.nextFloat() / 2;
+				float power = mainBlast.explosionEnergy - mainBlast.explosionEnergy * new Random().nextFloat() / 2;
 				Vec3 currentVector = new Vec3(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5);
 				BlockPos currentBlockPos = new BlockPos(currentVector);
 				for (float d = 0.3F; power > 0f; power -= d * 0.75F * 5) {

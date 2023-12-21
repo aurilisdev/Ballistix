@@ -1,18 +1,17 @@
 package ballistix.client.guidebook;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ballistix.References;
-import ballistix.client.guidebook.chapters.ChapterBlocks;
 import ballistix.client.guidebook.chapters.ChapterItems;
-import electrodynamics.client.guidebook.utils.ImageWrapperObject;
-import electrodynamics.client.guidebook.utils.components.Chapter;
+import ballistix.client.guidebook.chapters.ChapterMissileSilo;
+import ballistix.prefab.utils.BallistixTextUtils;
 import electrodynamics.client.guidebook.utils.components.Module;
+import electrodynamics.client.guidebook.utils.pagedata.graphics.ImageWrapperObject;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 
 public class ModuleBallistix extends Module {
 
-	private static final ImageWrapperObject LOGO = new ImageWrapperObject(10, 38, 0, 0, 32, 32, 32, 32, References.ID + ":textures/screen/guidebook/ballistixlogo.png");
+	private static final ImageWrapperObject LOGO = new ImageWrapperObject(0, 0, 0, 0, 32, 32, 32, 32, new ResourceLocation(References.ID, "textures/screen/guidebook/ballistixlogo.png"));
 
 	@Override
 	public ImageWrapperObject getLogo() {
@@ -20,21 +19,14 @@ public class ModuleBallistix extends Module {
 	}
 
 	@Override
-	protected List<Chapter> genChapters() {
-		List<Chapter> chapters = new ArrayList<>();
-		chapters.add(new ChapterBlocks());
-		chapters.add(new ChapterItems());
-		return chapters;
+	public MutableComponent getTitle() {
+		return BallistixTextUtils.guidebook(References.ID);
 	}
 
 	@Override
-	public String getTitleCat() {
-		return References.ID;
-	}
-
-	@Override
-	public boolean isFirst() {
-		return false;
+	public void addChapters() {
+		chapters.add(new ChapterMissileSilo(this));
+		chapters.add(new ChapterItems(this));
 	}
 
 }

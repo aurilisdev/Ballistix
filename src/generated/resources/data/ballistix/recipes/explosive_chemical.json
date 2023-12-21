@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PPP",
+    "PDP",
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "tag": "forge:dusts/poison"
+    },
+    "D": {
+      "item": "ballistix:debilitation"
+    }
+  },
+  "result": {
+    "item": "ballistix:chemical"
+  }
+}

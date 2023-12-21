@@ -1,7 +1,7 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "ballistix:item/tracker_16"
+        "layer0": "ballistix:item/tracker/tracker_16"
     },
     "overrides": [
         { "predicate": { "angle": 0.000000 }, "model": "ballistix:item/tracker" },

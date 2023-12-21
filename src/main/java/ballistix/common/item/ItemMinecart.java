@@ -3,6 +3,7 @@ package ballistix.common.item;
 import ballistix.References;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityMinecart;
+import electrodynamics.api.ISubtype;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
@@ -21,11 +22,12 @@ import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.level.gameevent.GameEvent;
 
 public class ItemMinecart extends Item {
-	private SubtypeBlast explosive;
 
-	public ItemMinecart(SubtypeBlast explosive) {
+	private SubtypeMinecart minecart;
+
+	public ItemMinecart(SubtypeMinecart minecart) {
 		super(new Item.Properties().tab(References.BALLISTIXTAB).stacksTo(1));
-		this.explosive = explosive;
+		this.minecart = minecart;
 		DispenserBlock.registerBehavior(this, DISPENSE_ITEM_BEHAVIOR);
 	}
 
@@ -50,7 +52,7 @@ public class ItemMinecart extends Item {
 			if (itemstack.hasCustomHoverName()) {
 				cart.setCustomName(itemstack.getHoverName());
 			}
-			cart.setExplosiveType(explosive);
+			cart.setExplosiveType(minecart);
 
 			level.addFreshEntity(cart);
 			level.gameEvent(context.getPlayer(), GameEvent.ENTITY_PLACE, blockpos);
@@ -61,7 +63,7 @@ public class ItemMinecart extends Item {
 	}
 
 	public SubtypeBlast getExplosive() {
-		return explosive;
+		return minecart.explosiveType;
 	}
 
 	private static final DispenseItemBehavior DISPENSE_ITEM_BEHAVIOR = new DefaultDispenseItemBehavior() {
@@ -103,7 +105,7 @@ public class ItemMinecart extends Item {
 			if (stack.hasCustomHoverName()) {
 				cart.setCustomName(stack.getHoverName());
 			}
-			cart.setExplosiveType(((ItemMinecart) stack.getItem()).explosive);
+			cart.setExplosiveType(((ItemMinecart) stack.getItem()).minecart);
 			level.addFreshEntity(cart);
 			stack.shrink(1);
 			return stack;
@@ -114,4 +116,47 @@ public class ItemMinecart extends Item {
 			source.getLevel().levelEvent(1000, source.getPos(), 0);
 		}
 	};
+
+	public enum SubtypeMinecart implements ISubtype {
+		obsidian(SubtypeBlast.obsidian),
+		condensive(SubtypeBlast.condensive),
+		attractive(SubtypeBlast.attractive),
+		repulsive(SubtypeBlast.repulsive),
+		incendiary(SubtypeBlast.incendiary),
+		shrapnel(SubtypeBlast.shrapnel),
+		debilitation(SubtypeBlast.debilitation),
+		chemical(SubtypeBlast.chemical),
+		emp(SubtypeBlast.emp),
+		breaching(SubtypeBlast.breaching),
+		thermobaric(SubtypeBlast.thermobaric),
+		contagious(SubtypeBlast.contagious),
+		fragmentation(SubtypeBlast.fragmentation),
+		nuclear(SubtypeBlast.nuclear),
+		antimatter(SubtypeBlast.antimatter),
+		largeantimatter(SubtypeBlast.largeantimatter),
+		darkmatter(SubtypeBlast.darkmatter);
+
+		public final SubtypeBlast explosiveType;
+
+		SubtypeMinecart(SubtypeBlast explosive) {
+			explosiveType = explosive;
+		}
+
+		@Override
+		public String forgeTag() {
+			return "explosive_minecarts/" + name();
+		}
+
+		@Override
+		public boolean isItem() {
+			return true;
+		}
+
+		@Override
+		public String tag() {
+			return "minecart" + name();
+		}
+
+	}
+
 }

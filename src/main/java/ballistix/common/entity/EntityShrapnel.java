@@ -4,8 +4,8 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import ballistix.DeferredRegisters;
 import ballistix.api.damage.DamageSourceShrapnel;
+import ballistix.registers.BallistixEntities;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -32,7 +32,7 @@ public class EntityShrapnel extends ThrowableProjectile {
 	}
 
 	public EntityShrapnel(Level worldIn) {
-		this(DeferredRegisters.ENTITY_SHRAPNEL.get(), worldIn);
+		this(BallistixEntities.ENTITY_SHRAPNEL.get(), worldIn);
 	}
 
 	@Override

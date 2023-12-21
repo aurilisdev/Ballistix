@@ -1,8 +1,8 @@
 package ballistix.common.entity;
 
-import ballistix.DeferredRegisters;
 import ballistix.common.blast.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.registers.BallistixEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -34,7 +34,7 @@ public class EntityMissile extends Entity {
 	}
 
 	public EntityMissile(Level worldIn) {
-		this(DeferredRegisters.ENTITY_MISSILE.get(), worldIn);
+		this(BallistixEntities.ENTITY_MISSILE.get(), worldIn);
 	}
 
 	public void setBlastType(SubtypeBlast explosive) {
@@ -123,17 +123,17 @@ public class EntityMissile extends Entity {
 				float x = (float) (getX() - getDimensions(getPose()).width / 1.0f);
 				float y = (float) (getY() + getDimensions(getPose()).height / 1.0f);
 				float z = (float) (getZ() - getDimensions(getPose()).width / 1.0f);
-				level.addParticle(ParticleTypes.LARGE_SMOKE, x + ranX, y + ranY, z + ranZ, -getDeltaMovement().x + ranX, -getDeltaMovement().y - 0.075f + ranY, -getDeltaMovement().z + ranZ);
+				level.addParticle(ParticleTypes.LARGE_SMOKE, x - 0.5 + ranX, y + ranY, z - 0.5 + ranZ, -getDeltaMovement().x + ranX, -getDeltaMovement().y - 0.075f + ranY, -getDeltaMovement().z + ranZ);
 
 			}
 			float motionX = (float) -getDeltaMovement().x;
 			float motionY = (float) -getDeltaMovement().y;
 			float motionZ = (float) -getDeltaMovement().z;
 			for (int i = 0; i < 4; i++) {
-				level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, false, this.getX(), this.getY(), this.getZ(), random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
+				level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, false, this.getX() - 0.5, this.getY(), this.getZ() - 0.5, random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
 			}
 			for (int i = 0; i < 4; i++) {
-				level.addParticle(ParticleTypes.CLOUD, false, this.getX(), this.getY(), this.getZ(), random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
+				level.addParticle(ParticleTypes.CLOUD, false, this.getX() - 0.5, this.getY(), this.getZ() - 0.5, random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
 			}
 		}
 	}

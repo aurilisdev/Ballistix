@@ -1,9 +1,11 @@
 package ballistix.common.entity;
 
-import ballistix.DeferredRegisters;
 import ballistix.api.entity.IDefusable;
 import ballistix.common.blast.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.common.item.ItemGrenade.SubtypeGrenade;
+import ballistix.registers.BallistixBlocks;
+import ballistix.registers.BallistixEntities;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -21,24 +23,24 @@ import net.minecraftforge.network.NetworkHooks;
 public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 	private static final EntityDataAccessor<Integer> FUSE = SynchedEntityData.defineId(EntityGrenade.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(EntityGrenade.class, EntityDataSerializers.INT);
-	public int blastOrdinal = -1;
-	public int fuse = 80;
+	private int grenadeOrdinal = -1;
+	private int fuse = 80;
 
 	public EntityGrenade(EntityType<? extends EntityGrenade> type, Level worldIn) {
 		super(type, worldIn);
 	}
 
 	public EntityGrenade(Level worldIn) {
-		this(DeferredRegisters.ENTITY_GRENADE.get(), worldIn);
+		this(BallistixEntities.ENTITY_GRENADE.get(), worldIn);
 	}
 
-	public void setExplosiveType(SubtypeBlast explosive) {
-		blastOrdinal = explosive.ordinal();
-		fuse = explosive.fuse;
+	public void setExplosiveType(SubtypeGrenade explosive) {
+		grenadeOrdinal = explosive.ordinal();
+		fuse = explosive.explosiveType.fuse;
 	}
 
-	public SubtypeBlast getExplosiveType() {
-		return blastOrdinal == -1 ? null : SubtypeBlast.values()[blastOrdinal];
+	public SubtypeGrenade getExplosiveType() {
+		return grenadeOrdinal == -1 ? null : SubtypeGrenade.values()[grenadeOrdinal];
 	}
 
 	@Override
@@ -50,9 +52,9 @@ public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 	@Override
 	public void defuse() {
 		remove(RemovalReason.DISCARDED);
-		if (blastOrdinal != -1) {
-			SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
-			ItemEntity item = new ItemEntity(level, getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(DeferredRegisters.SUBTYPEBLOCKREGISTER_MAPPINGS.get(explosive).get()));
+		if (grenadeOrdinal != -1) {
+			SubtypeBlast explosive = SubtypeGrenade.values()[grenadeOrdinal].explosiveType;
+			ItemEntity item = new ItemEntity(level, getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(BallistixBlocks.SUBTYPEBLOCKREGISTER_MAPPINGS.get(explosive).get()));
 			level.addFreshEntity(item);
 		}
 	}
@@ -65,10 +67,10 @@ public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 	@Override
 	public void tick() {
 		if (!level.isClientSide) {
-			entityData.set(TYPE, blastOrdinal);
+			entityData.set(TYPE, grenadeOrdinal);
 			entityData.set(FUSE, fuse);
 		} else {
-			blastOrdinal = entityData.get(TYPE);
+			grenadeOrdinal = entityData.get(TYPE);
 			fuse = entityData.get(FUSE);
 		}
 		if (!isNoGravity()) {
@@ -83,8 +85,8 @@ public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 		--fuse;
 		if (fuse <= 0) {
 			remove(RemovalReason.DISCARDED);
-			if (blastOrdinal != -1) {
-				SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
+			if (grenadeOrdinal != -1) {
+				SubtypeBlast explosive = SubtypeGrenade.values()[grenadeOrdinal].explosiveType;
 				Blast b = Blast.createFromSubtype(explosive, level, blockPosition());
 				if (b != null) {
 					b.performExplosion();
@@ -101,13 +103,13 @@ public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 	@Override
 	protected void addAdditionalSaveData(CompoundTag compound) {
 		compound.putInt("Fuse", fuse);
-		compound.putInt("type", blastOrdinal);
+		compound.putInt("type", grenadeOrdinal);
 	}
 
 	@Override
 	protected void readAdditionalSaveData(CompoundTag compound) {
 		fuse = compound.getInt("Fuse");
-		blastOrdinal = compound.getInt("type");
+		grenadeOrdinal = compound.getInt("type");
 	}
 
 	@Override

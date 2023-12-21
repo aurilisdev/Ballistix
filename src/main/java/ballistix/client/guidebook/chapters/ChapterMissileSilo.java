@@ -34,7 +34,7 @@ public class ChapterMissileSilo extends Chapter {
 		pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missilesilo.l1")).setIndentions(1).setSeparateStart());
 		pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missilesilo.range", BallistixTextUtils.guidebook("chapter.missilesilo.close"), 3000)).setIndentions(1).setSeparateStart());
 		pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missilesilo.range", BallistixTextUtils.guidebook("chapter.missilesilo.medium"), 10000)).setIndentions(1).setSeparateStart());
-		pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missilesilo.range", BallistixTextUtils.guidebook("chapter.missilesilo.close"), BallistixTextUtils.guidebook("chapter.missilesilo.unlimited"))).setIndentions(1).setSeparateStart());
+		pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missilesilo.range", BallistixTextUtils.guidebook("chapter.missilesilo.long"), BallistixTextUtils.guidebook("chapter.missilesilo.unlimited"))).setIndentions(1).setSeparateStart());
 		pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missilesilo.l2")).setSeparateStart());
 		pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missilesilo.l3")).setIndentions(1).setSeparateStart());
 		pageData.add(new ImageWrapperObject(0, 0, 0, 0, 150, 75, 150, 79, new ResourceLocation(References.ID, "textures/screen/guidebook/silo1.png")));

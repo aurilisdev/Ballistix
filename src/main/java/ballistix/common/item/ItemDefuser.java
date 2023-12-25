@@ -14,10 +14,7 @@ import net.minecraft.item.Items;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteractSpecific;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
-@EventBusSubscriber(modid = References.ID, bus = Bus.FORGE)
 public class ItemDefuser extends ItemElectric {
 
 	public ItemDefuser() {

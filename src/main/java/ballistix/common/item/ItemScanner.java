@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import ballistix.References;
+import ballistix.common.event.ServerEventHandler;
 import ballistix.prefab.utils.BallistixTextUtils;
 import electrodynamics.prefab.item.ElectricItemProperties;
 import electrodynamics.prefab.item.ItemElectric;
@@ -28,7 +29,7 @@ public class ItemScanner extends ItemElectric {
 	public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
 		boolean action = false;
 		ItemStack stack = playerIn.getItemInHand(handIn);
-		for (Entry<ServerWorld, HashSet<Integer>> en : ItemTracker.validuuids.entrySet()) {
+		for (Entry<ServerWorld, HashSet<Integer>> en : ServerEventHandler.getTrackedData()) {
 			Iterator<Integer> it = en.getValue().iterator();
 			while (it.hasNext()) {
 				int uuid = it.next();

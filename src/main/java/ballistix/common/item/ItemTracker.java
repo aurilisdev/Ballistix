@@ -1,14 +1,10 @@
 package ballistix.common.item;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
-
 import javax.annotation.Nullable;
 
 import ballistix.References;
+import ballistix.common.event.ServerEventHandler;
 import ballistix.prefab.utils.BallistixTextUtils;
 import electrodynamics.prefab.item.ElectricItemProperties;
 import electrodynamics.prefab.item.ItemElectric;
@@ -31,22 +27,13 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.TickEvent.ServerTickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
-@EventBusSubscriber(modid = References.ID, bus = Bus.FORGE)
 public class ItemTracker extends ItemElectric {
 
 	public static final String X = "target_x";
 	public static final String Z = "target_z";
 
 	public static final String UUID = "uuid";
-
-	public static HashMap<ServerWorld, HashSet<Integer>> validuuids = new HashMap<>();
 
 	public ItemTracker() {
 		super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1).tab(References.BALLISTIXTAB));
@@ -72,7 +59,7 @@ public class ItemTracker extends ItemElectric {
 			ServerWorld slevel = (ServerWorld) level;
 			if ((selected || entity instanceof PlayerEntity && ((PlayerEntity) entity).getOffhandItem() == stack) && hasTarget(stack)) {
 				int uuid = getUUID(stack);
-				if (validuuids.containsKey(level) && validuuids.get(level).contains(uuid)) {
+				if (ServerEventHandler.isTracked(slevel, uuid)) {
 					Entity ent = slevel.getEntity(uuid);
 					if (ent != null) {
 						setX(stack, ent.position().x);
@@ -92,9 +79,7 @@ public class ItemTracker extends ItemElectric {
 			PlayerInventory inv = player.inventory;
 			inv.removeItem(stack);
 			setUUID(stack, entity.getId());
-			HashSet<Integer> set = validuuids.getOrDefault(server, new HashSet<>());
-			set.add(entity.getId());
-			validuuids.put(server, set);
+			ServerEventHandler.addTracked(server, entity.getId());
 			if (hand == Hand.MAIN_HAND) {
 				inv.setItem(inv.selected, stack);
 			} else {
@@ -145,7 +130,6 @@ public class ItemTracker extends ItemElectric {
 		return stack.getOrCreateTag().contains(UUID);
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public static float getAngle(ItemStack stack, @Nullable ClientWorld level, @Nullable LivingEntity entity) {
 		Entity sourceEntity = entity != null ? (Entity) entity : stack.getEntityRepresentation();
 		if (sourceEntity == null) {
@@ -181,17 +165,4 @@ public class ItemTracker extends ItemElectric {
 		return slotChanged || !oldStack.getItem().equals(newStack.getItem());
 	}
 
-	@SubscribeEvent
-	public static void tick(ServerTickEvent event) {
-		for (Entry<ServerWorld, HashSet<Integer>> en : validuuids.entrySet()) {
-			Iterator<Integer> it = en.getValue().iterator();
-			while (it.hasNext()) {
-				int uuid = it.next();
-				Entity ent = en.getKey().getEntity(uuid);
-				if (ent == null || ent.isAlive()) {
-					it.remove();
-				}
-			}
-		}
-	}
 }

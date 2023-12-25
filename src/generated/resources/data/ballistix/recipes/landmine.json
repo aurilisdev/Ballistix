@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "P",
+    "R",
+    "F"
+  ],
+  "key": {
+    "P": {
+      "item": "minecraft:stone_pressure_plate"
+    },
+    "R": {
+      "tag": "forge:dusts/redstone"
+    },
+    "F": {
+      "item": "ballistix:fragmentation"
+    }
+  },
+  "result": {
+    "item": "ballistix:landmine"
+  }
+}

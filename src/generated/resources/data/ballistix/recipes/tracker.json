@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " C ",
+    "PBP",
+    "PAP"
+  ],
+  "key": {
+    "P": {
+      "tag": "forge:plates/steel"
+    },
+    "A": {
+      "tag": "forge:circuits/advanced"
+    },
+    "B": {
+      "item": "electrodynamics:battery"
+    },
+    "C": {
+      "item": "minecraft:compass"
+    }
+  },
+  "result": {
+    "item": "ballistix:tracker"
+  }
+}

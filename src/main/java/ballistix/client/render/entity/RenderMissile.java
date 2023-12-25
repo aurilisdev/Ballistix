@@ -24,54 +24,54 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class RenderMissile extends EntityRenderer<EntityMissile> {
 
-    public RenderMissile(EntityRendererManager renderManagerIn) {
-	super(renderManagerIn);
-	shadowSize = 0.15F;
-	shadowOpaque = 0.75F;
-    }
-
-    @Override
-    @Deprecated
-    public void render(EntityMissile entity, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn,
-	    int packedLightIn) {
-	int type = entity.range;
-	World world = entity.world;
-	matrixStackIn.push();
-	matrixStackIn.rotate(new Quaternion(new Vector3f(0, 1, 0), entity.rotationYaw + 90.0F, true));
-	matrixStackIn.rotate(new Quaternion(new Vector3f(0, 0, 1), 90 - entity.rotationPitch, true));
-	if (type == 1) {
-	    IBakedModel closerange = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILEMEDIUMRANGE);
-	    matrixStackIn.translate(0.5f, 2.6f, 0.5f);
-	    matrixStackIn.scale(1.5f, 2.5f, 1.5f);
-	    Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelRenderer().renderModelFlat(world, closerange,
-		    Blocks.AIR.getDefaultState(), entity.getPosition(), matrixStackIn, bufferIn.getBuffer(RenderType.getSolid()), false, world.rand,
-		    new Random().nextLong(), 0);
-	} else if (type == 0) {
-	    IBakedModel closerange = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILECLOSERANGE);
-	    matrixStackIn.translate(0.5f, 1.5f, 0.5f);
-	    matrixStackIn.scale(1.25f, 1.5f, 1.25f);
-	    Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelRenderer().renderModelFlat(world, closerange,
-		    Blocks.AIR.getDefaultState(), entity.getPosition(), matrixStackIn, bufferIn.getBuffer(RenderType.getSolid()), false, world.rand,
-		    new Random().nextLong(), 0);
-	} else if (type == 2) {
-	    IBakedModel closerange = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILELONGRANGE);
-	    matrixStackIn.translate(0.5f, 4, 0.5f);
-	    matrixStackIn.scale(2f, 4f, 2f);
-	    Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelRenderer().renderModelFlat(world, closerange,
-		    Blocks.AIR.getDefaultState(), entity.getPosition(), matrixStackIn, bufferIn.getBuffer(RenderType.getSolid()), false, world.rand,
-		    new Random().nextLong(), 0);
+	public RenderMissile(EntityRendererManager renderManagerIn) {
+		super(renderManagerIn);
+		shadowRadius = 0.15F;
+		shadowStrength = 0.75F;
 	}
-	matrixStackIn.pop();
-    }
 
-    @Override
-    public boolean shouldRender(EntityMissile livingEntityIn, ClippingHelper camera, double camX, double camY, double camZ) {
-	return true;
-    }
+	@Override
+	public void render(EntityMissile entity, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
+		int type = entity.range;
+		World world = entity.level;
+		matrixStackIn.pushPose();
+		matrixStackIn.mulPose(new Quaternion(new Vector3f(0, 1, 0), entity.yRot + 90.0F, true));
+		matrixStackIn.mulPose(new Quaternion(new Vector3f(0, 0, 1), 90 - entity.xRot, true));
+		switch (type) {
+		case 1: {
+			IBakedModel closerange = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILEMEDIUMRANGE);
+			matrixStackIn.translate(0.5f, 2.6f, 0.5f);
+			matrixStackIn.scale(1.5f, 2.5f, 1.5f);
+			Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateWithoutAO(world, closerange, Blocks.AIR.defaultBlockState(), entity.blockPosition(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, world.random, new Random().nextLong(), 0);
+			break;
+		}
+		case 0: {
+			IBakedModel closerange = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILECLOSERANGE);
+			matrixStackIn.translate(0.5f, 1.5f, 0.5f);
+			matrixStackIn.scale(1.25f, 1.5f, 1.25f);
+			Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateWithoutAO(world, closerange, Blocks.AIR.defaultBlockState(), entity.blockPosition(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, world.random, new Random().nextLong(), 0);
+			break;
+		}
+		case 2: {
+			IBakedModel closerange = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILELONGRANGE);
+			matrixStackIn.translate(0.5f, 4, 0.5f);
+			matrixStackIn.scale(2f, 4f, 2f);
+			Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateWithoutAO(world, closerange, Blocks.AIR.defaultBlockState(), entity.blockPosition(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, world.random, new Random().nextLong(), 0);
+			break;
+		}
+		default:
+			break;
+		}
+		matrixStackIn.popPose();
+	}
 
-    @Override
-    @Deprecated
-    public ResourceLocation getEntityTexture(EntityMissile entity) {
-	return AtlasTexture.LOCATION_BLOCKS_TEXTURE;
-    }
+	@Override
+	public boolean shouldRender(EntityMissile livingEntityIn, ClippingHelper camera, double camX, double camY, double camZ) {
+		return true;
+	}
+
+	@Override
+	public ResourceLocation getTextureLocation(EntityMissile entity) {
+		return AtlasTexture.LOCATION_BLOCKS;
+	}
 }

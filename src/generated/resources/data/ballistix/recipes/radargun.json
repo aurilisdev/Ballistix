@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GCS",
+    " BS",
+    " AS"
+  ],
+  "key": {
+    "A": {
+      "item": "electrodynamics:battery"
+    },
+    "B": {
+      "item": "minecraft:stone_button"
+    },
+    "C": {
+      "tag": "forge:circuits/basic"
+    },
+    "S": {
+      "tag": "forge:ingots/steel"
+    },
+    "G": {
+      "tag": "forge:glass"
+    }
+  },
+  "result": {
+    "item": "ballistix:radargun"
+  }
+}

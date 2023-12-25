@@ -1,11 +1,16 @@
 package ballistix.common.entity;
 
-import ballistix.DeferredRegisters;
+import ballistix.api.entity.IDefusable;
 import ballistix.common.blast.Blast;
-import ballistix.common.block.SubtypeBlast;
+import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.common.item.ItemGrenade.SubtypeGrenade;
+import ballistix.registers.BallistixBlocks;
+import ballistix.registers.BallistixEntities;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MoverType;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.projectile.ThrowableEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
@@ -15,85 +20,101 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
-public class EntityGrenade extends ThrowableEntity {
-    private static final DataParameter<Integer> FUSE = EntityDataManager.createKey(EntityGrenade.class, DataSerializers.VARINT);
-    private static final DataParameter<Integer> TYPE = EntityDataManager.createKey(EntityGrenade.class, DataSerializers.VARINT);
-    public int blastOrdinal = -1;
-    public int fuse = 80;
+public class EntityGrenade extends ThrowableEntity implements IDefusable {
 
-    public EntityGrenade(EntityType<? extends EntityGrenade> type, World worldIn) {
-	super(type, worldIn);
-    }
+	private static final DataParameter<Integer> FUSE = EntityDataManager.defineId(EntityGrenade.class, DataSerializers.INT);
+	private static final DataParameter<Integer> TYPE = EntityDataManager.defineId(EntityGrenade.class, DataSerializers.INT);
+	private int grenadeOrdinal = -1;
+	public int fuse = 80;
 
-    public EntityGrenade(World worldIn) {
-	this(DeferredRegisters.ENTITY_GRENADE.get(), worldIn);
-    }
-
-    public void setShrapnelType(SubtypeBlast explosive) {
-	blastOrdinal = explosive.ordinal();
-	fuse = explosive.fuse;
-    }
-
-    public SubtypeBlast getExplosiveType() {
-	return blastOrdinal == -1 ? null : SubtypeBlast.values()[blastOrdinal];
-    }
-
-    @Override
-    protected void registerData() {
-	dataManager.register(FUSE, 80);
-	dataManager.register(TYPE, -1);
-    }
-
-    @Override
-    public void tick() {
-	if (!world.isRemote) {
-	    dataManager.set(TYPE, blastOrdinal);
-	    dataManager.set(FUSE, fuse);
-	} else {
-	    blastOrdinal = dataManager.get(TYPE);
-	    fuse = dataManager.get(FUSE);
-	}
-	if (!hasNoGravity()) {
-	    this.setMotion(getMotion().add(0.0D, -0.04D, 0.0D));
+	public EntityGrenade(EntityType<? extends EntityGrenade> type, World worldIn) {
+		super(type, worldIn);
 	}
 
-	move(MoverType.SELF, getMotion());
-	this.setMotion(getMotion().scale(0.98D));
-	if (onGround) {
-	    this.setMotion(getMotion().mul(0.7D, -0.5D, 0.7D));
+	public EntityGrenade(World worldIn) {
+		this(BallistixEntities.ENTITY_GRENADE.get(), worldIn);
 	}
-	--fuse;
-	if (fuse <= 0) {
-	    this.remove();
-	    if (blastOrdinal != -1) {
-		SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
-		Blast b = Blast.createFromSubtype(explosive, world, getPosition());
-		if (b != null) {
-		    b.performExplosion();
+
+	public void setExplosiveType(SubtypeGrenade explosive) {
+		grenadeOrdinal = explosive.ordinal();
+		fuse = explosive.explosiveType.fuse;
+	}
+
+	public SubtypeGrenade getExplosiveType() {
+		return grenadeOrdinal == -1 ? null : SubtypeGrenade.values()[grenadeOrdinal];
+	}
+
+	@Override
+	protected void defineSynchedData() {
+		entityData.define(FUSE, 80);
+		entityData.define(TYPE, -1);
+	}
+
+	@Override
+	public void defuse() {
+		remove(false);
+		if (grenadeOrdinal != -1) {
+			SubtypeBlast explosive = SubtypeGrenade.values()[grenadeOrdinal].explosiveType;
+			ItemEntity item = new ItemEntity(level, blockPosition().getX() + 0.5, blockPosition().getY() + 0.5, blockPosition().getZ() + 0.5, new ItemStack(BallistixBlocks.SUBTYPEBLOCKREGISTER_MAPPINGS.get(explosive).get()));
+			level.addFreshEntity(item);
 		}
-	    }
-	} else {
-	    func_233566_aG_();
-	    if (world.isRemote) {
-		world.addParticle(ParticleTypes.SMOKE, getPosX(), getPosY() + 0.5D, getPosZ(), 0.0D, 0.0D, 0.0D);
-	    }
 	}
-    }
 
-    @Override
-    protected void writeAdditional(CompoundNBT compound) {
-	compound.putInt("Fuse", fuse);
-	compound.putInt("type", blastOrdinal);
-    }
+	@Override
+	public boolean isPickable() {
+		return !isAlive();
+	}
 
-    @Override
-    protected void readAdditional(CompoundNBT compound) {
-	fuse = compound.getInt("Fuse");
-	blastOrdinal = compound.getInt("type");
-    }
+	@Override
+	public void tick() {
+		if (!level.isClientSide) {
+			entityData.set(TYPE, grenadeOrdinal);
+			entityData.set(FUSE, fuse);
+		} else {
+			grenadeOrdinal = entityData.get(TYPE);
+			fuse = entityData.get(FUSE);
+		}
+		if (!isNoGravity()) {
+			this.setDeltaMovement(getDeltaMovement().add(0.0D, -0.04D, 0.0D));
+		}
 
-    @Override
-    public IPacket<?> createSpawnPacket() {
-	return NetworkHooks.getEntitySpawningPacket(this);
-    }
+		move(MoverType.SELF, getDeltaMovement());
+		this.setDeltaMovement(getDeltaMovement().scale(0.98D));
+		if (onGround) {
+			this.setDeltaMovement(getDeltaMovement().multiply(0.7D, -0.5D, 0.7D));
+		}
+		--fuse;
+		if (fuse <= 0) {
+			remove(false);
+			if (grenadeOrdinal != -1) {
+				SubtypeBlast explosive = SubtypeGrenade.values()[grenadeOrdinal].explosiveType;
+				Blast b = Blast.createFromSubtype(explosive, level, blockPosition());
+				if (b != null) {
+					b.performExplosion();
+				}
+			}
+		} else {
+			updateInWaterStateAndDoFluidPushing();
+			if (level.isClientSide) {
+				level.addParticle(ParticleTypes.SMOKE, getX(), getY() + 0.5D, getZ(), 0.0D, 0.0D, 0.0D);
+			}
+		}
+	}
+
+	@Override
+	protected void addAdditionalSaveData(CompoundNBT compound) {
+		compound.putInt("Fuse", fuse);
+		compound.putInt("type", grenadeOrdinal);
+	}
+
+	@Override
+	protected void readAdditionalSaveData(CompoundNBT compound) {
+		fuse = compound.getInt("Fuse");
+		grenadeOrdinal = compound.getInt("type");
+	}
+
+	@Override
+	public IPacket<?> getAddEntityPacket() {
+		return NetworkHooks.getEntitySpawningPacket(this);
+	}
 }

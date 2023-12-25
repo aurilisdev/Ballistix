@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " C ",
+    "CRC",
+    " C "
+  ],
+  "key": {
+    "R": {
+      "item": "minecraft:rotten_flesh"
+    },
+    "C": {
+      "item": "ballistix:chemical"
+    }
+  },
+  "result": {
+    "item": "ballistix:contagious"
+  }
+}

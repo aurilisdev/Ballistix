@@ -4,16 +4,17 @@ import java.util.List;
 
 import ballistix.References;
 import ballistix.common.tile.TileMissileSilo;
+import ballistix.prefab.utils.BallistixTextUtils;
 import electrodynamics.common.tile.TileMultiSubnode;
 import electrodynamics.prefab.item.ElectricItemProperties;
 import electrodynamics.prefab.item.ItemElectric;
-import electrodynamics.prefab.utilities.UtilitiesMath;
+import electrodynamics.prefab.utilities.math.MathUtils;
 import electrodynamics.prefab.utilities.object.Location;
 import electrodynamics.prefab.utilities.object.TransferPack;
+import electrodynamics.registers.ElectrodynamicsItems;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
@@ -21,88 +22,106 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 
 public class ItemRadarGun extends ItemElectric {
 
-    public ItemRadarGun() {
-	super((ElectricItemProperties) new ElectricItemProperties().capacity(10000).receive(TransferPack.joulesVoltage(500, 120))
-		.extract(TransferPack.joulesVoltage(500, 120)).maxStackSize(1).group(References.BALLISTIXTAB));
-    }
+	public static final double USAGE = 150.0;
 
-    @Override
-    public ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext context) {
-	TileEntity ent = context.getWorld().getTileEntity(context.getPos());
-	TileMissileSilo silo = ent instanceof TileMissileSilo ? (TileMissileSilo) ent : null;
-	if (ent instanceof TileMultiSubnode) {
-	    TileMultiSubnode node = (TileMultiSubnode) ent;
-	    TileEntity core = node.nodePos.getTile(node.getWorld());
-	    if (core instanceof TileMissileSilo) {
-		silo = (TileMissileSilo) core;
-	    }
+	public ItemRadarGun() {
+		super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1).tab(References.BALLISTIXTAB));
 	}
-	if (silo != null) {
-	    CompoundNBT nbt = stack.getOrCreateTag();
-	    int x = nbt.getInt("xCoord");
-	    int y = nbt.getInt("yCoord");
-	    int z = nbt.getInt("zCoord");
-	    silo.target = new Location(x, y, z);
-	}
-	return super.onItemUseFirst(stack, context);
-    }
 
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-	Location trace = UtilitiesMath.getRaytracedBlock(playerIn);
-	if (trace != null) {
-	    CompoundNBT nbt = playerIn.getItemStackFromSlot(handIn == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND)
-		    .getOrCreateTag();
-	    nbt.putInt("xCoord", trace.intX());
-	    nbt.putInt("yCoord", trace.intY());
-	    nbt.putInt("zCoord", trace.intZ());
-	    nbt.putString("world", worldIn.getDimensionKey().getLocation().getPath());
-	    extractPower(playerIn.getItemStackFromSlot(handIn == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND), 150,
-		    false);
+	@Override
+	public ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext context) {
+		if (context.getLevel().isClientSide) {
+			return super.onItemUseFirst(stack, context);
+		}
+		TileEntity ent = context.getLevel().getBlockEntity(context.getClickedPos());
+		TileMissileSilo silo = ent instanceof TileMissileSilo ? (TileMissileSilo) ent : null;
+		if (ent instanceof TileMultiSubnode) {
+			TileMultiSubnode node = (TileMultiSubnode) ent;
+			TileEntity core = node.getLevel().getBlockEntity(node.parentPos.get().toBlockPos());
+			if (core instanceof TileMissileSilo) {
+				silo = (TileMissileSilo) core;
+			}
+		}
+		if (silo != null) {
+			silo.target.set(getCoordiantes(stack));
+		}
+		return super.onItemUseFirst(stack, context);
 	}
-	return super.onItemRightClick(worldIn, playerIn, handIn);
-    }
 
-    public static ServerWorld getFromNBT(ServerWorld base, String str) {
-	for (ServerWorld world : base.getWorld().getServer().getWorlds()) {
-	    if (world.getDimensionKey().getLocation().getPath().equalsIgnoreCase(str)) {
-		return world;
-	    }
-	}
-	return null;
-    }
+	@Override
+	public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
 
-    @Override
-    public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-	super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
-	Location trace = UtilitiesMath.getRaytracedBlock(entityIn);
-	if (!worldIn.isRemote && entityIn instanceof PlayerEntity) {
-	    PlayerEntity player = (PlayerEntity) entityIn;
-	    if (isSelected && trace != null) {
-		player.sendStatusMessage(new TranslationTextComponent("message.radargun.text", trace.toString()), true);
-	    }
-	}
-    }
+		if (worldIn.isClientSide) {
+			return super.use(worldIn, playerIn, handIn);
+		}
 
-    @Override
-    public void addInformation(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-	super.addInformation(stack, worldIn, tooltip, flagIn);
-	if (stack.hasTag()) {
-	    CompoundNBT nbt = stack.getTag();
-	    int x = nbt.getInt("xCoord");
-	    int y = nbt.getInt("yCoord");
-	    int z = nbt.getInt("zCoord");
-	    String world = nbt.getString("world");
-	    tooltip.add(new TranslationTextComponent("tooltip.radargun.linked", world + ", " + x + ", " + y + ", " + z));
-	} else {
-	    tooltip.add(new TranslationTextComponent("tooltip.radargun.notag"));
+		Location trace = MathUtils.getRaytracedBlock(playerIn);
+
+		if (trace == null) {
+			return super.use(worldIn, playerIn, handIn);
+		}
+
+		ItemStack radarGun = playerIn.getItemInHand(handIn);
+
+		if (getJoulesStored(radarGun) < USAGE) {
+			return super.use(worldIn, playerIn, handIn);
+		}
+
+		storeCoordiantes(radarGun, trace.toBlockPos());
+
+		extractPower(radarGun, USAGE, false);
+
+		return super.use(worldIn, playerIn, handIn);
 	}
-    }
+
+	@Override
+	public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
+
+		if (!worldIn.isClientSide || !isSelected) {
+			return;
+		}
+
+		Location trace = MathUtils.getRaytracedBlock(entityIn);
+
+		if (trace == null) {
+			return;
+		}
+
+		if (entityIn instanceof PlayerEntity) {
+			((PlayerEntity) entityIn).displayClientMessage(BallistixTextUtils.chatMessage("radargun.text", trace.toBlockPos().toShortString()), true);
+		}
+	}
+
+	@Override
+	public void appendHoverText(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+		if (stack.hasTag() && stack.getTag().contains("xCoord")) {
+			tooltip.add(BallistixTextUtils.tooltip("radargun.pos", getCoordiantes(stack).toShortString()));
+		} else {
+			tooltip.add(BallistixTextUtils.tooltip("radargun.notag"));
+		}
+	}
+
+	public static void storeCoordiantes(ItemStack stack, BlockPos pos) {
+		CompoundNBT nbt = stack.getOrCreateTag();
+		nbt.putInt("xCoord", pos.getX());
+		nbt.putInt("yCoord", pos.getY());
+		nbt.putInt("zCoord", pos.getZ());
+	}
+
+	public static BlockPos getCoordiantes(ItemStack stack) {
+		CompoundNBT tag = stack.getOrCreateTag();
+		int x = tag.getInt("xCoord");
+		int y = tag.getInt("yCoord");
+		int z = tag.getInt("zCoord");
+		return new BlockPos(x, y, z);
+	}
+
 }

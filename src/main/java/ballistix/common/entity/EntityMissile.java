@@ -75,7 +75,7 @@ public class EntityMissile extends Entity {
 
 				float xRot = (float) (Math.atan(getDeltaMovement().y() / Math.sqrt(getDeltaMovement().x() * getDeltaMovement().x() + getDeltaMovement().z() * getDeltaMovement().z())) * 180.0D / Math.PI);
 				float yRot = (float) (Math.atan2(getDeltaMovement().x(), getDeltaMovement().z()) * 180.0D / Math.PI);
-				
+
 				setRot(yRot, xRot);
 			}
 			if (!level.isClientSide) {
@@ -127,18 +127,21 @@ public class EntityMissile extends Entity {
 				float x = (float) (getX() - getDimensionsForge(getPose()).width / 1.0f);
 				float y = (float) (getY() + getDimensionsForge(getPose()).height / 1.0f);
 				float z = (float) (getZ() - getDimensionsForge(getPose()).width / 1.0f);
-				level.addParticle(ParticleTypes.LARGE_SMOKE, x - 0.5 + ranX, y + ranY, z - 0.5 + ranZ, -getDeltaMovement().x + ranX, -getDeltaMovement().y - 0.075f + ranY, -getDeltaMovement().z + ranZ);
+				level.addParticle(ParticleTypes.LARGE_SMOKE, x + ranX, y + ranY, z + ranZ, -getDeltaMovement().x + ranX, -getDeltaMovement().y - 0.075f + ranY, -getDeltaMovement().z + ranZ);
 
 			}
 			float motionX = (float) -getDeltaMovement().x;
 			float motionY = (float) -getDeltaMovement().y;
 			float motionZ = (float) -getDeltaMovement().z;
-			for (int i = 0; i < 4; i++) {
-				level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, false, this.getX() - 0.5, this.getY(), this.getZ() - 0.5, random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
+			if (level.isClientSide) {
+				for (int i = 0; i < 4; i++) {
+					level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, false, this.getX(), this.getY(), this.getZ(), random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
+				}
+				for (int i = 0; i < 4; i++) {
+					level.addParticle(ParticleTypes.CLOUD, false, this.getX(), this.getY(), this.getZ(), random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
+				}
 			}
-			for (int i = 0; i < 4; i++) {
-				level.addParticle(ParticleTypes.CLOUD, false, this.getX() - 0.5, this.getY(), this.getZ() - 0.5, random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
-			}
+
 		}
 	}
 

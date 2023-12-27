@@ -20,5 +20,5 @@ public class ServerEventHandler {
 			event.addCapability(new ResourceLocation(References.ID, "siloregistry"), new CapabilitySiloRegistry());
 		}
 	}
-	
+
 }

@@ -33,6 +33,7 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 
 		addComponent(new ScreenComponentSimpleLabel(inventoryLabelX, inventoryLabelY - 55, 10, 4210752, BallistixTextUtils.gui("missilesilo.missile")));
 		addComponent(new ScreenComponentSimpleLabel(inventoryLabelX, inventoryLabelY - 20, 10, 4210752, BallistixTextUtils.gui("missilesilo.explosive")));
+    
 		addComponent(new ScreenComponentSimpleLabel(79, 13, 10, 4210752, BallistixTextUtils.gui("missilesilo.x")));
 		addComponent(new ScreenComponentSimpleLabel(79, 31, 10, 4210752, BallistixTextUtils.gui("missilesilo.y")));
 		addComponent(new ScreenComponentSimpleLabel(79, 49, 10, 4210752, BallistixTextUtils.gui("missilesilo.z")));
@@ -178,6 +179,7 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 	}
 
 	@Override
+
 	public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
 		super.render(stack, mouseX, mouseY, partialTicks);
 		if (needsUpdate) {

@@ -123,8 +123,8 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 					}
 				}
 			}
-			if (ModList.get().isLoaded("nuclearscience")) {
-				if (threadSimple.isComplete && rayDone) {
+			if (threadSimple.isComplete && rayDone) {
+				if (ModList.get().isLoaded("nuclearscience")) {
 					if (perticksimple == -1) {
 						cachedIterator = threadSimple.results.iterator();
 						perticksimple = (int) (threadSimple.results.size() * 1.5 / Constants.EXPLOSIVE_NUCLEAR_DURATION + 1);
@@ -151,6 +151,9 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 						attackEntities((float) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2);
 						return true;
 					}
+				} else {
+					attackEntities((float) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2);
+					return true;
 				}
 			}
 		}

@@ -42,6 +42,7 @@ public class BallistixBlockStateProvider extends ElectrodynamicsBlockStateProvid
 		simpleBlock(BallistixBlocks.getBlock(SubtypeBlast.largeantimatter), existingBlock(BallistixBlocks.getBlock(SubtypeBlast.largeantimatter)), true);
 
 		horrRotatedBlock(BallistixBlocks.blockMissileSilo, existingBlock(BallistixBlocks.blockMissileSilo), 90, 0, false);
+		horrRotatedBlock(BallistixBlocks.blockRadar, existingBlock(BallistixBlocks.blockRadar), 90, 0, false);
 
 	}
 

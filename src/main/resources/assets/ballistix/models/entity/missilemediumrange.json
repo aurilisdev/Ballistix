@@ -2,7 +2,7 @@
   "loader" : "forge:obj",
   "credit" : "aurilisdev",
   "model" : "ballistix:models/entity/missiles/missilemediumrange.obj",
-  "flip-v" : true,
+  "flip_v" : true,
   "textures" : {
     "texture0" : "ballistix:model/missilemediumrange",
     "texture1" : "ballistix:model/missilemediumrange2",

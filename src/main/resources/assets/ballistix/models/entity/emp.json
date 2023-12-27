@@ -1,8 +1,8 @@
 {
   "loader" : "forge:obj",
   "model" : "ballistix:models/entity/emp.obj",
-  "detectCullableFaces" : false,
-  "diffuseLighting" : false,
-  "flip-v" : true,
-  "ambientToFullbright" : true
+  "automatic_culling" : false,
+  "shade_quads" : false,
+  "flip_v" : true,
+  "emissive_ambient" : true
 }

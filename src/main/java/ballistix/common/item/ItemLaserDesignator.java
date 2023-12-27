@@ -30,9 +30,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 public class ItemLaserDesignator extends ItemElectric {
 
 	public static final double USAGE = 150.0;
-	
+
 	public static final String FREQUENCY_KEY = "freq";
-	
+
 	public ItemLaserDesignator() {
 		super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1).tab(References.BALLISTIXTAB), item -> ElectrodynamicsItems.ITEM_BATTERY.get());
 	}
@@ -105,7 +105,7 @@ public class ItemLaserDesignator extends ItemElectric {
 			}
 
 			silo.target.set(trace.toBlockPos());
-
+      
 			silo.shouldLaunch = true;
 
 			extractPower(designator, USAGE, false);
@@ -154,5 +154,5 @@ public class ItemLaserDesignator extends ItemElectric {
 	public static int getFrequency(ItemStack stack) {
 		return stack.getOrCreateTag().getInt(FREQUENCY_KEY);
 	}
-	
+
 }

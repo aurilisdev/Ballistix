@@ -19,6 +19,7 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 
 public class ItemRocketLauncher extends Item {
+
 	private static HashMap<Player, Long> millisecondMap = new HashMap<>();
 
 	public ItemRocketLauncher() {

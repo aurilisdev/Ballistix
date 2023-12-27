@@ -91,6 +91,7 @@ public class BlockMissileSilo extends GenericMachineBlock implements IMultiblock
 		SUBNODES_SOUTH[15] = new Subnode(new BlockPos(0, 1, 1), Shapes.empty());
 		SUBNODES_SOUTH[16] = new Subnode(new BlockPos(1, 1, 1), Shapes.empty());
 
+
 		/* NORTH */
 
 		// 1st layer
@@ -159,7 +160,6 @@ public class BlockMissileSilo extends GenericMachineBlock implements IMultiblock
 		SUBNODES_WEST[14] = new Subnode(new BlockPos(1, 1, -1), rotate(Direction.WEST, Shapes.empty()));
 		SUBNODES_WEST[15] = new Subnode(new BlockPos(1, 1, 0), rotate(Direction.WEST, Shapes.empty()));
 		SUBNODES_WEST[16] = new Subnode(new BlockPos(1, 1, 1), rotate(Direction.WEST, Shapes.empty()));
-
 
 	}
 

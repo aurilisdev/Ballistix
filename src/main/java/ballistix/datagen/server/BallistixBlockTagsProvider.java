@@ -1,11 +1,11 @@
 package ballistix.datagen.server;
 
+import ballistix.References;
 import ballistix.registers.BallistixBlocks;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.tags.BlockTags;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import nuclearscience.References;
 
 public class BallistixBlockTagsProvider extends BlockTagsProvider {
 

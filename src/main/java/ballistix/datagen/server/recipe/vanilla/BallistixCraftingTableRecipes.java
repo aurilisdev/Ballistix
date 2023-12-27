@@ -24,6 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.StrictNBTIngredient;
+import net.minecraftforge.fml.ModList;
 import nuclearscience.common.tags.NuclearScienceTags;
 
 public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
@@ -107,35 +108,35 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
 	}
 
 	private void addExplosives(Consumer<FinishedRecipe> consumer) {
+		if (ModList.get().isLoaded("nuclearscience")) {
+			ElectrodynamicsShapedCraftingRecipe.start(BallistixBlocks.getBlock(SubtypeBlast.antimatter).asItem(), 1)
+					//
+					.addPattern("CCC")
+					//
+					.addPattern("CNC")
+					//
+					.addPattern("CCC")
+					//
+					.addKey('C', NuclearScienceTags.Items.CELL_ANTIMATTER_LARGE)
+					//
+					.addKey('N', BallistixBlocks.getBlock(SubtypeBlast.nuclear).asItem())
+					//
+					.complete(References.ID, "explosive_antimatter", consumer);
 
-		ElectrodynamicsShapedCraftingRecipe.start(BallistixBlocks.getBlock(SubtypeBlast.antimatter).asItem(), 1)
-				//
-				.addPattern("CCC")
-				//
-				.addPattern("CNC")
-				//
-				.addPattern("CCC")
-				//
-				.addKey('C', NuclearScienceTags.Items.CELL_ANTIMATTER_LARGE)
-				//
-				.addKey('N', BallistixBlocks.getBlock(SubtypeBlast.nuclear).asItem())
-				//
-				.complete(References.ID, "explosive_antimatter", consumer);
-
-		ElectrodynamicsShapedCraftingRecipe.start(BallistixBlocks.getBlock(SubtypeBlast.largeantimatter).asItem(), 1)
-				//
-				.addPattern(" C ")
-				//
-				.addPattern("CAC")
-				//
-				.addPattern(" C ")
-				//
-				.addKey('C', NuclearScienceTags.Items.CELL_ANTIMATTER_VERY_LARGE)
-				//
-				.addKey('A', BallistixBlocks.getBlock(SubtypeBlast.antimatter).asItem())
-				//
-				.complete(References.ID, "explosive_antimatterlarge", consumer);
-
+			ElectrodynamicsShapedCraftingRecipe.start(BallistixBlocks.getBlock(SubtypeBlast.largeantimatter).asItem(), 1)
+					//
+					.addPattern(" C ")
+					//
+					.addPattern("CAC")
+					//
+					.addPattern(" C ")
+					//
+					.addKey('C', NuclearScienceTags.Items.CELL_ANTIMATTER_VERY_LARGE)
+					//
+					.addKey('A', BallistixBlocks.getBlock(SubtypeBlast.antimatter).asItem())
+					//
+					.complete(References.ID, "explosive_antimatterlarge", consumer);
+		}
 		ElectrodynamicsShapedCraftingRecipe.start(BallistixBlocks.getBlock(SubtypeBlast.attractive).asItem(), 1)
 				//
 				.addPattern("CDC")
@@ -197,21 +198,21 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
 				.addKey('C', BallistixBlocks.getBlock(SubtypeBlast.chemical).asItem())
 				//
 				.complete(References.ID, "explosive_contagious", consumer);
-
-		ElectrodynamicsShapedCraftingRecipe.start(BallistixBlocks.getBlock(SubtypeBlast.darkmatter).asItem(), 1)
-				//
-				.addPattern("DDD")
-				//
-				.addPattern("DAD")
-				//
-				.addPattern("DDD")
-				//
-				.addKey('D', NuclearScienceTags.Items.CELL_DARK_MATTER)
-				//
-				.addKey('A', BallistixBlocks.getBlock(SubtypeBlast.largeantimatter).asItem())
-				//
-				.complete(References.ID, "explosive_darkmatter", consumer);
-
+		if (ModList.get().isLoaded("nuclearscience")) {
+			ElectrodynamicsShapedCraftingRecipe.start(BallistixBlocks.getBlock(SubtypeBlast.darkmatter).asItem(), 1)
+					//
+					.addPattern("DDD")
+					//
+					.addPattern("DAD")
+					//
+					.addPattern("DDD")
+					//
+					.addKey('D', NuclearScienceTags.Items.CELL_DARK_MATTER)
+					//
+					.addKey('A', BallistixBlocks.getBlock(SubtypeBlast.largeantimatter).asItem())
+					//
+					.complete(References.ID, "explosive_darkmatter", consumer);
+		}
 		ElectrodynamicsShapedCraftingRecipe.start(BallistixBlocks.getBlock(SubtypeBlast.debilitation).asItem(), 1)
 				//
 				.addPattern("DDD")
@@ -277,23 +278,23 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
 				.addKey('L', Items.LAVA_BUCKET)
 				//
 				.complete(References.ID, "explosive_incendiary", consumer);
-
-		ElectrodynamicsShapedCraftingRecipe.start(BallistixBlocks.getBlock(SubtypeBlast.nuclear).asItem(), 1)
-				//
-				.addPattern("CTC")
-				//
-				.addPattern("TRT")
-				//
-				.addPattern("CTC")
-				//
-				.addKey('C', ElectrodynamicsTags.Items.CIRCUITS_BASIC)
-				//
-				.addKey('T', BallistixBlocks.getBlock(SubtypeBlast.thermobaric).asItem())
-				//
-				.addKey('R', NuclearScienceTags.Items.FUELROD_URANIUM_HIGH_EN)
-				//
-				.complete(References.ID, "explosive_nuclear", consumer);
-
+		if (ModList.get().isLoaded("nuclearscience")) {
+			ElectrodynamicsShapedCraftingRecipe.start(BallistixBlocks.getBlock(SubtypeBlast.nuclear).asItem(), 1)
+					//
+					.addPattern("CTC")
+					//
+					.addPattern("TRT")
+					//
+					.addPattern("CTC")
+					//
+					.addKey('C', ElectrodynamicsTags.Items.CIRCUITS_BASIC)
+					//
+					.addKey('T', BallistixBlocks.getBlock(SubtypeBlast.thermobaric).asItem())
+					//
+					.addKey('R', NuclearScienceTags.Items.FUELROD_URANIUM_HIGH_EN)
+					//
+					.complete(References.ID, "explosive_nuclear", consumer);
+		}
 		ElectrodynamicsShapedCraftingRecipe.start(BallistixBlocks.getBlock(SubtypeBlast.obsidian).asItem(), 1)
 				//
 				.addPattern("OOO")

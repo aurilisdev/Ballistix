@@ -19,7 +19,7 @@ public class BallistixLootTablesProvider extends ElectrodynamicsLootTablesProvid
 			addSimpleBlock(BallistixBlocks.getBlock(blast));
 		}
 
-		addITable(BallistixBlocks.blockMissileSilo, BallistixBlockTypes.TILE_MISSILESILO);
+		addMachineTable(BallistixBlocks.blockMissileSilo, BallistixBlockTypes.TILE_MISSILESILO, true, false, false, false, false);
 
 	}
 

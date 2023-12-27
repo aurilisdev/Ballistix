@@ -11,6 +11,7 @@ import ballistix.common.item.ItemMissile;
 import ballistix.common.network.SiloRegistry;
 import ballistix.common.settings.Constants;
 import ballistix.registers.BallistixBlockTypes;
+import ballistix.registers.BallistixBlocks;
 import ballistix.registers.BallistixItems;
 import electrodynamics.api.multiblock.Subnode;
 import electrodynamics.api.multiblock.parent.IMultiblockParentTile;
@@ -21,6 +22,7 @@ import electrodynamics.prefab.properties.PropertyType;
 import electrodynamics.prefab.tile.GenericTile;
 import electrodynamics.prefab.tile.components.IComponentType;
 import electrodynamics.prefab.tile.components.type.ComponentContainerProvider;
+import electrodynamics.prefab.tile.components.type.ComponentDirection;
 import electrodynamics.prefab.tile.components.type.ComponentInventory;
 import electrodynamics.prefab.tile.components.type.ComponentInventory.InventoryBuilder;
 import electrodynamics.prefab.tile.components.type.ComponentPacketHandler;
@@ -35,6 +37,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -116,7 +119,6 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 		level.addFreshEntity(missile);
 
 		cooldown = COOLDOWN;
-
 	}
 
 	protected boolean isItemValidForSlot(int index, ItemStack stack, ComponentInventory inv) {
@@ -202,7 +204,7 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 
 	@Override
 	public Subnode[] getSubNodes() {
-
+    
 		return switch (getFacing()) {
 		case EAST -> BlockMissileSilo.SUBNODES_EAST;
 		case WEST -> BlockMissileSilo.SUBNODES_WEST;
@@ -252,6 +254,18 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 
 			} else {
 				range.set(0);
+			}
+
+		}
+
+		if (index == 1 || index == -1) {
+
+			ItemStack explosive = inv.getItem(1);
+
+			if (!explosive.isEmpty() && explosive.getItem() instanceof BlockItemDescriptable blockItem && blockItem.getBlock() instanceof BlockExplosive) {
+				hasExplosive.set(true);
+			} else {
+				hasExplosive.set(true);
 			}
 
 		}

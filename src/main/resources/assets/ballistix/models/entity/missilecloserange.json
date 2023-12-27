@@ -2,7 +2,7 @@
     "loader": "forge:obj",
 	"credit": "aurilisdev",
 	"model": "ballistix:models/entity/missiles/missilecloserange.obj",
-    "flip-v": true,
+    "flip_v": true,
 	"textures": {
 		"texture0": "ballistix:model/missilecloserange",
 		"particle": "ballistix:model/missilecloserange"

@@ -6,7 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import ballistix.common.item.ItemMissile;
 import ballistix.common.tile.TileMissileSilo;
-import electrodynamics.prefab.tile.components.ComponentType;
+import electrodynamics.prefab.tile.components.IComponentType;
 import electrodynamics.prefab.tile.components.type.ComponentInventory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -24,7 +24,7 @@ public class RenderMissileSilo implements BlockEntityRenderer<TileMissileSilo> {
 	@Override
 	public void render(TileMissileSilo tileEntityIn, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 
-		ItemStack stack = tileEntityIn.<ComponentInventory>getComponent(ComponentType.Inventory).getItem(0);
+		ItemStack stack = tileEntityIn.<ComponentInventory>getComponent(IComponentType.Inventory).getItem(0);
 
 		if (stack.isEmpty()) {
 			return;

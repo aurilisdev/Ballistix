@@ -96,11 +96,12 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 			addGuiLabel("missilesilo.z", "Z-Coord");
 			addGuiLabel("missilesilo.freq", "Freq");
 
-			add("death.attack.chemicalgas", "%s opened the Zyklon-B without reading the instructions!");
-			add("death.attack.shrapnel", "%s was hit by shrapnel!");
+			addDamageSource("chemicalgas", "%s opened the Zyklon-B without reading the instructions!");
+			addDamageSource("shrapnel", "%s was hit by shrapnel!");
 
 			addChatMessage("radargun.text", "Coordinates: %s");
-			addChatMessage("laserdesignator.launch", "Launching missile from: %s");
+			addChatMessage("laserdesignator.launch", "Launching all missiles with frequency %s to targets: ");
+			addChatMessage("laserdesignator.launchsend", "-> %s");
 			addChatMessage("laserdesignator.setfrequency", "Set frequency to: %s");
 			addChatMessage("scanner.cleared", "Cleared trackers!");
 			addChatMessage("scanner.none", "There were no trackers!");
@@ -110,6 +111,8 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 			addTooltip("laserdesignator.frequency", "Frequency: %s");
 			addTooltip("laserdesignator.nofrequency", "Unbound");
 			addTooltip("laserdesignator.invalidfreq", "Set a frequency for the silo");
+			addTooltip("tracker.tracking", "Tracking: %s");
+			addTooltip("tracker.none", "NONE");
 
 			addSubtitle("ballistix.antimatterexplosion", "Antimatter bomb explodes");
 			addSubtitle("ballistix.darkmatter", "Dark matter bomb ignites and explodes");
@@ -146,8 +149,8 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 
 			addGuidebook("chapter.items.scanner1", "The Scanner is every paranoid player's best friend. Think someone has tagged you with a Tracker and is trying to nuke your prestigious dirt house? Fear not; Simply right-click with the Scanner. This will expend 150 Joules and jam any tracking signals if they are present!");
 
-			addJei("info.item.missilecloserange", "Specs:\n    Range: 3);000 Blocks");
-			addJei("info.item.missilemediumrange", "Specs:\n    Range: 10);000 Blocks");
+			addJei("info.item.missilecloserange", "Specs:\n    Range: 3000 Blocks");
+			addJei("info.item.missilemediumrange", "Specs:\n    Range: 10 000 Blocks");
 			addJei("info.item.missilelongrange", "Specs:\n    Range: Unlimited");
 
 		}

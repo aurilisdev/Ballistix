@@ -23,13 +23,13 @@ public class BlockMissileSilo extends GenericMachineBlock implements IMultiblock
 		super(TileMissileSilo::new);
 	}
 
-	public static final Subnode[] SUBNODES_SOUTH = new Subnode[14];
+	public static final Subnode[] SUBNODES_SOUTH = new Subnode[17];
 
-	public static final Subnode[] SUBNODES_NORTH = new Subnode[14];
+	public static final Subnode[] SUBNODES_NORTH = new Subnode[17];
 
-	public static final Subnode[] SUBNODES_EAST = new Subnode[14];
+	public static final Subnode[] SUBNODES_EAST = new Subnode[17];
 
-	public static final Subnode[] SUBNODES_WEST = new Subnode[14];
+	public static final Subnode[] SUBNODES_WEST = new Subnode[17];
 
 	public static final VoxelShape[] SHAPES = new VoxelShape[14];
 
@@ -87,6 +87,10 @@ public class BlockMissileSilo extends GenericMachineBlock implements IMultiblock
 		SUBNODES_SOUTH[11] = new Subnode(new BlockPos(-1, 1, 0), SHAPES[11]);
 		SUBNODES_SOUTH[12] = new Subnode(new BlockPos(0, 1, 0), SHAPES[12]);
 		SUBNODES_SOUTH[13] = new Subnode(new BlockPos(1, 1, 0), SHAPES[13]);
+		SUBNODES_SOUTH[14] = new Subnode(new BlockPos(-1, 1, 1), Shapes.empty());
+		SUBNODES_SOUTH[15] = new Subnode(new BlockPos(0, 1, 1), Shapes.empty());
+		SUBNODES_SOUTH[16] = new Subnode(new BlockPos(1, 1, 1), Shapes.empty());
+
 
 		/* NORTH */
 
@@ -107,6 +111,9 @@ public class BlockMissileSilo extends GenericMachineBlock implements IMultiblock
 		SUBNODES_NORTH[11] = new Subnode(new BlockPos(-1, 1, 1), rotate(Direction.NORTH, SHAPES[10]));
 		SUBNODES_NORTH[12] = new Subnode(new BlockPos(0, 1, 1), rotate(Direction.NORTH, SHAPES[9]));
 		SUBNODES_NORTH[13] = new Subnode(new BlockPos(1, 1, 1), rotate(Direction.NORTH, SHAPES[8]));
+		SUBNODES_NORTH[14] = new Subnode(new BlockPos(-1, 1, 1), rotate(Direction.NORTH, Shapes.empty()));
+		SUBNODES_NORTH[15] = new Subnode(new BlockPos(0, 1, 1), rotate(Direction.NORTH, Shapes.empty()));
+		SUBNODES_NORTH[16] = new Subnode(new BlockPos(1, 1, 1), rotate(Direction.NORTH, Shapes.empty()));
 
 		/* EAST */
 
@@ -127,6 +134,9 @@ public class BlockMissileSilo extends GenericMachineBlock implements IMultiblock
 		SUBNODES_EAST[11] = new Subnode(new BlockPos(0, 1, -1), rotate(Direction.EAST, SHAPES[13]));
 		SUBNODES_EAST[12] = new Subnode(new BlockPos(0, 1, 0), rotate(Direction.EAST, SHAPES[12]));
 		SUBNODES_EAST[13] = new Subnode(new BlockPos(0, 1, 1), rotate(Direction.EAST, SHAPES[11]));
+		SUBNODES_EAST[14] = new Subnode(new BlockPos(1, 1, -1), rotate(Direction.EAST, Shapes.empty()));
+		SUBNODES_EAST[15] = new Subnode(new BlockPos(1, 1, 0), rotate(Direction.EAST, Shapes.empty()));
+		SUBNODES_EAST[16] = new Subnode(new BlockPos(1, 1, 1), rotate(Direction.EAST, Shapes.empty()));
 
 		/* WEST */
 
@@ -147,6 +157,9 @@ public class BlockMissileSilo extends GenericMachineBlock implements IMultiblock
 		SUBNODES_WEST[11] = new Subnode(new BlockPos(1, 1, -1), rotate(Direction.WEST, SHAPES[8]));
 		SUBNODES_WEST[12] = new Subnode(new BlockPos(1, 1, 0), rotate(Direction.WEST, SHAPES[9]));
 		SUBNODES_WEST[13] = new Subnode(new BlockPos(1, 1, 1), rotate(Direction.WEST, SHAPES[10]));
+		SUBNODES_WEST[14] = new Subnode(new BlockPos(1, 1, -1), rotate(Direction.WEST, Shapes.empty()));
+		SUBNODES_WEST[15] = new Subnode(new BlockPos(1, 1, 0), rotate(Direction.WEST, Shapes.empty()));
+		SUBNODES_WEST[16] = new Subnode(new BlockPos(1, 1, 1), rotate(Direction.WEST, Shapes.empty()));
 
 	}
 

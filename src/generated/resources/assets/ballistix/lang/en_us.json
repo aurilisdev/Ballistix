@@ -19,7 +19,8 @@
   "block.ballistix.repulsive": "Repulsive Explosive",
   "block.ballistix.shrapnel": "Shrapnel Explosive",
   "block.ballistix.thermobaric": "Thermobaric Explosive",
-  "chat.ballistix.laserdesignator.launch": "Launching missile from: %s",
+  "chat.ballistix.laserdesignator.launch": "Launching all missiles with frequency %s to targets: ",
+  "chat.ballistix.laserdesignator.launchsend": "-> %s",
   "chat.ballistix.laserdesignator.setfrequency": "Set frequency to: %s",
   "chat.ballistix.radargun.text": "Coordinates: %s",
   "chat.ballistix.scanner.cleared": "Cleared trackers!",
@@ -89,9 +90,9 @@
   "item.ballistix.scanner": "Scanner",
   "item.ballistix.tracker": "Tracker",
   "itemGroup.itemgroupballistix": "Ballistix",
-  "jei.info.item.missilecloserange": "Specs:\n    Range: 3);000 Blocks",
+  "jei.info.item.missilecloserange": "Specs:\n    Range: 3000 Blocks",
   "jei.info.item.missilelongrange": "Specs:\n    Range: Unlimited",
-  "jei.info.item.missilemediumrange": "Specs:\n    Range: 10);000 Blocks",
+  "jei.info.item.missilemediumrange": "Specs:\n    Range: 10 000 Blocks",
   "subtitles.ballistix.ballistix.antimatterexplosion": "Antimatter bomb explodes",
   "subtitles.ballistix.ballistix.darkmatter": "Dark matter bomb ignites and explodes",
   "subtitles.ballistix.ballistix.nuclearexplosion": "Nuclear bomb explodes",
@@ -99,5 +100,7 @@
   "tooltip.ballistix.laserdesignator.invalidfreq": "Set a frequency for the silo",
   "tooltip.ballistix.laserdesignator.nofrequency": "Unbound",
   "tooltip.ballistix.radargun.notag": "No Coordinates Stored",
-  "tooltip.ballistix.radargun.pos": "Stored: %s"
+  "tooltip.ballistix.radargun.pos": "Stored: %s",
+  "tooltip.ballistix.tracker.none": "NONE",
+  "tooltip.ballistix.tracker.tracking": "Tracking: %s"
 }

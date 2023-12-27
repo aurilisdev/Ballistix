@@ -102,7 +102,8 @@ public class ItemRadarGun extends ItemElectric {
 	@Override
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		if (stack.hasTag() && stack.getTag().contains(NBTUtils.LOCATION)) {
+
+		if (stack.hasTag() && stack.getTag().contains("xCoord")) {
 			tooltip.add(BallistixTextUtils.tooltip("radargun.pos", getCoordiantes(stack).toShortString()));
 		} else {
 			tooltip.add(BallistixTextUtils.tooltip("radargun.notag"));

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CTC",
+    "TRT",
+    "CTC"
+  ],
+  "key": {
+    "R": {
+      "tag": "forge:fuel_rods/heuo2"
+    },
+    "C": {
+      "tag": "forge:circuits/basic"
+    },
+    "T": {
+      "item": "ballistix:thermobaric"
+    }
+  },
+  "result": {
+    "item": "ballistix:nuclear"
+  }
+}

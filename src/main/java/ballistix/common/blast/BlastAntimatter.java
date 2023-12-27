@@ -3,86 +3,81 @@ package ballistix.common.blast;
 import java.util.Iterator;
 
 import ballistix.common.blast.thread.ThreadSimpleBlast;
-import ballistix.common.block.SubtypeBlast;
+import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import ballistix.registers.BallistixSounds;
+import electrodynamics.api.sound.SoundAPI;
+import electrodynamics.prefab.utilities.WorldUtils;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Explosion;
-import net.minecraft.world.Explosion.Mode;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 
 public class BlastAntimatter extends Blast implements IHasCustomRenderer {
 
-    public BlastAntimatter(World world, BlockPos position) {
-	super(world, position);
-    }
-
-    @Override
-    @Deprecated
-    public void doPreExplode() {
-	if (!world.isRemote) {
-	    thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, false);
-	    thread.start();
+	public BlastAntimatter(World world, BlockPos position) {
+		super(world, position);
 	}
-    }
 
-    private ThreadSimpleBlast thread;
-    private int pertick = -1;
-
-    @Override
-    public boolean shouldRender() {
-	return pertick > 0;
-    }
-
-    @Override
-    public boolean doExplode(int callCount) {
-	if (!world.isRemote) {
-	    if (thread == null) {
-		return true;
-	    }
-	    Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
-		    (float) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, false, Mode.BREAK);
-	    if (thread.isComplete) {
-		hasStarted = true;
-		if (pertick == -1) {
-		    pertick = (int) (thread.results.size() * 1.5 / Constants.EXPLOSIVE_ANTIMATTER_DURATION + 1);
+	@Override
+	public void doPreExplode() {
+		if (!world.isClientSide) {
+			thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, true);
+			thread.start();
+		} else {
+			SoundAPI.playSound(BallistixSounds.SOUND_ANTIMATTEREXPLOSION.get(), SoundCategory.BLOCKS, 25, 1, position);
 		}
-		int finished = pertick;
-		Iterator<BlockPos> iterator = thread.results.iterator();
-		while (iterator.hasNext()) {
-		    if (finished-- < 0) {
-			break;
-		    }
-		    BlockPos p = new BlockPos(iterator.next()).add(position);
-		    BlockState state = world.getBlockState(p);
-		    Block block = state.getBlock();
-
-		    if (state != Blocks.AIR.getDefaultState() && state != Blocks.VOID_AIR.getDefaultState()
-			    && state.getBlockHardness(world, p) >= 0) {
-			block.onExplosionDestroy(world, p, ex);
-			world.setBlockState(p, Blocks.AIR.getDefaultState(), 2 | 16 | 32);
-		    }
-		    iterator.remove();
-		}
-		if (thread.results.isEmpty()) {
-		    attackEntities((float) Constants.EXPLOSIVE_ANTIMATTER_RADIUS * 2);
-		    return true;
-		}
-	    }
 	}
-	return false;
-    }
 
-    @Override
-    public boolean isInstantaneous() {
-	return false;
-    }
+	private ThreadSimpleBlast thread;
+	private int pertick = -1;
 
-    @Override
-    public SubtypeBlast getBlastType() {
-	return SubtypeBlast.antimatter;
-    }
+	@Override
+	public boolean shouldRender() {
+		return pertick > 0;
+	}
+
+	private Iterator<BlockPos> cachedIterator;
+
+	@Override
+	public boolean doExplode(int callCount) {
+		if (!world.isClientSide) {
+			if (thread == null) {
+				return true;
+			}
+			if (thread.isComplete) {
+				hasStarted = true;
+				if (pertick == -1) {
+					pertick = (int) (thread.results.size() / Constants.EXPLOSIVE_ANTIMATTER_DURATION + 1);
+					cachedIterator = thread.results.iterator();
+				}
+				int finished = pertick;
+				while (cachedIterator.hasNext()) {
+					if (finished-- < 0) {
+						break;
+					}
+					BlockPos p = new BlockPos(cachedIterator.next()).offset(position);
+					WorldUtils.fastRemoveBlockExplosion((ServerWorld) world, p);
+				}
+				if (!cachedIterator.hasNext()) {
+					position = position.above().above();
+					attackEntities((float) Constants.EXPLOSIVE_ANTIMATTER_RADIUS * 2, false);
+					WorldUtils.clearChunkCache();
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isInstantaneous() {
+		return false;
+	}
+
+	@Override
+	public SubtypeBlast getBlastType() {
+		return SubtypeBlast.antimatter;
+	}
 
 }

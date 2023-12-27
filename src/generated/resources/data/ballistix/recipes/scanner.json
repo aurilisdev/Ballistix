@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " S ",
+    "STS",
+    " SB"
+  ],
+  "key": {
+    "B": {
+      "item": "electrodynamics:battery"
+    },
+    "S": {
+      "tag": "forge:gems/emerald"
+    },
+    "T": {
+      "item": "ballistix:tracker"
+    }
+  },
+  "result": {
+    "item": "ballistix:scanner"
+  }
+}

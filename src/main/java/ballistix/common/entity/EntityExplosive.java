@@ -1,11 +1,15 @@
 package ballistix.common.entity;
 
-import ballistix.DeferredRegisters;
+import ballistix.api.entity.IDefusable;
 import ballistix.common.blast.Blast;
-import ballistix.common.block.SubtypeBlast;
+import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.registers.BallistixBlocks;
+import ballistix.registers.BallistixEntities;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MoverType;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
@@ -15,94 +19,110 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
-public class EntityExplosive extends Entity {
-    private static final DataParameter<Integer> FUSE = EntityDataManager.createKey(EntityExplosive.class, DataSerializers.VARINT);
-    private static final DataParameter<Integer> TYPE = EntityDataManager.createKey(EntityExplosive.class, DataSerializers.VARINT);
-    public int blastOrdinal = -1;
-    public int fuse = 80;
+public class EntityExplosive extends Entity implements IDefusable {
 
-    public EntityExplosive(EntityType<? extends EntityExplosive> type, World worldIn) {
-	super(type, worldIn);
-	preventEntitySpawning = true;
-    }
+	private static final DataParameter<Integer> FUSE = EntityDataManager.defineId(EntityExplosive.class, DataSerializers.INT);
+	private static final DataParameter<Integer> TYPE = EntityDataManager.defineId(EntityExplosive.class, DataSerializers.INT);
+	public int blastOrdinal = -1;
+	public int fuse = 80;
 
-    public EntityExplosive(World worldIn, double x, double y, double z) {
-	this(DeferredRegisters.ENTITY_EXPLOSIVE.get(), worldIn);
-	setPosition(x, y, z);
-	double d0 = worldIn.rand.nextDouble() * ((float) Math.PI * 2F);
-	this.setMotion(-Math.sin(d0) * 0.02D, 0.2F, -Math.cos(d0) * 0.02D);
-	prevPosX = x;
-	prevPosY = y;
-	prevPosZ = z;
-    }
-
-    public void setBlastType(SubtypeBlast explosive) {
-	blastOrdinal = explosive.ordinal();
-	fuse = explosive.fuse;
-    }
-
-    public SubtypeBlast getBlastType() {
-	return blastOrdinal == -1 ? null : SubtypeBlast.values()[blastOrdinal];
-    }
-
-    @Override
-    protected void registerData() {
-	dataManager.register(FUSE, 80);
-	dataManager.register(TYPE, -1);
-    }
-
-    @Override
-    public void tick() {
-	if (!world.isRemote) {
-	    dataManager.set(TYPE, blastOrdinal);
-	    dataManager.set(FUSE, fuse);
-	} else {
-	    blastOrdinal = dataManager.get(TYPE);
-	    fuse = dataManager.get(FUSE);
-	}
-	if (!hasNoGravity()) {
-	    this.setMotion(getMotion().add(0.0D, -0.04D, 0.0D));
+	public EntityExplosive(EntityType<? extends EntityExplosive> type, World worldIn) {
+		super(type, worldIn);
+		blocksBuilding = true;
 	}
 
-	move(MoverType.SELF, getMotion());
-	this.setMotion(getMotion().scale(0.98D));
-	if (onGround) {
-	    this.setMotion(getMotion().mul(0.7D, -0.5D, 0.7D));
+	public EntityExplosive(World worldIn, double x, double y, double z) {
+		this(BallistixEntities.ENTITY_EXPLOSIVE.get(), worldIn);
+		setPos(x, y, z);
+		double d0 = worldIn.random.nextDouble() * ((float) Math.PI * 2F);
+		this.setDeltaMovement(-Math.sin(d0) * 0.02D, 0.2F, -Math.cos(d0) * 0.02D);
+		xo = x;
+		yo = y;
+		zo = z;
 	}
 
-	--fuse;
-	if (fuse <= 0) {
-	    this.remove();
-	    if (blastOrdinal != -1) {
-		SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
-		Blast b = Blast.createFromSubtype(explosive, world, getPosition());
-		if (b != null) {
-		    b.performExplosion();
+	@Override
+	public boolean isPickable() {
+		return !isAlive();
+	}
+
+	public void setBlastType(SubtypeBlast explosive) {
+		blastOrdinal = explosive.ordinal();
+		fuse = explosive.fuse;
+	}
+
+	public SubtypeBlast getBlastType() {
+		return blastOrdinal == -1 ? null : SubtypeBlast.values()[blastOrdinal];
+	}
+
+	@Override
+	protected void defineSynchedData() {
+		entityData.define(FUSE, 80);
+		entityData.define(TYPE, -1);
+	}
+
+	@Override
+	public void defuse() {
+		remove(false);
+		if (blastOrdinal != -1) {
+			SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
+			ItemEntity item = new ItemEntity(level, blockPosition().getX() + 0.5, blockPosition().getY() + 0.5, blockPosition().getZ() + 0.5, new ItemStack(BallistixBlocks.SUBTYPEBLOCKREGISTER_MAPPINGS.get(explosive).get()));
+			level.addFreshEntity(item);
 		}
-	    }
-	} else {
-	    func_233566_aG_();
-	    if (world.isRemote) {
-		world.addParticle(ParticleTypes.LAVA, getPosX(), getPosY() + 0.5D, getPosZ(), 0.0D, 0.0D, 0.0D);
-	    }
 	}
 
-    }
+	@Override
+	public void tick() {
+		if (!level.isClientSide) {
+			entityData.set(TYPE, blastOrdinal);
+			entityData.set(FUSE, fuse);
+		} else {
+			blastOrdinal = entityData.get(TYPE);
+			fuse = entityData.get(FUSE);
+		}
+		if (!isNoGravity()) {
+			this.setDeltaMovement(getDeltaMovement().add(0.0D, -0.04D, 0.0D));
+		}
 
-    @Override
-    protected void writeAdditional(CompoundNBT compound) {
-	compound.putInt("Fuse", fuse);
-	compound.putInt("type", blastOrdinal);
-    }
+		move(MoverType.SELF, getDeltaMovement());
+		this.setDeltaMovement(getDeltaMovement().scale(0.98D));
+		if (onGround) {
+			this.setDeltaMovement(getDeltaMovement().multiply(0.7D, -0.5D, 0.7D));
+		}
 
-    @Override
-    protected void readAdditional(CompoundNBT compound) {
-	fuse = compound.getInt("Fuse");
-	blastOrdinal = compound.getInt("type");
-    }
+		--fuse;
+		if (fuse <= 0) {
+			remove(false);
+			if (blastOrdinal != -1) {
+				SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
+				Blast b = Blast.createFromSubtype(explosive, level, blockPosition());
+				if (b != null) {
+					b.performExplosion();
+				}
+			}
+		} else {
+			updateInWaterStateAndDoFluidPushing();
+			if (level.isClientSide) {
+				level.addParticle(ParticleTypes.LAVA, getX(), getY() + 0.5D, getZ(), 0.0D, 0.0D, 0.0D);
+			}
+		}
 
-    @Override
-    public IPacket<?> createSpawnPacket() {
-	return NetworkHooks.getEntitySpawningPacket(this);
-    }
+	}
+
+	@Override
+	protected void addAdditionalSaveData(CompoundNBT compound) {
+		compound.putInt("Fuse", fuse);
+		compound.putInt("type", blastOrdinal);
+	}
+
+	@Override
+	protected void readAdditionalSaveData(CompoundNBT compound) {
+		fuse = compound.getInt("Fuse");
+		blastOrdinal = compound.getInt("type");
+	}
+
+	@Override
+	public IPacket<?> getAddEntityPacket() {
+		return NetworkHooks.getEntitySpawningPacket(this);
+	}
 }

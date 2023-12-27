@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CDC"
+  ],
+  "key": {
+    "C": {
+      "item": "ballistix:condensive"
+    },
+    "D": {
+      "tag": "forge:dusts/redstone"
+    }
+  },
+  "result": {
+    "item": "ballistix:attractive"
+  }
+}

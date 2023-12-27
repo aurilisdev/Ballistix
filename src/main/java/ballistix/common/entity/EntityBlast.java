@@ -1,9 +1,9 @@
 package ballistix.common.entity;
 
-import ballistix.DeferredRegisters;
 import ballistix.common.blast.Blast;
 import ballistix.common.blast.IHasCustomRenderer;
-import ballistix.common.block.SubtypeBlast;
+import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.registers.BallistixEntities;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
@@ -15,95 +15,98 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 public class EntityBlast extends Entity {
-    private static final DataParameter<Integer> CALLCOUNT = EntityDataManager.createKey(EntityBlast.class, DataSerializers.VARINT);
-    private static final DataParameter<Integer> TYPE = EntityDataManager.createKey(EntityBlast.class, DataSerializers.VARINT);
-    private static final DataParameter<Boolean> SHOULDSTARTCUSTOMRENDER = EntityDataManager.createKey(EntityBlast.class, DataSerializers.BOOLEAN);
+	private static final DataParameter<Integer> CALLCOUNT = EntityDataManager.defineId(EntityBlast.class, DataSerializers.INT);
+	private static final DataParameter<Integer> TYPE = EntityDataManager.defineId(EntityBlast.class, DataSerializers.INT);
+	private static final DataParameter<Boolean> SHOULDSTARTCUSTOMRENDER = EntityDataManager.defineId(EntityBlast.class, DataSerializers.BOOLEAN);
 
-    private Blast blast;
-    public int blastOrdinal = -1;
-    public int callcount = 0;
-    public boolean shouldRenderCustom = false;
-    public int ticksWhenCustomRender;
+	private Blast blast;
+	public int blastOrdinal = -1;
+	public int callcount = 0;
+	public boolean shouldRenderCustom = false;
+	public int ticksWhenCustomRender;
 
-    public EntityBlast(EntityType<? extends EntityBlast> type, World worldIn) {
-	super(type, worldIn);
-	preventEntitySpawning = true;
-    }
-
-    public EntityBlast(World worldIn) {
-	this(DeferredRegisters.ENTITY_BLAST.get(), worldIn);
-    }
-
-    public void setBlastType(SubtypeBlast explosive) {
-	blastOrdinal = explosive.ordinal();
-	blast = Blast.createFromSubtype(getBlastType(), world, getPosition());
-    }
-
-    public SubtypeBlast getBlastType() {
-	return blastOrdinal == -1 ? null : SubtypeBlast.values()[blastOrdinal];
-    }
-
-    @Override
-    protected void registerData() {
-	dataManager.register(CALLCOUNT, 80);
-	dataManager.register(TYPE, -1);
-	dataManager.register(SHOULDSTARTCUSTOMRENDER, false);
-    }
-
-    @Override
-    public void tick() {
-	if (!world.isRemote) {
-	    dataManager.set(TYPE, blastOrdinal);
-	    dataManager.set(CALLCOUNT, callcount);
-	    dataManager.set(SHOULDSTARTCUSTOMRENDER, blast instanceof IHasCustomRenderer && ((IHasCustomRenderer) blast).shouldRender());
-	} else {
-	    blastOrdinal = dataManager.get(TYPE);
-	    callcount = dataManager.get(CALLCOUNT);
-	    if (!shouldRenderCustom && dataManager.get(SHOULDSTARTCUSTOMRENDER) == Boolean.TRUE) {
-		ticksWhenCustomRender = ticksExisted;
-	    }
-	    shouldRenderCustom = dataManager.get(SHOULDSTARTCUSTOMRENDER);
+	public EntityBlast(EntityType<? extends EntityBlast> type, World worldIn) {
+		super(type, worldIn);
+		blocksBuilding = true;
 	}
-	if (blast != null) {
-	    if (callcount == 0) {
-		blast.preExplode();
-	    } else if (blast.explode(callcount)) {
-		blast.postExplode();
-		remove();
-	    }
-	    callcount++;
-	} else {
-	    if (blastOrdinal == -1) {
-		if (ticksExisted > 60) {
-		    remove();
+
+	public EntityBlast(World worldIn) {
+		this(BallistixEntities.ENTITY_BLAST.get(), worldIn);
+	}
+	
+	@Override
+	public boolean shouldRender(double x, double y, double z) {
+		return true;
+	}
+
+	public void setBlastType(SubtypeBlast explosive) {
+		blastOrdinal = explosive.ordinal();
+		blast = Blast.createFromSubtype(getBlastType(), level, blockPosition());
+	}
+
+	public SubtypeBlast getBlastType() {
+		return blastOrdinal == -1 ? null : SubtypeBlast.values()[blastOrdinal];
+	}
+
+	@Override
+	protected void defineSynchedData() {
+		entityData.define(CALLCOUNT, 80);
+		entityData.define(TYPE, -1);
+		entityData.define(SHOULDSTARTCUSTOMRENDER, false);
+	}
+
+	@Override
+	public void tick() {
+		if (!level.isClientSide) {
+			entityData.set(TYPE, blastOrdinal);
+			entityData.set(CALLCOUNT, callcount);
+			entityData.set(SHOULDSTARTCUSTOMRENDER, blast instanceof IHasCustomRenderer && ((IHasCustomRenderer) blast).shouldRender());
+		} else {
+			blastOrdinal = entityData.get(TYPE);
+			callcount = entityData.get(CALLCOUNT);
+			if (!shouldRenderCustom && entityData.get(SHOULDSTARTCUSTOMRENDER) == Boolean.TRUE) {
+				ticksWhenCustomRender = tickCount;
+			}
+			shouldRenderCustom = entityData.get(SHOULDSTARTCUSTOMRENDER);
 		}
-	    } else {
-		blast = Blast.createFromSubtype(getBlastType(), world, getPosition());
-	    }
+		if (blast != null) {
+			if (callcount == 0) {
+				blast.preExplode();
+			} else if (blast.explode(callcount)) {
+				blast.postExplode();
+				remove(false);
+			}
+			callcount++;
+		} else if (blastOrdinal == -1) {
+			if (tickCount > 60) {
+				remove(false);
+			}
+		} else {
+			blast = Blast.createFromSubtype(getBlastType(), level, blockPosition());
+		}
 	}
-    }
 
-    @Override
-    protected void writeAdditional(CompoundNBT compound) {
-	compound.putInt("type", blastOrdinal);
-	compound.putInt("callcount", callcount);
-    }
-
-    @Override
-    protected void readAdditional(CompoundNBT compound) {
-	blastOrdinal = compound.getInt("type");
-	callcount = compound.getInt("callcount");
-	if (blastOrdinal != -1) {
-	    setBlastType(getBlastType());
+	@Override
+	protected void addAdditionalSaveData(CompoundNBT compound) {
+		compound.putInt("type", blastOrdinal);
+		compound.putInt("callcount", callcount);
 	}
-    }
 
-    @Override
-    public IPacket<?> createSpawnPacket() {
-	return NetworkHooks.getEntitySpawningPacket(this);
-    }
+	@Override
+	protected void readAdditionalSaveData(CompoundNBT compound) {
+		blastOrdinal = compound.getInt("type");
+		callcount = compound.getInt("callcount");
+		if (blastOrdinal != -1) {
+			setBlastType(getBlastType());
+		}
+	}
 
-    public Blast getBlast() {
-	return blast;
-    }
+	@Override
+	public IPacket<?> getAddEntityPacket() {
+		return NetworkHooks.getEntitySpawningPacket(this);
+	}
+
+	public Blast getBlast() {
+		return blast;
+	}
 }

@@ -46,7 +46,6 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 			addBlock(BallistixBlocks.getBlock(SubtypeBlast.landmine), "Landmine");
 
 			addBlock(BallistixBlocks.blockMissileSilo, "Missile Silo");
-			addBlock(BallistixBlocks.blockRadar, "Radar");
 
 			addItem(BallistixItems.getItem(SubtypeGrenade.condensive), "Condensive Grenade");
 			addItem(BallistixItems.getItem(SubtypeGrenade.attractive), "Attractive Grenade");

@@ -8,9 +8,7 @@ import ballistix.References;
 import ballistix.common.block.BlockExplosive;
 import ballistix.common.block.BlockMissileSilo;
 import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.common.tile.TileRadar;
 import electrodynamics.api.ISubtype;
-import electrodynamics.prefab.block.GenericMachineBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -22,11 +20,9 @@ public class BallistixBlocks {
 	public static final HashMap<ISubtype, RegistryObject<Block>> SUBTYPEBLOCKREGISTER_MAPPINGS = new HashMap<>();
 
 	public static BlockMissileSilo blockMissileSilo;
-	public static GenericMachineBlock blockRadar;
 
 	static {
 		BLOCKS.register("missilesilo", () -> blockMissileSilo = new BlockMissileSilo());
-		BLOCKS.register("radar", () -> blockRadar = new GenericMachineBlock(TileRadar::new));
 		for (SubtypeBlast subtype : SubtypeBlast.values()) {
 			SUBTYPEBLOCKREGISTER_MAPPINGS.put(subtype, BLOCKS.register(subtype.tag(), () -> new BlockExplosive(subtype)));
 		}

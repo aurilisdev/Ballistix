@@ -9,7 +9,6 @@ import ballistix.client.render.entity.RenderMinecart;
 import ballistix.client.render.entity.RenderMissile;
 import ballistix.client.render.entity.RenderShrapnel;
 import ballistix.client.render.tile.RenderMissileSilo;
-import ballistix.client.render.tile.RenderRadar;
 import ballistix.client.screen.ScreenMissileSilo;
 import ballistix.common.item.ItemTracker;
 import ballistix.registers.BallistixBlockTypes;
@@ -78,7 +77,6 @@ public class ClientRegister {
 		event.registerEntityRenderer(BallistixEntities.ENTITY_MISSILE.get(), RenderMissile::new);
 		event.registerEntityRenderer(BallistixEntities.ENTITY_MINECART.get(), RenderMinecart::new);
 		event.registerBlockEntityRenderer(BallistixBlockTypes.TILE_MISSILESILO.get(), RenderMissileSilo::new);
-		event.registerBlockEntityRenderer(BallistixBlockTypes.TILE_RADAR.get(), RenderRadar::new);
 
 	}
 

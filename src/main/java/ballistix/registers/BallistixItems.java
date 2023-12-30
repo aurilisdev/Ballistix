@@ -1,7 +1,6 @@
 package ballistix.registers;
 
 import static ballistix.registers.BallistixBlocks.blockMissileSilo;
-import static ballistix.registers.BallistixBlocks.blockRadar;
 import static ballistix.registers.UnifiedBallistixRegister.getSafeBlock;
 
 import java.util.ArrayList;
@@ -56,7 +55,6 @@ public class BallistixItems {
 			SUBTYPEITEMREGISTER_MAPPINGS.put(missile, ITEMS.register(missile.tag(), () -> new ItemMissile(missile)));
 		}
 		ITEMS.register("missilesilo", () -> new BlockItemDescriptable(() -> blockMissileSilo, new Item.Properties().tab(References.BALLISTIXTAB)));
-		ITEMS.register("radar", () -> new BlockItemDescriptable(() -> blockRadar, new Item.Properties().tab(References.BALLISTIXTAB)));
 
 	}
 

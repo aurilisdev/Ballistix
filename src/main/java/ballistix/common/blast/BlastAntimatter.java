@@ -7,77 +7,89 @@ import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
 import ballistix.registers.BallistixSounds;
 import electrodynamics.api.sound.SoundAPI;
-import electrodynamics.prefab.utilities.WorldUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class BlastAntimatter extends Blast implements IHasCustomRenderer {
 
-	public BlastAntimatter(Level world, BlockPos position) {
-		super(world, position);
-	}
+    public BlastAntimatter(Level world, BlockPos position) {
+	super(world, position);
+    }
 
-	@Override
-	public void doPreExplode() {
-		if (!world.isClientSide) {
-			thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, true);
-			thread.start();
-		} else {
-			SoundAPI.playSound(BallistixSounds.SOUND_ANTIMATTEREXPLOSION.get(), SoundSource.BLOCKS, 25, 1, position);
+    @Override
+    public void doPreExplode() {
+	if (!world.isClientSide) {
+	    thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS,
+		    Integer.MAX_VALUE, null, true);
+	    thread.start();
+	} else {
+	    SoundAPI.playSound(BallistixSounds.SOUND_ANTIMATTEREXPLOSION.get(), SoundSource.BLOCKS, 25, 1, position);
+	}
+    }
+
+    private ThreadSimpleBlast thread;
+    private int pertick = -1;
+
+    @Override
+    public boolean shouldRender() {
+	return pertick > 0;
+    }
+
+    private Iterator<BlockPos> iterator;
+
+    @Override
+    public boolean doExplode(int callCount) {
+	if (!world.isClientSide) {
+	    if (thread == null) {
+		return true;
+	    }
+	    Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
+		    (float) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, false, BlockInteraction.DESTROY);
+	    if (thread.isComplete) {
+		hasStarted = true;
+		if (pertick == -1) {
+		    pertick = (int) (thread.results.size() * 1.5 / Constants.EXPLOSIVE_ANTIMATTER_DURATION + 1);
+		    iterator = thread.results.iterator();
 		}
-	}
+		int finished = pertick;
+		while (iterator.hasNext()) {
+		    if (finished-- < 0) {
+			break;
+		    }
+		    BlockPos p = new BlockPos(iterator.next()).offset(position);
+		    BlockState state = world.getBlockState(p);
+		    Block block = state.getBlock();
 
-	private ThreadSimpleBlast thread;
-	private int pertick = -1;
-
-	@Override
-	public boolean shouldRender() {
-		return pertick > 0;
-	}
-
-	private Iterator<BlockPos> cachedIterator;
-
-	@Override
-	public boolean doExplode(int callCount) {
-		if (!world.isClientSide) {
-			if (thread == null) {
-				return true;
-			}
-			if (thread.isComplete) {
-				hasStarted = true;
-				if (pertick == -1) {
-					pertick = (int) (thread.results.size() / Constants.EXPLOSIVE_ANTIMATTER_DURATION + 1);
-					cachedIterator = thread.results.iterator();
-				}
-				int finished = pertick;
-				while (cachedIterator.hasNext()) {
-					if (finished-- < 0) {
-						break;
-					}
-					BlockPos p = new BlockPos(cachedIterator.next()).offset(position);
-					WorldUtils.fastRemoveBlockExplosion((ServerLevel) world, p);
-				}
-				if (!cachedIterator.hasNext()) {
-					position = position.above().above();
-					attackEntities((float) Constants.EXPLOSIVE_ANTIMATTER_RADIUS * 2, false);
-					WorldUtils.clearChunkCache();
-					return true;
-				}
-			}
+		    if (state != Blocks.AIR.defaultBlockState() && state != Blocks.VOID_AIR.defaultBlockState()
+			    && state.getDestroySpeed(world, p) >= 0) {
+			block.wasExploded(world, p, ex);
+			world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
+		    }
 		}
-		return false;
+		if (!iterator.hasNext()) {
+		    position = position.above().above();
+		    attackEntities((float) Constants.EXPLOSIVE_ANTIMATTER_RADIUS * 2);
+		    return true;
+		}
+	    }
 	}
+	return false;
+    }
 
-	@Override
-	public boolean isInstantaneous() {
-		return false;
-	}
+    @Override
+    public boolean isInstantaneous() {
+	return false;
+    }
 
-	@Override
-	public SubtypeBlast getBlastType() {
-		return SubtypeBlast.antimatter;
-	}
+    @Override
+    public SubtypeBlast getBlastType() {
+	return SubtypeBlast.antimatter;
+    }
 
 }

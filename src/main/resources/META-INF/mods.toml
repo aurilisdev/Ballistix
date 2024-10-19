@@ -8,7 +8,7 @@ version="${file.jarVersion}" #mandatory
 displayName="Ballistix" #mandatory
 displayURL="https://github.com/aurilisdev/Ballistix" #optional
 logoFile="ballistix.png" #optional
-credits="Thanks to all contributors" #optional
+credits="Thanks to all contributors. Brazil lang file by FITFC. Russian lang file by Quarkrus." #optional
 authors="aurilisdev" #optional
 description='''
 '''

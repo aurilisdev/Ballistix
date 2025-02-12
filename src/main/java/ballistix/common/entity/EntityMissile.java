@@ -10,6 +10,7 @@ import ballistix.common.settings.Constants;
 import ballistix.registers.BallistixEntities;
 import electrodynamics.Electrodynamics;
 import electrodynamics.prefab.utilities.BlockEntityUtils;
+import electrodynamics.prefab.utilities.Scheduler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -18,6 +19,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -26,6 +28,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -34,20 +37,29 @@ public class EntityMissile extends Entity {
 
     public static final ConcurrentHashMap<ResourceKey<Level>, HashSet<EntityMissile>> MISSILES = new ConcurrentHashMap<>();
 
-    private static final EntityDataAccessor<Integer> EXPLOSIVE_TYPE = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> MISSILE_TYPE = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> IS_ITEM = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Integer> ISSTUCK = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Float> HEALTH = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> START_X = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> START_Z = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> SPEED = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<BlockPos> TARGET = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.BLOCK_POS);
+    private static final EntityDataAccessor<Integer> EXPLOSIVE_TYPE = SynchedEntityData.defineId(EntityMissile.class,
+	    EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> MISSILE_TYPE = SynchedEntityData.defineId(EntityMissile.class,
+	    EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> IS_ITEM = SynchedEntityData.defineId(EntityMissile.class,
+	    EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> ISSTUCK = SynchedEntityData.defineId(EntityMissile.class,
+	    EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Float> HEALTH = SynchedEntityData.defineId(EntityMissile.class,
+	    EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> START_X = SynchedEntityData.defineId(EntityMissile.class,
+	    EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> START_Z = SynchedEntityData.defineId(EntityMissile.class,
+	    EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> SPEED = SynchedEntityData.defineId(EntityMissile.class,
+	    EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<BlockPos> TARGET = SynchedEntityData.defineId(EntityMissile.class,
+	    EntityDataSerializers.BLOCK_POS);
 
-    public static final int MAX_CRUISING_ALTITUDE = 500;
+    public static final int MAX_CRUISING_ALTITUDE = 300;
     public static final int WORLD_BUILD_HEIGHT = 320;
-    public static final int ARC_TURN_HEIGHT_MIN = 400;
-
+    public static final int ARC_TURN_HEIGHT_MIN = 150;
+    private ChunkPos lastChunk;
 
     public BlockPos target = BlockEntityUtils.OUT_OF_REACH;
     public int blastOrdinal = -1;
@@ -62,266 +74,316 @@ public class EntityMissile extends Entity {
     public float health = Constants.MISSILE_HEALTH;
 
     public EntityMissile(EntityType<? extends EntityMissile> type, Level worldIn) {
-        super(type, worldIn);
-        blocksBuilding = true;
+	super(type, worldIn);
+	blocksBuilding = true;
     }
 
     public EntityMissile(Level worldIn) {
-        this(BallistixEntities.ENTITY_MISSILE.get(), worldIn);
+	this(BallistixEntities.ENTITY_MISSILE.get(), worldIn);
     }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        builder.define(EXPLOSIVE_TYPE, -1);
-        builder.define(MISSILE_TYPE, -1);
-        builder.define(ISSTUCK, -1);
-        builder.define(START_X, -1.0F);
-        builder.define(START_Z, -1.0F);
-        builder.define(SPEED, -1.0F);
-        builder.define(TARGET, BlockEntityUtils.OUT_OF_REACH);
-        builder.define(IS_ITEM, false);
-        builder.define(HEALTH, health);
+	builder.define(EXPLOSIVE_TYPE, -1);
+	builder.define(MISSILE_TYPE, -1);
+	builder.define(ISSTUCK, -1);
+	builder.define(START_X, -1.0F);
+	builder.define(START_Z, -1.0F);
+	builder.define(SPEED, -1.0F);
+	builder.define(TARGET, BlockEntityUtils.OUT_OF_REACH);
+	builder.define(IS_ITEM, false);
+	builder.define(HEALTH, health);
+    }
+
+    private void releaseChunk() {
+	ServerLevel serverWorld = (ServerLevel) this.level();
+	ChunkPos chunkPos = new ChunkPos(this.blockPosition());
+	serverWorld.setChunkForced(chunkPos.x, chunkPos.z, false);
+
+    }
+
+    private void forceLoadChunk() {
+	ServerLevel serverWorld = (ServerLevel) this.level();
+	ChunkPos chunkPos = new ChunkPos(this.blockPosition());
+	for (int x = -1; x <= 1; x++) {
+	    for (int z = -1; z <= 1; z++) {
+		serverWorld.setChunkForced(chunkPos.x + x, chunkPos.z + z, true);
+	    }
+	}
     }
 
     @Override
     public void tick() {
+	if (!this.level().isClientSide) {
+	    ChunkPos newChunk = new ChunkPos(this.blockPosition());
+	    if (!newChunk.equals(this.lastChunk)) {
+		releaseChunk(); // Unload previous chunk
+		forceLoadChunk(); // Load new chunk
+		this.lastChunk = newChunk;
+	    }
+	}
+	Level level = level();
+	boolean isClientSide = level.isClientSide;
+	boolean isServerSide = !isClientSide;
+
+	if (isServerSide) {
+
+	    entityData.set(EXPLOSIVE_TYPE, blastOrdinal);
+	    entityData.set(MISSILE_TYPE, missileType);
+	    entityData.set(ISSTUCK, isStuck ? 1 : -1);
+	    entityData.set(START_X, startX);
+	    entityData.set(START_Z, startZ);
+	    entityData.set(SPEED, speed);
+	    entityData.set(TARGET, target);
+	    entityData.set(IS_ITEM, isItem);
 
-        Level level = level();
-        boolean isClientSide = level.isClientSide;
-        boolean isServerSide = !isClientSide;
+	} else {
 
-        if (isServerSide) {
+	    blastOrdinal = entityData.get(EXPLOSIVE_TYPE);
+	    missileType = entityData.get(MISSILE_TYPE);
+	    boolean old = isStuck;
+	    isStuck = entityData.get(ISSTUCK) > 0;
+	    if (isStuck != old) {
+		setPos(getX() - speed * getDeltaMovement().x * 1, getY() - speed * getDeltaMovement().y * 1,
+			getZ() - speed * getDeltaMovement().z * 1);
+	    }
+	    startX = entityData.get(START_X);
+	    startZ = entityData.get(START_Z);
+	    speed = entityData.get(SPEED);
+	    target = entityData.get(TARGET);
+	    isItem = entityData.get(IS_ITEM);
+	}
 
-            entityData.set(EXPLOSIVE_TYPE, blastOrdinal);
-            entityData.set(MISSILE_TYPE, missileType);
-            entityData.set(ISSTUCK, isStuck ? 1 : -1);
-            entityData.set(START_X, startX);
-            entityData.set(START_Z, startZ);
-            entityData.set(SPEED, speed);
-            entityData.set(TARGET, target);
-            entityData.set(IS_ITEM, isItem);
+	if (isServerSide && health <= 0) {
+	    level().playSound(null, blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0F,
+		    1.0F);
+	    removeAfterChangingDimensions();
+	    return;
+	}
 
-        } else {
+	if ((!isItem && target.equals(BlockEntityUtils.OUT_OF_REACH)) || blastOrdinal == -1) {
+	    if (isServerSide) {
+		removeAfterChangingDimensions();
+	    }
+	    return;
+	}
 
-            blastOrdinal = entityData.get(EXPLOSIVE_TYPE);
-            missileType = entityData.get(MISSILE_TYPE);
-            boolean old = isStuck;
-            isStuck = entityData.get(ISSTUCK) > 0;
-            if (isStuck != old) {
-                setPos(getX() - speed * getDeltaMovement().x * 1, getY() - speed * getDeltaMovement().y * 1, getZ() - speed * getDeltaMovement().z * 1);
-            }
-            startX = entityData.get(START_X);
-            startZ = entityData.get(START_Z);
-            speed = entityData.get(SPEED);
-            target = entityData.get(TARGET);
-            isItem = entityData.get(IS_ITEM);
-        }
+	if (isStuck) {
+	    if (isServerSide && blastEntity.getBlast().hasStarted) {
+		removeAfterChangingDimensions();
+	    }
+	    return;
+	}
 
-        if(isServerSide && health <= 0) {
-            level().playSound(null, blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0F, 1.0F);
-            removeAfterChangingDimensions();
-            return;
-        }
+	BlockState state = level.getBlockState(blockPosition());
 
-        if ((!isItem && target.equals(BlockEntityUtils.OUT_OF_REACH)) || blastOrdinal == -1) {
-            if (isServerSide) {
-                removeAfterChangingDimensions();
-            }
-            return;
-        }
+	if (blastEntity != null) {
+	    return;
+	}
 
-        if (isStuck) {
-            if (isServerSide && blastEntity.getBlast().hasStarted) {
-                removeAfterChangingDimensions();
-            }
-            return;
-        }
+	if (getDeltaMovement().length() > 0 && !isStuck) {
 
-        BlockState state = level.getBlockState(blockPosition());
+	    setXRot((float) (Math.atan(getDeltaMovement().y() / Math.sqrt(
+		    getDeltaMovement().x() * getDeltaMovement().x() + getDeltaMovement().z() * getDeltaMovement().z()))
+		    * 180.0D / Math.PI));
+	    setYRot((float) (Math.atan2(getDeltaMovement().x(), getDeltaMovement().z()) * 180.0D / Math.PI));
 
-        if (blastEntity != null) {
-            return;
-        }
+	}
 
-        if (getDeltaMovement().length() > 0 && !isStuck) {
+	if (isServerSide) {
 
-            setXRot((float) (Math.atan(getDeltaMovement().y() / Math.sqrt(getDeltaMovement().x() * getDeltaMovement().x() + getDeltaMovement().z() * getDeltaMovement().z())) * 180.0D / Math.PI));
-            setYRot((float) (Math.atan2(getDeltaMovement().x(), getDeltaMovement().z()) * 180.0D / Math.PI));
+	    if (!state.getCollisionShape(level, blockPosition()).isEmpty()
+		    && (isItem || getY() < target.getY() && getDeltaMovement().y() < 0 && tickCount > 20)) {
 
-        }
+		SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
 
-        if (isServerSide) {
+		setPos(getX() - speed * getDeltaMovement().x * 2, getY() - speed * getDeltaMovement().y * 2,
+			getZ() - speed * getDeltaMovement().z * 2);
 
+		Blast b = explosive.createBlast(level, blockPosition());
 
-            if (!state.getCollisionShape(level, blockPosition()).isEmpty() && (isItem || getY() < target.getY() && getDeltaMovement().y() < 0 && tickCount > 20)) {
+		if (b != null) {
 
-                SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
+		    blastEntity = b.performExplosion();
 
-                setPos(getX() - speed * getDeltaMovement().x * 2, getY() - speed * getDeltaMovement().y * 2, getZ() - speed * getDeltaMovement().z * 2);
+		    if (blastEntity == null) {
 
-                Blast b = explosive.createBlast(level, blockPosition());
+			removeAfterChangingDimensions();
 
-                if (b != null) {
+		    } else {
 
-                    blastEntity = b.performExplosion();
+			isStuck = true;
 
-                    if (blastEntity == null) {
+		    }
+		}
 
-                        removeAfterChangingDimensions();
+	    }
 
-                    } else {
+	    if (!isItem && getY() >= ARC_TURN_HEIGHT_MIN) {
+		float iDeltaX = target.getX() - startX;
+		float iDeltaZ = target.getZ() - startZ;
 
-                        isStuck = true;
+		float initialDistance = (float) Math.sqrt(iDeltaX * iDeltaX + iDeltaZ * iDeltaZ);
+		float halfwayDistance = initialDistance / 2.0F;
 
-                    }
-                }
+		float deltaX = (float) (getPosition().x - startX);
+		float deltaZ = (float) (getPosition().z - startZ);
 
-            }
+		float distanceTraveled = (float) Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
 
-            if (!isItem && getY() >= ARC_TURN_HEIGHT_MIN) {
+		double maxRadii = MAX_CRUISING_ALTITUDE - ARC_TURN_HEIGHT_MIN;
 
-                float iDeltaX = target.getX() - startX;
-                float iDeltaZ = target.getZ() - startZ;
+		float turnRadius = (float) Mth.clamp(halfwayDistance, 0.001F, maxRadii);
 
-                float iDistanceXZ = (float) Math.sqrt(iDeltaX * iDeltaX + iDeltaZ * iDeltaZ);
-                float halfwayXZ = iDistanceXZ / 2.0F;
+		float deltaY = (float) (getPosition().y - ARC_TURN_HEIGHT_MIN);
 
-                double maxRadii = MAX_CRUISING_ALTITUDE - ARC_TURN_HEIGHT_MIN;
+		float phi = 0;
+		float signY = 1;
 
-                float turnRadius = (float) Mth.clamp(halfwayXZ, 0.001F, maxRadii);
+		if (halfwayDistance <= maxRadii) {
 
-                float deltaX = (float) (target.getX() - getX());
-                float deltaZ = (float) (target.getZ() - getZ());
+		    if (getPosition().y >= ARC_TURN_HEIGHT_MIN && distanceTraveled < halfwayDistance) {
 
-                float distanceToTarget2D = (float) Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
-                float distanceFromStart2D = iDistanceXZ - distanceToTarget2D;
+			phi = (float) Math.asin(Mth.clamp(deltaY / turnRadius, 0, 1));
 
-                float deltaY = (float) (getY() - ARC_TURN_HEIGHT_MIN);
+		    } else if (distanceTraveled >= halfwayDistance) {
 
-                float phi = 0;
-                float signY = 1;
+			phi = (float) Math.asin(Mth.clamp((initialDistance - distanceTraveled) / turnRadius, 0, 1));
+			signY = -1;
 
-                if (halfwayXZ <= maxRadii) {
+		    } else if (distanceTraveled >= initialDistance) {
 
-                    phi = (float) Math.asin(Mth.clamp(deltaY / turnRadius, 0, 0.999));
+			signY = -1;
 
-                    if (distanceFromStart2D > halfwayXZ) {
+		    }
 
-                        signY = -1;
+		    float x = (float) ((iDeltaX / initialDistance) * Math.sin(phi));
+		    float z = (float) ((iDeltaZ / initialDistance) * Math.sin(phi));
 
-                    }
+		    setDeltaMovement(new Vec3(x, Math.cos(phi) * signY, z));
 
-                    float x = (float) (iDeltaX / iDistanceXZ * Math.sin(phi));
-                    float z = (float) (iDeltaZ / iDistanceXZ * Math.sin(phi));
+		} else {
 
-                    setDeltaMovement(x, Math.cos(phi) * signY, z);
+		    if (getPosition().y >= ARC_TURN_HEIGHT_MIN && distanceTraveled < halfwayDistance) {
 
-                } else {
+			if (distanceTraveled <= turnRadius) {
 
-                    if (distanceFromStart2D < halfwayXZ) {
+			    phi = (float) Math.asin(Mth.clamp(deltaY / turnRadius, 0, 1));
 
-                        if (distanceFromStart2D <= turnRadius) {
-                            phi = (float) Math.asin(Mth.clamp(deltaY / turnRadius, 0, 0.999));
-                        } else {
-                            phi = (float) (Math.PI / 2.0);
-                        }
+			} else {
 
-                    } else if (distanceFromStart2D > halfwayXZ) {
+			    phi = (float) (Math.PI / 2.0);
 
-                        if (distanceToTarget2D <= iDistanceXZ - turnRadius) {
-                            phi = (float) Math.asin(Mth.clamp(deltaY / turnRadius, 0, 0.999));
-                            signY = -1;
-                        } else {
-                            phi = (float) (Math.PI / 2.0);
-                        }
-                    } else {
-                        phi = (float) (Math.PI / 2.0);
-                    }
+			}
 
-                    float x = (float) (iDeltaX / iDistanceXZ * Math.sin(phi));
-                    float z = (float) (iDeltaZ / iDistanceXZ * Math.sin(phi));
+		    } else if (distanceTraveled >= halfwayDistance) {
 
-                    setDeltaMovement(x, Math.cos(phi) * signY, z);
+			if (distanceTraveled >= initialDistance - turnRadius) {
 
-                }
-            }
-        }
+			    phi = (float) Math.asin(Mth.clamp((initialDistance - distanceTraveled) / turnRadius, 0, 1));
+			    signY = -1;
 
-        if (isServerSide || state.getCollisionShape(level, blockPosition()).isEmpty()) {
+			} else {
 
-            setPos(getX() + speed * getDeltaMovement().x, getY() + speed * getDeltaMovement().y, getZ() + speed * getDeltaMovement().z);
+			    phi = (float) (Math.PI / 2.0);
 
-        }
+			}
 
-        if (!isItem && !target.equals(BlockEntityUtils.OUT_OF_REACH) && speed < 3.0F) {
-            speed += 0.02F;
-        }
+		    } else if (distanceTraveled >= initialDistance) {
 
-        if (isServerSide || speed >= 3.0F) {
-            return;
-        }
+			signY = -1;
 
+		    }
 
-        //exhaust only when missile is accelerating
+		    float x = (float) (iDeltaX / initialDistance * Math.sin(phi));
+		    float z = (float) (iDeltaZ / initialDistance * Math.sin(phi));
 
+		    setDeltaMovement(new Vec3(x, Math.cos(phi) * signY, z));
 
-        float widthOver2 = getDimensions(getPose()).width() / 2.0F;
+		}
+	    }
+	}
 
-        for (int i = 0; i < 5; i++) {
+	if (isServerSide || state.getCollisionShape(level, blockPosition()).isEmpty()) {
 
-            float x = (float) (getX() - widthOver2 + Electrodynamics.RANDOM.nextFloat(widthOver2));
-            float y = (float) (getY() - Electrodynamics.RANDOM.nextFloat(0.5F));
-            float z = (float) (getZ() - widthOver2 + Electrodynamics.RANDOM.nextFloat(widthOver2));
+	    setPos(getX() + speed * getDeltaMovement().x, getY() + speed * getDeltaMovement().y,
+		    getZ() + speed * getDeltaMovement().z);
 
-            level.addParticle(ParticleTypes.LARGE_SMOKE, x, y, z, -speed * (getDeltaMovement().x + Electrodynamics.RANDOM.nextFloat()), -speed * (getDeltaMovement().y - 0.075f + Electrodynamics.RANDOM.nextFloat()), -speed * (getDeltaMovement().z + Electrodynamics.RANDOM.nextFloat()));
+	}
 
-        }
+	if (!isItem && !target.equals(BlockEntityUtils.OUT_OF_REACH) && speed < 3.0F) {
+	    speed += 0.02F;
+	}
 
-        float motionX = (float) (-speed * getDeltaMovement().x);
-        float motionY = (float) (-speed * getDeltaMovement().y);
-        float motionZ = (float) (-speed * getDeltaMovement().z);
-        for (int i = 0; i < 4; i++) {
-            level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, false, this.getX(), this.getY(), this.getZ(), random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
-        }
+	if (isServerSide || speed >= 3.0F) {
+	    return;
+	}
 
-        for (int i = 0; i < 4; i++) {
-            level.addParticle(ParticleTypes.CLOUD, false, this.getX(), this.getY(), this.getZ(), random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
-        }
+	// exhaust only when missile is accelerating
 
+	float widthOver2 = getDimensions(getPose()).width() / 2.0F;
+
+	for (int i = 0; i < 5; i++) {
+
+	    float x = (float) (getX() - widthOver2 + Electrodynamics.RANDOM.nextFloat(widthOver2));
+	    float y = (float) (getY() - Electrodynamics.RANDOM.nextFloat(0.5F));
+	    float z = (float) (getZ() - widthOver2 + Electrodynamics.RANDOM.nextFloat(widthOver2));
+
+	    level.addParticle(ParticleTypes.LARGE_SMOKE, x, y, z,
+		    -speed * (getDeltaMovement().x + Electrodynamics.RANDOM.nextFloat()),
+		    -speed * (getDeltaMovement().y - 0.075f + Electrodynamics.RANDOM.nextFloat()),
+		    -speed * (getDeltaMovement().z + Electrodynamics.RANDOM.nextFloat()));
+
+	}
+
+	float motionX = (float) (-speed * getDeltaMovement().x);
+	float motionY = (float) (-speed * getDeltaMovement().y);
+	float motionZ = (float) (-speed * getDeltaMovement().z);
+	for (int i = 0; i < 4; i++) {
+	    level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, false, this.getX(), this.getY(), this.getZ(),
+		    random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY,
+		    random.nextDouble() / 1.5 - 0.3333 + motionZ);
+	}
+
+	for (int i = 0; i < 4; i++) {
+	    level.addParticle(ParticleTypes.CLOUD, false, this.getX(), this.getY(), this.getZ(),
+		    random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY,
+		    random.nextDouble() / 1.5 - 0.3333 + motionZ);
+	}
 
     }
 
     @Override
     protected boolean canRide(Entity entityIn) {
-        return true;
+	return true;
     }
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compound) {
-        compound.putInt("type", blastOrdinal);
-        compound.putInt("range", missileType);
-        compound.putBoolean("isItem", isItem);
-        compound.put("target", NbtUtils.writeBlockPos(target));
-        compound.putFloat("startx", startX);
-        compound.putFloat("startz", startZ);
-        compound.putFloat("speed", speed);
-        compound.putInt("freq", frequency);
-        compound.putFloat("health", health);
+	compound.putInt("type", blastOrdinal);
+	compound.putInt("range", missileType);
+	compound.putBoolean("isItem", isItem);
+	compound.put("target", NbtUtils.writeBlockPos(target));
+	compound.putFloat("startx", startX);
+	compound.putFloat("startz", startZ);
+	compound.putFloat("speed", speed);
+	compound.putInt("freq", frequency);
+	compound.putFloat("health", health);
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
-        blastOrdinal = compound.getInt("type");
-        missileType = compound.getInt("range");
-        isItem = compound.getBoolean("isItem");
-        blastOrdinal = compound.getInt("type");
-        Optional<BlockPos> pos = NbtUtils.readBlockPos(compound, "target");
-        target = pos.orElse(BlockEntityUtils.OUT_OF_REACH);
-        startX = compound.getFloat("startx");
-        startZ = compound.getFloat("startz");
-        speed = compound.getFloat("speed");
-        frequency = compound.getInt("freq");
-        health = compound.getFloat("health");
+	blastOrdinal = compound.getInt("type");
+	missileType = compound.getInt("range");
+	isItem = compound.getBoolean("isItem");
+	blastOrdinal = compound.getInt("type");
+	Optional<BlockPos> pos = NbtUtils.readBlockPos(compound, "target");
+	target = pos.orElse(BlockEntityUtils.OUT_OF_REACH);
+	startX = compound.getFloat("startx");
+	startZ = compound.getFloat("startz");
+	speed = compound.getFloat("speed");
+	frequency = compound.getInt("freq");
+	health = compound.getFloat("health");
     }
 
     @Override
@@ -331,47 +393,52 @@ public class EntityMissile extends Entity {
 
     @Override
     public InteractionResult interact(Player player, InteractionHand hand) {
-        if (player.isSecondaryUseActive()) {
-            return InteractionResult.PASS;
-        } else {
-            if (!this.level().isClientSide) {
-                return player.startRiding(this, true) ? InteractionResult.CONSUME : InteractionResult.PASS;
-            } else {
-                return InteractionResult.SUCCESS;
-            }
-        }
+	if (player.isSecondaryUseActive()) {
+	    return InteractionResult.PASS;
+	} else {
+	    if (!this.level().isClientSide) {
+		return player.startRiding(this, true) ? InteractionResult.CONSUME : InteractionResult.PASS;
+	    } else {
+		return InteractionResult.SUCCESS;
+	    }
+	}
     }
 
     @Override
     public boolean isPickable() {
-        return true;
+	return true;
     }
 
     @Override
     public void onAddedToLevel() {
-        super.onAddedToLevel();
-        HashSet<EntityMissile> set = MISSILES.getOrDefault(level().dimension(), new HashSet<>());
-        set.add(this);
-        MISSILES.put(level().dimension(), set);
+	super.onAddedToLevel();
+	HashSet<EntityMissile> set = MISSILES.getOrDefault(level().dimension(), new HashSet<>());
+	set.add(this);
+	MISSILES.put(level().dimension(), set);
     }
 
     @Override
     public void onRemovedFromLevel() {
-        super.onRemovedFromLevel();
-        HashSet<EntityMissile> set = MISSILES.getOrDefault(level().dimension(), new HashSet<>());
-        set.remove(this);
-        //MISSILES.put(level().dimension(), set);
+	super.onRemovedFromLevel();
+	HashSet<EntityMissile> set = MISSILES.getOrDefault(level().dimension(), new HashSet<>());
+	set.remove(this);
+	if (!this.level().isClientSide) {
+	    releaseChunk();
+	    Scheduler.schedule(1, this::forceLoadChunk);
+	}
+	// MISSILES.put(level().dimension(), set);
     }
 
     @Override
     public void remove(RemovalReason reason) {
-        super.remove(reason);
-        HashSet<EntityMissile> set = MISSILES.getOrDefault(level().dimension(), new HashSet<>());
-        set.remove(this);
+	super.remove(reason);
+	HashSet<EntityMissile> set = MISSILES.getOrDefault(level().dimension(), new HashSet<>());
+	set.remove(this);
+
     }
 
     public Vec3 getPosition() {
-        return new Vec3(getX(), getY(), getZ());
+	return new Vec3(getX(), getY(), getZ());
     }
 
 }

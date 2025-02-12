@@ -1,6 +1,7 @@
 package ballistix.prefab.screen;
 
 import ballistix.client.screen.ScreenFireControlRadar;
+import ballistix.common.settings.Constants;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import electrodynamics.prefab.screen.component.ScreenComponentGeneric;
 import electrodynamics.prefab.tile.components.IComponentType;
@@ -119,19 +120,9 @@ public class ScreenComponentRadarGrid extends ScreenComponentGeneric {
             return;
         }
 
-        float deltaX = (float) (tile.trackingPos.get().x - tile.getBlockPos().getX());
+        float deltaX = (float) ((tile.trackingPos.get().x - tile.getBlockPos().getX()) / (2.0f * Constants.FIRE_CONTROL_RADAR_RANGE)) * width;
 
-        float deltaZ = (float) (tile.trackingPos.get().z - tile.getBlockPos().getZ());
-
-        float offsetX = deltaX % center;
-
-        float offsetZ = deltaZ % center;
-
-        float mag = (float) Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
-
-        deltaX = deltaX / mag;
-
-        deltaZ = deltaZ / mag;
+        float deltaZ = (float) ((tile.trackingPos.get().z - tile.getBlockPos().getZ()) / (2.0f * Constants.FIRE_CONTROL_RADAR_RANGE)) * width;
 
         double angleRads = Math.atan2(deltaZ, deltaX);
 
@@ -139,7 +130,7 @@ public class ScreenComponentRadarGrid extends ScreenComponentGeneric {
 
         int alpha = (int) ((dotTheta + 360.0F - theta) / 360.0F * 255.0F);
 
-        graphics.fill((int) Math.floor(x + center + offsetX - 1), (int) Math.floor(y + center + offsetZ - 1), (int) Math.ceil(x + center + offsetX + 1), (int) Math.ceil(y + center + offsetZ + 1), new Color(255, 0, 0, alpha).color());
+        graphics.fill((int) Math.floor(x + center + deltaX - 1), (int) Math.floor(y + center + deltaZ - 1), (int) Math.ceil(x + center + deltaX + 1), (int) Math.ceil(y + center + deltaZ + 1), new Color(255, 0, 0, alpha).color());
 
     }
 }

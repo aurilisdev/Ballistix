@@ -105,7 +105,7 @@ public class ItemRocketLauncher extends ItemElectrodynamics {
 			missile.shrink(1);
 			EntityMissile miss = new EntityMissile(world);
 			miss.moveTo(entityLiving.getX(), entityLiving.getY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getZ(), entityLiving.getYRot(), entityLiving.getXRot());
-			miss.speed = 2.0F;
+			miss.speed = 2F;
 			miss.setDeltaMovement(entityLiving.getLookAngle().x, entityLiving.getLookAngle().y, entityLiving.getLookAngle().z);
 			miss.blastOrdinal = blastOrdinal;
 			miss.missileType = 0;

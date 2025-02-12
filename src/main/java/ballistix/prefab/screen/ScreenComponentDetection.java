@@ -12,6 +12,7 @@ import electrodynamics.prefab.utilities.math.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
@@ -50,7 +51,7 @@ public class ScreenComponentDetection extends ScreenComponentGeneric {
 
         Font font = screen.getFontRenderer();
 
-        Component text = Component.literal(detection.getPosition().toString());
+        Component text = Component.literal(new BlockPos((int)detection.getPosition().x,(int)detection.getPosition().y,(int)detection.getPosition().z).toString());
 
         int x = xLocation + 20;
         int y = yLocation + 4;

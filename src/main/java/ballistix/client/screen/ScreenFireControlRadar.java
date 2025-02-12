@@ -23,6 +23,7 @@ import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentGuiTa
 import electrodynamics.prefab.screen.component.utils.AbstractScreenComponentInfo;
 import electrodynamics.prefab.utilities.math.Color;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
@@ -66,7 +67,7 @@ public class ScreenFireControlRadar extends GenericScreen<ContainerFireControlRa
             if (tile == null) {
                 return;
             }
-            Component radar = tile.trackingPos.get().equals(TileFireControlRadar.OUT_OF_REACH) ? BallistixTextUtils.gui("turret.radarnone").withStyle(ChatFormatting.GREEN) : Component.literal(tile.trackingPos.get().toString()).withStyle(ChatFormatting.DARK_GRAY);
+            Component radar = tile.trackingPos.get().equals(TileFireControlRadar.OUT_OF_REACH) ? BallistixTextUtils.gui("turret.radarnone").withStyle(ChatFormatting.GREEN) : Component.literal(new BlockPos((int)tile.trackingPos.get().x,(int)tile.trackingPos.get().y,(int)tile.trackingPos.get().z).toString()).withStyle(ChatFormatting.DARK_GRAY);
 
             int x = (int) (getGuiWidth() + 10);
             int y = (int) (getGuiHeight() + 20);

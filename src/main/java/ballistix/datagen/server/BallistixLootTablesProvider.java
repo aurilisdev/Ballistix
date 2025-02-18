@@ -23,12 +23,19 @@ public class BallistixLootTablesProvider extends ElectrodynamicsLootTablesProvid
 		}
 
 		addMachineTable(BallistixBlocks.blockMissileSilo, BallistixBlockTypes.TILE_MISSILESILO, true, false, false, false, false);
+		addSimpleBlock(BallistixBlocks.blockRadar);
+		addSimpleBlock(BallistixBlocks.blockFireControlRadar);
+		addSimpleBlock(BallistixBlocks.blockEsmTower);
+		addSimpleBlock(BallistixBlocks.blockSamTurret);
+		addSimpleBlock(BallistixBlocks.blockCiwsTurret);
+		addSimpleBlock(BallistixBlocks.blockLaserTurret);
+		addSimpleBlock(BallistixBlocks.blockRailgunTurret);
 
 	}
 
 	@Override
 	public List<Block> getExcludedBlocks() {
-		return List.of(BallistixBlocks.blockRadar);
+		return List.of();
 	}
 
 }

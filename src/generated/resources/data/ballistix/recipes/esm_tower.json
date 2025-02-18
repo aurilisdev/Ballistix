@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "forge:plates/aluminum"
+    },
+    "C": {
+      "tag": "forge:circuits/elite"
+    },
+    "P": {
+      "tag": "forge:plates/steel"
+    },
+    "R": {
+      "item": "ballistix:radar"
+    },
+    "W": {
+      "item": "electrodynamics:wiregold"
+    }
+  },
+  "pattern": [
+    "AAA",
+    "WRW",
+    "PCP"
+  ],
+  "result": {
+    "item": "ballistix:esmtower"
+  },
+  "show_notification": false
+}

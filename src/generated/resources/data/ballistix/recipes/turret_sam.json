@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "forge:circuits/basic"
+    },
+    "M": {
+      "item": "electrodynamics:motor"
+    },
+    "P": {
+      "tag": "forge:plates/steel"
+    },
+    "S": {
+      "item": "ballistix:missilesilo"
+    }
+  },
+  "pattern": [
+    " S ",
+    "PMP",
+    "PCP"
+  ],
+  "result": {
+    "item": "ballistix:samturret"
+  },
+  "show_notification": false
+}

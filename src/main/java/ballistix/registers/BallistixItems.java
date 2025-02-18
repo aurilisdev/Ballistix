@@ -40,6 +40,8 @@ public class BallistixItems {
 
 	public static final HashMap<ISubtype, RegistryObject<Item>> SUBTYPEITEMREGISTER_MAPPINGS = new HashMap<>();
 
+	public static final RegistryObject<Item> ITEM_AAMISSILE = ITEMS.register("aamissile", () -> new ItemElectrodynamics(new Item.Properties().stacksTo(10), BallistixCreativeTabs.MAIN));
+	public static final RegistryObject<Item> ITEM_BULLET = ITEMS.register("bullet", () -> new ItemElectrodynamics(new Item.Properties().stacksTo(64), BallistixCreativeTabs.MAIN));
 	public static final RegistryObject<Item> ITEM_DUSTPOISON = ITEMS.register("dustpoison", () -> new ItemElectrodynamics(new Item.Properties(), () -> BallistixCreativeTabs.MAIN.get()));
 	public static final RegistryObject<Item> ITEM_ROCKETLAUNCHER = ITEMS.register("rocketlauncher", ItemRocketLauncher::new);
 	public static final RegistryObject<Item> ITEM_RADARGUN = ITEMS.register("radargun", ItemRadarGun::new);
@@ -63,6 +65,12 @@ public class BallistixItems {
 		}
 		ITEMS.register("missilesilo", () -> new BlockItemDescriptable(() -> blockMissileSilo, new Item.Properties(), () -> BallistixCreativeTabs.MAIN.get()));
 		ITEMS.register("radar", () -> new BlockItemDescriptable(() -> blockRadar, new Item.Properties(), () -> BallistixCreativeTabs.MAIN.get()));
+		ITEMS.register("firecontrolradar", () -> new BlockItemDescriptable(() -> BallistixBlocks.blockFireControlRadar, new Item.Properties(), () -> BallistixCreativeTabs.MAIN.get()));
+		ITEMS.register("esmtower", () -> new BlockItemDescriptable(() -> BallistixBlocks.blockEsmTower, new Item.Properties(), () -> BallistixCreativeTabs.MAIN.get()));
+		ITEMS.register("samturret", () -> new BlockItemDescriptable(() -> BallistixBlocks.blockSamTurret, new Item.Properties(), () -> BallistixCreativeTabs.MAIN.get()));
+		ITEMS.register("ciwsturret", () -> new BlockItemDescriptable(() -> BallistixBlocks.blockCiwsTurret, new Item.Properties(), () -> BallistixCreativeTabs.MAIN.get()));
+		ITEMS.register("laserturret", () -> new BlockItemDescriptable(() -> BallistixBlocks.blockLaserTurret, new Item.Properties(), () -> BallistixCreativeTabs.MAIN.get()));
+		ITEMS.register("railgunturret", () -> new BlockItemDescriptable(() -> BallistixBlocks.blockRailgunTurret, new Item.Properties(), () -> BallistixCreativeTabs.MAIN.get()));
 
 	}
 

@@ -2,6 +2,7 @@ package ballistix.common.entity;
 
 import ballistix.api.entity.IDefusable;
 import ballistix.common.blast.Blast;
+import ballistix.common.blast.BlastDarkmatter;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.registers.BallistixBlocks;
 import ballistix.registers.BallistixEntities;
@@ -21,6 +22,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkHooks;
 
 public class EntityExplosive extends Entity implements IDefusable {
+
 	private static final EntityDataAccessor<Integer> FUSE = SynchedEntityData.defineId(EntityExplosive.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(EntityExplosive.class, EntityDataSerializers.INT);
 	public int blastOrdinal = -1;
@@ -90,12 +92,33 @@ public class EntityExplosive extends Entity implements IDefusable {
 			this.setDeltaMovement(getDeltaMovement().multiply(0.7D, -0.5D, 0.7D));
 		}
 
+		if (!level().isClientSide && blastOrdinal > -1 && SubtypeBlast.values()[blastOrdinal] == SubtypeBlast.largeantimatter) {
+
+			for (EntityBlast entity : level().getEntitiesOfClass(EntityBlast.class, getBoundingBox().inflate(getDeltaMovement().length()))) {
+				if (entity.blastOrdinal == SubtypeBlast.darkmatter.ordinal() && entity.getBlast() != null) {
+					BlastDarkmatter blast = (BlastDarkmatter) entity.getBlast();
+					blast.canceled = true;
+					entity.remove(RemovalReason.DISCARDED);
+					SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
+					Blast b = explosive.createBlast(level(), blockPosition());
+					if (b != null) {
+						b.performExplosion();
+					}
+					removeAfterChangingDimensions();
+					return;
+				}
+			}
+
+		}
+
 		--fuse;
 		if (fuse <= 0) {
-			remove(RemovalReason.DISCARDED);
+			if (!level().isClientSide()) {
+				remove(RemovalReason.DISCARDED);
+			}
 			if (blastOrdinal != -1) {
 				SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
-				Blast b = Blast.createFromSubtype(explosive, level(), blockPosition());
+				Blast b = explosive.createBlast(level(), blockPosition());
 				if (b != null) {
 					b.performExplosion();
 				}

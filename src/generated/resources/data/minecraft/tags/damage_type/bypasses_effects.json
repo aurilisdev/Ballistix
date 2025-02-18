@@ -1,6 +1,9 @@
 {
   "values": [
     "ballistix:chemicalgas",
-    "ballistix:shrapnel"
+    "ballistix:shrapnel",
+    "ballistix:ciwsbullet",
+    "ballistix:laserturret",
+    "ballistix:railgunround"
   ]
 }

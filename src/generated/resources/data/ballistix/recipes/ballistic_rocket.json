@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "tag": "forge:gunpowder"
+    },
+    "P": {
+      "tag": "forge:plates/steel"
+    }
+  },
+  "pattern": [
+    " P ",
+    "PGP",
+    "PGP"
+  ],
+  "result": {
+    "item": "ballistix:aamissile"
+  },
+  "show_notification": false
+}

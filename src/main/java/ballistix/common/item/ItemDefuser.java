@@ -22,6 +22,8 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
 @EventBusSubscriber(modid = References.ID, bus = Bus.FORGE)
 public class ItemDefuser extends ItemElectric {
+	
+	public static final double USAGE = 150;
 
 	public ItemDefuser() {
 		super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1), () -> BallistixCreativeTabs.MAIN.get(), item -> ElectrodynamicsItems.ITEM_BATTERY.get());
@@ -51,7 +53,7 @@ public class ItemDefuser extends ItemElectric {
 
 		if (entity instanceof IDefusable defuse) {
 
-			defuser.extractPower(stack, 150, false);
+			defuser.extractPower(stack, USAGE, false);
 			defuse.defuse();
 
 		} else if (entity instanceof PrimedTnt tnt) {
@@ -59,7 +61,7 @@ public class ItemDefuser extends ItemElectric {
 			entity.remove(RemovalReason.DISCARDED);
 
 			ItemEntity item = new ItemEntity(world, tnt.getBlockX() + 0.5, tnt.getBlockY() + 0.5, tnt.getBlockZ() + 0.5, new ItemStack(Items.TNT));
-			defuser.extractPower(stack, 150, false);
+			defuser.extractPower(stack, USAGE, false);
 			world.addFreshEntity(item);
 
 		}

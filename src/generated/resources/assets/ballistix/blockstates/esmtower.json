@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "ballistix:block/esmtower"
+    },
+    "facing=north": {
+      "model": "ballistix:block/esmtower",
+      "y": 270
+    },
+    "facing=south": {
+      "model": "ballistix:block/esmtower",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "ballistix:block/esmtower",
+      "y": 180
+    }
+  }
+}

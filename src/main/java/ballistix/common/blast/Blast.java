@@ -1,6 +1,5 @@
 package ballistix.common.blast;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -88,18 +87,20 @@ public abstract class Blast {
 	public EntityBlast performExplosion() {
 		ConstructBlastEvent evt = new ConstructBlastEvent(world, this);
 		MinecraftForge.EVENT_BUS.post(evt);
-		Explosion explosion = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), 3, true, BlockInteraction.DESTROY);
-		if (!ForgeEventFactory.onExplosionStart(world, explosion) && !evt.isCanceled()) {
-			if (isInstantaneous()) {
-				doPreExplode();
-				doExplode(0);
-				doPostExplode();
-			} else if (!world.isClientSide) {
-				EntityBlast entity = new EntityBlast(world);
-				entity.setPos(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5);
-				entity.setBlastType(getBlastType());
-				world.addFreshEntity(entity);
-				return entity;
+		if(position != null) {
+			Explosion explosion = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), 3, true, BlockInteraction.DESTROY);
+			if (!ForgeEventFactory.onExplosionStart(world, explosion) && !evt.isCanceled()) {
+				if (isInstantaneous()) {
+					doPreExplode();
+					doExplode(0);
+					doPostExplode();
+				} else if (!world.isClientSide) {
+					EntityBlast entity = new EntityBlast(world);
+					entity.setPos(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5);
+					entity.setBlastType(getBlastType());
+					world.addFreshEntity(entity);
+					return entity;
+				}
 			}
 		}
 		return null;
@@ -158,12 +159,7 @@ public abstract class Blast {
 		}
 	}
 
-	public static Blast createFromSubtype(SubtypeBlast explosive, Level world, BlockPos pos) {
-		try {
-			return (Blast) explosive.blastClass.getConstructor(Level.class, BlockPos.class).newInstance(world, pos);
-		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
-		}
-		return null;
+	public static interface BlastFactory<T extends Blast> {
+		T create(Level world, BlockPos pos);
 	}
 }

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "ballistix:block/ciwsturret"
+    },
+    "facing=north": {
+      "model": "ballistix:block/ciwsturret",
+      "y": 270
+    },
+    "facing=south": {
+      "model": "ballistix:block/ciwsturret",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "ballistix:block/ciwsturret",
+      "y": 180
+    }
+  }
+}

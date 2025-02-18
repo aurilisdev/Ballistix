@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "ballistix:block/laserturret"
+    },
+    "facing=north": {
+      "model": "ballistix:block/laserturret",
+      "y": 270
+    },
+    "facing=south": {
+      "model": "ballistix:block/laserturret",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "ballistix:block/laserturret",
+      "y": 180
+    }
+  }
+}

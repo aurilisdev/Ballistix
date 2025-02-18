@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "ballistix:block/largeantimatter"
+      "model": "ballistix:block/explosivelargeantimatter"
     }
   }
 }

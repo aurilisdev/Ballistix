@@ -20,6 +20,13 @@ public class BallistixLootTablesProvider extends ElectrodynamicsLootTablesProvid
 		}
 
 		addITable(BallistixBlocks.blockMissileSilo, BallistixBlockTypes.TILE_MISSILESILO);
+		addSimpleBlock(BallistixBlocks.blockRadar);
+		addSimpleBlock(BallistixBlocks.blockFireControlRadar);
+		addSimpleBlock(BallistixBlocks.blockEsmTower);
+		addSimpleBlock(BallistixBlocks.blockSamTurret);
+		addSimpleBlock(BallistixBlocks.blockCiwsTurret);
+		addSimpleBlock(BallistixBlocks.blockLaserTurret);
+		addSimpleBlock(BallistixBlocks.blockRailgunTurret);
 
 	}
 

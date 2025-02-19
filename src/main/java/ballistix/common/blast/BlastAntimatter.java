@@ -6,7 +6,6 @@ import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
 import ballistix.registers.BallistixSounds;
-import electrodynamics.api.sound.SoundAPI;
 import electrodynamics.prefab.utilities.WorldUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -22,11 +21,10 @@ public class BlastAntimatter extends Blast implements IHasCustomRenderer {
 	@Override
 	public void doPreExplode() {
 		if (!world.isClientSide) {
-			thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, true);
+			thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.antimatter.ordinal());
 			thread.start();
-		} else {
-			SoundAPI.playSound(BallistixSounds.SOUND_ANTIMATTEREXPLOSION.get(), SoundSource.BLOCKS, 25, 1, position);
-		}
+			world.playSound(null, position, BallistixSounds.SOUND_ANTIMATTEREXPLOSION.get(), SoundSource.BLOCKS, 25.0F, 1.0F);
+		} 
 	}
 
 	private ThreadSimpleBlast thread;

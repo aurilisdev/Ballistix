@@ -3,20 +3,27 @@ package ballistix.common.item;
 import java.util.HashMap;
 
 import ballistix.References;
+import ballistix.api.missile.MissileManager;
+import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.common.block.BlockExplosive;
 import ballistix.common.block.subtype.SubtypeMissile;
-import ballistix.common.entity.EntityMissile;
 import ballistix.registers.BallistixItems;
+import ballistix.registers.BallistixSounds;
 import electrodynamics.common.blockitem.BlockItemDescriptable;
+import electrodynamics.prefab.utilities.NBTUtils;
+import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 public class ItemRocketLauncher extends Item {
 
@@ -37,10 +44,28 @@ public class ItemRocketLauncher extends Item {
 	}
 
 	@Override
+	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+		return slotChanged;
+	}
+
+	@Override
+	public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+		super.inventoryTick(stack, level, entity, slotId, isSelected);
+		if (level.isClientSide) {
+			return;
+		}
+		int timeRemaining = stack.getOrCreateTag().getInt(NBTUtils.TIMER);
+		if (timeRemaining > 0) {
+			timeRemaining--;
+			stack.getOrCreateTag().putInt(NBTUtils.TIMER, timeRemaining);
+		}
+	}
+
+	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
 		ItemStack itemstack = playerIn.getItemInHand(handIn);
 		playerIn.startUsingItem(handIn);
-		return new InteractionResultHolder<>(InteractionResult.SUCCESS, itemstack);
+		return new InteractionResultHolder<>(InteractionResult.PASS, itemstack);
 	}
 
 	@Override
@@ -90,14 +115,35 @@ public class ItemRocketLauncher extends Item {
 		if (hasExplosive && hasRange) {
 			ex.shrink(1);
 			missile.shrink(1);
-			EntityMissile miss = new EntityMissile(world);
-			miss.moveTo(entityLiving.getX(), entityLiving.getY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getZ(), entityLiving.getYRot(), entityLiving.getXRot());
-			miss.setDeltaMovement(entityLiving.getLookAngle().x * 2, entityLiving.getLookAngle().y * 2, entityLiving.getLookAngle().z * 2);
-			miss.blastOrdinal = blastOrdinal;
-			miss.range = 0;
-			miss.isItem = true;
-			world.addFreshEntity(miss);
-		}
+			VirtualMissile virtualMissile = new VirtualMissile(
+					//
+					new Vec3(entityLiving.getX(), entityLiving.getY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getZ()),
+					//
+					new Vec3(entityLiving.getLookAngle().x, entityLiving.getLookAngle().y, entityLiving.getLookAngle().z),
+					//
+					2.0F,
+					//
+					true,
+					//
+					0,
+					//
+					0,
+					//
+					BlockPos.ZERO,
+					//
+					0,
+					//
+					blastOrdinal,
+					//
+					false,
+					//
+					0
+			//
+			);
 
+			MissileManager.addMissile(world.dimension(), virtualMissile);
+
+			world.playSound(null, player.blockPosition().above(), BallistixSounds.SOUND_MISSILE_ROCKETLAUNCHER.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+		}
 	}
 }

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "ballistix:block/firecontrolradar",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "ballistix:block/firecontrolradar"
+    },
+    "facing=south": {
+      "model": "ballistix:block/firecontrolradar",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "ballistix:block/firecontrolradar",
+      "y": 270
+    }
+  }
+}

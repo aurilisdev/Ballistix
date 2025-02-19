@@ -4,7 +4,7 @@
 	"model": "ballistix:models/entity/missiles/missilecloserange.obj",
     "flip_v": true,
 	"textures": {
-		"texture0": "ballistix:model/missilecloserange",
-		"particle": "ballistix:model/missilecloserange"
+		"texture0": "ballistix:block/model/missilecloserange",
+		"particle": "ballistix:block/model/missilecloserange"
 	}
 }

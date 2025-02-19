@@ -1,0 +1,10 @@
+{
+  "loader": "forge:obj",
+  "credit": "skip999",
+  "model": "ballistix:models/entity/missiles/aamissile.obj",
+  "flip_v": true,
+  "textures": {
+    "texture0": "ballistix:block/model/aamissile",
+    "particle": "ballistix:block/model/aamissile"
+  }
+}

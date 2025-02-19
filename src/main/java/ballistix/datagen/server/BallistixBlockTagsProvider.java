@@ -16,9 +16,10 @@ public class BallistixBlockTagsProvider extends BlockTagsProvider {
 	@Override
 	protected void addTags() {
 
-		tag(BlockTags.MINEABLE_WITH_PICKAXE).add(BallistixBlocks.blockMissileSilo);
+		tag(BlockTags.MINEABLE_WITH_PICKAXE).add(BallistixBlocks.blockMissileSilo, BallistixBlocks.blockRadar, BallistixBlocks.blockFireControlRadar, BallistixBlocks.blockEsmTower, BallistixBlocks.blockSamTurret, BallistixBlocks.blockCiwsTurret, BallistixBlocks.blockLaserTurret, BallistixBlocks.blockRailgunTurret);
 
-		tag(BlockTags.NEEDS_STONE_TOOL).add(BallistixBlocks.blockMissileSilo);
+		tag(BlockTags.NEEDS_STONE_TOOL).add(BallistixBlocks.blockMissileSilo, BallistixBlocks.blockRadar, BallistixBlocks.blockFireControlRadar, BallistixBlocks.blockEsmTower, BallistixBlocks.blockSamTurret, BallistixBlocks.blockCiwsTurret, BallistixBlocks.blockLaserTurret, BallistixBlocks.blockRailgunTurret);
+
 
 	}
 

@@ -5,16 +5,58 @@
     ],
     "subtitle": "subtitles.ballistix.antimatterexplosion"
   },
+  "ciwsturretfiring": {
+    "sounds": [
+      "ballistix:ciwsturretfiring"
+    ],
+    "subtitle": "subtitles.ballistix.ciwsturretfiring"
+  },
   "darkmatter": {
     "sounds": [
       "ballistix:darkmatter"
     ],
     "subtitle": "subtitles.ballistix.darkmatter"
   },
+  "empexplosion": {
+    "sounds": [
+      "ballistix:empexplosion"
+    ],
+    "subtitle": "subtitles.ballistix.empexplosion"
+  },
+  "firecontrolradar": {
+    "sounds": [
+      "ballistix:firecontrolradar"
+    ],
+    "subtitle": "subtitles.ballistix.firecontrolradar"
+  },
+  "laserturretfiring": {
+    "sounds": [
+      "ballistix:laserturretfiring"
+    ],
+    "subtitle": "subtitles.ballistix.laserturretfiring"
+  },
+  "missile_launch_rocketlauncher": {
+    "sounds": [
+      "ballistix:missile_launch_rocketlauncher"
+    ],
+    "subtitle": "subtitles.ballistix.missile_launch_rocketlauncher"
+  },
+  "missile_launch_silo": {
+    "sounds": [
+      "ballistix:missile_launch_silo"
+    ],
+    "subtitle": "subtitles.ballistix.missile_launch_silo"
+  },
   "nuclearexplosion": {
     "sounds": [
       "ballistix:nuclearexplosion"
     ],
     "subtitle": "subtitles.ballistix.nuclearexplosion"
+  },
+  "radar": {
+    "sounds": [
+      "ballistix:radar"
+    ],
+    "subtitle": "subtitles.ballistix.radar"
   }
 }

@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "ballistix:block/emp"
+      "model": "ballistix:block/explosiveemp"
     }
   }
 }

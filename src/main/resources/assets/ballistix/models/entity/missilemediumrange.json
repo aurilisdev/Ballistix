@@ -4,8 +4,8 @@
   "model" : "ballistix:models/entity/missiles/missilemediumrange.obj",
   "flip_v" : true,
   "textures" : {
-    "texture0" : "ballistix:model/missilemediumrange",
-    "texture1" : "ballistix:model/missilemediumrange2",
-    "particle" : "ballistix:model/missilemediumrange"
+    "texture0" : "ballistix:block/model/missilemediumrange",
+    "texture1" : "ballistix:block/model/missilemediumrange2",
+    "particle" : "ballistix:block/model/missilemediumrange"
   }
 }

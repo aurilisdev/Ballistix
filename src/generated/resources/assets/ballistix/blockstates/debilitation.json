@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "ballistix:block/debilitation"
+      "model": "ballistix:block/explosivedebilitation"
     }
   }
 }

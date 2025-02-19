@@ -8,7 +8,6 @@ import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
 import ballistix.registers.BallistixSounds;
-import electrodynamics.api.sound.SoundAPI;
 import electrodynamics.prefab.utilities.WorldUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
@@ -35,16 +34,16 @@ public class BlastDarkmatter extends Blast {
 	@Override
 	public void doPreExplode() {
 		if (!world.isClientSide) {
-			thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null, true);
+			thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.darkmatter.ordinal());
 			thread.start();
-		} else {
-			SoundAPI.playSound(BallistixSounds.SOUND_DARKMATTER.get(), SoundSource.BLOCKS, 1, 1, position);
-		}
+			world.playSound(null, position, BallistixSounds.SOUND_DARKMATTER.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+		} 
 	}
 
 	private ThreadSimpleBlast thread;
 	private int callAtStart = -1;
 	private int pertick = -1;
+	public boolean canceled = false;
 
 	private Iterator<BlockPos> cachedIterator;
 
@@ -52,7 +51,7 @@ public class BlastDarkmatter extends Blast {
 	public boolean doExplode(int callCount) {
 		if (!world.isClientSide) {
 			hasStarted = true;
-			if (thread == null) {
+			if (thread == null || canceled) {
 				return true;
 			}
 			if (thread.isComplete) {

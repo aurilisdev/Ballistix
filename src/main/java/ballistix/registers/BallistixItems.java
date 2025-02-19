@@ -33,6 +33,8 @@ public class BallistixItems {
 
 	public static final HashMap<ISubtype, RegistryObject<Item>> SUBTYPEITEMREGISTER_MAPPINGS = new HashMap<>();
 
+	public static final RegistryObject<Item> ITEM_AAMISSILE = ITEMS.register("aamissile", () -> new Item(new Item.Properties().stacksTo(10).tab(References.BALLISTIXTAB)));
+	public static final RegistryObject<Item> ITEM_BULLET = ITEMS.register("bullet", () -> new Item(new Item.Properties().stacksTo(64).tab(References.BALLISTIXTAB)));
 	public static final RegistryObject<Item> ITEM_DUSTPOISON = ITEMS.register("dustpoison", () -> new Item(new Item.Properties().tab(References.BALLISTIXTAB)));
 	public static final RegistryObject<Item> ITEM_ROCKETLAUNCHER = ITEMS.register("rocketlauncher", ItemRocketLauncher::new);
 	public static final RegistryObject<Item> ITEM_RADARGUN = ITEMS.register("radargun", ItemRadarGun::new);
@@ -55,6 +57,13 @@ public class BallistixItems {
 			SUBTYPEITEMREGISTER_MAPPINGS.put(missile, ITEMS.register(missile.tag(), () -> new ItemMissile(missile)));
 		}
 		ITEMS.register("missilesilo", () -> new BlockItemDescriptable(() -> blockMissileSilo, new Item.Properties().tab(References.BALLISTIXTAB)));
+		ITEMS.register("radar", () -> new BlockItemDescriptable(() -> BallistixBlocks.blockRadar, new Item.Properties().tab(References.BALLISTIXTAB)));
+		ITEMS.register("firecontrolradar", () -> new BlockItemDescriptable(() -> BallistixBlocks.blockFireControlRadar, new Item.Properties().tab(References.BALLISTIXTAB)));
+		ITEMS.register("esmtower", () -> new BlockItemDescriptable(() -> BallistixBlocks.blockEsmTower, new Item.Properties().tab(References.BALLISTIXTAB)));
+		ITEMS.register("samturret", () -> new BlockItemDescriptable(() -> BallistixBlocks.blockSamTurret, new Item.Properties().tab(References.BALLISTIXTAB)));
+		ITEMS.register("ciwsturret", () -> new BlockItemDescriptable(() -> BallistixBlocks.blockCiwsTurret, new Item.Properties().tab(References.BALLISTIXTAB)));
+		ITEMS.register("laserturret", () -> new BlockItemDescriptable(() -> BallistixBlocks.blockLaserTurret, new Item.Properties().tab(References.BALLISTIXTAB)));
+		ITEMS.register("railgunturret", () -> new BlockItemDescriptable(() -> BallistixBlocks.blockRailgunTurret, new Item.Properties().tab(References.BALLISTIXTAB)));
 
 	}
 

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "ballistix:block/railgunturret"
+    },
+    "facing=north": {
+      "model": "ballistix:block/railgunturret",
+      "y": 270
+    },
+    "facing=south": {
+      "model": "ballistix:block/railgunturret",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "ballistix:block/railgunturret",
+      "y": 180
+    }
+  }
+}

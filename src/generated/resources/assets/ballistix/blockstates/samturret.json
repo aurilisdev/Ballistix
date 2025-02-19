@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "ballistix:block/samturret"
+    },
+    "facing=north": {
+      "model": "ballistix:block/samturret",
+      "y": 270
+    },
+    "facing=south": {
+      "model": "ballistix:block/samturret",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "ballistix:block/samturret",
+      "y": 180
+    }
+  }
+}

@@ -77,7 +77,7 @@ public class ThreadRaySideBlast extends Thread {
 		while (power > 0.0F) {
 		    BlockPos next = new BlockPos((int) Math.floor(currentVector.x()),
 			    (int) Math.floor(currentVector.y()), (int) Math.floor(currentVector.z()));
-		    if (!next.equals(currentBlockPos)) {
+		    if (!next.equals(currentBlockPos) && currentBlockPos != position) {
 			currentBlockPos = next;
 			BlockState block = world.getBlockState(currentBlockPos);
 			if (!block.isAir()) {

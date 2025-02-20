@@ -19,6 +19,7 @@ public class UnifiedBallistixRegister {
 		BallistixEntities.ENTITIES.register(bus);
 		BallistixSounds.SOUNDS.register(bus);
 		BallistixCreativeTabs.CREATIVE_TABS.register(bus);
+		BallistixParticles.PARTICLES.register(bus);
 	}
 
 	static {

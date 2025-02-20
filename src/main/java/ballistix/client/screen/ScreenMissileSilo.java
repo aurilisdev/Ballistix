@@ -1,5 +1,8 @@
 package ballistix.client.screen;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ballistix.common.inventory.container.ContainerMissileSilo;
 import ballistix.common.settings.Constants;
 import ballistix.common.tile.TileMissileSilo;
@@ -23,9 +26,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 

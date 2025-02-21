@@ -16,7 +16,7 @@ public class ParticleBlastSmoke extends TextureSheetParticle {
     private double friction = 0.95;
     private float startRed = 1.0F, startGreen = 0.7F, startBlue = 0.2F;
     private float endRed = 0.6F, endGreen = 0.2f, endBlue = 0.2f;
-    private float endGray = 0.425F;
+    private float endGray = 0.325F;
     private float startQuadSize;
 
     public static double smoothStep(double u) {
@@ -65,7 +65,7 @@ public class ParticleBlastSmoke extends TextureSheetParticle {
 	this.quadSize = options.scale;
 	this.startQuadSize = options.scale;
 	this.lifetime = options.lifetime;
-	this.setSpriteFromAge(sprites);
+	this.setSprite(sprites.get(level.random));
 	this.hasPhysics = options.hasPhysics;
 	this.burning = options.burning;
 	this.friction = options.friction;
@@ -112,8 +112,6 @@ public class ParticleBlastSmoke extends TextureSheetParticle {
 	// Proceed with default ticking (position update, age increment, etc.)
 	super.tick();
 
-	// Update sprite by age, if animated
-	this.setSpriteFromAge(sprites);
     }
 
     public static class Factory implements ParticleProvider<ParticleOptionBlastSmoke>,

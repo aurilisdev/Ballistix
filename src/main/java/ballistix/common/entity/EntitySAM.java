@@ -43,7 +43,7 @@ public class EntitySAM extends Entity {
     }
 
     public EntitySAM(Level level) {
-        this(BallistixEntities.ENTITY_RAILGUNROUND.get(), level);
+        this(BallistixEntities.ENTITY_SAM.get(), level);
     }
 
     @Override

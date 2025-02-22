@@ -192,6 +192,10 @@ public class MissileManager {
         return virtual.get(id);
     }
 
+    public static void wipeAllMissiles() {
+        getOverworld().removeData(BallistixAttachmentTypes.ACTIVE_MISSILES);
+    }
+
     public static void addBullet(ResourceKey<Level> key, VirtualProjectile.VirtualBullet bullet) {
         ServerLevel overworld = getOverworld();
 
@@ -215,6 +219,10 @@ public class MissileManager {
         HashMap<UUID, VirtualProjectile.VirtualBullet> virtual = data.getOrDefault(level, new HashMap<>());
 
         return virtual.get(id);
+    }
+
+    public static void wipeAllBullets() {
+        getOverworld().removeData(BallistixAttachmentTypes.ACTIVE_BULLETS);
     }
 
     public static void addRailgunRound(ResourceKey<Level> key, VirtualProjectile.VirtualRailgunRound railgun) {
@@ -242,6 +250,10 @@ public class MissileManager {
         return virtual.get(id);
     }
 
+    public static void wipeAllRailgunRounds() {
+        getOverworld().removeData(BallistixAttachmentTypes.ACTIVE_RAILGUNROUNDS);
+    }
+
     public static void addSAM(ResourceKey<Level> key, VirtualProjectile.VirtualSAM bullet) {
         ServerLevel overworld = getOverworld();
 
@@ -265,6 +277,10 @@ public class MissileManager {
         HashMap<UUID, VirtualProjectile.VirtualSAM> virtual = data.getOrDefault(level, new HashMap<>());
 
         return virtual.get(id);
+    }
+
+    public static void wipeAllSAMs() {
+        getOverworld().removeData(BallistixAttachmentTypes.ACTIVE_SAMS);
     }
 
     private static ServerLevel getOverworld() {

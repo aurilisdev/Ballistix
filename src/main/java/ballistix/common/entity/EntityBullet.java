@@ -39,7 +39,7 @@ public class EntityBullet extends Entity {
     }
 
     public EntityBullet(Level level) {
-        this(BallistixEntities.ENTITY_RAILGUNROUND.get(), level);
+        this(BallistixEntities.ENTITY_BULLET.get(), level);
     }
 
     @Override

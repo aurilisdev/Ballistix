@@ -170,7 +170,7 @@ public abstract class GenericTileTurret extends GenericTile {
             if (deltaY < 0) {
                 turretRotation.set(turretRotation.get().add(0, -Math.cos(rotationSpeedRadians) * 0.125, 0));
                 if (turretRotation.get().y < getMinElevation()) {
-                    turretRotation.set(new Vec3(turretRotation.get().x, getMinElevation(), turretRotation.get().z));
+                    turretRotation.set(new Vec3(turretRotation.get().x, Math.max(getMinElevation(), desiredRotation.get().y), turretRotation.get().z));
                 } else if (turretRotation.get().y < desiredRotation.get().y) {
                     turretRotation.set(new Vec3(turretRotation.get().x, desiredRotation.get().y, turretRotation.get().z));
                 }
@@ -178,7 +178,7 @@ public abstract class GenericTileTurret extends GenericTile {
                 turretRotation.set(turretRotation.get().add(0, Math.cos(rotationSpeedRadians) * 0.125, 0));
 
                 if (turretRotation.get().y > getMaxElevation()) {
-                    turretRotation.set(new Vec3(turretRotation.get().x, getMaxElevation(), turretRotation.get().z));
+                    turretRotation.set(new Vec3(turretRotation.get().x, Math.min(getMaxElevation(), desiredRotation.get().y), turretRotation.get().z));
                 } else if (turretRotation.get().y > desiredRotation.get().y) {
                     turretRotation.set(new Vec3(turretRotation.get().x, desiredRotation.get().y, turretRotation.get().z));
                 }

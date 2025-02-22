@@ -90,7 +90,7 @@ public class TileSearchRadar extends GenericTile {
         electro.joules(electro.getJoulesStored() - (Constants.RADAR_USAGE / 20.0));
 
         for (VirtualMissile missile : MissileManager.getMissilesForLevel(level.dimension())) {
-            if (missile.getBoundingBox().intersects(searchArea) && (!usingWhitelist.get() || (usingWhitelist.get() && !whitelistedFrequencies.get().contains(missile.frequency)))) {
+            if (missile.getBoundingBox().intersects(searchArea) && (!usingWhitelist.get() || (usingWhitelist.get() && !whitelistedFrequencies.get().contains(missile.frequency))) && !missile.hasExploded()) {
                 trackedMissiles.add(missile);
             }
         }

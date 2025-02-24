@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "OOH",
+    " MT",
+    "PCP"
+  ],
+  "key": {
+    "P": {
+      "tag": "forge:plates/steel"
+    },
+    "C": {
+      "tag": "forge:circuits/elite"
+    },
+    "T": {
+      "item": "electrodynamics:upgradetransformer"
+    },
+    "H": {
+      "tag": "forge:chests"
+    },
+    "M": {
+      "item": "electrodynamics:motor"
+    },
+    "O": {
+      "item": "electrodynamics:coil"
+    }
+  },
+  "result": {
+    "item": "ballistix:railgunturret"
+  }
+}

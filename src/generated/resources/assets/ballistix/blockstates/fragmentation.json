@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "ballistix:block/fragmentation"
+      "model": "ballistix:block/explosivefragmentation"
     }
   }
 }

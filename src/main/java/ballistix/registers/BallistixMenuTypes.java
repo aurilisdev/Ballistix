@@ -1,8 +1,17 @@
 package ballistix.registers;
 
 import ballistix.References;
+import ballistix.common.inventory.container.ContainerCIWSTurret;
+import ballistix.common.inventory.container.ContainerESMTower;
+import ballistix.common.inventory.container.ContainerFireControlRadar;
+import ballistix.common.inventory.container.ContainerLaserTurret;
 import ballistix.common.inventory.container.ContainerMissileSilo;
+import ballistix.common.inventory.container.ContainerRailgunTurret;
+import ballistix.common.inventory.container.ContainerSAMTurret;
+import ballistix.common.inventory.container.ContainerSearchRadar;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.MenuType.MenuSupplier;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -10,6 +19,17 @@ import net.minecraftforge.registries.RegistryObject;
 public class BallistixMenuTypes {
 	public static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(ForgeRegistries.CONTAINERS, References.ID);
 
-	public static final RegistryObject<MenuType<ContainerMissileSilo>> CONTAINER_MISSILESILO = MENU_TYPES.register("missilesilo", () -> new MenuType<>(ContainerMissileSilo::new));
+	public static final RegistryObject<MenuType<ContainerMissileSilo>> CONTAINER_MISSILESILO = register("missilesilo", ContainerMissileSilo::new);
+	public static final RegistryObject<MenuType<ContainerFireControlRadar>> CONTAINER_FIRECONTROLRADAR = register("firecontrolradar", ContainerFireControlRadar::new);
+	public static final RegistryObject<MenuType<ContainerSearchRadar>> CONTAINER_SEARCHRADAR = register("searchradar", ContainerSearchRadar::new);
+	public static final RegistryObject<MenuType<ContainerESMTower>> CONTAINER_ESMTOWER = register("esmtower", ContainerESMTower::new);
+	public static final RegistryObject< MenuType<ContainerSAMTurret>> CONTAINER_SAMTURRET = register("samturret", ContainerSAMTurret::new);
+	public static final RegistryObject< MenuType<ContainerCIWSTurret>> CONTAINER_CIWSTURRET = register("ciwsturret", ContainerCIWSTurret::new);
+	public static final RegistryObject< MenuType<ContainerLaserTurret>> CONTAINER_LASERTURRET = register("laserturret", ContainerLaserTurret::new);
+	public static final RegistryObject< MenuType<ContainerRailgunTurret>> CONTAINER_RAILGUNTURRET = register("railgunturret", ContainerRailgunTurret::new);
+	
+	private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> register(String id, MenuSupplier<T> supplier) {
+		return MENU_TYPES.register(id, () -> new MenuType<>(supplier));
+	}
 
 }

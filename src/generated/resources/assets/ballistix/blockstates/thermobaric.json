@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "ballistix:block/thermobaric"
+      "model": "ballistix:block/explosivethermobaric"
     }
   }
 }

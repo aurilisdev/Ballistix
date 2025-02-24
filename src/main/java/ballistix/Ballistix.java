@@ -4,6 +4,7 @@ import ballistix.api.capability.BallistixCapabilities;
 import ballistix.client.ClientRegister;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.BallistixVoxelShapesRegistry;
+import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.packet.NetworkHandler;
 import ballistix.common.settings.Constants;
 import ballistix.common.tags.BallistixTags;
@@ -30,10 +31,6 @@ public class Ballistix {
 		ConfigurationHandler.registerConfig(Constants.class);
 		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 		UnifiedBallistixRegister.register(bus);
-		new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, true).start();
-		new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null, true).start();
-		new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, Integer.MAX_VALUE, null, true).start();
-		new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2, Integer.MAX_VALUE, null, true).start();
 	}
 
 	@SubscribeEvent
@@ -49,6 +46,13 @@ public class Ballistix {
 		NetworkHandler.init();
 		BallistixTags.init();
 		BallistixVoxelShapesRegistry.init();
+		event.enqueueWork(() -> {
+			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.antimatter.ordinal()).start();
+			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.darkmatter.ordinal()).start();
+			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.largeantimatter.ordinal()).start();
+			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2, Integer.MAX_VALUE, null, SubtypeBlast.nuclear.ordinal()).start();
+			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) Constants.EXPLOSIVE_EMP_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.emp.ordinal());
+		});
 	}
 
 	@SubscribeEvent

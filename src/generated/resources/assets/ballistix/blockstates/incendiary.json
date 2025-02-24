@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "ballistix:block/incendiary"
+      "model": "ballistix:block/explosiveincendiary"
     }
   }
 }

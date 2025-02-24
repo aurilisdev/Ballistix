@@ -87,7 +87,7 @@ public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 			remove(RemovalReason.DISCARDED);
 			if (grenadeOrdinal != -1) {
 				SubtypeBlast explosive = SubtypeGrenade.values()[grenadeOrdinal].explosiveType;
-				Blast b = Blast.createFromSubtype(explosive, level, blockPosition());
+				Blast b = explosive.createBlast(level, blockPosition());
 				if (b != null) {
 					b.performExplosion();
 				}

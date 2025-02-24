@@ -1,6 +1,13 @@
 {
   "replace": false,
   "values": [
-    "ballistix:missilesilo"
+    "ballistix:missilesilo",
+    "ballistix:radar",
+    "ballistix:firecontrolradar",
+    "ballistix:esmtower",
+    "ballistix:samturret",
+    "ballistix:ciwsturret",
+    "ballistix:laserturret",
+    "ballistix:railgunturret"
   ]
 }

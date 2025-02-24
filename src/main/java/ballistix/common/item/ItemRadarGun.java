@@ -4,6 +4,7 @@ import java.util.List;
 
 import ballistix.References;
 import ballistix.common.tile.TileMissileSilo;
+import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
 import ballistix.prefab.utils.BallistixTextUtils;
 import electrodynamics.common.tile.TileMultiSubnode;
 import electrodynamics.prefab.item.ElectricItemProperties;
@@ -39,16 +40,22 @@ public class ItemRadarGun extends ItemElectric {
 		if (context.getLevel().isClientSide) {
 			return super.onItemUseFirst(stack, context);
 		}
-		BlockEntity ent = context.getLevel().getBlockEntity(context.getClickedPos());
-		TileMissileSilo silo = ent instanceof TileMissileSilo s ? s : null;
-		if (ent instanceof TileMultiSubnode node) {
-			BlockEntity core = node.getLevel().getBlockEntity(node.parentPos.get().toBlockPos());
-			if (core instanceof TileMissileSilo c) {
-				silo = c;
-			}
-		}
-		if (silo != null) {
+		BlockEntity tile = context.getLevel().getBlockEntity(context.getClickedPos());
+
+		if(tile instanceof TileMissileSilo silo) {
+
 			silo.target.set(getCoordiantes(stack));
+
+		} else if (tile instanceof TileMultiSubnode subnode && subnode.getLevel().getBlockEntity(subnode.parentPos.get().toBlockPos()) instanceof TileMissileSilo silo) {
+
+			silo.target.set(getCoordiantes(stack));
+
+		} else if (tile instanceof TileTurretAntimissile turret) {
+			if(turret.bindFireControlRadar(getCoordiantes(stack))) {
+				context.getPlayer().displayClientMessage(BallistixTextUtils.chatMessage("radargun.turretsucess"), true);
+			} else {
+				context.getPlayer().displayClientMessage(BallistixTextUtils.chatMessage("radargun.turrettoofar"), true);
+			}
 		}
 		return super.onItemUseFirst(stack, context);
 	}
@@ -69,6 +76,10 @@ public class ItemRadarGun extends ItemElectric {
 		ItemStack radarGun = playerIn.getItemInHand(handIn);
 
 		if (getJoulesStored(radarGun) < USAGE) {
+			return super.use(worldIn, playerIn, handIn);
+		}
+		
+		if(trace.getTile(playerIn.level) instanceof TileMissileSilo || trace.getTile(playerIn.level) instanceof TileMultiSubnode subnode && subnode.getLevel().getBlockEntity(subnode.parentPos.get().toBlockPos()) instanceof TileMissileSilo || trace.getTile(worldIn) instanceof TileTurretAntimissile) {
 			return super.use(worldIn, playerIn, handIn);
 		}
 

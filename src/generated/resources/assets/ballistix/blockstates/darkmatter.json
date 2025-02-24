@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "ballistix:block/darkmatter"
+      "model": "ballistix:block/explosivedarkmatter"
     }
   }
 }

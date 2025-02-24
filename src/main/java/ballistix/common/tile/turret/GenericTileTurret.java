@@ -333,7 +333,7 @@ public abstract class GenericTileTurret extends GenericTile {
                 }
                 //world.setBlockAndUpdate(toCheck, Blocks.COBBLESTONE.defaultBlockState());
             }
-            toCheck = new BlockPos((int) Math.floor(start.getX() + x), (int) Math.floor(start.getY() + y), (int) Math.floor(start.getZ() + z));
+            toCheck = new BlockPos((int) Math.floor(start.getX() + x), (int) Math.ceil(start.getY() + y), (int) Math.floor(start.getZ() + z));
             if (!toCheck.equals(start) && !toCheck.equals(end)) {
                 state = world.getBlockState(toCheck);
                 if(!state.isAir() && state.isCollisionShapeFullBlock(world, toCheck)) {

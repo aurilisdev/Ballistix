@@ -56,7 +56,7 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
     }
 
     @Override
-    public void tickServerActive(ComponentTickable tickable) {
+    public void tickServer(ComponentTickable tickable) {
         if (heat.get() > 0) {
             heat.set(heat.get() - 1.0);
         }
@@ -67,6 +67,12 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
             overheated.set(false);
             firing.set(false);
         }
+        super.tickServer(tickable);
+    }
+
+    @Override
+    public void tickServerActive(ComponentTickable tickable) {
+
     }
 
     @Override
@@ -209,7 +215,7 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
 
     @Override
     public boolean shouldPlaySound() {
-        return firing.get();
+        return firing.get() && !hasNoPower.get();
     }
     
     @Override

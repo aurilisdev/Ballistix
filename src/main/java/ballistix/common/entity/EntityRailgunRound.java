@@ -29,8 +29,8 @@ public class EntityRailgunRound extends Entity {
 
 	private static final float RAD2DEG = (float) (180.0F / Math.PI);
 
-	private static final EntityDataAccessor<Rotations> ROTATION = SynchedEntityData.defineId(EntityBullet.class, EntityDataSerializers.ROTATIONS);
-	private static final EntityDataAccessor<Float> SPEED = SynchedEntityData.defineId(EntityBullet.class, EntityDataSerializers.FLOAT);
+	private static final EntityDataAccessor<Rotations> ROTATION = SynchedEntityData.defineId(EntityRailgunRound.class, EntityDataSerializers.ROTATIONS);
+	private static final EntityDataAccessor<Float> SPEED = SynchedEntityData.defineId(EntityRailgunRound.class, EntityDataSerializers.FLOAT);
 
 	public Vector3f rotation = new Vector3f(0, 0, 0);
 	@Nullable

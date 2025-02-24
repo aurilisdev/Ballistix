@@ -31,190 +31,195 @@ import net.minecraft.world.phys.Vec3;
 
 public class TileTurretLaser extends TileTurretAntimissile implements ITickableSound {
 
-    public final Property<Vec3> targetPos = property(new Property<>(PropertyType.Vec3, "targetposition", TileFireControlRadar.OUT_OF_REACH));
-    public final Property<Boolean> targetingEntity = property(new Property<>(PropertyType.Boolean, "targetingentity", false));
-    public final Property<Double> heat = property(new Property<>(PropertyType.Double, "heat", 0.0));
-    public final Property<Boolean> overheated = property(new Property<>(PropertyType.Boolean, "overheated", false));
-    public final Property<Boolean> firing = property(new Property<>(PropertyType.Boolean, "isfiring", false));
-    public final Property<Boolean> onlyTargetPlayers = property(new Property<>(PropertyType.Boolean, "onlytargetplayers", false));
+	public final Property<Vec3> targetPos = property(new Property<>(PropertyType.Vec3, "targetposition", TileFireControlRadar.OUT_OF_REACH));
+	public final Property<Boolean> targetingEntity = property(new Property<>(PropertyType.Boolean, "targetingentity", false));
+	public final Property<Double> heat = property(new Property<>(PropertyType.Double, "heat", 0.0));
+	public final Property<Boolean> overheated = property(new Property<>(PropertyType.Boolean, "overheated", false));
+	public final Property<Boolean> firing = property(new Property<>(PropertyType.Boolean, "isfiring", false));
+	public final Property<Boolean> onlyTargetPlayers = property(new Property<>(PropertyType.Boolean, "onlytargetplayers", false));
 
-    private LivingEntity livingTarget = null;
-    private boolean isPlaying = false;
+	private LivingEntity livingTarget = null;
+	private boolean isPlaying = false;
 
-    public TileTurretLaser(BlockPos worldPos, BlockState blockState) {
-        super(BallistixBlockTypes.TILE_LASERTURRET.get(), worldPos, blockState, Constants.LASER_TURRET_BASE_RANGE, 0, Constants.LASER_TURRET_USAGEPERTICK, Constants.LASER_TURRET_ROTATIONSPEEDRADIANS, 0);
-    }
+	public TileTurretLaser(BlockPos worldPos, BlockState blockState) {
+		super(BallistixBlockTypes.TILE_LASERTURRET.get(), worldPos, blockState, Constants.LASER_TURRET_BASE_RANGE, 0, Constants.LASER_TURRET_USAGEPERTICK, Constants.LASER_TURRET_ROTATIONSPEEDRADIANS, 0);
+	}
 
-    @Override
-    public ComponentInventory getInventory() {
-        return new ComponentInventory(this);
-    }
+	@Override
+	public ComponentInventory getInventory() {
+		return new ComponentInventory(this);
+	}
 
-    @Override
-    public ComponentContainerProvider getContainer() {
-        return new ComponentContainerProvider("container.laserturret", this).createMenu((id, player) -> new ContainerLaserTurret(id, player, getComponent(IComponentType.Inventory), getCoordsArray()));
-    }
+	@Override
+	public ComponentContainerProvider getContainer() {
+		return new ComponentContainerProvider("container.laserturret", this).createMenu((id, player) -> new ContainerLaserTurret(id, player, getComponent(IComponentType.Inventory), getCoordsArray()));
+	}
 
-    @Override
-    public void tickServerActive(ComponentTickable tickable) {
-        if (heat.get() > 0) {
-            heat.set(heat.get() - 1.0);
-        }
-        if (!canFire.get()) {
-            firing.set(false);
-        }
-        if (heat.get() < Constants.LASER_TURRET_COOLTHRESHHOLD) {
-            overheated.set(false);
-            firing.set(false);
-        }
-    }
+	@Override
+	public void tickServer(ComponentTickable tickable) {
+		if (heat.get() > 0) {
+			heat.set(heat.get() - 1.0);
+		}
+		if (!canFire.get()) {
+			firing.set(false);
+		}
+		if (heat.get() < Constants.LASER_TURRET_COOLTHRESHHOLD) {
+			overheated.set(false);
+			firing.set(false);
+		}
+		super.tickServer(tickable);
+	}
 
-    @Override
-    public void fireTickServer(long ticks) {
+	@Override
+	public void tickServerActive(ComponentTickable tickable) {
 
-        if (overheated.get()) {
-            firing.set(false);
-            return;
-        }
+	}
 
-        firing.set(true);
+	@Override
+	public void fireTickServer(long ticks) {
 
-        double distanceToTarget = TileFireControlRadar.getDistanceToMissile(getProjectileLaunchPosition(), target.getTargetLocation());
+		if (overheated.get()) {
+			firing.set(false);
+			return;
+		}
 
-        double multiplier = 1.0 - (distanceToTarget / currentRange.get());
+		firing.set(true);
 
-        float damage = (float) (multiplier * Constants.LASER_TURRET_BASE_DAMAGE);
+		double distanceToTarget = TileFireControlRadar.getDistanceToMissile(getProjectileLaunchPosition(), target.getTargetLocation());
 
-        if (livingTarget == null) {
+		double multiplier = 1.0 - (distanceToTarget / currentRange.get());
 
-            VirtualMissile missile = (VirtualMissile) target.getTarget();
+		float damage = (float) (multiplier * Constants.LASER_TURRET_BASE_DAMAGE);
 
-            missile.health -= damage;
+		if (livingTarget == null) {
 
-        } else {
+			VirtualMissile missile = (VirtualMissile) target.getTarget();
 
-            livingTarget.hurt(DamageSourceLaserTurret.INSTANCE, damage);
-            livingTarget.setSecondsOnFire(10);
+			missile.health -= damage;
 
-        }
+		} else {
 
-        heat.set(heat.get() + 2.0);
+			livingTarget.hurt(DamageSourceLaserTurret.INSTANCE, damage);
+			livingTarget.setSecondsOnFire(10);
 
-        if (heat.get() > Constants.LASER_TURRET_MAXHEAT) {
-            overheated.set(true);
-        }
+		}
 
+		heat.set(heat.get() + 2.0);
 
-    }
+		if (heat.get() > Constants.LASER_TURRET_MAXHEAT) {
+			overheated.set(true);
+		}
 
-    @Override
-    public void tickClient(ComponentTickable tickable) {
-        if (shouldPlaySound() && !isPlaying) {
-            isPlaying = true;
-            SoundBarrierMethods.playTileSound(BallistixSounds.SOUND_LASER_TURRETFIRING.get(), SoundSource.BLOCKS, this, 1.0F, 1.0F, true);
-        }
-        if (overheated.get() && level.random.nextDouble() < 0.5) {
-            level.addParticle(ParticleTypes.LARGE_SMOKE, getBlockPos().getX() + level.random.nextDouble(), getBlockPos().getY() + level.random.nextDouble(), getBlockPos().getZ() + level.random.nextDouble(), 0, 0, 0);
-        }
-    }
+	}
 
-    @Override
-    public Vec3 getProjectileLaunchPosition() {
-        BlockPos above = getBlockPos();
-        return new Vec3(above.getX() + 0.5, above.getY() + 1.03125, above.getZ() + 0.5);
-    }
+	@Override
+	public void tickClient(ComponentTickable tickable) {
+		if (shouldPlaySound() && !isPlaying) {
+			isPlaying = true;
+			SoundBarrierMethods.playTileSound(BallistixSounds.SOUND_LASER_TURRETFIRING.get(), SoundSource.BLOCKS, this, 1.0F, 1.0F, true);
+		}
+		if (overheated.get() && level.random.nextDouble() < 0.5) {
+			level.addParticle(ParticleTypes.LARGE_SMOKE, getBlockPos().getX() + level.random.nextDouble(), getBlockPos().getY() + level.random.nextDouble(), getBlockPos().getZ() + level.random.nextDouble(), 0, 0, 0);
+		}
+	}
 
-    @Nullable
-    @Override
-    public Vec3 getTargetPosition(@NotNull ITarget target) {
-        return target.getTargetLocation();
-    }
+	@Override
+	public Vec3 getProjectileLaunchPosition() {
+		BlockPos above = getBlockPos();
+		return new Vec3(above.getX() + 0.5, above.getY() + 1.03125, above.getZ() + 0.5);
+	}
 
-    @Override
-    public double getMinElevation() {
-        return -0.5;
-    }
+	@Nullable
+	@Override
+	public Vec3 getTargetPosition(@NotNull ITarget target) {
+		return target.getTargetLocation();
+	}
 
-    @Override
-    public double getMaxElevation() {
-        return 1;
-    }
+	@Override
+	public double getMinElevation() {
+		return -0.5;
+	}
 
-    @Override
-    public @Nullable ITarget getTarget(long ticks) {
-        targetingEntity.set(false);
+	@Override
+	public double getMaxElevation() {
+		return 1;
+	}
 
-        ITarget target = super.getTarget(ticks);
+	@Override
+	public @Nullable ITarget getTarget(long ticks) {
+		targetingEntity.set(false);
 
-        if (target != null && raycastToBlockPos(level, getBlockPos(), target.getTargetBlockPos()).isEmpty()) {
+		ITarget target = super.getTarget(ticks);
 
-            livingTarget = null;
-            targetPos.set(target.getTargetLocation());
-            return target;
+		if (target != null && raycastToBlockPos(level, getBlockPos(), target.getTargetBlockPos()).isEmpty()) {
 
-        }
+			livingTarget = null;
+			targetPos.set(target.getTargetLocation());
+			return target;
 
-        if (livingTarget != null && (livingTarget.isRemoved() || livingTarget.isDeadOrDying())) {
-            livingTarget = null;
-        }
+		}
 
-        if (ticks % 5 == 0) {
+		if (livingTarget != null && (livingTarget.isRemoved() || livingTarget.isDeadOrDying())) {
+			livingTarget = null;
+		}
 
-            LivingEntity selected = null;
-            double lastMag = 0;
+		if (ticks % 5 == 0) {
 
-            Class<? extends LivingEntity> type = onlyTargetPlayers.get() ? Player.class : LivingEntity.class;
+			LivingEntity selected = null;
+			double lastMag = 0;
 
-            for (LivingEntity entity : level.getEntitiesOfClass(type, new AABB(getBlockPos()).inflate(currentRange.get() / 4.0))) {
-                if (raycastToBlockPos(level, getBlockPos(), entity.blockPosition()).isEmpty() && !(entity instanceof Player player && (player.isCreative() || whitelistedPlayers.get().contains(player.getName().getString()))) && !entity.isDeadOrDying() && !entity.isRemoved()) {
-                    double deltaX = entity.getX() - getBlockPos().getX();
-                    double deltaY = entity.getY() - getBlockPos().getY();
-                    double deltaZ = entity.getZ() - getBlockPos().getZ();
+			Class<? extends LivingEntity> type = onlyTargetPlayers.get() ? Player.class : LivingEntity.class;
 
-                    double mag = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+			for (LivingEntity entity : level.getEntitiesOfClass(type, new AABB(getBlockPos()).inflate(currentRange.get() / 4.0))) {
+				if (raycastToBlockPos(level, getBlockPos(), entity.blockPosition()).isEmpty() && !(entity instanceof Player player && (player.isCreative() || whitelistedPlayers.get().contains(player.getName().getString()))) && !entity.isDeadOrDying() && !entity.isRemoved()) {
+					double deltaX = entity.getX() - getBlockPos().getX();
+					double deltaY = entity.getY() - getBlockPos().getY();
+					double deltaZ = entity.getZ() - getBlockPos().getZ();
 
-                    if (selected == null) {
-                        selected = entity;
-                        lastMag = mag;
-                    } else if (mag < lastMag) {
-                        selected = entity;
-                    }
-                }
-            }
+					double mag = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
-            livingTarget = selected;
-        }
+					if (selected == null) {
+						selected = entity;
+						lastMag = mag;
+					} else if (mag < lastMag) {
+						selected = entity;
+					}
+				}
+			}
 
-        if (livingTarget != null) {
-            target = new ITarget.TargetLivingEntity(livingTarget);
-            targetingEntity.set(true);
-            targetPos.set(target.getTargetLocation());
-            return target;
-        }
+			livingTarget = selected;
+		}
 
-        targetPos.set(TileFireControlRadar.OUT_OF_REACH);
+		if (livingTarget != null) {
+			target = new ITarget.TargetLivingEntity(livingTarget);
+			targetingEntity.set(true);
+			targetPos.set(target.getTargetLocation());
+			return target;
+		}
 
-        return null;
-    }
+		targetPos.set(TileFireControlRadar.OUT_OF_REACH);
 
-    @Override
-    public boolean isValidPlacement() {
-        return !targetingEntity.get() || super.isValidPlacement();
-    }
+		return null;
+	}
 
-    @Override
-    public void setNotPlaying() {
-        isPlaying = false;
-    }
+	@Override
+	public boolean isValidPlacement() {
+		return !targetingEntity.get() || super.isValidPlacement();
+	}
 
-    @Override
-    public boolean shouldPlaySound() {
-        return firing.get();
-    }
-    
-    @Override
-    public AABB getRenderBoundingBox() {
-    	return INFINITE_EXTENT_AABB;
-    }
-    
+	@Override
+	public void setNotPlaying() {
+		isPlaying = false;
+	}
+
+	@Override
+	public boolean shouldPlaySound() {
+		return firing.get() && !hasNoPower.get();
+	}
+
+	@Override
+	public AABB getRenderBoundingBox() {
+		return INFINITE_EXTENT_AABB;
+	}
+
 }

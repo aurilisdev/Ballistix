@@ -2,8 +2,11 @@ package ballistix.common.tile;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import ballistix.References;
 import ballistix.common.block.BlockESMTower;
 import ballistix.common.inventory.container.ContainerESMTower;
 import ballistix.common.settings.Constants;
@@ -34,6 +37,10 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.event.TickEvent.Phase;
+import net.minecraftforge.event.TickEvent.ServerTickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 public class TileESMTower extends GenericTile implements IMultiblockParentTile {
 
@@ -145,6 +152,70 @@ public class TileESMTower extends GenericTile implements IMultiblockParentTile {
     @Override
     public AABB getRenderBoundingBox() {
     	return super.getRenderBoundingBox().inflate(0, 2, 0);
+    }
+    
+    @EventBusSubscriber(modid = References.ID, bus = EventBusSubscriber.Bus.FORGE)
+    private static class MapHandlerer {
+
+        @SubscribeEvent
+        public static void clearMaps(ServerTickEvent event) {
+        	
+        	if(event.phase == Phase.START) {
+    			return;
+    		}
+
+            Iterator<Map.Entry<ResourceKey<Level>, HashSet<TileSearchRadar>>> searchIterator = SEARCH_RADARS.entrySet().iterator();
+
+            while (searchIterator.hasNext()) {
+                Map.Entry<ResourceKey<Level>, HashSet<TileSearchRadar>> entry = searchIterator.next();
+
+                Iterator<TileSearchRadar> it = entry.getValue().iterator();
+
+                while (it.hasNext()) {
+                    TileSearchRadar radar = it.next();
+
+                    if (radar == null || radar.isRemoved()) {
+                        it.remove();
+                    }
+                }
+
+            }
+
+            Iterator<Map.Entry<ResourceKey<Level>, HashSet<TileFireControlRadar>>> fireIterator = FIRE_CONTROL_RADARS.entrySet().iterator();
+
+            while (fireIterator.hasNext()) {
+                Map.Entry<ResourceKey<Level>, HashSet<TileFireControlRadar>> entry = fireIterator.next();
+
+                Iterator<TileFireControlRadar> it = entry.getValue().iterator();
+
+                while (it.hasNext()) {
+                    TileFireControlRadar radar = it.next();
+
+                    if (radar == null || radar.isRemoved()) {
+                        it.remove();
+                    }
+                }
+
+            }
+
+            Iterator<Map.Entry<ResourceKey<Level>, HashSet<TileESMTower>>> esmIterator = ESM_TOWERS.entrySet().iterator();
+
+            while(esmIterator.hasNext()) {
+                Map.Entry<ResourceKey<Level>, HashSet<TileESMTower>> entry = esmIterator.next();
+
+                Iterator<TileESMTower> it = entry.getValue().iterator();
+
+                while(it.hasNext()) {
+                    TileESMTower radar = it.next();
+
+                    if(radar == null || radar.isRemoved()) {
+                        it.remove();
+                    }
+                }
+
+            }
+
+        }
     }
 
 }

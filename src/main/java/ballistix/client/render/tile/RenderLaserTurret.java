@@ -63,7 +63,7 @@ public class RenderLaserTurret extends AbstractTileRenderer<TileTurretLaser> {
 
         matrixStackIn.popPose();
 
-        if(!tileEntityIn.firing.get()) {
+        if(!tileEntityIn.firing.get() || tileEntityIn.hasNoPower.get()) {
             return;
         }
 

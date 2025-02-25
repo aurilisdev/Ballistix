@@ -75,6 +75,7 @@ public class BallistixBlockStateProvider extends ElectrodynamicsBlockStateProvid
 
 	}
 
+	@SuppressWarnings("unused")
 	private void simpleExplosive(Block block, ExplosiveParent parent, boolean registerItem) {
 		BlockModelBuilder builder = models().withExistingParent(name(block), blockLoc(parent.toString())).texture("3", blockLoc(name(block) + "base")).texture("particle", "#3");
 		getVariantBuilder(block).partialState().setModels(new ConfiguredModel(builder));

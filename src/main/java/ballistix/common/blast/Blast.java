@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.UUID;
 
 import com.google.common.collect.Maps;
 
@@ -39,8 +38,6 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.EventHooks;
 
 public abstract class Blast {
-
-    private static final UUID FAKE_PLAYER_ID = UUID.fromString("111aa11a-11a1-111a-aaaa-a1a11a111123");
 
     public BlockPos position;
     public Level world;

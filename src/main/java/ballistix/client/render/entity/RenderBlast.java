@@ -98,21 +98,21 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 		    Blocks.BLACK_STAINED_GLASS.defaultBlockState(), modelSphere, 1, 1, 1, 0, OverlayTexture.NO_OVERLAY,
 		    ModelData.EMPTY, RenderType.translucent());
 	} else if (subtype == SubtypeBlast.antimatter && entityIn.shouldRenderCustom) {
-	    float scale = (float) ((entityIn.tickCount + partialTicks - entityIn.ticksWhenCustomRender)
-		    / Constants.EXPLOSIVE_ANTIMATTER_DURATION * Constants.EXPLOSIVE_ANTIMATTER_RADIUS);
-	    matrixStack.scale(0.1f, 0.1f, 0.1f);
-	    matrixStack.scale(scale, scale, scale);
-	    BakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_FIREBALL);
-	    RenderingUtils.renderModel(modelSphere, null, RenderType.translucent(), matrixStack, bufferIn,
-		    packedLightIn, packedLightIn);
+//	    float scale = (float) ((entityIn.tickCount + partialTicks - entityIn.ticksWhenCustomRender)
+//		    / Constants.EXPLOSIVE_ANTIMATTER_DURATION * Constants.EXPLOSIVE_ANTIMATTER_RADIUS);
+//	    matrixStack.scale(0.1f, 0.1f, 0.1f);
+//	    matrixStack.scale(scale, scale, scale);
+//	    BakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_FIREBALL);
+//	    RenderingUtils.renderModel(modelSphere, null, RenderType.translucent(), matrixStack, bufferIn,
+//		    packedLightIn, packedLightIn);
 	} else if (subtype == SubtypeBlast.largeantimatter && entityIn.shouldRenderCustom) {
-	    float scale = (float) ((entityIn.tickCount + partialTicks - entityIn.ticksWhenCustomRender)
-		    / Constants.EXPLOSIVE_ANTIMATTER_DURATION * Constants.EXPLOSIVE_ANTIMATTER_RADIUS);
-	    matrixStack.scale(0.1f, 0.1f, 0.1f);
-	    matrixStack.scale(scale, scale, scale);
-	    BakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_FIREBALL);
-	    RenderingUtils.renderModel(modelSphere, null, RenderType.translucent(), matrixStack, bufferIn,
-		    packedLightIn, packedLightIn);
+//	    float scale = (float) ((entityIn.tickCount + partialTicks - entityIn.ticksWhenCustomRender)
+//		    / Constants.EXPLOSIVE_ANTIMATTER_DURATION * Constants.EXPLOSIVE_ANTIMATTER_RADIUS);
+//	    matrixStack.scale(0.1f, 0.1f, 0.1f);
+//	    matrixStack.scale(scale, scale, scale);
+//	    BakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_FIREBALL);
+//	    RenderingUtils.renderModel(modelSphere, null, RenderType.translucent(), matrixStack, bufferIn,
+//		    packedLightIn, packedLightIn);
 	}
 	matrixStack.popPose();
 	super.render(entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn);

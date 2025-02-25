@@ -4,17 +4,22 @@ import java.util.Iterator;
 
 import ballistix.References;
 import ballistix.api.blast.IHasCustomRender;
-import ballistix.client.particle.ParticleOptionBlastSmoke;
+import ballistix.client.particle.ParticleOptionsBlastSmoke;
+import ballistix.client.particle.ParticleOptionsShockwave;
+import ballistix.client.shake.CameraShakeEffect;
+import ballistix.client.shake.CameraShakeManager;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
-import ballistix.common.blast.thread.raycast.ThreadRaycastBlast;
+import ballistix.common.blast.thread.raycast.ThreadDynamicRaycastBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.packet.type.client.particle.BlastParticleSpawnType;
 import ballistix.common.packet.type.client.particle.PacketSpawnBlastParticle;
 import ballistix.common.settings.Constants;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.compatibility.nuclearscience.RadiationHandler;
+import ballistix.prefab.utils.ParticleUtilities;
 import ballistix.registers.BallistixSounds;
 import electrodynamics.prefab.utilities.object.Location;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
@@ -23,19 +28,19 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-public class BlastNuclear extends BlastCalculating implements IHasCustomRender {
+public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 
 	public BlastNuclear(Level world, BlockPos position) {
 		super(world, position);
@@ -44,7 +49,7 @@ public class BlastNuclear extends BlastCalculating implements IHasCustomRender {
 	@Override
 	public void doPreExplode() {
 		if (!world.isClientSide) {
-			threadRay = new ThreadRaycastBlast(world, position, (int) Constants.EXPLOSIVE_NUCLEAR_SIZE,
+			threadRay = new ThreadDynamicRaycastBlast(world, position, (int) Constants.EXPLOSIVE_NUCLEAR_SIZE,
 					(float) Constants.EXPLOSIVE_NUCLEAR_ENERGY, null);
 			threadSimple = new ThreadSimpleBlast(world, position, (int) (Constants.EXPLOSIVE_NUCLEAR_SIZE * 2.5),
 					Integer.MAX_VALUE, null, getBlastType().ordinal());
@@ -57,10 +62,11 @@ public class BlastNuclear extends BlastCalculating implements IHasCustomRender {
 	private Iterator<BlockPos> cachedIteratorRay;
 	private Iterator<BlockPos> cachedIterator;
 
-	private ThreadRaycastBlast threadRay;
+	private ThreadDynamicRaycastBlast threadRay;
 	private ThreadSimpleBlast threadSimple;
 	private int pertick = -1;
 	private int perticksimple = -1;
+	private boolean hasShaken;
 
 	@Override
 	public boolean shouldRender() {
@@ -76,25 +82,23 @@ public class BlastNuclear extends BlastCalculating implements IHasCustomRender {
 		Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
 				(float) Constants.EXPLOSIVE_NUCLEAR_SIZE, false, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION,
 				ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
-		boolean rayDone = false;
 		boolean addRadiation = false;
-		if (ticksSinceBlastStart == 1) {
-			world.playSound(null, position, BallistixSounds.SOUND_NUCLEAREXPLOSION.get(), SoundSource.BLOCKS, 25, 1);
-		}
-		if (threadRay.isComplete && !rayDone && callCount % 2 == 0) {
-
-			synchronized (threadRay.resultsSync) {
+		if (callCount % 2 == 0) {
+			synchronized (threadRay.finishedBlocks) {
 				if (pertick == -1) {
 					hasStarted = true;
-					pertick = (int) (threadRay.resultsSync.size() / Constants.EXPLOSIVE_NUCLEAR_DURATION * 2 + 1);
-					cachedIteratorRay = threadRay.resultsSync.iterator();
+					attackEntities((float) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2, ex);
+					world.playSound(null, position, BallistixSounds.SOUND_NUCLEAREXPLOSION.get(), SoundSource.BLOCKS,
+							25, 1);
+					pertick = (int) (2400.0 * 360.0 / Constants.EXPLOSIVE_NUCLEAR_DURATION);
 				}
 				int finished = pertick;
+				cachedIteratorRay = threadRay.finishedBlocks.iterator();
 				while (cachedIteratorRay.hasNext()) {
 					if (finished-- < 0) {
 						break;
 					}
-					BlockPos p = new BlockPos(cachedIteratorRay.next());
+					BlockPos p = cachedIteratorRay.next();
 
 					switch (griefPreventionMethod) {
 					case GRIEF_DEFENDER:
@@ -117,7 +121,7 @@ public class BlastNuclear extends BlastCalculating implements IHasCustomRender {
 					}
 					world.getBlockState(p).getBlock().wasExploded(world, p, ex);
 					world.setBlock(p, state, 3);
-					if (world.random.nextFloat() < 1 / 20.0 && world instanceof ServerLevel serverlevel) {
+					if (world instanceof ServerLevel serverlevel) {
 						if (ticksSinceBlastStart == 1) {
 							serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(player -> {
 								serverlevel.playSound(null, player.getX(), player.getY(), player.getZ(),
@@ -125,22 +129,20 @@ public class BlastNuclear extends BlastCalculating implements IHasCustomRender {
 										SoundSource.PLAYERS, 25, 1.0F);
 							});
 						}
-						serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false)
-								.forEach(pl -> PacketDistributor.sendToPlayer(pl,
-										new PacketSpawnBlastParticle(p, BlastParticleSpawnType.EXPLOSION)));
-//			Minecraft.getInstance().particleEngine.createParticle(ParticleTypes.EXPLOSION, p.getX() + 0.5,
-//				p.getY() + 0.5, p.getZ() + 0.5, 0, 0, 0);
+						if (world.random.nextFloat() < 1 / 20.0) {
+							serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false)
+									.forEach(pl -> PacketDistributor.sendToPlayer(pl,
+											new PacketSpawnBlastParticle(p, BlastParticleSpawnType.EXPLOSION)));
+						}
 					}
-				}
-				if (!cachedIteratorRay.hasNext()) {
-					rayDone = true;
+					cachedIteratorRay.remove();
 				}
 				if (ModList.get().isLoaded(References.NUCLEAR_SCIENCE_ID)) {
 					addRadiation = true;
 				}
 			}
 		}
-		if (threadSimple.isComplete && threadRay.isComplete && callCount % 2 == 0) {
+		if (threadSimple.isComplete && callCount % 2 == 0) {
 			if (ModList.get().isLoaded(References.NUCLEAR_SCIENCE_ID)) {
 				if (ticksSinceBlastStart == 1)
 					attackEntities((float) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2, ex);
@@ -156,7 +158,8 @@ public class BlastNuclear extends BlastCalculating implements IHasCustomRender {
 			}
 			if (perticksimple == -1) {
 				cachedIterator = threadSimple.results.iterator();
-				perticksimple = (int) (threadSimple.results.size() / Constants.EXPLOSIVE_NUCLEAR_DURATION * 2 + 1);
+				perticksimple = (int) ((double) threadSimple.results.size()
+						/ (Constants.EXPLOSIVE_NUCLEAR_DURATION * 2.0) + 1);
 			}
 			int finished = perticksimple;
 			while (cachedIterator.hasNext()) {
@@ -164,7 +167,7 @@ public class BlastNuclear extends BlastCalculating implements IHasCustomRender {
 					break;
 				}
 
-				BlockPos pos = new BlockPos(cachedIterator.next()).offset(position);
+				BlockPos pos = cachedIterator.next().offset(position);
 
 				switch (griefPreventionMethod) {
 				case GRIEF_DEFENDER:
@@ -182,9 +185,9 @@ public class BlastNuclear extends BlastCalculating implements IHasCustomRender {
 				}
 			}
 			if (!cachedIterator.hasNext()) {
-				if (ticksSinceBlastStart == 1)
+				if (threadRay.isComplete)
 					attackEntities((float) Constants.EXPLOSIVE_NUCLEAR_SIZE * 2, ex);
-				return ticksSinceBlastStart > 1000;
+				return ticksSinceBlastStart > 1500;
 			}
 		}
 		return false;
@@ -194,64 +197,71 @@ public class BlastNuclear extends BlastCalculating implements IHasCustomRender {
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void produceParticles() {
-
-		RandomSource random = world.random;
-
 		double x = position.getX() + 0.5;
 		double y = position.getY() + 0.5;
 		double z = position.getZ() + 0.5;
 
-		double centerX = x;
-		double centerY = y;
-		double centerZ = z;
-
-		double initialSpeed = 1.2;
+		double initialSpeed = 1.5;
 
 		if (ticksSinceBlastStart < 5) {
 			// Fireball
-			ParticleOptions particle = new ParticleOptionBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 3f, -0.045f, 1500,
-					true, true, 200, 0.97);
-			BlastThermobaric.spawnSurroundingParticles(particle, random, centerX, centerY, centerZ, 150, 10, 90,
-					initialSpeed, true);
+			ParticleOptions particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 3f, -0.045f,
+					1500, true, true, 200, 0.97);
+			ParticleUtilities.spawnParticleSphere(particle, x, y, z, 250, 10, 90, initialSpeed, true);
 
-			// Centersmokes
-			initialSpeed = 2; // Increase/decrease to taste
-			particle = new ParticleOptionBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 2.5f, 0.045f, 1500, true, 0.99);
-			BlastThermobaric.spawnSurroundingParticles(particle, random, centerX, centerY, centerZ, 75, 0, 20,
-					initialSpeed, true);
-			// Centersmokes
-			initialSpeed = 2; // Increase/decrease to taste
-			particle = new ParticleOptionBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 2.5f, 0.01f, 1500, true, 0.995);
-			BlastThermobaric.spawnSurroundingParticles(particle, random, centerX, centerY, centerZ, 125, 0, 20,
-					initialSpeed, true);
-			// Centersmokes
-			initialSpeed = 2; // Increase/decrease to taste
-			particle = new ParticleOptionBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 2.5f, -0.015f, 1500, true, 0.97);
-			BlastThermobaric.spawnSurroundingParticles(particle, random, centerX, centerY, centerZ, 100, 0, 20,
-					initialSpeed, true);
+			// Centersmokes fast falling
+			initialSpeed = 2;
+			particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 2.5f, 0.045f, 1500, true, 0.99);
+			ParticleUtilities.spawnParticleSphere(particle, x, y, z, 75, 0, 20, initialSpeed, true);
+			// Centersmokes veryslowfalling
+			initialSpeed = 2;
+			particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 2.5f, 0.01f, 1500, true, 0.995);
+			ParticleUtilities.spawnParticleSphere(particle, x, y, z, 125, 0, 20, initialSpeed, true);
+			// Centersmokes rising
+			initialSpeed = 2;
+			particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 2.5f, -0.015f, 1500, true, 0.97);
+			ParticleUtilities.spawnParticleSphere(particle, x, y, z, 100, 0, 20, initialSpeed, true);
 
 			// Shockwave
 			if (ticksSinceBlastStart == 2) {
-				initialSpeed = 1.5; // Increase/decrease to taste
-				particle = new ParticleOptionBlastSmoke().setParameters(1.5f, 1.5f, 1.5f, 3f, 0, 150, false, 1);
-				BlastThermobaric.spawnSurroundingParticles(particle, random, centerX, centerY + 25, centerZ, 200, 0, 0,
-						initialSpeed, false);
+				initialSpeed = 1.5;
+				particle = new ParticleOptionsShockwave().setParameters(1, 1, 1, 1, 3, 150, false, 1);
+				ParticleUtilities.spawnParticleRing(particle, x, y + 25, z, 200, initialSpeed, false);
 			}
-		} else {
-
+		} else if (ticksSinceBlastStart < 1500) {
 			// Centersmokes rising
-			initialSpeed = 0.7; // Increase/decrease to taste
-			ParticleOptions particle = new ParticleOptionBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 3f, -0.045f,
-					Mth.clamp(1500 - ticksSinceBlastStart, 1, 1500), true, 0.95);
-			BlastThermobaric.spawnSurroundingParticles(particle, random, centerX,
-					centerY + 0.024f * ticksSinceBlastStart, centerZ, 1, -20, 20, initialSpeed, true);
-			if (ticksSinceBlastStart < 1250) { // Centerfire rising
-				initialSpeed = 0.5; // Increase/decrease to taste
-				particle = new ParticleOptionBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 3f, -0.045f,
+			initialSpeed = 0.7;
+			ParticleOptions particle = new ParticleOptionsBlastSmoke().setParameters(0.40625f / 0.8f, 0.40625f / 0.8f,
+					0.40625f / 0.8f, 3f, -0.045f, Mth.clamp(1500 - ticksSinceBlastStart, 1, 1500), true, 0.975);
+			ParticleUtilities.spawnParticleSphere(particle, x, y + 0.024f * ticksSinceBlastStart, z, 1, -20, 20,
+					initialSpeed, true);
+			if (ticksSinceBlastStart < 1250) {
+				// Centerfire rising
+				initialSpeed = 0.5;
+				particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 3f, -0.045f,
 						Mth.clamp(1250 - ticksSinceBlastStart, 1, 1250), true, true, 500, 0.97);
-				BlastThermobaric.spawnSurroundingParticles(particle, random, centerX,
-						centerY + 0.033f * ticksSinceBlastStart, centerZ, 1, -20, 20, initialSpeed, true);
+				ParticleUtilities.spawnParticleSphere(particle, x, y + 0.033f * ticksSinceBlastStart, z, 1, -20, 20,
+						initialSpeed, true);
 			}
+		}
+		// Shockwave
+		double spawnSize = 3;
+		double endSize = Constants.EXPLOSIVE_NUCLEAR_SIZE * 5;
+		int diff = (int) (endSize - spawnSize);
+		if (ticksSinceBlastStart > diff)
+			return;
+		double size = ParticleUtilities.progressGroundShockwave(world, x, z, ticksSinceBlastStart * 5 / (double) diff,
+				spawnSize, endSize, 0.4);
+		if (hasShaken)
+			return;
+		Vec3 pos = new Vec3(x, y, z);
+		double realDistance = Minecraft.getInstance().player.position().distanceTo(pos);
+		double dist = Mth.abs((float) (realDistance - size));
+		if (dist < 3) {
+			hasShaken = true;
+			CameraShakeEffect effect = CameraShakeManager.createBlastSourcedEffect(80.0, endSize, world.getGameTime(),
+					pos);
+			CameraShakeManager.addShake(effect);
 		}
 	}
 
@@ -260,7 +270,7 @@ public class BlastNuclear extends BlastCalculating implements IHasCustomRender {
 		if (world.isClientSide) {
 			return shouldRenderCustomClient;
 		}
-		return (threadRay == null || threadRay.isComplete);
+		return threadRay == null || threadRay.isComplete;
 	}
 
 	@Override

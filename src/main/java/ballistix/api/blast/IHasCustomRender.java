@@ -8,7 +8,7 @@ public interface IHasCustomRender {
     {
 	if(this instanceof Blast bl)
 	{
-	    return bl.isInstantaneous();
+	    return !bl.isInstantaneous();
 	}
 	return false;
     }

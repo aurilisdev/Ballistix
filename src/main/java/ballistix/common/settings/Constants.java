@@ -9,14 +9,14 @@ import electrodynamics.api.configuration.IntValue;
 public class Constants {
 	@DoubleValue(def = 45.0)
 	public static double EXPLOSIVE_ANTIMATTER_RADIUS = 45.0;
-	@DoubleValue(def = 20.0, comment = "Value is in ticks.")
-	public static double EXPLOSIVE_ANTIMATTER_DURATION = 10.0;
+	@DoubleValue(def = 80.0, comment = "Value is in ticks.")
+	public static double EXPLOSIVE_ANTIMATTER_DURATION = 80.0;
 	@DoubleValue(def = 45.0)
 	public static double EXPLOSIVE_EMP_RADIUS = 45.0;
-	@DoubleValue(def = 80.0)
-	public static double EXPLOSIVE_LARGEANTIMATTER_RADIUS = 80.0;
+	@DoubleValue(def = 100.0)
+	public static double EXPLOSIVE_LARGEANTIMATTER_RADIUS = 100.0;
 	@DoubleValue(def = 200.0, comment = "Value is in ticks.")
-	public static double EXPLOSIVE_LARGEANTIMATTER_DURATION = 30.0;
+	public static double EXPLOSIVE_LARGEANTIMATTER_DURATION = 200.0;
 	@DoubleValue(def = 1.0)
 	public static double EXPLOSIVE_ATTRACTIVE_SIZE = 1.0;
 	@DoubleValue(def = 1.0)
@@ -49,8 +49,8 @@ public class Constants {
 	public static double EXPLOSIVE_INCENDIARY_RADIUS = 7.0;
 	@DoubleValue(def = 45.0)
 	public static double EXPLOSIVE_NUCLEAR_SIZE = 45.0;
-	@DoubleValue(def = 180.0, comment = "Value is in ticks.")
-	public static double EXPLOSIVE_NUCLEAR_DURATION = 180.0;
+	@DoubleValue(def = 360.0, comment = "Value is in ticks.")
+	public static double EXPLOSIVE_NUCLEAR_DURATION = 360.0;
 	@DoubleValue(def = 120.0)
 	public static double EXPLOSIVE_NUCLEAR_ENERGY = 120.0;
 	@DoubleValue(def = 10.0)

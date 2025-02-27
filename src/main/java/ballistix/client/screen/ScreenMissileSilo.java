@@ -147,6 +147,8 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 	private void updateSiloCoords(int x, int y, int z, TileMissileSilo silo) {
 
 		silo.target.set(new BlockPos(x, y, z));
+		
+		silo.target.updateServer();
 
 	}
 
@@ -171,6 +173,8 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 		}
 
 		silo.frequency.set(frequency);
+		
+		silo.frequency.updateServer();
 
 	}
 

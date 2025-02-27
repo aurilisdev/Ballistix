@@ -56,20 +56,37 @@ public class ThreadSimpleBlast extends ThreadBlast {
 				}
 			}
 			if (CACHED_EUCLIDEAN_RESULTS[ordinal] == null) {
-				ArrayList<BlockPos> positions = new ArrayList<>();
+				int rSqrd = explosionRadius * explosionRadius;
+				ArrayList<BlockPos> positions = new ArrayList<>(
+						(int) (Math.PI * 4.0 / 3.0 * rSqrd * (explosionRadius + 1)));
 				for (int i = -explosionRadius; i <= explosionRadius; i++) {
-					for (int j = -explosionRadius; j <= explosionRadius; j++) {
-						for (int k = -explosionRadius; k <= explosionRadius; k++) {
-							int idistance = i * i + j * j + k * k;
-							if (idistance <= explosionRadius * explosionRadius
-									&& random.nextFloat() * (explosionRadius * explosionRadius) < explosionRadius
-											* explosionRadius * strictnessAtEdges - idistance) {
-								positions.add(new HashDistanceBlockPos(i, j, k,
-										(int) Math.max(1, idistance - 50 + random.nextFloat() * 100)));
+					for (int j = 0; j <= explosionRadius; j++) {
+						int dist2D = i * i + j * j;
+						if (dist2D <= rSqrd) {
+							int kMax = (int) Math.floor(Math.sqrt(rSqrd - dist2D));
+							for (int k = 0; k <= kMax; k++) {
+								int dist3D = dist2D + k * k;
+								if (random.nextFloat() * rSqrd < rSqrd * strictnessAtEdges - dist3D) {
+									positions.add(new HashDistanceBlockPos(i, k, j,
+											(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+									if (k != 0) {
+										positions.add(new HashDistanceBlockPos(i, -k, j,
+												(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+										if (j != 0) {
+											positions.add(new HashDistanceBlockPos(i, -k, -j,
+													(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+										}
+									}
+									if (j != 0) {
+										positions.add(new HashDistanceBlockPos(i, k, -j,
+												(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+									}
+								}
 							}
 						}
 					}
 				}
+				// Sort
 				Random rand = Electrodynamics.RANDOM;
 				for (int i = 0; i < positions.size(); i++) {
 					int newIndex = rand.nextInt(Math.max(0, i - 10), Math.min(positions.size() - 1, i + 10));
@@ -78,7 +95,6 @@ public class ThreadSimpleBlast extends ThreadBlast {
 					positions.set(i, atNew);
 				}
 				CACHED_EUCLIDEAN_RESULTS[ordinal] = Sets.newHashSet(positions);
-
 			}
 
 			results = CACHED_EUCLIDEAN_RESULTS[ordinal];
@@ -86,20 +102,37 @@ public class ThreadSimpleBlast extends ThreadBlast {
 				currentlyCalculating.remove(explosionRadius);
 			}
 		} else {
-			ArrayList<BlockPos> positions = new ArrayList<>();
+			int rSqrd = explosionRadius * explosionRadius;
+			ArrayList<BlockPos> positions = new ArrayList<>(
+					(int) (Math.PI * 4.0 / 3.0 * rSqrd * (explosionRadius + 1)));
 			for (int i = -explosionRadius; i <= explosionRadius; i++) {
-				for (int j = -explosionRadius; j <= explosionRadius; j++) {
-					for (int k = -explosionRadius; k <= explosionRadius; k++) {
-						int idistance = i * i + j * j + k * k;
-						if (idistance <= explosionRadius * explosionRadius
-								&& random.nextFloat() * (explosionRadius * explosionRadius) < explosionRadius
-										* explosionRadius * strictnessAtEdges - idistance) {
-							positions.add(new HashDistanceBlockPos(i, j, k,
-									(int) Math.max(1, idistance - 50 + random.nextFloat() * 100)));
+				for (int j = 0; j <= explosionRadius; j++) {
+					int dist2D = i * i + j * j;
+					if (dist2D <= rSqrd) {
+						int kMax = (int) Math.floor(Math.sqrt(rSqrd - dist2D));
+						for (int k = 0; k <= kMax; k++) {
+							int dist3D = dist2D + k * k;
+							if (random.nextFloat() * rSqrd < rSqrd * strictnessAtEdges - dist3D) {
+								positions.add(new HashDistanceBlockPos(i, k, j,
+										(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+								if (k != 0) {
+									positions.add(new HashDistanceBlockPos(i, -k, j,
+											(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+									if (j != 0) {
+										positions.add(new HashDistanceBlockPos(i, -k, -j,
+												(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+									}
+								}
+								if (j != 0) {
+									positions.add(new HashDistanceBlockPos(i, k, -j,
+											(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+								}
+							}
 						}
 					}
 				}
 			}
+			// Sort
 			Random rand = Electrodynamics.RANDOM;
 			for (int i = 0; i < positions.size(); i++) {
 				int newIndex = rand.nextInt(Math.max(0, i - 10), Math.min(positions.size() - 1, i + 10));

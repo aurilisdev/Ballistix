@@ -115,7 +115,7 @@ public class ItemLaserDesignator extends ItemElectric {
 		playerIn.displayClientMessage(BallistixTextUtils.chatMessage("laserdesignator.launch", frequency), false);
 		playerIn.displayClientMessage(BallistixTextUtils.chatMessage("laserdesignator.launchsend", trace), false);
 
-		return super.use(worldIn, playerIn, handIn);
+		return ActionResult.pass(playerIn.getItemInHand(handIn));
 	}
 
 	@Override
@@ -154,6 +154,11 @@ public class ItemLaserDesignator extends ItemElectric {
 
 	public static int getFrequency(ItemStack stack) {
 		return stack.getOrCreateTag().getInt(FREQUENCY_KEY);
+	}
+	
+	@Override
+	public boolean useOnRelease(ItemStack stack) {
+		return false;
 	}
 	
 }

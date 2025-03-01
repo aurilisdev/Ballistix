@@ -161,12 +161,7 @@ public abstract class Blast {
 		}
 	}
 
-	public static Blast createFromSubtype(SubtypeBlast explosive, World world, BlockPos pos) {
-		try {
-			return (Blast) explosive.blastClass.getConstructor(World.class, BlockPos.class).newInstance(world, pos);
-		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
-		}
-		return null;
+	public static interface BlastFactory<T extends Blast> {
+		T create(World world, BlockPos pos);
 	}
 }

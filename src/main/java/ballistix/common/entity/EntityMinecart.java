@@ -127,7 +127,7 @@ public class EntityMinecart extends AbstractMinecartEntity implements IDefusable
 			remove(false);
 			if (blastOrdinal != -1) {
 				SubtypeBlast explosive = SubtypeMinecart.values()[blastOrdinal].explosiveType;
-				Blast b = Blast.createFromSubtype(explosive, level, blockPosition());
+				Blast b = explosive.createBlast(level, blockPosition());
 				if (b != null) {
 					b.performExplosion();
 				}

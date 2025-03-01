@@ -1,16 +1,33 @@
 package ballistix.client.screen;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import ballistix.common.inventory.container.ContainerMissileSilo;
+import ballistix.common.settings.Constants;
 import ballistix.common.tile.TileMissileSilo;
+import ballistix.prefab.screen.ScreenComponentBallistixLabel;
+import ballistix.prefab.screen.ScreenComponentCustomRender;
+import ballistix.prefab.screen.ScreenComponentFillArea;
 import ballistix.prefab.utils.BallistixTextUtils;
+import electrodynamics.api.electricity.formatting.ChatFormatter;
+import electrodynamics.api.electricity.formatting.DisplayUnit;
 import electrodynamics.prefab.screen.GenericScreen;
 import electrodynamics.prefab.screen.component.editbox.ScreenComponentEditBox;
-import electrodynamics.prefab.screen.component.types.ScreenComponentSimpleLabel;
+import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentElectricInfo;
+import electrodynamics.prefab.screen.component.types.wrapper.InventoryIOWrapper;
+import electrodynamics.prefab.screen.component.utils.AbstractScreenComponentInfo;
+import electrodynamics.prefab.tile.components.IComponentType;
+import electrodynamics.prefab.tile.components.type.ComponentElectrodynamic;
+import electrodynamics.prefab.utilities.ElectroTextUtils;
+import electrodynamics.prefab.utilities.math.Color;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -26,17 +43,35 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 
 	public ScreenMissileSilo(ContainerMissileSilo container, PlayerInventory playerInventory, ITextComponent title) {
 		super(container, playerInventory, title);
-		addEditBox(xCoordField = new ScreenComponentEditBox(122, 10, 48, 15, getFontRenderer()).setTextColor(-1).setTextColorUneditable(-1).setMaxLength(10).setResponder(this::setX).setFilter(ScreenComponentEditBox.INTEGER));
-		addEditBox(yCoordField = new ScreenComponentEditBox(122, 28, 48, 15, getFontRenderer()).setTextColor(-1).setTextColorUneditable(-1).setMaxLength(10).setResponder(this::setY).setFilter(ScreenComponentEditBox.INTEGER));
-		addEditBox(zCoordField = new ScreenComponentEditBox(122, 46, 48, 15, getFontRenderer()).setTextColor(-1).setTextColorUneditable(-1).setMaxLength(10).setResponder(this::setZ).setFilter(ScreenComponentEditBox.INTEGER));
-		addEditBox(frequencyField = new ScreenComponentEditBox(122, 64, 48, 15, getFontRenderer()).setTextColor(-1).setTextColorUneditable(-1).setMaxLength(7).setResponder(this::setFrequency).setFilter(ScreenComponentEditBox.INTEGER));
+		imageHeight += 20;
+		inventoryLabelY += 20;
 
-		addComponent(new ScreenComponentSimpleLabel(inventoryLabelX, inventoryLabelY - 55, 10, 4210752, BallistixTextUtils.gui("missilesilo.missile")));
-		addComponent(new ScreenComponentSimpleLabel(inventoryLabelX, inventoryLabelY - 20, 10, 4210752, BallistixTextUtils.gui("missilesilo.explosive")));
-		addComponent(new ScreenComponentSimpleLabel(79, 13, 10, 4210752, BallistixTextUtils.gui("missilesilo.x")));
-		addComponent(new ScreenComponentSimpleLabel(79, 31, 10, 4210752, BallistixTextUtils.gui("missilesilo.y")));
-		addComponent(new ScreenComponentSimpleLabel(79, 49, 10, 4210752, BallistixTextUtils.gui("missilesilo.z")));
-		addComponent(new ScreenComponentSimpleLabel(79, 67, 10, 4210752, BallistixTextUtils.gui("missilesilo.freq")));
+		addComponent(new ScreenComponentElectricInfo(this::getElectricInformation,-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(Constants.MISSILESILO_USAGE * 20));
+
+		addEditBox(xCoordField = new ScreenComponentEditBox(10, 20, 48, 15, getFontRenderer()).setTextColor(-1).setTextColorUneditable(-1).setMaxLength(10).setResponder(this::setX).setFilter(ScreenComponentEditBox.INTEGER));
+		addEditBox(yCoordField = new ScreenComponentEditBox(10, 38, 48, 15, getFontRenderer()).setTextColor(-1).setTextColorUneditable(-1).setMaxLength(10).setResponder(this::setY).setFilter(ScreenComponentEditBox.INTEGER));
+		addEditBox(zCoordField = new ScreenComponentEditBox(10, 56, 48, 15, getFontRenderer()).setTextColor(-1).setTextColorUneditable(-1).setMaxLength(10).setResponder(this::setZ).setFilter(ScreenComponentEditBox.INTEGER));
+		addEditBox(frequencyField = new ScreenComponentEditBox(10, 74, 48, 15, getFontRenderer()).setTextColor(-1).setTextColorUneditable(-1).setMaxLength(10).setResponder(this::setFrequency).setFilter(ScreenComponentEditBox.INTEGER));
+
+
+
+		addComponent(new ScreenComponentBallistixLabel(110, 24, 10, ScreenComponentCustomRender.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.missile")));
+		addComponent(new ScreenComponentBallistixLabel(110, 45, 10, ScreenComponentCustomRender.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.explosive")));
+		addComponent(new ScreenComponentBallistixLabel(60, 22, 10, ScreenComponentCustomRender.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.x")));
+		addComponent(new ScreenComponentBallistixLabel(60, 40, 10, ScreenComponentCustomRender.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.y")));
+		addComponent(new ScreenComponentBallistixLabel(60, 58, 10, ScreenComponentCustomRender.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.z")));
+		addComponent(new ScreenComponentBallistixLabel(60, 76, 10, ScreenComponentCustomRender.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.freq")));
+		addComponent(new ScreenComponentBallistixLabel(110, 74, 10, ScreenComponentCustomRender.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.sync")));
+
+		new InventoryIOWrapper(this, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE + 2, 75, 102, 8, 92).hideAdditional(show -> {
+
+		});
+	}
+	
+	@Override
+	protected void initializeComponents() {
+		addComponent(new ScreenComponentFillArea(88, 18, 80, 71, new Color(120,120, 120, 255)));
+		super.initializeComponents();
 	}
 
 	private void setSiloTargetX(String coord) {
@@ -190,6 +225,21 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 				frequencyField.setValue("" + silo.frequency.get());
 			}
 		}
+	}
+	
+	private List<? extends IReorderingProcessor> getElectricInformation() {
+		ArrayList<IReorderingProcessor> list = new ArrayList<>();
+
+		TileMissileSilo silo = menu.getHostFromIntArray();
+		if (silo == null) {
+			return list;
+		}
+
+		ComponentElectrodynamic el = silo.getComponent(IComponentType.Electrodynamic);
+		list.add(BallistixTextUtils.tooltip("missilesilo.charge", ChatFormatter.getChatDisplayShort(el.getJoulesStored(), DisplayUnit.JOULES).withStyle(TextFormatting.GRAY), ChatFormatter.getChatDisplayShort(Constants.MISSILESILO_USAGE, DisplayUnit.JOULES).withStyle(TextFormatting.GRAY)).withStyle(TextFormatting.DARK_GRAY).getVisualOrderText());
+		list.add(ElectroTextUtils.gui("machine.voltage", ChatFormatter.getChatDisplayShort(el.getVoltage(), DisplayUnit.VOLTAGE).withStyle(TextFormatting.GRAY)).withStyle(TextFormatting.DARK_GRAY).getVisualOrderText());
+
+		return list;
 	}
 
 }

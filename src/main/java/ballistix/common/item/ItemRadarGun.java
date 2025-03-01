@@ -4,6 +4,7 @@ import java.util.List;
 
 import ballistix.References;
 import ballistix.common.tile.TileMissileSilo;
+import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
 import ballistix.prefab.utils.BallistixTextUtils;
 import electrodynamics.common.tile.TileMultiSubnode;
 import electrodynamics.prefab.item.ElectricItemProperties;
@@ -38,17 +39,26 @@ public class ItemRadarGun extends ItemElectric {
 		if (context.getLevel().isClientSide) {
 			return super.onItemUseFirst(stack, context);
 		}
-		TileEntity ent = context.getLevel().getBlockEntity(context.getClickedPos());
-		TileMissileSilo silo = ent instanceof TileMissileSilo ? (TileMissileSilo) ent : null;
-		if (ent instanceof TileMultiSubnode) {
-			TileMultiSubnode node = (TileMultiSubnode) ent;
-			TileEntity core = node.getLevel().getBlockEntity(node.parentPos.get().toBlockPos());
-			if (core instanceof TileMissileSilo) {
-				silo = (TileMissileSilo) core;
-			}
-		}
-		if (silo != null) {
+		TileEntity tile = context.getLevel().getBlockEntity(context.getClickedPos());
+
+		if(tile instanceof TileMissileSilo) {
+
+			((TileMissileSilo) tile).target.set(getCoordiantes(stack));
+			((TileMissileSilo) tile).target.forceDirty();
+
+		} else if (tile instanceof TileMultiSubnode && ((TileMultiSubnode) tile).getLevel().getBlockEntity(((TileMultiSubnode) tile).parentPos.get().toBlockPos()) instanceof TileMissileSilo) {
+			
+			TileMissileSilo silo = (TileMissileSilo) ((TileMultiSubnode) tile).getLevel().getBlockEntity(((TileMultiSubnode) tile).parentPos.get().toBlockPos());
+
 			silo.target.set(getCoordiantes(stack));
+			silo.target.forceDirty();
+
+		} else if (tile instanceof TileTurretAntimissile) {
+			if(((TileTurretAntimissile) tile).bindFireControlRadar(getCoordiantes(stack))) {
+				context.getPlayer().displayClientMessage(BallistixTextUtils.chatMessage("radargun.turretsucess"), true);
+			} else {
+				context.getPlayer().displayClientMessage(BallistixTextUtils.chatMessage("radargun.turrettoofar"), true);
+			}
 		}
 		return super.onItemUseFirst(stack, context);
 	}
@@ -69,6 +79,12 @@ public class ItemRadarGun extends ItemElectric {
 		ItemStack radarGun = playerIn.getItemInHand(handIn);
 
 		if (getJoulesStored(radarGun) < USAGE) {
+			return super.use(worldIn, playerIn, handIn);
+		}
+		
+		TileEntity tile = trace.getTile(playerIn.level);
+		
+		if(tile instanceof TileMissileSilo || trace.getTile(playerIn.level) instanceof TileMultiSubnode && ((TileMultiSubnode) tile).getLevel().getBlockEntity(((TileMultiSubnode) tile).parentPos.get().toBlockPos()) instanceof TileMissileSilo || trace.getTile(worldIn) instanceof TileTurretAntimissile) {
 			return super.use(worldIn, playerIn, handIn);
 		}
 

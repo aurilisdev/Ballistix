@@ -7,7 +7,6 @@ import ballistix.common.blast.thread.raycast.ThreadRaycastBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
 import ballistix.registers.BallistixSounds;
-import electrodynamics.api.sound.SoundAPI;
 import electrodynamics.common.packet.NetworkHandler;
 import electrodynamics.common.packet.types.client.PacketSpawnSmokeParticle;
 import electrodynamics.prefab.utilities.object.Location;
@@ -38,13 +37,12 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 	public void doPreExplode() {
 		if (!world.isClientSide) {
 			threadRay = new ThreadRaycastBlast(world, position, (int) Constants.EXPLOSIVE_NUCLEAR_SIZE, (float) Constants.EXPLOSIVE_NUCLEAR_ENERGY, null);
-			threadSimple = new ThreadSimpleBlast(world, position, (int) (Constants.EXPLOSIVE_NUCLEAR_SIZE * 2), Integer.MAX_VALUE, null, true);
+			threadSimple = new ThreadSimpleBlast(world, position, (int) (Constants.EXPLOSIVE_NUCLEAR_SIZE * 2), Integer.MAX_VALUE, null, SubtypeBlast.nuclear.ordinal());
 			threadSimple.strictnessAtEdges = 1.7;
 			threadRay.start();
 			threadSimple.start();
-		} else {
-			SoundAPI.playSound(BallistixSounds.SOUND_NUCLEAREXPLOSION.get(), SoundCategory.BLOCKS, 1, 1, position);
-		}
+			world.playSound(null, position, BallistixSounds.SOUND_NUCLEAREXPLOSION.get(), SoundCategory.BLOCKS, 1.0F, 1.0F);
+		} 
 	}
 
 	private Iterator<BlockPos> cachedIteratorRay;
@@ -54,7 +52,7 @@ public class BlastNuclear extends Blast implements IHasCustomRenderer {
 	private ThreadSimpleBlast threadSimple;
 	private int pertick = -1;
 	private int perticksimple = -1;
-	private int particleHeight = 0;
+	private int particleHeight = 0; 
 
 	@Override
 	public boolean shouldRender() {

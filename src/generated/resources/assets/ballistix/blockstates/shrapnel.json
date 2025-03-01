@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "ballistix:block/shrapnel"
+      "model": "ballistix:block/explosiveshrapnel"
     }
   }
 }

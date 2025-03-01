@@ -3,11 +3,16 @@ package ballistix.common.item;
 import java.util.HashMap;
 
 import ballistix.References;
+import ballistix.api.missile.MissileManager;
+import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.common.block.BlockExplosive;
 import ballistix.common.block.subtype.SubtypeMissile;
 import ballistix.common.entity.EntityMissile;
 import ballistix.registers.BallistixItems;
+import ballistix.registers.BallistixSounds;
 import electrodynamics.common.blockitem.BlockItemDescriptable;
+import electrodynamics.prefab.utilities.NBTUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -16,6 +21,9 @@ import net.minecraft.item.UseAction;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 
 public class ItemRocketLauncher extends Item {
@@ -40,7 +48,20 @@ public class ItemRocketLauncher extends Item {
 	public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
 		ItemStack itemstack = playerIn.getItemInHand(handIn);
 		playerIn.startUsingItem(handIn);
-		return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
+		return new ActionResult<>(ActionResultType.PASS, itemstack);
+	}
+	
+	@Override
+	public void inventoryTick(ItemStack stack, World level, Entity entity, int slotId, boolean isSelected) {
+		super.inventoryTick(stack, level, entity, slotId, isSelected);
+		if (level.isClientSide) {
+			return;
+		}
+		int timeRemaining = stack.getOrCreateTag().getInt(NBTUtils.TIMER);
+		if (timeRemaining > 0) {
+			timeRemaining--;
+			stack.getOrCreateTag().putInt(NBTUtils.TIMER, timeRemaining);
+		}
 	}
 
 	@Override
@@ -91,13 +112,35 @@ public class ItemRocketLauncher extends Item {
 		if (hasExplosive && hasRange) {
 			ex.shrink(1);
 			missile.shrink(1);
-			EntityMissile miss = new EntityMissile(world);
-			miss.moveTo(entityLiving.getX(), entityLiving.getY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getZ(), entityLiving.yRot, entityLiving.xRot);
-			miss.setDeltaMovement(entityLiving.getLookAngle().x * 2, entityLiving.getLookAngle().y * 2, entityLiving.getLookAngle().z * 2);
-			miss.blastOrdinal = blastOrdinal;
-			miss.range = 0;
-			miss.isItem = true;
-			world.addFreshEntity(miss);
+			VirtualMissile virtualMissile = new VirtualMissile(
+					//
+					new Vector3d(entityLiving.getX(), entityLiving.getY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getZ()),
+					//
+					new Vector3d(entityLiving.getLookAngle().x, entityLiving.getLookAngle().y, entityLiving.getLookAngle().z),
+					//
+					2.0F,
+					//
+					true,
+					//
+					0,
+					//
+					0,
+					//
+					BlockPos.ZERO,
+					//
+					0,
+					//
+					blastOrdinal,
+					//
+					false,
+					//
+					0
+			//
+			);
+
+			MissileManager.addMissile(world.dimension(), virtualMissile);
+
+			world.playSound(null, player.blockPosition().above(), BallistixSounds.SOUND_MISSILE_ROCKETLAUNCHER.get(), SoundCategory.BLOCKS, 1.0F, 1.0F);
 		}
 
 	}

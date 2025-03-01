@@ -6,10 +6,14 @@ import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
 import ballistix.registers.BallistixSounds;
-import electrodynamics.api.sound.SoundAPI;
 import electrodynamics.prefab.utilities.WorldUtils;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.Explosion;
+import net.minecraft.world.Explosion.Mode;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
@@ -22,11 +26,10 @@ public class BlastAntimatter extends Blast implements IHasCustomRenderer {
 	@Override
 	public void doPreExplode() {
 		if (!world.isClientSide) {
-			thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, true);
+			thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.antimatter.ordinal());
 			thread.start();
-		} else {
-			SoundAPI.playSound(BallistixSounds.SOUND_ANTIMATTEREXPLOSION.get(), SoundCategory.BLOCKS, 25, 1, position);
-		}
+			world.playSound(null, position, BallistixSounds.SOUND_ANTIMATTEREXPLOSION.get(), SoundCategory.BLOCKS, 25.0F, 1.0F);
+		} 
 	}
 
 	private ThreadSimpleBlast thread;
@@ -52,17 +55,24 @@ public class BlastAntimatter extends Blast implements IHasCustomRenderer {
 					cachedIterator = thread.results.iterator();
 				}
 				int finished = pertick;
+				Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, false, Mode.BREAK);
 				while (cachedIterator.hasNext()) {
 					if (finished-- < 0) {
 						break;
 					}
 					BlockPos p = new BlockPos(cachedIterator.next()).offset(position);
-					WorldUtils.fastRemoveBlockExplosion((ServerWorld) world, p);
+					BlockState state = world.getBlockState(p);
+		            Block block = state.getBlock();
+					if (!state.isAir() && state.getDestroySpeed(world, p) >= 0) {
+						block.wasExploded(world, p, ex);
+                        world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
+					}
+					//WorldUtils.fastRemoveBlockExplosion((ServerWorld) world, p);
 				}
 				if (!cachedIterator.hasNext()) {
 					position = position.above().above();
 					attackEntities((float) Constants.EXPLOSIVE_ANTIMATTER_RADIUS * 2, false);
-					WorldUtils.clearChunkCache();
+					//WorldUtils.clearChunkCache();
 					return true;
 				}
 			}

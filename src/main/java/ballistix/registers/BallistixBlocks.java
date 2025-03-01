@@ -7,10 +7,18 @@ import java.util.HashMap;
 import java.util.List;
 
 import ballistix.References;
+import ballistix.common.block.BlockESMTower;
 import ballistix.common.block.BlockExplosive;
 import ballistix.common.block.BlockMissileSilo;
 import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.common.tile.radar.TileFireControlRadar;
+import ballistix.common.tile.radar.TileSearchRadar;
+import ballistix.common.tile.turret.antimissile.TileTurretCIWS;
+import ballistix.common.tile.turret.antimissile.TileTurretLaser;
+import ballistix.common.tile.turret.antimissile.TileTurretRailgun;
+import ballistix.common.tile.turret.antimissile.TileTurretSAM;
 import electrodynamics.api.ISubtype;
+import electrodynamics.prefab.block.GenericMachineBlock;
 import net.minecraft.block.Block;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
@@ -22,9 +30,23 @@ public class BallistixBlocks {
 	public static final HashMap<ISubtype, RegistryObject<Block>> SUBTYPEBLOCKREGISTER_MAPPINGS = new HashMap<>();
 
 	public static BlockMissileSilo blockMissileSilo;
+	public static GenericMachineBlock blockRadar;
+	public static GenericMachineBlock blockFireControlRadar;
+	public static BlockESMTower blockEsmTower;
+	public static GenericMachineBlock blockSamTurret;
+	public static GenericMachineBlock blockCiwsTurret;
+	public static GenericMachineBlock blockLaserTurret;
+	public static GenericMachineBlock blockRailgunTurret;
 
 	static {
 		BLOCKS.register("missilesilo", () -> blockMissileSilo = new BlockMissileSilo());
+		BLOCKS.register("radar", () -> blockRadar = new GenericMachineBlock(world -> new TileSearchRadar()));
+		BLOCKS.register("firecontrolradar", () -> blockFireControlRadar = new GenericMachineBlock(world -> new TileFireControlRadar()));
+		BLOCKS.register("esmtower", () -> blockEsmTower = new BlockESMTower());
+		BLOCKS.register("samturret", () -> blockSamTurret = new GenericMachineBlock(world -> new TileTurretSAM()));
+		BLOCKS.register("ciwsturret", () -> blockCiwsTurret = new GenericMachineBlock(world -> new TileTurretCIWS()));
+		BLOCKS.register("laserturret", () -> blockLaserTurret = new GenericMachineBlock(world -> new TileTurretLaser()));
+		BLOCKS.register("railgunturret", () -> blockRailgunTurret = new GenericMachineBlock(world -> new TileTurretRailgun()));
 		for (SubtypeBlast subtype : SubtypeBlast.values()) {
 			SUBTYPEBLOCKREGISTER_MAPPINGS.put(subtype, BLOCKS.register(subtype.tag(), supplier(() -> new BlockExplosive(subtype), subtype)));
 		}

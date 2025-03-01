@@ -1,0 +1,261 @@
+{
+  "credit": "skip999",
+  "parent": "block/cube_all",
+  "texture_size": [
+    64,
+    64
+  ],
+  "textures": {
+    "0": "ballistix:block/model/railgunturret",
+    "particle": "electrodynamics:block/steelcasing"
+  },
+  "elements": [
+    {
+      "from": [
+        3.5,
+        6,
+        3.5
+      ],
+      "to": [
+        12.5,
+        7,
+        12.5
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          5,
+          6.5,
+          5
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            2.75,
+            6.25,
+            3
+          ],
+          "texture": "#0"
+        },
+        "east": {
+          "uv": [
+            4,
+            2.75,
+            6.25,
+            3
+          ],
+          "texture": "#0"
+        },
+        "south": {
+          "uv": [
+            4,
+            4.75,
+            6.25,
+            5
+          ],
+          "texture": "#0"
+        },
+        "west": {
+          "uv": [
+            4,
+            4.75,
+            6.25,
+            5
+          ],
+          "texture": "#0"
+        },
+        "up": {
+          "uv": [
+            6.25,
+            5,
+            4,
+            2.75
+          ],
+          "texture": "#0"
+        },
+        "down": {
+          "uv": [
+            6.25,
+            2.75,
+            4,
+            5
+          ],
+          "texture": "#0"
+        }
+      }
+    },
+    {
+      "from": [
+        4.5,
+        7,
+        11
+      ],
+      "to": [
+        11.5,
+        16,
+        12
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          4,
+          7,
+          11
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            5,
+            5.75,
+            7.25
+          ],
+          "texture": "#0"
+        },
+        "east": {
+          "uv": [
+            4,
+            5,
+            4.25,
+            7.25
+          ],
+          "texture": "#0"
+        },
+        "south": {
+          "uv": [
+            4,
+            5,
+            5.75,
+            7.25
+          ],
+          "texture": "#0"
+        },
+        "west": {
+          "uv": [
+            5.5,
+            5,
+            5.75,
+            7.25
+          ],
+          "texture": "#0"
+        },
+        "up": {
+          "uv": [
+            4,
+            5,
+            5.75,
+            5.25
+          ],
+          "texture": "#0"
+        },
+        "down": {
+          "uv": [
+            4,
+            7,
+            5.75,
+            7.25
+          ],
+          "texture": "#0"
+        }
+      }
+    },
+    {
+      "from": [
+        4.5,
+        7,
+        4
+      ],
+      "to": [
+        11.5,
+        16,
+        5
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          4,
+          7,
+          4
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            5,
+            5.75,
+            7.25
+          ],
+          "texture": "#0"
+        },
+        "east": {
+          "uv": [
+            4,
+            5,
+            4.25,
+            7.25
+          ],
+          "texture": "#0"
+        },
+        "south": {
+          "uv": [
+            4,
+            5,
+            5.75,
+            7.25
+          ],
+          "texture": "#0"
+        },
+        "west": {
+          "uv": [
+            5.5,
+            5,
+            5.75,
+            7.25
+          ],
+          "texture": "#0"
+        },
+        "up": {
+          "uv": [
+            4,
+            5,
+            5.75,
+            5.25
+          ],
+          "texture": "#0"
+        },
+        "down": {
+          "uv": [
+            4,
+            7,
+            5.75,
+            7.25
+          ],
+          "texture": "#0"
+        }
+      }
+    }
+  ],
+  "groups": [
+    {
+      "name": "balljoint",
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "color": 0,
+      "children": [
+        0,
+        1,
+        2
+      ]
+    }
+  ]
+}

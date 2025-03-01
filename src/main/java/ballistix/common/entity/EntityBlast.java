@@ -1,5 +1,6 @@
 package ballistix.common.entity;
 
+import ballistix.References;
 import ballistix.common.blast.Blast;
 import ballistix.common.blast.IHasCustomRenderer;
 import ballistix.common.block.subtype.SubtypeBlast;
@@ -11,7 +12,10 @@ import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.world.ForgeChunkManager;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 public class EntityBlast extends Entity {
@@ -24,6 +28,8 @@ public class EntityBlast extends Entity {
 	public int callcount = 0;
 	public boolean shouldRenderCustom = false;
 	public int ticksWhenCustomRender;
+	
+	public boolean detonated = false;
 
 	public EntityBlast(EntityType<? extends EntityBlast> type, World worldIn) {
 		super(type, worldIn);
@@ -41,7 +47,7 @@ public class EntityBlast extends Entity {
 
 	public void setBlastType(SubtypeBlast explosive) {
 		blastOrdinal = explosive.ordinal();
-		blast = Blast.createFromSubtype(getBlastType(), level, blockPosition());
+		blast = getBlastType().createBlast(level, blockPosition());
 	}
 
 	public SubtypeBlast getBlastType() {
@@ -57,6 +63,15 @@ public class EntityBlast extends Entity {
 
 	@Override
 	public void tick() {
+		if (detonated /* || tickCount > 1000 */) {
+			if (!level.isClientSide) {
+				remove(false);
+			}
+			return;
+		}
+
+		tickCount++;
+
 		if (!level.isClientSide) {
 			entityData.set(TYPE, blastOrdinal);
 			entityData.set(CALLCOUNT, callcount);
@@ -64,27 +79,49 @@ public class EntityBlast extends Entity {
 		} else {
 			blastOrdinal = entityData.get(TYPE);
 			callcount = entityData.get(CALLCOUNT);
-			if (!shouldRenderCustom && entityData.get(SHOULDSTARTCUSTOMRENDER) == Boolean.TRUE) {
+			if (!shouldRenderCustom && entityData.get(SHOULDSTARTCUSTOMRENDER)) {
 				ticksWhenCustomRender = tickCount;
 			}
 			shouldRenderCustom = entityData.get(SHOULDSTARTCUSTOMRENDER);
 		}
+
+		if (blastOrdinal == -1) {
+			return;
+		}
+
+		if (blast == null) {
+			blast = getBlastType().createBlast(level, blockPosition());
+		}
+
 		if (blast != null) {
 			if (callcount == 0) {
 				blast.preExplode();
 			} else if (blast.explode(callcount)) {
+				detonated = true;
 				blast.postExplode();
-				remove(false);
+
 			}
 			callcount++;
-		} else if (blastOrdinal == -1) {
-			if (tickCount > 60) {
-				remove(false);
-			}
-		} else {
-			blast = Blast.createFromSubtype(getBlastType(), level, blockPosition());
 		}
 	}
+	
+	@Override
+	public void onAddedToWorld() {
+		super.onAddedToWorld();
+		if (!level.isClientSide()) {
+			ChunkPos pos = level.getChunk(blockPosition()).getPos();
+			ForgeChunkManager.forceChunk((ServerWorld) level, References.ID, blockPosition(), pos.x, pos.z, true, true);
+		}
+	}
+
+	@Override
+	public void remove(boolean keepData) {
+		if (!level.isClientSide && !keepData) {
+			ChunkPos pos = level.getChunk(blockPosition()).getPos();
+			ForgeChunkManager.forceChunk((ServerWorld) level, References.ID, blockPosition(), pos.x, pos.z, false, true);
+		}
+		super.remove(keepData);
+	}	
 
 	@Override
 	protected void addAdditionalSaveData(CompoundNBT compound) {

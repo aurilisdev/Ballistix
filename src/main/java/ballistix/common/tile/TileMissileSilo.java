@@ -1,15 +1,21 @@
 package ballistix.common.tile;
 
+import javax.annotation.Nonnull;
+
 import ballistix.References;
+import ballistix.api.missile.MissileManager;
+import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.common.block.BlockExplosive;
 import ballistix.common.block.BlockMissileSilo;
-import ballistix.common.entity.EntityMissile;
 import ballistix.common.inventory.container.ContainerMissileSilo;
+import ballistix.common.item.ItemLaserDesignator;
 import ballistix.common.item.ItemMissile;
+import ballistix.common.item.ItemRadarGun;
 import ballistix.common.network.SiloRegistry;
 import ballistix.common.settings.Constants;
 import ballistix.registers.BallistixBlockTypes;
 import ballistix.registers.BallistixItems;
+import ballistix.registers.BallistixSounds;
 import electrodynamics.api.multiblock.Subnode;
 import electrodynamics.api.multiblock.parent.IMultiblockParentTile;
 import electrodynamics.common.blockitem.BlockItemDescriptable;
@@ -19,23 +25,29 @@ import electrodynamics.prefab.properties.PropertyType;
 import electrodynamics.prefab.tile.GenericTile;
 import electrodynamics.prefab.tile.components.IComponentType;
 import electrodynamics.prefab.tile.components.type.ComponentContainerProvider;
+import electrodynamics.prefab.tile.components.type.ComponentElectrodynamic;
 import electrodynamics.prefab.tile.components.type.ComponentInventory;
 import electrodynamics.prefab.tile.components.type.ComponentInventory.InventoryBuilder;
 import electrodynamics.prefab.tile.components.type.ComponentPacketHandler;
 import electrodynamics.prefab.tile.components.type.ComponentTickable;
-import electrodynamics.registers.ElectrodynamicsBlocks;
+import electrodynamics.prefab.utilities.NBTUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.common.world.ForgeChunkManager;
 
 public class TileMissileSilo extends GenericTile implements IMultiblockParentTile {
@@ -60,7 +72,6 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 
 	}));
 	public Property<BlockPos> target = property(new Property<>(PropertyType.BlockPos, "target", BlockPos.ZERO));
-	public Property<Integer> hasRedstoneSignal = property(new Property<>(PropertyType.Integer, "hasredstonesignal", 0x00000));
 
 	private int cooldown = 100;
 	public boolean shouldLaunch = false;
@@ -69,7 +80,8 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 		super(BallistixBlockTypes.TILE_MISSILESILO.get());
 
 		addComponent(new ComponentTickable(this).tickServer(this::tickServer));
-		addComponent(new ComponentInventory(this, InventoryBuilder.newInv().inputs(2)).valid(this::isItemValidForSlot));
+		addComponent(new ComponentInventory(this, InventoryBuilder.newInv().inputs(3)).valid(this::isItemValidForSlot));
+		addComponent(new ComponentElectrodynamic(this, false, true).voltage(120).maxJoules(Constants.MISSILESILO_USAGE * 20).setInputDirections(Direction.values()));
 		addComponent(new ComponentPacketHandler(this));
 		addComponent(new ComponentContainerProvider("container.missilesilo", this).createMenu((id, player) -> new ContainerMissileSilo(id, player, getComponent(IComponentType.Inventory), getCoordsArray())));
 
@@ -81,12 +93,23 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 			target.set(getBlockPos());
 		}
 
-		if (cooldown > 0) {
+		ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
+
+		if (cooldown > 0 || electro.getJoulesStored() < Constants.MISSILESILO_USAGE) {
 			cooldown--;
 			return;
 		}
 
-		if (range.get() == 0 || !hasExplosive.get() || (hasRedstoneSignal.get() == 0 && !shouldLaunch)) {
+		boolean hasRedstone = level.hasNeighborSignal(getBlockPos());
+
+		for (Subnode subnode : getSubNodes()) {
+			hasRedstone |= level.hasNeighborSignal(getBlockPos().offset(subnode.pos));
+			if (hasRedstone) {
+				break;
+			}
+		}
+
+		if (range.get() == 0 || !hasExplosive.get() || (!hasRedstone && !shouldLaunch)) {
 			return;
 		}
 
@@ -102,16 +125,42 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 		ItemStack explosive = inv.getItem(EXPLOSIVE_SLOT);
 		ItemStack mis = inv.getItem(MISSILE_SLOT);
 
-		EntityMissile missile = new EntityMissile(level);
-		missile.setPos(getBlockPos().getX() + 1.0, getBlockPos().getY(), getBlockPos().getZ() + 1.0);
-		missile.range = ((ItemMissile) mis.getItem()).missile.ordinal();
-		missile.target = target.get();
-		missile.blastOrdinal = ((BlockExplosive) ((BlockItemDescriptable) explosive.getItem()).getBlock()).explosive.ordinal();
+		int ordinal = ((ItemMissile) mis.getItem()).missile.ordinal();
+
+		VirtualMissile missile = new VirtualMissile(
+				//
+				new Vector3d(getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5),
+				//
+				new Vector3d(0, 1, 0),
+				//
+				0.0F,
+				//
+				false,
+				//
+				getBlockPos().getX() + 0.5F,
+				//
+				getBlockPos().getZ() + 0.5F,
+				//
+				target.get(),
+				//
+				ordinal,
+				//
+				((BlockExplosive) ((BlockItemDescriptable) explosive.getItem()).getBlock()).explosive.ordinal(),
+				//
+				false,
+				//
+				frequency.get()
+		//
+		);
+
+		MissileManager.addMissile(level.dimension(), missile);
+
+		electro.joules(electro.getJoulesStored() - Constants.MISSILESILO_USAGE);
 
 		inv.removeItem(MISSILE_SLOT, 1);
 		inv.removeItem(EXPLOSIVE_SLOT, 1);
 
-		level.addFreshEntity(missile);
+		level.playSound(null, getBlockPos(), BallistixSounds.SOUND_MISSILE_SILO.get(), SoundCategory.BLOCKS, 1.0F, 1.0F);
 
 		cooldown = COOLDOWN;
 
@@ -125,6 +174,8 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 		}
 		if (index == 1) {
 			return item instanceof BlockItemDescriptable && ((BlockItemDescriptable) item).getBlock() instanceof BlockExplosive;
+		} else if (index == 2) {
+			return stack.getItem() == BallistixItems.ITEM_RADARGUN.get() || stack.getItem() == BallistixItems.ITEM_LASERDESIGNATOR.get();
 		}
 		return false;
 	}
@@ -154,51 +205,6 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 	}
 
 	@Override
-	public void onNeightborChanged(BlockPos neighbor, boolean blockStateChange) {
-		if (level.isClientSide) {
-			return;
-		}
-		if (level.hasNeighborSignal(getBlockPos())) {
-			setRedstoneSignal(0);
-		} else {
-			clearRedstoneSignal(0);
-		}
-
-	}
-
-	@Override
-	public void onSubnodeNeighborChange(TileMultiSubnode subnode, BlockPos subnodeChangingNeighbor, boolean blockStateChange) {
-		if (level.isClientSide || subnodeChangingNeighbor.equals(getBlockPos())) {
-			return;
-		}
-		BlockState state = level.getBlockState(subnodeChangingNeighbor);
-		if (state.isAir(level, subnodeChangingNeighbor) || state.is(ElectrodynamicsBlocks.multi)) {
-			return;
-		}
-		if (level.hasNeighborSignal(subnode.getBlockPos())) {
-			setRedstoneSignal(subnode.nodeIndex.getIndex() + 1);
-		} else {
-			clearRedstoneSignal(subnode.nodeIndex.getIndex() + 1);
-		}
-	}
-
-	private void clearRedstoneSignal(int index) {
-		int redstone = hasRedstoneSignal.get() & ~(1 << index);
-		hasRedstoneSignal.set(redstone);
-
-	}
-
-	private void setRedstoneSignal(int index) {
-		int redstone = hasRedstoneSignal.getIndex() | (1 << index);
-		hasRedstoneSignal.set(redstone);
-	}
-
-	@Override
-	public AxisAlignedBB getRenderBoundingBox() {
-		return INFINITE_EXTENT_AABB;
-	}
-
-	@Override
 	public Subnode[] getSubNodes() {
 
 		switch (getFacing()) {
@@ -221,6 +227,8 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 		handleMissile(inv, index);
 
 		handleExplosive(inv, index);
+		
+		handleSync(inv, index);
 
 	}
 
@@ -274,6 +282,31 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 		}
 	}
 
+	private void handleSync(ComponentInventory inv, int index) {
+		if (index == 2 || index == -1) {
+
+			ItemStack sync = inv.getItem(2);
+
+			if (sync.isEmpty()) {
+				return;
+			}
+
+			if (sync.getItem() == BallistixItems.ITEM_LASERDESIGNATOR.get()) {
+
+				sync.getOrCreateTag().putInt(ItemLaserDesignator.FREQUENCY_KEY, frequency.get());
+
+			} else if (sync.getItem() == BallistixItems.ITEM_RADARGUN.get()) {
+
+				if (sync.getOrCreateTag().contains("xCoord")) {
+					target.set(ItemRadarGun.getCoordiantes(sync));
+					target.forceDirty();
+				}
+
+			}
+
+		}
+	}
+
 	@Override
 	public void onLoad() {
 		super.onLoad();
@@ -314,6 +347,11 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 	public ActionResultType onSubnodeUse(PlayerEntity player, Hand hand, BlockRayTraceResult hit, TileMultiSubnode subnode) {
 		return use(player, hand, hit);
 	}
+	
+	@Override
+	public <T> LazyOptional<T> getSubnodeCapability(@Nonnull Capability<T> cap, Direction side) {
+		return getCapability(cap, side);
+	}
 
 	public static double calculateDistance(BlockPos fromPos, BlockPos toPos) {
 		double deltaX = fromPos.getX() - toPos.getX();
@@ -321,6 +359,11 @@ public class TileMissileSilo extends GenericTile implements IMultiblockParentTil
 		double deltaZ = fromPos.getZ() - toPos.getZ();
 
 		return Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+	}
+	
+	@Override
+	public AxisAlignedBB getRenderBoundingBox() {
+		return INFINITE_EXTENT_AABB;
 	}
 
 }

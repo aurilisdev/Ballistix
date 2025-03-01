@@ -5,7 +5,9 @@ import com.google.common.collect.Sets;
 import ballistix.References;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.tile.TileESMTower;
-import ballistix.common.tile.TileMissileSilo;
+import ballistix.common.tile.TileLauncherControlPanelT1;
+import ballistix.common.tile.TileLauncherControlPanelT2;
+import ballistix.common.tile.TileLauncherControlPanelT3;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.radar.TileSearchRadar;
 import ballistix.common.tile.turret.antimissile.TileTurretCIWS;
@@ -21,7 +23,9 @@ public class BallistixTiles {
 
 	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, References.ID);
 
-	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileMissileSilo>> TILE_MISSILESILO = BLOCK_ENTITY_TYPES.register("missilesilo", () -> new BlockEntityType<>(TileMissileSilo::new, Sets.newHashSet(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.missilesilo)), null));
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileLauncherControlPanelT1>> TILE_LAUNCHER_CONTROL_PANEL_TIER1 = BLOCK_ENTITY_TYPES.register("launchercontrolpaneltier1", () -> new BlockEntityType<>(TileLauncherControlPanelT1::new, Sets.newHashSet(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchercontrolpaneltier1)), null));
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileLauncherControlPanelT2>> TILE_LAUNCHER_CONTROL_PANEL_TIER2 = BLOCK_ENTITY_TYPES.register("launchercontrolpaneltier2", () -> new BlockEntityType<>(TileLauncherControlPanelT2::new, Sets.newHashSet(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchercontrolpaneltier2)), null));
+	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileLauncherControlPanelT3>> TILE_LAUNCHER_CONTROL_PANEL_TIER3 = BLOCK_ENTITY_TYPES.register("launchercontrolpaneltier3", () -> new BlockEntityType<>(TileLauncherControlPanelT3::new, Sets.newHashSet(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchercontrolpaneltier3)), null));
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileSearchRadar>> TILE_RADAR = BLOCK_ENTITY_TYPES.register("radar", () -> new BlockEntityType<>(TileSearchRadar::new, Sets.newHashSet(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.radar)), null));
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileFireControlRadar>> TILE_FIRECONTROLRADAR = BLOCK_ENTITY_TYPES.register("firecontrolradar", () -> new BlockEntityType<>(TileFireControlRadar::new, Sets.newHashSet(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.firecontrolradar)), null));
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileESMTower>> TILE_ESMTOWER = BLOCK_ENTITY_TYPES.register("esmtower", () -> new BlockEntityType<>(TileESMTower::new, Sets.newHashSet(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.esmtower)), null));

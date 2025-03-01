@@ -24,7 +24,9 @@ public class BallistixLootTablesProvider extends ElectrodynamicsLootTablesProvid
 			addSimpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(blast));
 		}
 
-		addMachineTable(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.missilesilo), BallistixTiles.TILE_MISSILESILO, true, false, false, false, false);
+		addMachineTable(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchercontrolpaneltier1), BallistixTiles.TILE_LAUNCHER_CONTROL_PANEL_TIER1, true, false, false, false, false);
+		addMachineTable(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchercontrolpaneltier2), BallistixTiles.TILE_LAUNCHER_CONTROL_PANEL_TIER2, true, false, false, false, false);
+		addMachineTable(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchercontrolpaneltier3), BallistixTiles.TILE_LAUNCHER_CONTROL_PANEL_TIER3, true, false, false, false, false);
 		addSimpleBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.radar));
 		addSimpleBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.firecontrolradar));
 		addSimpleBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.samturret));

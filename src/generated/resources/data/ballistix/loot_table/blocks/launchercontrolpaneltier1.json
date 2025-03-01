@@ -38,12 +38,12 @@
               "function": "minecraft:set_contents"
             }
           ],
-          "name": "ballistix:missilesilo"
+          "name": "ballistix:launchercontrolpaneltier1"
         }
       ],
-      "name": "missilesilo",
+      "name": "launchercontrolpaneltier1",
       "rolls": 1.0
     }
   ],
-  "random_sequence": "ballistix:blocks/missilesilo"
+  "random_sequence": "ballistix:blocks/launchercontrolpaneltier1"
 }

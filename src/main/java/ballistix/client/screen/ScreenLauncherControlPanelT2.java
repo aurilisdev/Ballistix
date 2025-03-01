@@ -3,9 +3,9 @@ package ballistix.client.screen;
 import java.util.ArrayList;
 import java.util.List;
 
-import ballistix.common.inventory.container.ContainerMissileSilo;
+import ballistix.common.inventory.container.ContainerLauncherControlPanelT2;
 import ballistix.common.settings.Constants;
-import ballistix.common.tile.TileMissileSilo;
+import ballistix.common.tile.TileLauncherControlPanelT2;
 import ballistix.prefab.utils.BallistixTextUtils;
 import electrodynamics.api.electricity.formatting.ChatFormatter;
 import electrodynamics.api.electricity.formatting.DisplayUnit;
@@ -14,7 +14,6 @@ import electrodynamics.prefab.screen.component.editbox.ScreenComponentEditBox;
 import electrodynamics.prefab.screen.component.types.ScreenComponentFillArea;
 import electrodynamics.prefab.screen.component.types.ScreenComponentSimpleLabel;
 import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentElectricInfo;
-import electrodynamics.prefab.screen.component.types.wrapper.WrapperInventoryIO;
 import electrodynamics.prefab.screen.component.utils.AbstractScreenComponentInfo;
 import electrodynamics.prefab.tile.components.IComponentType;
 import electrodynamics.prefab.tile.components.type.ComponentElectrodynamic;
@@ -27,47 +26,33 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
 
-public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
+public class ScreenLauncherControlPanelT2 extends GenericScreen<ContainerLauncherControlPanelT2> {
 
 	private boolean needsUpdate = true;
 
 	private final ScreenComponentEditBox xCoordField;
 	private final ScreenComponentEditBox yCoordField;
 	private final ScreenComponentEditBox zCoordField;
-	private final ScreenComponentEditBox frequencyField;
 
-
-	public ScreenMissileSilo(ContainerMissileSilo container, Inventory playerInventory, Component title) {
+	public ScreenLauncherControlPanelT2(ContainerLauncherControlPanelT2 container, Inventory playerInventory, Component title) {
 		super(container, playerInventory, title);
 
 		imageHeight += 20;
 		inventoryLabelY += 20;
 
-		addComponent(new ScreenComponentElectricInfo(this::getElectricInformation,-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(Constants.MISSILESILO_USAGE * 20));
+		addComponent(new ScreenComponentElectricInfo(this::getElectricInformation, -AbstractScreenComponentInfo.SIZE + 1, 2).wattage(Constants.MISSILESILO_USAGE * 20));
 
 		addEditBox(xCoordField = new ScreenComponentEditBox(10, 20, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setX).setFilter(ScreenComponentEditBox.INTEGER));
 		addEditBox(yCoordField = new ScreenComponentEditBox(10, 38, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setY).setFilter(ScreenComponentEditBox.INTEGER));
 		addEditBox(zCoordField = new ScreenComponentEditBox(10, 56, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setZ).setFilter(ScreenComponentEditBox.INTEGER));
-		addEditBox(frequencyField = new ScreenComponentEditBox(10, 74, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setFrequency).setFilter(ScreenComponentEditBox.INTEGER));
 
-
-
-		addComponent(new ScreenComponentSimpleLabel(110, 24, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.missile")));
-		addComponent(new ScreenComponentSimpleLabel(110, 45, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.explosive")));
 		addComponent(new ScreenComponentSimpleLabel(60, 22, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.x")));
 		addComponent(new ScreenComponentSimpleLabel(60, 40, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.y")));
 		addComponent(new ScreenComponentSimpleLabel(60, 58, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.z")));
-		addComponent(new ScreenComponentSimpleLabel(60, 76, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.freq")));
-		addComponent(new ScreenComponentSimpleLabel(110, 74, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.sync")));
-
-		new WrapperInventoryIO(this, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE + 2, 75, 102, 8, 92).hideAdditional(show -> {
-
-		});
 	}
 
 	@Override
 	protected void initializeComponents() {
-		addComponent(new ScreenComponentFillArea(88, 18, 80, 71, new Color(120,120, 120, 255)));
 		super.initializeComponents();
 	}
 
@@ -77,7 +62,7 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 			return;
 		}
 
-		TileMissileSilo silo = menu.getSafeHost();
+		TileLauncherControlPanelT2 silo = menu.getSafeHost();
 
 		if (silo == null) {
 			return;
@@ -101,7 +86,7 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 			return;
 		}
 
-		TileMissileSilo silo = menu.getSafeHost();
+		TileLauncherControlPanelT2 silo = menu.getSafeHost();
 
 		if (silo == null) {
 			return;
@@ -125,7 +110,7 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 			return;
 		}
 
-		TileMissileSilo silo = menu.getSafeHost();
+		TileLauncherControlPanelT2 silo = menu.getSafeHost();
 
 		if (silo == null) {
 			return;
@@ -143,49 +128,16 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 
 	}
 
-	private void updateSiloCoords(int x, int y, int z, TileMissileSilo silo) {
+	private void updateSiloCoords(int x, int y, int z, TileLauncherControlPanelT2 silo) {
 
 		silo.target.set(new BlockPos(x, y, z));
 
-	}
-
-	private void setSiloFrequency(String val) {
-
-		if (val.isEmpty()) {
-			return;
-		}
-
-		TileMissileSilo silo = menu.getSafeHost();
-
-		if (silo == null) {
-			return;
-		}
-
-		int frequency = 0;
-
-		try {
-			frequency = Integer.parseInt(val);
-		} catch (Exception e) {
-			// Filler
-		}
-
-		silo.frequency.set(frequency);
-
-	}
-
-	private void setFrequency(String val) {
-		frequencyField.setFocus(true);
-		xCoordField.setFocus(false);
-		yCoordField.setFocus(false);
-		zCoordField.setFocus(false);
-		setSiloFrequency(val);
 	}
 
 	private void setX(String val) {
 		xCoordField.setFocus(true);
 		yCoordField.setFocus(false);
 		zCoordField.setFocus(false);
-		frequencyField.setFocus(false);
 		setSiloTargetX(val);
 	}
 
@@ -193,7 +145,6 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 		yCoordField.setFocus(true);
 		xCoordField.setFocus(false);
 		zCoordField.setFocus(false);
-		frequencyField.setFocus(false);
 		setSiloTargetY(val);
 	}
 
@@ -201,7 +152,6 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 		zCoordField.setFocus(true);
 		yCoordField.setFocus(false);
 		xCoordField.setFocus(false);
-		frequencyField.setFocus(false);
 		setSiloTargetZ(val);
 	}
 
@@ -210,12 +160,11 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 		super.render(graphics, mouseX, mouseY, partialTicks);
 		if (needsUpdate) {
 			needsUpdate = false;
-			TileMissileSilo silo = menu.getSafeHost();
+			TileLauncherControlPanelT2 silo = menu.getSafeHost();
 			if (silo != null) {
 				xCoordField.setValue("" + silo.target.get().getX());
 				yCoordField.setValue("" + silo.target.get().getY());
 				zCoordField.setValue("" + silo.target.get().getZ());
-				frequencyField.setValue("" + silo.frequency.get());
 			}
 		}
 	}
@@ -223,7 +172,7 @@ public class ScreenMissileSilo extends GenericScreen<ContainerMissileSilo> {
 	private List<? extends FormattedCharSequence> getElectricInformation() {
 		ArrayList<FormattedCharSequence> list = new ArrayList<>();
 
-		TileMissileSilo silo = menu.getSafeHost();
+		TileLauncherControlPanelT2 silo = menu.getSafeHost();
 		if (silo == null) {
 			return list;
 		}

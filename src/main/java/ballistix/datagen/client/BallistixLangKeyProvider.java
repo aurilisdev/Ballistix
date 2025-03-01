@@ -47,7 +47,9 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.darkmatter), "Darkmatter Explosive");
                 addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.landmine), "Landmine");
 
-                addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.missilesilo), "Missile Silo");
+                addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchercontrolpaneltier1), "Launcher Control Panel T1");
+                addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchercontrolpaneltier2), "Launcher Control Panel T2");
+                addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchercontrolpaneltier3), "Launcher Control Panel T3");
                 addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.radar), "Search Radar");
                 addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.firecontrolradar), "Fire Control Radar");
                 addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.samturret), "SAM Turret");
@@ -98,7 +100,9 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
                 addItem(BallistixItems.ITEM_SCANNER, "Scanner");
                 addItem(BallistixItems.ITEM_DEFUSER, "Defuser");
 
-                addContainer("missilesilo", "Missile Silo");
+                addContainer("launchercontrolpaneltier1", "Launcher Control Panel T1");
+                addContainer("launchercontrolpaneltier2", "Launcher Control Panel T2");
+                addContainer("launchercontrolpaneltier3", "Launcher Control Panel T3");
                 addContainer("samturret", "SAM Turret");
                 addContainer("searchradar", "Search Radar");
                 addContainer("firecontrolradar", "Fire Control Radar");

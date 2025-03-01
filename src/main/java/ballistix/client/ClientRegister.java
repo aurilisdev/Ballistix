@@ -27,7 +27,9 @@ import ballistix.client.screen.ScreenCIWSTurret;
 import ballistix.client.screen.ScreenESMTower;
 import ballistix.client.screen.ScreenFireControlRadar;
 import ballistix.client.screen.ScreenLaserTurret;
-import ballistix.client.screen.ScreenMissileSilo;
+import ballistix.client.screen.ScreenLauncherControlPanelT1;
+import ballistix.client.screen.ScreenLauncherControlPanelT2;
+import ballistix.client.screen.ScreenLauncherControlPanelT3;
 import ballistix.client.screen.ScreenRailgunTurret;
 import ballistix.client.screen.ScreenSAMTurret;
 import ballistix.client.screen.ScreenSearchRadar;
@@ -152,7 +154,9 @@ public class ClientRegister {
 
 	@SubscribeEvent
 	public static void registerMenus(RegisterMenuScreensEvent event) {
-		event.register(BallistixMenuTypes.CONTAINER_MISSILESILO.get(), ScreenMissileSilo::new);
+		event.register(BallistixMenuTypes.CONTAINER_LAUNCHER_CONTROL_PANEL_T1.get(), ScreenLauncherControlPanelT1::new);
+		event.register(BallistixMenuTypes.CONTAINER_LAUNCHER_CONTROL_PANEL_T2.get(), ScreenLauncherControlPanelT2::new);
+		event.register(BallistixMenuTypes.CONTAINER_LAUNCHER_CONTROL_PANEL_T3.get(), ScreenLauncherControlPanelT3::new);
 		event.register(BallistixMenuTypes.CONTAINER_SAMTURRET.get(), ScreenSAMTurret::new);
 		event.register(BallistixMenuTypes.CONTAINER_FIRECONTROLRADAR.get(), ScreenFireControlRadar::new);
 		event.register(BallistixMenuTypes.CONTAINER_SEARCHRADAR.get(), ScreenSearchRadar::new);
@@ -198,7 +202,7 @@ public class ClientRegister {
 		event.registerEntityRenderer(BallistixEntities.ENTITY_SAM.get(), RenderSAM::new);
 		event.registerEntityRenderer(BallistixEntities.ENTITY_BULLET.get(), RenderBullet::new);
 		event.registerEntityRenderer(BallistixEntities.ENTITY_RAILGUNROUND.get(), RenderRailgunRound::new);
-		event.registerBlockEntityRenderer(BallistixTiles.TILE_MISSILESILO.get(), RenderMissileSilo::new);
+		event.registerBlockEntityRenderer(BallistixTiles.TILE_LAUNCHER_CONTROL_PANEL_TIER1.get(), RenderMissileSilo::new);
 		event.registerBlockEntityRenderer(BallistixTiles.TILE_RADAR.get(), RenderRadar::new);
 		event.registerBlockEntityRenderer(BallistixTiles.TILE_FIRECONTROLRADAR.get(), RenderFireControlRadar::new);
 		event.registerBlockEntityRenderer(BallistixTiles.TILE_SAMTURRET.get(), RenderSAMTurret::new);

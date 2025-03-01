@@ -5,7 +5,9 @@ import ballistix.common.inventory.container.ContainerCIWSTurret;
 import ballistix.common.inventory.container.ContainerESMTower;
 import ballistix.common.inventory.container.ContainerFireControlRadar;
 import ballistix.common.inventory.container.ContainerLaserTurret;
-import ballistix.common.inventory.container.ContainerMissileSilo;
+import ballistix.common.inventory.container.ContainerLauncherControlPanelT1;
+import ballistix.common.inventory.container.ContainerLauncherControlPanelT2;
+import ballistix.common.inventory.container.ContainerLauncherControlPanelT3;
 import ballistix.common.inventory.container.ContainerRailgunTurret;
 import ballistix.common.inventory.container.ContainerSAMTurret;
 import ballistix.common.inventory.container.ContainerSearchRadar;
@@ -21,10 +23,12 @@ public class BallistixMenuTypes {
 
 	public static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(Registries.MENU, References.ID);
 
-	public static final DeferredHolder<MenuType<?>,MenuType<ContainerMissileSilo>> CONTAINER_MISSILESILO = register("missilesilo", ContainerMissileSilo::new);
-	public static final DeferredHolder<MenuType<?>,MenuType<ContainerFireControlRadar>> CONTAINER_FIRECONTROLRADAR = register("firecontrolradar", ContainerFireControlRadar::new);
-	public static final DeferredHolder<MenuType<?>,MenuType<ContainerSearchRadar>> CONTAINER_SEARCHRADAR = register("searchradar", ContainerSearchRadar::new);
-	public static final DeferredHolder<MenuType<?>,MenuType<ContainerESMTower>> CONTAINER_ESMTOWER = register("esmtower", ContainerESMTower::new);
+	public static final DeferredHolder<MenuType<?>, MenuType<ContainerLauncherControlPanelT1>> CONTAINER_LAUNCHER_CONTROL_PANEL_T1 = register("launchercontrolpaneltier1", ContainerLauncherControlPanelT1::new);
+	public static final DeferredHolder<MenuType<?>, MenuType<ContainerLauncherControlPanelT2>> CONTAINER_LAUNCHER_CONTROL_PANEL_T2 = register("launchercontrolpaneltier2", ContainerLauncherControlPanelT2::new);
+	public static final DeferredHolder<MenuType<?>, MenuType<ContainerLauncherControlPanelT3>> CONTAINER_LAUNCHER_CONTROL_PANEL_T3 = register("launchercontrolpaneltier3", ContainerLauncherControlPanelT3::new);
+	public static final DeferredHolder<MenuType<?>, MenuType<ContainerFireControlRadar>> CONTAINER_FIRECONTROLRADAR = register("firecontrolradar", ContainerFireControlRadar::new);
+	public static final DeferredHolder<MenuType<?>, MenuType<ContainerSearchRadar>> CONTAINER_SEARCHRADAR = register("searchradar", ContainerSearchRadar::new);
+	public static final DeferredHolder<MenuType<?>, MenuType<ContainerESMTower>> CONTAINER_ESMTOWER = register("esmtower", ContainerESMTower::new);
 	public static final DeferredHolder<MenuType<?>, MenuType<ContainerSAMTurret>> CONTAINER_SAMTURRET = register("samturret", ContainerSAMTurret::new);
 	public static final DeferredHolder<MenuType<?>, MenuType<ContainerCIWSTurret>> CONTAINER_CIWSTURRET = register("ciwsturret", ContainerCIWSTurret::new);
 	public static final DeferredHolder<MenuType<?>, MenuType<ContainerLaserTurret>> CONTAINER_LASERTURRET = register("laserturret", ContainerLaserTurret::new);

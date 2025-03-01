@@ -5,7 +5,7 @@ import java.util.Random;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import ballistix.common.item.ItemMissile;
-import ballistix.common.tile.TileMissileSilo;
+import ballistix.common.tile.TileLauncherControlPanelT1;
 import electrodynamics.client.render.tile.AbstractTileRenderer;
 import electrodynamics.prefab.tile.components.IComponentType;
 import electrodynamics.prefab.tile.components.type.ComponentInventory;
@@ -17,14 +17,14 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 
-public class RenderMissileSilo extends AbstractTileRenderer<TileMissileSilo> {
+public class RenderMissileSilo extends AbstractTileRenderer<TileLauncherControlPanelT1> {
 
 	public RenderMissileSilo(BlockEntityRendererProvider.Context context) {
 		super(context);
 	}
 
 	@Override
-	public void render(TileMissileSilo tileEntityIn, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+	public void render(TileLauncherControlPanelT1 tileEntityIn, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 
 		ItemStack stack = tileEntityIn.<ComponentInventory>getComponent(IComponentType.Inventory).getItem(0);
 
@@ -68,7 +68,7 @@ public class RenderMissileSilo extends AbstractTileRenderer<TileMissileSilo> {
 	}
 
 	@Override
-	public AABB getRenderBoundingBox(TileMissileSilo blockEntity) {
+	public AABB getRenderBoundingBox(TileLauncherControlPanelT1 blockEntity) {
 		return super.getRenderBoundingBox(blockEntity).inflate(10);
 	}
 }

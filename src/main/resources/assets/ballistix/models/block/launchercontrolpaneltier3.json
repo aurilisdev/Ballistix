@@ -1,8 +1,10 @@
 {
 	"credit": "aurilisdev",
 	"texture_size": [32, 32],
+	"parent": "block/cube_all",
 	"textures": {
-		"2": "ballistix:block/model/controlpaneltier3"
+		"2": "ballistix:block/model/controlpaneltier3",
+		"particle": "ballistix:block/model/controlpaneltier3"
 	},
 	"elements": [
 		{

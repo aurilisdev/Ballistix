@@ -16,19 +16,15 @@ import net.minecraft.world.level.levelgen.Heightmap.Types;
  */
 public class ParticleUtilities {
 
-	public static void spawnParticleRing(ParticleOptions particle, double centerX, double centerY, double centerZ,
-			int count, double initialSpeed, boolean shouldRandomize) {
+	public static void spawnParticleRing(ParticleOptions particle, double centerX, double centerY, double centerZ, int count, double initialSpeed, boolean shouldRandomize) {
 		for (float rad = 0; rad < 2.0 * Mth.PI; rad += 2 * Mth.PI / count) {
-			double x = Mth.cos(rad) * (shouldRandomize ? Electrodynamics.RANDOM.nextDouble() * 0.05 + 1 : 1)
-					* initialSpeed;
-			double z = Mth.sin(rad) * (shouldRandomize ? Electrodynamics.RANDOM.nextDouble() * 0.05 + 1 : 1)
-					* initialSpeed;
+			double x = Mth.cos(rad) * (shouldRandomize ? Electrodynamics.RANDOM.nextDouble() * 0.05 + 1 : 1) * initialSpeed;
+			double z = Mth.sin(rad) * (shouldRandomize ? Electrodynamics.RANDOM.nextDouble() * 0.05 + 1 : 1) * initialSpeed;
 			Minecraft.getInstance().particleEngine.createParticle(particle, centerX, centerY, centerZ, x, 0, z);
 		}
 	}
 
-	public static void spawnParticleSphere(ParticleOptions particle, double centerX, double centerY, double centerZ,
-			int count, double thetamin, double thetamax, double initialSpeed, boolean shouldRandomize) {
+	public static void spawnParticleSphere(ParticleOptions particle, double centerX, double centerY, double centerZ, int count, double thetamin, double thetamax, double initialSpeed, boolean shouldRandomize) {
 		// Convert latitude bounds to radians
 		double latMinRad = Math.toRadians(thetamin);
 		double latMaxRad = Math.toRadians(thetamax);
@@ -52,12 +48,9 @@ public class ParticleUtilities {
 			double phi_random = phi * (1 + Electrodynamics.RANDOM.nextDouble() * 0.15);
 			// Convert spherical (theta, phi) -> Cartesian (x, y, z)
 			double sinTheta = Math.sin(theta_random);
-			double x = sinTheta * Math.cos(phi_random) * (shouldRandomize ? Electrodynamics.RANDOM.nextDouble() : 1)
-					* initialSpeed;
-			double z = sinTheta * Math.sin(phi_random) * (shouldRandomize ? Electrodynamics.RANDOM.nextDouble() : 1)
-					* initialSpeed;
-			double y = Math.cos(theta_random) * (shouldRandomize ? Electrodynamics.RANDOM.nextDouble() : 1)
-					* initialSpeed;
+			double x = sinTheta * Math.cos(phi_random) * (shouldRandomize ? Electrodynamics.RANDOM.nextDouble() : 1) * initialSpeed;
+			double z = sinTheta * Math.sin(phi_random) * (shouldRandomize ? Electrodynamics.RANDOM.nextDouble() : 1) * initialSpeed;
+			double y = Math.cos(theta_random) * (shouldRandomize ? Electrodynamics.RANDOM.nextDouble() : 1) * initialSpeed;
 
 			// Store the point
 			Minecraft.getInstance().particleEngine.createParticle(particle, centerX, centerY, centerZ, x, y, z);
@@ -71,11 +64,10 @@ public class ParticleUtilities {
 	 * @param progress
 	 * @param spawnSize
 	 * @param endSize
-	 * @param chance 
+	 * @param chance
 	 * @return currentShockwaveRadius
 	 */
-	public static double progressGroundShockwave(Level world, double x, double z, double progress, double spawnSize,
-			double endSize, double chance) {
+	public static double progressGroundShockwave(Level world, double x, double z, double progress, double spawnSize, double endSize, double chance) {
 		if (progress > 1)
 			return endSize;
 		int r = (int) (spawnSize + (endSize - spawnSize) * progress);
@@ -88,8 +80,10 @@ public class ParticleUtilities {
 				int rz = (int) (z + r * dirZ);
 				int ry = world.getHeight(Types.WORLD_SURFACE, rx, rz);
 
-				Minecraft.getInstance().particleEngine.createParticle(new ParticleOptionsShockwave().setParameters(1f,
-						1f, 1f, (float) (1.0f - progress), 1.3f, 5, false, 1), rx + 1.5, ry, rz + 0.5, 0, 0, 0);
+				int life = (int) (15 * (1.0f - progress));
+				if (life > 0) {
+					Minecraft.getInstance().particleEngine.createParticle(new ParticleOptionsShockwave().setParameters(1f, 1f, 1f, (float) (1.0f - progress), 1.3f, life, false, 1), rx + 1.5, ry, rz + 0.5, 0, 0, 0);
+				}
 			}
 		}
 		return r;

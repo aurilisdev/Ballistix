@@ -1,5 +1,8 @@
 package ballistix.client.particle;
 
+import com.mojang.blaze3d.vertex.VertexConsumer;
+
+import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleEngine;
@@ -18,8 +21,7 @@ public class ParticleMissileSmoke extends TextureSheetParticle {
 	private float endGray = 0.5F;
 	private float startQuadSize;
 
-	public ParticleMissileSmoke(ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed,
-			double zSpeed, ParticleOptionsMissileSmoke options, SpriteSet set) {
+	public ParticleMissileSmoke(ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, ParticleOptionsMissileSmoke options, SpriteSet set) {
 		super(level, x, y, z, 0.0, 0.0, 0.0);
 		this.friction = 0.96F;
 		this.gravity = 0;
@@ -37,8 +39,9 @@ public class ParticleMissileSmoke extends TextureSheetParticle {
 		this.setSpriteFromAge(sprites);
 		this.hasPhysics = options.hasPhysics;
 
-		
-		// Randomize values so particles don't look the same. Could be done in explosives, but this needs to be done for every explosive. Thus this saves space...
+		// Randomize values so particles don't look the same. Could be done in
+		// explosives, but this needs to be done for every explosive. Thus this saves
+		// space...
 		double brightnessRandom = 0.2 * level.random.nextDouble();
 		startRed *= (0.8 + brightnessRandom);
 		startGreen *= (0.8 + brightnessRandom);
@@ -64,19 +67,6 @@ public class ParticleMissileSmoke extends TextureSheetParticle {
 		this.xd *= friction;
 		this.yd *= friction;
 		this.zd *= friction;
-		float lifeProgress = (float) this.age / (float) this.lifetime;
-
-		int burningTime = lifetime / 3;
-		int orangeTime = (int) (burningTime / 1.3);
-		this.rCol = ParticleBlastSmoke.smoothTransition(age, startRed, endRed, endGray, orangeTime,
-				burningTime - orangeTime);
-		this.gCol = ParticleBlastSmoke.smoothTransition(age, startGreen, endGreen, endGray, orangeTime,
-				burningTime - orangeTime);
-		this.bCol = ParticleBlastSmoke.smoothTransition(age, startBlue, endBlue, endGray, orangeTime,
-				burningTime - orangeTime);
-
-		// Gradually shrink the particle
-		this.quadSize = startQuadSize * Mth.cos((float) (Mth.PI / 2f * Math.pow((1 - lifeProgress) - 1, 5)));
 
 		// Proceed with default ticking (position update, age increment, etc.)
 		super.tick();
@@ -85,8 +75,23 @@ public class ParticleMissileSmoke extends TextureSheetParticle {
 		this.setSpriteFromAge(sprites);
 	}
 
-	public static class Factory implements ParticleProvider<ParticleOptionsMissileSmoke>,
-			ParticleEngine.SpriteParticleRegistration<ParticleOptionsMissileSmoke> {
+	@Override
+	public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
+		super.render(buffer, renderInfo, partialTicks);
+		float lifeProgress = (float) (this.age + partialTicks) / (float) this.lifetime;
+		if (lifeProgress <= 1 && lifeProgress >= 0) {
+			int burningTime = lifetime / 3;
+			int orangeTime = (int) (burningTime / 1.3);
+			this.rCol = ParticleBlastSmoke.smoothTransition(age + partialTicks, startRed, endRed, endGray, orangeTime, burningTime - orangeTime);
+			this.gCol = ParticleBlastSmoke.smoothTransition(age + partialTicks, startGreen, endGreen, endGray, orangeTime, burningTime - orangeTime);
+			this.bCol = ParticleBlastSmoke.smoothTransition(age + partialTicks, startBlue, endBlue, endGray, orangeTime, burningTime - orangeTime);
+
+			// Gradually shrink the particle
+			this.quadSize = startQuadSize * Mth.cos((float) (Mth.PI / 2f * Math.pow((1 - lifeProgress) - 1, 5)));
+		}
+	}
+
+	public static class Factory implements ParticleProvider<ParticleOptionsMissileSmoke>, ParticleEngine.SpriteParticleRegistration<ParticleOptionsMissileSmoke> {
 
 		private final SpriteSet sprites;
 
@@ -95,8 +100,7 @@ public class ParticleMissileSmoke extends TextureSheetParticle {
 		}
 
 		@Override
-		public Particle createParticle(ParticleOptionsMissileSmoke type, ClientLevel level, double x, double y,
-				double z, double xSpeed, double ySpeed, double zSpeed) {
+		public Particle createParticle(ParticleOptionsMissileSmoke type, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
 			return new ParticleMissileSmoke(level, x, y, z, xSpeed, ySpeed, zSpeed, type, sprites);
 		}
 

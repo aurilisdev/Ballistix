@@ -1,5 +1,8 @@
 package ballistix.client.particle;
 
+import com.mojang.blaze3d.vertex.VertexConsumer;
+
+import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleEngine;
@@ -15,8 +18,7 @@ public class ParticleShockwave extends TextureSheetParticle {
 	private float startQuadSize;
 	private float startAlpha;
 
-	public ParticleShockwave(ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed,
-			double zSpeed, ParticleOptionsShockwave type, SpriteSet set) {
+	public ParticleShockwave(ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, ParticleOptionsShockwave type, SpriteSet set) {
 		super(level, x, y, z, 0.0, 0.0, 0.0);
 		this.friction = 0.96F;
 		this.speedUpWhenYMotionIsBlocked = true;
@@ -27,7 +29,7 @@ public class ParticleShockwave extends TextureSheetParticle {
 		this.rCol = type.r;
 		this.gCol = type.g;
 		this.bCol = type.b;
-		this.alpha = type.a;
+		this.alpha = 0;
 		this.startAlpha = type.a;
 		this.quadSize = type.scale;
 		this.startQuadSize = type.scale;
@@ -55,20 +57,23 @@ public class ParticleShockwave extends TextureSheetParticle {
 		this.xd *= friction;
 		this.yd *= friction;
 		this.zd *= friction;
-		float lifeProgress = (float) this.age / (float) this.lifetime;
-
-		// Gradually shrink the particle
-		this.quadSize = startQuadSize * Mth.cos((float) (Mth.PI / 2f * Math.pow((1 - lifeProgress) - 1, 5)));
-		
-		this.alpha = startAlpha * Mth.cos((float) (Mth.PI / 2f * Math.pow((1 - lifeProgress)-1, 5)));
-
-		// Proceed with default ticking (position update, age increment, etc.)
 		super.tick();
-
 	}
 
-	public static class Factory implements ParticleProvider<ParticleOptionsShockwave>,
-			ParticleEngine.SpriteParticleRegistration<ParticleOptionsShockwave> {
+	@Override
+	public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
+		super.render(buffer, renderInfo, partialTicks);
+
+		float lifeProgress = (float) (this.age + partialTicks) / (float) this.lifetime;
+		if (lifeProgress <= 1 && lifeProgress >= 0) {
+			// Gradually shrink and expand the particle
+			this.quadSize = startQuadSize * Mth.cos((float) (Mth.PI * 2 * Math.pow((lifeProgress - 0.5), 2)));
+
+			this.alpha = startAlpha * Mth.cos((float) (Mth.PI * 2 * Math.pow((lifeProgress - 0.5), 2)));
+		}
+	}
+
+	public static class Factory implements ParticleProvider<ParticleOptionsShockwave>, ParticleEngine.SpriteParticleRegistration<ParticleOptionsShockwave> {
 
 		private final SpriteSet sprites;
 
@@ -77,8 +82,7 @@ public class ParticleShockwave extends TextureSheetParticle {
 		}
 
 		@Override
-		public Particle createParticle(ParticleOptionsShockwave type, ClientLevel level, double x, double y, double z,
-				double xSpeed, double ySpeed, double zSpeed) {
+		public Particle createParticle(ParticleOptionsShockwave type, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
 			return new ParticleShockwave(level, x, y, z, xSpeed, ySpeed, zSpeed, type, sprites);
 		}
 

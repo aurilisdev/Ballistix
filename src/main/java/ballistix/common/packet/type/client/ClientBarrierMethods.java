@@ -27,15 +27,15 @@ public class ClientBarrierMethods {
 			return;
 		}
 		switch (type) {
-		case EXPLOSION:
+		case EXPLOSIVE_BLOCK_BREAK:
 			Minecraft.getInstance().particleEngine.createParticle(ParticleTypes.EXPLOSION, p.getX() + 0.5,
 					p.getY() + 0.5, p.getZ() + 0.5, 0, 0, 0);
 			break;
-		case LEAVEBREAK:
+		case LEAVES_BREAKING:
 			Minecraft.getInstance().particleEngine.createParticle(ParticleTypes.GUST, p.getX() + 0.5, p.getY() + 0.5,
 					p.getZ() + 0.5, 0, 0, 0);
 			break;
-		case TURNRADIOACTVIE:
+		case TURNRADIOACTIVE:
 			Minecraft.getInstance().particleEngine.createParticle(ParticleTypes.ASH, p.getX() + 0.5, p.getY() + 1.25,
 					p.getZ() + 0.5, 0, 0, 0);
 			break;

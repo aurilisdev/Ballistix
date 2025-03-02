@@ -1,8 +1,7 @@
 package ballistix.common.packet.type.client.particle;
 
 public enum BlastParticleSpawnType {
-    EXPLOSION,
-    LEAVEBREAK,
-    TURNRADIOACTVIE,
-    
+    EXPLOSIVE_BLOCK_BREAK,
+    LEAVES_BREAKING,
+    TURNRADIOACTIVE,
 }

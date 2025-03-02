@@ -88,10 +88,10 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
 					case SABER_FACTIONS:
 						break;
 					}
-					if (world.random.nextFloat() < 1 / 40.0 && world instanceof ServerLevel serverlevel) {
+					if (world.random.nextFloat() < 1 / 20.0 && world instanceof ServerLevel serverlevel) {
 						serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false)
 								.forEach(pl -> PacketDistributor.sendToPlayer(pl,
-										new PacketSpawnBlastParticle(p, BlastParticleSpawnType.EXPLOSION)));
+										new PacketSpawnBlastParticle(p, BlastParticleSpawnType.EXPLOSIVE_BLOCK_BREAK)));
 					}
 					cachedIterator.remove();
 				}
@@ -132,7 +132,7 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
 			ParticleUtilities.spawnParticleSphere(particle, x, y, z, 100, 0, 20, initialSpeed, true);
 		}
 		double spawnSize = 3;
-		double endSize = Constants.EXPLOSIVE_THERMOBARIC_SIZE * 5;
+		double endSize = Constants.EXPLOSIVE_THERMOBARIC_SIZE * 7.5;
 		int diff = (int) (endSize - spawnSize);
 		if (ticksSinceBlastStart > diff)
 			return;

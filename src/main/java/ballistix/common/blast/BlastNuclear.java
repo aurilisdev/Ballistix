@@ -131,8 +131,8 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 						}
 						if (world.random.nextFloat() < 1 / 20.0) {
 							serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false)
-									.forEach(pl -> PacketDistributor.sendToPlayer(pl,
-											new PacketSpawnBlastParticle(p, BlastParticleSpawnType.EXPLOSION)));
+							.forEach(pl -> PacketDistributor.sendToPlayer(pl,
+									new PacketSpawnBlastParticle(p, BlastParticleSpawnType.EXPLOSIVE_BLOCK_BREAK)));
 						}
 					}
 					cachedIteratorRay.remove();

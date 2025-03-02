@@ -30,7 +30,7 @@ public class RadiationHandler {
 	    world.setBlock(p, BlockIrradiated.getIrradiatedBlockstate(state), 3);
 	    if (world.random.nextFloat() < 1 / 15.0 && world instanceof ServerLevel serverlevel) {
 		serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> PacketDistributor
-			.sendToPlayer(pl, new PacketSpawnBlastParticle(p, BlastParticleSpawnType.TURNRADIOACTVIE)));
+			.sendToPlayer(pl, new PacketSpawnBlastParticle(p, BlastParticleSpawnType.TURNRADIOACTIVE)));
 //		Minecraft.getInstance().particleEngine.createParticle(ParticleTypes.ASH, p.getX() + 0.5, p.getY() + 1.5,
 //			p.getZ() + 0.5, 0, 0, 0);
 	    }
@@ -38,7 +38,7 @@ public class RadiationHandler {
 	    world.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
 	    if (world.random.nextFloat() < 1 / 15.0 && world instanceof ServerLevel serverlevel) {
 		serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> PacketDistributor
-			.sendToPlayer(pl, new PacketSpawnBlastParticle(p, BlastParticleSpawnType.LEAVEBREAK)));
+			.sendToPlayer(pl, new PacketSpawnBlastParticle(p, BlastParticleSpawnType.LEAVES_BREAKING)));
 //		Minecraft.getInstance().particleEngine.createParticle(ParticleTypes.GUST, p.getX() + 0.5,
 //			p.getY() + 1.5, p.getZ() + 0.5, 0, 0, 0);
 	    }

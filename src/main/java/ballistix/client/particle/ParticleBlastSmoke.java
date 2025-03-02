@@ -1,5 +1,8 @@
 package ballistix.client.particle;
 
+import com.mojang.blaze3d.vertex.VertexConsumer;
+
+import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleEngine;
@@ -28,7 +31,7 @@ public class ParticleBlastSmoke extends TextureSheetParticle {
 		return Math.pow((1 - Mth.cos((float) (Mth.PI * u))) / 2.0, 5.0);
 	}
 
-	public static float smoothTransition(int time, float x, float y, float z, int t1, int t2) {
+	public static float smoothTransition(float time, float x, float y, float z, int t1, int t2) {
 		// Handle out-of-range times if needed
 		if (time <= 0) {
 			return x;
@@ -48,8 +51,7 @@ public class ParticleBlastSmoke extends TextureSheetParticle {
 		return (float) (y + (z - y) * s); // smoothly interpolate from y to z
 	}
 
-	public ParticleBlastSmoke(ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed,
-			double zSpeed, ParticleOptionsBlastSmoke options, SpriteSet set) {
+	public ParticleBlastSmoke(ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, ParticleOptionsBlastSmoke options, SpriteSet set) {
 		super(level, x, y, z, 0.0, 0.0, 0.0);
 		this.friction = 0.96F;
 		this.gravity = options.gravity;
@@ -70,7 +72,9 @@ public class ParticleBlastSmoke extends TextureSheetParticle {
 		this.burning = options.burning;
 		this.friction = options.friction;
 
-		// Randomize values so particles don't look the same. Could be done in explosives, but this needs to be done for every explosive. Thus this saves space...
+		// Randomize values so particles don't look the same. Could be done in
+		// explosives, but this needs to be done for every explosive. Thus this saves
+		// space...
 		double brightnessRandom = 0.2 * level.random.nextDouble();
 		burningTime *= (0.9 + brightnessRandom);
 		startRed *= (0.8 + brightnessRandom);
@@ -96,27 +100,33 @@ public class ParticleBlastSmoke extends TextureSheetParticle {
 		this.xd *= friction;
 		this.yd *= friction;
 		this.zd *= friction;
-		float lifeProgress = (float) this.age / (float) this.lifetime;
-
-		if (burning) {
-
-			int orangeLast = (int) (burningTime / 1.4);
-
-			this.rCol = smoothTransition(age, startRed, endRed, endGray, orangeLast, burningTime - orangeLast);
-			this.gCol = smoothTransition(age, startGreen, endGreen, endGray, orangeLast, burningTime - orangeLast);
-			this.bCol = smoothTransition(age, startBlue, endBlue, endGray, orangeLast, burningTime - orangeLast);
-		}
-
-		// Gradually shrink the particle
-		this.quadSize = startQuadSize * Mth.cos((float) (Mth.PI / 2f * Math.pow((1 - lifeProgress) - 1, 5)));
 
 		// Proceed with default ticking (position update, age increment, etc.)
 		super.tick();
 
 	}
 
-	public static class Factory implements ParticleProvider<ParticleOptionsBlastSmoke>,
-			ParticleEngine.SpriteParticleRegistration<ParticleOptionsBlastSmoke> {
+	@Override
+	public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
+		float lifeProgress = (float) (this.age + partialTicks) / (float) this.lifetime;
+		if (lifeProgress <= 1 && lifeProgress >= 0) {
+			if (burning) {
+
+				int orangeLast = (int) (burningTime / 1.4);
+
+				this.rCol = smoothTransition(age + partialTicks, startRed, endRed, endGray, orangeLast, burningTime - orangeLast);
+				this.gCol = smoothTransition(age + partialTicks, startGreen, endGreen, endGray, orangeLast, burningTime - orangeLast);
+				this.bCol = smoothTransition(age + partialTicks, startBlue, endBlue, endGray, orangeLast, burningTime - orangeLast);
+			}
+
+			// Gradually shrink the particle
+			this.quadSize = startQuadSize * Mth.cos((float) (Mth.PI / 2f * Math.pow((1 - lifeProgress) - 1, 5)));
+
+		}
+		super.render(buffer, renderInfo, partialTicks);
+	}
+
+	public static class Factory implements ParticleProvider<ParticleOptionsBlastSmoke>, ParticleEngine.SpriteParticleRegistration<ParticleOptionsBlastSmoke> {
 
 		private final SpriteSet sprites;
 
@@ -125,8 +135,7 @@ public class ParticleBlastSmoke extends TextureSheetParticle {
 		}
 
 		@Override
-		public Particle createParticle(ParticleOptionsBlastSmoke type, ClientLevel level, double x, double y, double z,
-				double xSpeed, double ySpeed, double zSpeed) {
+		public Particle createParticle(ParticleOptionsBlastSmoke type, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
 			return new ParticleBlastSmoke(level, x, y, z, xSpeed, ySpeed, zSpeed, type, sprites);
 		}
 

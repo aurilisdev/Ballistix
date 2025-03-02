@@ -8,6 +8,8 @@ import ballistix.client.shake.CameraShakeEffect;
 import ballistix.client.shake.CameraShakeManager;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.common.packet.type.client.particle.BlastParticleSpawnType;
+import ballistix.common.packet.type.client.particle.PacketSpawnBlastParticle;
 import ballistix.common.settings.Constants;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.prefab.utils.ParticleUtilities;
@@ -16,9 +18,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
@@ -28,6 +32,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class BlastAntimatter extends BlastLasting implements IHasCustomRender {
 
@@ -38,8 +43,7 @@ public class BlastAntimatter extends BlastLasting implements IHasCustomRender {
 	@Override
 	public void doPreExplode() {
 		if (!world.isClientSide) {
-			thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS,
-					Integer.MAX_VALUE, null, getBlastType().ordinal());
+			thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, getBlastType().ordinal());
 			thread.start();
 			world.playSound(null, position, BallistixSounds.SOUND_ANTIMATTEREXPLOSION.get(), SoundSource.BLOCKS, 25, 1);
 		}
@@ -64,9 +68,7 @@ public class BlastAntimatter extends BlastLasting implements IHasCustomRender {
 		if (world.isClientSide || !thread.isComplete) {
 			return false;
 		}
-		Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
-				(float) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, false, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION,
-				ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
+		Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) Constants.EXPLOSIVE_ANTIMATTER_RADIUS, false, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
 		if (pertick == -1) {
 			hasStarted = true;
 			pertick = (int) (thread.results.size() * 1.5 / Constants.EXPLOSIVE_ANTIMATTER_DURATION + 1);
@@ -95,6 +97,9 @@ public class BlastAntimatter extends BlastLasting implements IHasCustomRender {
 
 					break;
 				}
+				if (world.random.nextFloat() < 1 / 30.0 && world instanceof ServerLevel serverlevel) {
+					serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> PacketDistributor.sendToPlayer(pl, new PacketSpawnBlastParticle(p, BlastParticleSpawnType.EXPLOSIVE_BLOCK_BREAK)));
+				}
 
 			}
 		}
@@ -110,19 +115,19 @@ public class BlastAntimatter extends BlastLasting implements IHasCustomRender {
 	public boolean isInstantaneous() {
 		return false;
 	}
+
 	private boolean hasShaken;
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void produceParticles() {
-		if(ticksSinceBlastStart < 2)
+		if (ticksSinceBlastStart < 2)
 			return;
 		double x = position.getX() + 0.5;
 		double y = position.getY() + 0.5;
 		double z = position.getZ() + 0.5;
 		// Fireball
-		ParticleOptions particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 2f, -0.01f, 750,
-				true, true, 120, 0.999);
+		ParticleOptions particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 2f, -0.01f, 750, true, true, 120, 0.999);
 		ParticleUtilities.spawnParticleSphere(particle, x, y, z, 100, -90, 90, Constants.EXPLOSIVE_ANTIMATTER_RADIUS / Constants.EXPLOSIVE_ANTIMATTER_DURATION * 2, true);
 		// Shockwave
 		double spawnSize = 3;
@@ -130,8 +135,7 @@ public class BlastAntimatter extends BlastLasting implements IHasCustomRender {
 		int diff = (int) (endSize - spawnSize);
 		if (ticksSinceBlastStart > diff)
 			return;
-		double size = ParticleUtilities.progressGroundShockwave(world, x, z, ticksSinceBlastStart * 5 / (double) diff,
-				spawnSize, endSize, 0.4);
+		double size = ParticleUtilities.progressGroundShockwave(world, x, z, ticksSinceBlastStart * 5 / (double) diff, spawnSize, endSize, 0.4);
 		if (hasShaken)
 			return;
 		Vec3 pos = new Vec3(x, y, z);
@@ -139,8 +143,7 @@ public class BlastAntimatter extends BlastLasting implements IHasCustomRender {
 		double dist = Mth.abs((float) (realDistance - size));
 		if (dist < 3) {
 			hasShaken = true;
-			CameraShakeEffect effect = CameraShakeManager.createBlastSourcedEffect(Constants.EXPLOSIVE_ANTIMATTER_DURATION, endSize, world.getGameTime(),
-					pos);
+			CameraShakeEffect effect = CameraShakeManager.createBlastSourcedEffect(Constants.EXPLOSIVE_ANTIMATTER_DURATION, endSize, world.getGameTime(), pos);
 			CameraShakeManager.addShake(effect);
 		}
 	}
@@ -157,6 +160,5 @@ public class BlastAntimatter extends BlastLasting implements IHasCustomRender {
 		}
 		return thread == null || thread.isComplete;
 	}
-
 
 }

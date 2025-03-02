@@ -29,7 +29,87 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
 
 	@Override
 	public void addRecipes(RecipeOutput output) {
+		ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launcherplatformtier1), 1)
+				//
+				.addPattern("S S")
+				//
+				.addPattern("SCS")
+				//
+				.addPattern("SSS")
+				//
+				.addKey('S', ElectrodynamicsTags.Items.INGOT_STEEL)
+				//
+				.addKey('C', ElectrodynamicsTags.Items.CIRCUITS_BASIC)
+				//
+				.complete(References.ID, "launcherplatformtier1", output);
+		ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launcherplatformtier2), 1)
+				//
+				.addPattern("S S")
+				//
+				.addPattern("SCS")
+				//
+				.addPattern("SPS")
+				//
+				.addKey('S', ElectrodynamicsTags.Items.INGOT_STEEL)
+				//
+				.addKey('C', ElectrodynamicsTags.Items.CIRCUITS_ADVANCED)
+				//
+				.addKey('P', BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launcherplatformtier1))
+				//
+				.complete(References.ID, "launcherplatformtier2", output);
+		ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launcherplatformtier3), 1)
+				//
+				.addPattern("S S")
+				//
+				.addPattern("SCS")
+				//
+				.addPattern("SPS")
+				//
+				.addKey('S', ElectrodynamicsTags.Items.PLATE_STEEL)
+				//
+				.addKey('C', ElectrodynamicsTags.Items.CIRCUITS_ELITE)
+				//
+				.addKey('P', BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launcherplatformtier2))
+				//
+				.complete(References.ID, "launcherplatformtier3", output);
 
+		ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchersupportframetier1), 1)
+				//
+				.addPattern("S S")
+				//
+				.addPattern("SSS")
+				//
+				.addPattern("S S")
+				//
+				.addKey('S', ElectrodynamicsTags.Items.INGOT_STEEL)
+				//
+				.complete(References.ID, "launchersupportframetier1", output);
+		ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchersupportframetier2), 1)
+				//
+				.addPattern("S S")
+				//
+				.addPattern("SVS")
+				//
+				.addPattern("S S")
+				//
+				.addKey('S', ElectrodynamicsTags.Items.INGOT_STEEL)
+				//
+				.addKey('V', BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchersupportframetier1))
+				//
+				.complete(References.ID, "launchersupportframetier2", output);
+		ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchersupportframetier3), 1)
+				//
+				.addPattern("S S")
+				//
+				.addPattern("SVS")
+				//
+				.addPattern("S S")
+				//
+				.addKey('S', ElectrodynamicsTags.Items.PLATE_STEEL)
+				//
+				.addKey('V', BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchersupportframetier2))
+				//
+				.complete(References.ID, "launchersupportframetier3", output);
 		ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchercontrolpaneltier1), 1)
 				//
 				.addPattern("SGS")

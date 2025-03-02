@@ -13,7 +13,7 @@ public class BallistixVoxelShapes {
 
     }
 
-    public static final VoxelShapeProvider LAUNCHER_CONTROL_PANEL = VoxelShapeProvider.createOmni(Block.box(0, 0, 0, 16, 1, 16));
+    public static final VoxelShapeProvider LAUNCHER_CONTROL_PANEL = VoxelShapeProvider.createOmni(Block.box(0, 0, 0, 16, 16, 16));
 
     public static final VoxelShapeProvider RADAR = VoxelShapeProvider.createDirectional(
             //

@@ -7,6 +7,12 @@ import ballistix.common.tile.TileESMTower;
 import ballistix.common.tile.TileLauncherControlPanelT1;
 import ballistix.common.tile.TileLauncherControlPanelT2;
 import ballistix.common.tile.TileLauncherControlPanelT3;
+import ballistix.common.tile.TileLauncherPlatformT1;
+import ballistix.common.tile.TileLauncherPlatformT2;
+import ballistix.common.tile.TileLauncherPlatformT3;
+import ballistix.common.tile.TileLauncherSupportFrameT1;
+import ballistix.common.tile.TileLauncherSupportFrameT2;
+import ballistix.common.tile.TileLauncherSupportFrameT3;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.radar.TileSearchRadar;
 import ballistix.common.tile.turret.antimissile.TileTurretCIWS;
@@ -31,6 +37,12 @@ public enum SubtypeBallistixMachine implements ISubtype, IMachine {
 	launchercontrolpaneltier1(true, TileLauncherControlPanelT1::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.LAUNCHER_CONTROL_PANEL)),
 	launchercontrolpaneltier2(true, TileLauncherControlPanelT2::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.LAUNCHER_CONTROL_PANEL)),
 	launchercontrolpaneltier3(true, TileLauncherControlPanelT3::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.LAUNCHER_CONTROL_PANEL)),
+	launchersupportframetier1(true, TileLauncherSupportFrameT1::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.LAUNCHER_CONTROL_PANEL)),
+	launchersupportframetier2(true, TileLauncherSupportFrameT2::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.LAUNCHER_CONTROL_PANEL)),
+	launchersupportframetier3(true, TileLauncherSupportFrameT3::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.LAUNCHER_CONTROL_PANEL)),
+	launcherplatformtier1(true, TileLauncherPlatformT1::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.LAUNCHER_CONTROL_PANEL)),
+	launcherplatformtier2(true, TileLauncherPlatformT2::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.LAUNCHER_CONTROL_PANEL)),
+	launcherplatformtier3(true, TileLauncherPlatformT3::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.LAUNCHER_CONTROL_PANEL)),
 	radar(true, TileSearchRadar::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.RADAR)),
 	firecontrolradar(true, TileFireControlRadar::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.FIRE_CONTROL_RADAR)),
 	esmtower(true, TileESMTower::new,MachineProperties.builder().setRenderShape(RenderShape.INVISIBLE)

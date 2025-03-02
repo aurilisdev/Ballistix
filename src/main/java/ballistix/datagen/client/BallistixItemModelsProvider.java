@@ -40,6 +40,15 @@ public class BallistixItemModelsProvider extends ElectrodynamicsItemModelsProvid
         simpleBlockItem(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchercontrolpaneltier2), existingBlock(blockLoc("launchercontrolpaneltier2")));
         simpleBlockItem(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchercontrolpaneltier3), existingBlock(blockLoc("launchercontrolpaneltier3")));
 
+        
+        simpleBlockItem(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchersupportframetier1), existingBlock(blockLoc("launchersupportframetier1")));
+        simpleBlockItem(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchersupportframetier2), existingBlock(blockLoc("launchersupportframetier2")));
+        simpleBlockItem(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchersupportframetier3), existingBlock(blockLoc("launchersupportframetier3")));
+        
+        simpleBlockItem(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launcherplatformtier1), existingBlock(blockLoc("launcherplatformtier1")));
+        simpleBlockItem(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launcherplatformtier2), existingBlock(blockLoc("launcherplatformtier2")));
+        simpleBlockItem(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launcherplatformtier3), existingBlock(blockLoc("launcherplatformtier3")));
+
 
         simpleBlockItem(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.radar), existingBlock(blockLoc("radarfull"))).transforms()
                 //

@@ -35,7 +35,6 @@ public class ThreadRaycastBlast extends ThreadBlast {
     }
 
     @Override
-    @SuppressWarnings("java:S2184")
     public void run() {
         results.add(new HashDistanceBlockPos(position.getX(), position.getY(), position.getZ(), 0));
         for (Direction dir : Direction.values()) {
@@ -62,7 +61,7 @@ public class ThreadRaycastBlast extends ThreadBlast {
             if (!block.getFluidState().isEmpty()) {
                 return 0.25f;
             }
-	    float resistance = (float) (block.getExplosionResistance(world, position, explosion) * 0.75 / Math.sqrt(200));
+	    float resistance = block.getExplosionResistance(world, position, explosion);
 	    if (resistance > 200) {
 	        resistance = 0.75f * (float) Math.sqrt(resistance);
 	    }

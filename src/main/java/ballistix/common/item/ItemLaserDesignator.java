@@ -3,7 +3,7 @@ package ballistix.common.item;
 import java.util.List;
 
 import ballistix.api.silo.SiloRegistry;
-import ballistix.common.tile.TileMissileSilo;
+import ballistix.common.tile.TileLauncherControlPanelT1;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixCreativeTabs;
 import ballistix.registers.BallistixDataComponentTypes;
@@ -39,10 +39,10 @@ public class ItemLaserDesignator extends ItemElectric {
     @Override
     public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
         BlockEntity ent = context.getLevel().getBlockEntity(context.getClickedPos());
-        TileMissileSilo silo = ent instanceof TileMissileSilo s ? s : null;
+        TileLauncherControlPanelT1 silo = ent instanceof TileLauncherControlPanelT1 s ? s : null;
         if (ent instanceof TileMultiSubnode node) {
             BlockEntity core = node.getLevel().getBlockEntity(node.parentPos.get());
-            if (core instanceof TileMissileSilo c) {
+            if (core instanceof TileLauncherControlPanelT1 c) {
                 silo = c;
             }
         }
@@ -78,7 +78,7 @@ public class ItemLaserDesignator extends ItemElectric {
         BlockEntity tile = trace.getTile(worldIn);
 
         // fixes bug of blowing self up
-        if (tile instanceof TileMissileSilo || tile instanceof TileMultiSubnode) {
+        if (tile instanceof TileLauncherControlPanelT1 || tile instanceof TileMultiSubnode) {
             return InteractionResultHolder.pass(playerIn.getItemInHand(handIn));
         }
 
@@ -90,11 +90,11 @@ public class ItemLaserDesignator extends ItemElectric {
 
         double distance;
 
-        for (TileMissileSilo silo : SiloRegistry.getSilos(frequency)) {
+        for (TileLauncherControlPanelT1 silo : SiloRegistry.getSilos(frequency)) {
 
             range = silo.range.get();
 
-            distance = TileMissileSilo.calculateDistance(silo.getBlockPos(), target);
+            distance = TileLauncherControlPanelT1.calculateDistance(silo.getBlockPos(), target);
 
             if (range == 0 || (range > 0 && range < distance)) {
                 continue;

@@ -1,9 +1,9 @@
 package ballistix.common.tile.turret.antimissile;
 
-import ballistix.api.missile.virtual.VirtualMissile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.api.turret.ITarget;
 import ballistix.common.inventory.container.ContainerLaserTurret;
 import ballistix.common.settings.Constants;

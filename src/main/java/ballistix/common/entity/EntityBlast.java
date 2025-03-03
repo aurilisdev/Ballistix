@@ -2,8 +2,8 @@ package ballistix.common.entity;
 
 import ballistix.Ballistix;
 import ballistix.References;
+import ballistix.api.blast.IHasCustomRender;
 import ballistix.common.blast.Blast;
-import ballistix.common.blast.IHasCustomRenderer;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.registers.BallistixEntities;
 import net.minecraft.nbt.CompoundTag;
@@ -21,9 +21,12 @@ import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
 import net.neoforged.neoforge.common.world.chunk.TicketController;
 
 public class EntityBlast extends Entity {
-	private static final EntityDataAccessor<Integer> CALLCOUNT = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.INT);
-	private static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.INT);
-	private static final EntityDataAccessor<Boolean> SHOULDSTARTCUSTOMRENDER = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Integer> CALLCOUNT = SynchedEntityData.defineId(EntityBlast.class,
+			EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(EntityBlast.class,
+			EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Boolean> SHOULDSTARTCUSTOMRENDER = SynchedEntityData
+			.defineId(EntityBlast.class, EntityDataSerializers.BOOLEAN);
 
 	private Blast blast;
 	public int blastOrdinal = -1;
@@ -63,21 +66,21 @@ public class EntityBlast extends Entity {
 		builder.define(SHOULDSTARTCUSTOMRENDER, false);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void tick() {
-		if(detonated /*|| tickCount > 1000 */) {
-			if(!level().isClientSide) {
+		tickCount++;
+		if (detonated /* || tickCount > 1000 */) {
+			if (!level().isClientSide && tickCount > 20) {
 				remove(RemovalReason.DISCARDED);
 			}
 			return;
 		}
 
-		tickCount++;
-
 		if (!level().isClientSide) {
 			entityData.set(TYPE, blastOrdinal);
 			entityData.set(CALLCOUNT, callcount);
-			entityData.set(SHOULDSTARTCUSTOMRENDER, blast instanceof IHasCustomRenderer has && has.shouldRender());
+			entityData.set(SHOULDSTARTCUSTOMRENDER, blast instanceof IHasCustomRender has && has.shouldRender());
 		} else {
 			blastOrdinal = entityData.get(TYPE);
 			callcount = entityData.get(CALLCOUNT);
@@ -85,23 +88,27 @@ public class EntityBlast extends Entity {
 				ticksWhenCustomRender = tickCount;
 			}
 			shouldRenderCustom = entityData.get(SHOULDSTARTCUSTOMRENDER);
+			if (blast != null) {
+				blast.shouldRenderCustomClient = shouldRenderCustom;
+			}
 		}
 
-		if(blastOrdinal == -1) {
+		if (blastOrdinal == -1) {
 			return;
 		}
 
-		if(blast == null) {
+		if (blast == null) {
 			blast = getBlastType().createBlast(level(), blockPosition());
 		}
 
 		if (blast != null) {
 			if (callcount == 0) {
 				blast.preExplode();
-			} else if (blast.explode(callcount)) {
-				detonated = true;
-				blast.postExplode();
-
+			} else {
+				if (blast.explode(callcount)) {
+					detonated = true;
+					blast.postExplode();
+				}
 			}
 			callcount++;
 		}
@@ -110,17 +117,19 @@ public class EntityBlast extends Entity {
 	@Override
 	public void onAddedToLevel() {
 		super.onAddedToLevel();
-		if(!level().isClientSide()) {
+		if (!level().isClientSide()) {
 			ChunkPos pos = level().getChunk(blockPosition()).getPos();
-			ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level(), blockPosition(), pos.x, pos.z, true, true);
+			ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level(), blockPosition(), pos.x, pos.z, true,
+					true);
 		}
 	}
 
 	@Override
 	public void remove(RemovalReason reason) {
-		if(!level().isClientSide && reason == RemovalReason.DISCARDED) {
+		if (!level().isClientSide && reason == RemovalReason.DISCARDED) {
 			ChunkPos pos = level().getChunk(blockPosition()).getPos();
-			ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level(), blockPosition(), pos.x, pos.z, false, true);
+			ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level(), blockPosition(), pos.x, pos.z, false,
+					true);
 		}
 		super.remove(reason);
 	}
@@ -153,7 +162,6 @@ public class EntityBlast extends Entity {
 		public static void register(RegisterTicketControllersEvent event) {
 			event.register(TICKET_CONTROLLER);
 		}
-
 
 	}
 

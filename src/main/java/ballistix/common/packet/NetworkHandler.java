@@ -3,6 +3,7 @@ package ballistix.common.packet;
 import ballistix.Ballistix;
 import ballistix.References;
 import ballistix.common.packet.type.client.PacketSetSearchRadarTrackedClient;
+import ballistix.common.packet.type.client.particle.PacketSpawnBlastParticle;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -21,6 +22,7 @@ public class NetworkHandler {
 		// CLIENTBOUND
 
 		registry.playToClient(PacketSetSearchRadarTrackedClient.TYPE, PacketSetSearchRadarTrackedClient.CODEC, PacketSetSearchRadarTrackedClient::handle);
+	        registry.playToClient(PacketSpawnBlastParticle.TYPE, PacketSpawnBlastParticle.CODEC, PacketSpawnBlastParticle::handle);
 
 	}
 

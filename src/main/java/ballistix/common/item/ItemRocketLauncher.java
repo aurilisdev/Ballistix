@@ -79,6 +79,7 @@ public class ItemRocketLauncher extends ItemElectrodynamics {
 
         Player player = (Player) entityLiving;
 
+        if(!player.isCreative())
         stack.set(ElectrodynamicsDataComponentTypes.TIMER, Constants.ROCKET_LAUNCHER_COOLDOWN_TICKS);
 
         int blastOrdinal = 0;
@@ -117,7 +118,7 @@ public class ItemRocketLauncher extends ItemElectrodynamics {
                     //
                     new Vec3(entityLiving.getLookAngle().x, entityLiving.getLookAngle().y, entityLiving.getLookAngle().z),
                     //
-                    2.0F,
+                    1.333F,
                     //
                     true,
                     //

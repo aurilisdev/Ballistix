@@ -1,5 +1,7 @@
 package ballistix.common.inventory.container;
 
+import java.util.HashSet;
+
 import ballistix.common.packet.type.client.PacketSetSearchRadarTrackedClient;
 import ballistix.common.tile.radar.TileSearchRadar;
 import ballistix.registers.BallistixMenuTypes;
@@ -11,8 +13,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.neoforged.neoforge.network.PacketDistributor;
-
-import java.util.HashSet;
 
 public class ContainerSearchRadar extends GenericContainerBlockEntity<TileSearchRadar> {
 

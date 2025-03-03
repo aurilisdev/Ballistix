@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "c:circuits/elite"
+    },
+    "P": {
+      "item": "ballistix:launcherplatformtier2"
+    },
+    "S": {
+      "tag": "c:plates/steel"
+    }
+  },
+  "pattern": [
+    "S S",
+    "SCS",
+    "SPS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ballistix:launcherplatformtier3"
+  }
+}

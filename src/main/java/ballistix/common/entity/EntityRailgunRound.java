@@ -2,24 +2,24 @@ package ballistix.common.entity;
 
 import java.util.UUID;
 
-import ballistix.api.missile.MissileManager;
-import ballistix.api.missile.virtual.VirtualProjectile;
-import net.minecraft.core.UUIDUtil;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.server.level.ServerLevel;
+import javax.annotation.Nullable;
+
 import org.joml.Vector3f;
 
+import ballistix.api.missile.MissileManager;
+import ballistix.api.missile.virtual.VirtualProjectile;
 import ballistix.registers.BallistixEntities;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-
-import javax.annotation.Nullable;
 
 public class EntityRailgunRound extends Entity {
 

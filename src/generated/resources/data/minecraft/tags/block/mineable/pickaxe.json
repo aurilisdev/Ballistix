@@ -1,12 +1,20 @@
 {
   "values": [
-    "ballistix:missilesilo",
-    "ballistix:laserturret",
+    "ballistix:launchersupportframetier2",
+    "ballistix:launchersupportframetier3",
     "ballistix:ciwsturret",
-    "ballistix:railgunturret",
-    "ballistix:samturret",
-    "ballistix:esmtower",
+    "ballistix:radar",
+    "ballistix:launchercontrolpaneltier2",
+    "ballistix:launchersupportframetier1",
+    "ballistix:launcherplatformtier3",
+    "ballistix:launcherplatformtier1",
+    "ballistix:launcherplatformtier2",
     "ballistix:firecontrolradar",
-    "ballistix:radar"
+    "ballistix:railgunturret",
+    "ballistix:launchercontrolpaneltier3",
+    "ballistix:laserturret",
+    "ballistix:samturret",
+    "ballistix:launchercontrolpaneltier1",
+    "ballistix:esmtower"
   ]
 }

@@ -1,12 +1,18 @@
 package ballistix.api.missile.virtual;
 
+import java.util.UUID;
+
+import javax.annotation.Nullable;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import ballistix.api.blast.IHasCustomRender;
 import ballistix.common.blast.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityBlast;
 import ballistix.common.entity.EntityMissile;
 import ballistix.common.settings.Constants;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import electrodynamics.prefab.utilities.BlockEntityUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
@@ -17,9 +23,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-
-import javax.annotation.Nullable;
-import java.util.UUID;
 
 public class VirtualMissile {
 
@@ -127,7 +130,7 @@ public class VirtualMissile {
 
             if (b != null) {
 
-                if (b.isInstantaneous()) {
+		if (b.isInstantaneous() && !(b instanceof IHasCustomRender)) {
                     b.performExplosion();
 
                     hasExploded = true;

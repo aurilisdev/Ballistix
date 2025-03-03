@@ -3,10 +3,14 @@ package ballistix.common.blast;
 import java.util.ArrayList;
 import java.util.List;
 
+import ballistix.api.blast.IHasCustomRender;
+import ballistix.client.particle.ParticleOptionsShockwave;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,8 +23,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.Level.ExplosionInteraction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
-public class BlastAttractive extends Blast {
+public class BlastAttractive extends Blast implements IHasCustomRender {
 
 	public BlastAttractive(Level world, BlockPos position) {
 		super(world, position);
@@ -28,6 +34,7 @@ public class BlastAttractive extends Blast {
 
 	@Override
 	public boolean doExplode(int callCount) {
+		super.doExplode(callCount);
 
 		hasStarted = true;
 
@@ -35,13 +42,15 @@ public class BlastAttractive extends Blast {
 
 			world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) Constants.EXPLOSIVE_ATTRACTIVE_SIZE, ExplosionInteraction.BLOCK);
 
+		} else {
+			produceParticles();
 		}
 
 		float x = position.getX();
 		float y = position.getY();
 		float z = position.getZ();
 
-		float size = 5f;
+		float size = 7f;
 
 		float f2 = size * 2.0F;
 
@@ -57,20 +66,20 @@ public class BlastAttractive extends Blast {
 		for (Entity entity : entities) {
 
 			switch (griefPreventionMethod) {
-				case GRIEF_DEFENDER:
-					if(!GriefDefenderHandler.shouldEntityBeHarmed(entity)) {
-						continue;
-					}
-					break;
-				default:
-					break;
+			case GRIEF_DEFENDER:
+				if (!GriefDefenderHandler.shouldEntityBeHarmed(entity)) {
+					continue;
+				}
+				break;
+			default:
+				break;
 			}
 
 			double deltaX = entity.getX() - x;
 			double deltaY = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - y;
 			double deltaZ = entity.getZ() - z;
 			double deltaDistance = Mth.sqrt((float) (deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ));
-			if(deltaDistance == 0.0F) {
+			if (deltaDistance == 0.0F) {
 				continue;
 			}
 			deltaX = deltaX / deltaDistance;
@@ -83,6 +92,37 @@ public class BlastAttractive extends Blast {
 			}
 		}
 		return true;
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	@Override
+	public void produceParticles() {
+		float x = position.getX() + 0.5f;
+		float y = position.getY() + 0.5f;
+		float z = position.getZ() + 0.5f;
+
+		float size = 7f;
+
+		float f2 = size * 2.0F;
+
+		int x0 = Mth.floor(x - f2 - 1.0D);
+		int x1 = Mth.floor(x + f2 + 1.0D);
+		int y0 = Mth.floor(y - f2 - 1.0D);
+		int y1 = Mth.floor(y + f2 + 1.0D);
+		int z0 = Mth.floor(z - f2 - 1.0D);
+		int z1 = Mth.floor(z + f2 + 1.0D);
+		for (int dx = x0; dx < x1; dx++) {
+			for (int dy = y0; dy < y1; dy++) {
+				for (int dz = z0; dz < z1; dz++) {
+					if ((x - dx) * (x - dx) + (y - dy) * (y - dy) + (z - dz) * (z - dz) <= (2 * size + 1) * (2 * size + 1)) {
+						if (world.random.nextFloat() < 1 / 40.0) {
+							ParticleOptions particle = new ParticleOptionsShockwave().setParameters(1, 1, 1, 1, (float) 0.3, 15, false, 1);
+							Minecraft.getInstance().particleEngine.createParticle(particle, dx, dy, dz, (x - dx) / 15.0, (y - dy) / 15.0, (z - dz) / 15.0);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	@Override

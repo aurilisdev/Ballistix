@@ -1,12 +1,17 @@
 package ballistix.api.missile.virtual;
 
+import java.util.UUID;
+
+import org.joml.Vector3f;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import ballistix.api.missile.MissileManager;
 import ballistix.common.entity.EntityBullet;
 import ballistix.common.entity.EntityRailgunRound;
 import ballistix.common.entity.EntitySAM;
 import ballistix.registers.BallistixDamageTypes;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.server.level.ServerLevel;
@@ -17,9 +22,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
-
-import java.util.UUID;
 
 public abstract class VirtualProjectile {
 

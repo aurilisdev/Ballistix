@@ -1,8 +1,10 @@
 package ballistix.common.blast.thread;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import com.google.common.collect.Sets;
 
@@ -16,144 +18,133 @@ import net.minecraft.world.level.Level;
 
 public class ThreadSimpleBlast extends ThreadBlast {
 
-    //private static final HashSet<BlockPos>[] CACHED_RESULTS = new HashSet[SubtypeBlast.values().length];
-    private static final HashSet<BlockPos>[] CACHED_EUCLIDEAN_RESULTS = new HashSet[SubtypeBlast.values().length];
-    //private final boolean euclideanDistanceBased;
+	private static final HashSet<BlockPos>[] CACHED_EUCLIDEAN_RESULTS = new HashSet[SubtypeBlast.values().length];
+	private static final Set<Integer> currentlyCalculating = Collections.synchronizedSet(new HashSet<>());
 
-    private final int ordinal;
+	private final int ordinal;
 
-    public ThreadSimpleBlast(Level world, BlockPos position, int range, float energy, Entity source, int ordinal) {
-        super(world, position, range, energy, source);
-        setName("Simple blast thread");
-        this.ordinal = ordinal;
-    }
+	public ThreadSimpleBlast(Level world, BlockPos position, int range, float energy, Entity source, int ordinal) {
+		super(world, position, range, energy, source);
+		setName("Simple blast thread");
+		this.ordinal = ordinal;
+		setPriority(MAX_PRIORITY);
+	}
 
-    public double strictnessAtEdges = 1.85;
+	public double strictnessAtEdges = 1.85;
 
-    @Override
-    @SuppressWarnings("java:S2184")
-    public void run() {
-        int explosionRadius = this.explosionRadius;
-        Random random = Electrodynamics.RANDOM;
-        runEuclidian(explosionRadius, random);
-        super.run();
-    }
+	@Override
+	public void run() {
+		int explosionRadius = this.explosionRadius;
+		Random random = Electrodynamics.RANDOM;
+		runEuclidian(explosionRadius, random);
+		super.run();
+	}
 
-    //This helps eliminate checking the boolean every single iteration of the loop making is much faster
-    /*
-    public void runNonEuclidian(int explosionRadius, Random random) {
+	public void runEuclidian(int explosionRadius, Random random) {
+		if (Constants.SHOULD_CACHE_EXPLOSIONS) {
+			synchronized (currentlyCalculating) {
+				while (currentlyCalculating.contains(explosionRadius)) {
+					try {
+						sleep(100);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+						break;
+					}
+				}
+				if (CACHED_EUCLIDEAN_RESULTS[ordinal] == null) {
+					currentlyCalculating.add(explosionRadius);
+				}
+			}
+			if (CACHED_EUCLIDEAN_RESULTS[ordinal] == null) {
+				int rSqrd = explosionRadius * explosionRadius;
+				ArrayList<BlockPos> positions = new ArrayList<>(
+						(int) (Math.PI * 4.0 / 3.0 * rSqrd * (explosionRadius + 1)));
+				for (int i = -explosionRadius; i <= explosionRadius; i++) {
+					for (int j = 0; j <= explosionRadius; j++) {
+						int dist2D = i * i + j * j;
+						if (dist2D <= rSqrd) {
+							int kMax = (int) Math.floor(Math.sqrt(rSqrd - dist2D));
+							for (int k = 0; k <= kMax; k++) {
+								int dist3D = dist2D + k * k;
+								if (random.nextFloat() * rSqrd < rSqrd * strictnessAtEdges - dist3D) {
+									positions.add(new HashDistanceBlockPos(i, k, j,
+											(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+									if (k != 0) {
+										positions.add(new HashDistanceBlockPos(i, -k, j,
+												(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+										if (j != 0) {
+											positions.add(new HashDistanceBlockPos(i, -k, -j,
+													(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+										}
+									}
+									if (j != 0) {
+										positions.add(new HashDistanceBlockPos(i, k, -j,
+												(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+									}
+								}
+							}
+						}
+					}
+				}
+				// Sort
+				Random rand = Electrodynamics.RANDOM;
+				for (int i = 0; i < positions.size(); i++) {
+					int newIndex = rand.nextInt(Math.max(0, i - 10), Math.min(positions.size() - 1, i + 10));
+					BlockPos atNew = positions.get(newIndex);
+					positions.set(newIndex, positions.get(i));
+					positions.set(i, atNew);
+				}
+				CACHED_EUCLIDEAN_RESULTS[ordinal] = Sets.newHashSet(positions);
+			}
 
-        if (Constants.SHOULD_CACHE_EXPLOSIONS) {
+			results = CACHED_EUCLIDEAN_RESULTS[ordinal];
+			synchronized (currentlyCalculating) {
+				currentlyCalculating.remove(explosionRadius);
+			}
+		} else {
+			int rSqrd = explosionRadius * explosionRadius;
+			ArrayList<BlockPos> positions = new ArrayList<>(
+					(int) (Math.PI * 4.0 / 3.0 * rSqrd * (explosionRadius + 1)));
+			for (int i = -explosionRadius; i <= explosionRadius; i++) {
+				for (int j = 0; j <= explosionRadius; j++) {
+					int dist2D = i * i + j * j;
+					if (dist2D <= rSqrd) {
+						int kMax = (int) Math.floor(Math.sqrt(rSqrd - dist2D));
+						for (int k = 0; k <= kMax; k++) {
+							int dist3D = dist2D + k * k;
+							if (random.nextFloat() * rSqrd < rSqrd * strictnessAtEdges - dist3D) {
+								positions.add(new HashDistanceBlockPos(i, k, j,
+										(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+								if (k != 0) {
+									positions.add(new HashDistanceBlockPos(i, -k, j,
+											(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+									if (j != 0) {
+										positions.add(new HashDistanceBlockPos(i, -k, -j,
+												(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+									}
+								}
+								if (j != 0) {
+									positions.add(new HashDistanceBlockPos(i, k, -j,
+											(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+								}
+							}
+						}
+					}
+				}
+			}
+			// Sort
+			Random rand = Electrodynamics.RANDOM;
+			for (int i = 0; i < positions.size(); i++) {
+				int newIndex = rand.nextInt(Math.max(0, i - 10), Math.min(positions.size() - 1, i + 10));
+				BlockPos atNew = positions.get(newIndex);
+				positions.set(newIndex, positions.get(i));
+				positions.set(i, atNew);
+			}
+			results = Sets.newHashSet(positions);
+		}
 
-            if(CACHED_RESULTS[ordinal] == null) {
-
-                ArrayList<BlockPos> positions = new ArrayList<>();
-                for (int i = -explosionRadius; i <= explosionRadius; i++) {
-                    for (int j = -explosionRadius; j <= explosionRadius; j++) {
-                        for (int k = -explosionRadius; k <= explosionRadius; k++) {
-                            int idistance = i * i + j * j + k * k;
-                            if (idistance <= explosionRadius * explosionRadius && random.nextFloat() * (explosionRadius * explosionRadius) < explosionRadius * explosionRadius * strictnessAtEdges - idistance) {
-                                positions.add(new BlockPos(i, j, k));
-                            }
-                        }
-                    }
-                }
-                Random rand = Electrodynamics.RANDOM;
-                for (int i = 0; i < positions.size(); i++) {
-                    int newIndex = rand.nextInt(Math.max(0, i - 10), Math.min(positions.size() - 1, i + 10));
-                    BlockPos atNew = positions.get(newIndex);
-                    positions.set(newIndex, positions.get(i));
-                    positions.set(i, atNew);
-                }
-                CACHED_RESULTS[ordinal] = Sets.newHashSet(positions);
-
-            }
-
-            results = CACHED_RESULTS[ordinal];
-
-        } else {
-
-            ArrayList<BlockPos> positions = new ArrayList<>();
-            for (int i = -explosionRadius; i <= explosionRadius; i++) {
-                for (int j = -explosionRadius; j <= explosionRadius; j++) {
-                    for (int k = -explosionRadius; k <= explosionRadius; k++) {
-                        int idistance = i * i + j * j + k * k;
-                        if (idistance <= explosionRadius * explosionRadius && random.nextFloat() * (explosionRadius * explosionRadius) < explosionRadius * explosionRadius * strictnessAtEdges - idistance) {
-                            positions.add(new BlockPos(i, j, k));
-                        }
-                    }
-                }
-            }
-            Random rand = Electrodynamics.RANDOM;
-            for (int i = 0; i < positions.size(); i++) {
-                int newIndex = rand.nextInt(Math.max(0, i - 10), Math.min(positions.size() - 1, i + 10));
-                BlockPos atNew = positions.get(newIndex);
-                positions.set(newIndex, positions.get(i));
-                positions.set(i, atNew);
-            }
-            results = Sets.newHashSet(positions);
-
-        }
-
-    }
-     */
-
-    public void runEuclidian(int explosionRadius, Random random) {
-
-        if (Constants.SHOULD_CACHE_EXPLOSIONS) {
-
-            if (CACHED_EUCLIDEAN_RESULTS[ordinal] == null) {
-
-                ArrayList<BlockPos> positions = new ArrayList<>();
-                for (int i = -explosionRadius; i <= explosionRadius; i++) {
-                    for (int j = -explosionRadius; j <= explosionRadius; j++) {
-                        for (int k = -explosionRadius; k <= explosionRadius; k++) {
-                            int idistance = i * i + j * j + k * k;
-                            if (idistance <= explosionRadius * explosionRadius && random.nextFloat() * (explosionRadius * explosionRadius) < explosionRadius * explosionRadius * strictnessAtEdges - idistance) {
-                                positions.add(new HashDistanceBlockPos(i, j, k, (int) Math.max(1, idistance - 50 + random.nextFloat() * 100)));
-                            }
-                        }
-                    }
-                }
-                Random rand = Electrodynamics.RANDOM;
-                for (int i = 0; i < positions.size(); i++) {
-                    int newIndex = rand.nextInt(Math.max(0, i - 10), Math.min(positions.size() - 1, i + 10));
-                    BlockPos atNew = positions.get(newIndex);
-                    positions.set(newIndex, positions.get(i));
-                    positions.set(i, atNew);
-                }
-                CACHED_EUCLIDEAN_RESULTS[ordinal] = Sets.newHashSet(positions);
-
-            }
-
-            results = CACHED_EUCLIDEAN_RESULTS[ordinal];
-
-        } else {
-            ArrayList<BlockPos> positions = new ArrayList<>();
-            for (int i = -explosionRadius; i <= explosionRadius; i++) {
-                for (int j = -explosionRadius; j <= explosionRadius; j++) {
-                    for (int k = -explosionRadius; k <= explosionRadius; k++) {
-                        int idistance = i * i + j * j + k * k;
-                        if (idistance <= explosionRadius * explosionRadius && random.nextFloat() * (explosionRadius * explosionRadius) < explosionRadius * explosionRadius * strictnessAtEdges - idistance) {
-                            positions.add(new HashDistanceBlockPos(i, j, k, (int) Math.max(1, idistance - 50 + random.nextFloat() * 100)));
-                        }
-                    }
-                }
-            }
-            Random rand = Electrodynamics.RANDOM;
-            for (int i = 0; i < positions.size(); i++) {
-                int newIndex = rand.nextInt(Math.max(0, i - 10), Math.min(positions.size() - 1, i + 10));
-                BlockPos atNew = positions.get(newIndex);
-                positions.set(newIndex, positions.get(i));
-                positions.set(i, atNew);
-            }
-            results = Sets.newHashSet(positions);
-        }
-
-
-    }
+	}
 
 }
-
 
 //TODO: Create a thread manager pool thingy so u cant spam threads.

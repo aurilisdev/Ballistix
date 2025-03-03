@@ -9,14 +9,14 @@ import electrodynamics.api.configuration.IntValue;
 public class Constants {
 	@DoubleValue(def = 45.0)
 	public static double EXPLOSIVE_ANTIMATTER_RADIUS = 45.0;
-	@DoubleValue(def = 20.0, comment = "Value is in ticks.")
-	public static double EXPLOSIVE_ANTIMATTER_DURATION = 10.0;
+	@DoubleValue(def = 80.0, comment = "Value is in ticks.")
+	public static double EXPLOSIVE_ANTIMATTER_DURATION = 80.0;
 	@DoubleValue(def = 45.0)
 	public static double EXPLOSIVE_EMP_RADIUS = 45.0;
-	@DoubleValue(def = 80.0)
-	public static double EXPLOSIVE_LARGEANTIMATTER_RADIUS = 80.0;
+	@DoubleValue(def = 100.0)
+	public static double EXPLOSIVE_LARGEANTIMATTER_RADIUS = 100.0;
 	@DoubleValue(def = 200.0, comment = "Value is in ticks.")
-	public static double EXPLOSIVE_LARGEANTIMATTER_DURATION = 30.0;
+	public static double EXPLOSIVE_LARGEANTIMATTER_DURATION = 200.0;
 	@DoubleValue(def = 1.0)
 	public static double EXPLOSIVE_ATTRACTIVE_SIZE = 1.0;
 	@DoubleValue(def = 1.0)
@@ -47,22 +47,22 @@ public class Constants {
 	public static double EXPLOSIVE_FRAGMENTATION_SHRAPNEL_COUNT = 50.0;
 	@DoubleValue(def = 7.0)
 	public static double EXPLOSIVE_INCENDIARY_RADIUS = 7.0;
-	@DoubleValue(def = 35.0)
-	public static double EXPLOSIVE_NUCLEAR_SIZE = 35.0;
-	@DoubleValue(def = 30.0, comment = "Value is in ticks.")
-	public static double EXPLOSIVE_NUCLEAR_DURATION = 30.0;
-	@DoubleValue(def = 80.0)
-	public static double EXPLOSIVE_NUCLEAR_ENERGY = 80.0;
+	@DoubleValue(def = 45.0)
+	public static double EXPLOSIVE_NUCLEAR_SIZE = 45.0;
+	@DoubleValue(def = 360.0, comment = "Value is in ticks.")
+	public static double EXPLOSIVE_NUCLEAR_DURATION = 360.0;
+	@DoubleValue(def = 120.0)
+	public static double EXPLOSIVE_NUCLEAR_ENERGY = 120.0;
 	@DoubleValue(def = 10.0)
 	public static double EXPLOSIVE_OBSIDIAN_SIZE = 10.0;
 	@DoubleValue(def = 25.0)
 	public static double EXPLOSIVE_SHRAPNEL_SHRAPNEL_COUNT = 25.0;
-	@DoubleValue(def = 20.0)
-	public static double EXPLOSIVE_THERMOBARIC_SIZE = 20.0;
-	@DoubleValue(def = 15.0, comment = "Value is in ticks.")
-	public static double EXPLOSIVE_THERMOBARIC_DURATION = 15.0;
-	@DoubleValue(def = 45.0)
-	public static double EXPLOSIVE_THERMOBARIC_ENERGY = 45.0;
+	@DoubleValue(def = 30.0)
+	public static double EXPLOSIVE_THERMOBARIC_SIZE = 30.0;
+	@DoubleValue(def = 45.0, comment = "Value is in ticks.")
+	public static double EXPLOSIVE_THERMOBARIC_DURATION = 45.0;
+	@DoubleValue(def = 60.0)
+	public static double EXPLOSIVE_THERMOBARIC_ENERGY = 60.0;
 	@DoubleValue(def = 10000, comment = "Usage per launch in joules")
 	public static double MISSILESILO_USAGE = 10000;
 	@IntValue(def = 60)

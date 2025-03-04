@@ -118,7 +118,7 @@ public class ItemRocketLauncher extends ItemElectrodynamics {
                     //
                     new Vec3(entityLiving.getLookAngle().x, entityLiving.getLookAngle().y, entityLiving.getLookAngle().z),
                     //
-                    1.333F,
+                    1.0F,
                     //
                     true,
                     //

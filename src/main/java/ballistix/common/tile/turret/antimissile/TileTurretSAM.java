@@ -31,6 +31,8 @@ public class TileTurretSAM extends TileTurretAntimissileProjectile {
     public final Property<Integer> cooldown = property(new Property<>(PropertyTypes.INTEGER, "cooldown", 0));
     public final Property<Boolean> outOfAmmo = property(new Property<>(PropertyTypes.BOOLEAN, "noammo", false));
 
+    public static final float MAX_SPEED = 3.0F;
+
     public TileTurretSAM(BlockPos worldPos, BlockState blockState) {
         super(BallistixTiles.TILE_SAMTURRET.get(), worldPos, blockState, Constants.SAM_TURRET_BASE_RANGE, 100, Constants.SAM_TURRET_USAGEPERTICK, Constants.SAM_TURRET_ROTATIONSPEEDRADIANS, Constants.SAM_INNACCURACY);
     }
@@ -84,7 +86,7 @@ public class TileTurretSAM extends TileTurretAntimissileProjectile {
 
         Vec3 rotvec = projectileVals.getSecond();
 
-        VirtualProjectile.VirtualSAM sam = new VirtualProjectile.VirtualSAM(getProjectileSpeed(), getProjectileLaunchPosition(), projectileVals.getFirst(), currentRange.get().floatValue(), new Vector3f((float) rotvec.x, (float) rotvec.y, (float) rotvec.z));
+        VirtualProjectile.VirtualSAM sam = new VirtualProjectile.VirtualSAM(0.0F, getProjectileLaunchPosition(), projectileVals.getFirst(), currentRange.get().floatValue(), new Vector3f((float) rotvec.x, (float) rotvec.y, (float) rotvec.z), boundFireControl.get());
 
         MissileManager.addSAM(level.dimension(), sam);
 
@@ -104,7 +106,7 @@ public class TileTurretSAM extends TileTurretAntimissileProjectile {
 
     @Override
     public float getProjectileSpeed() {
-        return 3.0F;
+        return MAX_SPEED;
     }
 
     @Override

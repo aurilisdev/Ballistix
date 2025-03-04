@@ -2,6 +2,7 @@ package ballistix.client.particle;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
+import electrodynamics.Electrodynamics;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -35,14 +36,14 @@ public class ParticleMissileSmoke extends TextureSheetParticle {
 		this.bCol = options.b;
 		this.quadSize = options.scale;
 		this.startQuadSize = options.scale;
-		this.lifetime = (int) (options.lifetime * (0.8 + level.random.nextDouble() * 0.2));
+		this.lifetime = (int) (options.lifetime * (0.8 + Electrodynamics.RANDOM.nextDouble() * 0.2));
 		this.setSpriteFromAge(sprites);
 		this.hasPhysics = options.hasPhysics;
 
 		// Randomize values so particles don't look the same. Could be done in
 		// explosives, but this needs to be done for every explosive. Thus this saves
 		// space...
-		double brightnessRandom = 0.2 * level.random.nextDouble();
+		double brightnessRandom = 0.2 * Electrodynamics.RANDOM.nextDouble();
 		startRed *= (0.8 + brightnessRandom);
 		startGreen *= (0.8 + brightnessRandom);
 		startBlue *= (0.8 + brightnessRandom);
@@ -54,7 +55,7 @@ public class ParticleMissileSmoke extends TextureSheetParticle {
 		bCol *= (0.4 + brightnessRandom);
 		endGray *= (0.8 + brightnessRandom);
 		setColor(startRed, startGreen, startBlue);
-		gravity *= burning ? (0.75 + level.random.nextDouble() * 0.5) : 1.5 * level.random.nextDouble();
+		gravity *= burning ? (0.75 + Electrodynamics.RANDOM.nextDouble() * 0.5) : 1.5 * Electrodynamics.RANDOM.nextDouble();
 	}
 
 	@Override

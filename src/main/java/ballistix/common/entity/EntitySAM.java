@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import ballistix.common.tile.turret.antimissile.TileTurretSAM;
 import org.joml.Vector3f;
 
 import ballistix.api.missile.MissileManager;
@@ -79,11 +80,13 @@ public class EntitySAM extends Entity {
                 return;
             }
 
-            if (blockPosition().equals(sam.blockPosition())) {
+            if (!blockPosition().equals(sam.blockPosition())) {
                 setPos(sam.position);
-                setDeltaMovement(sam.deltaMovement);
                 speed = sam.speed;
             }
+
+            rotation = sam.rotation;
+            setDeltaMovement(sam.deltaMovement);
 
         }
 
@@ -95,15 +98,14 @@ public class EntitySAM extends Entity {
             rotation = entityData.get(ROTATION);
         }
 
-        for (int i = 0; i < speed; i++) {
-
-            setPos(new Vec3(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z));
-
-        }
+        setPos(new Vec3(getX() + getDeltaMovement().x * speed, getY() + getDeltaMovement().y * speed, getZ() + getDeltaMovement().z * speed));
 
         setYRot((float) Math.atan2(rotation.z, rotation.x) * RAD2DEG);
         setXRot((float) (Math.asin(rotation.y) * RAD2DEG));
 
+        if(speed < TileTurretSAM.MAX_SPEED) {
+            speed += 0.02F;
+        }
 
     }
 

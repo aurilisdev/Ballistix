@@ -95,6 +95,8 @@ public class Constants {
 	public static int SAM_TURRET_COOLDOWN = 100;
 	@DoubleValue(def = 0.02)
 	public static double SAM_INNACCURACY = 0.02;
+	@DoubleValue(def = 0.01)
+	public static final double SAM_ENTITY_TURNINGSPEEDRADIANS = 0.01;
 
 	@DoubleValue(def = 1000)
 	public static double CIWS_TURRET_USAGEPERTICK = 1000;

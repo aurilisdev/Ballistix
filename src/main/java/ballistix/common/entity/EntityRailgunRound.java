@@ -75,7 +75,7 @@ public class EntityRailgunRound extends Entity {
                 return;
             }
 
-            if (blockPosition().equals(railgunround.blockPosition())) {
+            if (!blockPosition().equals(railgunround.blockPosition())) {
                 setPos(railgunround.position);
                 setDeltaMovement(railgunround.deltaMovement);
                 speed = railgunround.speed;
@@ -91,11 +91,7 @@ public class EntityRailgunRound extends Entity {
             rotation = entityData.get(ROTATION);
         }
 
-        for (int i = 0; i < speed; i++) {
-
-            setPos(new Vec3(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z));
-
-        }
+        setPos(new Vec3(getX() + getDeltaMovement().x * speed, getY() + getDeltaMovement().y * speed, getZ() + getDeltaMovement().z * speed));
 
         setYRot((float) Math.atan2(rotation.z, rotation.x) * RAD2DEG);
         setXRot((float) (Math.asin(rotation.y) * RAD2DEG));

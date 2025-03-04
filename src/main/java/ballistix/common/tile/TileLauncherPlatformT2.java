@@ -6,6 +6,17 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class TileLauncherPlatformT2 extends TileLauncherPlatformT1 {
 	public TileLauncherPlatformT2(BlockPos pos, BlockState state) {
-		super(BallistixTiles.TILE_LAUNCHER_PLATFORM_TIER2.get(), pos, state, 1);
+		super(BallistixTiles.TILE_LAUNCHER_PLATFORM_TIER2.get(), pos, state);
 	}
+
+	@Override
+	public int getRange() {
+		return 3000;
+	}
+
+	@Override
+	public int getTier() {
+		return 2;
+	}
+
 }

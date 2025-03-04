@@ -2,20 +2,16 @@ package ballistix.common.tile;
 
 import ballistix.Ballistix;
 import ballistix.References;
-import ballistix.api.missile.MissileManager;
-import ballistix.api.missile.virtual.VirtualMissile;
+import ballistix.api.silo.ILauncherControlPanel;
+import ballistix.api.silo.ILauncherPlatform;
 import ballistix.api.silo.SiloRegistry;
-import ballistix.common.block.BlockExplosive;
 import ballistix.common.inventory.container.ContainerLauncherControlPanelT1;
 import ballistix.common.inventory.container.ContainerLauncherControlPanelT2;
 import ballistix.common.inventory.container.ContainerLauncherControlPanelT3;
-import ballistix.common.item.ItemMissile;
 import ballistix.common.settings.Constants;
 import ballistix.registers.BallistixDataComponentTypes;
 import ballistix.registers.BallistixItems;
-import ballistix.registers.BallistixSounds;
 import ballistix.registers.BallistixTiles;
-import electrodynamics.common.blockitem.types.BlockItemDescriptable;
 import electrodynamics.prefab.properties.Property;
 import electrodynamics.prefab.properties.PropertyTypes;
 import electrodynamics.prefab.tile.GenericTile;
@@ -34,31 +30,21 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
 import net.neoforged.neoforge.common.world.chunk.TicketController;
 
-public class TileLauncherControlPanelT1 extends GenericTile {
+public class TileLauncherControlPanelT1 extends GenericTile implements ILauncherControlPanel {
 
-	public static final int MISSILE_SLOT = 0;
-	public static final int EXPLOSIVE_SLOT = 1;
-
-	public static final int COOLDOWN = 100;
-
-	public Property<Integer> range = property(new Property<>(PropertyTypes.INTEGER, "range", 0));
-	public Property<Boolean> hasExplosive = property(new Property<>(PropertyTypes.BOOLEAN, "hasexplosive", false));
 	public Property<Integer> frequency = property(new Property<>(PropertyTypes.INTEGER, "frequency", 0).onChange((prop, prevFreq) -> {
 
 		if (level == null || level.isClientSide) {
@@ -76,16 +62,22 @@ public class TileLauncherControlPanelT1 extends GenericTile {
 	private int cooldown = 100;
 	public boolean shouldLaunch = false;
 	public CachedTileOutput launcherPlatform;
+	public static final int COOLDOWN = 100;
 
 	public TileLauncherControlPanelT1(BlockPos pos, BlockState state) {
-		this(BallistixTiles.TILE_LAUNCHER_CONTROL_PANEL_TIER1.get(), pos, state, 1);
+		this(BallistixTiles.TILE_LAUNCHER_CONTROL_PANEL_TIER1.get(), pos, state);
 	}
 
-	public TileLauncherControlPanelT1(BlockEntityType<?> type, BlockPos pos, BlockState state, int tier) {
+	public TileLauncherControlPanelT1(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
+		int tier = getTier();
 		addComponent(new ComponentTickable(this).tickServer(this::tickServer));
 		addComponent(new ComponentElectrodynamic(this, false, true).voltage(120 * tier).maxJoules(Constants.MISSILESILO_USAGE * 20 * tier).setInputDirections(BlockEntityUtils.MachineDirection.values()));
-		addComponent(new ComponentInventory(this, InventoryBuilder.newInv().inputs(3)).setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).setDirectionsBySlot(1, BlockEntityUtils.MachineDirection.values()).valid(this::isItemValidForSlot));
+		if (tier == 3) {
+			addComponent(new ComponentInventory(this, InventoryBuilder.newInv().inputs(1)).setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).setDirectionsBySlot(1, BlockEntityUtils.MachineDirection.values()).valid(this::isItemValidForSlot));
+		} else {
+			addComponent(new ComponentInventory(this));
+		}
 		addComponent(new ComponentPacketHandler(this));
 		if (tier == 1) {
 			addComponent(new ComponentContainerProvider("container.launchercontrolpaneltier" + tier, this).createMenu((id, player) -> new ContainerLauncherControlPanelT1(id, player, getComponent(IComponentType.Inventory), getCoordsArray())));
@@ -97,7 +89,7 @@ public class TileLauncherControlPanelT1 extends GenericTile {
 
 	}
 
-	protected void newTickServer(ComponentTickable tickable) {
+	protected void tickServer(ComponentTickable tickable) {
 		Direction facing = getFacing();
 		if (launcherPlatform == null) {
 			launcherPlatform = new CachedTileOutput(level, worldPosition.relative(facing.getOpposite()));
@@ -105,9 +97,6 @@ public class TileLauncherControlPanelT1 extends GenericTile {
 		if (tickable.getTicks() % 20 == 0) {
 			launcherPlatform.update(worldPosition.relative(facing.getOpposite()));
 		}
-	}
-
-	protected void tickServer(ComponentTickable tickable) {
 		if (target.get() == null) {
 			target.set(getBlockPos());
 		}
@@ -121,7 +110,12 @@ public class TileLauncherControlPanelT1 extends GenericTile {
 
 		boolean hasRedstone = level.hasNeighborSignal(getBlockPos());
 
-		if (range.get() == 0 || !hasExplosive.get() || (!hasRedstone && !shouldLaunch)) {
+		if (!launcherPlatform.valid()) {
+			return;
+		}
+		ILauncherPlatform platform = launcherPlatform.<ILauncherPlatform>getSafe();
+
+		if (!platform.hasExplosive() || (!hasRedstone && !shouldLaunch)) {
 			return;
 		}
 
@@ -129,66 +123,18 @@ public class TileLauncherControlPanelT1 extends GenericTile {
 
 		double dist = calculateDistance(worldPosition, target.get());
 
-		if (range.get() == 0 || (range.get() > 0 && range.get() < dist)) {
+		if (platform.getRange() < dist) {
 			return;
 		}
 
-		ComponentInventory inv = getComponent(IComponentType.Inventory);
-		ItemStack explosive = inv.getItem(EXPLOSIVE_SLOT);
-		ItemStack mis = inv.getItem(MISSILE_SLOT);
-
-		int ordinal = ((ItemMissile) mis.getItem()).missile.ordinal();
-
-		VirtualMissile missile = new VirtualMissile(
-				//
-				new Vec3(getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5),
-				//
-				new Vec3(0, 1, 0),
-				//
-				0.0F,
-				//
-				false,
-				//
-				getBlockPos().getX() + 0.5F,
-				//
-				getBlockPos().getZ() + 0.5F,
-				//
-				target.get(),
-				//
-				ordinal,
-				//
-				((BlockExplosive) ((BlockItemDescriptable) explosive.getItem()).getBlock()).explosive.ordinal(),
-				//
-				false,
-				//
-				frequency.get()
-		//
-		);
-
-		MissileManager.addMissile(level.dimension(), missile);
-
-		electro.joules(electro.getJoulesStored() - Constants.MISSILESILO_USAGE);
-
-		inv.removeItem(MISSILE_SLOT, 1);
-		inv.removeItem(EXPLOSIVE_SLOT, 1);
-
-		level.playSound(null, getBlockPos(), BallistixSounds.SOUND_MISSILE_SILO.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+		platform.launch(this);
 
 		cooldown = COOLDOWN;
 
 	}
 
 	protected boolean isItemValidForSlot(int index, ItemStack stack, ComponentInventory inv) {
-		Item item = stack.getItem();
-
-		if (index == 0) {
-			return item instanceof ItemMissile;
-		} else if (index == 1) {
-			return item instanceof BlockItemDescriptable des && des.getBlock() instanceof BlockExplosive;
-		} else if (index == 2) {
-			return stack.is(BallistixItems.ITEM_RADARGUN) || stack.is(BallistixItems.ITEM_LASERDESIGNATOR);
-		}
-		return false;
+		return stack.is(BallistixItems.ITEM_RADARGUN) || stack.is(BallistixItems.ITEM_LASERDESIGNATOR);
 	}
 
 	@Override
@@ -217,83 +163,24 @@ public class TileLauncherControlPanelT1 extends GenericTile {
 
 	@Override
 	public void onInventoryChange(ComponentInventory inv, int index) {
-
-		handleMissile(inv, index);
-
-		handleExplosive(inv, index);
-
 		handleSync(inv, index);
-
-	}
-
-	private void handleMissile(ComponentInventory inv, int index) {
-		if (index == 0 || index == -1) {
-
-			ItemStack missile = inv.getItem(0);
-
-			if (missile.isEmpty()) {
-				range.set(0);
-				return;
-			}
-
-			if (missile.getItem() instanceof ItemMissile item) {
-
-				switch (item.missile) {
-
-				case closerange:
-					range.set(Constants.CLOSERANGE_MISSILE_RANGE);
-					break;
-				case mediumrange:
-					range.set(Constants.MEDIUMRANGE_MISSILE_RANGE);
-					break;
-				case longrange:
-					range.set(Constants.LONGRANGE_MISSILE_RANGE);
-					break;
-				default:
-					range.set(0);
-					break;
-				}
-
-			} else {
-				range.set(0);
-			}
-
-		}
-	}
-
-	private void handleExplosive(ComponentInventory inv, int index) {
-		if (index == 1 || index == -1) {
-
-			ItemStack explosive = inv.getItem(1);
-
-			if (!explosive.isEmpty() && explosive.getItem() instanceof BlockItemDescriptable blockItem && blockItem.getBlock() instanceof BlockExplosive) {
-				hasExplosive.set(true);
-			} else {
-				hasExplosive.set(false);
-			}
-
-		}
 	}
 
 	private void handleSync(ComponentInventory inv, int index) {
-		if (index == 2 || index == -1) {
+		ItemStack sync = inv.getItem(0);
 
-			ItemStack sync = inv.getItem(2);
+		if (sync.isEmpty()) {
+			return;
+		}
 
-			if (sync.isEmpty()) {
-				return;
-			}
+		if (sync.is(BallistixItems.ITEM_LASERDESIGNATOR)) {
 
-			if (sync.is(BallistixItems.ITEM_LASERDESIGNATOR)) {
+			sync.set(BallistixDataComponentTypes.BOUND_FREQUENCY, frequency.get());
 
-				sync.set(BallistixDataComponentTypes.BOUND_FREQUENCY, frequency.get());
+		} else if (sync.is(BallistixItems.ITEM_RADARGUN)) {
 
-			} else if (sync.is(BallistixItems.ITEM_RADARGUN)) {
-
-				if (sync.has(ElectrodynamicsDataComponentTypes.BLOCK_POS)) {
-					target.set(sync.get(ElectrodynamicsDataComponentTypes.BLOCK_POS));
-				}
-
+			if (sync.has(ElectrodynamicsDataComponentTypes.BLOCK_POS)) {
+				target.set(sync.get(ElectrodynamicsDataComponentTypes.BLOCK_POS));
 			}
 
 		}
@@ -348,6 +235,21 @@ public class TileLauncherControlPanelT1 extends GenericTile {
 			event.register(TICKET_CONTROLLER);
 		}
 
+	}
+
+	@Override
+	public int getTier() {
+		return 1;
+	}
+
+	@Override
+	public BlockPos getTarget() {
+		return target.get();
+	}
+
+	@Override
+	public int getFrequency() {
+		return frequency.get();
 	}
 
 }

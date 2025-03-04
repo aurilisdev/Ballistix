@@ -109,6 +109,9 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 			addContainer("launchercontrolpaneltier1", "Launcher Control Panel T1");
 			addContainer("launchercontrolpaneltier2", "Launcher Control Panel T2");
 			addContainer("launchercontrolpaneltier3", "Launcher Control Panel T3");
+			addContainer("launcherplatformtier1", "Launcher Platform T1");
+			addContainer("launcherplatformtier2", "Launcher Platform T2");
+			addContainer("launcherplatformtier3", "Launcher Platform T3");
 			addContainer("samturret", "SAM Turret");
 			addContainer("searchradar", "Search Radar");
 			addContainer("firecontrolradar", "Fire Control Radar");

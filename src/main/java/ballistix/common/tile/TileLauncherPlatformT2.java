@@ -1,6 +1,7 @@
 package ballistix.common.tile;
 
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
+import ballistix.common.settings.Constants;
 import ballistix.registers.BallistixTiles;
 import electrodynamics.api.multiblock.subnodebased.parent.IMultiblockParentBlock;
 import net.minecraft.core.BlockPos;
@@ -18,7 +19,7 @@ public class TileLauncherPlatformT2 extends TileLauncherPlatformT1 {
 
 	@Override
 	public int getRange() {
-		return 3000;
+		return Constants.LAUNCHER_PLATFORM_RANGE_T2;
 	}
 
 	@Override

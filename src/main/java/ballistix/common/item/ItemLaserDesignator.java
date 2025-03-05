@@ -2,8 +2,10 @@ package ballistix.common.item;
 
 import java.util.List;
 
+import ballistix.api.silo.ILauncherControlPanel;
 import ballistix.api.silo.ILauncherPlatform;
 import ballistix.api.silo.SiloRegistry;
+import ballistix.common.settings.Constants;
 import ballistix.common.tile.TileLauncherControlPanelT1;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixCreativeTabs;
@@ -91,21 +93,23 @@ public class ItemLaserDesignator extends ItemElectric {
 
 		double distance;
 
-		for (TileLauncherControlPanelT1 silo : SiloRegistry.getSilos(frequency)) {
+		for (ILauncherControlPanel silo : SiloRegistry.getSilos(frequency)) {
 
-			if (!silo.launcherPlatform.valid())
+			if (!silo.getPlatform().valid() || silo.getTier() < 3)
 				continue;
-			range = silo.launcherPlatform.<ILauncherPlatform>getSafe().getRange();
+			ILauncherPlatform platform = silo.getPlatform().<ILauncherPlatform>getSafe();
+			if (platform == null)
+				continue;
+			range = platform.getRange();
+			distance = TileLauncherControlPanelT1.calculateDistance(silo.getPos(), target);
 
-			distance = TileLauncherControlPanelT1.calculateDistance(silo.getBlockPos(), target);
-
-			if (range == 0 || (range > 0 && range < distance)) {
+			if (range == 0 || (range > 0 && range < distance) || distance > Constants.LASER_DESIGNATOR_RANGE) {
 				continue;
 			}
 
-			silo.target.set(trace.toBlockPos());
+			silo.setTarget(trace.toBlockPos());
 
-			silo.shouldLaunch = true;
+			silo.launch();
 
 			extractPower(designator, USAGE, false);
 

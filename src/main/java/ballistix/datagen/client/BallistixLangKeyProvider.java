@@ -92,9 +92,9 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 
 			addItem(BallistixItems.ITEM_DUSTPOISON, "Poison Dust");
 
-			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.closerange), "Close-range Missile");
-			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.mediumrange), "Medium-range Missile");
-			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.longrange), "Long-range Missile");
+			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier1), "T1 Missile");
+			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier2), "T2 Missile");
+			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier3), "T3 Missile");
 
 			addItem(BallistixItems.ITEM_AAMISSILE, "Ballistic Rocket");
 			addItem(BallistixItems.ITEM_BULLET, "20mm Bullet");

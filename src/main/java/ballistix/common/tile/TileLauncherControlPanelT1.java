@@ -68,6 +68,11 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 		this(BallistixTiles.TILE_LAUNCHER_CONTROL_PANEL_TIER1.get(), pos, state);
 	}
 
+	@Override
+	public CachedTileOutput getPlatform() {
+		return launcherPlatform;
+	}
+
 	public TileLauncherControlPanelT1(BlockEntityType<?> type, BlockPos pos, BlockState state) {
 		super(type, pos, state);
 		int tier = getTier();
@@ -115,7 +120,9 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 		}
 		ILauncherPlatform platform = launcherPlatform.getSafe();
 
-		if (platform == null) { // Should really update the cachedtileoutput so this cant occur. As of before the getsafe, the platform wasnt null, but as it was removed inworld, the output made it null and returns a null on getsafe.
+		if (platform == null) { // Should really update the cachedtileoutput so this cant occur. As of before
+								// the getsafe, the platform wasnt null, but as it was removed inworld, the
+								// output made it null and returns a null on getsafe.
 			return;
 		}
 
@@ -244,6 +251,21 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 	@Override
 	public int getTier() {
 		return 1;
+	}
+
+	@Override
+	public BlockPos getPos() {
+		return getBlockPos();
+	}
+
+	@Override
+	public void launch() {
+		shouldLaunch = true;
+	}
+
+	@Override
+	public void setTarget(BlockPos blockPos) {
+		target.set(blockPos);
 	}
 
 	@Override

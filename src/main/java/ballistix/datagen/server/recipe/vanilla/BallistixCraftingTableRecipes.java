@@ -295,7 +295,7 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
 				//
 				.complete(References.ID, "turret_railgun", output);
 
-		ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.closerange), 1)
+		ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier1), 1)
 				//
 				.addPattern(" P ")
 				//
@@ -311,9 +311,9 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
 				//
 				.addKey('G', Tags.Items.GUNPOWDERS)
 				//
-				.complete(References.ID, "missile_closerange", output);
+				.complete(References.ID, "missile_tier1", output);
 
-		ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.mediumrange), 1)
+		ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier2), 1)
 				//
 				.addPattern(" C ")
 				//
@@ -327,11 +327,11 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
 				//
 				.addKey('G', Tags.Items.GUNPOWDERS)
 				//
-				.addKey('M', BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.closerange))
+				.addKey('M', BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier1))
 				//
-				.complete(References.ID, "missile_mediumrange", output);
+				.complete(References.ID, "missile_tier2", output);
 
-		ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.longrange), 1)
+		ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier3), 1)
 				//
 				.addPattern(" C ")
 				//
@@ -345,9 +345,9 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
 				//
 				.addKey('G', Tags.Items.GUNPOWDERS)
 				//
-				.addKey('M', BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.mediumrange))
+				.addKey('M', BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier2))
 				//
-				.complete(References.ID, "missile_longrange", output);
+				.complete(References.ID, "missile_tier3", output);
 
 		ShapedCraftingRecipeBuilder.start(BallistixItems.ITEM_AAMISSILE.get(), 1)
 				//

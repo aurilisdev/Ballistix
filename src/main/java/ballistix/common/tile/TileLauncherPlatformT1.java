@@ -12,6 +12,7 @@ import ballistix.common.inventory.container.ContainerLauncherPlatformT1;
 import ballistix.common.inventory.container.ContainerLauncherPlatformT2;
 import ballistix.common.inventory.container.ContainerLauncherPlatformT3;
 import ballistix.common.item.ItemMissile;
+import ballistix.common.settings.Constants;
 import ballistix.registers.BallistixSounds;
 import ballistix.registers.BallistixTiles;
 import electrodynamics.api.multiblock.subnodebased.parent.IMultiblockParentBlock;
@@ -72,7 +73,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 
 	@Override
 	public int getRange() {
-		return 500;
+		return Constants.LAUNCHER_PLATFORM_RANGE_T1;
 	}
 
 	@Override

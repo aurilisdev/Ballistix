@@ -2,6 +2,7 @@
 	"credit": "aurilisdev",
 	"texture_size": [64, 64],
 	"parent": "block/cube_all",
+	"ambientocclusion": "false",
 	"textures": {
 		"0": "ballistix:block/model/launcherplatformtier2",
 		"particle": "ballistix:block/model/launcherplatformtier2"

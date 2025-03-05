@@ -3,13 +3,13 @@
   "category": "misc",
   "key": {
     "C": {
-      "tag": "c:circuits/advanced"
+      "tag": "c:circuits/elite"
     },
     "G": {
       "tag": "c:gunpowders"
     },
     "M": {
-      "item": "ballistix:missilecloserange"
+      "item": "ballistix:missiletier2"
     },
     "P": {
       "tag": "c:plates/steel"
@@ -22,6 +22,6 @@
   ],
   "result": {
     "count": 1,
-    "id": "ballistix:missilemediumrange"
+    "id": "ballistix:missiletier3"
   }
 }

@@ -19,7 +19,7 @@ import ballistix.client.render.tile.RenderCIWSTurret;
 import ballistix.client.render.tile.RenderESMTower;
 import ballistix.client.render.tile.RenderFireControlRadar;
 import ballistix.client.render.tile.RenderLaserTurret;
-import ballistix.client.render.tile.RenderMissileSilo;
+import ballistix.client.render.tile.RenderLauncherPlatform;
 import ballistix.client.render.tile.RenderRadar;
 import ballistix.client.render.tile.RenderRailgunTurret;
 import ballistix.client.render.tile.RenderSAMTurret;
@@ -30,6 +30,9 @@ import ballistix.client.screen.ScreenLaserTurret;
 import ballistix.client.screen.ScreenLauncherControlPanelT1;
 import ballistix.client.screen.ScreenLauncherControlPanelT2;
 import ballistix.client.screen.ScreenLauncherControlPanelT3;
+import ballistix.client.screen.ScreenLauncherPlatformT1;
+import ballistix.client.screen.ScreenLauncherPlatformT2;
+import ballistix.client.screen.ScreenLauncherPlatformT3;
 import ballistix.client.screen.ScreenRailgunTurret;
 import ballistix.client.screen.ScreenSAMTurret;
 import ballistix.client.screen.ScreenSearchRadar;
@@ -67,54 +70,32 @@ public class ClientRegister {
 	public static final ResourceLocation ANGLE_PREDICATE = Electrodynamics.vanillarl("angle");
 
 	public static final ResourceLocation TEXTURE_SHRAPNEL = Ballistix.rl("textures/model/shrapnel.png");
-	public static final ResourceLocation TEXTURE_MISSILECLOSERANGE = Ballistix
-			.rl("textures/model/missilecloserange.png");
-	public static final ResourceLocation TEXTURE_MISSILEMEDIUMRANGE = Ballistix
-			.rl("textures/model/missilemediumrange.png");
+	public static final ResourceLocation TEXTURE_MISSILECLOSERANGE = Ballistix.rl("textures/model/missilecloserange.png");
+	public static final ResourceLocation TEXTURE_MISSILEMEDIUMRANGE = Ballistix.rl("textures/model/missilemediumrange.png");
 	public static final ResourceLocation TEXTURE_MISSILELONGRANGE = Ballistix.rl("textures/model/missilelongrange.png");
 
-	public static final ModelResourceLocation MODEL_RADARDISH = ModelResourceLocation
-			.standalone(Ballistix.rl("block/radardish"));
-	public static final ModelResourceLocation MODEL_FIRECONTROLRADARDISH = ModelResourceLocation
-			.standalone(Ballistix.rl("block/firecontrolradardish"));
-	public static final ModelResourceLocation MODEL_MISSILECLOSERANGE = ModelResourceLocation
-			.standalone(Ballistix.rl("entity/missilecloserange"));
-	public static final ModelResourceLocation MODEL_MISSILEMEDIUMRANGE = ModelResourceLocation
-			.standalone(Ballistix.rl("entity/missilemediumrange"));
-	public static final ModelResourceLocation MODEL_MISSILELONGRANGE = ModelResourceLocation
-			.standalone(Ballistix.rl("entity/missilelongrange"));
-	public static final ModelResourceLocation MODEL_DARKMATTERSPHERE = ModelResourceLocation
-			.standalone(Ballistix.rl("entity/darkmattersphere"));
-	public static final ModelResourceLocation MODEL_DARKMATTERDISK = ModelResourceLocation
-			.standalone(Ballistix.rl("entity/darkmatterdisk"));
-	public static final ModelResourceLocation MODEL_FIREBALL = ModelResourceLocation
-			.standalone(Ballistix.rl("entity/explosionsphere"));
+	public static final ModelResourceLocation MODEL_RADARDISH = ModelResourceLocation.standalone(Ballistix.rl("block/radardish"));
+	public static final ModelResourceLocation MODEL_FIRECONTROLRADARDISH = ModelResourceLocation.standalone(Ballistix.rl("block/firecontrolradardish"));
+	public static final ModelResourceLocation MODEL_MISSILECLOSERANGE = ModelResourceLocation.standalone(Ballistix.rl("entity/missilecloserange"));
+	public static final ModelResourceLocation MODEL_MISSILEMEDIUMRANGE = ModelResourceLocation.standalone(Ballistix.rl("entity/missilemediumrange"));
+	public static final ModelResourceLocation MODEL_MISSILELONGRANGE = ModelResourceLocation.standalone(Ballistix.rl("entity/missilelongrange"));
+	public static final ModelResourceLocation MODEL_DARKMATTERSPHERE = ModelResourceLocation.standalone(Ballistix.rl("entity/darkmattersphere"));
+	public static final ModelResourceLocation MODEL_DARKMATTERDISK = ModelResourceLocation.standalone(Ballistix.rl("entity/darkmatterdisk"));
+	public static final ModelResourceLocation MODEL_FIREBALL = ModelResourceLocation.standalone(Ballistix.rl("entity/explosionsphere"));
 	public static final ModelResourceLocation MODEL_EMP = ModelResourceLocation.standalone(Ballistix.rl("entity/emp"));
-	public static final ModelResourceLocation MODEL_BLACKHOLECUBE = ModelResourceLocation
-			.standalone(Ballistix.rl("entity/blackhole"));
+	public static final ModelResourceLocation MODEL_BLACKHOLECUBE = ModelResourceLocation.standalone(Ballistix.rl("entity/blackhole"));
 
-	public static final ModelResourceLocation MODEL_AAMISSILE = ModelResourceLocation
-			.standalone(Ballistix.rl("entity/aamissile"));
-	public static final ModelResourceLocation MODEL_SAMTURRET_BALLJOINT = ModelResourceLocation
-			.standalone(Ballistix.rl("block/samturretballjoint"));
-	public static final ModelResourceLocation MODEL_SAMTURRET_RAIL = ModelResourceLocation
-			.standalone(Ballistix.rl("block/samturretrail"));
-	public static final ModelResourceLocation MODEL_ESMTOWER = ModelResourceLocation
-			.standalone(Ballistix.rl("block/esmtower"));
-	public static final ModelResourceLocation MODEL_CIWSTURRET_BALLJOINT = ModelResourceLocation
-			.standalone(Ballistix.rl("block/ciwsturretballjoint"));
-	public static final ModelResourceLocation MODEL_CIWSTURRET_HEAD = ModelResourceLocation
-			.standalone(Ballistix.rl("block/ciwsturrethead"));
-	public static final ModelResourceLocation MODEL_CIWSTURRET_BARREL = ModelResourceLocation
-			.standalone(Ballistix.rl("block/ciwsturretbarrel"));
-	public static final ModelResourceLocation MODEL_LASERTURRET_BALLJOINT = ModelResourceLocation
-			.standalone(Ballistix.rl("block/laserturretballjoint"));
-	public static final ModelResourceLocation MODEL_LASERTURRET_HEAD = ModelResourceLocation
-			.standalone(Ballistix.rl("block/laserturrethead"));
-	public static final ModelResourceLocation MODEL_RAILGUNTURRET_BALLJOINT = ModelResourceLocation
-			.standalone(Ballistix.rl("block/railgunturretballjoint"));
-	public static final ModelResourceLocation MODEL_RAILGUNTURRET_HEAD = ModelResourceLocation
-			.standalone(Ballistix.rl("block/railgunturretgun"));
+	public static final ModelResourceLocation MODEL_AAMISSILE = ModelResourceLocation.standalone(Ballistix.rl("entity/aamissile"));
+	public static final ModelResourceLocation MODEL_SAMTURRET_BALLJOINT = ModelResourceLocation.standalone(Ballistix.rl("block/samturretballjoint"));
+	public static final ModelResourceLocation MODEL_SAMTURRET_RAIL = ModelResourceLocation.standalone(Ballistix.rl("block/samturretrail"));
+	public static final ModelResourceLocation MODEL_ESMTOWER = ModelResourceLocation.standalone(Ballistix.rl("block/esmtower"));
+	public static final ModelResourceLocation MODEL_CIWSTURRET_BALLJOINT = ModelResourceLocation.standalone(Ballistix.rl("block/ciwsturretballjoint"));
+	public static final ModelResourceLocation MODEL_CIWSTURRET_HEAD = ModelResourceLocation.standalone(Ballistix.rl("block/ciwsturrethead"));
+	public static final ModelResourceLocation MODEL_CIWSTURRET_BARREL = ModelResourceLocation.standalone(Ballistix.rl("block/ciwsturretbarrel"));
+	public static final ModelResourceLocation MODEL_LASERTURRET_BALLJOINT = ModelResourceLocation.standalone(Ballistix.rl("block/laserturretballjoint"));
+	public static final ModelResourceLocation MODEL_LASERTURRET_HEAD = ModelResourceLocation.standalone(Ballistix.rl("block/laserturrethead"));
+	public static final ModelResourceLocation MODEL_RAILGUNTURRET_BALLJOINT = ModelResourceLocation.standalone(Ballistix.rl("block/railgunturretballjoint"));
+	public static final ModelResourceLocation MODEL_RAILGUNTURRET_HEAD = ModelResourceLocation.standalone(Ballistix.rl("block/railgunturretgun"));
 
 	public static void setup() {
 		ItemProperties.register(BallistixItems.ITEM_TRACKER.get(), ANGLE_PREDICATE, (stack, level, entity, seed) -> {
@@ -132,18 +113,15 @@ public class ClientRegister {
 			} else if (sourceEntity instanceof ItemFrame itemFrameEntity) {
 				Direction direction = itemFrameEntity.getDirection();
 				int j = direction.getAxis().isVertical() ? 90 * direction.getAxisDirection().getStep() : 0;
-				angleOfSource = Mth
-						.wrapDegrees(180 + direction.get2DDataValue() * 90L + itemFrameEntity.getRotation() * 45L + j);
+				angleOfSource = Mth.wrapDegrees(180 + direction.get2DDataValue() * 90L + itemFrameEntity.getRotation() * 45L + j);
 			} else if (sourceEntity instanceof ItemEntity item) {
 				angleOfSource = 180.0F - item.getSpin(0.5F) / ((float) Math.PI * 2F) * 360.0F;
 			} else if (entity != null) {
 				angleOfSource = entity.yBodyRot;
 			}
 
-			double rawAngleToTarget = Math.atan2(target.z() - sourceEntity.getZ(), target.x() - sourceEntity.getX())
-					/ ((float) Math.PI * 2F);
-			double adjustedAngleToTarget = 0.5D
-					- (Mth.positiveModulo(angleOfSource / 360.0D, 1.0D) - 0.25D - rawAngleToTarget);
+			double rawAngleToTarget = Math.atan2(target.z() - sourceEntity.getZ(), target.x() - sourceEntity.getX()) / ((float) Math.PI * 2F);
+			double adjustedAngleToTarget = 0.5D - (Mth.positiveModulo(angleOfSource / 360.0D, 1.0D) - 0.25D - rawAngleToTarget);
 
 			return Mth.positiveModulo((float) adjustedAngleToTarget, 1.0F);
 			//
@@ -157,6 +135,9 @@ public class ClientRegister {
 		event.register(BallistixMenuTypes.CONTAINER_LAUNCHER_CONTROL_PANEL_T1.get(), ScreenLauncherControlPanelT1::new);
 		event.register(BallistixMenuTypes.CONTAINER_LAUNCHER_CONTROL_PANEL_T2.get(), ScreenLauncherControlPanelT2::new);
 		event.register(BallistixMenuTypes.CONTAINER_LAUNCHER_CONTROL_PANEL_T3.get(), ScreenLauncherControlPanelT3::new);
+		event.register(BallistixMenuTypes.CONTAINER_LAUNCHER_PLATFORM_T1.get(), ScreenLauncherPlatformT1::new);
+		event.register(BallistixMenuTypes.CONTAINER_LAUNCHER_PLATFORM_T2.get(), ScreenLauncherPlatformT2::new);
+		event.register(BallistixMenuTypes.CONTAINER_LAUNCHER_PLATFORM_T3.get(), ScreenLauncherPlatformT3::new);
 		event.register(BallistixMenuTypes.CONTAINER_SAMTURRET.get(), ScreenSAMTurret::new);
 		event.register(BallistixMenuTypes.CONTAINER_FIRECONTROLRADAR.get(), ScreenFireControlRadar::new);
 		event.register(BallistixMenuTypes.CONTAINER_SEARCHRADAR.get(), ScreenSearchRadar::new);
@@ -202,7 +183,9 @@ public class ClientRegister {
 		event.registerEntityRenderer(BallistixEntities.ENTITY_SAM.get(), RenderSAM::new);
 		event.registerEntityRenderer(BallistixEntities.ENTITY_BULLET.get(), RenderBullet::new);
 		event.registerEntityRenderer(BallistixEntities.ENTITY_RAILGUNROUND.get(), RenderRailgunRound::new);
-		event.registerBlockEntityRenderer(BallistixTiles.TILE_LAUNCHER_CONTROL_PANEL_TIER1.get(), RenderMissileSilo::new);
+		event.registerBlockEntityRenderer(BallistixTiles.TILE_LAUNCHER_PLATFORM_TIER1.get(), RenderLauncherPlatform::new);
+		event.registerBlockEntityRenderer(BallistixTiles.TILE_LAUNCHER_PLATFORM_TIER2.get(), RenderLauncherPlatform::new);
+		event.registerBlockEntityRenderer(BallistixTiles.TILE_LAUNCHER_PLATFORM_TIER3.get(), RenderLauncherPlatform::new);
 		event.registerBlockEntityRenderer(BallistixTiles.TILE_RADAR.get(), RenderRadar::new);
 		event.registerBlockEntityRenderer(BallistixTiles.TILE_FIRECONTROLRADAR.get(), RenderFireControlRadar::new);
 		event.registerBlockEntityRenderer(BallistixTiles.TILE_SAMTURRET.get(), RenderSAMTurret::new);

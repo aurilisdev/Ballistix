@@ -3,7 +3,6 @@ package ballistix.api.silo;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import ballistix.common.tile.TileLauncherControlPanelT1;
 import ballistix.registers.BallistixAttachmentTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -11,15 +10,14 @@ import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 public class SiloRegistry {
 
-	public static void registerSilo(int frequency, TileLauncherControlPanelT1 silo) {
-
+	public static void registerSilo(int frequency, ILauncherControlPanel silo) {
 		ServerLevel overworld = getOverworld();
 
 		HashMap<Integer, HashSet<BlockPos>> siloRegistry = overworld.getData(BallistixAttachmentTypes.SILO_FREQUENCIES);
 
 		HashSet<BlockPos> registered = siloRegistry.getOrDefault(frequency, new HashSet<>());
 
-		registered.add(silo.getBlockPos());
+		registered.add(silo.getPos());
 
 		siloRegistry.put(frequency, registered);
 
@@ -27,7 +25,7 @@ public class SiloRegistry {
 
 	}
 
-	public static void unregisterSilo(int frequency, TileLauncherControlPanelT1 silo) {
+	public static void unregisterSilo(int frequency, ILauncherControlPanel silo) {
 
 		ServerLevel overworld = getOverworld();
 
@@ -35,25 +33,24 @@ public class SiloRegistry {
 
 		HashSet<BlockPos> registered = siloRegistry.getOrDefault(frequency, new HashSet<>());
 
-		registered.remove(silo.getBlockPos());
+		registered.remove(silo.getPos());
 
 		siloRegistry.put(frequency, registered);
 
 		overworld.setData(BallistixAttachmentTypes.SILO_FREQUENCIES, siloRegistry);
-
 	}
 
-	public static HashSet<TileLauncherControlPanelT1> getSilos(int freq) {
+	public static HashSet<ILauncherControlPanel> getSilos(int freq) {
 
 		ServerLevel overworld = getOverworld();
 
 		HashMap<Integer, HashSet<BlockPos>> siloRegistry = overworld.getData(BallistixAttachmentTypes.SILO_FREQUENCIES);
 
-		HashSet<TileLauncherControlPanelT1> silos = new HashSet<>();
+		HashSet<ILauncherControlPanel> silos = new HashSet<>();
 
 		for (BlockPos pos : siloRegistry.getOrDefault(freq, new HashSet<>())) {
 
-			if (overworld.getBlockEntity(pos) instanceof TileLauncherControlPanelT1 silo) {
+			if (overworld.getBlockEntity(pos) instanceof ILauncherControlPanel silo) {
 				silos.add(silo);
 			}
 

@@ -20,8 +20,7 @@ public class ContainerLauncherControlPanelT1 extends GenericContainerBlockEntity
 	}
 
 	@Override
-	public void addInventorySlots(Container inv, Inventory playerinv) {
-		setPlayerInvOffset(20);
+	public void addInventorySlots(Container arg0, Inventory arg1) {
 	}
 
 }

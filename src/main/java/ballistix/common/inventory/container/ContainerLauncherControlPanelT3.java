@@ -25,5 +25,4 @@ public class ContainerLauncherControlPanelT3 extends GenericContainerBlockEntity
 		setPlayerInvOffset(20);
 		addSlot(new SlotGeneric(inv, nextIndex(), 90, 70));
 	}
-
 }

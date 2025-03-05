@@ -3,25 +3,25 @@
   "category": "misc",
   "key": {
     "C": {
-      "tag": "c:circuits/elite"
+      "tag": "c:circuits/basic"
     },
     "G": {
       "tag": "c:gunpowders"
     },
-    "M": {
-      "item": "ballistix:missilemediumrange"
+    "I": {
+      "tag": "c:ingots/steel"
     },
     "P": {
       "tag": "c:plates/steel"
     }
   },
   "pattern": [
-    " C ",
-    "PGP",
-    "PMP"
+    " P ",
+    "ICI",
+    "IGI"
   ],
   "result": {
     "count": 1,
-    "id": "ballistix:missilelongrange"
+    "id": "ballistix:missiletier1"
   }
 }

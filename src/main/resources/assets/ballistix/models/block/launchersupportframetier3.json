@@ -2,6 +2,7 @@
 	"credit": "aurilisdev",
 	"texture_size": [32, 32],
 	"parent": "block/cube_all",
+	"ambientocclusion": "false",
 	"textures": {
 		"2": "ballistix:block/model/supportframetier3",
 		"particle": "ballistix:block/model/supportframetier3"

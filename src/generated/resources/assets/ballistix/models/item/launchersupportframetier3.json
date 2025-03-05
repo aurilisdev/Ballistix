@@ -1,3 +1,22 @@
 {
-  "parent": "ballistix:block/launchersupportframetier3"
+  "parent": "ballistix:block/launchersupportframetier3",
+  "display": {
+    "gui": {
+      "rotation": [
+        30,
+        225,
+        0
+      ],
+      "scale": [
+        0.45,
+        0.45,
+        0.45
+      ],
+      "translation": [
+        0,
+        -3.2,
+        0
+      ]
+    }
+  }
 }

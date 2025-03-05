@@ -4,9 +4,10 @@ import java.util.Random;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import ballistix.api.silo.ILauncherPlatform;
 import ballistix.common.item.ItemMissile;
-import ballistix.common.tile.TileLauncherControlPanelT1;
 import electrodynamics.client.render.tile.AbstractTileRenderer;
+import electrodynamics.prefab.tile.GenericTile;
 import electrodynamics.prefab.tile.components.IComponentType;
 import electrodynamics.prefab.tile.components.type.ComponentInventory;
 import net.minecraft.client.Minecraft;
@@ -17,14 +18,14 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 
-public class RenderMissileSilo extends AbstractTileRenderer<TileLauncherControlPanelT1> {
+public class RenderLauncherPlatform<T extends GenericTile & ILauncherPlatform> extends AbstractTileRenderer<T> {
 
-	public RenderMissileSilo(BlockEntityRendererProvider.Context context) {
+	public RenderLauncherPlatform(BlockEntityRendererProvider.Context context) {
 		super(context);
 	}
 
 	@Override
-	public void render(TileLauncherControlPanelT1 tileEntityIn, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+	public void render(T tileEntityIn, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 
 		ItemStack stack = tileEntityIn.<ComponentInventory>getComponent(IComponentType.Inventory).getItem(0);
 
@@ -34,7 +35,7 @@ public class RenderMissileSilo extends AbstractTileRenderer<TileLauncherControlP
 
 		int type = ((ItemMissile) stack.getItem()).missile.ordinal();
 
-		if(type == -1) {
+		if (type == -1) {
 			return;
 		}
 
@@ -42,7 +43,7 @@ public class RenderMissileSilo extends AbstractTileRenderer<TileLauncherControlP
 
 		BakedModel model;
 
-		if(type == 0) {
+		if (type == 0) {
 
 			model = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILECLOSERANGE);
 			matrixStackIn.translate(0.5f, 0.8f, 0.5f);
@@ -68,7 +69,7 @@ public class RenderMissileSilo extends AbstractTileRenderer<TileLauncherControlP
 	}
 
 	@Override
-	public AABB getRenderBoundingBox(TileLauncherControlPanelT1 blockEntity) {
+	public AABB getRenderBoundingBox(T blockEntity) {
 		return super.getRenderBoundingBox(blockEntity).inflate(10);
 	}
 }

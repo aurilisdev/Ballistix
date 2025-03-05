@@ -26,8 +26,8 @@ public class ContainerLauncherPlatformT1 extends GenericContainerBlockEntity<Til
 	@Override
 	public void addInventorySlots(Container inv, Inventory playerinv) {
 		setPlayerInvOffset(20);
-		addSlot(new SlotGeneric(ScreenComponentSlot.SlotType.NORMAL, BallistixIconTypes.MISSILE_DARK, inv, nextIndex(), 90, 20).setIOColor(new Color(0, 240, 255, 255)));
-		addSlot(new SlotGeneric(ScreenComponentSlot.SlotType.NORMAL, BallistixIconTypes.EXPLOSIVE_DARK, inv, nextIndex(), 90, 41).setIOColor(new Color(0, 240, 255, 255)));
+		addSlot(new SlotGeneric(ScreenComponentSlot.SlotType.NORMAL, BallistixIconTypes.MISSILE_DARK, inv, nextIndex(), 80, 30).setIOColor(new Color(0, 240, 255, 255)));
+		addSlot(new SlotGeneric(ScreenComponentSlot.SlotType.NORMAL, BallistixIconTypes.EXPLOSIVE_DARK, inv, nextIndex(), 80, 51).setIOColor(new Color(0, 240, 255, 255)));
 	}
 
 }

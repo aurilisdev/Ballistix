@@ -72,7 +72,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 		super(type, pos, state);
 		int tier = getTier();
 		addComponent(new ComponentTickable(this).tickServer(this::tickServer));
-		addComponent(new ComponentElectrodynamic(this, false, true).voltage(120 * tier).maxJoules(Constants.MISSILESILO_USAGE * 20 * tier).setInputDirections(BlockEntityUtils.MachineDirection.values()));
+		addComponent(new ComponentElectrodynamic(this, false, true).voltage(120 * Math.pow(2, tier - 1)).maxJoules(Constants.MISSILESILO_USAGE * 20 * tier).setInputDirections(BlockEntityUtils.MachineDirection.values()));
 		if (tier == 3) {
 			addComponent(new ComponentInventory(this, InventoryBuilder.newInv().inputs(1)).setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).setDirectionsBySlot(1, BlockEntityUtils.MachineDirection.values()).valid(this::isItemValidForSlot));
 		} else {
@@ -113,7 +113,11 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 		if (!launcherPlatform.valid()) {
 			return;
 		}
-		ILauncherPlatform platform = launcherPlatform.<ILauncherPlatform>getSafe();
+		ILauncherPlatform platform = launcherPlatform.getSafe();
+
+		if (platform == null) { // Should really update the cachedtileoutput so this cant occur. As of before the getsafe, the platform wasnt null, but as it was removed inworld, the output made it null and returns a null on getsafe.
+			return;
+		}
 
 		if (!platform.hasExplosive() || (!hasRedstone && !shouldLaunch)) {
 			return;

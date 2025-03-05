@@ -35,8 +35,6 @@ public class ScreenLauncherControlPanelT1 extends GenericScreen<ContainerLaunche
 	public ScreenLauncherControlPanelT1(ContainerLauncherControlPanelT1 container, Inventory playerInventory, Component title) {
 		super(container, playerInventory, title);
 
-		imageHeight += 20;
-		inventoryLabelY += 20;
 
 		addComponent(new ScreenComponentElectricInfo(this::getElectricInformation, -AbstractScreenComponentInfo.SIZE + 1, 2).wattage(Constants.MISSILESILO_USAGE * 20));
 

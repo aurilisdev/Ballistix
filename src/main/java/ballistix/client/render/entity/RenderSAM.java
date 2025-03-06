@@ -30,13 +30,14 @@ public class RenderSAM extends EntityRenderer<EntitySAM> {
 
         Level world = entity.level();
 
-        if(entity.rotation.length() <= 0) {
+        if(entity.getDeltaMovement().length() <= 0) {
             return;
         }
 
         matrixStackIn.pushPose();
 
-        matrixStackIn.mulPose(MathUtils.rotQuaternionDeg(0, (-entity.getYRot()) - 180, 90 - entity.getXRot()));
+        matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(entity.getYRot() + 90.0F, MathUtils.YP));
+        matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(90 - entity.getXRot(), MathUtils.ZP));
 
         BakedModel model = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_AAMISSILE);
 

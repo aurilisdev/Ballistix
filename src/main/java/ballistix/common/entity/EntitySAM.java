@@ -5,7 +5,6 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import ballistix.common.tile.turret.antimissile.TileTurretSAM;
-import org.joml.Vector3f;
 
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualProjectile;
@@ -30,11 +29,9 @@ public class EntitySAM extends Entity {
 
     private static final float RAD2DEG = (float) (180.0F / Math.PI);
 
-    private static final EntityDataAccessor<Vector3f> ROTATION = SynchedEntityData.defineId(EntitySAM.class, EntityDataSerializers.VECTOR3);
     private static final EntityDataAccessor<Float> SPEED = SynchedEntityData.defineId(EntitySAM.class, EntityDataSerializers.FLOAT);
 
 
-    public Vector3f rotation = new Vector3f(0, 0, 0);
     @Nullable
     public UUID id;
     public float speed = 0.0F;
@@ -85,23 +82,20 @@ public class EntitySAM extends Entity {
                 speed = sam.speed;
             }
 
-            rotation = sam.rotation;
             setDeltaMovement(sam.deltaMovement);
 
         }
 
         if (isServer) {
             entityData.set(SPEED, speed);
-            entityData.set(ROTATION, rotation);
         } else {
             speed = entityData.get(SPEED);
-            rotation = entityData.get(ROTATION);
         }
 
         setPos(new Vec3(getX() + getDeltaMovement().x * speed, getY() + getDeltaMovement().y * speed, getZ() + getDeltaMovement().z * speed));
 
-        setYRot((float) Math.atan2(rotation.z, rotation.x) * RAD2DEG);
-        setXRot((float) (Math.asin(rotation.y) * RAD2DEG));
+        setXRot((float) (Math.atan(getDeltaMovement().y() / Math.sqrt(getDeltaMovement().x() * getDeltaMovement().x() + getDeltaMovement().z() * getDeltaMovement().z())) * RAD2DEG));
+        setYRot((float) (Math.atan2(getDeltaMovement().x(), getDeltaMovement().z()) * RAD2DEG));
 
         if(speed < TileTurretSAM.MAX_SPEED) {
             speed += 0.02F;
@@ -112,13 +106,11 @@ public class EntitySAM extends Entity {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(SPEED, 0.0F);
-        builder.define(ROTATION, new Vector3f(0, 0, 0));
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
         UUIDUtil.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("id")).ifSuccess(pair -> id = pair.getFirst());
-        rotation = new Vector3f(compound.getFloat("xrot"), compound.getFloat("yrot"), compound.getFloat("zrot"));
         compound.putFloat("speed", speed);
     }
 
@@ -130,9 +122,6 @@ public class EntitySAM extends Entity {
         if (id != null) {
             UUIDUtil.CODEC.encode(id, NbtOps.INSTANCE, new CompoundTag()).ifSuccess(tag -> compound.put("id", tag));
         }
-        compound.putFloat("xrot", rotation.x);
-        compound.putFloat("yrot", rotation.y);
-        compound.putFloat("zrot", rotation.z);
         speed = compound.getFloat("speed");
     }
 

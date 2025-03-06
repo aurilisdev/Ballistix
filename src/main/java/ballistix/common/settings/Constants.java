@@ -75,12 +75,12 @@ public class Constants {
 
 	@DoubleValue(def = 10000, comment = "Usage in watt for radar")
 	public static double RADAR_USAGE = 10000;
-	@DoubleValue(def = 600)
+	@IntValue(def = 600)
 	public static int RADAR_RANGE = 600;
 
 	@DoubleValue(def = 10000, comment = "Usage in watt for fire control radar")
 	public static double FIRE_CONTROL_RADAR_USAGE = 10000;
-	@DoubleValue(def = 550)
+	@IntValue(def = 550)
 	public static int FIRE_CONTROL_RADAR_RANGE = 550;
 	@DoubleValue(def = 32.0, comment = "How far a turret can be from a fire control radar")
 	public static double MAX_DISTANCE_FROM_RADAR = 32.0;
@@ -93,10 +93,10 @@ public class Constants {
 	public static double SAM_TURRET_ROTATIONSPEEDRADIANS = 0.2;
 	@IntValue(def = 100)
 	public static int SAM_TURRET_COOLDOWN = 100;
-	@DoubleValue(def = 0.02)
-	public static double SAM_INNACCURACY = 0.02;
-	@DoubleValue(def = 0.01)
-	public static final double SAM_ENTITY_TURNINGSPEEDRADIANS = 0.01;
+	@DoubleValue(def = 0.1)
+	public static double SAM_MK1_ENTITY_TURNINGSPEEDRADIANS = 0.1;
+	@DoubleValue(def = 0.5)
+	public static double SAM_MK1_CHANCE_TO_DESTROY = 0.5;
 
 	@DoubleValue(def = 1000)
 	public static double CIWS_TURRET_USAGEPERTICK = 1000;
@@ -142,10 +142,16 @@ public class Constants {
 	public static int LAUNCHER_PLATFORM_RANGE_T2 = 3000;
 	@IntValue(def = 10000)
 	public static int LAUNCHER_PLATFORM_RANGE_T3 = 10000;
+
+	@DoubleValue(def = 0.05)
+	public static double SAM_MK2_ENTITY_TURNINGSPEEDRADIANS = 0.05;
+	@DoubleValue(def = 0.8)
+	public static double SAM_MK2_CHANCE_TO_DESTROY = 0.8;
+
 	@BooleanValue(def = true, comment = "Whether explosions will be cached; may use a lot of memory!")
 	public static boolean SHOULD_CACHE_EXPLOSIONS = true;
 
-	@IntValue(def = 1000)
+	@DoubleValue(def = 1000)
 	public static double LASER_DESIGNATOR_RANGE = 1000;
 
 }

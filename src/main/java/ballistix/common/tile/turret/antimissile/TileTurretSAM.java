@@ -1,9 +1,5 @@
 package ballistix.common.tile.turret.antimissile;
 
-import org.joml.Vector3f;
-
-import com.mojang.datafixers.util.Pair;
-
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualProjectile;
 import ballistix.common.inventory.container.ContainerSAMTurret;
@@ -34,7 +30,7 @@ public class TileTurretSAM extends TileTurretAntimissileProjectile {
     public static final float MAX_SPEED = 3.0F;
 
     public TileTurretSAM(BlockPos worldPos, BlockState blockState) {
-        super(BallistixTiles.TILE_SAMTURRET.get(), worldPos, blockState, Constants.SAM_TURRET_BASE_RANGE, 100, Constants.SAM_TURRET_USAGEPERTICK, Constants.SAM_TURRET_ROTATIONSPEEDRADIANS, Constants.SAM_INNACCURACY);
+        super(BallistixTiles.TILE_SAMTURRET.get(), worldPos, blockState, Constants.SAM_TURRET_BASE_RANGE, 100, Constants.SAM_TURRET_USAGEPERTICK, Constants.SAM_TURRET_ROTATIONSPEEDRADIANS, 1);
     }
 
     @Override
@@ -82,11 +78,11 @@ public class TileTurretSAM extends TileTurretAntimissileProjectile {
 
         outOfAmmo.set(false);
 
-        Pair<Vec3, Vec3> projectileVals = getProjectileTrajectoryFromInaccuracy(inaccuracy, baseRange, inaccuracyMultiplier.get(), getProjectileLaunchPosition(), getTargetPosition(getTarget(ticks)));
+        //Pair<Vec3, Vec3> projectileVals = getProjectileTrajectoryFromInaccuracy(inaccuracy, baseRange, inaccuracyMultiplier.get(), getProjectileLaunchPosition(), getTargetPosition(getTarget(ticks)));
 
-        Vec3 rotvec = projectileVals.getSecond();
+        Vec3 rotvec = desiredRotation.get();
 
-        VirtualProjectile.VirtualSAM sam = new VirtualProjectile.VirtualSAM(0.0F, getProjectileLaunchPosition(), projectileVals.getFirst(), currentRange.get().floatValue(), new Vector3f((float) rotvec.x, (float) rotvec.y, (float) rotvec.z), boundFireControl.get());
+        VirtualProjectile.VirtualSAM sam = new VirtualProjectile.VirtualSAM(0.0F, getProjectileLaunchPosition(), targetMovement.get(), currentRange.get().floatValue(), boundFireControl.get());
 
         MissileManager.addSAM(level.dimension(), sam);
 

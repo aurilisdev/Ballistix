@@ -37,7 +37,7 @@ public abstract class TileTurretAntimissileProjectile extends TileTurretAntimiss
     // speed in units of ticks
     public abstract float getProjectileSpeed();
 
-    public static Pair<Vec3, Vec3> getProjectileTrajectoryFromInaccuracy(double inaccuracy, double baseRange, double inaccuracyMultiplier, Vec3 launchPos, Vec3 interceptionPos) {
+    public Vec3 getProjectileTrajectoryFromInaccuracy(double inaccuracy, double baseRange, double inaccuracyMultiplier, Vec3 launchPos, Vec3 interceptionPos) {
 
         double distanceToTarget = TileFireControlRadar.getDistanceToMissile(launchPos, interceptionPos);
 
@@ -68,17 +68,7 @@ public abstract class TileTurretAntimissileProjectile extends TileTurretAntimiss
 
         }
 
-        double sumXZ = deltaX * deltaX + deltaZ * deltaZ;
-
-        double magXZ = Math.sqrt(sumXZ);
-
-        if (magXZ <= 0) {
-            magXZ = 1;
-        }
-
-        double thetaY = Math.atan(deltaY / magXZ);
-
-        return Pair.of(new Vec3(deltaX, deltaY, deltaZ).normalize(), new Vec3(deltaX / magXZ, Math.sin(thetaY), deltaZ / magXZ));
+        return new Vec3(deltaX, deltaY, deltaZ).normalize();
 
     }
 

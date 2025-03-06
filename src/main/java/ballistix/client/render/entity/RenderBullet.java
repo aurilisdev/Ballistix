@@ -20,6 +20,7 @@ import net.minecraft.world.phys.AABB;
 public class RenderBullet extends EntityRenderer<EntityBullet> {
 
     private static final Color COLOR = new Color(181, 166, 66, 255);
+    private static final AABB BOX = new AABB(0, 0, 0, 0.0625, 0.0625, 0.0625);
 
     public RenderBullet(EntityRendererProvider.Context context) {
         super(context);
@@ -29,7 +30,7 @@ public class RenderBullet extends EntityRenderer<EntityBullet> {
     public void render(EntityBullet entity, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
 
 
-        if (entity.rotation.length() <= 0) {
+        if (entity.getDeltaMovement().length() <= 0) {
             return;
         }
 
@@ -37,9 +38,10 @@ public class RenderBullet extends EntityRenderer<EntityBullet> {
 
         matrixStackIn.pushPose();
 
-        matrixStackIn.mulPose(MathUtils.rotQuaternionDeg(0, (-entity.getYRot()) - 180, 90 - entity.getXRot()));
+        matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(entity.getYRot() + 90.0F, MathUtils.YP));
+        matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(90 - entity.getXRot(), MathUtils.ZP));
 
-        RenderingUtils.renderFilledBoxNoOverlay(matrixStackIn, bufferIn.getBuffer(RenderType.solid()), new AABB(0, 0, 0, 0.0625, 0.0625, 0.0625), COLOR.rFloat(), COLOR.gFloat(), COLOR.bFloat(), COLOR.aFloat(), sprite.getU0(), sprite.getV0(), sprite.getU1(), sprite.getV1(), packedLightIn, RenderingUtils.ALL_FACES);
+        RenderingUtils.renderFilledBoxNoOverlay(matrixStackIn, bufferIn.getBuffer(RenderType.solid()), BOX, COLOR.rFloat(), COLOR.gFloat(), COLOR.bFloat(), COLOR.aFloat(), sprite.getU0(), sprite.getV0(), sprite.getU1(), sprite.getV1(), packedLightIn, RenderingUtils.ALL_FACES);
 
         matrixStackIn.popPose();
     }

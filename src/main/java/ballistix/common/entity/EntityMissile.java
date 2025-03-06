@@ -30,20 +30,13 @@ import net.minecraft.world.phys.Vec3;
 
 public class EntityMissile extends Entity {
 
-    private static final EntityDataAccessor<Integer> MISSILE_TYPE = SynchedEntityData.defineId(EntityMissile.class,
-            EntityDataSerializers.INT);
-    private static final EntityDataAccessor<BlockPos> TARGET = SynchedEntityData.defineId(EntityMissile.class,
-            EntityDataSerializers.BLOCK_POS);
-    private static final EntityDataAccessor<Float> SPEED = SynchedEntityData.defineId(EntityMissile.class,
-            EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> START_X = SynchedEntityData.defineId(EntityMissile.class,
-            EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> START_Z = SynchedEntityData.defineId(EntityMissile.class,
-            EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Boolean> IS_ITEM = SynchedEntityData.defineId(EntityMissile.class,
-            EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> CURRENTLYEXPLODING = SynchedEntityData
-            .defineId(EntityMissile.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> MISSILE_TYPE = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<BlockPos> TARGET = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.BLOCK_POS);
+    private static final EntityDataAccessor<Float> SPEED = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> START_X = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> START_Z = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Boolean> IS_ITEM = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> CURRENTLYEXPLODING = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.BOOLEAN);
 
     public int missileType = -1;
     public float speed = 0.0F;
@@ -137,9 +130,7 @@ public class EntityMissile extends Entity {
 
         if (getDeltaMovement().length() > 0) {
 
-            setXRot((float) (Math.atan(getDeltaMovement().y() / Math.sqrt(
-                    getDeltaMovement().x() * getDeltaMovement().x() + getDeltaMovement().z() * getDeltaMovement().z()))
-                    * 180.0D / Math.PI));
+            setXRot((float) (Math.atan(getDeltaMovement().y() / Math.sqrt(getDeltaMovement().x() * getDeltaMovement().x() + getDeltaMovement().z() * getDeltaMovement().z())) * 180.0D / Math.PI));
             setYRot((float) (Math.atan2(getDeltaMovement().x(), getDeltaMovement().z()) * 180.0D / Math.PI));
 
         }
@@ -209,6 +200,7 @@ public class EntityMissile extends Entity {
                         phi = (float) Math.asin(Mth.clamp((initialDistance - distanceTraveled) / turnRadius, 0, 1));
                         signY = -1;
 
+
                     } else {
 
                         phi = (float) (Math.PI / 2.0);
@@ -230,8 +222,7 @@ public class EntityMissile extends Entity {
 
         }
 
-        Vec3 vec = new Vec3(getX() + speed * getDeltaMovement().x, getY() + speed * getDeltaMovement().y,
-                getZ() + speed * getDeltaMovement().z);
+        Vec3 vec = new Vec3(getX() + speed * getDeltaMovement().x, getY() + speed * getDeltaMovement().y, getZ() + speed * getDeltaMovement().z);
 
         setPos(vec);
 
@@ -255,10 +246,7 @@ public class EntityMissile extends Entity {
         y -= motionY;
         z -= motionZ;
         for (int i = 0; i < 4; i++) {
-            Minecraft.getInstance().particleEngine.createParticle(new ParticleOptionsMissileSmoke().setParameters(1, 1, 1, 0.3f * (missileType + 1), 50, true), x, y, z,
-                    -motionX * (0.4 + 0.2 * Electrodynamics.RANDOM.nextDouble()),
-                    -motionY * (0.4 + 0.2 * Electrodynamics.RANDOM.nextDouble()),
-                    -motionZ * (0.4 + 0.2 * Electrodynamics.RANDOM.nextDouble()));
+            Minecraft.getInstance().particleEngine.createParticle(new ParticleOptionsMissileSmoke().setParameters(1, 1, 1, 0.3f * (missileType + 1), 50, true), x, y, z, -motionX * (0.4 + 0.2 * Electrodynamics.RANDOM.nextDouble()), -motionY * (0.4 + 0.2 * Electrodynamics.RANDOM.nextDouble()), -motionZ * (0.4 + 0.2 * Electrodynamics.RANDOM.nextDouble()));
 
         }
 
@@ -271,8 +259,7 @@ public class EntityMissile extends Entity {
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compound) {
-        if (level() instanceof ServerLevel server
-                && (!server.isPositionEntityTicking(blockPosition()) || !server.hasChunkAt(blockPosition()))) {
+        if (level() instanceof ServerLevel server && (!server.isPositionEntityTicking(blockPosition()) || !server.hasChunkAt(blockPosition()))) {
             setRemoved(RemovalReason.DISCARDED);
         }
         compound.putInt("range", missileType);
@@ -289,8 +276,7 @@ public class EntityMissile extends Entity {
     protected void readAdditionalSaveData(CompoundTag compound) {
         missileType = compound.getInt("range");
         UUIDUtil.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("id")).ifSuccess(pair -> id = pair.getFirst());
-        BlockPos.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("target"))
-                .ifSuccess(pair -> target = pair.getFirst());
+        BlockPos.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("target")).ifSuccess(pair -> target = pair.getFirst());
         startX = compound.getFloat("startx");
         startZ = compound.getFloat("startz");
         isItem = compound.getBoolean("isitem");
@@ -317,8 +303,7 @@ public class EntityMissile extends Entity {
         if (!level().isClientSide) {
             if (id != null) {
                 VirtualMissile missile = MissileManager.getMissile(level().dimension(), id);
-                if (missile != null)
-                    missile.setSpawned(false, -1);
+                if (missile != null) missile.setSpawned(false, -1);
             }
         }
         super.remove(reason);

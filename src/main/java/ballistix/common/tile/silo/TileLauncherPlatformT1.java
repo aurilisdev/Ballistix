@@ -1,4 +1,6 @@
-package ballistix.common.tile;
+package ballistix.common.tile.silo;
+
+import java.util.Random;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -6,6 +8,7 @@ import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.api.silo.ILauncherControlPanel;
 import ballistix.api.silo.ILauncherPlatform;
+import ballistix.api.silo.ILauncherSupportFrame;
 import ballistix.common.block.BlockExplosive;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.inventory.container.ContainerLauncherPlatformT1;
@@ -15,6 +18,7 @@ import ballistix.common.item.ItemMissile;
 import ballistix.common.settings.Constants;
 import ballistix.registers.BallistixSounds;
 import ballistix.registers.BallistixTiles;
+import electrodynamics.Electrodynamics;
 import electrodynamics.api.multiblock.subnodebased.parent.IMultiblockParentBlock;
 import electrodynamics.api.multiblock.subnodebased.parent.IMultiblockParentTile;
 import electrodynamics.common.blockitem.types.BlockItemDescriptable;
@@ -81,46 +85,78 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 		return 1;
 	}
 
+	private static BlockPos addRandomVector(BlockPos pos, double accuracy) {
+		Random random = Electrodynamics.RANDOM;
+
+		// Generate a random length from 0 to accuracy
+		double length = accuracy * random.nextDouble();
+
+		// Generate a random angle
+		double angle = random.nextDouble() * 2 * Math.PI;
+
+		// Calculate the x and y offsets using the random length and angle
+		int offsetX = (int) (length * Math.cos(angle));
+		int offsetY = (int) (length * Math.sin(angle));
+
+		// Create a new BlockPos with the modified x and y, keeping z unchanged
+		return new BlockPos(pos.getX() + offsetX, pos.getY(), pos.getZ() + offsetY);
+	}
+
 	@Override
-	public void launch(ILauncherControlPanel controlPanel) {
+	public boolean launch(ILauncherControlPanel controlPanel) {
 		ComponentInventory inv = getComponent(IComponentType.Inventory);
 		ItemStack explosive = inv.getItem(EXPLOSIVE_SLOT);
 		ItemStack mis = inv.getItem(MISSILE_SLOT);
+		if (mis.getItem() instanceof ItemMissile itmissile && explosive.getItem() instanceof BlockItemDescriptable desc && desc.getBlock() instanceof BlockExplosive blexplosive) {
+			if (blexplosive.explosive.tier > itmissile.missile.tier || itmissile.missile.tier > getTier() || blexplosive.explosive.tier > getTier()) {
+				return false;
+			}
 
-		int ordinal = ((ItemMissile) mis.getItem()).missile.ordinal();
+			int accuracy = 45;
+			if (level.getBlockEntity(worldPosition.relative(getFacing().getOpposite())) instanceof ILauncherSupportFrame frame) {
+				accuracy = frame.getInaccuracy();
+			} else if (level.getBlockEntity(worldPosition.relative(getFacing())) instanceof ILauncherSupportFrame frame) {
+				accuracy = frame.getInaccuracy();
+			}
+			int ordinal = ((ItemMissile) mis.getItem()).missile.ordinal();
 
-		VirtualMissile missile = new VirtualMissile(
-				//
-				new Vec3(getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5),
-				//
-				new Vec3(0, 1, 0),
-				//
-				0.0F,
-				//
-				false,
-				//
-				getBlockPos().getX() + 0.5F,
-				//
-				getBlockPos().getZ() + 0.5F,
-				//
-				controlPanel.getTarget(),
-				//
-				ordinal,
-				//
-				((BlockExplosive) ((BlockItemDescriptable) explosive.getItem()).getBlock()).explosive.ordinal(),
-				//
-				false,
-				//
-				controlPanel.getFrequency()
-		//
-		);
+			BlockPos fixedTarget = addRandomVector(controlPanel.getTarget(), accuracy);
 
-		MissileManager.addMissile(level.dimension(), missile);
+			VirtualMissile missile = new VirtualMissile(
+					//
+					new Vec3(getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5),
+					//
+					new Vec3(0, 1, 0),
+					//
+					0.0F,
+					//
+					false,
+					//
+					getBlockPos().getX() + 0.5F,
+					//
+					getBlockPos().getZ() + 0.5F,
+					//
+					fixedTarget,
+					//
+					ordinal,
+					//
+					blexplosive.explosive.ordinal(),
+					//
+					false,
+					//
+					controlPanel.getFrequency()
+			//
+			);
 
-		inv.removeItem(MISSILE_SLOT, 1);
-		inv.removeItem(EXPLOSIVE_SLOT, 1);
+			MissileManager.addMissile(level.dimension(), missile);
 
-		level.playSound(null, getBlockPos(), BallistixSounds.SOUND_MISSILE_SILO.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+			inv.removeItem(MISSILE_SLOT, 1);
+			inv.removeItem(EXPLOSIVE_SLOT, 1);
+
+			level.playSound(null, getBlockPos(), BallistixSounds.SOUND_MISSILE_SILO.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+			return true;
+		}
+		return false;
 
 	}
 

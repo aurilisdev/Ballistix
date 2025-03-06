@@ -1,14 +1,14 @@
 {
-  "parent": "ballistix:entity/missilecloserange",
+	"parent": "ballistix:entity/missiles/missiletier1",
    "display": {
         "gui": {
             "rotation": [ 30, 225, 37 ],
-            "translation": [ -3, 1.5, 0],
-            "scale":[ 0.4, 0.4, 0.4 ]
+            "translation": [ -4, 2, 0],
+            "scale":[ 0.32, 0.32, 0.32 ]
         },
         "ground": {
             "rotation": [ 0, 0, 0 ],
-            "translation": [ 4, 8, 4],
+            "translation": [ 4, 4, 4],
             "scale":[ 0.5, 0.5, 0.5 ]
         },
         "fixed": {

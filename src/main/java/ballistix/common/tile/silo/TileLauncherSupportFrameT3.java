@@ -1,4 +1,4 @@
-package ballistix.common.tile;
+package ballistix.common.tile.silo;
 
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.registers.BallistixTiles;
@@ -14,5 +14,10 @@ public class TileLauncherSupportFrameT3 extends TileLauncherSupportFrameT1 {
 	@Override
 	public IMultiblockParentBlock.SubnodeWrapper getSubNodes() {
 		return SubtypeBallistixMachine.Subnodes.LAUNCHER_SUPPORT_FRAME_TIER3;
+	}
+
+	@Override
+	public int getInaccuracy() {
+		return 0;
 	}
 }

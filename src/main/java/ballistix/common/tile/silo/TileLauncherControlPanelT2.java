@@ -1,4 +1,4 @@
-package ballistix.common.tile;
+package ballistix.common.tile.silo;
 
 import ballistix.registers.BallistixTiles;
 import net.minecraft.core.BlockPos;

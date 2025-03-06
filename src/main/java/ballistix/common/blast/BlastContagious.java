@@ -8,6 +8,7 @@ import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixDamageTypes;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.sounds.SoundEvents;
@@ -57,8 +58,8 @@ public class BlastContagious extends Blast {
 							default -> true;
 						};
 
-						if (add && x * x + y * y + z * z < radius * radius && world.random.nextDouble() < 1 / 20.0) {
-							world.addParticle(new DustParticleOptions(new Vector3f(0.5f, 0.4f, 0), 5), xPos, yPos , zPos, 0.0D, 0.0D, 0.0D);
+						if (add && x * x + y * y + z * z < radius * radius && world.random.nextDouble() < 1 / 10.0) {
+							Minecraft.getInstance().particleEngine.createParticle(new DustParticleOptions(new Vector3f(0.5f, 0.4f, 0), 5), xPos, yPos , zPos, 0.0D, 0.0D, 0.0D);
 						}
 					}
 				}

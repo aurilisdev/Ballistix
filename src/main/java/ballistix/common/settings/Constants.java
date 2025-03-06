@@ -144,6 +144,6 @@ public class Constants {
 	public static boolean SHOULD_CACHE_EXPLOSIONS = true;
 
 	@IntValue(def = 1000)
-	public static double LASER_DESIGNATOR_RANGE = 1000;
+	public static int LASER_DESIGNATOR_RANGE = 1000;
 
 }

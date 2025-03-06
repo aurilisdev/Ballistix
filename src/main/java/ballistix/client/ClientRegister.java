@@ -76,9 +76,9 @@ public class ClientRegister {
 
 	public static final ModelResourceLocation MODEL_RADARDISH = ModelResourceLocation.standalone(Ballistix.rl("block/radardish"));
 	public static final ModelResourceLocation MODEL_FIRECONTROLRADARDISH = ModelResourceLocation.standalone(Ballistix.rl("block/firecontrolradardish"));
-	public static final ModelResourceLocation MODEL_MISSILECLOSERANGE = ModelResourceLocation.standalone(Ballistix.rl("entity/missilecloserange"));
-	public static final ModelResourceLocation MODEL_MISSILEMEDIUMRANGE = ModelResourceLocation.standalone(Ballistix.rl("entity/missilemediumrange"));
-	public static final ModelResourceLocation MODEL_MISSILELONGRANGE = ModelResourceLocation.standalone(Ballistix.rl("entity/missilelongrange"));
+	public static final ModelResourceLocation MODEL_MISSILETIER1 = ModelResourceLocation.standalone(Ballistix.rl("entity/missiles/missiletier1"));
+	public static final ModelResourceLocation MODEL_MISSILETIER2 = ModelResourceLocation.standalone(Ballistix.rl("entity/missiles/missiletier2"));
+	public static final ModelResourceLocation MODEL_MISSILETIER3 = ModelResourceLocation.standalone(Ballistix.rl("entity/missiles/missiletier3"));
 	public static final ModelResourceLocation MODEL_DARKMATTERSPHERE = ModelResourceLocation.standalone(Ballistix.rl("entity/darkmattersphere"));
 	public static final ModelResourceLocation MODEL_DARKMATTERDISK = ModelResourceLocation.standalone(Ballistix.rl("entity/darkmatterdisk"));
 	public static final ModelResourceLocation MODEL_FIREBALL = ModelResourceLocation.standalone(Ballistix.rl("entity/explosionsphere"));
@@ -151,9 +151,9 @@ public class ClientRegister {
 	public static void onModelEvent(ModelEvent.RegisterAdditional event) {
 		event.register(MODEL_RADARDISH);
 		event.register(MODEL_FIRECONTROLRADARDISH);
-		event.register(MODEL_MISSILECLOSERANGE);
-		event.register(MODEL_MISSILEMEDIUMRANGE);
-		event.register(MODEL_MISSILELONGRANGE);
+		event.register(MODEL_MISSILETIER1);
+		event.register(MODEL_MISSILETIER2);
+		event.register(MODEL_MISSILETIER3);
 		event.register(MODEL_DARKMATTERSPHERE);
 		event.register(MODEL_DARKMATTERDISK);
 		event.register(MODEL_FIREBALL);

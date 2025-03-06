@@ -1,9 +1,9 @@
 {
-  "parent": "ballistix:entity/missilelongrange",
+	"parent": "ballistix:entity/missiles/missiletier3",
    "display": {
         "gui": {
             "rotation": [ 30, 225, 37 ],
-            "translation": [ -4, -3, 0],
+            "translation": [ -4, 2, 0],
             "scale":[ 0.32, 0.32, 0.32 ]
         },
         "ground": {

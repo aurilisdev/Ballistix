@@ -1,6 +1,6 @@
 package ballistix.common.inventory.container;
 
-import ballistix.common.tile.TileLauncherControlPanelT3;
+import ballistix.common.tile.silo.TileLauncherControlPanelT3;
 import ballistix.registers.BallistixMenuTypes;
 import electrodynamics.prefab.inventory.container.slot.item.SlotGeneric;
 import electrodynamics.prefab.inventory.container.types.GenericContainerBlockEntity;

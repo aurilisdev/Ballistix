@@ -7,6 +7,6 @@ public interface ILauncherPlatform {
 
 	public boolean hasExplosive();
 
-	public void launch(ILauncherControlPanel panel);
+	public boolean launch(ILauncherControlPanel panel);
 
 }

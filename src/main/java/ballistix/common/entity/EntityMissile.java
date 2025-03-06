@@ -255,7 +255,7 @@ public class EntityMissile extends Entity {
 	y -= motionY;
 	z -= motionZ;
 	for (int i = 0; i < 4; i++) {
-	    Minecraft.getInstance().particleEngine.createParticle(new ParticleOptionsMissileSmoke().setParameters(1, 1, 1, 0.3f * (missileType+1), 50, true), x, y, z,
+	    Minecraft.getInstance().particleEngine.createParticle(new ParticleOptionsMissileSmoke().setParameters(1, 1, 1, missileType == 1 ? 0.3f : missileType == 2 ? 0.5f : 0.2f, 50, true), x, y, z,
 		    -motionX * (0.4 + 0.2 * Electrodynamics.RANDOM.nextDouble()),
 		    -motionY * (0.4 + 0.2 * Electrodynamics.RANDOM.nextDouble()),
 		    -motionZ * (0.4 + 0.2 * Electrodynamics.RANDOM.nextDouble()));

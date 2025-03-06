@@ -2,7 +2,7 @@ package ballistix.common.item;
 
 import java.util.List;
 
-import ballistix.common.tile.TileLauncherControlPanelT1;
+import ballistix.common.tile.silo.TileLauncherControlPanelT1;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixCreativeTabs;

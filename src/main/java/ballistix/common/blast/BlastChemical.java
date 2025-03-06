@@ -8,6 +8,7 @@ import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.Constants;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixDamageTypes;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.sounds.SoundEvents;
@@ -33,7 +34,7 @@ public class BlastChemical extends Blast {
 
 	@Override
 	public void doPreExplode() {
-		if(!world.isClientSide) {
+		if (!world.isClientSide) {
 			world.playSound(null, position, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 25, 1);
 		}
 	}
@@ -51,15 +52,14 @@ public class BlastChemical extends Blast {
 						double yPos = position.getY() + y + 0.5 + world.random.nextDouble() - 1.0;
 						double zPos = position.getZ() + z + 0.5 + world.random.nextDouble() - 1.0;
 
-
-						boolean add = switch(griefPreventionMethod) {
-							case GRIEF_DEFENDER -> GriefDefenderHandler.shouldAddParticle(new BlockPos((int) xPos, (int) yPos, (int) zPos));
-							default -> true;
+						boolean add = switch (griefPreventionMethod) {
+						case GRIEF_DEFENDER -> GriefDefenderHandler.shouldAddParticle(new BlockPos((int) xPos, (int) yPos, (int) zPos));
+						default -> true;
 						};
 
-						if (add && x * x + y * y + z * z < radius * radius && world.random.nextDouble() < 1 / 20.0) {
+						if (add && x * x + y * y + z * z < radius * radius && world.random.nextDouble() < 1 / 10.0) {
 
-							world.addParticle(new DustParticleOptions(new Vector3f(0.7f, 0.8f, 0), 5), xPos, yPos, zPos, 0.0D, 0.0D, 0.0D);
+							Minecraft.getInstance().particleEngine.createParticle(new DustParticleOptions(new Vector3f(0.7f, 0.8f, 0), 5), xPos, yPos, zPos, 0.0D, 0.0D, 0.0D);
 						}
 					}
 				}
@@ -82,13 +82,13 @@ public class BlastChemical extends Blast {
 			for (Entity entity : entities) {
 
 				switch (griefPreventionMethod) {
-					case GRIEF_DEFENDER :
-						if(!GriefDefenderHandler.shouldEntityBeHarmed(entity)) {
-							continue;
-						}
-						break;
-					default:
-						break;
+				case GRIEF_DEFENDER:
+					if (!GriefDefenderHandler.shouldEntityBeHarmed(entity)) {
+						continue;
+					}
+					break;
+				default:
+					break;
 				}
 
 				if (entity instanceof LivingEntity living) {

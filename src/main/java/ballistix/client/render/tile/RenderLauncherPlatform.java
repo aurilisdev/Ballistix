@@ -42,24 +42,41 @@ public class RenderLauncherPlatform<T extends GenericTile & ILauncherPlatform> e
 		matrixStackIn.pushPose();
 
 		BakedModel model;
-
+//		if (type == 0) {
+//
+//			model = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILECLOSERANGE);
+//			matrixStackIn.translate(0.5f, 0.8f, 0.5f);
+//			matrixStackIn.scale(1.25f, 1.5f, 1.25f);
+//
+//		} else if (type == 1) {
+//
+//			model = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILEMEDIUMRANGE);
+//			matrixStackIn.translate(0.5f, 1.3f, 0.5f);
+//			matrixStackIn.scale(1.5f, 2.5f, 1.5f);
+//
+//		} else {
+//
+//			model = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILELONGRANGE);
+//			matrixStackIn.translate(0.5f, 0.05f, 0.5f);
+//			matrixStackIn.scale(2f, 4f, 2f);
+//		}
 		if (type == 0) {
 
-			model = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILECLOSERANGE);
-			matrixStackIn.translate(0.5f, 0.8f, 0.5f);
-			matrixStackIn.scale(1.25f, 1.5f, 1.25f);
+			model = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILETIER1);
+			matrixStackIn.translate(0.5f, 0.87, 0.5f);
+			matrixStackIn.scale(1f, 0.75f, 1f);
 
 		} else if (type == 1) {
 
-			model = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILEMEDIUMRANGE);
-			matrixStackIn.translate(0.5f, 1.3f, 0.5f);
-			matrixStackIn.scale(1.5f, 2.5f, 1.5f);
+			model = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILETIER2);
+			matrixStackIn.translate(0.5f, 1.1f, 0.5f);
+			matrixStackIn.scale(1f, 1f, 1f);
 
 		} else {
 
-			model = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILELONGRANGE);
-			matrixStackIn.translate(0.5f, 0.05f, 0.5f);
-			matrixStackIn.scale(2f, 4f, 2f);
+			model = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILETIER3);
+			matrixStackIn.translate(0.5f, 1.1f, 0.5f);
+			matrixStackIn.scale(1f, 1.25f, 1f);
 
 		}
 

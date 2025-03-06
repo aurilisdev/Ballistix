@@ -6,7 +6,7 @@ import ballistix.api.silo.ILauncherControlPanel;
 import ballistix.api.silo.ILauncherPlatform;
 import ballistix.api.silo.SiloRegistry;
 import ballistix.common.settings.Constants;
-import ballistix.common.tile.TileLauncherControlPanelT1;
+import ballistix.common.tile.silo.TileLauncherControlPanelT1;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixCreativeTabs;
 import ballistix.registers.BallistixDataComponentTypes;

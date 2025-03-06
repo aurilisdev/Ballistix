@@ -1,4 +1,4 @@
-package ballistix.common.tile;
+package ballistix.common.tile.silo;
 
 import ballistix.Ballistix;
 import ballistix.References;
@@ -24,6 +24,7 @@ import electrodynamics.prefab.tile.components.type.ComponentPacketHandler;
 import electrodynamics.prefab.tile.components.type.ComponentTickable;
 import electrodynamics.prefab.utilities.BlockEntityUtils;
 import electrodynamics.prefab.utilities.object.CachedTileOutput;
+import electrodynamics.prefab.utilities.object.TransferPack;
 import electrodynamics.registers.ElectrodynamicsDataComponentTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -62,7 +63,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 	private int cooldown = 100;
 	public boolean shouldLaunch = false;
 	public CachedTileOutput launcherPlatform;
-	public static final int COOLDOWN = 100;
+	public static final int COOLDOWN = 20;
 
 	public TileLauncherControlPanelT1(BlockPos pos, BlockState state) {
 		this(BallistixTiles.TILE_LAUNCHER_CONTROL_PANEL_TIER1.get(), pos, state);
@@ -108,7 +109,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 
 		ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
 
-		if (cooldown > 0 || electro.getJoulesStored() < Constants.MISSILESILO_USAGE) {
+		if (cooldown > 0 || electro.getJoulesStored() < Constants.MISSILESILO_USAGE * getTier()) {
 			cooldown--;
 			return;
 		}
@@ -138,10 +139,10 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 			return;
 		}
 
-		platform.launch(this);
-
-		cooldown = COOLDOWN;
-
+		if (platform.launch(this)) {
+			cooldown = COOLDOWN;
+		}
+		electro.extractPower(TransferPack.joulesVoltage(Constants.MISSILESILO_USAGE * getTier(), electro.getVoltage()), false);
 	}
 
 	protected boolean isItemValidForSlot(int index, ItemStack stack, ComponentInventory inv) {

@@ -95,13 +95,13 @@ public class ItemRocketLauncher extends ItemElectrodynamics {
 		for (ItemStack st : player.getInventory().items) {
 			Item it = st.getItem();
 			if (!hasExplosive && it instanceof BlockItemDescriptable bl) {
-				if (bl.getBlock() instanceof BlockExplosive exs && exs.explosive.tier == 1) {
+				if (bl.getBlock() instanceof BlockExplosive exs && (player.isCreative() || exs.explosive.tier == 1)) {
 					blastOrdinal = exs.explosive.ordinal();
 					hasExplosive = true;
 					ex = st;
 				}
 			}
-			if (!hasRange && it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier1)) {
+			if (!hasRange && (it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier1) || (player.isCreative() && (it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier1) || it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier2) || it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier3))))) {
 				hasRange = true;
 				missile = st;
 			}
@@ -128,7 +128,7 @@ public class ItemRocketLauncher extends ItemElectrodynamics {
 					//
 					BlockPos.ZERO,
 					//
-					0,
+					 missile.getItem() == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier2) ? 1 : missile.getItem() == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier3) ? 2 : 0,
 					//
 					blastOrdinal,
 					//

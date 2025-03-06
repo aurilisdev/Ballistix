@@ -1,9 +1,6 @@
 package ballistix.common.tile.turret.antimissile;
 
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
-
-import com.mojang.datafixers.util.Pair;
 
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualProjectile;
@@ -89,11 +86,9 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
 
         outOfAmmo.set(false);
 
-        Pair<Vec3, Vec3> projectileVals = getProjectileTrajectoryFromInaccuracy(inaccuracy, baseRange, inaccuracyMultiplier.get(), getProjectileLaunchPosition(), getTargetPosition(getTarget(ticks)));
+        Vec3 trajectory = getProjectileTrajectoryFromInaccuracy(inaccuracy, baseRange, inaccuracyMultiplier.get(), getProjectileLaunchPosition(), getTargetPosition(getTarget(ticks)));
 
-        Vec3 rotvec = projectileVals.getSecond();
-
-        VirtualProjectile.VirtualRailgunRound railgunround = new VirtualProjectile.VirtualRailgunRound(getProjectileSpeed(), getProjectileLaunchPosition(), projectileVals.getFirst(), currentRange.get().floatValue(), new Vector3f((float) rotvec.x, (float) rotvec.y, (float) rotvec.z));
+        VirtualProjectile.VirtualRailgunRound railgunround = new VirtualProjectile.VirtualRailgunRound(getProjectileSpeed(), getProjectileLaunchPosition(), trajectory, currentRange.get().floatValue());
 
         MissileManager.addRailgunRound(level.dimension(), railgunround);
 

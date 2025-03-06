@@ -1,5 +1,6 @@
 package ballistix.common.tile;
 
+import ballistix.registers.BallistixItems;
 import org.jetbrains.annotations.Nullable;
 
 import ballistix.api.missile.MissileManager;
@@ -50,6 +51,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 	public static final int EXPLOSIVE_SLOT = 1;
 
 	public Property<Boolean> hasExplosive = property(new Property<>(PropertyTypes.BOOLEAN, "hasexplosive", false));
+	private boolean isAA = false;
 
 	public TileLauncherPlatformT1(BlockPos pos, BlockState state) {
 		this(BallistixTiles.TILE_LAUNCHER_PLATFORM_TIER1.get(), pos, state);
@@ -127,7 +129,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 	protected boolean isItemValidForSlot(int index, ItemStack stack, ComponentInventory inv) {
 		Item item = stack.getItem();
 		if (index == 0) {
-			return item instanceof ItemMissile missile && missile.missile.tier <= getTier();
+			return item instanceof ItemMissile missile && missile.missile.tier <= getTier() || stack.is(BallistixItems.ITEM_AAMISSILEMK2);
 		} else if (index == 1) {
 			return item instanceof BlockItemDescriptable des && des.getBlock() instanceof BlockExplosive expl && expl.explosive.tier <= getTier() && expl.explosive.tier > -1;
 		}
@@ -142,7 +144,6 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 	private void handleExplosive(ComponentInventory inv, int index) {
 		if (index == 1 || index == -1) {
 			ItemStack explosive = inv.getItem(1);
-
 			if (!explosive.isEmpty() && explosive.getItem() instanceof BlockItemDescriptable blockItem && blockItem.getBlock() instanceof BlockExplosive) {
 				hasExplosive.set(true);
 			} else {

@@ -96,7 +96,7 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier2), "T2 Missile");
 			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier3), "T3 Missile");
 
-			addItem(BallistixItems.ITEM_AAMISSILE, "Ballistic Rocket");
+			addItem(BallistixItems.ITEM_AAMISSILE, "Smart Missile MK1");
 			addItem(BallistixItems.ITEM_BULLET, "20mm Bullet");
 
 			addItem(BallistixItems.ITEM_ROCKETLAUNCHER, "Rocket Launcher");

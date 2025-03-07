@@ -100,10 +100,10 @@ public class EntitySAM extends Entity {
         setXRot((float) (Math.atan(getDeltaMovement().y() / Math.sqrt(getDeltaMovement().x() * getDeltaMovement().x() + getDeltaMovement().z() * getDeltaMovement().z())) * RAD2DEG));
         setYRot((float) (Math.atan2(getDeltaMovement().x(), getDeltaMovement().z()) * RAD2DEG));
 
-        float topSpeed = variant == 0 ? Constants.SAM_MK1_TOP_SPEED : Constants.SAM_MK2_TOP_SPEED;
+        float topSpeed = variant == 0 ? Constants.SAM_TOP_SPEED : Constants.ANTIBALLISTICMISSILE_TOP_SPEED;
 
         if(speed < topSpeed) {
-            speed += variant == 0 ? Constants.SAM_MK1_ACCELERATION : Constants.SAM_MK2_ACCELERATION;
+            speed += variant == 0 ? Constants.SAM_ACCELERATION : Constants.ANTIBALLISTICMISSILE_ACCELERATION;
         }
 
     }

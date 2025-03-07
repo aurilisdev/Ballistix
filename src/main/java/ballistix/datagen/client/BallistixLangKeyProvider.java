@@ -96,8 +96,8 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier2), "T2 Missile");
 			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier3), "T3 Missile");
 
-			addItem(BallistixItems.ITEM_AAMISSILE, "Smart Missile MK1");
-			addItem(BallistixItems.ITEM_AAMISSILEMK2, "Smart Missile MK2");
+			addItem(BallistixItems.ITEM_AAMISSILE, "Surface-to-air Missile");
+			addItem(BallistixItems.ITEM_AAMISSILEMK2, "Anti-Ballistic Missile");
 			addItem(BallistixItems.ITEM_BULLET, "20mm Bullet");
 
 			addItem(BallistixItems.ITEM_ROCKETLAUNCHER, "Rocket Launcher");
@@ -172,6 +172,9 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 
 			addTooltip("turret.whitelistmanager", "Whitelist Manager");
 
+			addTooltip("aamissile.hitrate", "Hit rate: %s");
+
+			
 			addGuiLabel("turret.radar", "Radar: ");
 			addGuiLabel("turret.radarnone", "None");
 			addGuiLabel("turret.status", "Status: %s");

@@ -96,7 +96,7 @@ public class TileTurretSAM extends TileTurretAntimissileProjectile {
 
     @Override
     public float getProjectileSpeed() {
-        return Constants.SAM_MK1_TOP_SPEED;
+        return Constants.SAM_TOP_SPEED;
     }
 
     @Override

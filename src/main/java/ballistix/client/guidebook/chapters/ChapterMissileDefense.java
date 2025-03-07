@@ -72,7 +72,7 @@ public class ChapterMissileDefense extends Chapter {
                 //
                 Constants.SAM_TURRET_COOLDOWN,
                 //
-                ChatFormatter.getChatDisplayShort(Constants.SAM_MK1_CHANCE_TO_DESTROY * 100, DisplayUnit.PERCENTAGE))).setSeparateStart().setIndentions(1));
+                ChatFormatter.getChatDisplayShort(Constants.SAM_CHANCE_TO_DESTROY * 100, DisplayUnit.PERCENTAGE))).setSeparateStart().setIndentions(1));
 
         // CIWS Turret
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.ciwsturret).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
@@ -100,7 +100,7 @@ public class ChapterMissileDefense extends Chapter {
         // Missile Silo
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.missilesilo").withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
         pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launcherplatformtier3)));
-        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.missilesilo1", BallistixItems.ITEM_AAMISSILEMK2.get().getDescription().copy().withStyle(ChatFormatting.BOLD), ChatFormatter.getChatDisplayShort(Constants.SAM_MK2_CHANCE_TO_DESTROY * 100, DisplayUnit.PERCENTAGE))).setSeparateStart().setIndentions(1).setSeparateStart().setIndentions(1));
+        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.missilesilo1", BallistixItems.ITEM_AAMISSILEMK2.get().getDescription().copy().withStyle(ChatFormatting.BOLD), ChatFormatter.getChatDisplayShort(Constants.ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY * 100, DisplayUnit.PERCENTAGE))).setSeparateStart().setIndentions(1).setSeparateStart().setIndentions(1));
 
 
     }

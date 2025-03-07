@@ -2,8 +2,6 @@ package ballistix.common.tile.turret.antimissile.util;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.mojang.datafixers.util.Pair;
-
 import ballistix.api.turret.ITarget;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import electrodynamics.Electrodynamics;
@@ -14,62 +12,62 @@ import net.minecraft.world.phys.Vec3;
 
 public abstract class TileTurretAntimissileProjectile extends TileTurretAntimissile {
 
-    public TileTurretAntimissileProjectile(BlockEntityType<?> tileEntityTypeIn, BlockPos worldPos, BlockState blockState, double range, double minRange, double usage, double rotationSpeedRadians, double inaccuracy) {
-        super(tileEntityTypeIn, worldPos, blockState, range, minRange, usage, rotationSpeedRadians, inaccuracy);
-    }
+	public TileTurretAntimissileProjectile(BlockEntityType<?> tileEntityTypeIn, BlockPos worldPos, BlockState blockState, double range, double minRange, double usage, double rotationSpeedRadians, double inaccuracy) {
+		super(tileEntityTypeIn, worldPos, blockState, range, minRange, usage, rotationSpeedRadians, inaccuracy);
+	}
 
-    @Nullable
-    @Override
-    public Vec3 getTargetPosition(ITarget target) {
+	@Nullable
+	@Override
+	public Vec3 getTargetPosition(ITarget target) {
 
-        float trackingSpeed = 0F;//radar.tracking.speed;
-        Vec3 trackingVector = target.getTargetMovement();
+		float trackingSpeed = 0F;// radar.tracking.speed;
+		Vec3 trackingVector = target.getTargetMovement();
 
-        double timeToIntercept = TileFireControlRadar.getTimeToIntercept(target.getTargetLocation(), trackingVector, trackingSpeed, getProjectileSpeed(), getProjectileLaunchPosition());
+		double timeToIntercept = TileFireControlRadar.getTimeToIntercept(target.getTargetLocation(), trackingVector, trackingSpeed, getProjectileSpeed(), getProjectileLaunchPosition());
 
-        if (timeToIntercept <= 0) {
-            return null;
-        }
+		if (timeToIntercept <= 0) {
+			return null;
+		}
 
-        return target.getTargetLocation().add(trackingVector.scale(trackingSpeed).scale(timeToIntercept));
-    }
+		return target.getTargetLocation().add(trackingVector.scale(trackingSpeed).scale(timeToIntercept));
+	}
 
-    // speed in units of ticks
-    public abstract float getProjectileSpeed();
+	// speed in units of ticks
+	public abstract float getProjectileSpeed();
 
-    public Vec3 getProjectileTrajectoryFromInaccuracy(double inaccuracy, double baseRange, double inaccuracyMultiplier, Vec3 launchPos, Vec3 interceptionPos) {
+	public Vec3 getProjectileTrajectoryFromInaccuracy(double inaccuracy, double baseRange, double inaccuracyMultiplier, Vec3 launchPos, Vec3 interceptionPos) {
 
-        double distanceToTarget = TileFireControlRadar.getDistanceToMissile(launchPos, interceptionPos);
+		double distanceToTarget = TileFireControlRadar.getDistanceToMissile(launchPos, interceptionPos);
 
-        double deltaX = interceptionPos.x - launchPos.x;
-        double deltaY = interceptionPos.y - launchPos.y;
-        double deltaZ = interceptionPos.z - launchPos.z;
+		double deltaX = interceptionPos.x - launchPos.x;
+		double deltaY = interceptionPos.y - launchPos.y;
+		double deltaZ = interceptionPos.z - launchPos.z;
 
-        double rangePenalty = 1.0;
+		double rangePenalty = 1.0;
 
-        if (distanceToTarget > baseRange) {
+		if (distanceToTarget > baseRange) {
 
-            rangePenalty = ((distanceToTarget - baseRange) / baseRange) * inaccuracyMultiplier * Electrodynamics.RANDOM.nextDouble();
+			rangePenalty = ((distanceToTarget - baseRange) / baseRange) * inaccuracyMultiplier * Electrodynamics.RANDOM.nextDouble();
 
-        }
+		}
 
-        if(Electrodynamics.RANDOM.nextBoolean()) {
-            deltaX = deltaX * (1.0 + inaccuracy * Electrodynamics.RANDOM.nextDouble());
-        } else {
-            deltaZ = deltaZ * (1.0 + inaccuracy * Electrodynamics.RANDOM.nextDouble());
-        }
+		if (Electrodynamics.RANDOM.nextBoolean()) {
+			deltaX = deltaX * (1.0 + inaccuracy * Electrodynamics.RANDOM.nextDouble());
+		} else {
+			deltaZ = deltaZ * (1.0 + inaccuracy * Electrodynamics.RANDOM.nextDouble());
+		}
 
-        if (rangePenalty < 1.0) {
-            if(Electrodynamics.RANDOM.nextBoolean()) {
-                deltaZ = deltaZ * (1.0 + rangePenalty);
-            } else {
-                deltaX = deltaX * (1.0 + rangePenalty);
-            }
+		if (rangePenalty < 1.0) {
+			if (Electrodynamics.RANDOM.nextBoolean()) {
+				deltaZ = deltaZ * (1.0 + rangePenalty);
+			} else {
+				deltaX = deltaX * (1.0 + rangePenalty);
+			}
 
-        }
+		}
 
-        return new Vec3(deltaX, deltaY, deltaZ).normalize();
+		return new Vec3(deltaX, deltaY, deltaZ).normalize();
 
-    }
+	}
 
 }

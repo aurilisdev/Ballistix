@@ -370,7 +370,7 @@ public abstract class VirtualProjectile {
 
         @Override
         public void onHitMissile(Level world, VirtualMissile missile) {
-            if(Electrodynamics.RANDOM.nextDouble() < (variant == 0 ? Constants.SAM_MK1_CHANCE_TO_DESTROY : Constants.SAM_MK2_CHANCE_TO_DESTROY)) {
+            if(Electrodynamics.RANDOM.nextDouble() < (variant == 0 ? Constants.SAM_CHANCE_TO_DESTROY : Constants.ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY)) {
                 MissileManager.removeMissile(world.dimension(), missile.getId());
             }
             world.playSound(null, blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0F, 1.0F);
@@ -415,9 +415,9 @@ public abstract class VirtualProjectile {
         @Override
         public void updatePosition(ServerLevel level) {
 
-            float topSpeed = variant == 0 ? Constants.SAM_MK1_TOP_SPEED : Constants.SAM_MK2_TOP_SPEED;
+            float topSpeed = variant == 0 ? Constants.SAM_TOP_SPEED : Constants.ANTIBALLISTICMISSILE_TOP_SPEED;
 
-            float minSpeed = variant == 0 ? topSpeed * Constants.SAM_MK1_MINTURNSPEED_PERC : topSpeed * Constants.SAM_MK2_MINTURNSPEED_PERC;
+            float minSpeed = variant == 0 ? topSpeed * Constants.SAM_MINTURNSPEED_PERC : topSpeed * Constants.ANTIBALLISTICMISSILE_MINTURNSPEED_PERC;
 
             if(radarPos == null || radarPos.equals(BlockEntityUtils.OUT_OF_REACH) || speed < minSpeed) {
                 super.updatePosition(level);
@@ -472,9 +472,9 @@ public abstract class VirtualProjectile {
             double turnRate = 0;
 
             if(variant == 0) {
-                turnRate = Constants.SAM_MK1_ENTITY_TURNINGSPEEDRADIANS / 2.0;
+                turnRate = Constants.SAM_ENTITY_TURNINGSPEEDRADIANS / 2.0;
             } else if (variant == 1) {
-                turnRate = Constants.SAM_MK2_ENTITY_TURNINGSPEEDRADIANS / 2.0;
+                turnRate = Constants.ANTIBALLISTICMISSILE_ENTITY_TURNINGSPEEDRADIANS / 2.0;
             }
 
             if(deltaAlpha > 0) {
@@ -523,10 +523,10 @@ public abstract class VirtualProjectile {
         public void tick(ServerLevel level) {
             super.tick(level);
 
-            float topSpeed = variant == 0 ? Constants.SAM_MK1_TOP_SPEED : Constants.SAM_MK2_TOP_SPEED;
+            float topSpeed = variant == 0 ? Constants.SAM_TOP_SPEED : Constants.ANTIBALLISTICMISSILE_TOP_SPEED;
 
             if(speed < topSpeed) {
-                speed += variant == 0 ? Constants.SAM_MK1_ACCELERATION : Constants.SAM_MK2_ACCELERATION;
+                speed += variant == 0 ? Constants.SAM_ACCELERATION : Constants.ANTIBALLISTICMISSILE_ACCELERATION;
             }
 
             if(speed >= topSpeed) {

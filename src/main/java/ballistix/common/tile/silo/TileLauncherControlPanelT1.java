@@ -1,4 +1,4 @@
-package ballistix.common.tile;
+package ballistix.common.tile.silo;
 
 import ballistix.Ballistix;
 import ballistix.References;
@@ -57,12 +57,12 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 		SiloRegistry.registerSilo(newFreq, this);
 
 	}));
+
 	public Property<BlockPos> target = property(new Property<>(PropertyTypes.BLOCK_POS, "target", BlockPos.ZERO));
 
 	private int cooldown = 100;
 	public boolean shouldLaunch = false;
 	public CachedTileOutput launcherPlatform;
-	public static final int COOLDOWN = 100;
 
 	public TileLauncherControlPanelT1(BlockPos pos, BlockState state) {
 		this(BallistixTiles.TILE_LAUNCHER_CONTROL_PANEL_TIER1.get(), pos, state);
@@ -126,7 +126,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 			return;
 		}
 
-		if (!platform.hasExplosive() || (!hasRedstone && !shouldLaunch)) {
+		if (!platform.hasMissile() || (platform.hasExplosive() && platform.hasSAM()) || (!platform.hasExplosive() && !platform.hasSAM()) || (!hasRedstone && !shouldLaunch)) {
 			return;
 		}
 
@@ -138,9 +138,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 			return;
 		}
 
-		platform.launch(this);
-
-		cooldown = COOLDOWN;
+		cooldown = platform.launch(this, hasRedstone);
 
 	}
 

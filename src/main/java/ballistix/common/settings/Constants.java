@@ -1,9 +1,6 @@
 package ballistix.common.settings;
 
-import electrodynamics.api.configuration.BooleanValue;
-import electrodynamics.api.configuration.Configuration;
-import electrodynamics.api.configuration.DoubleValue;
-import electrodynamics.api.configuration.IntValue;
+import electrodynamics.api.configuration.*;
 
 @Configuration(name = "Ballistix")
 public class Constants {
@@ -95,8 +92,24 @@ public class Constants {
 	public static int SAM_TURRET_COOLDOWN = 100;
 	@DoubleValue(def = 0.1)
 	public static double SAM_MK1_ENTITY_TURNINGSPEEDRADIANS = 0.1;
+	@FloatValue(def = 3.0F)
+	public static float SAM_MK1_TOP_SPEED = 3.0F;
+	@FloatValue(def = 0.04F)
+	public static float SAM_MK1_ACCELERATION = 0.04F;
+	@FloatValue(def = 0.25F)
+	public static float SAM_MK1_MINTURNSPEED_PERC = 0.25F;
 	@DoubleValue(def = 0.5)
 	public static double SAM_MK1_CHANCE_TO_DESTROY = 0.5;
+	@DoubleValue(def = 0.05)
+	public static double SAM_MK2_ENTITY_TURNINGSPEEDRADIANS = 0.05;
+	@DoubleValue(def = 0.8)
+	public static double SAM_MK2_CHANCE_TO_DESTROY = 0.8;
+	@FloatValue(def = 5.0F)
+	public static float SAM_MK2_TOP_SPEED = 5.0F;
+	@FloatValue(def = 0.01F)
+	public static float SAM_MK2_ACCELERATION = 0.01F;
+	@FloatValue(def = 0.15F)
+	public static float SAM_MK2_MINTURNSPEED_PERC = 0.15F;
 
 	@DoubleValue(def = 1000)
 	public static double CIWS_TURRET_USAGEPERTICK = 1000;
@@ -142,11 +155,6 @@ public class Constants {
 	public static int LAUNCHER_PLATFORM_RANGE_T2 = 3000;
 	@IntValue(def = 10000)
 	public static int LAUNCHER_PLATFORM_RANGE_T3 = 10000;
-
-	@DoubleValue(def = 0.05)
-	public static double SAM_MK2_ENTITY_TURNINGSPEEDRADIANS = 0.05;
-	@DoubleValue(def = 0.8)
-	public static double SAM_MK2_CHANCE_TO_DESTROY = 0.8;
 
 	@BooleanValue(def = true, comment = "Whether explosions will be cached; may use a lot of memory!")
 	public static boolean SHOULD_CACHE_EXPLOSIONS = true;

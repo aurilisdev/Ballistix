@@ -97,6 +97,7 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier3), "T3 Missile");
 
 			addItem(BallistixItems.ITEM_AAMISSILE, "Smart Missile MK1");
+			addItem(BallistixItems.ITEM_AAMISSILEMK2, "Smart Missile MK2");
 			addItem(BallistixItems.ITEM_BULLET, "20mm Bullet");
 
 			addItem(BallistixItems.ITEM_ROCKETLAUNCHER, "Rocket Launcher");
@@ -259,8 +260,9 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 			addGuidebook("chapter.missiledefense.esmtower1", "The ESM Tower is used to detect nearby radars. The tower can detect radars within a %s block range. Search Radars are weaker by nature, so the tower will only be able to identify if one is within its detection range. Fire Control Radars on the other hand will have their exact positions listed if they are active! Note "
 					+ "that an ESM Tower will have its exact position detected by a Search Radar! A detected ESM Tower will cause the radar to emit a redstone signal just as with a missile.");
 
-			addGuidebook("chapter.missiledefense.samturret1", "The SAM Turret is a turret dedicated to long-range missile defense. Firing %1$ss, the turret can engage targets up to %2$s blocks! This range can be further increased with range upgrades, however note that the turret will be less accurate past its base range. The turret is highly accurate, and can hold up to 10 rockets "
-					+ "at a time. A Ballistic Rocket will outright destroy a missile upon impact. Note the turret will need to wait %3$s ticks between firing! The turret has a maximum elevation of 90 degrees and a maximum depression of 45 degrees. It should be noted that the turret can only engage missiles. Furthermore, once a missile is within 150 blocks, the turret will no longer be able to engage " + "it! The turret must also have a line of sight to the missile.");
+			addGuidebook("chapter.missiledefense.samturret1", "The SAM Turret is a turret dedicated to long-range missile defense. Firing %1$ss, the turret can engage targets up to %2$s blocks! This range can be further increased with range upgrades. On top of this, the missiles launched are homing so long as the Fire Control Radar is tracking a target, granting an increased chance " +
+					"to hit the target!. The turret is highly accurate, and can hold up to 10 rockets at a time. A Smart Missile will outright destroy a Ballistic Missile, however it only has a %4$s chance to do so! Note the turret will need to wait %3$s ticks between firing! The turret has a maximum elevation of 90 degrees and a maximum depression of 45 degrees. It should be noted that the turret " +
+					"can only engage missiles. Furthermore, once a missile is within 100 blocks, the turret will no longer be able to engage it!");
 
 			addGuidebook("chapter.missiledefense.ciwsturret1", "The Close-In Weapons System or CIWS Turret is designed as a last line of defense against an incoming missile. It fires %1$ss at an impressive 20 rounds / second! The turret is reasonably accurate, but accuracy quickly decreases the further a target is from it. It has a base range of %2$s blocks that can be increased "
 					+ "with range upgrades. Each bullet will inflict one damage to an incoming missile with each missile having %3$s health. The turret must have a direct line of site to the missile however. The turret can only hold up to 128 rounds. Unlike the SAM Turret, the CIWS has no minimum range. The turret has a maximum elevation of 90 degrees and a maximum depression of 45 degrees.");
@@ -277,6 +279,11 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 			addGuidebook("chapter.missiledefense.railgunturret1", "The Railgun Turret is a hybrid between the CIWS and SAM turrets. It fires %1$ss that destroy a missile on contact. It is able to engage missiles up to %2$s blocks, and this range can be increased with range upgrades. It has no minimum engagement range. The turret must wait %3$s ticks between shots, and can "
 					+ "only hold up to 64 rods at a time. Like with the Laser Turret, it is incredibly power-hungry. The turret has a maximum elevation of 45 degrees and a maximum depression of 45 degrees.");
 			addGuidebook("chapter.missiledefense.railgunturret2", "Like with the CIWS and Laser Turrets, the Railgun Turret can engage players and mobs up to one quarter the distance of its missile engagement range. The steel rod will deal 20 damage on impact, but the turret must have a clear line of site to engage!");
+
+			addGuidebook("chapter.missiledefense.missilesilo", "Missile Silo");
+			addGuidebook("chapter.missiledefense.missilesilo1", "Another method of missile defense altogether is to repurpose a missile silo to fire %1$ss. The Smart Missile MK2 is capable of reaching higher speeds than its MK1 counterpart, and boasts a %2$s chance to destroy a missile! However, the silo can only hold five at a time, and must be linked to a Fire Control Radar. " +
+					"To link a missile silo to a radar, enter the radar's XYZ coordinates into the silo where the target coordinates typically go. The MK2 can only be fired with a redstone signal, and the explosives slot must be empty. The Fire Control Radar will emit a comparator signal of 15 if actively tracking a target. However, as with the MK1, a MK2 can only be fired if the incoming missile " +
+					"is more than 100 blocks away. It should be noted that the MK2, while faster, cannot turn as fast due to its size.");
 
 			addJei("info.item.missilecloserange", "Specs:\n    Range: 3000 Blocks");
 			addJei("info.item.missilemediumrange", "Specs:\n    Range: 10 000 Blocks");

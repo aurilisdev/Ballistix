@@ -5,7 +5,7 @@ import java.util.List;
 
 import ballistix.common.inventory.container.ContainerLauncherControlPanelT3;
 import ballistix.common.settings.Constants;
-import ballistix.common.tile.TileLauncherControlPanelT3;
+import ballistix.common.tile.silo.TileLauncherControlPanelT3;
 import ballistix.prefab.utils.BallistixTextUtils;
 import electrodynamics.api.electricity.formatting.ChatFormatter;
 import electrodynamics.api.electricity.formatting.DisplayUnit;

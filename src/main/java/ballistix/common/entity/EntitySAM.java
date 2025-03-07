@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import ballistix.common.tile.turret.antimissile.TileTurretSAM;
+import ballistix.common.settings.Constants;
 
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualProjectile;
@@ -30,11 +30,12 @@ public class EntitySAM extends Entity {
     private static final float RAD2DEG = (float) (180.0F / Math.PI);
 
     private static final EntityDataAccessor<Float> SPEED = SynchedEntityData.defineId(EntitySAM.class, EntityDataSerializers.FLOAT);
-
+    private static final EntityDataAccessor<Integer> VARIANT = SynchedEntityData.defineId(EntitySAM.class, EntityDataSerializers.INT);
 
     @Nullable
     public UUID id;
     public float speed = 0.0F;
+    public int variant = 0;
 
     public EntitySAM(EntityType<?> entityType, Level level) {
         super(entityType, level);
@@ -88,8 +89,10 @@ public class EntitySAM extends Entity {
 
         if (isServer) {
             entityData.set(SPEED, speed);
+            entityData.set(VARIANT, variant);
         } else {
             speed = entityData.get(SPEED);
+            variant = entityData.get(VARIANT);
         }
 
         setPos(new Vec3(getX() + getDeltaMovement().x * speed, getY() + getDeltaMovement().y * speed, getZ() + getDeltaMovement().z * speed));
@@ -97,8 +100,10 @@ public class EntitySAM extends Entity {
         setXRot((float) (Math.atan(getDeltaMovement().y() / Math.sqrt(getDeltaMovement().x() * getDeltaMovement().x() + getDeltaMovement().z() * getDeltaMovement().z())) * RAD2DEG));
         setYRot((float) (Math.atan2(getDeltaMovement().x(), getDeltaMovement().z()) * RAD2DEG));
 
-        if(speed < TileTurretSAM.MAX_SPEED) {
-            speed += 0.02F;
+        float topSpeed = variant == 0 ? Constants.SAM_MK1_TOP_SPEED : Constants.SAM_MK2_TOP_SPEED;
+
+        if(speed < topSpeed) {
+            speed += variant == 0 ? Constants.SAM_MK1_ACCELERATION : Constants.SAM_MK2_ACCELERATION;
         }
 
     }
@@ -106,12 +111,14 @@ public class EntitySAM extends Entity {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(SPEED, 0.0F);
+        builder.define(VARIANT, 0);
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
         UUIDUtil.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("id")).ifSuccess(pair -> id = pair.getFirst());
         compound.putFloat("speed", speed);
+        compound.putInt("variant", variant);
     }
 
     @Override
@@ -123,6 +130,7 @@ public class EntitySAM extends Entity {
             UUIDUtil.CODEC.encode(id, NbtOps.INSTANCE, new CompoundTag()).ifSuccess(tag -> compound.put("id", tag));
         }
         speed = compound.getFloat("speed");
+        variant = compound.getInt("variant");
     }
 
     @Override

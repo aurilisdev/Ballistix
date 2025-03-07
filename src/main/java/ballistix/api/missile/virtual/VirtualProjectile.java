@@ -5,7 +5,6 @@ import java.util.UUID;
 import ballistix.client.particle.ParticleOptionsMissileSmoke;
 import ballistix.common.settings.Constants;
 import ballistix.common.tile.radar.TileFireControlRadar;
-import ballistix.common.tile.turret.antimissile.TileTurretSAM;
 import electrodynamics.Electrodynamics;
 import electrodynamics.prefab.utilities.BlockEntityUtils;
 import electrodynamics.registers.ElectrodynamicsSounds;
@@ -77,6 +76,7 @@ public abstract class VirtualProjectile {
         }
 
         if (distanceTraveled >= range + 5) {
+            onReachMaxDistance(level);
             hasExploded = true;
             return;
         }
@@ -90,7 +90,7 @@ public abstract class VirtualProjectile {
         if(projected != null) {
             BlockState state = level.getBlockState(projected);
 
-            if (!state.getCollisionShape(level, projected).isEmpty() && tickCount > 5) {
+            if (!state.getCollisionShape(level, projected).isEmpty() && tickCount > getMinTicksForCollisionCheck(level)) {
                 onHitBlock(level, projected);
                 hasExploded = true;
                 return;
@@ -162,6 +162,12 @@ public abstract class VirtualProjectile {
     public abstract void onHitLiving(Level world, LivingEntity entity);
 
     public abstract void onHitBlock(Level world, BlockPos block);
+
+    public void onReachMaxDistance(Level world) {
+
+    }
+
+    public abstract int getMinTicksForCollisionCheck(Level world);
 
     public abstract AABB getBoundingBox();
 
@@ -249,6 +255,11 @@ public abstract class VirtualProjectile {
         }
 
         @Override
+        public int getMinTicksForCollisionCheck(Level world) {
+            return 5;
+        }
+
+        @Override
         public AABB getBoundingBox() {
             return new AABB(position.x - 0.05F, position.y, position.z - 0.05F, position.x + 0.05F, position.y + 0.1F, position.z + 0.05F);
         }
@@ -306,6 +317,11 @@ public abstract class VirtualProjectile {
         }
 
         @Override
+        public int getMinTicksForCollisionCheck(Level world) {
+            return 5;
+        }
+
+        @Override
         public AABB getBoundingBox() {
             return new AABB(position.x - 0.05F, position.y, position.z - 0.05F, position.x + 0.05F, position.y + 0.1F, position.z + 0.05F);
         }
@@ -354,10 +370,20 @@ public abstract class VirtualProjectile {
 
         @Override
         public void onHitMissile(Level world, VirtualMissile missile) {
-            if(Electrodynamics.RANDOM.nextDouble() > Constants.SAM_CHANCE_TO_DESTROY) {
+            if(Electrodynamics.RANDOM.nextDouble() < (variant == 0 ? Constants.SAM_MK1_CHANCE_TO_DESTROY : Constants.SAM_MK2_CHANCE_TO_DESTROY)) {
                 MissileManager.removeMissile(world.dimension(), missile.getId());
             }
             world.playSound(null, blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0F, 1.0F);
+        }
+
+        @Override
+        public void onReachMaxDistance(Level world) {
+            world.explode(null, null, null, position.x, position.y, position.z,2.0F, false, Level.ExplosionInteraction.BLOCK, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
+        }
+
+        @Override
+        public int getMinTicksForCollisionCheck(Level world) {
+            return variant == 0 ? 5 : 20;
         }
 
         @Override
@@ -382,13 +408,18 @@ public abstract class VirtualProjectile {
             sam.setDeltaMovement(deltaMovement);
             sam.id = id;
             sam.speed = speed;
+            sam.variant = variant;
             return sam;
         }
 
         @Override
         public void updatePosition(ServerLevel level) {
 
-            if(radarPos == null || radarPos.equals(BlockEntityUtils.OUT_OF_REACH) || speed < (variant == 0 ? TileTurretSAM.MAX_SPEED / 4.0 : ) {
+            float topSpeed = variant == 0 ? Constants.SAM_MK1_TOP_SPEED : Constants.SAM_MK2_TOP_SPEED;
+
+            float minSpeed = variant == 0 ? topSpeed * Constants.SAM_MK1_MINTURNSPEED_PERC : topSpeed * Constants.SAM_MK2_MINTURNSPEED_PERC;
+
+            if(radarPos == null || radarPos.equals(BlockEntityUtils.OUT_OF_REACH) || speed < minSpeed) {
                 super.updatePosition(level);
                 return;
             }
@@ -411,7 +442,7 @@ public abstract class VirtualProjectile {
             float trackingSpeed = 0F;//radar.tracking.speed;
             Vec3 trackingVector = tracking.deltaMovement;
 
-            double timeToIntercept = TileFireControlRadar.getTimeToIntercept(tracking.position, trackingVector, trackingSpeed, TileTurretSAM.MAX_SPEED, position);
+            double timeToIntercept = TileFireControlRadar.getTimeToIntercept(tracking.position, trackingVector, trackingSpeed, topSpeed, position);
 
             if (timeToIntercept <= 0) {
                 super.updatePosition(level);
@@ -492,11 +523,13 @@ public abstract class VirtualProjectile {
         public void tick(ServerLevel level) {
             super.tick(level);
 
-            if(speed < TileTurretSAM.MAX_SPEED) {
-                speed += 0.02F;
+            float topSpeed = variant == 0 ? Constants.SAM_MK1_TOP_SPEED : Constants.SAM_MK2_TOP_SPEED;
+
+            if(speed < topSpeed) {
+                speed += variant == 0 ? Constants.SAM_MK1_ACCELERATION : Constants.SAM_MK2_ACCELERATION;
             }
 
-            if(speed >= TileTurretSAM.MAX_SPEED) {
+            if(speed >= topSpeed) {
                 return;
             }
 

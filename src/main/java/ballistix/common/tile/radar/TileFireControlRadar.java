@@ -89,6 +89,7 @@ public class TileFireControlRadar extends GenericTile {
 
         if (tracking != null && (tracking.hasExploded() || tracking.getId() == null || MissileManager.getMissile(level.dimension(), tracking.getId()) == null)) {
             tracking = null;
+            trackingPos.set(OUT_OF_REACH);
         }
 
         VirtualMissile temp = null;
@@ -210,6 +211,11 @@ public class TileFireControlRadar extends GenericTile {
             ChunkPos pos = level.getChunk(getBlockPos()).getPos();
             ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, getBlockPos(), pos.x, pos.z, true, true);
         }
+    }
+
+    @Override
+    public int getComparatorSignal() {
+        return trackingPos.get().equals(OUT_OF_REACH) ? 0 : 15;
     }
 
     @EventBusSubscriber(modid = References.ID, bus = EventBusSubscriber.Bus.MOD)

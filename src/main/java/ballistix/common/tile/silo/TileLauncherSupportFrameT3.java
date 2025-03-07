@@ -1,4 +1,4 @@
-package ballistix.common.tile;
+package ballistix.common.tile.silo;
 
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.registers.BallistixTiles;

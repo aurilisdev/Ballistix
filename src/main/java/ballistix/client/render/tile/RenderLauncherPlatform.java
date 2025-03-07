@@ -2,6 +2,8 @@ package ballistix.client.render.tile;
 
 import java.util.Random;
 
+import ballistix.client.ClientRegister;
+import ballistix.registers.BallistixItems;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import ballistix.api.silo.ILauncherPlatform;
@@ -33,39 +35,51 @@ public class RenderLauncherPlatform<T extends GenericTile & ILauncherPlatform> e
 			return;
 		}
 
-		int type = ((ItemMissile) stack.getItem()).missile.ordinal();
+		if(stack.getItem() instanceof ItemMissile missile) {
 
-		if (type == -1) {
-			return;
-		}
+			matrixStackIn.pushPose();
 
-		matrixStackIn.pushPose();
+			BakedModel model;
 
-		BakedModel model;
+			if (missile.missile.tier == 0) {
 
-		if (type == 0) {
+				model = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILECLOSERANGE);
+				matrixStackIn.translate(0.5f, 0.8f, 0.5f);
+				matrixStackIn.scale(1.25f, 1.5f, 1.25f);
 
-			model = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILECLOSERANGE);
-			matrixStackIn.translate(0.5f, 0.8f, 0.5f);
-			matrixStackIn.scale(1.25f, 1.5f, 1.25f);
+			} else if (missile.missile.tier == 1) {
 
-		} else if (type == 1) {
+				model = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILEMEDIUMRANGE);
+				matrixStackIn.translate(0.5f, 1.3f, 0.5f);
+				matrixStackIn.scale(1.5f, 2.5f, 1.5f);
 
-			model = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILEMEDIUMRANGE);
-			matrixStackIn.translate(0.5f, 1.3f, 0.5f);
+			} else {
+
+				model = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILELONGRANGE);
+				matrixStackIn.translate(0.5f, 0.05f, 0.5f);
+				matrixStackIn.scale(2f, 4f, 2f);
+
+			}
+
+			Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model, tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(), 0);
+
+			matrixStackIn.popPose();
+
+		} else if (stack.is(BallistixItems.ITEM_AAMISSILEMK2)) {
+
+			matrixStackIn.pushPose();
+
+			BakedModel model = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_AAMISSILE_MK2);
+
+			matrixStackIn.translate(0.5f, 0, 0.5f);
 			matrixStackIn.scale(1.5f, 2.5f, 1.5f);
 
-		} else {
+			Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model, tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(), 0);
 
-			model = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILELONGRANGE);
-			matrixStackIn.translate(0.5f, 0.05f, 0.5f);
-			matrixStackIn.scale(2f, 4f, 2f);
+			matrixStackIn.popPose();
 
 		}
 
-		Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model, tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(), 0);
-
-		matrixStackIn.popPose();
 	}
 
 	@Override

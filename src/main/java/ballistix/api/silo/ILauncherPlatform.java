@@ -5,8 +5,13 @@ public interface ILauncherPlatform {
 
 	public int getTier();
 
+	public boolean hasMissile();
+
 	public boolean hasExplosive();
 
-	public boolean launch(ILauncherControlPanel panel);
+	public boolean hasSAM();
+
+	// returns cooldown
+	public int launch(ILauncherControlPanel panel, boolean redstoneTriggered);
 
 }

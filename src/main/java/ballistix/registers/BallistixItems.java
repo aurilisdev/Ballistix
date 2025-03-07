@@ -43,6 +43,7 @@ public class BallistixItems {
 	public static final BulkDeferredHolder<Item, ItemMissile, SubtypeMissile> ITEMS_MISSILE = new BulkDeferredHolder<>(SubtypeMissile.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemMissile(subtype)));
 
 	public static final DeferredHolder<Item, ItemElectrodynamics> ITEM_AAMISSILE = ITEMS.register("aamissile", () -> new ItemElectrodynamics(new Item.Properties().stacksTo(10), BallistixCreativeTabs.MAIN));
+	public static final DeferredHolder<Item, ItemElectrodynamics> ITEM_AAMISSILEMK2 = ITEMS.register("aamissilemk2", () -> new ItemElectrodynamics(new Item.Properties().stacksTo(5), BallistixCreativeTabs.MAIN));
 	public static final DeferredHolder<Item, ItemElectrodynamics> ITEM_BULLET = ITEMS.register("bullet", () -> new ItemElectrodynamics(new Item.Properties().stacksTo(64), BallistixCreativeTabs.MAIN));
 	public static final DeferredHolder<Item, ItemElectrodynamics> ITEM_DUSTPOISON = ITEMS.register("dustpoison", () -> new ItemElectrodynamics(new Item.Properties(), BallistixCreativeTabs.MAIN));
 	public static final DeferredHolder<Item, ItemRocketLauncher> ITEM_ROCKETLAUNCHER = ITEMS.register("rocketlauncher", ItemRocketLauncher::new);

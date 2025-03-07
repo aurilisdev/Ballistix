@@ -1,14 +1,14 @@
 package ballistix.common.tile.silo;
 
-import java.util.Random;
-
+import ballistix.api.missile.virtual.VirtualProjectile;
+import ballistix.common.tile.radar.TileFireControlRadar;
+import ballistix.registers.BallistixItems;
 import org.jetbrains.annotations.Nullable;
 
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.api.silo.ILauncherControlPanel;
 import ballistix.api.silo.ILauncherPlatform;
-import ballistix.api.silo.ILauncherSupportFrame;
 import ballistix.common.block.BlockExplosive;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.inventory.container.ContainerLauncherPlatformT1;
@@ -18,7 +18,6 @@ import ballistix.common.item.ItemMissile;
 import ballistix.common.settings.Constants;
 import ballistix.registers.BallistixSounds;
 import ballistix.registers.BallistixTiles;
-import electrodynamics.Electrodynamics;
 import electrodynamics.api.multiblock.subnodebased.parent.IMultiblockParentBlock;
 import electrodynamics.api.multiblock.subnodebased.parent.IMultiblockParentTile;
 import electrodynamics.common.blockitem.types.BlockItemDescriptable;
@@ -53,7 +52,11 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 	public static final int MISSILE_SLOT = 0;
 	public static final int EXPLOSIVE_SLOT = 1;
 
+	public static final int COOLDOWN = 100;
+
 	public Property<Boolean> hasExplosive = property(new Property<>(PropertyTypes.BOOLEAN, "hasexplosive", false));
+	public Property<Boolean> hasMissile = property(new Property<>(PropertyTypes.BOOLEAN, "hasmissile", false));
+	public Property<Boolean> hasSam = property(new Property<>(PropertyTypes.BOOLEAN, "hassam", false));
 
 	public TileLauncherPlatformT1(BlockPos pos, BlockState state) {
 		this(BallistixTiles.TILE_LAUNCHER_PLATFORM_TIER1.get(), pos, state);
@@ -85,85 +88,95 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 		return 1;
 	}
 
-	private static BlockPos addRandomVector(BlockPos pos, double accuracy) {
-		Random random = Electrodynamics.RANDOM;
-
-		// Generate a random length from 0 to accuracy
-		double length = accuracy * random.nextDouble();
-
-		// Generate a random angle
-		double angle = random.nextDouble() * 2 * Math.PI;
-
-		// Calculate the x and y offsets using the random length and angle
-		int offsetX = (int) (length * Math.cos(angle));
-		int offsetY = (int) (length * Math.sin(angle));
-
-		// Create a new BlockPos with the modified x and y, keeping z unchanged
-		return new BlockPos(pos.getX() + offsetX, pos.getY(), pos.getZ() + offsetY);
-	}
-
 	@Override
-	public boolean launch(ILauncherControlPanel controlPanel) {
+	public int launch(ILauncherControlPanel controlPanel, boolean redstoneTriggered) {
+
+		int cooldown = 0;
+
 		ComponentInventory inv = getComponent(IComponentType.Inventory);
-		ItemStack explosive = inv.getItem(EXPLOSIVE_SLOT);
+
 		ItemStack mis = inv.getItem(MISSILE_SLOT);
-		if (mis.getItem() instanceof ItemMissile itmissile && explosive.getItem() instanceof BlockItemDescriptable desc && desc.getBlock() instanceof BlockExplosive blexplosive) {
-			if (blexplosive.explosive.tier > itmissile.missile.tier || itmissile.missile.tier > getTier() || blexplosive.explosive.tier > getTier()) {
-				return false;
+
+		if (redstoneTriggered && hasSam.get()) {
+
+			BlockPos target = controlPanel.getTarget();
+
+			if (level.getBlockEntity(target) instanceof TileFireControlRadar radar && radar.tracking != null && TileFireControlRadar.getDistanceToMissile(new Vec3(getBlockPos().getX(), getBlockPos().getY(), getBlockPos().getZ()), radar.tracking.position) > 100) {
+				VirtualProjectile.VirtualSAM sam = new VirtualProjectile.VirtualSAM(
+						//
+						0.0F,
+						//
+						new Vec3(getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5),
+						//
+						new Vec3(0, 1, 0),
+						//
+						Constants.FIRE_CONTROL_RADAR_RANGE * 3F,
+						//
+						target,
+						//
+						1
+				//
+				);
+
+				MissileManager.addSAM(level.dimension(), sam);
+
+				inv.removeItem(MISSILE_SLOT, 1);
+
+				cooldown = COOLDOWN * 2;
 			}
+		} else if (!hasSam.get()) {
+			ItemStack explosive = inv.getItem(EXPLOSIVE_SLOT);
+			if (mis.getItem() instanceof ItemMissile itmissile && explosive.getItem() instanceof BlockItemDescriptable desc && desc.getBlock() instanceof BlockExplosive blexplosive) {
+				if (blexplosive.explosive.tier > itmissile.missile.tier || itmissile.missile.tier > getTier() || blexplosive.explosive.tier > getTier()) {
+					return -1;
+				}
+				VirtualMissile missile = new VirtualMissile(
+						//
+						new Vec3(getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5),
+						//
+						new Vec3(0, 1, 0),
+						//
+						0.0F,
+						//
+						false,
+						//
+						getBlockPos().getX() + 0.5F,
+						//
+						getBlockPos().getZ() + 0.5F,
+						//
+						controlPanel.getTarget(),
+						//
+						itmissile.missile.ordinal(),
+						//
+						((BlockExplosive) ((BlockItemDescriptable) explosive.getItem()).getBlock()).explosive.ordinal(),
+						//
+						false,
+						//
+						controlPanel.getFrequency()
+				//
+				);
 
-			int accuracy = 45;
-			if (level.getBlockEntity(worldPosition.relative(getFacing().getOpposite())) instanceof ILauncherSupportFrame frame) {
-				accuracy = frame.getInaccuracy();
-			} else if (level.getBlockEntity(worldPosition.relative(getFacing())) instanceof ILauncherSupportFrame frame) {
-				accuracy = frame.getInaccuracy();
+				MissileManager.addMissile(level.dimension(), missile);
+
+				inv.removeItem(MISSILE_SLOT, 1);
+				inv.removeItem(EXPLOSIVE_SLOT, 1);
+
+				cooldown = COOLDOWN;
+			} else {
+				return -1;
 			}
-			int ordinal = ((ItemMissile) mis.getItem()).missile.ordinal();
-
-			BlockPos fixedTarget = addRandomVector(controlPanel.getTarget(), accuracy);
-
-			VirtualMissile missile = new VirtualMissile(
-					//
-					new Vec3(getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5),
-					//
-					new Vec3(0, 1, 0),
-					//
-					0.0F,
-					//
-					false,
-					//
-					getBlockPos().getX() + 0.5F,
-					//
-					getBlockPos().getZ() + 0.5F,
-					//
-					fixedTarget,
-					//
-					ordinal,
-					//
-					blexplosive.explosive.ordinal(),
-					//
-					false,
-					//
-					controlPanel.getFrequency()
-			//
-			);
-
-			MissileManager.addMissile(level.dimension(), missile);
-
-			inv.removeItem(MISSILE_SLOT, 1);
-			inv.removeItem(EXPLOSIVE_SLOT, 1);
-
-			level.playSound(null, getBlockPos(), BallistixSounds.SOUND_MISSILE_SILO.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
-			return true;
 		}
-		return false;
+
+		level.playSound(null, getBlockPos(), BallistixSounds.SOUND_MISSILE_SILO.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+
+		return cooldown;
 
 	}
 
 	protected boolean isItemValidForSlot(int index, ItemStack stack, ComponentInventory inv) {
 		Item item = stack.getItem();
 		if (index == 0) {
-			return item instanceof ItemMissile missile && missile.missile.tier <= getTier();
+			return (item instanceof ItemMissile missile && missile.missile.tier <= getTier()) || stack.is(BallistixItems.ITEM_AAMISSILEMK2);
 		} else if (index == 1) {
 			return item instanceof BlockItemDescriptable des && des.getBlock() instanceof BlockExplosive expl && expl.explosive.tier <= getTier() && expl.explosive.tier > -1;
 		}
@@ -172,14 +185,41 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 
 	@Override
 	public void onInventoryChange(ComponentInventory inv, int index) {
+		handleMissile(inv, index);
 		handleExplosive(inv, index);
+	}
+
+	private void handleMissile(ComponentInventory inv, int index) {
+		if (index == 0 || index == -1) {
+
+			ItemStack missile = inv.getItem(0);
+
+			if (missile.isEmpty()) {
+				hasMissile.set(false);
+				hasSam.set(false);
+				return;
+			}
+
+			boolean sam = missile.is(BallistixItems.ITEM_AAMISSILEMK2);
+
+			if (missile.getItem() instanceof ItemMissile || sam) {
+
+				hasMissile.set(true);
+
+				hasSam.set(sam);
+
+			} else {
+				hasMissile.set(false);
+				hasSam.set(false);
+			}
+
+		}
 	}
 
 	private void handleExplosive(ComponentInventory inv, int index) {
 		if (index == 1 || index == -1) {
 			ItemStack explosive = inv.getItem(1);
-
-			if (!explosive.isEmpty() && explosive.getItem() instanceof BlockItemDescriptable blockItem && blockItem.getBlock() instanceof BlockExplosive) {
+			if ((!explosive.isEmpty() && explosive.getItem() instanceof BlockItemDescriptable blockItem && blockItem.getBlock() instanceof BlockExplosive) || (explosive.isEmpty() && inv.getItem(MISSILE_SLOT).is(BallistixItems.ITEM_AAMISSILEMK2))) {
 				hasExplosive.set(true);
 			} else {
 				hasExplosive.set(false);
@@ -191,6 +231,16 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 	@Override
 	public boolean hasExplosive() {
 		return hasExplosive.get();
+	}
+
+	@Override
+	public boolean hasMissile() {
+		return hasMissile.get();
+	}
+
+	@Override
+	public boolean hasSAM() {
+		return hasSam.get();
 	}
 
 	@Override

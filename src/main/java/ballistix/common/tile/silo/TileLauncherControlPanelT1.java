@@ -58,6 +58,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 		SiloRegistry.registerSilo(newFreq, this);
 
 	}));
+
 	public Property<BlockPos> target = property(new Property<>(PropertyTypes.BLOCK_POS, "target", BlockPos.ZERO));
 
 	private int cooldown = 100;
@@ -127,7 +128,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 			return;
 		}
 
-		if (!platform.hasExplosive() || (!hasRedstone && !shouldLaunch)) {
+		if (!platform.hasMissile() || (platform.hasExplosive() && platform.hasSAM()) || (!platform.hasExplosive() && !platform.hasSAM()) || (!hasRedstone && !shouldLaunch)) {
 			return;
 		}
 
@@ -139,8 +140,9 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 			return;
 		}
 
-		if (platform.launch(this)) {
-			cooldown = COOLDOWN;
+		int newCool = platform.launch(this, hasRedstone);
+		if (newCool != -1) {
+			cooldown = newCool;
 		}
 		electro.extractPower(TransferPack.joulesVoltage(Constants.MISSILESILO_USAGE * getTier(), electro.getVoltage()), false);
 	}

@@ -130,7 +130,7 @@ public class VirtualMissile {
 
             if (b != null) {
 
-		if (b.isInstantaneous() && !(b instanceof IHasCustomRender)) {
+                if (b.isInstantaneous() && !(b instanceof IHasCustomRender)) {
                     b.performExplosion();
 
                     hasExploded = true;

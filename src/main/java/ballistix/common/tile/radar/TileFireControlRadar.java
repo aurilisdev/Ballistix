@@ -96,9 +96,9 @@ public class TileFireControlRadar extends GenericTile {
 
         for (VirtualMissile missile : MissileManager.getMissilesForLevel(level.dimension())) {
             if (missile.getBoundingBox().intersects(searchArea)) {
-                if (temp == null && (!usingWhitelist.get() || usingWhitelist.get() && !whitelistedFrequencies.get().contains(missile.frequency)) && !missile.hasExploded()) {
+                if (temp == null && (!usingWhitelist.get() || usingWhitelist.get() && !whitelistedFrequencies.get().contains(missile.payloadData.frequency)) && !missile.hasExploded()) {
                     temp = missile;
-                } else if (temp != null && getDistanceToMissile(searchPos, missile.position) < getDistanceToMissile(searchPos, temp.position) && (!usingWhitelist.get() || usingWhitelist.get() && !whitelistedFrequencies.get().contains(missile.frequency)) && !missile.hasExploded()) {
+                } else if (temp != null && getDistanceToMissile(searchPos, missile.position) < getDistanceToMissile(searchPos, temp.position) && (!usingWhitelist.get() || usingWhitelist.get() && !whitelistedFrequencies.get().contains(missile.payloadData.frequency)) && !missile.hasExploded()) {
                     temp = missile;
                 }
             }
@@ -110,7 +110,7 @@ public class TileFireControlRadar extends GenericTile {
 
         if (tracking != null && !tracking.hasExploded()) {
             trackingPos.set(tracking.position);
-            missileType.set(tracking.missileType);
+            missileType.set(tracking.payloadData.missileType);
             if (trackingPos.get().distanceTo(new Vec3(worldPosition.getX(), trackingPos.get().y, worldPosition.getZ())) > Constants.FIRE_CONTROL_RADAR_RANGE) {
                 tracking = null;
                 trackingPos.set(OUT_OF_REACH);

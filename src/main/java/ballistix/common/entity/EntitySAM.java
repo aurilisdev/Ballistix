@@ -78,12 +78,13 @@ public class EntitySAM extends Entity {
                 return;
             }
 
-            if (!blockPosition().equals(sam.blockPosition())) {
+            if (!blockPosition().equals(sam.blockPosition()) || !getDeltaMovement().equals(sam.deltaMovement)) {
                 setPos(sam.position);
                 speed = sam.speed;
+                setDeltaMovement(sam.deltaMovement);
             }
 
-            setDeltaMovement(sam.deltaMovement);
+
 
         }
 
@@ -116,13 +117,6 @@ public class EntitySAM extends Entity {
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
-        UUIDUtil.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("id")).ifSuccess(pair -> id = pair.getFirst());
-        compound.putFloat("speed", speed);
-        compound.putInt("variant", variant);
-    }
-
-    @Override
-    protected void addAdditionalSaveData(CompoundTag compound) {
         if (level() instanceof ServerLevel server && (!server.isPositionEntityTicking(blockPosition()) || !server.hasChunkAt(blockPosition()))) {
             setRemoved(RemovalReason.DISCARDED);
         }
@@ -131,6 +125,13 @@ public class EntitySAM extends Entity {
         }
         speed = compound.getFloat("speed");
         variant = compound.getInt("variant");
+    }
+
+    @Override
+    protected void addAdditionalSaveData(CompoundTag compound) {
+        UUIDUtil.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("id")).ifSuccess(pair -> id = pair.getFirst());
+        compound.putFloat("speed", speed);
+        compound.putInt("variant", variant);
     }
 
     @Override

@@ -90,7 +90,7 @@ public class TileSearchRadar extends GenericTile {
         electro.joules(electro.getJoulesStored() - (Constants.RADAR_USAGE / 20.0));
 
         for (VirtualMissile missile : MissileManager.getMissilesForLevel(level.dimension())) {
-            if (missile.getBoundingBox().intersects(searchArea) && (!usingWhitelist.get() || (usingWhitelist.get() && !whitelistedFrequencies.get().contains(missile.frequency))) && !missile.hasExploded()) {
+            if (missile.getBoundingBox().intersects(searchArea) && (!usingWhitelist.get() || (usingWhitelist.get() && !whitelistedFrequencies.get().contains(missile.payloadData.frequency))) && !missile.hasExploded()) {
                 trackedMissiles.add(missile);
             }
         }
@@ -112,7 +112,7 @@ public class TileSearchRadar extends GenericTile {
         detections.clear();
 
         for (VirtualMissile missile : trackedMissiles) {
-            detections.add(new IDetected.Detected(missile.position, BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.values()[missile.missileType]), true));
+            detections.add(new IDetected.Detected(missile.position, BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.values()[missile.payloadData.missileType]), true));
         }
 
         for (TileESMTower tile : trackedEsmTowers) {

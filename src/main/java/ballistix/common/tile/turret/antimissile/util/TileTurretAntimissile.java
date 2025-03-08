@@ -28,10 +28,7 @@ public abstract class TileTurretAntimissile extends GenericTileTurret {
     }
 
     public boolean bindFireControlRadar(BlockPos pos) {
-        double deltaX = pos.getX() - getBlockPos().getX();
-        double deltaY = pos.getY() - getBlockPos().getY();
-        double deltaZ = pos.getZ() - getBlockPos().getZ();
-        double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+        double distance = getDistanceToPos(getBlockPos(), pos);
         if(distance > Constants.MAX_DISTANCE_FROM_RADAR) {
             return false;
         }
@@ -75,6 +72,13 @@ public abstract class TileTurretAntimissile extends GenericTileTurret {
             return null;
         }
         return new ITarget.TargetMissile(radar.tracking);
+    }
+
+    public static double getDistanceToPos(BlockPos start, BlockPos end) {
+        double deltaX = end.getX() - start.getX();
+        double deltaY = end.getY() - start.getY();
+        double deltaZ = end.getZ() - start.getZ();
+        return Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
     }
 
 }

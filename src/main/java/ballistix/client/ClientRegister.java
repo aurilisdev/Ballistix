@@ -86,7 +86,7 @@ public class ClientRegister {
 	public static final ModelResourceLocation MODEL_BLACKHOLECUBE = ModelResourceLocation.standalone(Ballistix.rl("entity/blackhole"));
 
 	public static final ModelResourceLocation MODEL_AAMISSILE = ModelResourceLocation.standalone(Ballistix.rl("entity/aamissile"));
-	public static final ModelResourceLocation MODEL_AAMISSILE_MK2 = ModelResourceLocation.standalone(Ballistix.rl("entity/aamissile"));
+	public static final ModelResourceLocation MODEL_AAMISSILE_MK2 = ModelResourceLocation.standalone(Ballistix.rl("entity/missileantiballistic"));
 	public static final ModelResourceLocation MODEL_SAMTURRET_BALLJOINT = ModelResourceLocation.standalone(Ballistix.rl("block/samturretballjoint"));
 	public static final ModelResourceLocation MODEL_SAMTURRET_RAIL = ModelResourceLocation.standalone(Ballistix.rl("block/samturretrail"));
 	public static final ModelResourceLocation MODEL_ESMTOWER = ModelResourceLocation.standalone(Ballistix.rl("block/esmtower"));

@@ -30,7 +30,7 @@ public class ScreenLauncherControlPanelT1 extends GenericScreen<ContainerLaunche
 	private boolean needsUpdate = true;
 
 	private final ScreenComponentEditBox xCoordField;
-	private final ScreenComponentEditBox yCoordField;
+	private final ScreenComponentEditBox zCoordField;
 
 	public ScreenLauncherControlPanelT1(ContainerLauncherControlPanelT1 container, Inventory playerInventory, Component title) {
 		super(container, playerInventory, title);
@@ -39,10 +39,10 @@ public class ScreenLauncherControlPanelT1 extends GenericScreen<ContainerLaunche
 		addComponent(new ScreenComponentElectricInfo(this::getElectricInformation, -AbstractScreenComponentInfo.SIZE + 1, 2).wattage(Constants.MISSILESILO_USAGE * 20));
 
 		addEditBox(xCoordField = new ScreenComponentEditBox(10, 20, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setX).setFilter(ScreenComponentEditBox.INTEGER));
-		addEditBox(yCoordField = new ScreenComponentEditBox(10, 38, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setY).setFilter(ScreenComponentEditBox.INTEGER));
+		addEditBox(zCoordField = new ScreenComponentEditBox(10, 38, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setY).setFilter(ScreenComponentEditBox.INTEGER));
 
 		addComponent(new ScreenComponentSimpleLabel(60, 22, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.x")));
-		addComponent(new ScreenComponentSimpleLabel(60, 40, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.y")));
+		addComponent(new ScreenComponentSimpleLabel(60, 40, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.z")));
 	}
 
 	@Override
@@ -105,12 +105,12 @@ public class ScreenLauncherControlPanelT1 extends GenericScreen<ContainerLaunche
 
 	private void setX(String val) {
 		xCoordField.setFocus(true);
-		yCoordField.setFocus(false);
+		zCoordField.setFocus(false);
 		setSiloTargetX(val);
 	}
 
 	private void setY(String val) {
-		yCoordField.setFocus(true);
+		zCoordField.setFocus(true);
 		xCoordField.setFocus(false);
 		setSiloTargetY(val);
 	}
@@ -123,7 +123,7 @@ public class ScreenLauncherControlPanelT1 extends GenericScreen<ContainerLaunche
 			TileLauncherControlPanelT1 silo = menu.getSafeHost();
 			if (silo != null) {
 				xCoordField.setValue("" + silo.target.get().getX());
-				yCoordField.setValue("" + silo.target.get().getY());
+				zCoordField.setValue("" + silo.target.get().getY());
 			}
 		}
 	}

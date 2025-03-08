@@ -71,8 +71,8 @@ public class RenderLauncherPlatform<T extends GenericTile & ILauncherPlatform> e
 
 			BakedModel model = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_AAMISSILE_MK2);
 
-			matrixStackIn.translate(0.5f, 0, 0.5f);
-			matrixStackIn.scale(1.5f, 2.5f, 1.5f);
+			matrixStackIn.translate(0.5f, 1F, 0.5f);
+			//matrixStackIn.scale(1.5f, 2.5f, 1.5f);
 
 			Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model, tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(), 0);
 

@@ -156,13 +156,12 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 
             } else {
 
-                int signX = level.random.nextBoolean() ? -1 : 1;
-                int signZ = level.random.nextBoolean() ? -1 : 1;
+                double length = inaccuracy * level.random.nextDouble();
+                double angle = level.random.nextDouble() * 2 * Math.PI;
+                int offsetX = (int) (length * Math.cos(angle));
+                int offsetZ = (int) (length * Math.sin(angle));
 
-                int offsetX = level.random.nextInt(inaccuracy);
-                int offsetZ = level.random.nextInt(inaccuracy);
-
-                BlockPos pos = controlPanel.getTarget().offset(signX * offsetX, 0, signZ * offsetZ);
+                BlockPos pos = controlPanel.getTarget().offset(offsetX, 0, offsetZ);
 
                 if(launchMissile(pos, controlPanel.getFrequency())) {
                     cooldown = COOLDOWN;

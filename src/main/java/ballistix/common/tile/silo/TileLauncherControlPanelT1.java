@@ -66,7 +66,6 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 	public boolean shouldLaunch = false;
 	public CachedTileOutput launcherPlatform;
 	public CachedTileOutput supportFrame;
-	public static final int COOLDOWN = 20;
 
 	public TileLauncherControlPanelT1(BlockPos pos, BlockState state) {
 		this(BallistixTiles.TILE_LAUNCHER_CONTROL_PANEL_TIER1.get(), pos, state);
@@ -118,13 +117,13 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 
 		boolean hasRedstone = level.hasNeighborSignal(getBlockPos());
 
-		if (!launcherPlatform.valid() || !supportFrame.valid()) {
+		if (!launcherPlatform.valid()) {
 			return;
 		}
-		ILauncherPlatform platform = launcherPlatform.getSafe();
-		ILauncherSupportFrame frame = supportFrame.getSafe();
 
-		if (platform == null || frame == null) { // Should really update the cachedtileoutput so this cant occur. As of before
+		ILauncherPlatform platform = launcherPlatform.getSafe();
+
+		if (platform == null) { // Should really update the cachedtileoutput so this cant occur. As of before
 								// the getsafe, the platform wasnt null, but as it was removed inworld, the
 								// output made it null and returns a null on getsafe.
 			return;
@@ -132,6 +131,12 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 
 		if (!platform.hasMissile() || (platform.hasExplosive() && platform.hasSAM()) || (!platform.hasExplosive() && !platform.hasSAM()) || (!hasRedstone && !shouldLaunch)) {
 			return;
+		}
+
+		int inaccuracy = Constants.LAUNCH_PLATFORM_DEFAULT_INACCURACY;
+
+		if(supportFrame.valid() && supportFrame.getSafe() instanceof ILauncherSupportFrame frame) {
+			inaccuracy = frame.getInaccuracy();
 		}
 
 		shouldLaunch = false;
@@ -142,7 +147,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 			return;
 		}
 
-		int newCool = platform.launch(this, hasRedstone, frame.getInaccuracy());
+		int newCool = platform.launch(this, hasRedstone, inaccuracy);
 		if (newCool != -1) {
 			cooldown = newCool;
 		}

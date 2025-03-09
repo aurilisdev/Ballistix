@@ -155,6 +155,8 @@ public class Constants {
 	public static int LAUNCHER_PLATFORM_RANGE_T2 = 3000;
 	@IntValue(def = 10000)
 	public static int LAUNCHER_PLATFORM_RANGE_T3 = 10000;
+	@IntValue(def = 45)
+	public static int LAUNCH_PLATFORM_DEFAULT_INACCURACY = 45;
 
 	@BooleanValue(def = true, comment = "Whether explosions will be cached; may use a lot of memory!")
 	public static boolean SHOULD_CACHE_EXPLOSIONS = true;

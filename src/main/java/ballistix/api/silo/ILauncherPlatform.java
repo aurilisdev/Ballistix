@@ -12,6 +12,6 @@ public interface ILauncherPlatform {
 	public boolean hasSAM();
 
 	// returns cooldown
-	public int launch(ILauncherControlPanel panel, boolean redstoneTriggered);
+	public int launch(ILauncherControlPanel panel, boolean redstoneTriggered, int inaccuracy);
 
 }

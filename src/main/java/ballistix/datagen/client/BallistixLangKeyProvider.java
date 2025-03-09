@@ -96,7 +96,7 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier2), "T2 Missile");
 			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier3), "T3 Missile");
 
-			addItem(BallistixItems.ITEM_AAMISSILE, "Surface-to-air Missile");
+			addItem(BallistixItems.ITEM_AAMISSILE, "Surface-to-Air Missile");
 			addItem(BallistixItems.ITEM_AAMISSILEMK2, "Anti-Ballistic Missile");
 			addItem(BallistixItems.ITEM_BULLET, "20mm Bullet");
 
@@ -222,18 +222,27 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 			addGuidebook(References.ID, "Ballistix");
 
 			addGuidebook("chapter.missilesilo", "Missile Silo");
-			addGuidebook("chapter.missilesilo.l1", "The Missile Silo is used, as the name suggests, to launch various missiles with different types of warheads. The Silo has 3 available missile types with the following block ranges:");
+			addGuidebook("chapter.missilesilo.l1.1", "The Missile Silo is a multiblock used, as the name suggests, to launch various missiles with different types of warheads. The Silo is composed of three different blocks:");
+			addGuidebook("chapter.missilesilo.controlpanel", "Control Panel");
+			addGuidebook("chapter.missilesilo.launchplatform", "Launch Platform");
+			addGuidebook("chapter.missilesilo.supportframe", "Support Frame");
+			addGuidebook("chapter.missilesilo.l1.2", "Each come in three tiers which provide successive buffs to the silo.");
+			addGuidebook("chapter.missilesilo.l2", "The %s is used to provide targeting information to the silo and instructs the Launch Platform to fire. It requires power to function, and can be instructed to launch with either a redstone signal or by using a Laser Designator. The silo will be on cooldown upon firing a missile, but will continue to fire missiles while it has a redstone " +
+					"signal once the cooldown is over. The Tier 1 Control Panel is the cheapest, but can only specify the X and Z coordinates of a target. The Tier 2 Panel is more expensive, but gains the ability to specify the Y variant. The missile will detonate once it reaches this Y value too, allowing for more precise strikes. The Tier 3 Control Panel is the most expensive, but gains the ability to " +
+					"specify the launch frequency of the silo.");
+			addGuidebook("chapter.missilesilo.l3.1", "The %1$s is what holds the missile and accompanying warhead. The Tier 1 variant can launch missiles %2$s blocks, the Tier 2 variant can launch blocks %3$s blocks, and the Tier 3 Variant can launch missiles %4$s Blocks. There are three types of missiles that can be loaded with increasing ranges:");
 			addGuidebook("chapter.missilesilo.range", "%1$s : %2$s");
-			addGuidebook("chapter.missilesilo.close", "Close-Range");
-			addGuidebook("chapter.missilesilo.medium", "Medium-Range");
-			addGuidebook("chapter.missilesilo.long", "Long-Range");
+			addGuidebook("chapter.missilesilo.close", "Tier 1");
+			addGuidebook("chapter.missilesilo.medium", "Tier 2");
+			addGuidebook("chapter.missilesilo.long", "Tier 3");
 			addGuidebook("chapter.missilesilo.unlimited", "Unlimited");
-			addGuidebook("chapter.missilesilo.l2", "Each missile type is capable of carrying any explosive as a warhead.");
+			addGuidebook("chapter.missilesilo.l3.2", "Each missile type is capable of carrying any explosive as a warhead. It should be noted that any Launch Platform can fire any missile tier, but it will only launch the missile as far as either the missile's range or the Launch Platform's range, whichever is less.");
 
-			addGuidebook("chapter.missilesilo.l3", "To load an explosive into a missile, first place the missile of your choice into the silo in its designated slot. Next, choose an explosive type and place it into its designated spot in the GUI. Next, program the target destination into the coordinate boxes. This can either be done manually or with a Radar Gun. Finally, " + "once this is all completed, to fire the missile, apply a redstone signal to the silo.");
+			addGuidebook("chapter.missilesilo.l4", "The %1$s is used to provide increased accuracy to the launched missile. The Launch Platform is able to fire missiles without one, but will incur an default inaccuracy of %2$s blocks, meaning the missile will land within %2$s blocks of the specified X and Z coordinates. The Tier 1 variant decreases the inaccuracy penalty to 30 blocks, " +
+					"the Tier 2 variant decrease the inaccuracy to 15 blocks, while the Tier 3 variant provides perfect accuracy.");
 
 			addGuidebook("chapter.items", "Items");
-			addGuidebook("chapter.items.rocketlauncher1", "The Rocket Launcher is capable of firing Close-Range missiles with any explosive warhead attached as a projectile. To fire it, have a Close-Range missile in your inventory along with the explosive type of your choice. Note, it must be a Ballistix explosive, and it must be the block form. Once this is done, hold " + "the Launcher and Right-Click to fire!");
+			addGuidebook("chapter.items.rocketlauncher1", "The Rocket Launcher is capable of firing Tier 1 missiles with any explosive warhead. To fire it, have a Tier 1 missile in your inventory along with the explosive type of your choice. Note, it must be a Ballistix explosive, and it must be the block form. Once this is done, hold " + "the Launcher and Right-Click to fire!");
 
 			addGuidebook("chapter.items.radargun1",
 					"The Radar Gun is used to collect coordinates of a target and feed them into the Missile Silo instead of programming them manually. To use the Radar Gun, simply Right-Click on the target with the Gun to store its coordinates. This will expend %s and store the coordinates to the Gun. Then Right-Click on the Missile Silo " + "with the Gun to feed in the coordinates. Alternatively, the coordinates can be imported using the \"Sync\" slot in the GUI.");
@@ -252,16 +261,19 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 
 			addGuidebook("chapter.missiledefense.l1", "While the best defense is not to be found, what do you do if your base gets discovered, and now someone has launched a nuclear missile at it? The answer is quite simple: shoot the missile down. Ballistix offers a wide selections of methods to accomplish this task. The following pages will cover these various methods, their " + "strengths, and their weaknesses.");
 
-			addGuidebook("chapter.missiledefense.searchradar1", "The Search Radar is a highly valuable tool, as it serves as an early warning device for incoming missiles. Being able to detect missiles out to a range of %s blocks, the device will emit a redstone signal upon detection, and will continue to emit a signal while said missile remains detected. Note however that the Search "
-					+ "Radar does not discriminate between the missiles it detects, meaning it can detect the missiles you launch as well! To prevent this, you can whitelist certain launch frequencies to exclude them from detection. To add frequencies, select the Frequency Manager tab inside the radar's GUI:");
+			addGuidebook("chapter.missiledefense.searchradar1", "The Search Radar is a highly valuable tool, as it serves as an early warning device for incoming missiles. Being able to detect missiles or ESM Towers out to a range of %s blocks, the device will emit a redstone signal upon detection, and will continue to emit a signal while it is detecting something. The Radar will " +
+					"read a comparator signal of 8 if it is only detecting an ESM Tower, and will read a signal of 15 if it is detecting both missiles and ESM Towers. Note however that the Search Radar does not discriminate between the missiles it detects, meaning it can detect the missiles you launch as well! To prevent this, you can whitelist certain launch frequencies to exclude them from " +
+					"detection. To add frequencies, select the Frequency Manager tab inside the radar's GUI:");
 			addGuidebook("chapter.missiledefense.searchradar2", "Note the whitelist mode must be enabled for the frequencies to actually be ignored. Disabling whitelist mode won't wipe any stored frequencies! The radar must also be placed above-ground in order to work.");
 
 			addGuidebook("chapter.missiledefense.firecontrolradar1", "The Fire Control Radar is an upgraded and more powerful variant of the Search Radar. The radar is able to lock onto an incoming missile and relay the target information to linked turrets. To link a turret, shift+right-click the radar with a %1$s. Then, shift+right-click the Radar Gun on the turret of choice. There is no limit "
 					+ "to the number of turrets that can be bound to a single Fire Control Radar, however the turret can be no more than %2$s blocks away. Note that all turrets bound to a radar will fire at the same target the radar is tracking! A turret will not be able to lock onto a missile if it is not bound to a radar.");
 			addGuidebook("chapter.missiledefense.firecontrolradar2", "Similarly to the Search Radar, the Fire Control Radar must be placed above-ground in order to work. Unlike the Search variant, it has a more limited range of %s blocks. A useful feature to note is the radar can be controlled via redstone.");
 
-			addGuidebook("chapter.missiledefense.esmtower1", "The ESM Tower is used to detect nearby radars. The tower can detect radars within a %s block range. Search Radars are weaker by nature, so the tower will only be able to identify if one is within its detection range. Fire Control Radars on the other hand will have their exact positions listed if they are active! Note "
+			addGuidebook("chapter.missiledefense.esmtower1", "The ESM Tower is used to detect nearby radars. The Tower can detect radars within a %s block range. Search Radars are weaker by nature, so the tower will only be able to identify if one is within its detection range. Fire Control Radars on the other hand will have their exact positions listed if they are active! Note "
 					+ "that an ESM Tower will have its exact position detected by a Search Radar! A detected ESM Tower will cause the radar to emit a redstone signal just as with a missile.");
+			addGuidebook("chapter.missiledefense.esmtower2", "Using the tower does not come with risks however! A missile silo can be configured to counter-launch if an ESM Tower is picked up by the Search Radar. A silo can be linked to a Search Radar by inputting the Radar's coordinates into the silo's target fields. Upon receiving a redstone signal, the silo will launch at the " +
+					"ESM Tower's position.");
 
 			addGuidebook("chapter.missiledefense.samturret1", "The SAM Turret is a turret dedicated to long-range missile defense. Firing %1$ss, the turret can engage targets up to %2$s blocks! This range can be further increased with range upgrades. On top of this, the missiles launched are homing so long as the Fire Control Radar is tracking a target, granting an increased chance " +
 					"to hit the target!. The turret is highly accurate, and can hold up to 10 rockets at a time. A Smart Missile will outright destroy a Ballistic Missile, however it only has a %4$s chance to do so! Note the turret will need to wait %3$s ticks between firing! The turret has a maximum elevation of 90 degrees and a maximum depression of 45 degrees. It should be noted that the turret " +

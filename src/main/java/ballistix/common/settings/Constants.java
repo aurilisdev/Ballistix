@@ -68,7 +68,7 @@ public class Constants {
 	@DoubleValue(def = 1000.0)
 	public static double ESM_TOWER_USAGE_PER_TICK = 1000.0;
 	@DoubleValue(def = 100)
-	public static double ESM_TOWER_SEARCH_RADIUS = 100.0;
+	public static double ESM_TOWER_SEARCH_RADIUS = 200.0;
 
 	@DoubleValue(def = 10000, comment = "Usage in watt for radar")
 	public static double RADAR_USAGE = 10000;
@@ -155,6 +155,8 @@ public class Constants {
 	public static int LAUNCHER_PLATFORM_RANGE_T2 = 3000;
 	@IntValue(def = 10000)
 	public static int LAUNCHER_PLATFORM_RANGE_T3 = 10000;
+	@IntValue(def = 45)
+	public static int LAUNCH_PLATFORM_DEFAULT_INACCURACY = 45;
 
 	@BooleanValue(def = true, comment = "Whether explosions will be cached; may use a lot of memory!")
 	public static boolean SHOULD_CACHE_EXPLOSIONS = true;

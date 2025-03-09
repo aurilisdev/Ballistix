@@ -38,11 +38,11 @@ public class ScreenLauncherControlPanelT1 extends GenericScreen<ContainerLaunche
 
 		addComponent(new ScreenComponentElectricInfo(this::getElectricInformation, -AbstractScreenComponentInfo.SIZE + 1, 2).wattage(Constants.MISSILESILO_USAGE * 20));
 
-		addEditBox(xCoordField = new ScreenComponentEditBox(10, 20, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setX).setFilter(ScreenComponentEditBox.INTEGER));
-		addEditBox(zCoordField = new ScreenComponentEditBox(10, 38, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setY).setFilter(ScreenComponentEditBox.INTEGER));
+		addEditBox(xCoordField = new ScreenComponentEditBox(10, 28, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setX).setFilter(ScreenComponentEditBox.INTEGER));
+		addEditBox(zCoordField = new ScreenComponentEditBox(10, 46, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setY).setFilter(ScreenComponentEditBox.INTEGER));
 
-		addComponent(new ScreenComponentSimpleLabel(60, 22, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.x")));
-		addComponent(new ScreenComponentSimpleLabel(60, 40, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.z")));
+		addComponent(new ScreenComponentSimpleLabel(60, 32, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.x")));
+		addComponent(new ScreenComponentSimpleLabel(60, 50, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.z")));
 	}
 
 	@Override

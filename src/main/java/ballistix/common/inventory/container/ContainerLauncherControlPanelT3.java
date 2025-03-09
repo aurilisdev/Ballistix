@@ -22,7 +22,7 @@ public class ContainerLauncherControlPanelT3 extends GenericContainerBlockEntity
 
 	@Override
 	public void addInventorySlots(Container inv, Inventory playerinv) {
-		setPlayerInvOffset(20);
-		addSlot(new SlotGeneric(inv, nextIndex(), 90, 70));
+		//setPlayerInvOffset(20);
+		addSlot(new SlotGeneric(inv, nextIndex(), 81, 51));
 	}
 }

@@ -1,7 +1,9 @@
 package ballistix.common.tile.silo;
 
 import ballistix.api.missile.virtual.VirtualProjectile;
+import ballistix.common.tile.TileESMTower;
 import ballistix.common.tile.radar.TileFireControlRadar;
+import ballistix.common.tile.radar.TileSearchRadar;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
 import ballistix.registers.BallistixItems;
 import org.jetbrains.annotations.Nullable;
@@ -90,16 +92,13 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
     }
 
     @Override
-    public int launch(ILauncherControlPanel controlPanel, boolean redstoneTriggered) {
+    public int launch(ILauncherControlPanel controlPanel, boolean redstoneTriggered, int inaccuracy) {
 
         int cooldown = 0;
 
-        ComponentInventory inv = getComponent(IComponentType.Inventory);
-
-        ItemStack mis = inv.getItem(MISSILE_SLOT);
-
         if (redstoneTriggered && hasSam.get()) {
 
+            ComponentInventory inv = getComponent(IComponentType.Inventory);
             BlockPos target = controlPanel.getTarget();
 
             if (
@@ -136,55 +135,98 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
                 cooldown = COOLDOWN * 2;
             }
         } else if (!hasSam.get()) {
-            ItemStack explosive = inv.getItem(EXPLOSIVE_SLOT);
-            if (mis.getItem() instanceof ItemMissile itmissile && explosive.getItem() instanceof BlockItemDescriptable desc && desc.getBlock() instanceof BlockExplosive blexplosive) {
-                if (blexplosive.explosive.tier > itmissile.missile.tier || itmissile.missile.tier > getTier() || blexplosive.explosive.tier > getTier()) {
-                    return -1;
+
+            // we only want this boolean to hit before stepping in to ensure it doesn't launch and blow up stuff on accident!
+
+            if (level.getBlockEntity(controlPanel.getTarget()) instanceof TileSearchRadar radar) {
+
+                if (TileTurretAntimissile.getDistanceToPos(getBlockPos(), radar.getBlockPos()) <= Constants.MAX_DISTANCE_FROM_RADAR && redstoneTriggered && !radar.trackedEsmTowers.isEmpty()) {
+
+                    for (TileESMTower tower : radar.trackedEsmTowers) {
+
+                        if (tower != null && !tower.isRemoved() && launchMissile(tower.getBlockPos(), controlPanel.getFrequency())) {
+                            cooldown = COOLDOWN * 5;
+                            break;
+                        }
+
+                    }
+
                 }
-                VirtualMissile missile = new VirtualMissile(
-                        //
-                        new Vec3(getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5),
-                        //
-                        new Vec3(0, 1, 0),
-                        //
-                        0.0F,
-                        //
-                        false,
-                        //
-                        getBlockPos().getX() + 0.5F,
-                        //
-                        getBlockPos().getZ() + 0.5F,
-                        //
-                        controlPanel.getTarget(),
-                        //
-                        itmissile.missile.ordinal(),
-                        //
-                        ((BlockExplosive) ((BlockItemDescriptable) explosive.getItem()).getBlock()).explosive.ordinal(),
-                        //
-                        controlPanel.getFrequency(),
-                        //
-                        getTier() > 1
-                        //
-                );
 
-                MissileManager.addMissile(level.dimension(), missile);
 
-                inv.removeItem(MISSILE_SLOT, 1);
-                inv.removeItem(EXPLOSIVE_SLOT, 1);
-
-                cooldown = COOLDOWN;
             } else {
-                return -1;
+
+                double length = inaccuracy * level.random.nextDouble();
+                double angle = level.random.nextDouble() * 2 * Math.PI;
+                int offsetX = (int) (length * Math.cos(angle));
+                int offsetZ = (int) (length * Math.sin(angle));
+
+                BlockPos pos = controlPanel.getTarget().offset(offsetX, 0, offsetZ);
+
+                if(launchMissile(pos, controlPanel.getFrequency())) {
+                    cooldown = COOLDOWN;
+                }
+
             }
+
+
         }
 
-        if(cooldown > 0) {
+        if (cooldown > 0) {
             level.playSound(null, getBlockPos(), BallistixSounds.SOUND_MISSILE_SILO.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
         }
 
 
-
         return cooldown;
+
+    }
+
+    public boolean launchMissile(BlockPos target, int frequency) {
+        ComponentInventory inv = getComponent(IComponentType.Inventory);
+
+        ItemStack mis = inv.getItem(MISSILE_SLOT);
+
+        ItemStack explosive = inv.getItem(EXPLOSIVE_SLOT);
+        if (mis.getItem() instanceof ItemMissile itmissile && explosive.getItem() instanceof BlockItemDescriptable desc && desc.getBlock() instanceof BlockExplosive blexplosive) {
+            if (blexplosive.explosive.tier > itmissile.missile.tier || itmissile.missile.tier > getTier() || blexplosive.explosive.tier > getTier()) {
+                return false;
+            }
+            VirtualMissile missile = new VirtualMissile(
+                    //
+                    new Vec3(getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5),
+                    //
+                    new Vec3(0, 1, 0),
+                    //
+                    0.0F,
+                    //
+                    false,
+                    //
+                    getBlockPos().getX() + 0.5F,
+                    //
+                    getBlockPos().getZ() + 0.5F,
+                    //
+                    target,
+                    //
+                    itmissile.missile.ordinal(),
+                    //
+                    ((BlockExplosive) ((BlockItemDescriptable) explosive.getItem()).getBlock()).explosive.ordinal(),
+                    //
+                    frequency,
+                    //
+                    getTier() > 1
+                    //
+            );
+
+            MissileManager.addMissile(level.dimension(), missile);
+
+            inv.removeItem(MISSILE_SLOT, 1);
+            inv.removeItem(EXPLOSIVE_SLOT, 1);
+
+            return true;
+        } else {
+            return false;
+        }
+
 
     }
 

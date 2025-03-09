@@ -15,6 +15,8 @@ public interface ILauncherControlPanel {
 
 	public CachedTileOutput getPlatform();
 
+	public CachedTileOutput getSupportFrame();
+
 	public void launch();
 
 	public void setTarget(BlockPos blockPos);

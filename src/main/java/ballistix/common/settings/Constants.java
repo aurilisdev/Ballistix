@@ -68,7 +68,7 @@ public class Constants {
 	@DoubleValue(def = 1000.0)
 	public static double ESM_TOWER_USAGE_PER_TICK = 1000.0;
 	@DoubleValue(def = 100)
-	public static double ESM_TOWER_SEARCH_RADIUS = 100.0;
+	public static double ESM_TOWER_SEARCH_RADIUS = 200.0;
 
 	@DoubleValue(def = 10000, comment = "Usage in watt for radar")
 	public static double RADAR_USAGE = 10000;

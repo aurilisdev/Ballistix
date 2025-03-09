@@ -9,6 +9,7 @@ import ballistix.common.item.ItemMinecart.SubtypeMinecart;
 import ballistix.common.recipe.recipeutils.ChargedItemIngredient;
 import ballistix.common.tags.BallistixTags;
 import ballistix.registers.BallistixItems;
+import electrodynamics.Electrodynamics;
 import electrodynamics.common.block.subtype.SubtypeMachine;
 import electrodynamics.common.block.subtype.SubtypeWire;
 import electrodynamics.common.tags.ElectrodynamicsTags;
@@ -351,7 +352,7 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
 
 		ShapedCraftingRecipeBuilder.start(BallistixItems.ITEM_AAMISSILE.get(), 1)
 				//
-				.addPattern(" P ")
+				.addPattern(" C ")
 				//
 				.addPattern("PGP")
 				//
@@ -361,7 +362,27 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
 				//
 				.addKey('G', Tags.Items.GUNPOWDERS)
 				//
-				.complete(References.ID, "ballistic_rocket", output);
+				.addKey('C', ElectrodynamicsTags.Items.CIRCUITS_ADVANCED)
+				//
+				.complete(References.ID, "sam_mark_1", output);
+
+		ShapedCraftingRecipeBuilder.start(BallistixItems.ITEM_AAMISSILEMK2.get(), 1)
+				//
+				.addPattern(" C ")
+				//
+				.addPattern("PSP")
+				//
+				.addPattern("PGP")
+				//
+				.addKey('P', ElectrodynamicsTags.Items.PLATE_STEEL)
+				//
+				.addKey('S', BallistixItems.ITEM_AAMISSILE.get())
+				//
+				.addKey('G', Tags.Items.GUNPOWDERS)
+				//
+				.addKey('C', ElectrodynamicsTags.Items.CIRCUITS_ELITE)
+				//
+				.complete(References.ID, "sam_mark_2", output);
 
 		ShapedCraftingRecipeBuilder.start(BallistixItems.ITEM_BULLET.get(), 4)
 				//

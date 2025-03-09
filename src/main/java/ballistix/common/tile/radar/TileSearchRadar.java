@@ -54,7 +54,7 @@ public class TileSearchRadar extends GenericTile {
 
     private final AABB searchArea = new AABB(getBlockPos()).inflate(Constants.RADAR_RANGE);
     private final HashSet<VirtualMissile> trackedMissiles = new HashSet<>();
-    private final HashSet<TileESMTower> trackedEsmTowers = new HashSet<>();
+    public final HashSet<TileESMTower> trackedEsmTowers = new HashSet<>();
     public final HashSet<IDetected.Detected> detections = new HashSet<>();
 
     public double clientRotation;
@@ -138,10 +138,21 @@ public class TileSearchRadar extends GenericTile {
     }
 
     @Override
+    public int getComparatorSignal() {
+        if (!trackedMissiles.isEmpty() && !trackedEsmTowers.isEmpty()) {
+            return 15;
+        } else if (trackedMissiles.isEmpty() && !trackedEsmTowers.isEmpty()) {
+            return 8;
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
     public void onBlockDestroyed() {
         super.onBlockDestroyed();
 
-        if(!level.isClientSide) {
+        if (!level.isClientSide) {
             TileESMTower.removeSearchRadar(this);
             ChunkPos pos = level.getChunk(getBlockPos()).getPos();
             ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, getBlockPos(), pos.x, pos.z, false, true);
@@ -153,7 +164,7 @@ public class TileSearchRadar extends GenericTile {
     @Override
     public void onPlace(BlockState oldState, boolean isMoving) {
         super.onPlace(oldState, isMoving);
-        if(!level.isClientSide) {
+        if (!level.isClientSide) {
             ChunkPos pos = level.getChunk(getBlockPos()).getPos();
             ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, getBlockPos(), pos.x, pos.z, true, true);
         }

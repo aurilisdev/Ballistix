@@ -4,6 +4,7 @@ import ballistix.Ballistix;
 import ballistix.References;
 import ballistix.api.silo.ILauncherControlPanel;
 import ballistix.api.silo.ILauncherPlatform;
+import ballistix.api.silo.ILauncherSupportFrame;
 import ballistix.api.silo.SiloRegistry;
 import ballistix.common.inventory.container.ContainerLauncherControlPanelT1;
 import ballistix.common.inventory.container.ContainerLauncherControlPanelT2;
@@ -64,15 +65,11 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 	private int cooldown = 100;
 	public boolean shouldLaunch = false;
 	public CachedTileOutput launcherPlatform;
+	public CachedTileOutput supportFrame;
 	public static final int COOLDOWN = 20;
 
 	public TileLauncherControlPanelT1(BlockPos pos, BlockState state) {
 		this(BallistixTiles.TILE_LAUNCHER_CONTROL_PANEL_TIER1.get(), pos, state);
-	}
-
-	@Override
-	public CachedTileOutput getPlatform() {
-		return launcherPlatform;
 	}
 
 	public TileLauncherControlPanelT1(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -101,8 +98,12 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 		if (launcherPlatform == null) {
 			launcherPlatform = new CachedTileOutput(level, worldPosition.relative(facing.getOpposite()));
 		}
+		if (supportFrame == null) {
+			supportFrame = new CachedTileOutput(level, worldPosition.relative(facing.getOpposite(), 2));
+		}
 		if (tickable.getTicks() % 20 == 0) {
 			launcherPlatform.update(worldPosition.relative(facing.getOpposite()));
+			supportFrame.update(worldPosition.relative(facing.getOpposite(), 2));
 		}
 		if (target.get() == null) {
 			target.set(getBlockPos());
@@ -117,12 +118,13 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 
 		boolean hasRedstone = level.hasNeighborSignal(getBlockPos());
 
-		if (!launcherPlatform.valid()) {
+		if (!launcherPlatform.valid() || !supportFrame.valid()) {
 			return;
 		}
 		ILauncherPlatform platform = launcherPlatform.getSafe();
+		ILauncherSupportFrame frame = supportFrame.getSafe();
 
-		if (platform == null) { // Should really update the cachedtileoutput so this cant occur. As of before
+		if (platform == null || frame == null) { // Should really update the cachedtileoutput so this cant occur. As of before
 								// the getsafe, the platform wasnt null, but as it was removed inworld, the
 								// output made it null and returns a null on getsafe.
 			return;
@@ -140,7 +142,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 			return;
 		}
 
-		int newCool = platform.launch(this, hasRedstone);
+		int newCool = platform.launch(this, hasRedstone, frame.getInaccuracy());
 		if (newCool != -1) {
 			cooldown = newCool;
 		}
@@ -231,26 +233,6 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 		return super.useWithItem(used, player, hand, hit);
 	}
 
-	public static double calculateDistance(BlockPos fromPos, BlockPos toPos) {
-		double deltaX = fromPos.getX() - toPos.getX();
-		double deltaY = fromPos.getY() - toPos.getY();
-		double deltaZ = fromPos.getZ() - toPos.getZ();
-
-		return Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
-	}
-
-	@EventBusSubscriber(modid = References.ID, bus = EventBusSubscriber.Bus.MOD)
-	private static final class ChunkloaderManager {
-
-		private static final TicketController TICKET_CONTROLLER = new TicketController(Ballistix.rl("chunkloadercontroller"));
-
-		@SubscribeEvent
-		public static void register(RegisterTicketControllersEvent event) {
-			event.register(TICKET_CONTROLLER);
-		}
-
-	}
-
 	@Override
 	public int getTier() {
 		return 1;
@@ -279,6 +261,36 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 	@Override
 	public int getFrequency() {
 		return frequency.get();
+	}
+
+	@Override
+	public CachedTileOutput getPlatform() {
+		return launcherPlatform;
+	}
+
+	@Override
+	public CachedTileOutput getSupportFrame() {
+		return supportFrame;
+	}
+
+	public static double calculateDistance(BlockPos fromPos, BlockPos toPos) {
+		double deltaX = fromPos.getX() - toPos.getX();
+		double deltaY = fromPos.getY() - toPos.getY();
+		double deltaZ = fromPos.getZ() - toPos.getZ();
+
+		return Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+	}
+
+	@EventBusSubscriber(modid = References.ID, bus = EventBusSubscriber.Bus.MOD)
+	private static final class ChunkloaderManager {
+
+		private static final TicketController TICKET_CONTROLLER = new TicketController(Ballistix.rl("chunkloadercontroller"));
+
+		@SubscribeEvent
+		public static void register(RegisterTicketControllersEvent event) {
+			event.register(TICKET_CONTROLLER);
+		}
+
 	}
 
 }

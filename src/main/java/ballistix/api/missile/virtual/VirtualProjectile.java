@@ -8,7 +8,6 @@ import ballistix.common.tile.radar.TileFireControlRadar;
 import electrodynamics.Electrodynamics;
 import electrodynamics.prefab.utilities.BlockEntityUtils;
 import electrodynamics.registers.ElectrodynamicsSounds;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -543,7 +542,7 @@ public abstract class VirtualProjectile {
             y -= motionY;
             z -= motionZ;
             for (int i = 0; i < 3; i++) {
-                Minecraft.getInstance().particleEngine.createParticle(new ParticleOptionsMissileSmoke().setParameters(1, 1, 1, 0.3f * 1, 50, true), x, y, z,
+                level.addParticle(new ParticleOptionsMissileSmoke().setParameters(1, 1, 1, 0.3f * 1, 50, true), x, y, z,
                         -motionX * (0.4 + 0.2 * Electrodynamics.RANDOM.nextDouble()),
                         -motionY * (0.4 + 0.2 * Electrodynamics.RANDOM.nextDouble()),
                         -motionZ * (0.4 + 0.2 * Electrodynamics.RANDOM.nextDouble()));

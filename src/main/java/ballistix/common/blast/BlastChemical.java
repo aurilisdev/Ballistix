@@ -93,7 +93,7 @@ public class BlastChemical extends Blast {
 
 				if (entity instanceof LivingEntity living) {
 
-					living.addEffect(new MobEffectInstance(MobEffects.POISON, 360));
+					living.addEffect(new MobEffectInstance(MobEffects.POISON, 360, 2));
 
 					living.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 360));
 

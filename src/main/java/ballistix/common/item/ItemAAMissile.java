@@ -2,8 +2,6 @@ package ballistix.common.item;
 
 import java.util.List;
 
-import ballistix.References;
-import ballistix.datagen.client.BallistixLangKeyProvider;
 import ballistix.prefab.utils.BallistixTextUtils;
 import electrodynamics.api.electricity.formatting.ChatFormatter;
 import electrodynamics.api.electricity.formatting.DisplayUnit;

@@ -122,7 +122,7 @@ public class Constants {
 
 	@DoubleValue(def = 10000)
 	public static double LASER_TURRET_USAGEPERTICK = 10000;
-	@DoubleValue(def = 100)
+	@DoubleValue(def = 300)
 	public static double LASER_TURRET_BASE_RANGE = 300;
 	@DoubleValue(def = 0.2)
 	public static double LASER_TURRET_ROTATIONSPEEDRADIANS = 0.2;

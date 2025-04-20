@@ -18,23 +18,9 @@ import ballistix.common.inventory.container.ContainerLauncherPlatformT1;
 import ballistix.common.inventory.container.ContainerLauncherPlatformT2;
 import ballistix.common.inventory.container.ContainerLauncherPlatformT3;
 import ballistix.common.item.ItemMissile;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.registers.BallistixSounds;
 import ballistix.registers.BallistixTiles;
-import electrodynamics.api.multiblock.subnodebased.parent.IMultiblockParentBlock;
-import electrodynamics.api.multiblock.subnodebased.parent.IMultiblockParentTile;
-import electrodynamics.common.blockitem.types.BlockItemDescriptable;
-import electrodynamics.common.tile.TileMultiSubnode;
-import electrodynamics.prefab.properties.Property;
-import electrodynamics.prefab.properties.PropertyTypes;
-import electrodynamics.prefab.tile.GenericTile;
-import electrodynamics.prefab.tile.components.IComponentType;
-import electrodynamics.prefab.tile.components.type.ComponentContainerProvider;
-import electrodynamics.prefab.tile.components.type.ComponentInventory;
-import electrodynamics.prefab.tile.components.type.ComponentInventory.InventoryBuilder;
-import electrodynamics.prefab.tile.components.type.ComponentPacketHandler;
-import electrodynamics.prefab.tile.components.type.ComponentTickable;
-import electrodynamics.prefab.utilities.BlockEntityUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
@@ -49,6 +35,19 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.IItemHandler;
+import voltaic.api.multiblock.subnodebased.TileMultiSubnode;
+import voltaic.api.multiblock.subnodebased.parent.IMultiblockParentBlock;
+import voltaic.api.multiblock.subnodebased.parent.IMultiblockParentTile;
+import voltaic.common.blockitem.BlockItemDescriptable;
+import voltaic.prefab.properties.types.PropertyTypes;
+import voltaic.prefab.properties.variant.SingleProperty;
+import voltaic.prefab.tile.GenericTile;
+import voltaic.prefab.tile.components.IComponentType;
+import voltaic.prefab.tile.components.type.ComponentContainerProvider;
+import voltaic.prefab.tile.components.type.ComponentInventory;
+import voltaic.prefab.tile.components.type.ComponentPacketHandler;
+import voltaic.prefab.tile.components.type.ComponentTickable;
+import voltaic.prefab.utilities.BlockEntityUtils;
 
 public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlatform, IMultiblockParentTile {
 
@@ -57,9 +56,9 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 
     public static final int COOLDOWN = 100;
 
-    public Property<Boolean> hasExplosive = property(new Property<>(PropertyTypes.BOOLEAN, "hasexplosive", false));
-    public Property<Boolean> hasMissile = property(new Property<>(PropertyTypes.BOOLEAN, "hasmissile", false));
-    public Property<Boolean> hasSam = property(new Property<>(PropertyTypes.BOOLEAN, "hassam", false));
+    public SingleProperty<Boolean> hasExplosive = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "hasexplosive", false));
+    public SingleProperty<Boolean> hasMissile = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "hasmissile", false));
+    public SingleProperty<Boolean> hasSam = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "hassam", false));
 
     public TileLauncherPlatformT1(BlockPos pos, BlockState state) {
         this(BallistixTiles.TILE_LAUNCHER_PLATFORM_TIER1.get(), pos, state);
@@ -69,21 +68,21 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
         super(type, pos, state);
         int tier = getTier();
         addComponent(new ComponentTickable(this));
-        addComponent(new ComponentInventory(this, InventoryBuilder.newInv().inputs(2)).setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).setDirectionsBySlot(1, BlockEntityUtils.MachineDirection.values()).valid(this::isItemValidForSlot));
+        addComponent(new ComponentInventory(this, ComponentInventory.InventoryBuilder.newInv().inputs(2)).setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).setDirectionsBySlot(1, BlockEntityUtils.MachineDirection.values()).valid(this::isItemValidForSlot));
         addComponent(new ComponentPacketHandler(this));
         if (tier == 1) {
-            addComponent(new ComponentContainerProvider("container.launcherplatformtier" + tier, this).createMenu((id, player) -> new ContainerLauncherPlatformT1(id, player, getComponent(IComponentType.Inventory), getCoordsArray())));
+            addComponent(new ComponentContainerProvider("launcherplatformtier" + tier, this).createMenu((id, player) -> new ContainerLauncherPlatformT1(id, player, getComponent(IComponentType.Inventory), getCoordsArray())));
         } else if (tier == 2) {
-            addComponent(new ComponentContainerProvider("container.launcherplatformtier" + tier, this).createMenu((id, player) -> new ContainerLauncherPlatformT2(id, player, getComponent(IComponentType.Inventory), getCoordsArray())));
+            addComponent(new ComponentContainerProvider("launcherplatformtier" + tier, this).createMenu((id, player) -> new ContainerLauncherPlatformT2(id, player, getComponent(IComponentType.Inventory), getCoordsArray())));
         } else if (tier == 3) {
-            addComponent(new ComponentContainerProvider("container.launcherplatformtier" + tier, this).createMenu((id, player) -> new ContainerLauncherPlatformT3(id, player, getComponent(IComponentType.Inventory), getCoordsArray())));
+            addComponent(new ComponentContainerProvider("launcherplatformtier" + tier, this).createMenu((id, player) -> new ContainerLauncherPlatformT3(id, player, getComponent(IComponentType.Inventory), getCoordsArray())));
         }
 
     }
 
     @Override
     public int getRange() {
-        return Constants.LAUNCHER_PLATFORM_RANGE_T1;
+        return BallistixConstants.LAUNCHER_PLATFORM_RANGE_T1;
     }
 
     @Override
@@ -96,7 +95,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 
         int cooldown = 0;
 
-        if (redstoneTriggered && hasSam.get()) {
+        if (redstoneTriggered && hasSam.getValue()) {
 
             ComponentInventory inv = getComponent(IComponentType.Inventory);
             BlockPos target = controlPanel.getTarget();
@@ -105,7 +104,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
                 //
                     level.getBlockEntity(target) instanceof TileFireControlRadar radar &&
                             //
-                            TileTurretAntimissile.getDistanceToPos(getBlockPos(), radar.getBlockPos()) < Constants.MAX_DISTANCE_FROM_RADAR &&
+                            TileTurretAntimissile.getDistanceToPos(getBlockPos(), radar.getBlockPos()) < BallistixConstants.MAX_DISTANCE_FROM_RADAR &&
                             //
                             radar.tracking != null &&
                             //
@@ -120,7 +119,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
                         //
                         new Vec3(0, 1, 0),
                         //
-                        Constants.FIRE_CONTROL_RADAR_RANGE * 3F,
+                        BallistixConstants.FIRE_CONTROL_RADAR_RANGE * 3F,
                         //
                         target,
                         //
@@ -134,13 +133,13 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 
                 cooldown = COOLDOWN * 2;
             }
-        } else if (!hasSam.get()) {
+        } else if (!hasSam.getValue()) {
 
             // we only want this boolean to hit before stepping in to ensure it doesn't launch and blow up stuff on accident!
 
             if (level.getBlockEntity(controlPanel.getTarget()) instanceof TileSearchRadar radar) {
 
-                if (TileTurretAntimissile.getDistanceToPos(getBlockPos(), radar.getBlockPos()) <= Constants.MAX_DISTANCE_FROM_RADAR && redstoneTriggered && !radar.trackedEsmTowers.isEmpty()) {
+                if (TileTurretAntimissile.getDistanceToPos(getBlockPos(), radar.getBlockPos()) <= BallistixConstants.MAX_DISTANCE_FROM_RADAR && redstoneTriggered && !radar.trackedEsmTowers.isEmpty()) {
 
                     for (TileESMTower tower : radar.trackedEsmTowers) {
 
@@ -252,8 +251,8 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
             ItemStack missile = inv.getItem(0);
 
             if (missile.isEmpty()) {
-                hasMissile.set(false);
-                hasSam.set(false);
+                hasMissile.setValue(false);
+                hasSam.setValue(false);
                 return;
             }
 
@@ -261,13 +260,13 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 
             if (missile.getItem() instanceof ItemMissile || sam) {
 
-                hasMissile.set(true);
+                hasMissile.setValue(true);
 
-                hasSam.set(sam);
+                hasSam.setValue(sam);
 
             } else {
-                hasMissile.set(false);
-                hasSam.set(false);
+                hasMissile.setValue(false);
+                hasSam.setValue(false);
             }
 
         }
@@ -277,9 +276,9 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
         if (index == 1 || index == -1) {
             ItemStack explosive = inv.getItem(1);
             if ((!explosive.isEmpty() && explosive.getItem() instanceof BlockItemDescriptable blockItem && blockItem.getBlock() instanceof BlockExplosive) || (explosive.isEmpty() && inv.getItem(MISSILE_SLOT).is(BallistixItems.ITEM_AAMISSILEMK2))) {
-                hasExplosive.set(true);
+                hasExplosive.setValue(true);
             } else {
-                hasExplosive.set(false);
+                hasExplosive.setValue(false);
             }
 
         }
@@ -287,17 +286,17 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 
     @Override
     public boolean hasExplosive() {
-        return hasExplosive.get();
+        return hasExplosive.getValue();
     }
 
     @Override
     public boolean hasMissile() {
-        return hasMissile.get();
+        return hasMissile.getValue();
     }
 
     @Override
     public boolean hasSAM() {
-        return hasSam.get();
+        return hasSam.getValue();
     }
 
     @Override

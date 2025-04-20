@@ -1,8 +1,8 @@
 package ballistix.prefab;
 
 import ballistix.Ballistix;
-import electrodynamics.api.screen.ITexture;
 import net.minecraft.resources.ResourceLocation;
+import voltaic.api.screen.ITexture;
 
 public enum BallistixIconTypes implements ITexture {
     MISSILE_DARK(0, 0, 14, 14, 14, 14, Ballistix.rl("textures/screen/component/icon/missile_dark.png")),

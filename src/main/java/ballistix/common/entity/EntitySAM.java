@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualProjectile;
@@ -101,10 +101,10 @@ public class EntitySAM extends Entity {
         setXRot((float) (Math.atan(getDeltaMovement().y() / Math.sqrt(getDeltaMovement().x() * getDeltaMovement().x() + getDeltaMovement().z() * getDeltaMovement().z())) * RAD2DEG));
         setYRot((float) (Math.atan2(getDeltaMovement().x(), getDeltaMovement().z()) * RAD2DEG));
 
-        float topSpeed = variant == 0 ? Constants.SAM_TOP_SPEED : Constants.ANTIBALLISTICMISSILE_TOP_SPEED;
+        float topSpeed = variant == 0 ? BallistixConstants.SAM_TOP_SPEED : BallistixConstants.ANTIBALLISTICMISSILE_TOP_SPEED;
 
         if(speed < topSpeed) {
-            speed += variant == 0 ? Constants.SAM_ACCELERATION : Constants.ANTIBALLISTICMISSILE_ACCELERATION;
+            speed += variant == 0 ? BallistixConstants.SAM_ACCELERATION : BallistixConstants.ANTIBALLISTICMISSILE_ACCELERATION;
         }
 
     }

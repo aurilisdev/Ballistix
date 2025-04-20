@@ -1,24 +1,15 @@
 package ballistix.common.tile.turret.antimissile;
 
+import ballistix.registers.BallistixSounds;
 import org.jetbrains.annotations.Nullable;
 
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualProjectile;
 import ballistix.api.turret.ITarget;
 import ballistix.common.inventory.container.ContainerRailgunTurret;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissileProjectile;
 import ballistix.registers.BallistixTiles;
-import electrodynamics.common.item.ItemUpgrade;
-import electrodynamics.common.tags.ElectrodynamicsTags;
-import electrodynamics.prefab.properties.Property;
-import electrodynamics.prefab.properties.PropertyTypes;
-import electrodynamics.prefab.tile.components.IComponentType;
-import electrodynamics.prefab.tile.components.type.ComponentContainerProvider;
-import electrodynamics.prefab.tile.components.type.ComponentInventory;
-import electrodynamics.prefab.tile.components.type.ComponentTickable;
-import electrodynamics.prefab.utilities.BlockEntityUtils;
-import electrodynamics.registers.ElectrodynamicsSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -27,18 +18,27 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import voltaic.common.item.ItemUpgrade;
+import voltaic.common.tags.VoltaicTags;
+import voltaic.prefab.properties.types.PropertyTypes;
+import voltaic.prefab.properties.variant.SingleProperty;
+import voltaic.prefab.tile.components.IComponentType;
+import voltaic.prefab.tile.components.type.ComponentContainerProvider;
+import voltaic.prefab.tile.components.type.ComponentInventory;
+import voltaic.prefab.tile.components.type.ComponentTickable;
+import voltaic.prefab.utilities.BlockEntityUtils;
 
 public class TileTurretRailgun extends TileTurretAntimissileProjectile {
 
-    public final Property<Integer> cooldown = property(new Property<>(PropertyTypes.INTEGER, "cooldown", 0));
-    public final Property<Boolean> outOfAmmo = property(new Property<>(PropertyTypes.BOOLEAN, "noammo", false));
-    public final Property<Boolean> targetingEntity = property(new Property<>(PropertyTypes.BOOLEAN, "targetingentity", false));
-    public final Property<Boolean> onlyTargetPlayers = property(new Property<>(PropertyTypes.BOOLEAN, "onlytargetplayers", false));
+    public final SingleProperty<Integer> cooldown = property(new SingleProperty<>(PropertyTypes.INTEGER, "cooldown", 0));
+    public final SingleProperty<Boolean> outOfAmmo = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "noammo", false));
+    public final SingleProperty<Boolean> targetingEntity = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "targetingentity", false));
+    public final SingleProperty<Boolean> onlyTargetPlayers = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "onlytargetplayers", false));
 
     private LivingEntity livingTarget = null;
 
     public TileTurretRailgun(BlockPos worldPos, BlockState blockState) {
-        super(BallistixTiles.TILE_RAILGUNTURRET.get(), worldPos, blockState, Constants.RAILGUN_TURRET_BASE_RANGE, 0, Constants.RAILGUN_TURRET_USAGEPERTICK, Constants.RAILGUN_TURRET_ROTATIONSPEEDRADIANS, Constants.RAILGUN_INNACCURACY);
+        super(BallistixTiles.TILE_RAILGUNTURRET.get(), worldPos, blockState, BallistixConstants.RAILGUN_TURRET_BASE_RANGE, 0, BallistixConstants.RAILGUN_TURRET_USAGEPERTICK, BallistixConstants.RAILGUN_TURRET_ROTATIONSPEEDRADIANS, BallistixConstants.RAILGUN_INNACCURACY);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
         return new ComponentInventory(this, ComponentInventory.InventoryBuilder.newInv().inputs(1).upgrades(3)).setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).valid((index, stack, inv) -> {
 
             if (index == 0) {
-                return stack.is(ElectrodynamicsTags.Items.ROD_STEEL);
+                return stack.is(VoltaicTags.Items.ROD_STEEL);
             } else if (index >= inv.getUpgradeSlotStartIndex()) {
                 return stack.getItem() instanceof ItemUpgrade upgrade && inv.isUpgradeValid(upgrade.subtype);
             } else {
@@ -58,20 +58,20 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
 
     @Override
     public ComponentContainerProvider getContainer() {
-        return new ComponentContainerProvider("container.railgunturret", this).createMenu((id, player) -> new ContainerRailgunTurret(id, player, getComponent(IComponentType.Inventory), getCoordsArray()));
+        return new ComponentContainerProvider("railgunturret", this).createMenu((id, player) -> new ContainerRailgunTurret(id, player, getComponent(IComponentType.Inventory), getCoordsArray()));
     }
 
     @Override
     public void tickServerActive(ComponentTickable tickable) {
-        if (cooldown.get() > 0) {
-            cooldown.set(cooldown.get() - 1);
+        if (cooldown.getValue() > 0) {
+            cooldown.setValue(cooldown.getValue() - 1);
         }
     }
 
     @Override
     public void fireTickServer(long ticks) {
 
-        if (cooldown.get() > 0) {
+        if (cooldown.getValue() > 0) {
             return;
         }
 
@@ -80,23 +80,23 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
         ItemStack missile = inv.getItem(0);
 
         if (missile.isEmpty()) {
-            outOfAmmo.set(true);
+            outOfAmmo.setValue(true);
             return;
         }
 
-        outOfAmmo.set(false);
+        outOfAmmo.setValue(false);
 
-        Vec3 trajectory = getProjectileTrajectoryFromInaccuracy(inaccuracy, baseRange, inaccuracyMultiplier.get(), getProjectileLaunchPosition(), getTargetPosition(getTarget(ticks)));
+        Vec3 trajectory = getProjectileTrajectoryFromInaccuracy(inaccuracy, baseRange, inaccuracyMultiplier.getValue(), getProjectileLaunchPosition(), getTargetPosition(getTarget(ticks)));
 
-        VirtualProjectile.VirtualRailgunRound railgunround = new VirtualProjectile.VirtualRailgunRound(getProjectileSpeed(), getProjectileLaunchPosition(), trajectory, currentRange.get().floatValue());
+        VirtualProjectile.VirtualRailgunRound railgunround = new VirtualProjectile.VirtualRailgunRound(getProjectileSpeed(), getProjectileLaunchPosition(), trajectory, currentRange.getValue().floatValue());
 
         MissileManager.addRailgunRound(level.dimension(), railgunround);
 
         inv.removeItem(0, 1);
 
-        level.playSound(null, getBlockPos(), ElectrodynamicsSounds.SOUND_RAILGUNKINETIC.get(), SoundSource.BLOCKS, 2.0F, 1.0F);
+        level.playSound(null, getBlockPos(), BallistixSounds.SOUND_RAILGUNKINETIC.get(), SoundSource.BLOCKS, 2.0F, 1.0F);
 
-        cooldown.set(Constants.RAILGUN_TURRET_COOLDOWN);
+        cooldown.setValue(BallistixConstants.RAILGUN_TURRET_COOLDOWN);
 
     }
 
@@ -125,7 +125,7 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
     @Override
     public ITarget getTarget(long ticks) {
 
-        targetingEntity.set(false);
+        targetingEntity.setValue(false);
 
         ITarget target = super.getTarget(ticks);
 
@@ -143,10 +143,10 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
             LivingEntity selected = null;
             double lastMag = 0;
 
-            Class<? extends LivingEntity> type = onlyTargetPlayers.get() ? Player.class : LivingEntity.class;
+            Class<? extends LivingEntity> type = onlyTargetPlayers.getValue() ? Player.class : LivingEntity.class;
 
-            for(LivingEntity entity : level.getEntitiesOfClass(type, new AABB(getBlockPos()).inflate(currentRange.get() / 4.0))) {
-                if(raycastToBlockPos(level, getBlockPos(), entity.blockPosition().above()).isEmpty() && !(entity instanceof Player player && (player.isCreative() || whitelistedPlayers.get().contains(player.getName().getString()))) && !entity.isDeadOrDying() && !entity.isRemoved()) {
+            for(LivingEntity entity : level.getEntitiesOfClass(type, new AABB(getBlockPos()).inflate(currentRange.getValue() / 4.0))) {
+                if(raycastToBlockPos(level, getBlockPos(), entity.blockPosition().above()).isEmpty() && !(entity instanceof Player player && (player.isCreative() || whitelistedPlayers.getValue().contains(player.getName().getString()))) && !entity.isDeadOrDying() && !entity.isRemoved()) {
                     double deltaX = entity.getX() - getBlockPos().getX();
                     double deltaY = entity.getY() - getBlockPos().getY();
                     double deltaZ = entity.getZ() - getBlockPos().getZ();
@@ -166,7 +166,7 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
         }
 
         if(livingTarget != null) {
-            targetingEntity.set(true);
+            targetingEntity.setValue(true);
             return new ITarget.TargetLivingEntity(livingTarget);
         }
 
@@ -175,7 +175,7 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
 
     @Override
     public boolean isValidPlacement() {
-        return !targetingEntity.get() || super.isValidPlacement();
+        return !targetingEntity.getValue() || super.isValidPlacement();
     }
 
 }

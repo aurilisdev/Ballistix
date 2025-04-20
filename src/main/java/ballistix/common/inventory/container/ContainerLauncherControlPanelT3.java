@@ -2,13 +2,13 @@ package ballistix.common.inventory.container;
 
 import ballistix.common.tile.silo.TileLauncherControlPanelT3;
 import ballistix.registers.BallistixMenuTypes;
-import electrodynamics.prefab.inventory.container.slot.item.SlotGeneric;
-import electrodynamics.prefab.inventory.container.types.GenericContainerBlockEntity;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
+import voltaic.prefab.inventory.container.slot.item.SlotGeneric;
+import voltaic.prefab.inventory.container.types.GenericContainerBlockEntity;
 
 public class ContainerLauncherControlPanelT3 extends GenericContainerBlockEntity<TileLauncherControlPanelT3> {
 

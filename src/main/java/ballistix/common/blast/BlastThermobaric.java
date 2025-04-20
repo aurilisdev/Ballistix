@@ -10,7 +10,7 @@ import ballistix.common.blast.thread.raycast.ThreadDynamicRaycastBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.packet.type.client.particle.BlastParticleSpawnType;
 import ballistix.common.packet.type.client.particle.PacketSpawnBlastParticle;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.prefab.utils.ParticleUtilities;
 import net.minecraft.client.Minecraft;
@@ -41,7 +41,7 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
     @Override
     public void doPreExplode() {
         if (!world.isClientSide) {
-            thread = new ThreadDynamicRaycastBlast(world, position, (int) Constants.EXPLOSIVE_THERMOBARIC_SIZE, (float) Constants.EXPLOSIVE_THERMOBARIC_ENERGY, null);
+            thread = new ThreadDynamicRaycastBlast(world, position, (int) BallistixConstants.EXPLOSIVE_THERMOBARIC_SIZE, (float) BallistixConstants.EXPLOSIVE_THERMOBARIC_ENERGY, null);
             thread.start();
         }
 
@@ -58,13 +58,13 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
             return !world.isClientSide;
         }
         if (callCount % 2 == 0) {
-            Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) Constants.EXPLOSIVE_THERMOBARIC_SIZE, false, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
+            Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) BallistixConstants.EXPLOSIVE_THERMOBARIC_SIZE, false, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
             synchronized (thread.finishedBlocks) {
                 if (pertick == -1) {
                     hasStarted = true;
-                    attackEntities((float) Constants.EXPLOSIVE_THERMOBARIC_SIZE * 2, ex);
+                    attackEntities((float) BallistixConstants.EXPLOSIVE_THERMOBARIC_SIZE * 2, ex);
                     world.playSound(null, position, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 25, 1);
-                    pertick = (int) (1200 * 45.0 / Constants.EXPLOSIVE_THERMOBARIC_DURATION);
+                    pertick = (int) (1200 * 45.0 / BallistixConstants.EXPLOSIVE_THERMOBARIC_DURATION);
                 }
                 cachedIterator = thread.finishedBlocks.iterator();
                 int finished = pertick;
@@ -91,7 +91,7 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
                     cachedIterator.remove();
                 }
                 if (!cachedIterator.hasNext() && thread.isComplete) {
-                    attackEntities((float) Constants.EXPLOSIVE_THERMOBARIC_SIZE * 2, ex);
+                    attackEntities((float) BallistixConstants.EXPLOSIVE_THERMOBARIC_SIZE * 2, ex);
                     return true;
                 }
             }
@@ -126,7 +126,7 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
             ParticleUtilities.spawnParticleSphere(particle, x, y, z, 100, 0, 20, initialSpeed, true);
         }
         double spawnSize = 3;
-        double endSize = Constants.EXPLOSIVE_THERMOBARIC_SIZE * 7.5;
+        double endSize = BallistixConstants.EXPLOSIVE_THERMOBARIC_SIZE * 7.5;
         int diff = (int) (endSize - spawnSize);
         if (ticksSinceBlastStart > diff) return;
         double size = ParticleUtilities.progressGroundShockwave(world, x, z, ticksSinceBlastStart * 2 / (double) diff, spawnSize, endSize, 0.3);
@@ -136,7 +136,7 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
         double dist = Mth.abs((float) (realDistance - size));
         if (dist < 3) {
             hasShaken = true;
-            CameraShakeEffect effect = CameraShakeManager.createBlastSourcedEffect(Constants.EXPLOSIVE_THERMOBARIC_DURATION / 1.5, endSize, world.getGameTime(), pos);
+            CameraShakeEffect effect = CameraShakeManager.createBlastSourcedEffect(BallistixConstants.EXPLOSIVE_THERMOBARIC_DURATION / 1.5, endSize, world.getGameTime(), pos);
             CameraShakeManager.addShake(effect);
         }
     }

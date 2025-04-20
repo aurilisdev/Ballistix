@@ -6,11 +6,11 @@ import java.util.concurrent.CompletableFuture;
 
 import ballistix.datagen.server.recipe.custom.item2item.BallistixMineralGrinderRecipes;
 import ballistix.datagen.server.recipe.vanilla.BallistixCraftingTableRecipes;
-import electrodynamics.datagen.utils.recipe.AbstractRecipeGenerator;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
+import voltaic.datagen.utils.server.recipe.AbstractRecipeGenerator;
 
 public class BallistixRecipeProvider extends RecipeProvider {
 

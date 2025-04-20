@@ -1,7 +1,6 @@
 package ballistix.client;
 
 import ballistix.Ballistix;
-import ballistix.References;
 import ballistix.client.guidebook.ModuleBallistix;
 import ballistix.client.particle.ParticleBlastSmoke;
 import ballistix.client.particle.ParticleMissileSmoke;
@@ -43,8 +42,6 @@ import ballistix.registers.BallistixItems;
 import ballistix.registers.BallistixMenuTypes;
 import ballistix.registers.BallistixParticles;
 import ballistix.registers.BallistixTiles;
-import electrodynamics.Electrodynamics;
-import electrodynamics.client.guidebook.ScreenGuidebook;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
@@ -62,12 +59,14 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
+import voltaic.Voltaic;
+import voltaic.client.guidebook.ScreenGuidebook;
 
 @OnlyIn(Dist.CLIENT)
-@EventBusSubscriber(modid = References.ID, bus = EventBusSubscriber.Bus.MOD, value = { Dist.CLIENT })
-public class ClientRegister {
+@EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD, value = { Dist.CLIENT })
+public class BallistixClientRegister {
 
-	public static final ResourceLocation ANGLE_PREDICATE = Electrodynamics.vanillarl("angle");
+	public static final ResourceLocation ANGLE_PREDICATE = Voltaic.vanillarl("angle");
 
 	public static final ResourceLocation TEXTURE_SHRAPNEL = Ballistix.rl("textures/model/shrapnel.png");
 	public static final ResourceLocation TEXTURE_MISSILECLOSERANGE = Ballistix.rl("textures/model/missilecloserange.png");

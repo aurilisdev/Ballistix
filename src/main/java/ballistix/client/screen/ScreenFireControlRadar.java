@@ -6,27 +6,27 @@ import java.util.List;
 import com.mojang.blaze3d.platform.InputConstants;
 
 import ballistix.common.inventory.container.ContainerFireControlRadar;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.prefab.BallistixIconTypes;
 import ballistix.prefab.screen.ScreenComponentRadarGrid;
 import ballistix.prefab.screen.WrapperFireControlFrequencyManager;
 import ballistix.prefab.utils.BallistixTextUtils;
-import electrodynamics.api.electricity.formatting.ChatFormatter;
-import electrodynamics.prefab.screen.GenericScreen;
-import electrodynamics.prefab.screen.component.button.ScreenComponentButton;
-import electrodynamics.prefab.screen.component.types.ScreenComponentCustomRender;
-import electrodynamics.prefab.screen.component.types.ScreenComponentSlot;
-import electrodynamics.prefab.screen.component.types.ScreenComponentVerticalSlider;
-import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentElectricInfo;
-import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentGuiTab;
-import electrodynamics.prefab.screen.component.utils.AbstractScreenComponentInfo;
-import electrodynamics.prefab.utilities.math.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
+import voltaic.api.electricity.formatting.ChatFormatter;
+import voltaic.prefab.screen.GenericScreen;
+import voltaic.prefab.screen.component.button.ScreenComponentButton;
+import voltaic.prefab.screen.component.types.ScreenComponentCustomRender;
+import voltaic.prefab.screen.component.types.ScreenComponentSlot;
+import voltaic.prefab.screen.component.types.ScreenComponentVerticalSlider;
+import voltaic.prefab.screen.component.types.guitab.ScreenComponentElectricInfo;
+import voltaic.prefab.screen.component.types.guitab.ScreenComponentGuiTab;
+import voltaic.prefab.screen.component.utils.AbstractScreenComponentInfo;
+import voltaic.prefab.utilities.math.Color;
 
 public class ScreenFireControlRadar extends GenericScreen<ContainerFireControlRadar> {
 
@@ -38,7 +38,7 @@ public class ScreenFireControlRadar extends GenericScreen<ContainerFireControlRa
     public ScreenFireControlRadar(ContainerFireControlRadar container, Inventory inv, Component title) {
         super(container, inv, title);
 
-        addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(Constants.FIRE_CONTROL_RADAR_USAGE));
+        addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(BallistixConstants.FIRE_CONTROL_RADAR_USAGE));
         addComponent(new ScreenComponentGuiTab(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR, ScreenComponentSlot.IconType.SONAR_PROFILE, () -> {
             List<FormattedCharSequence> info = new ArrayList<>();
 
@@ -49,7 +49,7 @@ public class ScreenFireControlRadar extends GenericScreen<ContainerFireControlRa
             }
 
             info.add(BallistixTextUtils.tooltip("turret.blockrange").withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
-            info.add(BallistixTextUtils.tooltip("turret.maxrange", ChatFormatter.formatDecimals(Constants.FIRE_CONTROL_RADAR_RANGE, 1).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+            info.add(BallistixTextUtils.tooltip("turret.maxrange", ChatFormatter.formatDecimals(BallistixConstants.FIRE_CONTROL_RADAR_RANGE, 1).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
 
 
             return info;
@@ -67,7 +67,7 @@ public class ScreenFireControlRadar extends GenericScreen<ContainerFireControlRa
             if (tile == null) {
                 return;
             }
-            Component radar = tile.trackingPos.get().equals(TileFireControlRadar.OUT_OF_REACH) ? BallistixTextUtils.gui("turret.radarnone").withStyle(ChatFormatting.GREEN) : Component.literal(new BlockPos((int)tile.trackingPos.get().x,(int)tile.trackingPos.get().y,(int)tile.trackingPos.get().z).toString()).withStyle(ChatFormatting.DARK_GRAY);
+            Component radar = tile.trackingPos.getValue().equals(TileFireControlRadar.OUT_OF_REACH) ? BallistixTextUtils.gui("turret.radarnone").withStyle(ChatFormatting.GREEN) : Component.literal(new BlockPos((int)tile.trackingPos.getValue().x,(int)tile.trackingPos.getValue().y,(int)tile.trackingPos.getValue().z).toString()).withStyle(ChatFormatting.DARK_GRAY);
 
             int x = (int) (getGuiWidth() + 10);
             int y = (int) (getGuiHeight() + 20);
@@ -116,7 +116,7 @@ public class ScreenFireControlRadar extends GenericScreen<ContainerFireControlRa
                         return;
                     }
 
-                    tile.usingRedstone.set(!tile.usingRedstone.get());
+                    tile.usingRedstone.setValue(!tile.usingRedstone.getValue());
 
 
                 })
@@ -135,7 +135,7 @@ public class ScreenFireControlRadar extends GenericScreen<ContainerFireControlRa
 
                     info.add(BallistixTextUtils.tooltip("radar.redstone").withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
 
-                    String key = tile.usingRedstone.get() ? "radar.redstone.enabled" : "radar.redstone.disabled";
+                    String key = tile.usingRedstone.getValue() ? "radar.redstone.enabled" : "radar.redstone.disabled";
 
                     info.add(BallistixTextUtils.tooltip(key).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC).getVisualOrderText());
 

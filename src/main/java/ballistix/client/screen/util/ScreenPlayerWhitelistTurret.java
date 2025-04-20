@@ -4,11 +4,11 @@ import com.mojang.blaze3d.platform.InputConstants;
 
 import ballistix.common.tile.turret.GenericTileTurret;
 import ballistix.prefab.screen.WrapperPlayerWhitelist;
-import electrodynamics.prefab.inventory.container.types.GenericContainerBlockEntity;
-import electrodynamics.prefab.screen.GenericScreen;
-import electrodynamics.prefab.screen.component.types.ScreenComponentVerticalSlider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
+import voltaic.prefab.inventory.container.types.GenericContainerBlockEntity;
+import voltaic.prefab.screen.GenericScreen;
+import voltaic.prefab.screen.component.types.ScreenComponentVerticalSlider;
 
 public abstract class ScreenPlayerWhitelistTurret<T extends GenericContainerBlockEntity<? extends GenericTileTurret>> extends GenericScreen<T> {
 

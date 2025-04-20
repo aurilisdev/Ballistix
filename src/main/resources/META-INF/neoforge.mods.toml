@@ -24,10 +24,10 @@ authors="${mod_authors}" #optional
 
 description='''${mod_description}'''
 
-[[dependencies.nuclearscience]]
-modId="electrodynamics"
+[[dependencies.ballistix]]
+modId="voltaic"
 mandatory=true
-versionRange="[0.10,)"
+versionRange="[1.0,)"
 ordering="NONE"
 side="BOTH"
 

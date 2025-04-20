@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityExplosive;
 import ballistix.registers.BallistixBlocks;
-import electrodynamics.prefab.utilities.math.MathUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -15,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.block.state.BlockState;
+import voltaic.prefab.utilities.math.MathUtils;
 
 public class RenderExplosive extends EntityRenderer<EntityExplosive> {
     public RenderExplosive(Context renderManagerIn) {

@@ -1,14 +1,14 @@
 package ballistix.prefab.screen;
 
 import ballistix.client.screen.ScreenFireControlRadar;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tile.radar.TileFireControlRadar;
-import electrodynamics.prefab.screen.component.ScreenComponentGeneric;
-import electrodynamics.prefab.tile.components.IComponentType;
-import electrodynamics.prefab.tile.components.type.ComponentTickable;
-import electrodynamics.prefab.utilities.math.Color;
-import electrodynamics.prefab.utilities.math.MathUtils;
 import net.minecraft.client.gui.GuiGraphics;
+import voltaic.prefab.screen.component.ScreenComponentGeneric;
+import voltaic.prefab.tile.components.IComponentType;
+import voltaic.prefab.tile.components.type.ComponentTickable;
+import voltaic.prefab.utilities.math.Color;
+import voltaic.prefab.utilities.math.MathUtils;
 
 public class ScreenComponentRadarGrid extends ScreenComponentGeneric {
 
@@ -52,7 +52,7 @@ public class ScreenComponentRadarGrid extends ScreenComponentGeneric {
 
         }
 
-        if(!tile.running.get()) {
+        if(!tile.running.getValue()) {
 
             //OUTLINE
 
@@ -116,13 +116,13 @@ public class ScreenComponentRadarGrid extends ScreenComponentGeneric {
 
         //DOT
 
-        if(tile.trackingPos.get().equals(TileFireControlRadar.OUT_OF_REACH)) {
+        if(tile.trackingPos.getValue().equals(TileFireControlRadar.OUT_OF_REACH)) {
             return;
         }
 
-        float deltaX = (float) ((tile.trackingPos.get().x - tile.getBlockPos().getX()) / (2.0f * Constants.FIRE_CONTROL_RADAR_RANGE)) * width;
+        float deltaX = (float) ((tile.trackingPos.getValue().x - tile.getBlockPos().getX()) / (2.0f * BallistixConstants.FIRE_CONTROL_RADAR_RANGE)) * width;
 
-        float deltaZ = (float) ((tile.trackingPos.get().z - tile.getBlockPos().getZ()) / (2.0f * Constants.FIRE_CONTROL_RADAR_RANGE)) * width;
+        float deltaZ = (float) ((tile.trackingPos.getValue().z - tile.getBlockPos().getZ()) / (2.0f * BallistixConstants.FIRE_CONTROL_RADAR_RANGE)) * width;
 
         double angleRads = Math.atan2(deltaZ, deltaX);
 

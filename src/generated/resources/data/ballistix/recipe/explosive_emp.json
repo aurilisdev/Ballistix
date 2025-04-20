@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "B": {
-      "type": "electrodynamics:chargeditemingredient",
+      "type": "ballistix:chargeditemingredient",
       "charge": {
         "joules": 1666666.0,
         "voltage": 120.0

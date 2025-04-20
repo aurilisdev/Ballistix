@@ -1,6 +1,6 @@
 package ballistix.registers;
 
-import ballistix.References;
+import ballistix.Ballistix;
 import ballistix.common.inventory.container.ContainerCIWSTurret;
 import ballistix.common.inventory.container.ContainerESMTower;
 import ballistix.common.inventory.container.ContainerFireControlRadar;
@@ -24,7 +24,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class BallistixMenuTypes {
 
-	public static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(Registries.MENU, References.ID);
+	public static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(Registries.MENU, Ballistix.ID);
 
 	public static final DeferredHolder<MenuType<?>, MenuType<ContainerLauncherControlPanelT1>> CONTAINER_LAUNCHER_CONTROL_PANEL_T1 = register("launchercontrolpaneltier1", ContainerLauncherControlPanelT1::new);
 	public static final DeferredHolder<MenuType<?>, MenuType<ContainerLauncherControlPanelT2>> CONTAINER_LAUNCHER_CONTROL_PANEL_T2 = register("launchercontrolpaneltier2", ContainerLauncherControlPanelT2::new);

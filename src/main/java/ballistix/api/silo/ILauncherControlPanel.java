@@ -1,7 +1,7 @@
 package ballistix.api.silo;
 
-import electrodynamics.prefab.utilities.object.CachedTileOutput;
 import net.minecraft.core.BlockPos;
+import voltaic.prefab.utilities.object.CachedTileOutput;
 
 public interface ILauncherControlPanel {
 

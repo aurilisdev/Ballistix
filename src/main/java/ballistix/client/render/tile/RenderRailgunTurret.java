@@ -6,17 +6,17 @@ import org.jetbrains.annotations.NotNull;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import ballistix.client.ClientRegister;
+import ballistix.client.BallistixClientRegister;
 import ballistix.common.tile.turret.antimissile.TileTurretRailgun;
 import ballistix.common.tile.turret.antimissile.TileTurretSAM;
-import electrodynamics.client.render.tile.AbstractTileRenderer;
-import electrodynamics.prefab.utilities.math.MathUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.phys.Vec3;
+import voltaic.client.render.AbstractTileRenderer;
+import voltaic.prefab.utilities.math.MathUtils;
 
 public class RenderRailgunTurret extends AbstractTileRenderer<TileTurretRailgun> {
 
@@ -27,9 +27,9 @@ public class RenderRailgunTurret extends AbstractTileRenderer<TileTurretRailgun>
     @Override
     public void render(@NotNull TileTurretRailgun tileEntityIn, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 
-        BakedModel model = getModel(ClientRegister.MODEL_RAILGUNTURRET_BALLJOINT);
+        BakedModel model = getModel(BallistixClientRegister.MODEL_RAILGUNTURRET_BALLJOINT);
 
-        Vec3 rotVec = tileEntityIn.turretRotation.get();
+        Vec3 rotVec = tileEntityIn.turretRotation.getValue();
 
         double yRot = TileTurretSAM.getXZAngleRadians(rotVec) / Math.PI * 180.0;
 
@@ -54,7 +54,7 @@ public class RenderRailgunTurret extends AbstractTileRenderer<TileTurretRailgun>
         matrixStackIn.mulPose(MathUtils.rotQuaternionDeg(0, (float) -yRot, elevRot));
         matrixStackIn.translate(-0.5, -0.8125, -0.5);
 
-        model = getModel(ClientRegister.MODEL_RAILGUNTURRET_HEAD);
+        model = getModel(BallistixClientRegister.MODEL_RAILGUNTURRET_HEAD);
 
         Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model, tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(), 0);
 

@@ -6,10 +6,9 @@ import java.util.List;
 
 import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixSounds;
-import electrodynamics.prefab.utilities.WorldUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
@@ -29,6 +28,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import voltaic.prefab.utilities.WorldUtils;
 
 public class BlastDarkmatter extends Blast {
 
@@ -39,7 +39,7 @@ public class BlastDarkmatter extends Blast {
     @Override
     public void doPreExplode() {
         if (!world.isClientSide) {
-            thread = new ThreadSimpleBlast(world, position, (int) Constants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null, getBlastType().ordinal());
+            thread = new ThreadSimpleBlast(world, position, (int) BallistixConstants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null, getBlastType().ordinal());
             thread.start();
             world.playSound(null, position, BallistixSounds.SOUND_DARKMATTER.get(), SoundSource.BLOCKS, 1, 1);
         }
@@ -62,13 +62,13 @@ public class BlastDarkmatter extends Blast {
         if (thread == null || canceled) {
             return true;
         }
-        Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) Constants.EXPLOSIVE_DARKMATTER_RADIUS, false, Explosion.BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
+        Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) BallistixConstants.EXPLOSIVE_DARKMATTER_RADIUS, false, Explosion.BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
         if (thread.isComplete) {
             if (callAtStart == -1) {
                 callAtStart = callCount;
             }
             if (pertick == -1) {
-                pertick = (int) (thread.results.size() / Constants.EXPLOSIVE_DARKMATTER_DURATION);
+                pertick = (int) (thread.results.size() / BallistixConstants.EXPLOSIVE_DARKMATTER_DURATION);
                 cachedIterator = thread.results.iterator();
             }
             int finished = pertick;
@@ -105,7 +105,7 @@ public class BlastDarkmatter extends Blast {
         float y = position.getY();
         float z = position.getZ();
 
-        float size = (float) Constants.EXPLOSIVE_DARKMATTER_RADIUS;
+        float size = (float) BallistixConstants.EXPLOSIVE_DARKMATTER_RADIUS;
 
         float doubleSize = size * 2.0F;
 

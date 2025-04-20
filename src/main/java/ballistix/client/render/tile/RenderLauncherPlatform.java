@@ -2,16 +2,12 @@ package ballistix.client.render.tile;
 
 import java.util.Random;
 
-import ballistix.client.ClientRegister;
+import ballistix.client.BallistixClientRegister;
 import ballistix.registers.BallistixItems;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import ballistix.api.silo.ILauncherPlatform;
 import ballistix.common.item.ItemMissile;
-import electrodynamics.client.render.tile.AbstractTileRenderer;
-import electrodynamics.prefab.tile.GenericTile;
-import electrodynamics.prefab.tile.components.IComponentType;
-import electrodynamics.prefab.tile.components.type.ComponentInventory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -19,6 +15,10 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
+import voltaic.client.render.AbstractTileRenderer;
+import voltaic.prefab.tile.GenericTile;
+import voltaic.prefab.tile.components.IComponentType;
+import voltaic.prefab.tile.components.type.ComponentInventory;
 
 public class RenderLauncherPlatform<T extends GenericTile & ILauncherPlatform> extends AbstractTileRenderer<T> {
 
@@ -43,19 +43,19 @@ public class RenderLauncherPlatform<T extends GenericTile & ILauncherPlatform> e
 
 			if (missile.missile.tier == 0) {
 
-				model = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILETIER1);
+				model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILETIER1);
 				matrixStackIn.translate(0.5f, 0.87, 0.5f);
 				matrixStackIn.scale(1f, 0.75f, 1f);
 
 			} else if (missile.missile.tier == 1) {
 
-				model = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILETIER2);
+				model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILETIER2);
 				matrixStackIn.translate(0.5f, 1.1f, 0.5f);
 				matrixStackIn.scale(1f, 1f, 1f);
 
 			} else {
 
-				model = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILETIER3);
+				model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILETIER3);
 				matrixStackIn.translate(0.5f, 1.1f, 0.5f);
 				matrixStackIn.scale(1f, 1.25f, 1f);
 
@@ -69,7 +69,7 @@ public class RenderLauncherPlatform<T extends GenericTile & ILauncherPlatform> e
 
 			matrixStackIn.pushPose();
 
-			BakedModel model = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_AAMISSILE_MK2);
+			BakedModel model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_AAMISSILE_MK2);
 
 			matrixStackIn.translate(0.5f, 1F, 0.5f);
 			//matrixStackIn.scale(1.5f, 2.5f, 1.5f);

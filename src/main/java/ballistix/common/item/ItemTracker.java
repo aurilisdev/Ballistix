@@ -6,17 +6,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import ballistix.Ballistix;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import ballistix.References;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixCreativeTabs;
 import ballistix.registers.BallistixDataComponentTypes;
-import electrodynamics.prefab.item.ElectricItemProperties;
-import electrodynamics.prefab.item.ItemElectric;
-import electrodynamics.prefab.utilities.object.TransferPack;
-import electrodynamics.registers.ElectrodynamicsItems;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -30,13 +26,17 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import voltaic.prefab.item.ElectricItemProperties;
+import voltaic.prefab.item.ItemElectric;
+import voltaic.prefab.utilities.object.TransferPack;
 
-@EventBusSubscriber(modid = References.ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.GAME)
 public class ItemTracker extends ItemElectric {
 
     public static final double USAGE = 150;
@@ -44,7 +44,7 @@ public class ItemTracker extends ItemElectric {
     public static HashMap<ServerLevel, HashSet<Integer>> validuuids = new HashMap<>();
 
     public ItemTracker() {
-        super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1), BallistixCreativeTabs.MAIN, item -> ElectrodynamicsItems.ITEM_BATTERY.get());
+        super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1), BallistixCreativeTabs.MAIN, item -> Items.AIR);
     }
 
     @Override

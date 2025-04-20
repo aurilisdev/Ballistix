@@ -4,9 +4,8 @@ import java.util.Random;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import ballistix.client.ClientRegister;
+import ballistix.client.BallistixClientRegister;
 import ballistix.common.entity.EntitySAM;
-import electrodynamics.prefab.utilities.math.MathUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -18,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import voltaic.prefab.utilities.math.MathUtils;
 
 public class RenderSAM extends EntityRenderer<EntitySAM> {
 
@@ -41,10 +41,10 @@ public class RenderSAM extends EntityRenderer<EntitySAM> {
 
         BakedModel model;
         if(entity.variant == 0) {
-            model = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_AAMISSILE);
+            model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_AAMISSILE);
 
         } else {
-            model = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_AAMISSILE_MK2);
+            model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_AAMISSILE_MK2);
 
             matrixStackIn.translate(0, 1.05f, 0);
             matrixStackIn.scale(1f, 1f, 1f);

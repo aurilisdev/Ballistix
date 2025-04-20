@@ -4,13 +4,10 @@ import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.common.block.BlockExplosive;
 import ballistix.common.block.subtype.SubtypeMissile;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.registers.BallistixCreativeTabs;
 import ballistix.registers.BallistixItems;
 import ballistix.registers.BallistixSounds;
-import electrodynamics.common.blockitem.types.BlockItemDescriptable;
-import electrodynamics.common.item.ItemElectrodynamics;
-import electrodynamics.registers.ElectrodynamicsDataComponentTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -24,8 +21,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import voltaic.common.blockitem.BlockItemDescriptable;
+import voltaic.common.item.ItemVoltaic;
+import voltaic.registers.VoltaicDataComponentTypes;
 
-public class ItemRocketLauncher extends ItemElectrodynamics {
+public class ItemRocketLauncher extends ItemVoltaic {
 
     public ItemRocketLauncher() {
         super(new Item.Properties().stacksTo(1), BallistixCreativeTabs.MAIN);
@@ -59,10 +59,10 @@ public class ItemRocketLauncher extends ItemElectrodynamics {
         if (level.isClientSide) {
             return;
         }
-        int timeRemaining = stack.getOrDefault(ElectrodynamicsDataComponentTypes.TIMER, 0);
+        int timeRemaining = stack.getOrDefault(VoltaicDataComponentTypes.TIMER, 0);
         if (timeRemaining > 0) {
             timeRemaining--;
-            stack.set(ElectrodynamicsDataComponentTypes.TIMER, timeRemaining);
+            stack.set(VoltaicDataComponentTypes.TIMER, timeRemaining);
         }
     }
 
@@ -73,13 +73,13 @@ public class ItemRocketLauncher extends ItemElectrodynamics {
             return;
         }
 
-        if (stack.getOrDefault(ElectrodynamicsDataComponentTypes.TIMER, 0) > 0) {
+        if (stack.getOrDefault(VoltaicDataComponentTypes.TIMER, 0) > 0) {
             return;
         }
 
         Player player = (Player) entityLiving;
 
-        if (!player.isCreative()) stack.set(ElectrodynamicsDataComponentTypes.TIMER, Constants.ROCKET_LAUNCHER_COOLDOWN_TICKS);
+        if (!player.isCreative()) stack.set(VoltaicDataComponentTypes.TIMER, BallistixConstants.ROCKET_LAUNCHER_COOLDOWN_TICKS);
 
         int blastOrdinal = 0;
 

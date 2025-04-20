@@ -2,7 +2,6 @@ package ballistix.common.blast.thread.raycast;
 
 import java.util.HashSet;
 
-import electrodynamics.prefab.block.HashDistanceBlockPos;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -11,6 +10,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import voltaic.prefab.block.HashDistanceBlockPos;
 
 public class ThreadRaySideBlast extends Thread {
 

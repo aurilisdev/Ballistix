@@ -7,9 +7,9 @@ import java.util.function.Consumer;
 import ballistix.api.radar.IDetected;
 import ballistix.client.screen.ScreenSearchRadar;
 import ballistix.common.tile.radar.TileSearchRadar;
-import electrodynamics.prefab.screen.component.types.ScreenComponentVerticalSlider;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.util.Mth;
+import voltaic.prefab.screen.component.types.ScreenComponentVerticalSlider;
 
 public class WrapperSearchRadarDetections {
 

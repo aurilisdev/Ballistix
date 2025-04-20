@@ -5,7 +5,7 @@ import ballistix.client.particle.ParticleOptionsBlastSmoke;
 import ballistix.client.shake.CameraShakeEffect;
 import ballistix.client.shake.CameraShakeManager;
 import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.prefab.utils.ParticleUtilities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -27,10 +27,10 @@ public class BlastBreaching extends BlastLasting implements IHasCustomRender {
     public boolean doExplode(int callCount) {
         super.doExplode(callCount);
         if (!world.isClientSide && !hasStarted) {
-            world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) Constants.EXPLOSIVE_BREACHING_SIZE, ExplosionInteraction.BLOCK);
+            world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) BallistixConstants.EXPLOSIVE_BREACHING_SIZE, ExplosionInteraction.BLOCK);
         }
         hasStarted = true;
-        return ticksSinceBlastStart > Constants.EXPLOSIVE_BREACHING_SIZE * 3;
+        return ticksSinceBlastStart > BallistixConstants.EXPLOSIVE_BREACHING_SIZE * 3;
     }
 
     @Override
@@ -69,7 +69,7 @@ public class BlastBreaching extends BlastLasting implements IHasCustomRender {
         }
         // Shockwave
         double spawnSize = 3;
-        double endSize = Constants.EXPLOSIVE_BREACHING_SIZE * 5;
+        double endSize = BallistixConstants.EXPLOSIVE_BREACHING_SIZE * 5;
         int diff = (int) (endSize - spawnSize);
         if (ticksSinceBlastStart > diff) return;
         double size = ParticleUtilities.progressGroundShockwave(world, x, z, ticksSinceBlastStart * 2 / (double) diff, spawnSize, endSize, 0.2);

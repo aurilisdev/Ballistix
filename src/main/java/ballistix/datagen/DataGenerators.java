@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-import ballistix.References;
+import ballistix.Ballistix;
 import ballistix.datagen.client.BallistixBlockStateProvider;
 import ballistix.datagen.client.BallistixItemModelsProvider;
 import ballistix.datagen.client.BallistixLangKeyProvider;
@@ -14,7 +14,6 @@ import ballistix.datagen.server.BallistixLootTablesProvider;
 import ballistix.datagen.server.recipe.BallistixRecipeProvider;
 import ballistix.datagen.server.tags.BallistixTagsProvider;
 import ballistix.registers.BallistixDamageTypes;
-import electrodynamics.datagen.client.ElectrodynamicsLangKeyProvider.Locale;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
@@ -27,8 +26,9 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
+import voltaic.datagen.utils.client.BaseLangKeyProvider;
 
-@EventBusSubscriber(modid = References.ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)
 public class DataGenerators {
 
 	@SubscribeEvent
@@ -51,7 +51,7 @@ public class DataGenerators {
 					//
 					.add(Registries.DAMAGE_TYPE, BallistixDamageTypes::registerTypes),
 					//
-					Set.of(References.ID));
+					Set.of(Ballistix.ID));
 
 			generator.addProvider(true, datapacks);
 			BallistixTagsProvider.addTagProviders(generator, output, datapacks.getRegistryProvider(), helper);
@@ -60,7 +60,7 @@ public class DataGenerators {
 		if (event.includeClient()) {
 			generator.addProvider(true, new BallistixBlockStateProvider(output, helper));
 			generator.addProvider(true, new BallistixItemModelsProvider(output, helper));
-			generator.addProvider(true, new BallistixLangKeyProvider(output, Locale.EN_US));
+			generator.addProvider(true, new BallistixLangKeyProvider(output, BaseLangKeyProvider.Locale.EN_US));
 			generator.addProvider(true, new BallistixSoundProvider(output, helper));
 		}
 	}

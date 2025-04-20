@@ -1,20 +1,20 @@
 package ballistix.datagen.client;
 
-import ballistix.References;
+import ballistix.Ballistix;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.item.ItemGrenade.SubtypeGrenade;
 import ballistix.common.item.ItemMinecart.SubtypeMinecart;
 import ballistix.registers.BallistixBlocks;
 import ballistix.registers.BallistixItems;
-import electrodynamics.datagen.client.ElectrodynamicsItemModelsProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import voltaic.datagen.utils.client.BaseItemModelsProvider;
 
-public class BallistixItemModelsProvider extends ElectrodynamicsItemModelsProvider {
+public class BallistixItemModelsProvider extends BaseItemModelsProvider {
 
 	public BallistixItemModelsProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
-		super(output, existingFileHelper, References.ID);
+		super(output, existingFileHelper, Ballistix.ID);
 	}
 
 	@Override

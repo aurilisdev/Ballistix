@@ -3,23 +3,23 @@ package ballistix.common.tile.turret.antimissile.util;
 import javax.annotation.Nullable;
 
 import ballistix.api.turret.ITarget;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.turret.GenericTileTurret;
-import electrodynamics.prefab.properties.Property;
-import electrodynamics.prefab.properties.PropertyTypes;
-import electrodynamics.prefab.utilities.BlockEntityUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import voltaic.prefab.properties.types.PropertyTypes;
+import voltaic.prefab.properties.variant.SingleProperty;
+import voltaic.prefab.utilities.BlockEntityUtils;
 
 public abstract class TileTurretAntimissile extends GenericTileTurret {
 
-    public final Property<Boolean> isNotLinked = property(new Property<>(PropertyTypes.BOOLEAN, "islinked", false));
-    public final Property<BlockPos> boundFireControl = property(new Property<>(PropertyTypes.BLOCK_POS, "bound", BlockEntityUtils.OUT_OF_REACH));
+    public final SingleProperty<Boolean> isNotLinked = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "islinked", false));
+    public final SingleProperty<BlockPos> boundFireControl = property(new SingleProperty<>(PropertyTypes.BLOCK_POS, "bound", BlockEntityUtils.OUT_OF_REACH));
     @Nullable
     private TileFireControlRadar radar;
 
@@ -29,10 +29,10 @@ public abstract class TileTurretAntimissile extends GenericTileTurret {
 
     public boolean bindFireControlRadar(BlockPos pos) {
         double distance = getDistanceToPos(getBlockPos(), pos);
-        if(distance > Constants.MAX_DISTANCE_FROM_RADAR) {
+        if(distance > BallistixConstants.MAX_DISTANCE_FROM_RADAR) {
             return false;
         }
-        boundFireControl.set(pos);
+        boundFireControl.setValue(pos);
         return true;
     }
 
@@ -55,16 +55,16 @@ public abstract class TileTurretAntimissile extends GenericTileTurret {
     @Override
     public ITarget getTarget(long ticks) {
         if(ticks % 10 == 0) {
-            if(level.getBlockEntity(boundFireControl.get()) instanceof TileFireControlRadar fire) {
+            if(level.getBlockEntity(boundFireControl.getValue()) instanceof TileFireControlRadar fire) {
                 radar = fire;
             } else {
                 radar = null;
-                boundFireControl.set(BlockEntityUtils.OUT_OF_REACH);
+                boundFireControl.setValue(BlockEntityUtils.OUT_OF_REACH);
             }
         }
-        isNotLinked.set(radar == null);
+        isNotLinked.setValue(radar == null);
 
-        if(isNotLinked.get()) {
+        if(isNotLinked.getValue()) {
             return null;
         }
 

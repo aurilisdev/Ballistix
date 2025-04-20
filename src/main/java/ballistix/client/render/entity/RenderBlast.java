@@ -2,12 +2,10 @@ package ballistix.client.render.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import ballistix.client.ClientRegister;
+import ballistix.client.BallistixClientRegister;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityBlast;
-import ballistix.common.settings.Constants;
-import electrodynamics.prefab.utilities.RenderingUtils;
-import electrodynamics.prefab.utilities.math.MathUtils;
+import ballistix.common.settings.BallistixConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -21,6 +19,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.client.model.data.ModelData;
+import voltaic.prefab.utilities.RenderingUtils;
+import voltaic.prefab.utilities.math.MathUtils;
 
 public class RenderBlast extends EntityRenderer<EntityBlast> {
 
@@ -36,10 +36,10 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 
         if (subtype == SubtypeBlast.darkmatter) {
             double x = entityIn.tickCount;
-            double time = 4.0 / 3.0 * Math.PI * Math.pow(Constants.EXPLOSIVE_DARKMATTER_RADIUS, 3) / Constants.EXPLOSIVE_DARKMATTER_DURATION;
+            double time = 4.0 / 3.0 * Math.PI * Math.pow(BallistixConstants.EXPLOSIVE_DARKMATTER_RADIUS, 3) / BallistixConstants.EXPLOSIVE_DARKMATTER_DURATION;
             float scale = (float) (0.1 * Math.log(x * x) + x / (time * 2));
-            BakedModel modelDisk = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_DARKMATTERDISK);
-            BakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_BLACKHOLECUBE);
+            BakedModel modelDisk = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_DARKMATTERDISK);
+            BakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_BLACKHOLECUBE);
 
             float animationRadians = (entityIn.tickCount + partialTicks) * 0.05f;
 
@@ -81,9 +81,9 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
                 RenderingUtils.renderStar(matrixStack, bufferIn, entityIn.tickCount + partialTicks, 500, 1, 1, 1, 0.7f, false);
             }
         } else if (subtype == SubtypeBlast.emp && entityIn.shouldRenderCustom) {
-            float scale = (float) ((entityIn.tickCount + partialTicks - entityIn.ticksWhenCustomRender) / Constants.EXPLOSIVE_ANTIMATTER_DURATION * Constants.EXPLOSIVE_EMP_RADIUS * 1.2) / 8.0f;
+            float scale = (float) ((entityIn.tickCount + partialTicks - entityIn.ticksWhenCustomRender) / BallistixConstants.EXPLOSIVE_ANTIMATTER_DURATION * BallistixConstants.EXPLOSIVE_EMP_RADIUS * 1.2) / 8.0f;
             matrixStack.scale(scale, scale, scale);
-            BakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_EMP);
+            BakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_EMP);
             Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(matrixStack.last(), bufferIn.getBuffer(Sheets.translucentCullBlockSheet()), Blocks.BLACK_STAINED_GLASS.defaultBlockState(), modelSphere, 1, 1, 1, 0, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, RenderType.translucent());
         } else if (subtype == SubtypeBlast.antimatter && entityIn.shouldRenderCustom) {
 //	    float scale = (float) ((entityIn.tickCount + partialTicks - entityIn.ticksWhenCustomRender)

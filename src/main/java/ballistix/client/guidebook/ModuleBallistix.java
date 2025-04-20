@@ -1,14 +1,13 @@
 package ballistix.client.guidebook;
 
 import ballistix.Ballistix;
-import ballistix.References;
 import ballistix.client.guidebook.chapters.ChapterItems;
 import ballistix.client.guidebook.chapters.ChapterMissileDefense;
 import ballistix.client.guidebook.chapters.ChapterMissileSilo;
 import ballistix.prefab.utils.BallistixTextUtils;
-import electrodynamics.client.guidebook.utils.components.Module;
-import electrodynamics.client.guidebook.utils.pagedata.graphics.ImageWrapperObject;
 import net.minecraft.network.chat.MutableComponent;
+import voltaic.client.guidebook.utils.components.Module;
+import voltaic.client.guidebook.utils.pagedata.graphics.ImageWrapperObject;
 
 public class ModuleBallistix extends Module {
 
@@ -21,7 +20,7 @@ public class ModuleBallistix extends Module {
 
 	@Override
 	public MutableComponent getTitle() {
-		return BallistixTextUtils.guidebook(References.ID);
+		return BallistixTextUtils.guidebook(Ballistix.ID);
 	}
 
 	@Override

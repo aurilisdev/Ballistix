@@ -1,11 +1,8 @@
 package ballistix.common.item;
 
-import ballistix.References;
+import ballistix.Ballistix;
 import ballistix.api.entity.IDefusable;
 import ballistix.registers.BallistixCreativeTabs;
-import electrodynamics.prefab.item.ElectricItemProperties;
-import electrodynamics.prefab.item.ItemElectric;
-import electrodynamics.prefab.utilities.object.TransferPack;
 import electrodynamics.registers.ElectrodynamicsItems;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Entity.RemovalReason;
@@ -18,8 +15,11 @@ import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import voltaic.prefab.item.ElectricItemProperties;
+import voltaic.prefab.item.ItemElectric;
+import voltaic.prefab.utilities.object.TransferPack;
 
-@EventBusSubscriber(modid = References.ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.GAME)
 public class ItemDefuser extends ItemElectric {
 
 	public static final double USAGE = 150;

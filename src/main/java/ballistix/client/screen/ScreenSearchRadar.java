@@ -6,22 +6,22 @@ import java.util.List;
 import com.mojang.blaze3d.platform.InputConstants;
 
 import ballistix.common.inventory.container.ContainerSearchRadar;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tile.radar.TileSearchRadar;
 import ballistix.prefab.screen.WrapperSearchFrequencyManager;
 import ballistix.prefab.screen.WrapperSearchRadarDetections;
 import ballistix.prefab.utils.BallistixTextUtils;
-import electrodynamics.api.electricity.formatting.ChatFormatter;
-import electrodynamics.prefab.screen.GenericScreen;
-import electrodynamics.prefab.screen.component.types.ScreenComponentSlot;
-import electrodynamics.prefab.screen.component.types.ScreenComponentVerticalSlider;
-import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentElectricInfo;
-import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentGuiTab;
-import electrodynamics.prefab.screen.component.utils.AbstractScreenComponentInfo;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
+import voltaic.api.electricity.formatting.ChatFormatter;
+import voltaic.prefab.screen.GenericScreen;
+import voltaic.prefab.screen.component.types.ScreenComponentSlot;
+import voltaic.prefab.screen.component.types.ScreenComponentVerticalSlider;
+import voltaic.prefab.screen.component.types.guitab.ScreenComponentElectricInfo;
+import voltaic.prefab.screen.component.types.guitab.ScreenComponentGuiTab;
+import voltaic.prefab.screen.component.utils.AbstractScreenComponentInfo;
 
 public class ScreenSearchRadar extends GenericScreen<ContainerSearchRadar> {
 
@@ -33,7 +33,7 @@ public class ScreenSearchRadar extends GenericScreen<ContainerSearchRadar> {
     public ScreenSearchRadar(ContainerSearchRadar container, Inventory inv, Component title) {
         super(container, inv, title);
 
-        addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(Constants.RADAR_USAGE));
+        addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(BallistixConstants.RADAR_USAGE));
 
         addComponent(new ScreenComponentGuiTab(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR, ScreenComponentSlot.IconType.SONAR_PROFILE, () -> {
             List<FormattedCharSequence> info = new ArrayList<>();
@@ -45,7 +45,7 @@ public class ScreenSearchRadar extends GenericScreen<ContainerSearchRadar> {
             }
 
             info.add(BallistixTextUtils.tooltip("turret.blockrange").withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
-            info.add(BallistixTextUtils.tooltip("turret.maxrange", ChatFormatter.formatDecimals(Constants.RADAR_RANGE, 1).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+            info.add(BallistixTextUtils.tooltip("turret.maxrange", ChatFormatter.formatDecimals(BallistixConstants.RADAR_RANGE, 1).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
 
 
             return info;

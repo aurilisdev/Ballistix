@@ -2,19 +2,19 @@ package ballistix.datagen.server;
 
 import java.util.List;
 
-import ballistix.References;
+import ballistix.Ballistix;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.registers.BallistixBlocks;
 import ballistix.registers.BallistixTiles;
-import electrodynamics.datagen.server.ElectrodynamicsLootTablesProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.level.block.Block;
+import voltaic.datagen.utils.server.loottable.BaseLootTablesProvider;
 
-public class BallistixLootTablesProvider extends ElectrodynamicsLootTablesProvider {
+public class BallistixLootTablesProvider extends BaseLootTablesProvider {
 
 	public BallistixLootTablesProvider(HolderLookup.Provider provider) {
-		super(References.ID, provider);
+		super(Ballistix.ID, provider);
 	}
 
 	@Override

@@ -4,26 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ballistix.common.inventory.container.ContainerLauncherControlPanelT3;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tile.silo.TileLauncherControlPanelT3;
 import ballistix.prefab.utils.BallistixTextUtils;
-import electrodynamics.api.electricity.formatting.ChatFormatter;
-import electrodynamics.api.electricity.formatting.DisplayUnit;
-import electrodynamics.prefab.screen.GenericScreen;
-import electrodynamics.prefab.screen.component.editbox.ScreenComponentEditBox;
-import electrodynamics.prefab.screen.component.types.ScreenComponentSimpleLabel;
-import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentElectricInfo;
-import electrodynamics.prefab.screen.component.utils.AbstractScreenComponentInfo;
-import electrodynamics.prefab.tile.components.IComponentType;
-import electrodynamics.prefab.tile.components.type.ComponentElectrodynamic;
-import electrodynamics.prefab.utilities.ElectroTextUtils;
-import electrodynamics.prefab.utilities.math.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
+import voltaic.api.electricity.formatting.ChatFormatter;
+import voltaic.api.electricity.formatting.DisplayUnits;
+import voltaic.prefab.screen.GenericScreen;
+import voltaic.prefab.screen.component.editbox.ScreenComponentEditBox;
+import voltaic.prefab.screen.component.types.ScreenComponentSimpleLabel;
+import voltaic.prefab.screen.component.types.guitab.ScreenComponentElectricInfo;
+import voltaic.prefab.screen.component.utils.AbstractScreenComponentInfo;
+import voltaic.prefab.tile.components.IComponentType;
+import voltaic.prefab.tile.components.type.ComponentElectrodynamic;
+import voltaic.prefab.utilities.VoltaicTextUtils;
+import voltaic.prefab.utilities.math.Color;
 
 public class ScreenLauncherControlPanelT3 extends GenericScreen<ContainerLauncherControlPanelT3> {
 
@@ -40,7 +40,7 @@ public class ScreenLauncherControlPanelT3 extends GenericScreen<ContainerLaunche
 		//imageHeight += 20;
 		//inventoryLabelY += 20;
 
-		addComponent(new ScreenComponentElectricInfo(this::getElectricInformation, -AbstractScreenComponentInfo.SIZE + 1, 2).wattage(Constants.MISSILESILO_USAGE * 20));
+		addComponent(new ScreenComponentElectricInfo(this::getElectricInformation, -AbstractScreenComponentInfo.SIZE + 1, 2).wattage(BallistixConstants.MISSILESILO_USAGE * 20));
 
 		addEditBox(xCoordField = new ScreenComponentEditBox(10, 17, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setX).setFilter(ScreenComponentEditBox.INTEGER));
 		addEditBox(yCoordField = new ScreenComponentEditBox(10, 35, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setY).setFilter(ScreenComponentEditBox.INTEGER));
@@ -71,7 +71,7 @@ public class ScreenLauncherControlPanelT3 extends GenericScreen<ContainerLaunche
 			return;
 		}
 
-		int x = silo.target.get().getX();
+		int x = silo.target.getValue().getX();
 
 		try {
 			x = Integer.parseInt(coord);
@@ -79,7 +79,7 @@ public class ScreenLauncherControlPanelT3 extends GenericScreen<ContainerLaunche
 			// Filler
 		}
 
-		updateSiloCoords(x, silo.target.get().getY(), silo.target.get().getZ(), silo);
+		updateSiloCoords(x, silo.target.getValue().getY(), silo.target.getValue().getZ(), silo);
 
 	}
 
@@ -95,7 +95,7 @@ public class ScreenLauncherControlPanelT3 extends GenericScreen<ContainerLaunche
 			return;
 		}
 
-		int y = silo.target.get().getY();
+		int y = silo.target.getValue().getY();
 
 		try {
 			y = Integer.parseInt(coord);
@@ -103,7 +103,7 @@ public class ScreenLauncherControlPanelT3 extends GenericScreen<ContainerLaunche
 			// Filler
 		}
 
-		updateSiloCoords(silo.target.get().getX(), y, silo.target.get().getZ(), silo);
+		updateSiloCoords(silo.target.getValue().getX(), y, silo.target.getValue().getZ(), silo);
 
 	}
 
@@ -119,7 +119,7 @@ public class ScreenLauncherControlPanelT3 extends GenericScreen<ContainerLaunche
 			return;
 		}
 
-		int z = silo.target.get().getZ();
+		int z = silo.target.getValue().getZ();
 
 		try {
 			z = Integer.parseInt(coord);
@@ -127,13 +127,13 @@ public class ScreenLauncherControlPanelT3 extends GenericScreen<ContainerLaunche
 			// Filler
 		}
 
-		updateSiloCoords(silo.target.get().getX(), silo.target.get().getY(), z, silo);
+		updateSiloCoords(silo.target.getValue().getX(), silo.target.getValue().getY(), z, silo);
 
 	}
 
 	private void updateSiloCoords(int x, int y, int z, TileLauncherControlPanelT3 silo) {
 
-		silo.target.set(new BlockPos(x, y, z));
+		silo.target.setValue(new BlockPos(x, y, z));
 
 	}
 
@@ -157,7 +157,7 @@ public class ScreenLauncherControlPanelT3 extends GenericScreen<ContainerLaunche
 			// Filler
 		}
 
-		silo.frequency.set(frequency);
+		silo.frequency.setValue(frequency);
 
 	}
 
@@ -200,10 +200,10 @@ public class ScreenLauncherControlPanelT3 extends GenericScreen<ContainerLaunche
 			needsUpdate = false;
 			TileLauncherControlPanelT3 silo = menu.getSafeHost();
 			if (silo != null) {
-				xCoordField.setValue("" + silo.target.get().getX());
-				yCoordField.setValue("" + silo.target.get().getY());
-				zCoordField.setValue("" + silo.target.get().getZ());
-				frequencyField.setValue("" + silo.frequency.get());
+				xCoordField.setValue("" + silo.target.getValue().getX());
+				yCoordField.setValue("" + silo.target.getValue().getY());
+				zCoordField.setValue("" + silo.target.getValue().getZ());
+				frequencyField.setValue("" + silo.frequency.getValue());
 			}
 		}
 	}
@@ -217,8 +217,8 @@ public class ScreenLauncherControlPanelT3 extends GenericScreen<ContainerLaunche
 		}
 
 		ComponentElectrodynamic el = silo.getComponent(IComponentType.Electrodynamic);
-		list.add(BallistixTextUtils.tooltip("missilesilo.charge", ChatFormatter.getChatDisplayShort(el.getJoulesStored(), DisplayUnit.JOULES).withStyle(ChatFormatting.GRAY), ChatFormatter.getChatDisplayShort(Constants.MISSILESILO_USAGE, DisplayUnit.JOULES).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
-		list.add(ElectroTextUtils.gui("machine.voltage", ChatFormatter.getChatDisplayShort(el.getVoltage(), DisplayUnit.VOLTAGE).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+		list.add(BallistixTextUtils.tooltip("missilesilo.charge", ChatFormatter.getChatDisplayShort(el.getJoulesStored(), DisplayUnits.JOULES).withStyle(ChatFormatting.GRAY), ChatFormatter.getChatDisplayShort(BallistixConstants.MISSILESILO_USAGE, DisplayUnits.JOULES).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+		list.add(VoltaicTextUtils.gui("machine.voltage", ChatFormatter.getChatDisplayShort(el.getVoltage(), DisplayUnits.VOLTAGE).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
 
 		return list;
 	}

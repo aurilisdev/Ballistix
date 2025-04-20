@@ -5,7 +5,7 @@ import java.util.List;
 import org.joml.Vector3f;
 
 import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixDamageTypes;
 import net.minecraft.client.Minecraft;
@@ -42,7 +42,7 @@ public class BlastContagious extends Blast {
 	@Override
 	public boolean doExplode(int callCount) {
 		hasStarted = true;
-		int radius = (int) Constants.EXPLOSIVE_CONTAGIOUS_SIZE;
+		int radius = (int) BallistixConstants.EXPLOSIVE_CONTAGIOUS_SIZE;
 		if (world.isClientSide && callCount % 3 == 0) {
 			for (int x = -radius; x <= radius; x++) {
 				for (int y = -radius; y <= radius; y++) {
@@ -102,7 +102,7 @@ public class BlastContagious extends Blast {
 				}
 			}
 		}
-		return callCount > Constants.EXPLOSIVE_CONTAGIOUS_DURATION;
+		return callCount > BallistixConstants.EXPLOSIVE_CONTAGIOUS_DURATION;
 	}
 
 	@Override

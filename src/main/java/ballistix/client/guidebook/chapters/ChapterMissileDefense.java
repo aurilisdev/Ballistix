@@ -2,22 +2,20 @@ package ballistix.client.guidebook.chapters;
 
 import ballistix.Ballistix;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixItems;
-import electrodynamics.api.electricity.formatting.ChatFormatter;
-import electrodynamics.api.electricity.formatting.DisplayUnit;
-import electrodynamics.client.guidebook.ScreenGuidebook;
-import electrodynamics.client.guidebook.utils.components.Chapter;
-import electrodynamics.client.guidebook.utils.components.Module;
-import electrodynamics.client.guidebook.utils.pagedata.graphics.AbstractGraphicWrapper;
-import electrodynamics.client.guidebook.utils.pagedata.graphics.ImageWrapperObject;
-import electrodynamics.client.guidebook.utils.pagedata.graphics.ItemWrapperObject;
-import electrodynamics.client.guidebook.utils.pagedata.text.TextWrapperObject;
-import electrodynamics.common.item.subtype.SubtypeRod;
-import electrodynamics.registers.ElectrodynamicsItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.MutableComponent;
+import voltaic.api.electricity.formatting.ChatFormatter;
+import voltaic.api.electricity.formatting.DisplayUnits;
+import voltaic.client.guidebook.ScreenGuidebook;
+import voltaic.client.guidebook.utils.components.Chapter;
+import voltaic.client.guidebook.utils.components.Module;
+import voltaic.client.guidebook.utils.pagedata.graphics.AbstractGraphicWrapper;
+import voltaic.client.guidebook.utils.pagedata.graphics.ImageWrapperObject;
+import voltaic.client.guidebook.utils.pagedata.graphics.ItemWrapperObject;
+import voltaic.client.guidebook.utils.pagedata.text.TextWrapperObject;
 
 public class ChapterMissileDefense extends Chapter {
 
@@ -45,7 +43,7 @@ public class ChapterMissileDefense extends Chapter {
         // Search Radar
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.radar).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
         pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.radar)));
-        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.searchradar1", Constants.RADAR_RANGE)).setSeparateStart().setIndentions(1));
+        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.searchradar1", BallistixConstants.RADAR_RANGE)).setSeparateStart().setIndentions(1));
         pageData.add(new ImageWrapperObject(0, 0, 0, 0, 150, 75, 150, 79, Ballistix.rl("textures/screen/guidebook/searchradar1.png")));
         pageData.add(new ImageWrapperObject(0, 0, 0, 0, 150, 150, 150, 150, Ballistix.rl("textures/screen/guidebook/searchradar2.png")));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.searchradar2")).setSeparateStart());
@@ -53,13 +51,13 @@ public class ChapterMissileDefense extends Chapter {
         // Fire Control Radar
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.firecontrolradar).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
         pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.firecontrolradar)));
-        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.firecontrolradar1", BallistixItems.ITEM_RADARGUN.get().getDescription().copy().withStyle(ChatFormatting.BOLD), Constants.MAX_DISTANCE_FROM_RADAR)).setSeparateStart().setIndentions(1));
-        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.firecontrolradar2", Constants.FIRE_CONTROL_RADAR_RANGE)).setSeparateStart().setIndentions(1));
+        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.firecontrolradar1", BallistixItems.ITEM_RADARGUN.get().getDescription().copy().withStyle(ChatFormatting.BOLD), BallistixConstants.MAX_DISTANCE_FROM_RADAR)).setSeparateStart().setIndentions(1));
+        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.firecontrolradar2", BallistixConstants.FIRE_CONTROL_RADAR_RANGE)).setSeparateStart().setIndentions(1));
 
         // ESM Tower
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.esmtower).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
         pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.esmtower)));
-        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.esmtower1", Constants.ESM_TOWER_SEARCH_RADIUS)).setSeparateStart().setIndentions(1));
+        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.esmtower1", BallistixConstants.ESM_TOWER_SEARCH_RADIUS)).setSeparateStart().setIndentions(1));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.esmtower2")).setSeparateStart().setIndentions(1));
 
         // SAM Turret
@@ -69,16 +67,16 @@ public class ChapterMissileDefense extends Chapter {
                 //
                 BallistixItems.ITEM_AAMISSILE.get().getDescription().copy().withStyle(ChatFormatting.BOLD),
                 //
-                Constants.SAM_TURRET_BASE_RANGE,
+                BallistixConstants.SAM_TURRET_BASE_RANGE,
                 //
-                Constants.SAM_TURRET_COOLDOWN,
+                BallistixConstants.SAM_TURRET_COOLDOWN,
                 //
-                ChatFormatter.getChatDisplayShort(Constants.SAM_CHANCE_TO_DESTROY * 100, DisplayUnit.PERCENTAGE))).setSeparateStart().setIndentions(1));
+                ChatFormatter.getChatDisplayShort(BallistixConstants.SAM_CHANCE_TO_DESTROY * 100, DisplayUnits.PERCENTAGE))).setSeparateStart().setIndentions(1));
 
         // CIWS Turret
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.ciwsturret).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
         pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.ciwsturret)));
-        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.ciwsturret1", BallistixItems.ITEM_BULLET.get().getDescription().copy().withStyle(ChatFormatting.BOLD), Constants.CIWS_TURRET_BASE_RANGE, Constants.MISSILE_HEALTH)).setSeparateStart().setIndentions(1));
+        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.ciwsturret1", BallistixItems.ITEM_BULLET.get().getDescription().copy().withStyle(ChatFormatting.BOLD), BallistixConstants.CIWS_TURRET_BASE_RANGE, BallistixConstants.MISSILE_HEALTH)).setSeparateStart().setIndentions(1));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.ciwsturret2")).setSeparateStart().setIndentions(1));
         pageData.add(new ImageWrapperObject(0, 0, 0, 0, 150, 75, 150, 79, Ballistix.rl("textures/screen/guidebook/ciwsturret1.png")));
         pageData.add(new ImageWrapperObject(0, 0, 0, 0, 150, 150, 150, 150, Ballistix.rl("textures/screen/guidebook/ciwsturret2.png")));
@@ -89,19 +87,19 @@ public class ChapterMissileDefense extends Chapter {
         // Laser Turret
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.laserturret).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
         pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.laserturret)));
-        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.laserturret1", Constants.LASER_TURRET_BASE_RANGE)).setSeparateStart().setIndentions(1));
+        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.laserturret1", BallistixConstants.LASER_TURRET_BASE_RANGE)).setSeparateStart().setIndentions(1));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.laserturret2")).setSeparateStart().setIndentions(1));
 
         // Railgun Turret
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.railgunturret).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
         pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.railgunturret)));
-        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.railgunturret1", ElectrodynamicsItems.ITEMS_ROD.getValue(SubtypeRod.steel).getDescription().copy().withStyle(ChatFormatting.BOLD), Constants.RAILGUN_TURRET_BASE_RANGE, Constants.RAILGUN_TURRET_COOLDOWN)).setSeparateStart().setIndentions(1));
+        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.railgunturret1", BallistixConstants.RAILGUN_TURRET_BASE_RANGE, BallistixConstants.RAILGUN_TURRET_COOLDOWN)).setSeparateStart().setIndentions(1));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.railgunturret2")).setSeparateStart().setIndentions(1));
 
         // Missile Silo
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.missilesilo").withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
         pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launcherplatformtier3)));
-        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.missilesilo1", BallistixItems.ITEM_AAMISSILEMK2.get().getDescription().copy().withStyle(ChatFormatting.BOLD), ChatFormatter.getChatDisplayShort(Constants.ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY * 100, DisplayUnit.PERCENTAGE))).setSeparateStart().setIndentions(1).setSeparateStart().setIndentions(1));
+        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.missilesilo1", BallistixItems.ITEM_AAMISSILEMK2.get().getDescription().copy().withStyle(ChatFormatting.BOLD), ChatFormatter.getChatDisplayShort(BallistixConstants.ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY * 100, DisplayUnits.PERCENTAGE))).setSeparateStart().setIndentions(1).setSeparateStart().setIndentions(1));
 
 
     }

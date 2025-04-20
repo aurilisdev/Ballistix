@@ -1,12 +1,12 @@
 package ballistix.prefab.utils;
 
 import ballistix.client.particle.ParticleOptionsShockwave;
-import electrodynamics.Electrodynamics;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
+import voltaic.Voltaic;
 
 /**
  * 
@@ -18,8 +18,8 @@ public class ParticleUtilities {
 
 	public static void spawnParticleRing(ParticleOptions particle, double centerX, double centerY, double centerZ, int count, double initialSpeed, boolean shouldRandomize) {
 		for (float rad = 0; rad < 2.0 * Mth.PI; rad += 2 * Mth.PI / count) {
-			double x = Mth.cos(rad) * (shouldRandomize ? Electrodynamics.RANDOM.nextDouble() * 0.05 + 1 : 1) * initialSpeed;
-			double z = Mth.sin(rad) * (shouldRandomize ? Electrodynamics.RANDOM.nextDouble() * 0.05 + 1 : 1) * initialSpeed;
+			double x = Mth.cos(rad) * (shouldRandomize ? Voltaic.RANDOM.nextDouble() * 0.05 + 1 : 1) * initialSpeed;
+			double z = Mth.sin(rad) * (shouldRandomize ? Voltaic.RANDOM.nextDouble() * 0.05 + 1 : 1) * initialSpeed;
 			Minecraft.getInstance().particleEngine.createParticle(particle, centerX, centerY, centerZ, x, 0, z);
 		}
 	}
@@ -44,13 +44,13 @@ public class ParticleUtilities {
 
 			// Azimuth angle in [0, 2*pi)
 			double phi = 2.0 * Math.PI * v;
-			double theta_random = theta * (1 + Electrodynamics.RANDOM.nextDouble() * 0.15);
-			double phi_random = phi * (1 + Electrodynamics.RANDOM.nextDouble() * 0.15);
+			double theta_random = theta * (1 + Voltaic.RANDOM.nextDouble() * 0.15);
+			double phi_random = phi * (1 + Voltaic.RANDOM.nextDouble() * 0.15);
 			// Convert spherical (theta, phi) -> Cartesian (x, y, z)
 			double sinTheta = Math.sin(theta_random);
-			double x = sinTheta * Math.cos(phi_random) * (shouldRandomize ? Electrodynamics.RANDOM.nextDouble() : 1) * initialSpeed;
-			double z = sinTheta * Math.sin(phi_random) * (shouldRandomize ? Electrodynamics.RANDOM.nextDouble() : 1) * initialSpeed;
-			double y = Math.cos(theta_random) * (shouldRandomize ? Electrodynamics.RANDOM.nextDouble() : 1) * initialSpeed;
+			double x = sinTheta * Math.cos(phi_random) * (shouldRandomize ? Voltaic.RANDOM.nextDouble() : 1) * initialSpeed;
+			double z = sinTheta * Math.sin(phi_random) * (shouldRandomize ? Voltaic.RANDOM.nextDouble() : 1) * initialSpeed;
+			double y = Math.cos(theta_random) * (shouldRandomize ? Voltaic.RANDOM.nextDouble() : 1) * initialSpeed;
 
 			// Store the point
 			Minecraft.getInstance().particleEngine.createParticle(particle, centerX, centerY, centerZ, x, y, z);
@@ -71,8 +71,8 @@ public class ParticleUtilities {
 		if (progress > 1)
 			return endSize;
 		int r = (int) (spawnSize + (endSize - spawnSize) * progress);
-		for (double i = 0; i < 360.0; i += 360.0 / (Math.PI * 2 * r) * (0.5 + Electrodynamics.RANDOM.nextDouble())) {
-			if (Electrodynamics.RANDOM.nextDouble() < chance) {
+		for (double i = 0; i < 360.0; i += 360.0 / (Math.PI * 2 * r) * (0.5 + Voltaic.RANDOM.nextDouble())) {
+			if (Voltaic.RANDOM.nextDouble() < chance) {
 				double angle = Math.toRadians(i);
 				double dirX = Math.cos(angle);
 				double dirZ = Math.sin(angle);

@@ -10,7 +10,7 @@ import static electrodynamics.prefab.utilities.ElectroTextUtils.JEI_INFO_ITEM;
 import static electrodynamics.prefab.utilities.ElectroTextUtils.MESSAGE_BASE;
 import static electrodynamics.prefab.utilities.ElectroTextUtils.TOOLTIP_BASE;
 
-import ballistix.References;
+import ballistix.Ballistix;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -58,7 +58,7 @@ public class BallistixTextUtils {
 	}
 
 	public static MutableComponent translated(String base, String key, Object... additional) {
-		return Component.translatable(base + "." + References.ID + "." + key, additional);
+		return Component.translatable(base + "." + Ballistix.ID + "." + key, additional);
 	}
 
 	public static boolean dimensionExists(String key) {
@@ -74,7 +74,7 @@ public class BallistixTextUtils {
 	}
 
 	public static boolean translationExists(String base, String key) {
-		return I18n.exists(base + "." + References.ID + "." + key);
+		return I18n.exists(base + "." + Ballistix.ID + "." + key);
 	}
 
 }

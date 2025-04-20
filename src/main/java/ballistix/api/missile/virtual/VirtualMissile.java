@@ -12,8 +12,7 @@ import ballistix.common.blast.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityBlast;
 import ballistix.common.entity.EntityMissile;
-import ballistix.common.settings.Constants;
-import electrodynamics.prefab.utilities.BlockEntityUtils;
+import ballistix.common.settings.BallistixConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.server.level.ServerLevel;
@@ -23,6 +22,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import voltaic.prefab.utilities.BlockEntityUtils;
 
 public class VirtualMissile {
 
@@ -57,7 +57,7 @@ public class VirtualMissile {
     public Vec3 position = Vec3.ZERO;
     public Vec3 deltaMovement = Vec3.ZERO;
     public float speed = 0.0F;
-    public float health = Constants.MISSILE_HEALTH;
+    public float health = BallistixConstants.MISSILE_HEALTH;
     private final UUID id;
     private boolean hasExploded = false;
     public final MissileEntityData entityData;

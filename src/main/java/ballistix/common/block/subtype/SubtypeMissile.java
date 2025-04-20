@@ -1,6 +1,7 @@
 package ballistix.common.block.subtype;
 
-import electrodynamics.api.ISubtype;
+
+import voltaic.api.ISubtype;
 
 public enum SubtypeMissile implements ISubtype {
 

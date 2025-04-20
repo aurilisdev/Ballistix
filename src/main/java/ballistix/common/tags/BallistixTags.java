@@ -1,9 +1,9 @@
 package ballistix.common.tags;
 
-import electrodynamics.Electrodynamics;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import voltaic.Voltaic;
 
 public class BallistixTags {
 
@@ -23,7 +23,7 @@ public class BallistixTags {
 		}
 
 		private static TagKey<Item> forgeTag(String name) {
-			return ItemTags.create(Electrodynamics.commonrl(name));
+			return ItemTags.create(Voltaic.commonrl(name));
 		}
 
 	}

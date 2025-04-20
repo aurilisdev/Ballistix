@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import ballistix.References;
+import ballistix.Ballistix;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
@@ -14,7 +14,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 
 @OnlyIn(Dist.CLIENT)
-@EventBusSubscriber(modid = References.ID, value = { Dist.CLIENT })
+@EventBusSubscriber(modid = Ballistix.ID, value = { Dist.CLIENT })
 public class CameraShakeManager {
 
 	private final static List<CameraShakeEffect> activeShakes = new ArrayList<>();

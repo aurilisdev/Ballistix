@@ -5,18 +5,11 @@ import java.util.List;
 import ballistix.api.silo.ILauncherControlPanel;
 import ballistix.api.silo.ILauncherPlatform;
 import ballistix.api.silo.SiloRegistry;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tile.silo.TileLauncherControlPanelT1;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixCreativeTabs;
 import ballistix.registers.BallistixDataComponentTypes;
-import electrodynamics.common.tile.TileMultiSubnode;
-import electrodynamics.prefab.item.ElectricItemProperties;
-import electrodynamics.prefab.item.ItemElectric;
-import electrodynamics.prefab.utilities.math.MathUtils;
-import electrodynamics.prefab.utilities.object.Location;
-import electrodynamics.prefab.utilities.object.TransferPack;
-import electrodynamics.registers.ElectrodynamicsItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -26,17 +19,24 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import voltaic.api.multiblock.subnodebased.TileMultiSubnode;
+import voltaic.prefab.item.ElectricItemProperties;
+import voltaic.prefab.item.ItemElectric;
+import voltaic.prefab.utilities.math.MathUtils;
+import voltaic.prefab.utilities.object.Location;
+import voltaic.prefab.utilities.object.TransferPack;
 
 public class ItemLaserDesignator extends ItemElectric {
 
 	public static final double USAGE = 150.0;
 
 	public ItemLaserDesignator() {
-		super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1), BallistixCreativeTabs.MAIN, item -> ElectrodynamicsItems.ITEM_BATTERY.get());
+		super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1), BallistixCreativeTabs.MAIN, item -> Items.AIR);
 	}
 
 	@Override
@@ -44,16 +44,16 @@ public class ItemLaserDesignator extends ItemElectric {
 		BlockEntity ent = context.getLevel().getBlockEntity(context.getClickedPos());
 		TileLauncherControlPanelT1 silo = ent instanceof TileLauncherControlPanelT1 s ? s : null;
 		if (ent instanceof TileMultiSubnode node) {
-			BlockEntity core = node.getLevel().getBlockEntity(node.parentPos.get());
+			BlockEntity core = node.getLevel().getBlockEntity(node.parentPos.getValue());
 			if (core instanceof TileLauncherControlPanelT1 c) {
 				silo = c;
 			}
 		}
 		if (silo != null && !context.getLevel().isClientSide) {
 
-			context.getPlayer().displayClientMessage(BallistixTextUtils.chatMessage("laserdesignator.setfrequency", silo.frequency.get()), false);
+			context.getPlayer().displayClientMessage(BallistixTextUtils.chatMessage("laserdesignator.setfrequency", silo.frequency.getValue()), false);
 
-			stack.set(BallistixDataComponentTypes.BOUND_FREQUENCY, silo.frequency.get());
+			stack.set(BallistixDataComponentTypes.BOUND_FREQUENCY, silo.frequency.getValue());
 
 		}
 		return super.onItemUseFirst(stack, context);
@@ -103,7 +103,7 @@ public class ItemLaserDesignator extends ItemElectric {
 			range = platform.getRange();
 			distance = TileLauncherControlPanelT1.calculateDistance(silo.getPos(), target);
 
-			if (range == 0 || (range > 0 && range < distance) || distance > Constants.LASER_DESIGNATOR_RANGE) {
+			if (range == 0 || (range > 0 && range < distance) || distance > BallistixConstants.LASER_DESIGNATOR_RANGE) {
 				continue;
 			}
 

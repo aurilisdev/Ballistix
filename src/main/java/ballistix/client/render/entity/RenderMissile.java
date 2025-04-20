@@ -2,10 +2,10 @@ package ballistix.client.render.entity;
 
 import java.util.Random;
 
+import ballistix.client.BallistixClientRegister;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import ballistix.common.entity.EntityMissile;
-import electrodynamics.prefab.utilities.math.MathUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -17,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import voltaic.prefab.utilities.math.MathUtils;
 
 public class RenderMissile extends EntityRenderer<EntityMissile> {
 
@@ -48,19 +49,19 @@ public class RenderMissile extends EntityRenderer<EntityMissile> {
 		BakedModel model;
 		if (type == 0) {
 
-			model = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILETIER1);
+			model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILETIER1);
 			matrixStackIn.translate(0, 0.82, 0);
 			matrixStackIn.scale(1f, 0.75f, 1f);
 
 		} else if (type == 1) {
 
-			model = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILETIER2);
+			model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILETIER2);
 			matrixStackIn.translate(0, 1.05f, 0);
 			matrixStackIn.scale(1f, 1f, 1f);
 
 		} else {
 
-			model = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILETIER3);
+			model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILETIER3);
 			matrixStackIn.translate(0, 1.05f, 0);
 			matrixStackIn.scale(1f, 1.25f, 1f);
 

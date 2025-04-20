@@ -2,17 +2,18 @@ package ballistix.client.render.tile;
 
 import java.util.Random;
 
+import ballistix.client.BallistixClientRegister;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import ballistix.common.tile.radar.TileSearchRadar;
-import electrodynamics.client.render.tile.AbstractTileRenderer;
-import electrodynamics.prefab.utilities.math.MathUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
+import voltaic.client.render.AbstractTileRenderer;
+import voltaic.prefab.utilities.math.MathUtils;
 
 public class RenderRadar extends AbstractTileRenderer<TileSearchRadar> {
 
@@ -23,7 +24,7 @@ public class RenderRadar extends AbstractTileRenderer<TileSearchRadar> {
 	@Override
 	public void render(TileSearchRadar tileEntityIn, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 
-		BakedModel radardish = getModel(ballistix.client.ClientRegister.MODEL_RADARDISH);
+		BakedModel radardish = getModel(BallistixClientRegister.MODEL_RADARDISH);
 
 		float partial = (float) (partialTicks * tileEntityIn.clientRotationSpeed);
 

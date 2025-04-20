@@ -1,9 +1,9 @@
 package ballistix.common.settings;
 
-import electrodynamics.api.configuration.*;
+import voltaic.api.configuration.*;
 
 @Configuration(name = "Ballistix")
-public class Constants {
+public class BallistixConstants {
 	@DoubleValue(def = 45.0)
 	public static double EXPLOSIVE_ANTIMATTER_RADIUS = 45.0;
 	@DoubleValue(def = 80.0, comment = "Value is in ticks.")

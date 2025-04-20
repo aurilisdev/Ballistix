@@ -5,28 +5,28 @@ import java.util.List;
 
 import ballistix.client.screen.util.ScreenPlayerWhitelistTurret;
 import ballistix.common.inventory.container.ContainerCIWSTurret;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tile.turret.antimissile.TileTurretCIWS;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
 import ballistix.prefab.BallistixIconTypes;
 import ballistix.prefab.screen.WrapperPlayerWhitelist;
 import ballistix.prefab.utils.BallistixTextUtils;
-import electrodynamics.api.electricity.formatting.ChatFormatter;
-import electrodynamics.prefab.inventory.container.slot.item.SlotGeneric;
-import electrodynamics.prefab.screen.component.button.ScreenComponentButton;
-import electrodynamics.prefab.screen.component.types.ScreenComponentCustomRender;
-import electrodynamics.prefab.screen.component.types.ScreenComponentSimpleLabel;
-import electrodynamics.prefab.screen.component.types.ScreenComponentVerticalSlider;
-import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentElectricInfo;
-import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentGuiTab;
-import electrodynamics.prefab.screen.component.types.wrapper.WrapperInventoryIO;
-import electrodynamics.prefab.screen.component.utils.AbstractScreenComponentInfo;
-import electrodynamics.prefab.utilities.BlockEntityUtils;
-import electrodynamics.prefab.utilities.math.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
+import voltaic.api.electricity.formatting.ChatFormatter;
+import voltaic.prefab.inventory.container.slot.item.SlotGeneric;
+import voltaic.prefab.screen.component.button.ScreenComponentButton;
+import voltaic.prefab.screen.component.types.ScreenComponentCustomRender;
+import voltaic.prefab.screen.component.types.ScreenComponentSimpleLabel;
+import voltaic.prefab.screen.component.types.ScreenComponentVerticalSlider;
+import voltaic.prefab.screen.component.types.guitab.ScreenComponentElectricInfo;
+import voltaic.prefab.screen.component.types.guitab.ScreenComponentGuiTab;
+import voltaic.prefab.screen.component.types.wrapper.WrapperInventoryIO;
+import voltaic.prefab.screen.component.utils.AbstractScreenComponentInfo;
+import voltaic.prefab.utilities.BlockEntityUtils;
+import voltaic.prefab.utilities.math.Color;
 
 public class ScreenCIWSTurret extends ScreenPlayerWhitelistTurret<ContainerCIWSTurret> {
 
@@ -45,7 +45,7 @@ public class ScreenCIWSTurret extends ScreenPlayerWhitelistTurret<ContainerCIWST
 
         whitelistSlider.setVisible(false);
 
-        addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(Constants.SAM_TURRET_USAGEPERTICK * 20));
+        addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(BallistixConstants.SAM_TURRET_USAGEPERTICK * 20));
 
         addComponent(new ScreenComponentGuiTab(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR_RIGHT, BallistixIconTypes.TARGET_MISSILE, () -> {
             List<FormattedCharSequence> text = new ArrayList<>();
@@ -55,7 +55,7 @@ public class ScreenCIWSTurret extends ScreenPlayerWhitelistTurret<ContainerCIWST
 
             }
             text.add(BallistixTextUtils.tooltip("turret.blockrange").withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
-            text.add(BallistixTextUtils.tooltip("turret.maxrange", ChatFormatter.formatDecimals(turret.currentRange.get(), 1).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+            text.add(BallistixTextUtils.tooltip("turret.maxrange", ChatFormatter.formatDecimals(turret.currentRange.getValue(), 1).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
             text.add(BallistixTextUtils.tooltip("turret.minrange", ChatFormatter.formatDecimals(turret.minimumRange, 1).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
             return text;
         }, 176, 2));
@@ -68,7 +68,7 @@ public class ScreenCIWSTurret extends ScreenPlayerWhitelistTurret<ContainerCIWST
 
             }
             text.add(BallistixTextUtils.tooltip("turret.entityrange").withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
-            text.add(BallistixTextUtils.tooltip("turret.maxrange", ChatFormatter.formatDecimals(turret.currentRange.get() / 4.0, 1).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+            text.add(BallistixTextUtils.tooltip("turret.maxrange", ChatFormatter.formatDecimals(turret.currentRange.getValue() / 4.0, 1).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
             text.add(BallistixTextUtils.tooltip("turret.minrange", ChatFormatter.formatDecimals(turret.minimumRange, 1).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
             return text;
         }, 176, AbstractScreenComponentInfo.SIZE + 2));
@@ -78,7 +78,7 @@ public class ScreenCIWSTurret extends ScreenPlayerWhitelistTurret<ContainerCIWST
             if(turret == null) {
                 return;
             }
-            Component radar = turret.isNotLinked.get() ? BallistixTextUtils.gui("turret.radarnone").withStyle(ChatFormatting.RED) : Component.literal(turret.boundFireControl.get().toShortString()).withStyle(ChatFormatting.DARK_GRAY);
+            Component radar = turret.isNotLinked.getValue() ? BallistixTextUtils.gui("turret.radarnone").withStyle(ChatFormatting.RED) : Component.literal(turret.boundFireControl.getValue().toShortString()).withStyle(ChatFormatting.DARK_GRAY);
 
             int x = (int) (getGuiWidth() + 10);
             int y = (int) (getGuiHeight() + 50);
@@ -122,28 +122,28 @@ public class ScreenCIWSTurret extends ScreenPlayerWhitelistTurret<ContainerCIWST
             }
             Component status = Component.empty();
 
-            if(turret.hasNoPower.get()) {
+            if(turret.hasNoPower.getValue()) {
                 status = BallistixTextUtils.gui("turret.statusnopower").withStyle(ChatFormatting.RED);
             } else {
 
-                if(turret.targetingEntity.get()) {
-                    if (!turret.hasTarget.get()) {
+                if(turret.targetingEntity.getValue()) {
+                    if (!turret.hasTarget.getValue()) {
                         status = BallistixTextUtils.gui("turret.statusnotarget").withStyle(ChatFormatting.GREEN);
-                    } else if (!turret.inRange.get()) {
+                    } else if (!turret.inRange.getValue()) {
                         status = BallistixTextUtils.gui("turret.statusoutofrange").withStyle(ChatFormatting.YELLOW);
-                    } else if (turret.outOfAmmo.get()) {
+                    } else if (turret.outOfAmmo.getValue()) {
                         status = BallistixTextUtils.gui("turret.statusnoammo").withStyle(ChatFormatting.RED);
                     } else {
                         status = BallistixTextUtils.gui("turret.statusgood").withStyle(ChatFormatting.GREEN);
                     }
                 } else {
-                    if (turret.boundFireControl.get().equals(BlockEntityUtils.OUT_OF_REACH)) {
+                    if (turret.boundFireControl.getValue().equals(BlockEntityUtils.OUT_OF_REACH)) {
                         status = BallistixTextUtils.gui("turret.statusunlinked").withStyle(ChatFormatting.RED);
-                    } else if (!turret.hasTarget.get()) {
+                    } else if (!turret.hasTarget.getValue()) {
                         status = BallistixTextUtils.gui("turret.statusnotarget").withStyle(ChatFormatting.GREEN);
-                    } else if (!turret.inRange.get()) {
+                    } else if (!turret.inRange.getValue()) {
                         status = BallistixTextUtils.gui("turret.statusoutofrange").withStyle(ChatFormatting.YELLOW);
-                    } else if (turret.outOfAmmo.get()) {
+                    } else if (turret.outOfAmmo.getValue()) {
                         status = BallistixTextUtils.gui("turret.statusnoammo").withStyle(ChatFormatting.RED);
                     } else {
                         status = BallistixTextUtils.gui("turret.statusgood").withStyle(ChatFormatting.GREEN);
@@ -175,7 +175,7 @@ public class ScreenCIWSTurret extends ScreenPlayerWhitelistTurret<ContainerCIWST
             if(turret == null) {
                 return;
             }
-            turret.onlyTargetPlayers.set(!turret.onlyTargetPlayers.get());
+            turret.onlyTargetPlayers.setValue(!turret.onlyTargetPlayers.getValue());
         }).onTooltip((graphics, but, xAxis, yAxis) -> {
             //
             TileTurretCIWS turret = menu.getSafeHost();
@@ -184,7 +184,7 @@ public class ScreenCIWSTurret extends ScreenPlayerWhitelistTurret<ContainerCIWST
             }
             List<Component> tooltips = new ArrayList<>();
             tooltips.add(BallistixTextUtils.tooltip("turret.targetmode").withStyle(ChatFormatting.DARK_GRAY));
-            if (turret.onlyTargetPlayers.get()) {
+            if (turret.onlyTargetPlayers.getValue()) {
                 tooltips.add(BallistixTextUtils.tooltip("turret.targetmodeplayers").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
             } else {
                 tooltips.add(BallistixTextUtils.tooltip("turret.targetmodeliving").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));

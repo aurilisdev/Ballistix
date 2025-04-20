@@ -2,7 +2,7 @@ package ballistix.common.blast;
 
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityShrapnel;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -26,7 +26,7 @@ public class BlastFragmentation extends Blast {
 
 		hasStarted = true;
 
-		for (int i = 0; i < Constants.EXPLOSIVE_FRAGMENTATION_SHRAPNEL_COUNT; i++) {
+		for (int i = 0; i < BallistixConstants.EXPLOSIVE_FRAGMENTATION_SHRAPNEL_COUNT; i++) {
 
 			EntityShrapnel shrapnel = new EntityShrapnel(world);
 

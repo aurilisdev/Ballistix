@@ -3,11 +3,9 @@ package ballistix.api.missile.virtual;
 import java.util.UUID;
 
 import ballistix.client.particle.ParticleOptionsMissileSmoke;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tile.radar.TileFireControlRadar;
-import electrodynamics.Electrodynamics;
-import electrodynamics.prefab.utilities.BlockEntityUtils;
-import electrodynamics.registers.ElectrodynamicsSounds;
+import ballistix.registers.BallistixSounds;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -30,6 +28,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import voltaic.Voltaic;
+import voltaic.prefab.utilities.BlockEntityUtils;
 
 import javax.annotation.Nullable;
 
@@ -312,7 +312,7 @@ public abstract class VirtualProjectile {
             if(state.getDestroySpeed(world, block) < 50.0F && !state.is(Blocks.BEDROCK)) {
                 world.destroyBlock(block, false);
             }
-            world.playSound(null, block, ElectrodynamicsSounds.SOUND_RODIMPACTINGGROUND.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+            world.playSound(null, block, BallistixSounds.SOUND_RODHITTINGGROUND.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
         }
 
         @Override
@@ -369,7 +369,7 @@ public abstract class VirtualProjectile {
 
         @Override
         public void onHitMissile(Level world, VirtualMissile missile) {
-            if(Electrodynamics.RANDOM.nextDouble() < (variant == 0 ? Constants.SAM_CHANCE_TO_DESTROY : Constants.ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY)) {
+            if(Voltaic.RANDOM.nextDouble() < (variant == 0 ? BallistixConstants.SAM_CHANCE_TO_DESTROY : BallistixConstants.ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY)) {
                 MissileManager.removeMissile(world.dimension(), missile.getId());
             }
             world.playSound(null, blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0F, 1.0F);
@@ -414,9 +414,9 @@ public abstract class VirtualProjectile {
         @Override
         public void updatePosition(ServerLevel level) {
 
-            float topSpeed = variant == 0 ? Constants.SAM_TOP_SPEED : Constants.ANTIBALLISTICMISSILE_TOP_SPEED;
+            float topSpeed = variant == 0 ? BallistixConstants.SAM_TOP_SPEED : BallistixConstants.ANTIBALLISTICMISSILE_TOP_SPEED;
 
-            float minSpeed = variant == 0 ? topSpeed * Constants.SAM_MINTURNSPEED_PERC : topSpeed * Constants.ANTIBALLISTICMISSILE_MINTURNSPEED_PERC;
+            float minSpeed = variant == 0 ? topSpeed * BallistixConstants.SAM_MINTURNSPEED_PERC : topSpeed * BallistixConstants.ANTIBALLISTICMISSILE_MINTURNSPEED_PERC;
 
             if(radarPos == null || radarPos.equals(BlockEntityUtils.OUT_OF_REACH) || speed < minSpeed) {
                 super.updatePosition(level);
@@ -471,9 +471,9 @@ public abstract class VirtualProjectile {
             double turnRate = 0;
 
             if(variant == 0) {
-                turnRate = Constants.SAM_ENTITY_TURNINGSPEEDRADIANS / 2.0;
+                turnRate = BallistixConstants.SAM_ENTITY_TURNINGSPEEDRADIANS / 2.0;
             } else if (variant == 1) {
-                turnRate = Constants.ANTIBALLISTICMISSILE_ENTITY_TURNINGSPEEDRADIANS / 2.0;
+                turnRate = BallistixConstants.ANTIBALLISTICMISSILE_ENTITY_TURNINGSPEEDRADIANS / 2.0;
             }
 
             if(deltaAlpha > 0) {
@@ -522,10 +522,10 @@ public abstract class VirtualProjectile {
         public void tick(ServerLevel level) {
             super.tick(level);
 
-            float topSpeed = variant == 0 ? Constants.SAM_TOP_SPEED : Constants.ANTIBALLISTICMISSILE_TOP_SPEED;
+            float topSpeed = variant == 0 ? BallistixConstants.SAM_TOP_SPEED : BallistixConstants.ANTIBALLISTICMISSILE_TOP_SPEED;
 
             if(speed < topSpeed) {
-                speed += variant == 0 ? Constants.SAM_ACCELERATION : Constants.ANTIBALLISTICMISSILE_ACCELERATION;
+                speed += variant == 0 ? BallistixConstants.SAM_ACCELERATION : BallistixConstants.ANTIBALLISTICMISSILE_ACCELERATION;
             }
 
             if(speed >= topSpeed) {
@@ -543,9 +543,9 @@ public abstract class VirtualProjectile {
             z -= motionZ;
             for (int i = 0; i < 3; i++) {
                 level.addParticle(new ParticleOptionsMissileSmoke().setParameters(1, 1, 1, 0.3f * 1, 50, true), x, y, z,
-                        -motionX * (0.4 + 0.2 * Electrodynamics.RANDOM.nextDouble()),
-                        -motionY * (0.4 + 0.2 * Electrodynamics.RANDOM.nextDouble()),
-                        -motionZ * (0.4 + 0.2 * Electrodynamics.RANDOM.nextDouble()));
+                        -motionX * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()),
+                        -motionY * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()),
+                        -motionZ * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()));
 
             }
 

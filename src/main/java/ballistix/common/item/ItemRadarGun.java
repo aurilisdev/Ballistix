@@ -6,14 +6,6 @@ import ballistix.common.tile.silo.TileLauncherControlPanelT1;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixCreativeTabs;
-import electrodynamics.common.tile.TileMultiSubnode;
-import electrodynamics.prefab.item.ElectricItemProperties;
-import electrodynamics.prefab.item.ItemElectric;
-import electrodynamics.prefab.utilities.math.MathUtils;
-import electrodynamics.prefab.utilities.object.Location;
-import electrodynamics.prefab.utilities.object.TransferPack;
-import electrodynamics.registers.ElectrodynamicsDataComponentTypes;
-import electrodynamics.registers.ElectrodynamicsItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -22,36 +14,44 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import voltaic.api.multiblock.subnodebased.TileMultiSubnode;
+import voltaic.prefab.item.ElectricItemProperties;
+import voltaic.prefab.item.ItemElectric;
+import voltaic.prefab.utilities.math.MathUtils;
+import voltaic.prefab.utilities.object.Location;
+import voltaic.prefab.utilities.object.TransferPack;
+import voltaic.registers.VoltaicDataComponentTypes;
 
 public class ItemRadarGun extends ItemElectric {
 
     public static final double USAGE = 150.0;
 
     public ItemRadarGun() {
-        super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1), BallistixCreativeTabs.MAIN, item -> ElectrodynamicsItems.ITEM_BATTERY.get());
+        super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1), BallistixCreativeTabs.MAIN, item -> Items.AIR);
     }
 
     @Override
     public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
-        if (context.getLevel().isClientSide || !stack.has(ElectrodynamicsDataComponentTypes.BLOCK_POS)) {
+        if (context.getLevel().isClientSide || !stack.has(VoltaicDataComponentTypes.BLOCK_POS)) {
             return super.onItemUseFirst(stack, context);
         }
         BlockEntity tile = context.getLevel().getBlockEntity(context.getClickedPos());
 
         if (tile instanceof TileLauncherControlPanelT1 silo) {
 
-            silo.target.set(stack.get(ElectrodynamicsDataComponentTypes.BLOCK_POS));
+            silo.target.setValue(stack.get(VoltaicDataComponentTypes.BLOCK_POS));
 
-        } else if (tile instanceof TileMultiSubnode subnode && subnode.getLevel().getBlockEntity(subnode.parentPos.get()) instanceof TileLauncherControlPanelT1 silo) {
+        } else if (tile instanceof TileMultiSubnode subnode && subnode.getLevel().getBlockEntity(subnode.parentPos.getValue()) instanceof TileLauncherControlPanelT1 silo) {
 
-            silo.target.set(stack.get(ElectrodynamicsDataComponentTypes.BLOCK_POS));
+            silo.target.setValue(stack.get(VoltaicDataComponentTypes.BLOCK_POS));
 
         } else if (tile instanceof TileTurretAntimissile turret) {
-            if (turret.bindFireControlRadar(stack.get(ElectrodynamicsDataComponentTypes.BLOCK_POS))) {
+            if (turret.bindFireControlRadar(stack.get(VoltaicDataComponentTypes.BLOCK_POS))) {
                 context.getPlayer().displayClientMessage(BallistixTextUtils.chatMessage("radargun.turretsucess"), true);
             } else {
                 context.getPlayer().displayClientMessage(BallistixTextUtils.chatMessage("radargun.turrettoofar"), true);
@@ -87,11 +87,11 @@ public class ItemRadarGun extends ItemElectric {
 
         //prevents using the radar gun on missile silo from overriding the stored coords
 
-        if (trace.getTile(playerIn.level()) instanceof TileLauncherControlPanelT1 || trace.getTile(playerIn.level()) instanceof TileMultiSubnode subnode && subnode.getLevel().getBlockEntity(subnode.parentPos.get()) instanceof TileLauncherControlPanelT1 || trace.getTile(worldIn) instanceof TileTurretAntimissile) {
+        if (trace.getTile(playerIn.level()) instanceof TileLauncherControlPanelT1 || trace.getTile(playerIn.level()) instanceof TileMultiSubnode subnode && subnode.getLevel().getBlockEntity(subnode.parentPos.getValue()) instanceof TileLauncherControlPanelT1 || trace.getTile(worldIn) instanceof TileTurretAntimissile) {
             return super.use(worldIn, playerIn, handIn);
         }
 
-        radarGun.set(ElectrodynamicsDataComponentTypes.BLOCK_POS, trace.toBlockPos());
+        radarGun.set(VoltaicDataComponentTypes.BLOCK_POS, trace.toBlockPos());
 
         extractPower(radarGun, USAGE, false);
 
@@ -120,8 +120,8 @@ public class ItemRadarGun extends ItemElectric {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, context, tooltip, flagIn);
-        if (stack.has(ElectrodynamicsDataComponentTypes.BLOCK_POS)) {
-            tooltip.add(BallistixTextUtils.tooltip("radargun.pos", stack.get(ElectrodynamicsDataComponentTypes.BLOCK_POS).toShortString()).withStyle(ChatFormatting.GRAY));
+        if (stack.has(VoltaicDataComponentTypes.BLOCK_POS)) {
+            tooltip.add(BallistixTextUtils.tooltip("radargun.pos", stack.get(VoltaicDataComponentTypes.BLOCK_POS).toShortString()).withStyle(ChatFormatting.GRAY));
         } else {
             tooltip.add(BallistixTextUtils.tooltip("radargun.notag").withStyle(ChatFormatting.GRAY));
         }

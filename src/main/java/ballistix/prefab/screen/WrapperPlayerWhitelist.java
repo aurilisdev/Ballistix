@@ -8,17 +8,17 @@ import ballistix.client.screen.util.ScreenPlayerWhitelistTurret;
 import ballistix.common.tile.turret.GenericTileTurret;
 import ballistix.prefab.BallistixIconTypes;
 import ballistix.prefab.utils.BallistixTextUtils;
-import electrodynamics.prefab.screen.component.button.ScreenComponentButton;
-import electrodynamics.prefab.screen.component.editbox.ScreenComponentEditBox;
-import electrodynamics.prefab.screen.component.types.ScreenComponentSimpleLabel;
-import electrodynamics.prefab.screen.component.types.ScreenComponentVerticalSlider;
-import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentGuiTab;
-import electrodynamics.prefab.utilities.ElectroTextUtils;
-import electrodynamics.prefab.utilities.math.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import voltaic.prefab.screen.component.button.ScreenComponentButton;
+import voltaic.prefab.screen.component.editbox.ScreenComponentEditBox;
+import voltaic.prefab.screen.component.types.ScreenComponentSimpleLabel;
+import voltaic.prefab.screen.component.types.ScreenComponentVerticalSlider;
+import voltaic.prefab.screen.component.types.guitab.ScreenComponentGuiTab;
+import voltaic.prefab.utilities.VoltaicTextUtils;
+import voltaic.prefab.utilities.math.Color;
 
 public class WrapperPlayerWhitelist {
 
@@ -67,9 +67,9 @@ public class WrapperPlayerWhitelist {
             List<Component> tooltips = new ArrayList<>();
             tooltips.add(BallistixTextUtils.tooltip("turret.whitelistmanager").withStyle(ChatFormatting.DARK_GRAY));
             if (!button.isPressed) {
-                tooltips.add(ElectroTextUtils.tooltip("inventoryio.presstoshow").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+                tooltips.add(VoltaicTextUtils.tooltip("inventoryio.presstoshow").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
             } else {
-                tooltips.add(ElectroTextUtils.tooltip("inventoryio.presstohide").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+                tooltips.add(VoltaicTextUtils.tooltip("inventoryio.presstohide").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
             }
 
             graphics.renderComponentTooltip(screen.getFontRenderer(), tooltips, xAxis, yAxis);
@@ -86,9 +86,7 @@ public class WrapperPlayerWhitelist {
                 return;
             }
 
-            turret.whitelistedPlayers.get().add(addEditBox.getValue());
-
-            turret.whitelistedPlayers.updateServer();
+            turret.whitelistedPlayers.addValue(addEditBox.getValue());
 
         }).setLabel(BallistixTextUtils.gui("turret.playerwhitelist.add")));
 
@@ -115,9 +113,7 @@ public class WrapperPlayerWhitelist {
                     return;
                 }
 
-                tile.whitelistedPlayers.get().remove(player.getName());
-
-                tile.whitelistedPlayers.forceDirty();
+                tile.whitelistedPlayers.removeValue(player.getName());
 
             }).onTooltip((graphics, button, xAxis, yAxis) -> graphics.renderTooltip(screen.getFontRenderer(), BallistixTextUtils.tooltip("radar.frequencymanager.delete"), xAxis, yAxis)).setIcon(BallistixIconTypes.DELETE);
         }
@@ -148,7 +144,7 @@ public class WrapperPlayerWhitelist {
             return;
         }
 
-        List<String> frequencyList = tile.whitelistedPlayers.get();
+        List<String> frequencyList = tile.whitelistedPlayers.getValue();
 
         lastRowCount = frequencyList.size();
 

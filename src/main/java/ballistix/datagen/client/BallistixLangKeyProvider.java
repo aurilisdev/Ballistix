@@ -91,6 +91,7 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.darkmatter), "Minecart with Darkmatter Explosive");
 
 			addItem(BallistixItems.ITEM_DUSTPOISON, "Poison Dust");
+			addItem(BallistixItems.ITEM_RANGEUPGRADE, "Range Upgrade");
 
 			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier1), "T1 Missile");
 			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier2), "T2 Missile");

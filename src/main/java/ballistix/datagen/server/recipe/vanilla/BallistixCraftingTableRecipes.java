@@ -9,6 +9,7 @@ import ballistix.common.item.ItemMinecart.SubtypeMinecart;
 import ballistix.common.recipe.recipeutils.ChargedItemIngredient;
 import ballistix.common.tags.BallistixTags;
 import ballistix.registers.BallistixItems;
+import electrodynamics.Electrodynamics;
 import electrodynamics.common.block.subtype.SubtypeMachine;
 import electrodynamics.common.block.subtype.SubtypeWire;
 import electrodynamics.registers.ElectrodynamicsItems;
@@ -1298,6 +1299,24 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
 					.complete(Ballistix.ID, "grenade_" + grenade.name(), output);
 
 		}
+
+		ShapedCraftingRecipeBuilder.start(BallistixItems.ITEM_RANGEUPGRADE.get(), 1)
+				//
+				.addPattern("PWP")
+				//
+				.addPattern("WBW")
+				//
+				.addPattern("PWP")
+				//
+				.addKey('P', Tags.Items.INGOTS_IRON)
+				//
+				.addKey('W', Tags.Items.INGOTS_COPPER)
+				//
+				.addKey('B', Tags.Items.DUSTS_REDSTONE)
+				//
+				.addConditions(ELECTRO_NOT_LOADED)
+				//
+				.complete(Electrodynamics.ID, "upgrade_range", output);
 
 	}
 

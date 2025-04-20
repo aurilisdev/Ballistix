@@ -1,0 +1,36 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:mod_loaded",
+        "modid": "electrodynamics"
+      }
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "c:gems/diamond"
+    },
+    "G": {
+      "tag": "c:gunpowders"
+    },
+    "P": {
+      "tag": "c:ingots/iron"
+    },
+    "S": {
+      "item": "ballistix:aamissile"
+    }
+  },
+  "pattern": [
+    " C ",
+    "PSP",
+    "PGP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ballistix:aamissilemk2"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "electrodynamics"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "c:plates/aluminum"
+    },
+    "C": {
+      "tag": "c:circuits/elite"
+    },
+    "P": {
+      "tag": "c:plates/steel"
+    },
+    "R": {
+      "item": "ballistix:radar"
+    },
+    "W": {
+      "item": "electrodynamics:wiregold"
+    }
+  },
+  "pattern": [
+    "AAA",
+    "WRW",
+    "PCP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ballistix:esmtower"
+  }
+}

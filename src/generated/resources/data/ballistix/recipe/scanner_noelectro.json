@@ -1,0 +1,33 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:mod_loaded",
+        "modid": "electrodynamics"
+      }
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "tag": "c:gems/diamond"
+    },
+    "S": {
+      "tag": "c:gems/amethyst"
+    },
+    "T": {
+      "item": "ballistix:tracker"
+    }
+  },
+  "pattern": [
+    " S ",
+    "STS",
+    " SB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ballistix:scanner"
+  }
+}

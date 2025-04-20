@@ -1,0 +1,33 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "electrodynamics"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "c:circuits/advanced"
+    },
+    "B": {
+      "item": "electrodynamics:battery"
+    },
+    "C": {
+      "item": "minecraft:compass"
+    },
+    "P": {
+      "tag": "c:plates/steel"
+    }
+  },
+  "pattern": [
+    " C ",
+    "PBP",
+    "PAP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ballistix:tracker"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "electrodynamics"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "electrodynamics:battery"
+    },
+    "B": {
+      "item": "minecraft:stone_button"
+    },
+    "C": {
+      "tag": "c:circuits/basic"
+    },
+    "G": {
+      "tag": "c:glass_blocks"
+    },
+    "S": {
+      "tag": "c:ingots/steel"
+    }
+  },
+  "pattern": [
+    "GCS",
+    " BS",
+    " AS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ballistix:radargun"
+  }
+}

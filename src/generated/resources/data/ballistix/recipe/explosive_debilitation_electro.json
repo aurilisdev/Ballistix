@@ -1,0 +1,30 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "electrodynamics"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "D": {
+      "tag": "c:dusts/sulfur"
+    },
+    "R": {
+      "item": "ballistix:repulsive"
+    },
+    "W": {
+      "item": "minecraft:water_bucket"
+    }
+  },
+  "pattern": [
+    "DDD",
+    "WRW",
+    "DDD"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ballistix:debilitation"
+  }
+}

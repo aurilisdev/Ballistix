@@ -1,0 +1,39 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "electrodynamics"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "c:circuits/elite"
+    },
+    "H": {
+      "tag": "c:chests"
+    },
+    "M": {
+      "item": "electrodynamics:motor"
+    },
+    "O": {
+      "item": "electrodynamics:coil"
+    },
+    "P": {
+      "tag": "c:plates/steel"
+    },
+    "T": {
+      "item": "electrodynamics:upgradetransformer"
+    }
+  },
+  "pattern": [
+    "OOH",
+    " MT",
+    "PCP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ballistix:railgunturret"
+  }
+}

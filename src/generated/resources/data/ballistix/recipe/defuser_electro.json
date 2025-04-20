@@ -1,0 +1,33 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "electrodynamics"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "electrodynamics:battery"
+    },
+    "C": {
+      "tag": "c:circuits/basic"
+    },
+    "S": {
+      "item": "minecraft:shears"
+    },
+    "W": {
+      "item": "electrodynamics:wirecopper"
+    }
+  },
+  "pattern": [
+    "W  ",
+    " SB",
+    "  C"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ballistix:defuser"
+  }
+}

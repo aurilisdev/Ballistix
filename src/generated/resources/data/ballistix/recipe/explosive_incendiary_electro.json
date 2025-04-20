@@ -1,0 +1,30 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "electrodynamics"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "L": {
+      "item": "minecraft:lava_bucket"
+    },
+    "R": {
+      "item": "ballistix:repulsive"
+    },
+    "S": {
+      "tag": "c:dusts/sulfur"
+    }
+  },
+  "pattern": [
+    "SSS",
+    "SRS",
+    "SLS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ballistix:incendiary"
+  }
+}

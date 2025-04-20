@@ -1,0 +1,30 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:mod_loaded",
+        "modid": "electrodynamics"
+      }
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": {
+      "tag": "c:ingots/iron"
+    },
+    "V": {
+      "item": "ballistix:launchersupportframetier1"
+    }
+  },
+  "pattern": [
+    "S S",
+    "SVS",
+    "S S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ballistix:launchersupportframetier2"
+  }
+}

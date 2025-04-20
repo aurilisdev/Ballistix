@@ -1,0 +1,30 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:mod_loaded",
+        "modid": "electrodynamics"
+      }
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "tag": "c:gunpowders"
+    },
+    "P": {
+      "tag": "c:ingots/copper"
+    }
+  },
+  "pattern": [
+    " P ",
+    "PGP",
+    "PGP"
+  ],
+  "result": {
+    "count": 4,
+    "id": "ballistix:bullet"
+  }
+}

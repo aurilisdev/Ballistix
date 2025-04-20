@@ -1,0 +1,39 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:mod_loaded",
+        "modid": "electrodynamics"
+      }
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "c:dusts/redstone"
+    },
+    "M": {
+      "tag": "c:storage_blocks/redstone"
+    },
+    "P": {
+      "item": "minecraft:iron_bars"
+    },
+    "R": {
+      "item": "ballistix:radargun"
+    },
+    "W": {
+      "tag": "c:ingots/gold"
+    }
+  },
+  "pattern": [
+    "WRW",
+    " M ",
+    "PCP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ballistix:radar"
+  }
+}

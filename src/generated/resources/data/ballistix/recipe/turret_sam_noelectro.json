@@ -1,0 +1,36 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:mod_loaded",
+        "modid": "electrodynamics"
+      }
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "c:ingots/copper"
+    },
+    "M": {
+      "tag": "c:storage_blocks/redstone"
+    },
+    "P": {
+      "tag": "c:ingots/iron"
+    },
+    "S": {
+      "item": "ballistix:launchercontrolpaneltier1"
+    }
+  },
+  "pattern": [
+    " S ",
+    "PMP",
+    "PCP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ballistix:samturret"
+  }
+}

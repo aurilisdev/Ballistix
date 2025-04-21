@@ -1,8 +1,8 @@
 package ballistix.prefab.screen;
 
 import ballistix.Ballistix;
-import electrodynamics.api.screen.ITexture;
 import net.minecraft.resources.ResourceLocation;
+import voltaic.api.screen.ITexture;
 
 public enum RadarTextures implements ITexture {
     FREQUENCY(18, 18, 0, 0, 18, 18, Ballistix.rl("textures/screen/component/radar/frequency.png"));

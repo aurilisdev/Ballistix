@@ -1,0 +1,33 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:mod_loaded",
+        "modid": "electrodynamics"
+      }
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "c:dusts/redstone"
+    },
+    "R": {
+      "item": "minecraft:netherite_scrap"
+    },
+    "T": {
+      "item": "ballistix:thermobaric"
+    }
+  },
+  "pattern": [
+    "CTC",
+    "TRT",
+    "CTC"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ballistix:nuclear"
+  }
+}

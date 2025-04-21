@@ -1,0 +1,27 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "electrodynamics"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": {
+      "tag": "c:plates/steel"
+    },
+    "V": {
+      "item": "ballistix:launchersupportframetier2"
+    }
+  },
+  "pattern": [
+    "S S",
+    "SVS",
+    "S S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ballistix:launchersupportframetier3"
+  }
+}

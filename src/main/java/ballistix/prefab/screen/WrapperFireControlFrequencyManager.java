@@ -8,17 +8,17 @@ import ballistix.client.screen.ScreenFireControlRadar;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.prefab.BallistixIconTypes;
 import ballistix.prefab.utils.BallistixTextUtils;
-import electrodynamics.prefab.screen.component.button.ScreenComponentButton;
-import electrodynamics.prefab.screen.component.editbox.ScreenComponentEditBox;
-import electrodynamics.prefab.screen.component.types.ScreenComponentSimpleLabel;
-import electrodynamics.prefab.screen.component.types.ScreenComponentVerticalSlider;
-import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentGuiTab;
-import electrodynamics.prefab.utilities.ElectroTextUtils;
-import electrodynamics.prefab.utilities.math.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import voltaic.prefab.screen.component.button.ScreenComponentButton;
+import voltaic.prefab.screen.component.editbox.ScreenComponentEditBox;
+import voltaic.prefab.screen.component.types.ScreenComponentSimpleLabel;
+import voltaic.prefab.screen.component.types.ScreenComponentVerticalSlider;
+import voltaic.prefab.screen.component.types.guitab.ScreenComponentGuiTab;
+import voltaic.prefab.utilities.VoltaicTextUtils;
+import voltaic.prefab.utilities.math.Color;
 
 public class WrapperFireControlFrequencyManager {
 
@@ -71,9 +71,9 @@ public class WrapperFireControlFrequencyManager {
             List<Component> tooltips = new ArrayList<>();
             tooltips.add(BallistixTextUtils.tooltip("radar.frequencymanager").withStyle(ChatFormatting.DARK_GRAY));
             if (!button.isPressed) {
-                tooltips.add(ElectroTextUtils.tooltip("inventoryio.presstoshow").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+                tooltips.add(VoltaicTextUtils.tooltip("inventoryio.presstoshow").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
             } else {
-                tooltips.add(ElectroTextUtils.tooltip("inventoryio.presstohide").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+                tooltips.add(VoltaicTextUtils.tooltip("inventoryio.presstohide").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
             }
 
             graphics.renderComponentTooltip(screen.getFontRenderer(), tooltips, xAxis, yAxis);
@@ -91,7 +91,7 @@ public class WrapperFireControlFrequencyManager {
                 return;
             }
 
-            radar.usingWhitelist.set(!radar.usingWhitelist.get());
+            radar.usingWhitelist.setValue(!radar.usingWhitelist.getValue());
 
         }).setLabel(() -> {
 
@@ -101,7 +101,7 @@ public class WrapperFireControlFrequencyManager {
                 return Component.empty();
             }
 
-            return radar.usingWhitelist.get() ? BallistixTextUtils.gui("radar.frequencywhitelist.enabled") : BallistixTextUtils.gui("radar.frequencywhitelist.disabled");
+            return radar.usingWhitelist.getValue() ? BallistixTextUtils.gui("radar.frequencywhitelist.enabled") : BallistixTextUtils.gui("radar.frequencywhitelist.disabled");
 
         }));
 
@@ -117,9 +117,7 @@ public class WrapperFireControlFrequencyManager {
 
                 int freq = Integer.parseInt(addEditBox.getValue());
 
-                radar.whitelistedFrequencies.get().add(freq);
-
-                radar.whitelistedFrequencies.updateServer();
+                radar.whitelistedFrequencies.addValue(freq);
 
             } catch (Exception e) {
 
@@ -150,9 +148,7 @@ public class WrapperFireControlFrequencyManager {
                     return;
                 }
 
-                tile.whitelistedFrequencies.get().remove((Integer) frequency.getFrequency().intValue());
-
-                tile.whitelistedFrequencies.forceDirty();
+                tile.whitelistedFrequencies.removeValue(frequency.getFrequency().intValue());
 
             }).onTooltip((graphics, button, xAxis, yAxis) -> graphics.renderTooltip(screen.getFontRenderer(), BallistixTextUtils.tooltip("radar.frequencymanager.delete"), xAxis, yAxis)).setIcon(BallistixIconTypes.DELETE);
         }
@@ -183,7 +179,7 @@ public class WrapperFireControlFrequencyManager {
             return;
         }
 
-        List<Integer> frequencyList = tile.whitelistedFrequencies.get();
+        List<Integer> frequencyList = tile.whitelistedFrequencies.getValue();
 
         lastRowCount = frequencyList.size();
 

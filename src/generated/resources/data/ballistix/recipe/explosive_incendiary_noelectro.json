@@ -1,0 +1,33 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:mod_loaded",
+        "modid": "electrodynamics"
+      }
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "L": {
+      "item": "minecraft:lava_bucket"
+    },
+    "R": {
+      "item": "ballistix:repulsive"
+    },
+    "S": {
+      "item": "minecraft:flint_and_steel"
+    }
+  },
+  "pattern": [
+    "SSS",
+    "SRS",
+    "SLS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ballistix:incendiary"
+  }
+}

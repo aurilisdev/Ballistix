@@ -2,7 +2,6 @@ package ballistix.common.block;
 
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityExplosive;
-import electrodynamics.common.block.states.ElectrodynamicsBlockStates;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -27,6 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import voltaic.common.block.states.VoltaicBlockStates;
 
 public class BlockExplosive extends Block {
     public final SubtypeBlast explosive;
@@ -38,8 +38,8 @@ public class BlockExplosive extends Block {
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        if (state.hasProperty(ElectrodynamicsBlockStates.FACING)) {
-            return explosive.shape.getShape(state.getValue(ElectrodynamicsBlockStates.FACING));
+        if (state.hasProperty(VoltaicBlockStates.FACING)) {
+            return explosive.shape.getShape(state.getValue(VoltaicBlockStates.FACING));
         }
         return explosive.shape.getShape(null);
     }

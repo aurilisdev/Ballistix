@@ -7,13 +7,13 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import ballistix.common.recipe.BallistixRecipeInit;
-import electrodynamics.api.item.IItemElectric;
-import electrodynamics.prefab.utilities.object.TransferPack;
+import ballistix.registers.BallistixRecipies;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.common.crafting.ICustomIngredient;
 import net.neoforged.neoforge.common.crafting.IngredientType;
+import voltaic.api.item.IItemElectric;
+import voltaic.prefab.utilities.object.TransferPack;
 
 public class ChargedItemIngredient implements ICustomIngredient {
 
@@ -78,7 +78,7 @@ public class ChargedItemIngredient implements ICustomIngredient {
 
     @Override
     public IngredientType<?> getType() {
-        return BallistixRecipeInit.CHARGEDITEM_INGREDIENT_TYPE.get();
+        return BallistixRecipies.CHARGEDITEM_INGREDIENT_TYPE.get();
     }
 
     @Override

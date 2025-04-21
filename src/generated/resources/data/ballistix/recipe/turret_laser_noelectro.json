@@ -1,0 +1,39 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:mod_loaded",
+        "modid": "electrodynamics"
+      }
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "c:ingots/copper"
+    },
+    "D": {
+      "tag": "c:gems/diamond"
+    },
+    "G": {
+      "tag": "c:glass_blocks"
+    },
+    "M": {
+      "tag": "c:storage_blocks/redstone"
+    },
+    "P": {
+      "tag": "c:ingots/iron"
+    }
+  },
+  "pattern": [
+    "GDG",
+    " M ",
+    "PCP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ballistix:laserturret"
+  }
+}

@@ -8,7 +8,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import ballistix.References;
+import ballistix.Ballistix;
 import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.api.missile.virtual.VirtualProjectile;
 import ballistix.registers.BallistixAttachmentTypes;
@@ -20,7 +20,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
-@EventBusSubscriber(modid = References.ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.GAME)
 public class MissileManager {
 
     @SubscribeEvent

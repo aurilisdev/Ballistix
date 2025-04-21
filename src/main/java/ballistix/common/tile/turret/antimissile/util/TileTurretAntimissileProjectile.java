@@ -4,11 +4,11 @@ import org.jetbrains.annotations.Nullable;
 
 import ballistix.api.turret.ITarget;
 import ballistix.common.tile.radar.TileFireControlRadar;
-import electrodynamics.Electrodynamics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import voltaic.Voltaic;
 
 public abstract class TileTurretAntimissileProjectile extends TileTurretAntimissile {
 
@@ -47,18 +47,18 @@ public abstract class TileTurretAntimissileProjectile extends TileTurretAntimiss
 
 		if (distanceToTarget > baseRange) {
 
-			rangePenalty = ((distanceToTarget - baseRange) / baseRange) * inaccuracyMultiplier * Electrodynamics.RANDOM.nextDouble();
+			rangePenalty = ((distanceToTarget - baseRange) / baseRange) * inaccuracyMultiplier * Voltaic.RANDOM.nextDouble();
 
 		}
 
-		if (Electrodynamics.RANDOM.nextBoolean()) {
-			deltaX = deltaX * (1.0 + inaccuracy * Electrodynamics.RANDOM.nextDouble());
+		if (Voltaic.RANDOM.nextBoolean()) {
+			deltaX = deltaX * (1.0 + inaccuracy * Voltaic.RANDOM.nextDouble());
 		} else {
-			deltaZ = deltaZ * (1.0 + inaccuracy * Electrodynamics.RANDOM.nextDouble());
+			deltaZ = deltaZ * (1.0 + inaccuracy * Voltaic.RANDOM.nextDouble());
 		}
 
 		if (rangePenalty < 1.0) {
-			if (Electrodynamics.RANDOM.nextBoolean()) {
+			if (Voltaic.RANDOM.nextBoolean()) {
 				deltaZ = deltaZ * (1.0 + rangePenalty);
 			} else {
 				deltaX = deltaX * (1.0 + rangePenalty);

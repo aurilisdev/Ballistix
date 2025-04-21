@@ -5,7 +5,7 @@ import java.util.List;
 import org.joml.Vector3f;
 
 import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixDamageTypes;
 import net.minecraft.client.Minecraft;
@@ -42,7 +42,7 @@ public class BlastChemical extends Blast {
 	@Override
 	public boolean doExplode(int callCount) {
 		hasStarted = true;
-		int radius = (int) Constants.EXPLOSIVE_CHEMICAL_SIZE;
+		int radius = (int) BallistixConstants.EXPLOSIVE_CHEMICAL_SIZE;
 		if (world.isClientSide && callCount % 3 == 0) {
 			for (int x = -radius; x <= radius; x++) {
 				for (int y = -radius; y <= radius; y++) {
@@ -107,7 +107,7 @@ public class BlastChemical extends Blast {
 				}
 			}
 		}
-		return callCount > Constants.EXPLOSIVE_CHEMICAL_DURATION;
+		return callCount > BallistixConstants.EXPLOSIVE_CHEMICAL_DURATION;
 	}
 
 	@Override

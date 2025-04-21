@@ -6,12 +6,12 @@ import java.util.function.Consumer;
 import ballistix.client.screen.ScreenESMTower;
 import ballistix.common.tile.TileESMTower;
 import ballistix.prefab.utils.BallistixTextUtils;
-import electrodynamics.prefab.screen.component.types.ScreenComponentSimpleLabel;
-import electrodynamics.prefab.screen.component.types.ScreenComponentVerticalSlider;
-import electrodynamics.prefab.utilities.math.Color;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import voltaic.prefab.screen.component.types.ScreenComponentSimpleLabel;
+import voltaic.prefab.screen.component.types.ScreenComponentVerticalSlider;
+import voltaic.prefab.utilities.math.Color;
 
 public class WrapperESMTowerDetections {
 
@@ -49,7 +49,7 @@ public class WrapperESMTowerDetections {
 	    return;
 	}
 
-	List<BlockPos> frequencyList = tile.fireControlRadars.get();
+	List<BlockPos> frequencyList = tile.fireControlRadars.getValue();
 
 	lastRowCount = frequencyList.size();
 

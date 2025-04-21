@@ -2,20 +2,20 @@ package ballistix.datagen.server.tags.types;
 
 import java.util.concurrent.CompletableFuture;
 
-import ballistix.References;
+import ballistix.Ballistix;
 import ballistix.registers.BallistixBlocks;
-import electrodynamics.common.block.BlockMachine;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.tags.BlockTags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import voltaic.common.block.BlockMachine;
 
 public class BallistixBlockTagsProvider extends BlockTagsProvider {
 
 	public BallistixBlockTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
-		super(output, lookupProvider, References.ID, existingFileHelper);
+		super(output, lookupProvider, Ballistix.ID, existingFileHelper);
 	}
 
 	@Override

@@ -1,0 +1,36 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:mod_loaded",
+        "modid": "electrodynamics"
+      }
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "minecraft:stone_button"
+    },
+    "C": {
+      "tag": "c:ingots/gold"
+    },
+    "G": {
+      "tag": "c:glass_blocks"
+    },
+    "S": {
+      "tag": "c:ingots/iron"
+    }
+  },
+  "pattern": [
+    "  G",
+    "SSC",
+    "  B"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ballistix:rocketlauncher"
+  }
+}

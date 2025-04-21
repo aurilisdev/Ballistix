@@ -1,7 +1,6 @@
 package ballistix.common.entity;
 
 import ballistix.Ballistix;
-import ballistix.References;
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.common.blast.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
@@ -148,7 +147,7 @@ public class EntityBlast extends Entity {
         return blast;
     }
 
-    @EventBusSubscriber(modid = References.ID, bus = EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)
     private static final class ChunkloaderManager {
 
         private static final TicketController TICKET_CONTROLLER = new TicketController(Ballistix.rl("blastcontroller"));

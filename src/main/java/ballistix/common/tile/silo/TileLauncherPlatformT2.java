@@ -1,11 +1,11 @@
 package ballistix.common.tile.silo;
 
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.registers.BallistixTiles;
-import electrodynamics.api.multiblock.subnodebased.parent.IMultiblockParentBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
+import voltaic.api.multiblock.subnodebased.parent.IMultiblockParentBlock;
 
 public class TileLauncherPlatformT2 extends TileLauncherPlatformT1 {
 	public TileLauncherPlatformT2(BlockPos pos, BlockState state) {
@@ -19,7 +19,7 @@ public class TileLauncherPlatformT2 extends TileLauncherPlatformT1 {
 
 	@Override
 	public int getRange() {
-		return Constants.LAUNCHER_PLATFORM_RANGE_T2;
+		return BallistixConstants.LAUNCHER_PLATFORM_RANGE_T2;
 	}
 
 	@Override

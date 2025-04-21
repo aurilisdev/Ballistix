@@ -19,11 +19,11 @@ import ballistix.common.blast.BlastObsidian;
 import ballistix.common.blast.BlastRepulsive;
 import ballistix.common.blast.BlastShrapnel;
 import ballistix.common.blast.BlastThermobaric;
-import electrodynamics.api.ISubtype;
-import electrodynamics.common.block.voxelshapes.VoxelShapeProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.shapes.Shapes;
+import voltaic.api.ISubtype;
+import voltaic.common.block.voxelshapes.VoxelShapeProvider;
 
 public enum SubtypeBlast implements ISubtype {
 

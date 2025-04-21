@@ -2,21 +2,21 @@ package ballistix.datagen.client;
 
 import java.util.Locale;
 
-import ballistix.References;
+import ballistix.Ballistix;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.registers.BallistixBlocks;
-import electrodynamics.datagen.client.ElectrodynamicsBlockStateProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import voltaic.datagen.utils.client.BaseBlockstateProvider;
 
-public class BallistixBlockStateProvider extends ElectrodynamicsBlockStateProvider {
+public class BallistixBlockStateProvider extends BaseBlockstateProvider {
 
 	public BallistixBlockStateProvider(PackOutput output, ExistingFileHelper exFileHelper) {
-		super(output, exFileHelper, References.ID);
+		super(output, exFileHelper, Ballistix.ID);
 	}
 
 	@Override

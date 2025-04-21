@@ -3,14 +3,6 @@ package ballistix.common.tile.antimissile.turret;
 import javax.annotation.Nullable;
 
 import ballistix.common.tile.radar.TileFireControlRadar;
-import electrodynamics.prefab.properties.Property;
-import electrodynamics.prefab.properties.PropertyTypes;
-import electrodynamics.prefab.tile.GenericTile;
-import electrodynamics.prefab.tile.components.IComponentType;
-import electrodynamics.prefab.tile.components.type.ComponentElectrodynamic;
-import electrodynamics.prefab.tile.components.type.ComponentTickable;
-import electrodynamics.prefab.utilities.BlockEntityUtils;
-import electrodynamics.registers.ElectrodynamicsCapabilities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -20,6 +12,14 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import voltaic.prefab.properties.types.PropertyTypes;
+import voltaic.prefab.properties.variant.SingleProperty;
+import voltaic.prefab.tile.GenericTile;
+import voltaic.prefab.tile.components.IComponentType;
+import voltaic.prefab.tile.components.type.ComponentElectrodynamic;
+import voltaic.prefab.tile.components.type.ComponentTickable;
+import voltaic.prefab.utilities.BlockEntityUtils;
+import voltaic.registers.VoltaicCapabilities;
 
 public abstract class GenericTileAMTurret extends GenericTile {
 
@@ -32,13 +32,13 @@ public abstract class GenericTileAMTurret extends GenericTile {
     private final double usage;
     boolean canFire = false;
 
-    public final Property<Vec3> turretRotation = property(new Property<>(PropertyTypes.VEC3, "turrot", getDefaultOrientation()));
-    public final Property<Vec3> desiredRotation = property(new Property<>(PropertyTypes.VEC3, "currot", getDefaultOrientation()));
-    public final Property<Vec3> targetMovement = property(new Property<>(PropertyTypes.VEC3, "movevec", Vec3.ZERO));
+    public final SingleProperty<Vec3> turretRotation = property(new SingleProperty<>(PropertyTypes.VEC3, "turrot", getDefaultOrientation()));
+    public final SingleProperty<Vec3> desiredRotation = property(new SingleProperty<>(PropertyTypes.VEC3, "currot", getDefaultOrientation()));
+    public final SingleProperty<Vec3> targetMovement = property(new SingleProperty<>(PropertyTypes.VEC3, "movevec", Vec3.ZERO));
 
     public GenericTileAMTurret(BlockEntityType<?> tileEntityTypeIn, BlockPos worldPos, BlockState blockState, double usage, double range, double rotationSpeedRadians) {
         super(tileEntityTypeIn, worldPos, blockState);
-        addComponent(new ComponentElectrodynamic(this, false, true).setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM).voltage(ElectrodynamicsCapabilities.DEFAULT_VOLTAGE).maxJoules(usage * 20));
+        addComponent(new ComponentElectrodynamic(this, false, true).setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM).voltage(VoltaicCapabilities.DEFAULT_VOLTAGE).maxJoules(usage * 20));
         addComponent(new ComponentTickable(this).tickServer(this::tickServer));
         this.usage = usage;
         this.range = range;
@@ -92,45 +92,45 @@ public abstract class GenericTileAMTurret extends GenericTile {
 
                 double thetaY = Math.atan(deltaY / magXZ);
 
-                targetMovement.set(new Vec3(deltaX, deltaY, deltaZ).normalize());
+                targetMovement.setValue(new Vec3(deltaX, deltaY, deltaZ).normalize());
 
-                desiredRotation.set(new Vec3(deltaX / magXZ, Math.sin(thetaY), deltaZ / magXZ));
+                desiredRotation.setValue(new Vec3(deltaX / magXZ, Math.sin(thetaY), deltaZ / magXZ));
 
                 distanceToTarget = TileFireControlRadar.getDistanceToMissile(launchPos, interceptPos);
 
             }
 
         } else {
-            desiredRotation.set(getDefaultOrientation());
+            desiredRotation.setValue(getDefaultOrientation());
         }
 
-        if (turretRotation.get().equals(desiredRotation.get())) {
+        if (turretRotation.getValue().equals(desiredRotation.getValue())) {
 
             canFire = hasTarget && distanceToTarget > 0 && distanceToTarget <= range;
 
         } else {
 
-            double thetaDesiredXZ = getXZAngleRadians(desiredRotation.get());
-            double thetaCurrXZ = getXZAngleRadians(turretRotation.get());
+            double thetaDesiredXZ = getXZAngleRadians(desiredRotation.getValue());
+            double thetaCurrXZ = getXZAngleRadians(turretRotation.getValue());
 
             double angleDifXZ = thetaDesiredXZ - thetaCurrXZ;
 
-            double deltaY = desiredRotation.get().y - turretRotation.get().y;
+            double deltaY = desiredRotation.getValue().y - turretRotation.getValue().y;
 
             if (deltaY < 0) {
-                turretRotation.set(turretRotation.get().add(0, -Math.cos(rotationSpeedRadians) * 0.125, 0));
-                if (turretRotation.get().y < getMinElevation()) {
-                    turretRotation.set(new Vec3(turretRotation.get().x, getMinElevation(), turretRotation.get().z));
-                } else if (turretRotation.get().y < desiredRotation.get().y) {
-                    turretRotation.set(new Vec3(turretRotation.get().x, desiredRotation.get().y, turretRotation.get().z));
+                turretRotation.setValue(turretRotation.getValue().add(0, -Math.cos(rotationSpeedRadians) * 0.125, 0));
+                if (turretRotation.getValue().y < getMinElevation()) {
+                    turretRotation.setValue(new Vec3(turretRotation.getValue().x, getMinElevation(), turretRotation.getValue().z));
+                } else if (turretRotation.getValue().y < desiredRotation.getValue().y) {
+                    turretRotation.setValue(new Vec3(turretRotation.getValue().x, desiredRotation.getValue().y, turretRotation.getValue().z));
                 }
             } else if (deltaY > 0) {
-                turretRotation.set(turretRotation.get().add(0, Math.cos(rotationSpeedRadians) * 0.125, 0));
+                turretRotation.setValue(turretRotation.getValue().add(0, Math.cos(rotationSpeedRadians) * 0.125, 0));
 
-                if (turretRotation.get().y > getMaxElevation()) {
-                    turretRotation.set(new Vec3(turretRotation.get().x, getMaxElevation(), turretRotation.get().z));
-                } else if (turretRotation.get().y > desiredRotation.get().y) {
-                    turretRotation.set(new Vec3(turretRotation.get().x, desiredRotation.get().y, turretRotation.get().z));
+                if (turretRotation.getValue().y > getMaxElevation()) {
+                    turretRotation.setValue(new Vec3(turretRotation.getValue().x, getMaxElevation(), turretRotation.getValue().z));
+                } else if (turretRotation.getValue().y > desiredRotation.getValue().y) {
+                    turretRotation.setValue(new Vec3(turretRotation.getValue().x, desiredRotation.getValue().y, turretRotation.getValue().z));
                 }
             }
 
@@ -144,21 +144,21 @@ public abstract class GenericTileAMTurret extends GenericTile {
 
             }
 
-            //thetaCurrXZ = getXZAngleRadians(turretRotation.get());
+            //thetaCurrXZ = getXZAngleRadians(turretRotation.getValue());
 
             if (angleDifXZ >= 0 && thetaCurrXZ > thetaDesiredXZ) {
 
-                turretRotation.set(new Vec3(desiredRotation.get().x, turretRotation.get().y, desiredRotation.get().z));
+                turretRotation.setValue(new Vec3(desiredRotation.getValue().x, turretRotation.getValue().y, desiredRotation.getValue().z));
 
             } else if (angleDifXZ < 0 && thetaCurrXZ < thetaDesiredXZ) {
 
-                turretRotation.set(new Vec3(desiredRotation.get().x, turretRotation.get().y, desiredRotation.get().z));
+                turretRotation.setValue(new Vec3(desiredRotation.getValue().x, turretRotation.getValue().y, desiredRotation.getValue().z));
 
             } else {
-                turretRotation.set(new Vec3(Math.cos(thetaCurrXZ), turretRotation.get().y, Math.sin(thetaCurrXZ)));
+                turretRotation.setValue(new Vec3(Math.cos(thetaCurrXZ), turretRotation.getValue().y, Math.sin(thetaCurrXZ)));
             }
 
-            canFire = hasTarget && turretRotation.get().equals(desiredRotation.get()) && distanceToTarget > 0 && distanceToTarget <= range;
+            canFire = hasTarget && turretRotation.getValue().equals(desiredRotation.getValue()) && distanceToTarget > 0 && distanceToTarget <= range;
 
         }
 

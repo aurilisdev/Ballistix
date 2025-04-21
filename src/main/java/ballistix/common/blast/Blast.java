@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import ballistix.Ballistix;
 import com.google.common.collect.Maps;
 
-import ballistix.References;
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.api.event.BlastEvent;
 import ballistix.api.event.BlastEvent.ConstructBlastEvent;
@@ -52,7 +52,7 @@ public abstract class Blast {
     }
 
     public static GriefPreventionMethod getGriefPreventionMethod() {
-        if (ModList.get().isLoaded(References.GRIEF_DEFENDER_ID)) {
+        if (ModList.get().isLoaded(Ballistix.GRIEF_DEFENDER_ID)) {
             return GriefPreventionMethod.GRIEF_DEFENDER;
         }
         return GriefPreventionMethod.NONE;

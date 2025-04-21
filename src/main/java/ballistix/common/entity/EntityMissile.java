@@ -8,8 +8,6 @@ import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.client.particle.ParticleOptionsMissileSmoke;
 import ballistix.registers.BallistixEntities;
-import electrodynamics.Electrodynamics;
-import electrodynamics.prefab.utilities.BlockEntityUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
@@ -27,6 +25,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import voltaic.Voltaic;
+import voltaic.prefab.utilities.BlockEntityUtils;
 
 public class EntityMissile extends Entity {
 
@@ -243,7 +243,7 @@ public class EntityMissile extends Entity {
 		y -= motionY;
 		z -= motionZ;
 		for (int i = 0; i < 4; i++) {
-			Minecraft.getInstance().particleEngine.createParticle(new ParticleOptionsMissileSmoke().setParameters(1, 1, 1, missileType == 1 ? 0.3f : missileType == 2 ? 0.5f : 0.2f, 50, true), x, y, z, -motionX * (0.4 + 0.2 * Electrodynamics.RANDOM.nextDouble()), -motionY * (0.4 + 0.2 * Electrodynamics.RANDOM.nextDouble()), -motionZ * (0.4 + 0.2 * Electrodynamics.RANDOM.nextDouble()));
+			Minecraft.getInstance().particleEngine.createParticle(new ParticleOptionsMissileSmoke().setParameters(1, 1, 1, missileType == 1 ? 0.3f : missileType == 2 ? 0.5f : 0.2f, 50, true), x, y, z, -motionX * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()), -motionY * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()), -motionZ * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()));
 		}
 
 	}

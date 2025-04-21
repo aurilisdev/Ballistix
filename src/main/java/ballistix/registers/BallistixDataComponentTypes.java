@@ -2,9 +2,9 @@ package ballistix.registers;
 
 import java.util.UUID;
 
+import ballistix.Ballistix;
 import com.mojang.serialization.Codec;
 
-import ballistix.References;
 import ballistix.common.item.ItemTracker;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentType;
@@ -15,7 +15,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class BallistixDataComponentTypes {
 
-    public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENT_TYPES = DeferredRegister.create(BuiltInRegistries.DATA_COMPONENT_TYPE, References.ID);
+    public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENT_TYPES = DeferredRegister.create(BuiltInRegistries.DATA_COMPONENT_TYPE, Ballistix.ID);
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> BOUND_FREQUENCY = DATA_COMPONENT_TYPES.register("frequency", () -> DataComponentType.<Integer>builder().persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT).cacheEncoding().build());
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemTracker.Target>> TRACKER_TARGET = DATA_COMPONENT_TYPES.register("trackertarget", () -> DataComponentType.<ItemTracker.Target>builder().persistent(ItemTracker.Target.CODEC).networkSynchronized(ItemTracker.Target.STREAM_CODEC).cacheEncoding().build());

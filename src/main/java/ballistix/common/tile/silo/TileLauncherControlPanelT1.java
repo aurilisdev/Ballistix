@@ -1,7 +1,6 @@
 package ballistix.common.tile.silo;
 
 import ballistix.Ballistix;
-import ballistix.References;
 import ballistix.api.silo.ILauncherControlPanel;
 import ballistix.api.silo.ILauncherPlatform;
 import ballistix.api.silo.ILauncherSupportFrame;
@@ -9,24 +8,10 @@ import ballistix.api.silo.SiloRegistry;
 import ballistix.common.inventory.container.ContainerLauncherControlPanelT1;
 import ballistix.common.inventory.container.ContainerLauncherControlPanelT2;
 import ballistix.common.inventory.container.ContainerLauncherControlPanelT3;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.registers.BallistixDataComponentTypes;
 import ballistix.registers.BallistixItems;
 import ballistix.registers.BallistixTiles;
-import electrodynamics.prefab.properties.Property;
-import electrodynamics.prefab.properties.PropertyTypes;
-import electrodynamics.prefab.tile.GenericTile;
-import electrodynamics.prefab.tile.components.IComponentType;
-import electrodynamics.prefab.tile.components.type.ComponentContainerProvider;
-import electrodynamics.prefab.tile.components.type.ComponentElectrodynamic;
-import electrodynamics.prefab.tile.components.type.ComponentInventory;
-import electrodynamics.prefab.tile.components.type.ComponentInventory.InventoryBuilder;
-import electrodynamics.prefab.tile.components.type.ComponentPacketHandler;
-import electrodynamics.prefab.tile.components.type.ComponentTickable;
-import electrodynamics.prefab.utilities.BlockEntityUtils;
-import electrodynamics.prefab.utilities.object.CachedTileOutput;
-import electrodynamics.prefab.utilities.object.TransferPack;
-import electrodynamics.registers.ElectrodynamicsDataComponentTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -44,23 +29,33 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
 import net.neoforged.neoforge.common.world.chunk.TicketController;
+import voltaic.prefab.properties.types.PropertyTypes;
+import voltaic.prefab.properties.variant.SingleProperty;
+import voltaic.prefab.tile.GenericTile;
+import voltaic.prefab.tile.components.IComponentType;
+import voltaic.prefab.tile.components.type.*;
+import voltaic.prefab.utilities.BlockEntityUtils;
+import voltaic.prefab.utilities.object.CachedTileOutput;
+import voltaic.prefab.utilities.object.TransferPack;
+import voltaic.registers.VoltaicCapabilities;
+import voltaic.registers.VoltaicDataComponentTypes;
 
 public class TileLauncherControlPanelT1 extends GenericTile implements ILauncherControlPanel {
 
-	public Property<Integer> frequency = property(new Property<>(PropertyTypes.INTEGER, "frequency", 0).onChange((prop, prevFreq) -> {
+	public SingleProperty<Integer> frequency = property(new SingleProperty<>(PropertyTypes.INTEGER, "frequency", 0).onChange((prop, prevFreq) -> {
 
 		if (level == null || level.isClientSide) {
 			return;
 		}
 
-		int newFreq = prop.get();
+		int newFreq = prop.getValue();
 
 		SiloRegistry.unregisterSilo(prevFreq, this);
 		SiloRegistry.registerSilo(newFreq, this);
 
 	}));
 
-	public Property<BlockPos> target = property(new Property<>(PropertyTypes.BLOCK_POS, "target", BlockPos.ZERO));
+	public SingleProperty<BlockPos> target = property(new SingleProperty<>(PropertyTypes.BLOCK_POS, "target", BlockPos.ZERO));
 
 	private int cooldown = 100;
 	public boolean shouldLaunch = false;
@@ -75,20 +70,21 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 		super(type, pos, state);
 		int tier = getTier();
 		addComponent(new ComponentTickable(this).tickServer(this::tickServer));
-		addComponent(new ComponentElectrodynamic(this, false, true).voltage(120 * Math.pow(2, tier - 1)).maxJoules(Constants.MISSILESILO_USAGE * 20 * tier).setInputDirections(BlockEntityUtils.MachineDirection.values()));
+		addComponent(new ComponentElectrodynamic(this, false, true).voltage(VoltaicCapabilities.DEFAULT_VOLTAGE * Math.pow(2, tier - 1)).maxJoules(BallistixConstants.MISSILESILO_USAGE * 20 * tier).setInputDirections(BlockEntityUtils.MachineDirection.values()));
 		if (tier == 3) {
-			addComponent(new ComponentInventory(this, InventoryBuilder.newInv().inputs(1)).setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).setDirectionsBySlot(1, BlockEntityUtils.MachineDirection.values()).valid(this::isItemValidForSlot));
+			addComponent(new ComponentInventory(this, ComponentInventory.InventoryBuilder.newInv().inputs(1)).setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).setDirectionsBySlot(1, BlockEntityUtils.MachineDirection.values()).valid(this::isItemValidForSlot));
 		} else {
 			addComponent(new ComponentInventory(this));
 		}
 		addComponent(new ComponentPacketHandler(this));
 		if (tier == 1) {
-			addComponent(new ComponentContainerProvider("container.launchercontrolpaneltier" + tier, this).createMenu((id, player) -> new ContainerLauncherControlPanelT1(id, player, getComponent(IComponentType.Inventory), getCoordsArray())));
+			addComponent(new ComponentContainerProvider("launchercontrolpaneltier" + tier, this).createMenu((id, player) -> new ContainerLauncherControlPanelT1(id, player, getComponent(IComponentType.Inventory), getCoordsArray())));
 		} else if (tier == 2) {
-			addComponent(new ComponentContainerProvider("container.launchercontrolpaneltier" + tier, this).createMenu((id, player) -> new ContainerLauncherControlPanelT2(id, player, getComponent(IComponentType.Inventory), getCoordsArray())));
+			addComponent(new ComponentContainerProvider("launchercontrolpaneltier" + tier, this).createMenu((id, player) -> new ContainerLauncherControlPanelT2(id, player, getComponent(IComponentType.Inventory), getCoordsArray())));
 		} else if (tier == 3) {
-			addComponent(new ComponentContainerProvider("container.launchercontrolpaneltier" + tier, this).createMenu((id, player) -> new ContainerLauncherControlPanelT3(id, player, getComponent(IComponentType.Inventory), getCoordsArray())));
+			addComponent(new ComponentContainerProvider("launchercontrolpaneltier" + tier, this).createMenu((id, player) -> new ContainerLauncherControlPanelT3(id, player, getComponent(IComponentType.Inventory), getCoordsArray())));
 		}
+		addComponent(new ComponentForgeEnergy(this));
 
 	}
 
@@ -104,13 +100,13 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 			launcherPlatform.update(worldPosition.relative(facing.getOpposite()));
 			supportFrame.update(worldPosition.relative(facing.getOpposite(), 2));
 		}
-		if (target.get() == null) {
-			target.set(getBlockPos());
+		if (target.getValue() == null) {
+			target.setValue(getBlockPos());
 		}
 
 		ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
 
-		if (cooldown > 0 || electro.getJoulesStored() < Constants.MISSILESILO_USAGE * getTier()) {
+		if (cooldown > 0 || electro.getJoulesStored() < BallistixConstants.MISSILESILO_USAGE * getTier()) {
 			cooldown--;
 			return;
 		}
@@ -133,7 +129,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 			return;
 		}
 
-		int inaccuracy = Constants.LAUNCH_PLATFORM_DEFAULT_INACCURACY;
+		int inaccuracy = BallistixConstants.LAUNCH_PLATFORM_DEFAULT_INACCURACY;
 
 		if(supportFrame.valid() && supportFrame.getSafe() instanceof ILauncherSupportFrame frame) {
 			inaccuracy = frame.getInaccuracy();
@@ -141,7 +137,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 
 		shouldLaunch = false;
 
-		double dist = calculateDistance(worldPosition, target.get());
+		double dist = calculateDistance(worldPosition, target.getValue());
 
 		if (platform.getRange() < dist) {
 			return;
@@ -151,7 +147,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 		if (newCool != -1) {
 			cooldown = newCool;
 		}
-		electro.extractPower(TransferPack.joulesVoltage(Constants.MISSILESILO_USAGE * getTier(), electro.getVoltage()), false);
+		electro.extractPower(TransferPack.joulesVoltage(BallistixConstants.MISSILESILO_USAGE * getTier(), electro.getVoltage()), false);
 	}
 
 	protected boolean isItemValidForSlot(int index, ItemStack stack, ComponentInventory inv) {
@@ -163,7 +159,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 		if (level.isClientSide) {
 			return;
 		}
-		SiloRegistry.unregisterSilo(frequency.get(), this);
+		SiloRegistry.unregisterSilo(frequency.getValue(), this);
 
 		ChunkPos chunkPos = level.getChunk(worldPosition).getPos();
 
@@ -196,12 +192,12 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 
 		if (sync.is(BallistixItems.ITEM_LASERDESIGNATOR)) {
 
-			sync.set(BallistixDataComponentTypes.BOUND_FREQUENCY, frequency.get());
+			sync.set(BallistixDataComponentTypes.BOUND_FREQUENCY, frequency.getValue());
 
 		} else if (sync.is(BallistixItems.ITEM_RADARGUN)) {
 
-			if (sync.has(ElectrodynamicsDataComponentTypes.BLOCK_POS)) {
-				target.set(sync.get(ElectrodynamicsDataComponentTypes.BLOCK_POS));
+			if (sync.has(VoltaicDataComponentTypes.BLOCK_POS)) {
+				target.setValue(sync.get(VoltaicDataComponentTypes.BLOCK_POS));
 			}
 
 		}
@@ -211,7 +207,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 	public void onLoad() {
 		super.onLoad();
 		if (!level.isClientSide) {
-			SiloRegistry.registerSilo(frequency.get(), this);
+			SiloRegistry.registerSilo(frequency.getValue(), this);
 		}
 	}
 
@@ -255,17 +251,17 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 
 	@Override
 	public void setTarget(BlockPos blockPos) {
-		target.set(blockPos);
+		target.setValue(blockPos);
 	}
 
 	@Override
 	public BlockPos getTarget() {
-		return target.get();
+		return target.getValue();
 	}
 
 	@Override
 	public int getFrequency() {
-		return frequency.get();
+		return frequency.getValue();
 	}
 
 	@Override
@@ -286,7 +282,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 		return Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 	}
 
-	@EventBusSubscriber(modid = References.ID, bus = EventBusSubscriber.Bus.MOD)
+	@EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)
 	private static final class ChunkloaderManager {
 
 		private static final TicketController TICKET_CONTROLLER = new TicketController(Ballistix.rl("chunkloadercontroller"));

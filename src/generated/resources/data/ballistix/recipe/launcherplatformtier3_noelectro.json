@@ -1,0 +1,33 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:mod_loaded",
+        "modid": "electrodynamics"
+      }
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "c:gems/diamond"
+    },
+    "P": {
+      "item": "ballistix:launcherplatformtier2"
+    },
+    "S": {
+      "tag": "c:ingots/iron"
+    }
+  },
+  "pattern": [
+    "S S",
+    "SCS",
+    "SPS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ballistix:launcherplatformtier3"
+  }
+}

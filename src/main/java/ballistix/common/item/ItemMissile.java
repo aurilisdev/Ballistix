@@ -2,10 +2,10 @@ package ballistix.common.item;
 
 import ballistix.common.block.subtype.SubtypeMissile;
 import ballistix.registers.BallistixCreativeTabs;
-import electrodynamics.common.item.ItemElectrodynamics;
 import net.minecraft.world.item.Item;
+import voltaic.common.item.ItemVoltaic;
 
-public class ItemMissile extends ItemElectrodynamics {
+public class ItemMissile extends ItemVoltaic {
 
 	public final SubtypeMissile missile;
 

@@ -1,6 +1,6 @@
 package ballistix.datagen.client;
 
-import ballistix.References;
+import ballistix.Ballistix;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.block.subtype.SubtypeMissile;
@@ -9,14 +9,14 @@ import ballistix.common.item.ItemMinecart.SubtypeMinecart;
 import ballistix.registers.BallistixBlocks;
 import ballistix.registers.BallistixItems;
 import ballistix.registers.BallistixSounds;
-import electrodynamics.datagen.client.ElectrodynamicsLangKeyProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.Level;
+import voltaic.datagen.utils.client.BaseLangKeyProvider;
 
-public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
+public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 
 	public BallistixLangKeyProvider(PackOutput output, Locale locale) {
-		super(output, locale, References.ID);
+		super(output, locale, Ballistix.ID);
 	}
 
 	@Override
@@ -91,6 +91,7 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.darkmatter), "Minecart with Darkmatter Explosive");
 
 			addItem(BallistixItems.ITEM_DUSTPOISON, "Poison Dust");
+			addItem(BallistixItems.ITEM_RANGEUPGRADE, "Range Upgrade");
 
 			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier1), "T1 Missile");
 			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier2), "T2 Missile");
@@ -214,12 +215,14 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 			addSubtitle(BallistixSounds.SOUND_FIRECONTROLRADAR, "Fire Control Radar tracks");
 			addSubtitle(BallistixSounds.SOUND_CIWS_TURRETFIRING, "CIWS Turret Fires");
 			addSubtitle(BallistixSounds.SOUND_LASER_TURRETFIRING, "Laser Turret fires");
+			addSubtitle(BallistixSounds.SOUND_RODHITTINGGROUND, "Rod Impacts Ground");
+			addSubtitle(BallistixSounds.SOUND_RAILGUNKINETIC, "Railgun Turret Fires");
 
 			addDimension(Level.OVERWORLD.location().getPath(), "The Overworld");
 			addDimension(Level.NETHER.location().getPath(), "The Nether");
 			addDimension(Level.END.location().getPath(), "The End");
 
-			addGuidebook(References.ID, "Ballistix");
+			addGuidebook(Ballistix.ID, "Ballistix");
 
 			addGuidebook("chapter.missilesilo", "Missile Silo");
 			addGuidebook("chapter.missilesilo.l1.1", "The Missile Silo is a multiblock used, as the name suggests, to launch various missiles with different types of warheads. The Silo is composed of three different blocks:");
@@ -291,7 +294,7 @@ public class BallistixLangKeyProvider extends ElectrodynamicsLangKeyProvider {
 			addGuidebook("chapter.missiledefense.laserturret2", "On top of being incredibly power hungry, the turret also has a heat buffer that builds up while firing. If the temperature of the turret reaches past a certain point, it will need to cool down before it can engage targets again! Like with the CIWS, the Laser Turret can attack entities and players within a quarter of its "
 					+ "missile targeting range. Mobs and players are additionally set on fire when damaged by the laser turret. It must have a clear line of site to the mob also.");
 
-			addGuidebook("chapter.missiledefense.railgunturret1", "The Railgun Turret is a hybrid between the CIWS and SAM turrets. It fires %1$ss that destroy a missile on contact. It is able to engage missiles up to %2$s blocks, and this range can be increased with range upgrades. It has no minimum engagement range. The turret must wait %3$s ticks between shots, and can "
+			addGuidebook("chapter.missiledefense.railgunturret1", "The Railgun Turret is a hybrid between the CIWS and SAM turrets. It fires Steel Rods that destroy a missile on contact. It is able to engage missiles up to %2$s blocks, and this range can be increased with range upgrades. It has no minimum engagement range. The turret must wait %3$s ticks between shots, and can "
 					+ "only hold up to 64 rods at a time. Like with the Laser Turret, it is incredibly power-hungry. The turret has a maximum elevation of 45 degrees and a maximum depression of 45 degrees.");
 			addGuidebook("chapter.missiledefense.railgunturret2", "Like with the CIWS and Laser Turrets, the Railgun Turret can engage players and mobs up to one quarter the distance of its missile engagement range. The steel rod will deal 20 damage on impact, but the turret must have a clear line of site to engage!");
 

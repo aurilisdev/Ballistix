@@ -5,11 +5,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
+import ballistix.Ballistix;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
 
-import ballistix.References;
 import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.api.missile.virtual.VirtualProjectile;
 import net.minecraft.core.BlockPos;
@@ -28,7 +28,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 public class BallistixAttachmentTypes {
 
-    public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, References.ID);
+    public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Ballistix.ID);
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<HashMap<Integer, HashSet<BlockPos>>>> SILO_FREQUENCIES = ATTACHMENT_TYPES.register("silofrequencies", () -> AttachmentType.builder(() -> new HashMap<Integer, HashSet<BlockPos>>()).serialize(new IAttachmentSerializer<CompoundTag, HashMap<Integer, HashSet<BlockPos>>>() {
         @Override

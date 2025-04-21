@@ -1,8 +1,8 @@
 package ballistix.registers;
 
+import ballistix.Ballistix;
 import com.google.common.collect.Sets;
 
-import ballistix.References;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.tile.TileESMTower;
 import ballistix.common.tile.radar.TileFireControlRadar;
@@ -27,7 +27,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class BallistixTiles {
 
-	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, References.ID);
+	public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Ballistix.ID);
 
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileLauncherControlPanelT1>> TILE_LAUNCHER_CONTROL_PANEL_TIER1 = BLOCK_ENTITY_TYPES.register("launchercontrolpaneltier1", () -> new BlockEntityType<>(TileLauncherControlPanelT1::new, Sets.newHashSet(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchercontrolpaneltier1)), null));
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TileLauncherControlPanelT2>> TILE_LAUNCHER_CONTROL_PANEL_TIER2 = BLOCK_ENTITY_TYPES.register("launchercontrolpaneltier2", () -> new BlockEntityType<>(TileLauncherControlPanelT2::new, Sets.newHashSet(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchercontrolpaneltier2)), null));

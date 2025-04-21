@@ -1,10 +1,9 @@
 package ballistix.registers;
 
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
-import ballistix.common.recipe.BallistixRecipeInit;
-import electrodynamics.common.blockitem.types.BlockItemDescriptable;
-import electrodynamics.prefab.utilities.ElectroTextUtils;
 import net.neoforged.bus.api.IEventBus;
+import voltaic.common.blockitem.BlockItemDescriptable;
+import voltaic.prefab.utilities.VoltaicTextUtils;
 
 public class UnifiedBallistixRegister {
 
@@ -14,7 +13,7 @@ public class UnifiedBallistixRegister {
 		BallistixBlocks.BLOCKS.register(bus);
 		BallistixItems.ITEMS.register(bus);
 		BallistixTiles.BLOCK_ENTITY_TYPES.register(bus);
-		BallistixRecipeInit.INGREDIENT_TYPES.register(bus);
+		BallistixRecipies.INGREDIENT_TYPES.register(bus);
 		BallistixMenuTypes.MENU_TYPES.register(bus);
 		BallistixEntities.ENTITIES.register(bus);
 		BallistixSounds.SOUNDS.register(bus);
@@ -24,18 +23,18 @@ public class UnifiedBallistixRegister {
 
 	static {
 
-		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.launchercontrolpaneltier1), ElectroTextUtils.voltageTooltip(120));
-		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.launchercontrolpaneltier2), ElectroTextUtils.voltageTooltip(240));
-		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.launchercontrolpaneltier3), ElectroTextUtils.voltageTooltip(480));
+		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.launchercontrolpaneltier1), VoltaicTextUtils.voltageTooltip(120));
+		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.launchercontrolpaneltier2), VoltaicTextUtils.voltageTooltip(240));
+		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.launchercontrolpaneltier3), VoltaicTextUtils.voltageTooltip(480));
 
-		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.radar), ElectroTextUtils.voltageTooltip(120));
-		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.firecontrolradar), ElectroTextUtils.voltageTooltip(120));
-		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.esmtower), ElectroTextUtils.voltageTooltip(480));
+		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.radar), VoltaicTextUtils.voltageTooltip(120));
+		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.firecontrolradar), VoltaicTextUtils.voltageTooltip(120));
+		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.esmtower), VoltaicTextUtils.voltageTooltip(480));
 
-		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.samturret), ElectroTextUtils.voltageTooltip(120));
-		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.ciwsturret), ElectroTextUtils.voltageTooltip(120));
-		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.laserturret), ElectroTextUtils.voltageTooltip(120));
-		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.railgunturret), ElectroTextUtils.voltageTooltip(120));
+		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.samturret), VoltaicTextUtils.voltageTooltip(120));
+		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.ciwsturret), VoltaicTextUtils.voltageTooltip(120));
+		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.laserturret), VoltaicTextUtils.voltageTooltip(120));
+		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.railgunturret), VoltaicTextUtils.voltageTooltip(120));
 
 	}
 

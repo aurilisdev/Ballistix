@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import ballistix.common.blast.thread.ThreadBlast;
-import electrodynamics.prefab.block.HashDistanceBlockPos;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -15,6 +14,7 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import voltaic.prefab.block.HashDistanceBlockPos;
 
 public class ThreadRaycastBlast extends ThreadBlast {
 

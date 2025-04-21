@@ -2,33 +2,19 @@ package ballistix.common.tile.radar;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 import ballistix.Ballistix;
-import ballistix.References;
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.api.radar.IDetected;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.block.subtype.SubtypeMissile;
 import ballistix.common.inventory.container.ContainerSearchRadar;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tile.TileESMTower;
-import ballistix.prefab.BallistixPropertyTypes;
 import ballistix.registers.BallistixItems;
 import ballistix.registers.BallistixSounds;
 import ballistix.registers.BallistixTiles;
-import electrodynamics.api.sound.SoundAPI;
-import electrodynamics.prefab.properties.Property;
-import electrodynamics.prefab.properties.PropertyTypes;
-import electrodynamics.prefab.tile.GenericTile;
-import electrodynamics.prefab.tile.components.IComponentType;
-import electrodynamics.prefab.tile.components.type.ComponentContainerProvider;
-import electrodynamics.prefab.tile.components.type.ComponentElectrodynamic;
-import electrodynamics.prefab.tile.components.type.ComponentPacketHandler;
-import electrodynamics.prefab.tile.components.type.ComponentTickable;
-import electrodynamics.prefab.utilities.BlockEntityUtils;
-import electrodynamics.registers.ElectrodynamicsCapabilities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -44,15 +30,24 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
 import net.neoforged.neoforge.common.world.chunk.TicketController;
+import voltaic.api.sound.SoundAPI;
+import voltaic.prefab.properties.types.PropertyTypes;
+import voltaic.prefab.properties.variant.ListProperty;
+import voltaic.prefab.properties.variant.SingleProperty;
+import voltaic.prefab.tile.GenericTile;
+import voltaic.prefab.tile.components.IComponentType;
+import voltaic.prefab.tile.components.type.*;
+import voltaic.prefab.utilities.BlockEntityUtils;
+import voltaic.registers.VoltaicCapabilities;
 
 public class TileSearchRadar extends GenericTile {
 
-    public final Property<Boolean> usingWhitelist = property(new Property<>(PropertyTypes.BOOLEAN, "usingwhitelist", false));
-    public final Property<List<Integer>> whitelistedFrequencies = property(new Property<>(BallistixPropertyTypes.INTEGER_LIST, "whitelistedfreqs", new ArrayList<>()));
-    public final Property<Boolean> redstone = property(new Property<>(PropertyTypes.BOOLEAN, "redstone", false));
-    public final Property<Boolean> isRunning = property(new Property<>(PropertyTypes.BOOLEAN, "isrunning", false));
+    public final SingleProperty<Boolean> usingWhitelist = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "usingwhitelist", false));
+    public final ListProperty<Integer> whitelistedFrequencies = property(new ListProperty<>(PropertyTypes.INTEGER_LIST, "whitelistedfreqs", new ArrayList<>()));
+    public final SingleProperty<Boolean> redstone = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "redstone", false));
+    public final SingleProperty<Boolean> isRunning = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "isrunning", false));
 
-    private final AABB searchArea = new AABB(getBlockPos()).inflate(Constants.RADAR_RANGE);
+    private final AABB searchArea = new AABB(getBlockPos()).inflate(BallistixConstants.RADAR_RANGE);
     private final HashSet<VirtualMissile> trackedMissiles = new HashSet<>();
     public final HashSet<TileESMTower> trackedEsmTowers = new HashSet<>();
     public final HashSet<IDetected.Detected> detections = new HashSet<>();
@@ -64,21 +59,22 @@ public class TileSearchRadar extends GenericTile {
         super(BallistixTiles.TILE_RADAR.get(), pos, state);
         addComponent(new ComponentTickable(this).tickServer(this::tickServer).tickClient(this::tickClient));
         addComponent(new ComponentPacketHandler(this));
-        addComponent(new ComponentElectrodynamic(this, false, true).voltage(ElectrodynamicsCapabilities.DEFAULT_VOLTAGE).setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM).maxJoules(Constants.RADAR_USAGE * 20));
-        addComponent(new ComponentContainerProvider("container.searchradar", this).createMenu((id, player) -> new ContainerSearchRadar(id, player, new SimpleContainer(0), getCoordsArray())));
+        addComponent(new ComponentElectrodynamic(this, false, true).voltage(VoltaicCapabilities.DEFAULT_VOLTAGE).setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM).maxJoules(BallistixConstants.RADAR_USAGE * 20));
+        addComponent(new ComponentContainerProvider("searchradar", this).createMenu((id, player) -> new ContainerSearchRadar(id, player, new SimpleContainer(0), getCoordsArray())));
+        addComponent(new ComponentForgeEnergy(this));
     }
 
     public void tickServer(ComponentTickable tickable) {
         ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
 
-        isRunning.set(electro.getJoulesStored() > (Constants.RADAR_USAGE / 20.0) && level.getBrightness(LightLayer.SKY, getBlockPos()) > 0);
+        isRunning.setValue(electro.getJoulesStored() > (BallistixConstants.RADAR_USAGE / 20.0) && level.getBrightness(LightLayer.SKY, getBlockPos()) > 0);
 
         trackedMissiles.clear();
         trackedEsmTowers.clear();
 
-        if (!isRunning.get()) {
-            if (redstone.get()) {
-                redstone.set(false);
+        if (!isRunning.getValue()) {
+            if (redstone.getValue()) {
+                redstone.setValue(false);
                 level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
             }
             TileESMTower.removeSearchRadar(this);
@@ -87,10 +83,10 @@ public class TileSearchRadar extends GenericTile {
 
         TileESMTower.addSearchRadar(this);
 
-        electro.joules(electro.getJoulesStored() - (Constants.RADAR_USAGE / 20.0));
+        electro.joules(electro.getJoulesStored() - (BallistixConstants.RADAR_USAGE / 20.0));
 
         for (VirtualMissile missile : MissileManager.getMissilesForLevel(level.dimension())) {
-            if (missile.getBoundingBox().intersects(searchArea) && (!usingWhitelist.get() || (usingWhitelist.get() && !whitelistedFrequencies.get().contains(missile.payloadData.frequency))) && !missile.hasExploded()) {
+            if (missile.getBoundingBox().intersects(searchArea) && (!usingWhitelist.getValue() || (usingWhitelist.getValue() && !whitelistedFrequencies.getValue().contains(missile.payloadData.frequency))) && !missile.hasExploded()) {
                 trackedMissiles.add(missile);
             }
         }
@@ -101,11 +97,11 @@ public class TileSearchRadar extends GenericTile {
             }
         }
 
-        if ((trackedMissiles.isEmpty() && trackedEsmTowers.isEmpty()) && redstone.get()) {
-            redstone.set(false);
+        if ((trackedMissiles.isEmpty() && trackedEsmTowers.isEmpty()) && redstone.getValue()) {
+            redstone.setValue(false);
             level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
-        } else if ((!trackedMissiles.isEmpty() || !trackedEsmTowers.isEmpty()) && !redstone.get()) {
-            redstone.set(true);
+        } else if ((!trackedMissiles.isEmpty() || !trackedEsmTowers.isEmpty()) && !redstone.getValue()) {
+            redstone.setValue(true);
             level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
         }
 
@@ -125,16 +121,16 @@ public class TileSearchRadar extends GenericTile {
 
         clientRotation += clientRotationSpeed;
 
-        clientRotationSpeed = Mth.clamp(clientRotationSpeed + 0.25 * (isRunning.get() ? 1 : -1), 0.0, 10.0);
+        clientRotationSpeed = Mth.clamp(clientRotationSpeed + 0.25 * (isRunning.getValue() ? 1 : -1), 0.0, 10.0);
 
-        if (tickable.getTicks() % 50 == 0 && isRunning.get()) {
+        if (tickable.getTicks() % 50 == 0 && isRunning.getValue()) {
             SoundAPI.playSound(BallistixSounds.SOUND_RADAR.get(), SoundSource.BLOCKS, 1.0F, 1.0F, worldPosition);
         }
     }
 
     @Override
     public int getSignal(Direction dir) {
-        return redstone.get() ? 15 : 0;
+        return redstone.getValue() ? 15 : 0;
     }
 
     @Override
@@ -170,7 +166,7 @@ public class TileSearchRadar extends GenericTile {
         }
     }
 
-    @EventBusSubscriber(modid = References.ID, bus = EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)
     private static final class ChunkloaderManager {
 
         private static final TicketController TICKET_CONTROLLER = new TicketController(Ballistix.rl("searchradarcontroller"));

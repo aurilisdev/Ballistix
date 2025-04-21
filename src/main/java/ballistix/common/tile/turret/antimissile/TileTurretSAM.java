@@ -3,32 +3,32 @@ package ballistix.common.tile.turret.antimissile;
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualProjectile;
 import ballistix.common.inventory.container.ContainerSAMTurret;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissileProjectile;
 import ballistix.registers.BallistixItems;
 import ballistix.registers.BallistixSounds;
 import ballistix.registers.BallistixTiles;
-import electrodynamics.common.item.ItemUpgrade;
-import electrodynamics.prefab.properties.Property;
-import electrodynamics.prefab.properties.PropertyTypes;
-import electrodynamics.prefab.tile.components.IComponentType;
-import electrodynamics.prefab.tile.components.type.ComponentContainerProvider;
-import electrodynamics.prefab.tile.components.type.ComponentInventory;
-import electrodynamics.prefab.tile.components.type.ComponentTickable;
-import electrodynamics.prefab.utilities.BlockEntityUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import voltaic.common.item.ItemUpgrade;
+import voltaic.prefab.properties.types.PropertyTypes;
+import voltaic.prefab.properties.variant.SingleProperty;
+import voltaic.prefab.tile.components.IComponentType;
+import voltaic.prefab.tile.components.type.ComponentContainerProvider;
+import voltaic.prefab.tile.components.type.ComponentInventory;
+import voltaic.prefab.tile.components.type.ComponentTickable;
+import voltaic.prefab.utilities.BlockEntityUtils;
 
 public class TileTurretSAM extends TileTurretAntimissileProjectile {
 
-    public final Property<Integer> cooldown = property(new Property<>(PropertyTypes.INTEGER, "cooldown", 0));
-    public final Property<Boolean> outOfAmmo = property(new Property<>(PropertyTypes.BOOLEAN, "noammo", false));
+    public final SingleProperty<Integer> cooldown = property(new SingleProperty<>(PropertyTypes.INTEGER, "cooldown", 0));
+    public final SingleProperty<Boolean> outOfAmmo = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "noammo", false));
 
     public TileTurretSAM(BlockPos worldPos, BlockState blockState) {
-        super(BallistixTiles.TILE_SAMTURRET.get(), worldPos, blockState, Constants.SAM_TURRET_BASE_RANGE, 100, Constants.SAM_TURRET_USAGEPERTICK, Constants.SAM_TURRET_ROTATIONSPEEDRADIANS, 1);
+        super(BallistixTiles.TILE_SAMTURRET.get(), worldPos, blockState, BallistixConstants.SAM_TURRET_BASE_RANGE, 100, BallistixConstants.SAM_TURRET_USAGEPERTICK, BallistixConstants.SAM_TURRET_ROTATIONSPEEDRADIANS, 1);
     }
 
     @Override
@@ -48,20 +48,20 @@ public class TileTurretSAM extends TileTurretAntimissileProjectile {
 
     @Override
     public ComponentContainerProvider getContainer() {
-        return new ComponentContainerProvider("container.samturret", this).createMenu((id, player) -> new ContainerSAMTurret(id, player, getComponent(IComponentType.Inventory), getCoordsArray()));
+        return new ComponentContainerProvider("samturret", this).createMenu((id, player) -> new ContainerSAMTurret(id, player, getComponent(IComponentType.Inventory), getCoordsArray()));
     }
 
     @Override
     public void tickServerActive(ComponentTickable tickable) {
-        if (cooldown.get() > 0) {
-            cooldown.set(cooldown.get() - 1);
+        if (cooldown.getValue() > 0) {
+            cooldown.setValue(cooldown.getValue() - 1);
         }
     }
 
     @Override
     public void fireTickServer(long ticks) {
 
-        if (cooldown.get() > 0) {
+        if (cooldown.getValue() > 0) {
             return;
         }
 
@@ -70,19 +70,19 @@ public class TileTurretSAM extends TileTurretAntimissileProjectile {
         ItemStack missile = inv.getItem(0);
 
         if (missile.isEmpty()) {
-            outOfAmmo.set(true);
+            outOfAmmo.setValue(true);
             return;
         }
 
-        outOfAmmo.set(false);
+        outOfAmmo.setValue(false);
 
-        VirtualProjectile.VirtualSAM sam = new VirtualProjectile.VirtualSAM(0.0F, getProjectileLaunchPosition(), targetMovement.get(), currentRange.get().floatValue(), boundFireControl.get(), 0);
+        VirtualProjectile.VirtualSAM sam = new VirtualProjectile.VirtualSAM(0.0F, getProjectileLaunchPosition(), targetMovement.getValue(), currentRange.getValue().floatValue(), boundFireControl.getValue(), 0);
 
         MissileManager.addSAM(level.dimension(), sam);
 
         level.playSound(null, getBlockPos().above(), BallistixSounds.SOUND_MISSILE_ROCKETLAUNCHER.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
 
-        cooldown.set(Constants.SAM_TURRET_COOLDOWN);
+        cooldown.setValue(BallistixConstants.SAM_TURRET_COOLDOWN);
 
         inv.removeItem(0, 1);
 
@@ -96,7 +96,7 @@ public class TileTurretSAM extends TileTurretAntimissileProjectile {
 
     @Override
     public float getProjectileSpeed() {
-        return Constants.SAM_TOP_SPEED;
+        return BallistixConstants.SAM_TOP_SPEED;
     }
 
     @Override

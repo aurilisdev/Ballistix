@@ -6,7 +6,7 @@ import java.util.List;
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.client.particle.ParticleOptionsShockwave;
 import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -37,7 +37,7 @@ public class BlastRepulsive extends Blast implements IHasCustomRender {
 		super.doExplode(callCount);
 		hasStarted = true;
 		if (!world.isClientSide) {
-			world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) Constants.EXPLOSIVE_REPULSIVE_SIZE, ExplosionInteraction.BLOCK);
+			world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) BallistixConstants.EXPLOSIVE_REPULSIVE_SIZE, ExplosionInteraction.BLOCK);
 		} else {
 			produceParticles();
 		}
@@ -79,7 +79,7 @@ public class BlastRepulsive extends Blast implements IHasCustomRender {
 			deltaX = deltaX / deltaDistance;
 			deltaY = deltaY / deltaDistance;
 			deltaZ = deltaZ / deltaDistance;
-			double d11 = Constants.EXPLOSIVE_ATTRACTIVE_REPULSIVE_PUSH_STRENGTH;
+			double d11 = BallistixConstants.EXPLOSIVE_ATTRACTIVE_REPULSIVE_PUSH_STRENGTH;
 			entity.setDeltaMovement(entity.getDeltaMovement().add(deltaX * d11, deltaY * d11, deltaZ * d11));
 			if (entity instanceof ServerPlayer serverplayerentity) {
 				serverplayerentity.connection.send(new ClientboundExplodePacket(x, y, z, size, new ArrayList<>(), new Vec3(deltaX * d11, deltaY * d11, deltaZ * d11), Explosion.BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE));

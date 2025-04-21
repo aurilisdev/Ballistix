@@ -3,10 +3,6 @@ package ballistix.client.render.entity;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import ballistix.common.entity.EntityRailgunRound;
-import electrodynamics.client.ClientRegister;
-import electrodynamics.prefab.utilities.RenderingUtils;
-import electrodynamics.prefab.utilities.math.Color;
-import electrodynamics.prefab.utilities.math.MathUtils;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.culling.Frustum;
@@ -16,6 +12,10 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.phys.AABB;
+import voltaic.client.VoltaicClientRegister;
+import voltaic.prefab.utilities.RenderingUtils;
+import voltaic.prefab.utilities.math.Color;
+import voltaic.prefab.utilities.math.MathUtils;
 
 public class RenderRailgunRound extends EntityRenderer<EntityRailgunRound> {
 
@@ -34,7 +34,7 @@ public class RenderRailgunRound extends EntityRenderer<EntityRailgunRound> {
             return;
         }
 
-        TextureAtlasSprite sprite = ClientRegister.getSprite(ClientRegister.TEXTURE_WHITE);
+        TextureAtlasSprite sprite = VoltaicClientRegister.whiteSprite();
 
         matrixStackIn.pushPose();
 

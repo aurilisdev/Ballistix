@@ -5,10 +5,8 @@ import org.joml.Matrix4f;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
-import ballistix.client.ClientRegister;
+import ballistix.client.BallistixClientRegister;
 import ballistix.common.entity.EntityShrapnel;
-import electrodynamics.prefab.utilities.math.Color;
-import electrodynamics.prefab.utilities.math.MathUtils;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -16,6 +14,8 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import voltaic.prefab.utilities.math.Color;
+import voltaic.prefab.utilities.math.MathUtils;
 
 public class RenderShrapnel extends EntityRenderer<EntityShrapnel> {
 	public RenderShrapnel(Context renderManagerIn) {
@@ -64,6 +64,6 @@ public class RenderShrapnel extends EntityRenderer<EntityShrapnel> {
 
 	@Override
 	public ResourceLocation getTextureLocation(EntityShrapnel entity) {
-		return ClientRegister.TEXTURE_SHRAPNEL;
+		return BallistixClientRegister.TEXTURE_SHRAPNEL;
 	}
 }

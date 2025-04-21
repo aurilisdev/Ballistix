@@ -58,5 +58,17 @@
       "ballistix:radar"
     ],
     "subtitle": "subtitles.ballistix.radar"
+  },
+  "railgunkinetic": {
+    "sounds": [
+      "ballistix:railgunkinetic"
+    ],
+    "subtitle": "subtitles.ballistix.railgunkinetic"
+  },
+  "rodhittingground": {
+    "sounds": [
+      "ballistix:rodhittingground"
+    ],
+    "subtitle": "subtitles.ballistix.rodhittingground"
   }
 }

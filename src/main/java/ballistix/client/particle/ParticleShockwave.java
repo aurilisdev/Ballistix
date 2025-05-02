@@ -64,7 +64,7 @@ public class ParticleShockwave extends TextureSheetParticle {
 	public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
 		super.render(buffer, renderInfo, partialTicks);
 
-		float lifeProgress = (float) (this.age + partialTicks) / (float) this.lifetime;
+		float lifeProgress = (this.age + partialTicks) / this.lifetime;
 		if (lifeProgress <= 1 && lifeProgress >= 0) {
 			// Gradually shrink and expand the particle
 			this.quadSize = startQuadSize * Mth.cos((float) (Mth.PI * 2 * Math.pow((lifeProgress - 0.5), 2)));

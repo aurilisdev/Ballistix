@@ -74,7 +74,7 @@ public class ThreadDynamicRaySideBlast extends Thread {
 				float currentY = position.getY() + 0.5F;
 				float currentZ = position.getZ() + 0.5F;
 
-				float len = Mth.sqrt((float) (x * x + y * y + z * z)); // from net.minecraft.util.Mth
+				float len = Mth.sqrt(x * x + y * y + z * z); // from net.minecraft.util.Mth
 				float invLen = (len == 0.0F ? 0.0F : 1.0F / len);
 				float dx = x * invLen;
 				float dy = y * invLen;

@@ -62,7 +62,6 @@ public class EntityBlast extends Entity {
         builder.define(SHOULDSTARTCUSTOMRENDER, false);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void tick() {
         tickCount++;

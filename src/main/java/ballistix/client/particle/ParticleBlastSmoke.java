@@ -108,7 +108,7 @@ public class ParticleBlastSmoke extends TextureSheetParticle {
 
 	@Override
 	public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
-		float lifeProgress = (float) (this.age + partialTicks) / (float) this.lifetime;
+		float lifeProgress = (this.age + partialTicks) / this.lifetime;
 		if (lifeProgress <= 1 && lifeProgress >= 0) {
 			if (burning) {
 

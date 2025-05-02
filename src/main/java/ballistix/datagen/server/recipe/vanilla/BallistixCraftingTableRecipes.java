@@ -881,8 +881,7 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
 
 	}
 
-	private void addExplosives(RecipeOutput output) {
-
+	private static void addExplosives(RecipeOutput output) {
 		ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.antimatter), 1)
 				//
 				.addPattern("CCC")
@@ -1320,7 +1319,7 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
 
 	}
 
-	private void addGear(RecipeOutput output) {
+	private static void addGear(RecipeOutput output) {
 
 		ShapedCraftingRecipeBuilder.start(BallistixItems.ITEM_DEFUSER.get(), 1)
 				//

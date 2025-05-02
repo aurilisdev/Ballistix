@@ -79,7 +79,7 @@ public class ParticleMissileSmoke extends TextureSheetParticle {
 	@Override
 	public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
 		super.render(buffer, renderInfo, partialTicks);
-		float lifeProgress = (float) (this.age + partialTicks) / (float) this.lifetime;
+		float lifeProgress = (this.age + partialTicks) / this.lifetime;
 		if (lifeProgress <= 1 && lifeProgress >= 0) {
 			int burningTime = lifetime / 3;
 			int orangeTime = (int) (burningTime / 1.3);

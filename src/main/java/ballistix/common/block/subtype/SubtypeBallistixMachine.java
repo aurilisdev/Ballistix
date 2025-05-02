@@ -309,7 +309,6 @@ public enum SubtypeBallistixMachine implements ISubtype, IMachine {
 			//
 			).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
 			VoxelShape topLeftShape = Stream.of(Block.box(2, 0, 6, 3, 7, 10), Block.box(1, 0, 7, 2, 7, 9), Block.box(0, 0.025, 7, 1, 1.975, 9), Block.box(2, 7, 7, 3, 16, 9)).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
-			;
 			VoxelShape rightShape = Stream.of(
 					//
 					Block.box(12, 0, 3, 16, 1, 13),

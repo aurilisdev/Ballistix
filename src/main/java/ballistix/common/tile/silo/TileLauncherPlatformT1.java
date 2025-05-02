@@ -222,9 +222,8 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
             inv.removeItem(EXPLOSIVE_SLOT, 1);
 
             return true;
-        } else {
-            return false;
         }
+	return false;
 
 
     }

@@ -124,10 +124,8 @@ public class ScreenLauncherControlPanelT2 extends GenericScreen<ContainerLaunche
 
 	}
 
-	private void updateSiloCoords(int x, int y, int z, TileLauncherControlPanelT2 silo) {
-
+	private static void updateSiloCoords(int x, int y, int z, TileLauncherControlPanelT2 silo) {
 		silo.target.setValue(new BlockPos(x, y, z));
-
 	}
 
 	private void setX(String val) {

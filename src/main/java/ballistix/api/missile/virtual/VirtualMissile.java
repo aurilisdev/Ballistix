@@ -4,6 +4,8 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import ballistix.api.silo.ILauncherPlatform;
+import ballistix.api.silo.ILauncherSupportFrame;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -19,9 +21,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import voltaic.api.multiblock.subnodebased.TileMultiSubnode;
 import voltaic.prefab.utilities.BlockEntityUtils;
 
 public class VirtualMissile {
@@ -126,7 +130,7 @@ public class VirtualMissile {
 
         BlockPos collisionPos = projectMovementForCollision(level);
 
-        if ((collisionPos != null || (targetData.usingAirburst && targetData.pastHalfwayPoint && position.y <= targetData.target.getY())) && (payloadData.isItem || tickCount > 20) || position.y <= level.getMinBuildHeight()) {
+        if ((collisionPos != null || (targetData.usingAirburst && targetData.pastHalfwayPoint && position.y <= targetData.target.getY())) && (payloadData.isItem || !isInValidBlockstate(collisionPos, level)) || position.y <= level.getMinBuildHeight()) {
 
             SubtypeBlast explosive = SubtypeBlast.values()[payloadData.blastOrdinal];
 
@@ -279,6 +283,25 @@ public class VirtualMissile {
 
     }
 
+    private boolean isInValidBlockstate(BlockPos pos, ServerLevel world) {
+
+        BlockEntity blockentity = world.getBlockEntity(pos);
+
+        if(blockentity instanceof ILauncherPlatform || blockentity instanceof ILauncherSupportFrame) {
+            return true;
+        }
+
+        if(blockentity instanceof TileMultiSubnode) {
+            TileMultiSubnode subnode = (TileMultiSubnode) blockentity;
+            BlockEntity owner = world.getBlockEntity(subnode.parentPos.getValue());
+
+            return owner instanceof ILauncherPlatform || owner instanceof ILauncherSupportFrame;
+        }
+
+        return false;
+
+    }
+
     public BlockPos blockPosition() {
         return new BlockPos((int) Math.floor(position.x), (int) Math.floor(position.y), (int) Math.floor(position.z));
     }
@@ -315,7 +338,7 @@ public class VirtualMissile {
             pos = new BlockPos((int) Math.floor(currPos.x), (int) Math.floor(currPos.y), (int) Math.floor(currPos.z));
             state = world.getBlockState(pos);
 
-            if (state.getCollisionShape(world, blockPosition()).isEmpty()) {
+            if (state.getCollisionShape(world, blockPosition()).isEmpty() || isInValidBlockstate(pos, world)) {
                 currPos.add(deltaMovement);
                 continue;
             }

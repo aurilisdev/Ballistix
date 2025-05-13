@@ -2,9 +2,12 @@ package ballistix.api.missile.virtual;
 
 import java.util.UUID;
 
+import ballistix.api.silo.ILauncherPlatform;
+import ballistix.api.silo.ILauncherSupportFrame;
 import ballistix.client.particle.ParticleOptionsMissileSmoke;
 import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tile.radar.TileFireControlRadar;
+import ballistix.common.tile.turret.GenericTileTurret;
 import ballistix.registers.BallistixSounds;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
@@ -25,10 +28,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import voltaic.Voltaic;
+import voltaic.api.multiblock.subnodebased.TileMultiSubnode;
 import voltaic.prefab.utilities.BlockEntityUtils;
 
 import javax.annotation.Nullable;
@@ -69,7 +74,7 @@ public abstract class VirtualProjectile {
 
         tickCount++;
 
-        if (tickCount > 30 && deltaMovement.length() <= 0) {
+        if (deltaMovement.length() <= 0) {
             hasExploded = true;
             return;
         }
@@ -86,10 +91,10 @@ public abstract class VirtualProjectile {
 
         BlockPos projected = projectMovementForCollision(level);
 
-        if(projected != null) {
+        if(projected != null && !isInValidBlockstate(projected, level)) {
             BlockState state = level.getBlockState(projected);
 
-            if (!state.getCollisionShape(level, projected).isEmpty() && tickCount > getMinTicksForCollisionCheck(level)) {
+            if (!state.getCollisionShape(level, projected).isEmpty()) {
                 onHitBlock(level, projected);
                 hasExploded = true;
                 return;
@@ -152,6 +157,14 @@ public abstract class VirtualProjectile {
         }
     }
 
+    protected boolean isInValidBlockstate(BlockPos pos, ServerLevel world) {
+
+        BlockEntity blockentity = world.getBlockEntity(pos);
+
+        return blockentity instanceof GenericTileTurret;
+
+    }
+
     public void updatePosition(ServerLevel level) {
         position = new Vec3(position.x + deltaMovement.x * speed, position.y + deltaMovement.y * speed, position.z + deltaMovement.z * speed);
     }
@@ -165,8 +178,6 @@ public abstract class VirtualProjectile {
     public void onReachMaxDistance(Level world) {
 
     }
-
-    public abstract int getMinTicksForCollisionCheck(Level world);
 
     public abstract AABB getBoundingBox();
 
@@ -200,7 +211,7 @@ public abstract class VirtualProjectile {
             pos = new BlockPos((int) Math.floor(currPos.x), (int) Math.floor(currPos.y), (int) Math.floor(currPos.z));
             state = world.getBlockState(pos);
 
-            if (state.getCollisionShape(world, blockPosition()).isEmpty()) {
+            if (state.getCollisionShape(world, blockPosition()).isEmpty() || isInValidBlockstate(pos, world)) {
                 currPos.add(deltaMovement);
                 continue;
             }
@@ -251,11 +262,6 @@ public abstract class VirtualProjectile {
         @Override
         public void onHitBlock(Level world, BlockPos block) {
 
-        }
-
-        @Override
-        public int getMinTicksForCollisionCheck(Level world) {
-            return 5;
         }
 
         @Override
@@ -316,11 +322,6 @@ public abstract class VirtualProjectile {
         }
 
         @Override
-        public int getMinTicksForCollisionCheck(Level world) {
-            return 5;
-        }
-
-        @Override
         public AABB getBoundingBox() {
             return new AABB(position.x - 0.05F, position.y, position.z - 0.05F, position.x + 0.05F, position.y + 0.1F, position.z + 0.05F);
         }
@@ -368,6 +369,28 @@ public abstract class VirtualProjectile {
         }
 
         @Override
+        protected boolean isInValidBlockstate(BlockPos pos, ServerLevel world) {
+            if(variant == 0) {
+                return super.isInValidBlockstate(pos, world);
+            }
+
+            BlockEntity blockentity = world.getBlockEntity(pos);
+
+            if(blockentity instanceof ILauncherPlatform || blockentity instanceof ILauncherSupportFrame) {
+                return true;
+            }
+
+            if(blockentity instanceof TileMultiSubnode) {
+                TileMultiSubnode subnode = (TileMultiSubnode) blockentity;
+                BlockEntity owner = world.getBlockEntity(subnode.parentPos.getValue());
+
+                return owner instanceof ILauncherPlatform || owner instanceof ILauncherSupportFrame;
+            }
+
+            return false;
+        }
+
+        @Override
         public void onHitMissile(Level world, VirtualMissile missile) {
             if(Voltaic.RANDOM.nextDouble() < (variant == 0 ? BallistixConstants.SAM_CHANCE_TO_DESTROY : BallistixConstants.ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY)) {
                 MissileManager.removeMissile(world.dimension(), missile.getId());
@@ -378,11 +401,6 @@ public abstract class VirtualProjectile {
         @Override
         public void onReachMaxDistance(Level world) {
             world.explode(null, null, null, position.x, position.y, position.z,2.0F, false, Level.ExplosionInteraction.BLOCK, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
-        }
-
-        @Override
-        public int getMinTicksForCollisionCheck(Level world) {
-            return variant == 0 ? 5 : 20;
         }
 
         @Override

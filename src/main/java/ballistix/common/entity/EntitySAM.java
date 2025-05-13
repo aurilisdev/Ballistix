@@ -4,11 +4,13 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import ballistix.client.particle.ParticleOptionsMissileSmoke;
 import ballistix.common.settings.BallistixConstants;
 
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualProjectile;
 import ballistix.registers.BallistixEntities;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -23,6 +25,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import voltaic.Voltaic;
 
 //want to keep this separate from the missiles since this thing has one job and one job only :D
 public class EntitySAM extends Entity {
@@ -105,6 +108,23 @@ public class EntitySAM extends Entity {
 
         if(speed < topSpeed) {
             speed += variant == 0 ? BallistixConstants.SAM_ACCELERATION : BallistixConstants.ANTIBALLISTICMISSILE_ACCELERATION;
+        }
+
+        if (isServer || speed >= 3.0F) {
+            return;
+        }
+
+        float x = (float) (getX());
+        float y = (float) (getY());
+        float z = (float) (getZ());
+        float motionX = (float) (speed * getDeltaMovement().x);
+        float motionY = (float) (speed * getDeltaMovement().y);
+        float motionZ = (float) (speed * getDeltaMovement().z);
+        x -= motionX;
+        y -= motionY;
+        z -= motionZ;
+        for (int i = 0; i < (variant == 0 ? 2 : 4); i++) {
+            Minecraft.getInstance().particleEngine.createParticle(new ParticleOptionsMissileSmoke().setParameters(1, 1, 1, variant == 0 ? 0.2F : 0.5f, 50, true), x, y, z, -motionX * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()), -motionY * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()), -motionZ * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()));
         }
 
     }

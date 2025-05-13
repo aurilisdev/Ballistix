@@ -132,17 +132,15 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
             }
         }
         if (threadSimple.isComplete && callCount % 2 == 0) {
-            if (ModList.get().isLoaded(Ballistix.NUCLEAR_SCIENCE_ID)) {
-                if (ticksSinceBlastStart == 1) attackEntities((float) BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE * 2, ex);
+            if (ticksSinceBlastStart == 1) attackEntities((float) BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE * 2, ex);
 
-                boolean add = switch (griefPreventionMethod) {
-                    case GRIEF_DEFENDER -> GriefDefenderHandler.shouldAddParticle(position);
-                    default -> true;
-                };
+            boolean add = switch (griefPreventionMethod) {
+                case GRIEF_DEFENDER -> GriefDefenderHandler.shouldAddParticle(position);
+                default -> true;
+            };
 
-                if (add) {
-                    RadiationSystem.addRadiationSource(world, new SimpleRadiationSource(150000.0, 2, (int) (BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE), false, 86400 * 20, position, false));
-                }
+            if (add) {
+                RadiationSystem.addRadiationSource(world, new SimpleRadiationSource(150000.0, 2, (int) (BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE), false, 86400 * 20, position, false));
             }
             if (perticksimple == -1) {
                 cachedIterator = threadSimple.results.iterator();

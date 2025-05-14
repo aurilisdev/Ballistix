@@ -1,11 +1,11 @@
 package ballistix.prefab.screen;
 
-import electrodynamics.api.screen.ITexture;
-import electrodynamics.prefab.screen.component.editbox.ScreenComponentEditBox;
-import electrodynamics.prefab.screen.component.types.ScreenComponentGeneric;
-import electrodynamics.prefab.utilities.math.Color;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import voltaic.api.screen.ITexture;
+import voltaic.prefab.screen.component.ScreenComponentGeneric;
+import voltaic.prefab.screen.component.editbox.ScreenComponentEditBox;
+import voltaic.prefab.utilities.math.Color;
 
 public class ScreenComponentWhitelistedPlayer extends ScreenComponentGeneric {
 
@@ -29,7 +29,7 @@ public class ScreenComponentWhitelistedPlayer extends ScreenComponentGeneric {
             return;
         }
 
-        graphics.drawString(gui.getFontRenderer(), Component.literal(playerName), guiWidth + xLocation + 5, guiHeight + yLocation + 7, Color.WHITE.color(), false);
+        graphics.drawString(gui.getFontRenderer(), Component.literal(playerName), guiWidth + xLocation + 5, guiHeight + yLocation + 5, Color.WHITE.color(), false);
 
     }
 

@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "electrodynamics"
+    }
+  ],
+  "key": {
+    "C": {
+      "tag": "forge:circuits/elite"
+    },
+    "P": {
+      "item": "ballistix:launcherplatformtier2"
+    },
+    "S": {
+      "tag": "forge:plates/steel"
+    }
+  },
+  "pattern": [
+    "S S",
+    "SCS",
+    "SPS"
+  ],
+  "result": {
+    "item": "ballistix:launcherplatformtier3"
+  },
+  "show_notification": false
+}

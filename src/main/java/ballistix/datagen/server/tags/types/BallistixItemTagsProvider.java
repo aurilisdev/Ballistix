@@ -2,7 +2,7 @@ package ballistix.datagen.server.tags.types;
 
 import java.util.concurrent.CompletableFuture;
 
-import ballistix.References;
+import ballistix.Ballistix;
 import ballistix.common.tags.BallistixTags;
 import ballistix.registers.BallistixItems;
 import net.minecraft.core.HolderLookup;
@@ -15,7 +15,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 public class BallistixItemTagsProvider extends ItemTagsProvider {
 
 	public BallistixItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, BlockTagsProvider provider, ExistingFileHelper existingFileHelper) {
-		super(output, lookupProvider, provider.contentsGetter(), References.ID, existingFileHelper);
+		super(output, lookupProvider, provider.contentsGetter(), Ballistix.ID, existingFileHelper);
 	}
 
 	@Override

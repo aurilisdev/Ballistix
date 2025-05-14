@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "electrodynamics"
+      }
+    }
+  ],
+  "key": {
+    "C": {
+      "tag": "forge:ingots/gold"
+    },
+    "G": {
+      "tag": "forge:gunpowder"
+    },
+    "M": {
+      "item": "ballistix:missiletier1"
+    },
+    "P": {
+      "tag": "forge:ingots/iron"
+    }
+  },
+  "pattern": [
+    " C ",
+    "PGP",
+    "PMP"
+  ],
+  "result": {
+    "item": "ballistix:missiletier2"
+  },
+  "show_notification": false
+}

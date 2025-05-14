@@ -4,8 +4,8 @@ import ballistix.api.entity.IDefusable;
 import ballistix.common.blast.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.item.ItemGrenade.SubtypeGrenade;
-import ballistix.registers.BallistixBlocks;
 import ballistix.registers.BallistixEntities;
+import ballistix.registers.BallistixItems;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -22,6 +22,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkHooks;
 
 public class EntityGrenade extends ThrowableProjectile implements IDefusable {
+
 	private static final EntityDataAccessor<Integer> FUSE = SynchedEntityData.defineId(EntityGrenade.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(EntityGrenade.class, EntityDataSerializers.INT);
 	private int grenadeOrdinal = -1;
@@ -44,18 +45,13 @@ public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 		return grenadeOrdinal == -1 ? null : SubtypeGrenade.values()[grenadeOrdinal];
 	}
 
-	@Override
-	protected void defineSynchedData() {
-		entityData.define(FUSE, 80);
-		entityData.define(TYPE, -1);
-	}
 
 	@Override
 	public void defuse() {
 		remove(RemovalReason.DISCARDED);
 		if (grenadeOrdinal != -1) {
 			SubtypeBlast explosive = SubtypeGrenade.values()[grenadeOrdinal].explosiveType;
-			ItemEntity item = new ItemEntity(level(), getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(BallistixBlocks.SUBTYPEBLOCKREGISTER_MAPPINGS.get(explosive).get()));
+			ItemEntity item = new ItemEntity(level(), getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(BallistixItems.ITEMS_EXPLOSIVE.getValue(explosive)));
 			level().addFreshEntity(item);
 		}
 	}
@@ -63,6 +59,12 @@ public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 	@Override
 	public boolean isPickable() {
 		return !isRemoved();
+	}
+
+	@Override
+	protected void defineSynchedData() {
+		entityData.define(FUSE, 80);
+		entityData.define(TYPE, -1);
 	}
 
 	@Override
@@ -112,9 +114,10 @@ public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 		fuse = compound.getInt("Fuse");
 		grenadeOrdinal = compound.getInt("type");
 	}
-
+	
 	@Override
 	public Packet<ClientGamePacketListener> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
+
 }

@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "electrodynamics"
+    }
+  ],
+  "key": {
+    "C": {
+      "tag": "forge:circuits/basic"
+    },
+    "M": {
+      "item": "electrodynamics:motor"
+    },
+    "P": {
+      "tag": "forge:plates/steel"
+    },
+    "S": {
+      "item": "ballistix:launchercontrolpaneltier1"
+    }
+  },
+  "pattern": [
+    " S ",
+    "PMP",
+    "PCP"
+  ],
+  "result": {
+    "item": "ballistix:samturret"
+  },
+  "show_notification": false
+}

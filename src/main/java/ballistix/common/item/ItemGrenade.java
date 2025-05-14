@@ -3,8 +3,6 @@ package ballistix.common.item;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityGrenade;
 import ballistix.registers.BallistixCreativeTabs;
-import electrodynamics.api.ISubtype;
-import electrodynamics.common.item.ItemElectrodynamics;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -16,13 +14,15 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import voltaic.api.ISubtype;
+import voltaic.common.item.ItemVoltaic;
 
-public class ItemGrenade extends ItemElectrodynamics {
+public class ItemGrenade extends ItemVoltaic {
 
 	private SubtypeGrenade grenade;
 
 	public ItemGrenade(SubtypeGrenade grenade) {
-		super(new Item.Properties().stacksTo(16), () -> BallistixCreativeTabs.MAIN.get());
+		super(new Item.Properties().stacksTo(16), BallistixCreativeTabs.MAIN);
 		this.grenade = grenade;
 	}
 

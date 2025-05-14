@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "electrodynamics"
+    }
+  ],
+  "key": {
+    "C": {
+      "tag": "forge:circuits/advanced"
+    },
+    "G": {
+      "item": "ballistix:radargun"
+    },
+    "M": {
+      "item": "electrodynamics:motor"
+    },
+    "P": {
+      "tag": "forge:plates/steel"
+    },
+    "R": {
+      "item": "ballistix:radar"
+    }
+  },
+  "pattern": [
+    " G ",
+    "CRC",
+    "PMP"
+  ],
+  "result": {
+    "item": "ballistix:firecontrolradar"
+  },
+  "show_notification": false
+}

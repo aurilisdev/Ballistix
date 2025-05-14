@@ -1,17 +1,19 @@
 package ballistix.prefab.screen;
 
+import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.inventory.container.ContainerESMTower;
 import ballistix.common.tile.TileESMTower;
-import ballistix.registers.BallistixBlocks;
-import electrodynamics.api.screen.ITexture;
-import electrodynamics.prefab.screen.GenericScreen;
-import electrodynamics.prefab.screen.component.editbox.ScreenComponentEditBox;
-import electrodynamics.prefab.screen.component.types.ScreenComponentGeneric;
+import ballistix.registers.BallistixItems;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import voltaic.api.screen.ITexture;
+import voltaic.prefab.screen.GenericScreen;
+import voltaic.prefab.screen.component.ScreenComponentGeneric;
+import voltaic.prefab.screen.component.editbox.ScreenComponentEditBox;
+import voltaic.prefab.utilities.math.Color;
 
 public class ScreenComponentFireControlRadar extends ScreenComponentGeneric {
 
@@ -30,7 +32,7 @@ public class ScreenComponentFireControlRadar extends ScreenComponentGeneric {
 
         GenericScreen<ContainerESMTower> screen = (GenericScreen<ContainerESMTower>) gui;
 
-        TileESMTower tile = screen.getMenu().getHostFromIntArray();
+        TileESMTower tile = screen.getMenu().getSafeHost();
 
         if (tile == null) {
             return;
@@ -44,7 +46,7 @@ public class ScreenComponentFireControlRadar extends ScreenComponentGeneric {
             return;
         }
 
-        graphics.renderItem(new ItemStack(BallistixBlocks.blockFireControlRadar), guiWidth + xLocation + 2, guiHeight + yLocation + 4);
+        graphics.renderItem(new ItemStack(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.firecontrolradar)), guiWidth + xLocation + 2, guiHeight + yLocation + 4);
 
         Font font = screen.getFontRenderer();
 
@@ -70,7 +72,7 @@ public class ScreenComponentFireControlRadar extends ScreenComponentGeneric {
 
         graphics.pose().scale(scale, scale, 0);
 
-        graphics.drawString(font, text, 0, 0, ScreenComponentCustomRender.TEXT_GRAY.color(), false);
+        graphics.drawString(font, text, 0, 0, Color.TEXT_GRAY.color(), false);
 
         graphics.pose().popPose();
 

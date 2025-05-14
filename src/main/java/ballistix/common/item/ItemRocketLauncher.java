@@ -4,13 +4,10 @@ import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.common.block.BlockExplosive;
 import ballistix.common.block.subtype.SubtypeMissile;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.registers.BallistixCreativeTabs;
 import ballistix.registers.BallistixItems;
 import ballistix.registers.BallistixSounds;
-import electrodynamics.common.blockitem.types.BlockItemDescriptable;
-import electrodynamics.common.item.ItemElectrodynamics;
-import electrodynamics.prefab.utilities.NBTUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -24,24 +21,34 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import voltaic.common.blockitem.BlockItemDescriptable;
+import voltaic.common.item.ItemVoltaic;
+import voltaic.prefab.utilities.NBTUtils;
 
-public class ItemRocketLauncher extends ItemElectrodynamics {
+public class ItemRocketLauncher extends ItemVoltaic {
 
-	public ItemRocketLauncher() {
-		super(new Item.Properties().stacksTo(1), () -> BallistixCreativeTabs.MAIN.get());
-	}
+    public ItemRocketLauncher() {
+        super(new Item.Properties().stacksTo(1), BallistixCreativeTabs.MAIN);
+    }
 
-	@Override
-	public UseAnim getUseAnimation(ItemStack stack) {
-		return UseAnim.NONE;
-	}
+    @Override
+    public UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.NONE;
+    }
 
-	@Override
-	public int getUseDuration(ItemStack stack) {
-		return Integer.MAX_VALUE;
-	}
-	
-	@Override
+    @Override
+    public int getUseDuration(ItemStack stack) {
+        return Integer.MAX_VALUE;
+    }
+
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+        ItemStack itemstack = playerIn.getItemInHand(handIn);
+        playerIn.startUsingItem(handIn);
+        return new InteractionResultHolder<>(InteractionResult.PASS, itemstack);
+    }
+
+    @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
         return slotChanged;
     }
@@ -59,14 +66,7 @@ public class ItemRocketLauncher extends ItemElectrodynamics {
         }
     }
 
-	@Override
-	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-		ItemStack itemstack = playerIn.getItemInHand(handIn);
-		playerIn.startUsingItem(handIn);
-		return new InteractionResultHolder<>(InteractionResult.PASS, itemstack);
-	}
-
-	@Override
+    @Override
     public void releaseUsing(ItemStack stack, Level world, LivingEntity entityLiving, int timeLeft) {
 
         if (world.isClientSide || !(entityLiving instanceof Player)) {
@@ -79,7 +79,7 @@ public class ItemRocketLauncher extends ItemElectrodynamics {
 
         Player player = (Player) entityLiving;
 
-        stack.getOrCreateTag().putInt(NBTUtils.TIMER, Constants.ROCKET_LAUNCHER_COOLDOWN_TICKS);
+        if (!player.isCreative()) stack.getOrCreateTag().putInt(NBTUtils.TIMER, BallistixConstants.ROCKET_LAUNCHER_COOLDOWN_TICKS);
 
         int blastOrdinal = 0;
 
@@ -94,13 +94,13 @@ public class ItemRocketLauncher extends ItemElectrodynamics {
         for (ItemStack st : player.getInventory().items) {
             Item it = st.getItem();
             if (!hasExplosive && it instanceof BlockItemDescriptable bl) {
-                if (bl.getBlock() instanceof BlockExplosive exs) {
+                if (bl.getBlock() instanceof BlockExplosive exs && (player.isCreative() || exs.explosive.tier == 1)) {
                     blastOrdinal = exs.explosive.ordinal();
                     hasExplosive = true;
                     ex = st;
                 }
             }
-            if (!hasRange && it == BallistixItems.getItem(SubtypeMissile.closerange)) {
+            if (!hasRange && (it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier1) || (player.isCreative() && (it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier1) || it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier2) || it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier3))))) {
                 hasRange = true;
                 missile = st;
             }
@@ -117,7 +117,7 @@ public class ItemRocketLauncher extends ItemElectrodynamics {
                     //
                     new Vec3(entityLiving.getLookAngle().x, entityLiving.getLookAngle().y, entityLiving.getLookAngle().z),
                     //
-                    2.0F,
+                    1.333F,
                     //
                     true,
                     //
@@ -127,13 +127,13 @@ public class ItemRocketLauncher extends ItemElectrodynamics {
                     //
                     BlockPos.ZERO,
                     //
-                    0,
+                    missile.getItem() == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier2) ? 1 : missile.getItem() == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier3) ? 2 : 0,
                     //
                     blastOrdinal,
                     //
-                    false,
+                    0,
                     //
-                    0
+                    false
                     //
             );
 

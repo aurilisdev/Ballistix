@@ -2,10 +2,10 @@ package ballistix.client.render.entity;
 
 import java.util.Random;
 
+import ballistix.client.BallistixClientRegister;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import ballistix.common.entity.EntityMissile;
-import electrodynamics.prefab.utilities.math.MathUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -17,10 +17,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import voltaic.prefab.utilities.math.MathUtils;
 
-@OnlyIn(Dist.CLIENT)
 public class RenderMissile extends EntityRenderer<EntityMissile> {
 
 	public RenderMissile(Context renderManagerIn) {
@@ -31,6 +29,7 @@ public class RenderMissile extends EntityRenderer<EntityMissile> {
 
 	@Override
 	public void render(EntityMissile entity, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
+
 		int type = entity.missileType;
 		Level world = entity.level();
 
@@ -48,24 +47,23 @@ public class RenderMissile extends EntityRenderer<EntityMissile> {
 		matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(90 - entity.getXRot(), MathUtils.ZP));
 
 		BakedModel model;
+		if (type == 0) {
 
-		if(type == 0) {
-
-			model = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILECLOSERANGE);
-			matrixStackIn.translate(0, 0.75, 0);
-			matrixStackIn.scale(1.25f, 1.5f, 1.25f);
+			model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILETIER1);
+			matrixStackIn.translate(0, 0.82, 0);
+			matrixStackIn.scale(1f, 0.75f, 1f);
 
 		} else if (type == 1) {
 
-			model = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILEMEDIUMRANGE);
-			matrixStackIn.translate(0, 1.25, 0);
-			matrixStackIn.scale(1.5f, 2.5f, 1.5f);
+			model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILETIER2);
+			matrixStackIn.translate(0, 1.05f, 0);
+			matrixStackIn.scale(1f, 1f, 1f);
 
 		} else {
 
-			model = Minecraft.getInstance().getModelManager().getModel(ballistix.client.ClientRegister.MODEL_MISSILELONGRANGE);
-			matrixStackIn.translate(0, 0f, 0);
-			matrixStackIn.scale(2f, 4f, 2f);
+			model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILETIER3);
+			matrixStackIn.translate(0, 1.05f, 0);
+			matrixStackIn.scale(1f, 1.25f, 1f);
 
 		}
 

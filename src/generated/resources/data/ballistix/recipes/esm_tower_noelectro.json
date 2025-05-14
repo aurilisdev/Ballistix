@@ -1,0 +1,39 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "electrodynamics"
+      }
+    }
+  ],
+  "key": {
+    "A": {
+      "tag": "forge:gems/diamond"
+    },
+    "C": {
+      "tag": "forge:storage_blocks/iron"
+    },
+    "P": {
+      "item": "minecraft:iron_bars"
+    },
+    "R": {
+      "item": "ballistix:radar"
+    },
+    "W": {
+      "tag": "forge:ingots/gold"
+    }
+  },
+  "pattern": [
+    "AAA",
+    "WRW",
+    "PCP"
+  ],
+  "result": {
+    "item": "ballistix:esmtower"
+  },
+  "show_notification": false
+}

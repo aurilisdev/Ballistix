@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "electrodynamics"
+      }
+    }
+  ],
+  "key": {
+    "C": {
+      "tag": "forge:ingots/copper"
+    },
+    "M": {
+      "tag": "forge:storage_blocks/redstone"
+    },
+    "P": {
+      "tag": "forge:ingots/iron"
+    },
+    "S": {
+      "item": "ballistix:launchercontrolpaneltier1"
+    }
+  },
+  "pattern": [
+    " S ",
+    "PMP",
+    "PCP"
+  ],
+  "result": {
+    "item": "ballistix:samturret"
+  },
+  "show_notification": false
+}

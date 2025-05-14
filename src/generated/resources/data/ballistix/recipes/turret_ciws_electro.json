@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "electrodynamics"
+    }
+  ],
+  "key": {
+    "C": {
+      "tag": "forge:circuits/basic"
+    },
+    "M": {
+      "item": "electrodynamics:motor"
+    },
+    "P": {
+      "tag": "forge:plates/steel"
+    }
+  },
+  "pattern": [
+    "PPC",
+    " M ",
+    "PCP"
+  ],
+  "result": {
+    "item": "ballistix:ciwsturret"
+  },
+  "show_notification": false
+}

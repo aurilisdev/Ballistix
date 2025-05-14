@@ -1,0 +1,42 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "electrodynamics"
+      }
+    }
+  ],
+  "key": {
+    "C": {
+      "tag": "forge:gems/diamond"
+    },
+    "H": {
+      "tag": "forge:chests"
+    },
+    "M": {
+      "tag": "forge:storage_blocks/redstone"
+    },
+    "O": {
+      "tag": "forge:ingots/copper"
+    },
+    "P": {
+      "tag": "forge:ingots/iron"
+    },
+    "T": {
+      "tag": "forge:storage_blocks/copper"
+    }
+  },
+  "pattern": [
+    "OOH",
+    " MT",
+    "PCP"
+  ],
+  "result": {
+    "item": "ballistix:railgunturret"
+  },
+  "show_notification": false
+}

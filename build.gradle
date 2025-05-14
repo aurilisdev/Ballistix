@@ -98,7 +98,7 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
     compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
     runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
-
+	compileOnly group: 'com.griefdefender', name: 'api', version: '2.1.1-SNAPSHOT'
 }
 
 repositories {
@@ -113,6 +113,10 @@ repositories {
     	name = "ModMaven"
     	url = "https://modmaven.dev"
   	}
+  	maven {
+        name = 'griefdefender'
+        url = 'https://repo.glaremasters.me/repository/bloodshot'
+    }
 
 }
 

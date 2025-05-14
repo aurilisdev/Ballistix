@@ -6,12 +6,11 @@ import javax.annotation.Nullable;
 
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualMissile;
+import ballistix.client.particle.ParticleOptionsMissileSmoke;
 import ballistix.registers.BallistixEntities;
-import electrodynamics.Electrodynamics;
-import electrodynamics.common.tile.machines.quarry.TileQuarry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.protocol.Packet;
@@ -27,9 +26,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
+import voltaic.Voltaic;
+import voltaic.prefab.utilities.BlockEntityUtils;
 
 public class EntityMissile extends Entity {
 
@@ -47,7 +47,7 @@ public class EntityMissile extends Entity {
 	public UUID id;
 	public boolean isItem = false;
 	public boolean isExploding = false;
-	public BlockPos target = TileQuarry.OUT_OF_REACH;
+	public BlockPos target = BlockEntityUtils.OUT_OF_REACH;
 	public float startX;
 	public float startZ;
 
@@ -62,18 +62,13 @@ public class EntityMissile extends Entity {
 
 	@Override
 	protected void defineSynchedData() {
-		entityData.define(TARGET, TileQuarry.OUT_OF_REACH);
+		entityData.define(TARGET, BlockEntityUtils.OUT_OF_REACH);
 		entityData.define(MISSILE_TYPE, -1);
 		entityData.define(START_X, 0.0F);
 		entityData.define(START_Z, 0.0F);
 		entityData.define(SPEED, 0.0F);
 		entityData.define(IS_ITEM, true);
 		entityData.define(CURRENTLYEXPLODING, false);
-	}
-
-	@Override
-	public AABB getBoundingBoxForCulling() {
-		return super.getBoundingBoxForCulling().expandTowards(20, 20, 20);
 	}
 
 	@Override
@@ -233,7 +228,7 @@ public class EntityMissile extends Entity {
 
 		setPos(vec);
 
-		if (!isItem && !target.equals(TileQuarry.OUT_OF_REACH) && speed < 3.0F) {
+		if (!isItem && !target.equals(BlockEntityUtils.OUT_OF_REACH) && speed < 3.0F) {
 			speed += 0.02F;
 		}
 
@@ -241,31 +236,24 @@ public class EntityMissile extends Entity {
 			return;
 		}
 
-		// exhaust only when missile is accelerating
-
-		float widthOver2 = getDimensions(getPose()).width / 2.0F;
-
-		for (int i = 0; i < 5; i++) {
-
-			float x = (float) (getX() - widthOver2 + Electrodynamics.RANDOM.nextFloat(widthOver2));
-			float y = (float) (getY() - Electrodynamics.RANDOM.nextFloat(0.5F));
-			float z = (float) (getZ() - widthOver2 + Electrodynamics.RANDOM.nextFloat(widthOver2));
-
-			level.addParticle(ParticleTypes.LARGE_SMOKE, x, y, z, -speed * (getDeltaMovement().x + Electrodynamics.RANDOM.nextFloat()), -speed * (getDeltaMovement().y - 0.075f + Electrodynamics.RANDOM.nextFloat()), -speed * (getDeltaMovement().z + Electrodynamics.RANDOM.nextFloat()));
-
-		}
-
-		float motionX = (float) (-speed * getDeltaMovement().x);
-		float motionY = (float) (-speed * getDeltaMovement().y);
-		float motionZ = (float) (-speed * getDeltaMovement().z);
+		float x = (float) (getX());
+		float y = (float) (getY());
+		float z = (float) (getZ());
+		float motionX = (float) (speed * getDeltaMovement().x);
+		float motionY = (float) (speed * getDeltaMovement().y);
+		float motionZ = (float) (speed * getDeltaMovement().z);
+		x -= motionX;
+		y -= motionY;
+		z -= motionZ;
 		for (int i = 0; i < 4; i++) {
-			level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, false, this.getX(), this.getY(), this.getZ(), random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
+			Minecraft.getInstance().particleEngine.createParticle(new ParticleOptionsMissileSmoke().setParameters(1, 1, 1, missileType == 1 ? 0.3f : missileType == 2 ? 0.5f : 0.2f, 50, true), x, y, z, -motionX * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()), -motionY * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()), -motionZ * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()));
 		}
 
-		for (int i = 0; i < 4; i++) {
-			level.addParticle(ParticleTypes.CLOUD, false, this.getX(), this.getY(), this.getZ(), random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
-		}
+	}
 
+	@Override
+	protected boolean canRide(Entity entityIn) {
+		return true;
 	}
 
 	@Override
@@ -325,9 +313,10 @@ public class EntityMissile extends Entity {
 	public boolean isAlwaysTicking() {
 		return true;
 	}
-
+	
 	@Override
 	public Packet<ClientGamePacketListener> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
+
 }

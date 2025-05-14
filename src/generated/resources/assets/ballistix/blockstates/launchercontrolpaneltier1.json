@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "ballistix:block/launchercontrolpaneltier1",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "ballistix:block/launchercontrolpaneltier1"
+    },
+    "facing=south": {
+      "model": "ballistix:block/launchercontrolpaneltier1",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "ballistix:block/launchercontrolpaneltier1",
+      "y": 270
+    }
+  }
+}

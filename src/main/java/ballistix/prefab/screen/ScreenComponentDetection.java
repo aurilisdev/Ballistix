@@ -4,17 +4,17 @@ import ballistix.api.radar.IDetected;
 import ballistix.common.inventory.container.ContainerSearchRadar;
 import ballistix.common.tile.radar.TileSearchRadar;
 import ballistix.prefab.utils.BallistixTextUtils;
-import electrodynamics.api.screen.ITexture;
-import electrodynamics.prefab.screen.GenericScreen;
-import electrodynamics.prefab.screen.component.editbox.ScreenComponentEditBox;
-import electrodynamics.prefab.screen.component.types.ScreenComponentGeneric;
-import electrodynamics.prefab.utilities.math.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import voltaic.api.screen.ITexture;
+import voltaic.prefab.screen.GenericScreen;
+import voltaic.prefab.screen.component.ScreenComponentGeneric;
+import voltaic.prefab.screen.component.editbox.ScreenComponentEditBox;
+import voltaic.prefab.utilities.math.Color;
 
 public class ScreenComponentDetection extends ScreenComponentGeneric {
 
@@ -33,7 +33,7 @@ public class ScreenComponentDetection extends ScreenComponentGeneric {
 
         GenericScreen<ContainerSearchRadar> screen = (GenericScreen<ContainerSearchRadar>) gui;
 
-        TileSearchRadar tile = screen.getMenu().getHostFromIntArray();
+        TileSearchRadar tile = screen.getMenu().getSafeHost();
 
         if (tile == null) {
             return;
@@ -73,7 +73,7 @@ public class ScreenComponentDetection extends ScreenComponentGeneric {
 
         graphics.pose().scale(scale, scale, 0);
 
-        graphics.drawString(font, text, 0, 0, ScreenComponentCustomRender.TEXT_GRAY.color(), false);
+        graphics.drawString(font, text, 0, 0, Color.TEXT_GRAY.color(), false);
 
         graphics.pose().popPose();
 
@@ -112,7 +112,7 @@ public class ScreenComponentDetection extends ScreenComponentGeneric {
 
             graphics.pose().scale(scale, scale, 0);
 
-            graphics.drawString(font, text, 0, 0, ScreenComponentCustomRender.TEXT_GRAY.color(), false);
+            graphics.drawString(font, text, 0, 0, Color.TEXT_GRAY.color(), false);
 
             graphics.pose().popPose();
 

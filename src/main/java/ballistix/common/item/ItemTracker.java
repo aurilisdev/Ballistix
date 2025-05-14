@@ -6,71 +6,69 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
-import javax.annotation.Nullable;
+import ballistix.Ballistix;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import ballistix.References;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixCreativeTabs;
-import electrodynamics.prefab.item.ElectricItemProperties;
-import electrodynamics.prefab.item.ItemElectric;
-import electrodynamics.prefab.utilities.object.TransferPack;
-import electrodynamics.registers.ElectrodynamicsItems;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.decoration.ItemFrame;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import voltaic.api.codec.StreamCodec;
+import voltaic.prefab.item.ElectricItemProperties;
+import voltaic.prefab.item.ItemElectric;
+import voltaic.prefab.utilities.object.TransferPack;
 
-@EventBusSubscriber(modid = References.ID, bus = Bus.FORGE)
+@EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.FORGE)
 public class ItemTracker extends ItemElectric {
 
-	public static final String X = "target_x";
+    public static final double USAGE = 150;
+    
+    public static final String X = "target_x";
 	public static final String Z = "target_z";
 
 	public static final String UUID = "uuid";
 
-	public static HashMap<ServerLevel, HashSet<Integer>> validuuids = new HashMap<>();
+    public static HashMap<ServerLevel, HashSet<Integer>> validuuids = new HashMap<>();
 
-	public ItemTracker() {
-		super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1), () -> BallistixCreativeTabs.MAIN.get(), item -> ElectrodynamicsItems.ITEM_BATTERY.get());
-	}
+    public ItemTracker() {
+        super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1), BallistixCreativeTabs.MAIN, item -> Items.AIR);
+    }
 
-	@Override
-	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		Component name = BallistixTextUtils.tooltip("tracker.none");
+    @Override
+    public void appendHoverText(ItemStack stack, Level context, List<Component> tooltip, TooltipFlag flagIn) {
+    	Component name = BallistixTextUtils.tooltip("tracker.none");
 		if (hasTarget(stack)) {
-			Entity entity = worldIn.getEntity(getUUID(stack));
+			Entity entity = context.getEntity(getUUID(stack));
 			if (entity != null) {
 				name = entity.getName();
 			}
 		}
-		tooltip.add(BallistixTextUtils.tooltip("tracker.tracking", name).withStyle(ChatFormatting.DARK_GRAY));
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-	}
+        tooltip.add(BallistixTextUtils.tooltip("tracker.tracking", name.copy().withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY));
+        super.appendHoverText(stack, context, tooltip, flagIn);
+    }
 
-	@Override
-	public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean selected) {
-		super.inventoryTick(stack, level, entity, slot, selected);
-		if (level instanceof ServerLevel slevel) {
+    @Override
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean selected) {
+        super.inventoryTick(stack, level, entity, slot, selected);
+        if (level instanceof ServerLevel slevel) {
 			if ((selected || entity instanceof Player player && player.getOffhandItem() == stack) && hasTarget(stack)) {
 				int uuid = getUUID(stack);
 				if (validuuids.containsKey(level) && validuuids.get(level).contains(uuid)) {
@@ -84,11 +82,11 @@ public class ItemTracker extends ItemElectric {
 				}
 			}
 		}
-	}
+    }
 
-	@Override
-	public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity entity, InteractionHand hand) {
-		if (player != null && player.level() instanceof ServerLevel server && getJoulesStored(stack) >= 150) {
+    @Override
+    public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity entity, InteractionHand hand) {
+    	if (player != null && player.level() instanceof ServerLevel server && getJoulesStored(stack) >= 150) {
 			Inventory inv = player.getInventory();
 			inv.removeItem(stack);
 			setUUID(stack, entity.getId());
@@ -102,10 +100,15 @@ public class ItemTracker extends ItemElectric {
 			}
 			extractPower(stack, 150, false);
 		}
-		return InteractionResult.PASS;
-	}
+        return InteractionResult.PASS;
+    }
 
-	public static double getX(ItemStack stack) {
+    @Override
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+        return slotChanged || !oldStack.getItem().equals(newStack.getItem());
+    }
+    
+    public static double getX(ItemStack stack) {
 		return stack.getOrCreateTag().getDouble(X);
 	}
 
@@ -145,51 +148,44 @@ public class ItemTracker extends ItemElectric {
 		return stack.getOrCreateTag().contains(UUID);
 	}
 
-	@OnlyIn(Dist.CLIENT)
-	public static float getAngle(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int par) {
-		Entity sourceEntity = entity != null ? (Entity) entity : stack.getEntityRepresentation();
-		if (sourceEntity == null) {
-			return 0F;
-		}
+    @SubscribeEvent
+    public static void tick(ServerTickEvent event) {
+    	if(event.phase != Phase.START) {
+    		return;
+    	}
+        for (Entry<ServerLevel, HashSet<Integer>> en : validuuids.entrySet()) {
+            Iterator<Integer> it = en.getValue().iterator();
+            while (it.hasNext()) {
+                int uuid = it.next();
+                Entity ent = en.getKey().getEntity(uuid);
+                if (ent == null || ent.isRemoved()) {
+                    it.remove();
+                }
+            }
+        }
+    }
 
-		double targetX = getX(stack);
-		double targetZ = getZ(stack);
+    public static record Target(double x, double z) {
 
-		double angleOfSource = 0.0D;
-		if (entity instanceof Player player && player.isLocalPlayer()) {
-			angleOfSource = entity.getYRot();
-		} else if (sourceEntity instanceof ItemFrame itemFrameEntity) {
-			Direction direction = itemFrameEntity.getDirection();
-			int j = direction.getAxis().isVertical() ? 90 * direction.getAxisDirection().getStep() : 0;
-			angleOfSource = Mth.wrapDegrees(180 + direction.get2DDataValue() * 90L + itemFrameEntity.getRotation() * 45L + j);
-		} else if (sourceEntity instanceof ItemEntity item) {
-			angleOfSource = 180.0F - item.getSpin(0.5F) / ((float) Math.PI * 2F) * 360.0F;
-		} else if (entity != null) {
-			angleOfSource = entity.yBodyRot;
-		}
+        public static final Codec<Target> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.DOUBLE.fieldOf("x").forGetter(Target::x),
+                Codec.DOUBLE.fieldOf("z").forGetter(Target::z)
+        ).apply(instance, Target::new));
 
-		double rawAngleToTarget = Math.atan2(targetZ - sourceEntity.getZ(), targetX - sourceEntity.getX()) / ((float) Math.PI * 2F);
-		double adjustedAngleToTarget = 0.5D - (Mth.positiveModulo(angleOfSource / 360.0D, 1.0D) - 0.25D - rawAngleToTarget);
-
-		return Mth.positiveModulo((float) adjustedAngleToTarget, 1.0F);
-	}
-
-	@Override
-	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-		return slotChanged || !oldStack.getItem().equals(newStack.getItem());
-	}
-
-	@SubscribeEvent
-	public static void tick(ServerTickEvent event) {
-		for (Entry<ServerLevel, HashSet<Integer>> en : validuuids.entrySet()) {
-			Iterator<Integer> it = en.getValue().iterator();
-			while (it.hasNext()) {
-				int uuid = it.next();
-				Entity ent = en.getKey().getEntity(uuid);
-				if (ent == null || ent.isRemoved()) {
-					it.remove();
-				}
+        public static final StreamCodec<ByteBuf, Target> STREAM_CODEC = new StreamCodec<ByteBuf, ItemTracker.Target>() {
+			
+			@Override
+			public void encode(ByteBuf buf, Target data) {
+				buf.writeDouble(data.x);
+				buf.writeDouble(data.z);
 			}
-		}
-	}
+			
+			@Override
+			public Target decode(ByteBuf buf) {
+				return new Target(buf.readDouble(), buf.readDouble());
+			}
+		};
+
+    }
+
 }

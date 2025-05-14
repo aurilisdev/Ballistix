@@ -9,6 +9,7 @@ import ballistix.client.screen.ScreenSearchRadar;
 import ballistix.common.tile.radar.TileSearchRadar;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.util.Mth;
+import voltaic.prefab.screen.component.types.ScreenComponentVerticalSlider;
 
 public class WrapperSearchRadarDetections {
 
@@ -40,7 +41,7 @@ public class WrapperSearchRadarDetections {
 
 
     public void tick() {
-        TileSearchRadar tile = screen.getMenu().getHostFromIntArray();
+        TileSearchRadar tile = screen.getMenu().getSafeHost();
         if(tile == null) {
             return;
         }

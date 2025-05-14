@@ -1,9 +1,9 @@
 package ballistix.common.tags;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import voltaic.Voltaic;
 
 public class BallistixTags {
 
@@ -23,7 +23,7 @@ public class BallistixTags {
 		}
 
 		private static TagKey<Item> forgeTag(String name) {
-			return ItemTags.create(new ResourceLocation("forge", name));
+			return ItemTags.create(Voltaic.forgerl(name));
 		}
 
 	}

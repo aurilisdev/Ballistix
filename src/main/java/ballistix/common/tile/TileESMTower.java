@@ -6,25 +6,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import ballistix.References;
-import ballistix.common.block.BlockESMTower;
+import ballistix.Ballistix;
+import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.inventory.container.ContainerESMTower;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.radar.TileSearchRadar;
-import ballistix.registers.BallistixBlockTypes;
-import electrodynamics.api.capability.ElectrodynamicsCapabilities;
-import electrodynamics.api.multiblock.Subnode;
-import electrodynamics.api.multiblock.parent.IMultiblockParentTile;
-import electrodynamics.common.tile.TileMultiSubnode;
-import electrodynamics.prefab.properties.Property;
-import electrodynamics.prefab.properties.PropertyType;
-import electrodynamics.prefab.tile.GenericTile;
-import electrodynamics.prefab.tile.components.IComponentType;
-import electrodynamics.prefab.tile.components.type.ComponentContainerProvider;
-import electrodynamics.prefab.tile.components.type.ComponentElectrodynamic;
-import electrodynamics.prefab.tile.components.type.ComponentPacketHandler;
-import electrodynamics.prefab.tile.components.type.ComponentTickable;
+import ballistix.registers.BallistixTiles;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
@@ -41,6 +29,17 @@ import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import voltaic.api.multiblock.subnodebased.TileMultiSubnode;
+import voltaic.api.multiblock.subnodebased.parent.IMultiblockParentBlock;
+import voltaic.api.multiblock.subnodebased.parent.IMultiblockParentTile;
+import voltaic.prefab.properties.types.PropertyTypes;
+import voltaic.prefab.properties.variant.ListProperty;
+import voltaic.prefab.properties.variant.SingleProperty;
+import voltaic.prefab.tile.GenericTile;
+import voltaic.prefab.tile.components.IComponentType;
+import voltaic.prefab.tile.components.type.*;
+import voltaic.prefab.utilities.BlockEntityUtils;
+import voltaic.registers.VoltaicCapabilities;
 
 public class TileESMTower extends GenericTile implements IMultiblockParentTile {
 
@@ -48,60 +47,58 @@ public class TileESMTower extends GenericTile implements IMultiblockParentTile {
     public static final ConcurrentHashMap<ResourceKey<Level>, HashSet<TileFireControlRadar>> FIRE_CONTROL_RADARS = new ConcurrentHashMap<>();
     public static final ConcurrentHashMap<ResourceKey<Level>, HashSet<TileESMTower>> ESM_TOWERS = new ConcurrentHashMap<>();
 
-    public final Property<Boolean> active = property(new Property<>(PropertyType.Boolean, "active", false));
-    public final Property<Boolean> searchRadarDetected = property(new Property<>(PropertyType.Boolean, "searchradar", false));
-    public final Property<ArrayList<BlockPos>> fireControlRadars = property(new Property<>(PropertyType.BlockPosList, "firecontrolradars", new ArrayList<BlockPos>()));
+    public final SingleProperty<Boolean> active = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "active", false));
+    public final SingleProperty<Boolean> searchRadarDetected = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "searchradar", false));
+    public final ListProperty<BlockPos> fireControlRadars = property(new ListProperty<>(PropertyTypes.BLOCK_POS_LIST, "firecontrolradars", new ArrayList<>())).setNoUpdateServer();
 
-    private final AABB searchArea = new AABB(getBlockPos()).inflate(Constants.ESM_TOWER_SEARCH_RADIUS);
+    private final AABB searchArea = new AABB(getBlockPos()).inflate(BallistixConstants.ESM_TOWER_SEARCH_RADIUS);
 
     public TileESMTower(BlockPos worldPos, BlockState blockState) {
-        super(BallistixBlockTypes.TILE_ESMTOWER.get(), worldPos, blockState);
+        super(BallistixTiles.TILE_ESMTOWER.get(), worldPos, blockState);
         addComponent(new ComponentTickable(this).tickServer(this::tickServer));
         addComponent(new ComponentPacketHandler(this));
-        addComponent(new ComponentElectrodynamic(this, false, true).voltage(ElectrodynamicsCapabilities.DEFAULT_VOLTAGE * 4).setInputDirections(Direction.DOWN).maxJoules(Constants.ESM_TOWER_USAGE_PER_TICK * 20));
-        addComponent(new ComponentContainerProvider("container.esmtower", this).createMenu((id, player) -> new ContainerESMTower(id, player, new SimpleContainer(0), getCoordsArray())));
+        addComponent(new ComponentElectrodynamic(this, false, true).voltage(VoltaicCapabilities.DEFAULT_VOLTAGE * 4).setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM).maxJoules(BallistixConstants.ESM_TOWER_USAGE_PER_TICK * 20));
+        addComponent(new ComponentContainerProvider("esmtower", this).createMenu((id, player) -> new ContainerESMTower(id, player, new SimpleContainer(0), getCoordsArray())));
+        addComponent(new ComponentForgeEnergy(this));
     }
 
     public void tickServer(ComponentTickable tickable) {
 
         ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
 
-        active.set(electro.getJoulesStored() > Constants.ESM_TOWER_USAGE_PER_TICK && level.getBrightness(LightLayer.SKY, getBlockPos()) > 0);
+        active.setValue(electro.getJoulesStored() > BallistixConstants.ESM_TOWER_USAGE_PER_TICK && level.getBrightness(LightLayer.SKY, getBlockPos()) > 0);
 
-        if(!active.get()) {
+        if (!active.getValue()) {
             removeESMTower(this);
-            searchRadarDetected.set(false);
-            fireControlRadars.get().clear();
-            fireControlRadars.forceDirty();
+            searchRadarDetected.setValue(false);
+            fireControlRadars.wipeList();
             return;
         }
 
         addESMTower(this);
 
-        searchRadarDetected.set(false);
-        fireControlRadars.get().clear();
+        searchRadarDetected.setValue(false);
+        fireControlRadars.wipeList();
 
-        for(TileSearchRadar radar : SEARCH_RADARS.getOrDefault(getLevel().dimension(), new HashSet<>())) {
-            if(searchArea.intersects(new AABB(radar.getBlockPos()))) {
-                searchRadarDetected.set(true);
+        for (TileSearchRadar radar : SEARCH_RADARS.getOrDefault(getLevel().dimension(), new HashSet<>())) {
+            if (searchArea.intersects(new AABB(radar.getBlockPos()))) {
+                searchRadarDetected.setValue(true);
                 break;
             }
         }
 
-        for(TileFireControlRadar radar : FIRE_CONTROL_RADARS.getOrDefault(getLevel().dimension(), new HashSet<>())) {
-            if(searchArea.intersects(new AABB(radar.getBlockPos()))) {
-                fireControlRadars.get().add(radar.getBlockPos());
+        for (TileFireControlRadar radar : FIRE_CONTROL_RADARS.getOrDefault(getLevel().dimension(), new HashSet<>())) {
+            if (searchArea.intersects(new AABB(radar.getBlockPos()))) {
+                fireControlRadars.addValue(radar.getBlockPos());
             }
         }
-
-        fireControlRadars.forceDirty();
 
 
     }
 
     @Override
-    public Subnode[] getSubNodes() {
-        return BlockESMTower.SUBNODES;
+    public IMultiblockParentBlock.SubnodeWrapper getSubNodes() {
+        return SubtypeBallistixMachine.Subnodes.ESM_TOWER;
     }
     
     @Override
@@ -148,22 +145,16 @@ public class TileESMTower extends GenericTile implements IMultiblockParentTile {
         esmTowers.add(esm);
         ESM_TOWERS.put(esm.getLevel().dimension(), esmTowers);
     }
-    
-    @Override
-    public AABB getRenderBoundingBox() {
-    	return super.getRenderBoundingBox().inflate(0, 2, 0);
-    }
-    
-    
-    @EventBusSubscriber(modid = References.ID, bus = EventBusSubscriber.Bus.FORGE)
-    private static class MapHandlerer {
+
+    @EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.FORGE)
+    public static class MapHandlerer {
 
         @SubscribeEvent
         public static void clearMaps(ServerTickEvent event) {
         	
-        	if(event.phase == Phase.START) {
-    			return;
-    		}
+        	if(event.phase != Phase.END) {
+        		return;
+        	}
 
             Iterator<Map.Entry<ResourceKey<Level>, HashSet<TileSearchRadar>>> searchIterator = SEARCH_RADARS.entrySet().iterator();
 
@@ -219,5 +210,9 @@ public class TileESMTower extends GenericTile implements IMultiblockParentTile {
         }
     }
     
+    @Override
+    public AABB getRenderBoundingBox() {
+    	return super.getRenderBoundingBox().inflate(0, 2, 0);
+    }
 
 }

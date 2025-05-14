@@ -1,6 +1,6 @@
 package ballistix.registers;
 
-import ballistix.References;
+import ballistix.Ballistix;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
@@ -18,7 +18,7 @@ public class BallistixDamageTypes {
 	public static final ResourceKey<DamageType> RAILGUN_ROUND = create("railgunround");
 
 	public static ResourceKey<DamageType> create(String name) {
-		return ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(References.ID, name));
+		return ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(Ballistix.ID, name));
 	}
 
 	public static void registerTypes(BootstapContext<DamageType> context) {

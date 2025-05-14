@@ -3,7 +3,6 @@ package ballistix.common.item;
 import ballistix.Ballistix;
 import ballistix.api.entity.IDefusable;
 import ballistix.registers.BallistixCreativeTabs;
-import electrodynamics.registers.ElectrodynamicsItems;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -25,7 +24,7 @@ public class ItemDefuser extends ItemElectric {
 	public static final double USAGE = 150;
 
 	public ItemDefuser() {
-		super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1), BallistixCreativeTabs.MAIN, item -> ElectrodynamicsItems.ITEM_BATTERY.get());
+		super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1), BallistixCreativeTabs.MAIN, item -> Items.AIR);
 	}
 
 	@SubscribeEvent

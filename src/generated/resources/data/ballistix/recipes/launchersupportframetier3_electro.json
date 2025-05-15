@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "electrodynamics"
+    }
+  ],
+  "key": {
+    "S": {
+      "tag": "forge:plates/steel"
+    },
+    "V": {
+      "item": "ballistix:launchersupportframetier2"
+    }
+  },
+  "pattern": [
+    "S S",
+    "SVS",
+    "S S"
+  ],
+  "result": {
+    "item": "ballistix:launchersupportframetier3"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "parent": "ballistix:block/launcherplatformtier3",
+  "display": {
+    "gui": {
+      "rotation": [
+        30,
+        225,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ],
+      "translation": [
+        0,
+        -2.2,
+        0
+      ]
+    }
+  }
+}

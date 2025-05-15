@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "electrodynamics"
+      }
+    }
+  ],
+  "key": {
+    "B": {
+      "tag": "forge:gems/diamond"
+    },
+    "S": {
+      "tag": "forge:gems/amethyst"
+    },
+    "T": {
+      "item": "ballistix:tracker"
+    }
+  },
+  "pattern": [
+    " S ",
+    "STS",
+    " SB"
+  ],
+  "result": {
+    "item": "ballistix:scanner"
+  }
+}

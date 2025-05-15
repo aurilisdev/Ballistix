@@ -3,20 +3,27 @@ package ballistix.common.blast;
 import java.util.ArrayList;
 import java.util.List;
 
+import ballistix.api.blast.IHasCustomRender;
+import ballistix.client.particle.ParticleOptionsShockwave;
 import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
+import ballistix.compatibility.griefdefender.GriefDefenderHandler;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.PrimedTnt;
-import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class BlastAttractive extends Blast {
+public class BlastAttractive extends Blast implements IHasCustomRender {
 
 	public BlastAttractive(Level world, BlockPos position) {
 		super(world, position);
@@ -24,40 +31,95 @@ public class BlastAttractive extends Blast {
 
 	@Override
 	public boolean doExplode(int callCount) {
+		super.doExplode(callCount);
+
 		hasStarted = true;
+
 		if (!world.isClientSide) {
-			world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) Constants.EXPLOSIVE_ATTRACTIVE_SIZE, BlockInteraction.BREAK);
+
+			world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) BallistixConstants.EXPLOSIVE_ATTRACTIVE_SIZE, BlockInteraction.BREAK);
+
+		} else {
+			produceParticles();
 		}
+
 		float x = position.getX();
 		float y = position.getY();
 		float z = position.getZ();
-		float size = 5f;
-		float f2 = size * 2.0F;
-		int k1 = Mth.floor(x - (double) f2 - 1.0D);
-		int l1 = Mth.floor(x + (double) f2 + 1.0D);
-		int i2 = Mth.floor(y - (double) f2 - 1.0D);
-		int i1 = Mth.floor(y + (double) f2 + 1.0D);
-		int j2 = Mth.floor(z - (double) f2 - 1.0D);
-		int j1 = Mth.floor(z + (double) f2 + 1.0D);
-		List<Entity> list = world.getEntities(null, new AABB(k1, i2, j2, l1, i1, j1));
 
-		for (Entity entity : list) {
-			double d5 = entity.getX() - x;
-			double d7 = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - y;
-			double d9 = entity.getZ() - z;
-			double d13 = Mth.sqrt((float) (d5 * d5 + d7 * d7 + d9 * d9));
-			if (d13 != 0.0D) {
-				d5 = d5 / d13;
-				d7 = d7 / d13;
-				d9 = d9 / d13;
-				double d11 = -Constants.EXPLOSIVE_ATTRACTIVE_REPULSIVE_PUSH_STRENGTH;
-				entity.setDeltaMovement(entity.getDeltaMovement().add(d5 * d11, d7 * d11, d9 * d11));
-				if (entity instanceof ServerPlayer serverplayerentity) {
-					serverplayerentity.connection.send(new ClientboundExplodePacket(x, y, z, size, new ArrayList<>(), new Vec3(d5 * d11, d7 * d11, d9 * d11)));
+		float size = 7f;
+
+		float f2 = size * 2.0F;
+
+		int x0 = Mth.floor(x - (double) f2 - 1.0D);
+		int x1 = Mth.floor(x + (double) f2 + 1.0D);
+		int y0 = Mth.floor(y - (double) f2 - 1.0D);
+		int y1 = Mth.floor(y + (double) f2 + 1.0D);
+		int z0 = Mth.floor(z - (double) f2 - 1.0D);
+		int z1 = Mth.floor(z + (double) f2 + 1.0D);
+
+		List<Entity> entities = world.getEntities(null, new AABB(x0, y0, z0, x1, y1, z1));
+
+		for (Entity entity : entities) {
+
+			switch (griefPreventionMethod) {
+			case GRIEF_DEFENDER:
+				if (!GriefDefenderHandler.shouldEntityBeHarmed(entity)) {
+					continue;
 				}
+				break;
+			default:
+				break;
+			}
+
+			double deltaX = entity.getX() - x;
+			double deltaY = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - y;
+			double deltaZ = entity.getZ() - z;
+			double deltaDistance = Mth.sqrt((float) (deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ));
+			if (deltaDistance == 0.0F) {
+				continue;
+			}
+			deltaX = deltaX / deltaDistance;
+			deltaY = deltaY / deltaDistance;
+			deltaZ = deltaZ / deltaDistance;
+			double d11 = -BallistixConstants.EXPLOSIVE_ATTRACTIVE_REPULSIVE_PUSH_STRENGTH;
+			entity.setDeltaMovement(entity.getDeltaMovement().add(deltaX * d11, deltaY * d11, deltaZ * d11));
+			if (entity instanceof ServerPlayer serverplayerentity) {
+				serverplayerentity.connection.send(new ClientboundExplodePacket(x, y, z, size, new ArrayList<>(), new Vec3(deltaX * d11, deltaY * d11, deltaZ * d11)));
 			}
 		}
 		return true;
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	@Override
+	public void produceParticles() {
+		float x = position.getX() + 0.5f;
+		float y = position.getY() + 0.5f;
+		float z = position.getZ() + 0.5f;
+
+		float size = 7f;
+
+		float f2 = size * 2.0F;
+
+		int x0 = Mth.floor(x - f2 - 1.0D);
+		int x1 = Mth.floor(x + f2 + 1.0D);
+		int y0 = Mth.floor(y - f2 - 1.0D);
+		int y1 = Mth.floor(y + f2 + 1.0D);
+		int z0 = Mth.floor(z - f2 - 1.0D);
+		int z1 = Mth.floor(z + f2 + 1.0D);
+		for (int dx = x0; dx < x1; dx++) {
+			for (int dy = y0; dy < y1; dy++) {
+				for (int dz = z0; dz < z1; dz++) {
+					if ((x - dx) * (x - dx) + (y - dy) * (y - dy) + (z - dz) * (z - dz) <= (2 * size + 1) * (2 * size + 1)) {
+						if (world.random.nextFloat() < 1 / 40.0) {
+							ParticleOptions particle = new ParticleOptionsShockwave().setParameters(1, 1, 1, 1, (float) 0.3, 15, false, 1);
+							Minecraft.getInstance().particleEngine.createParticle(particle, dx, dy, dz, (x - dx) / 15.0, (y - dy) / 15.0, (z - dz) / 15.0);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	@Override

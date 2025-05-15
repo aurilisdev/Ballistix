@@ -1,21 +1,20 @@
 package ballistix.prefab;
 
-import ballistix.References;
-import electrodynamics.api.screen.ITexture;
+import ballistix.Ballistix;
 import net.minecraft.resources.ResourceLocation;
+import voltaic.api.screen.ITexture;
 
 public enum BallistixIconTypes implements ITexture {
-    MISSILE_DARK(0, 0, 14, 14, 14, 14, new ResourceLocation(References.ID, "textures/screen/component/icon/missile_dark.png")),
-    EXPLOSIVE_DARK(0, 0, 16, 16, 16, 16, new ResourceLocation(References.ID, "textures/screen/component/icon/explosive_dark.png")),
-    TARGET(0, 0, 11, 11, 11, 11, new ResourceLocation(References.ID, "textures/screen/component/icon/target.png")),
-    FREQUENCY(0, 0, 9, 15, 9, 15, new ResourceLocation(References.ID, "textures/screen/component/icon/frequency.png")),
-    DELETE(0, 0, 8, 8, 8, 8, new ResourceLocation(References.ID, "textures/screen/component/icon/delete.png")),
-    REDSTONE(0, 0, 16, 16, 16, 16, new ResourceLocation(References.ID, "textures/screen/component/icon/redstone.png")),
-    TARGET_ENTITY(0, 0, 15, 15, 15, 15, new ResourceLocation(References.ID, "textures/screen/component/icon/target_entity.png")),
-    TARGET_MISSILE(0, 0, 15, 15, 15, 15, new ResourceLocation(References.ID, "textures/screen/component/icon/target_missile.png")),
-    PLAYER_WHITELIST(0, 0, 8, 8, 8, 8, new ResourceLocation(References.ID, "textures/screen/component/icon/playerwhitelist.png")),
-    TARGET_ONLY_PLAYERS(0, 0, 8, 8, 8, 8, new ResourceLocation(References.ID, "textures/screen/component/icon/targetonlyplayers.png")), //
-	SONAR_PROFILE(0, 0, 16, 16, 16, 16, new ResourceLocation(References.ID, "textures/screen/component/icon/sonarpattern.png"));
+    MISSILE_DARK(0, 0, 14, 14, 14, 14, Ballistix.rl("textures/screen/component/icon/missile_dark.png")),
+    EXPLOSIVE_DARK(0, 0, 16, 16, 16, 16, Ballistix.rl("textures/screen/component/icon/explosive_dark.png")),
+    TARGET(0, 0, 11, 11, 11, 11, Ballistix.rl("textures/screen/component/icon/target.png")),
+    FREQUENCY(0, 0, 9, 15, 9, 15, Ballistix.rl("textures/screen/component/icon/frequency.png")),
+    DELETE(0, 0, 8, 8, 8, 8, Ballistix.rl("textures/screen/component/icon/delete.png")),
+    REDSTONE(0, 0, 16, 16, 16, 16, Ballistix.rl("textures/screen/component/icon/redstone.png")),
+    TARGET_ENTITY(0, 0, 15, 15, 15, 15, Ballistix.rl("textures/screen/component/icon/target_entity.png")),
+    TARGET_MISSILE(0, 0, 15, 15, 15, 15, Ballistix.rl("textures/screen/component/icon/target_missile.png")),
+    PLAYER_WHITELIST(0, 0, 8, 8, 8, 8, Ballistix.rl("textures/screen/component/icon/playerwhitelist.png")),
+    TARGET_ONLY_PLAYERS(0, 0, 8, 8, 8, 8, Ballistix.rl("textures/screen/component/icon/targetonlyplayers.png"));
 
     private final int textU;
     private final int textV;

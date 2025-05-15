@@ -1,9 +1,8 @@
 package ballistix.common.item;
 
-import ballistix.References;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityMinecart;
-import electrodynamics.api.ISubtype;
+import ballistix.registers.BallistixCreativeTabs;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
@@ -20,13 +19,15 @@ import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.level.gameevent.GameEvent;
+import voltaic.api.ISubtype;
+import voltaic.common.item.ItemVoltaic;
 
-public class ItemMinecart extends Item {
+public class ItemMinecart extends ItemVoltaic {
 
 	private SubtypeMinecart minecart;
 
 	public ItemMinecart(SubtypeMinecart minecart) {
-		super(new Item.Properties().tab(References.BALLISTIXTAB).stacksTo(1));
+		super(new Item.Properties().stacksTo(1), () -> BallistixCreativeTabs.MAIN);
 		this.minecart = minecart;
 		DispenserBlock.registerBehavior(this, DISPENSE_ITEM_BEHAVIOR);
 	}

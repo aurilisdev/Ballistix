@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "electrodynamics"
+      }
+    }
+  ],
+  "key": {
+    "C": {
+      "tag": "forge:gems/diamond"
+    },
+    "G": {
+      "tag": "forge:gunpowder"
+    },
+    "P": {
+      "tag": "forge:ingots/iron"
+    },
+    "S": {
+      "item": "ballistix:aamissile"
+    }
+  },
+  "pattern": [
+    " C ",
+    "PSP",
+    "PGP"
+  ],
+  "result": {
+    "item": "ballistix:aamissilemk2"
+  }
+}

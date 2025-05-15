@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "electrodynamics"
+      }
+    }
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:spider_eye"
+    },
+    "R": {
+      "item": "ballistix:repulsive"
+    },
+    "W": {
+      "item": "minecraft:water_bucket"
+    }
+  },
+  "pattern": [
+    "DDD",
+    "WRW",
+    "DDD"
+  ],
+  "result": {
+    "item": "ballistix:debilitation"
+  }
+}

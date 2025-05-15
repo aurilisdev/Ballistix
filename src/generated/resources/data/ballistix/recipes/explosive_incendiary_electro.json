@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "electrodynamics"
+    }
+  ],
+  "key": {
+    "L": {
+      "item": "minecraft:lava_bucket"
+    },
+    "R": {
+      "item": "ballistix:repulsive"
+    },
+    "S": {
+      "tag": "forge:dusts/sulfur"
+    }
+  },
+  "pattern": [
+    "SSS",
+    "SRS",
+    "SLS"
+  ],
+  "result": {
+    "item": "ballistix:incendiary"
+  }
+}

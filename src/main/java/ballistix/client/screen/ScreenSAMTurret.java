@@ -77,7 +77,6 @@ public class ScreenSAMTurret extends GenericScreen<ContainerSAMTurret> {
 
             float remHeight = (height - height * scale) / 2.0F;
 
-            graphics.pushPose();
             poseStack.pushPose();
 
             poseStack.translate(x, y + remHeight, 0);

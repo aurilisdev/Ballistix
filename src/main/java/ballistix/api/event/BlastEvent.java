@@ -2,10 +2,8 @@ package ballistix.api.event;
 
 import ballistix.common.blast.Blast;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
-@Cancelable
 public class BlastEvent extends Event {
 
 	public Level world;

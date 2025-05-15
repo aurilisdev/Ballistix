@@ -4,12 +4,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Quaternion;
 
 import ballistix.client.screen.ScreenFireControlRadar;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tile.radar.TileFireControlRadar;
-import electrodynamics.prefab.screen.component.types.ScreenComponentGeneric;
-import electrodynamics.prefab.tile.components.IComponentType;
-import electrodynamics.prefab.tile.components.type.ComponentTickable;
-import electrodynamics.prefab.utilities.math.Color;
+import voltaic.prefab.screen.component.ScreenComponentGeneric;
+import voltaic.prefab.tile.components.IComponentType;
+import voltaic.prefab.tile.components.type.ComponentTickable;
+import voltaic.prefab.utilities.math.Color;
 
 public class ScreenComponentRadarGrid extends ScreenComponentGeneric {
 
@@ -22,12 +22,12 @@ public class ScreenComponentRadarGrid extends ScreenComponentGeneric {
     }
 
     @Override
-    public void renderBackground(PoseStack stack, int xAxis, int yAxis, int guiWidth, int guiHeight) {
+    public void renderBackground(PoseStack poseStack, int xAxis, int yAxis, int guiWidth, int guiHeight) {
 
-        int x = xLocation + guiWidth;
+    	int x = xLocation + guiWidth;
         int y = yLocation + guiHeight;
 
-        TileFireControlRadar tile = ((ScreenFireControlRadar)gui).getMenu().getHostFromIntArray();
+        TileFireControlRadar tile = ((ScreenFireControlRadar)gui).getMenu().getSafeHost();
 
         if(tile == null) {
             return;
@@ -35,7 +35,7 @@ public class ScreenComponentRadarGrid extends ScreenComponentGeneric {
 
         //BG
 
-        fill(stack, x, y, x + width, y + height, RADAR_BLACK.color());
+        fill(poseStack, x, y, x + width, y + height, RADAR_BLACK.color());
 
         // GRID
 
@@ -43,27 +43,27 @@ public class ScreenComponentRadarGrid extends ScreenComponentGeneric {
 
         for(int i = 1; i < 10; i++) {
 
-        	fill(stack, x + 1, y + gridWidth * i, x + this.width - 1, y + 1 + gridWidth * i, RADAR_GRID_GREEN.color());
+        	fill(poseStack, x + 1, y + gridWidth * i, x + this.width - 1, y + 1 + gridWidth * i, RADAR_GRID_GREEN.color());
 
         }
 
         for(int i = 1; i < 10; i++) {
 
-        	fill(stack, x + + gridWidth * i, y + 1, x + 1 + gridWidth * i, y + height - 1, RADAR_GRID_GREEN.color());
+        	fill(poseStack, x + + gridWidth * i, y + 1, x + 1 + gridWidth * i, y + height - 1, RADAR_GRID_GREEN.color());
 
         }
 
-        if(!tile.running.get()) {
+        if(!tile.running.getValue()) {
 
             //OUTLINE
 
-            fill(stack, x - 3, y - 3, x + 1, y + height + 3, ScreenComponentCustomRender.TEXT_GRAY.color());
+            fill(poseStack, x - 3, y - 3, x + 1, y + height + 3, Color.TEXT_GRAY.color());
 
-            fill(stack, x + width - 1, y - 3, x + width + 3, y + height + 3, ScreenComponentCustomRender.TEXT_GRAY.color());
+            fill(poseStack, x + width - 1, y - 3, x + width + 3, y + height + 3, Color.TEXT_GRAY.color());
 
-            fill(stack, x, y - 3, x + width, y + 1, ScreenComponentCustomRender.TEXT_GRAY.color());
+            fill(poseStack, x, y - 3, x + width, y + 1, Color.TEXT_GRAY.color());
 
-            fill(stack, x, y + height - 1, x + width, y + height + 3, ScreenComponentCustomRender.TEXT_GRAY.color());
+            fill(poseStack, x, y + height - 1, x + width, y + height + 3, Color.TEXT_GRAY.color());
 
             return;
 
@@ -91,39 +91,39 @@ public class ScreenComponentRadarGrid extends ScreenComponentGeneric {
 
         float extra = hyp - center;
 
-        stack.pushPose();
+        poseStack.pushPose();
 
-        stack.translate(x + center, y + center, 0);
+        poseStack.translate(x + center, y + center, 0);
 
-        stack.mulPose(new Quaternion(0, 0, theta, true));
+        poseStack.mulPose(new Quaternion(0, 0, theta, true));
 
-        stack.translate(-x -center, -y -center, 0);
+        poseStack.translate(-x -center, -y -center, 0);
 
-        fill(stack, (int) Math.floor(x + 1 - extra - 2), (int) Math.floor(y + center - 1), (int) Math.ceil(x + center), (int) Math.ceil(y + center + 1), RADAR_PULSE_GREEN.color());
+        fill(poseStack, (int) Math.floor(x + 1 - extra - 2), (int) Math.floor(y + center - 1), (int) Math.ceil(x + center), (int) Math.ceil(y + center + 1), RADAR_PULSE_GREEN.color());
 
-        stack.popPose();
+        poseStack.popPose();
 
         //OUTLINE
 
-        fill(stack, x - 3, y - 3, x + 1, y + height + 3, ScreenComponentCustomRender.TEXT_GRAY.color());
+        fill(poseStack, x - 3, y - 3, x + 1, y + height + 3, Color.TEXT_GRAY.color());
 
-        fill(stack, x + width - 1, y - 3, x + width + 3, y + height + 3, ScreenComponentCustomRender.TEXT_GRAY.color());
+        fill(poseStack, x + width - 1, y - 3, x + width + 3, y + height + 3, Color.TEXT_GRAY.color());
 
-        fill(stack, x, y - 3, x + width, y + 1, ScreenComponentCustomRender.TEXT_GRAY.color());
+        fill(poseStack, x, y - 3, x + width, y + 1, Color.TEXT_GRAY.color());
 
-        fill(stack, x, y + height - 1, x + width, y + height + 3, ScreenComponentCustomRender.TEXT_GRAY.color());
+        fill(poseStack, x, y + height - 1, x + width, y + height + 3, Color.TEXT_GRAY.color());
 
-        fill(stack, (int) Math.floor(x + center - 1), (int) Math.floor(y + center - 1), (int) Math.ceil(x + center + 1), (int) Math.ceil(y + center + 1), ScreenComponentCustomRender.JEI_TEXT_GRAY.color());
+        fill(poseStack, (int) Math.floor(x + center - 1), (int) Math.floor(y + center - 1), (int) Math.ceil(x + center + 1), (int) Math.ceil(y + center + 1), Color.JEI_TEXT_GRAY.color());
 
         //DOT
 
-        if(tile.trackingPos.get().equals(TileFireControlRadar.OUT_OF_REACH)) {
+        if(tile.trackingPos.getValue().equals(TileFireControlRadar.OUT_OF_REACH)) {
             return;
         }
 
-        float deltaX = (float) ((tile.trackingPos.get().x - tile.getBlockPos().getX()) / (2.0f * Constants.FIRE_CONTROL_RADAR_RANGE)) * width;
+        float deltaX = (float) ((tile.trackingPos.getValue().x - tile.getBlockPos().getX()) / (2.0f * BallistixConstants.FIRE_CONTROL_RADAR_RANGE)) * width;
 
-        float deltaZ = (float) ((tile.trackingPos.get().z - tile.getBlockPos().getZ()) / (2.0f * Constants.FIRE_CONTROL_RADAR_RANGE)) * width;
+        float deltaZ = (float) ((tile.trackingPos.getValue().z - tile.getBlockPos().getZ()) / (2.0f * BallistixConstants.FIRE_CONTROL_RADAR_RANGE)) * width;
 
         double angleRads = Math.atan2(deltaZ, deltaX);
 
@@ -131,6 +131,6 @@ public class ScreenComponentRadarGrid extends ScreenComponentGeneric {
 
         int alpha = (int) ((dotTheta + 360.0F - theta) / 360.0F * 255.0F);
 
-        fill(stack, (int) Math.floor(x + center + deltaX - 1), (int) Math.floor(y + center + deltaZ - 1), (int) Math.ceil(x + center + deltaX + 1), (int) Math.ceil(y + center + deltaZ + 1), new Color(255, 0, 0, alpha).color());
+        fill(poseStack, (int) Math.floor(x + center + deltaX - 1), (int) Math.floor(y + center + deltaZ - 1), (int) Math.ceil(x + center + deltaX + 1), (int) Math.ceil(y + center + deltaZ + 1), new Color(255, 0, 0, alpha).color());
     }
 }

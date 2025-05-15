@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import voltaic.common.block.states.VoltaicBlockStates;
 
 public class BlockExplosive extends Block {
 	public final SubtypeBlast explosive;
@@ -37,7 +38,10 @@ public class BlockExplosive extends Block {
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-		return explosive.shape.apply(state, level, pos, context);
+		if (state.hasProperty(VoltaicBlockStates.FACING)) {
+			return explosive.shape.getShape(state.getValue(VoltaicBlockStates.FACING));
+		}
+		return explosive.shape.getShape(null);
 	}
 
 	@Override

@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "WRW",
+    " M ",
+    "PCP"
+  ],
+  "key": {
+    "P": {
+      "item": "minecraft:iron_bars"
+    },
+    "R": {
+      "item": "ballistix:radargun"
+    },
+    "C": {
+      "tag": "forge:dusts/redstone"
+    },
+    "W": {
+      "tag": "forge:ingots/gold"
+    },
+    "M": {
+      "tag": "forge:storage_blocks/redstone"
+    }
+  },
+  "result": {
+    "item": "ballistix:radar"
+  },
+  "conditions": [
+    {
+      "value": {
+        "modid": "electrodynamics",
+        "type": "forge:mod_loaded"
+      },
+      "type": "forge:not"
+    }
+  ]
+}

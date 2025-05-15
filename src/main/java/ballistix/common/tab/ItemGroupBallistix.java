@@ -1,7 +1,7 @@
 package ballistix.common.tab;
 
-import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.registers.BallistixBlocks;
+import ballistix.common.block.subtype.SubtypeMissile;
+import ballistix.registers.BallistixItems;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 
@@ -13,6 +13,6 @@ public class ItemGroupBallistix extends CreativeModeTab {
 
 	@Override
 	public ItemStack makeIcon() {
-		return new ItemStack(BallistixBlocks.SUBTYPEBLOCKREGISTER_MAPPINGS.get(SubtypeBlast.antimatter).get());
+		return new ItemStack(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier2));
 	}
 }

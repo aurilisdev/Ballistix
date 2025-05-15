@@ -1,11 +1,8 @@
 package ballistix.common.item;
 
-import ballistix.References;
+import ballistix.Ballistix;
 import ballistix.api.entity.IDefusable;
-import electrodynamics.prefab.item.ElectricItemProperties;
-import electrodynamics.prefab.item.ItemElectric;
-import electrodynamics.prefab.utilities.object.TransferPack;
-import electrodynamics.registers.ElectrodynamicsItems;
+import ballistix.registers.BallistixCreativeTabs;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -14,20 +11,24 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteractSpecific;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import voltaic.prefab.item.ElectricItemProperties;
+import voltaic.prefab.item.ItemElectric;
+import voltaic.prefab.utilities.object.TransferPack;
 
-@EventBusSubscriber(modid = References.ID, bus = Bus.FORGE)
+@EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.FORGE)
 public class ItemDefuser extends ItemElectric {
 
+	public static final double USAGE = 150;
+
 	public ItemDefuser() {
-		super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1).tab(References.BALLISTIXTAB), item -> ElectrodynamicsItems.ITEM_BATTERY.get());
+		super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1), () -> BallistixCreativeTabs.MAIN, item -> Items.AIR);
 	}
 
 	@SubscribeEvent
-	public static void onInteractWithEntity(EntityInteractSpecific event) {
+	public static void onInteractWithEntity(PlayerInteractEvent.EntityInteractSpecific event) {
 
 		Level world = event.getWorld();
 
@@ -40,7 +41,7 @@ public class ItemDefuser extends ItemElectric {
 
 		ItemStack stack = playerIn.getItemInHand(event.getHand());
 
-		boolean validItem = stack.getItem() instanceof ItemDefuser defuser && defuser.getJoulesStored(stack) >= 150;
+		boolean validItem = stack.getItem() instanceof ItemDefuser defuser && defuser.getJoulesStored(stack) >= USAGE;
 
 		if (!validItem) {
 			return;
@@ -50,7 +51,7 @@ public class ItemDefuser extends ItemElectric {
 
 		if (entity instanceof IDefusable defuse) {
 
-			defuser.extractPower(stack, 150, false);
+			defuser.extractPower(stack, USAGE, false);
 			defuse.defuse();
 
 		} else if (entity instanceof PrimedTnt tnt) {

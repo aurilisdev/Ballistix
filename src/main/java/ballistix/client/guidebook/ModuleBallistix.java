@@ -1,18 +1,17 @@
 package ballistix.client.guidebook;
 
-import ballistix.References;
+import ballistix.Ballistix;
 import ballistix.client.guidebook.chapters.ChapterItems;
 import ballistix.client.guidebook.chapters.ChapterMissileDefense;
 import ballistix.client.guidebook.chapters.ChapterMissileSilo;
 import ballistix.prefab.utils.BallistixTextUtils;
-import electrodynamics.client.guidebook.utils.components.Module;
-import electrodynamics.client.guidebook.utils.pagedata.graphics.ImageWrapperObject;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import voltaic.client.guidebook.utils.components.Module;
+import voltaic.client.guidebook.utils.pagedata.graphics.ImageWrapperObject;
 
 public class ModuleBallistix extends Module {
 
-	private static final ImageWrapperObject LOGO = new ImageWrapperObject(0, 0, 0, 0, 32, 32, 32, 32, new ResourceLocation(References.ID, "textures/screen/guidebook/ballistixlogo.png"));
+	private static final ImageWrapperObject LOGO = new ImageWrapperObject(0, 0, 0, 0, 32, 32, 32, 32, Ballistix.rl("textures/screen/guidebook/ballistixlogo.png"));
 
 	@Override
 	public ImageWrapperObject getLogo() {
@@ -21,7 +20,7 @@ public class ModuleBallistix extends Module {
 
 	@Override
 	public MutableComponent getTitle() {
-		return BallistixTextUtils.guidebook(References.ID);
+		return BallistixTextUtils.guidebook(Ballistix.ID);
 	}
 
 	@Override

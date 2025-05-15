@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " C ",
+    "CAC",
+    " C "
+  ],
+  "key": {
+    "A": {
+      "item": "ballistix:antimatter"
+    },
+    "C": {
+      "tag": "forge:nether_stars"
+    }
+  },
+  "result": {
+    "item": "ballistix:largeantimatter"
+  },
+  "conditions": [
+    {
+      "value": {
+        "modid": "electrodynamics",
+        "type": "forge:mod_loaded"
+      },
+      "type": "forge:not"
+    }
+  ]
+}

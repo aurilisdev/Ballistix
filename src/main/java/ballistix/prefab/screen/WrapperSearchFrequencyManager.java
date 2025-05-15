@@ -8,26 +8,30 @@ import ballistix.client.screen.ScreenSearchRadar;
 import ballistix.common.tile.radar.TileSearchRadar;
 import ballistix.prefab.BallistixIconTypes;
 import ballistix.prefab.utils.BallistixTextUtils;
-import electrodynamics.prefab.screen.component.editbox.ScreenComponentEditBox;
-import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentGuiTab;
-import electrodynamics.prefab.utilities.ElectroTextUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.Mth;
+import voltaic.prefab.screen.component.button.ScreenComponentButton;
+import voltaic.prefab.screen.component.editbox.ScreenComponentEditBox;
+import voltaic.prefab.screen.component.types.ScreenComponentSimpleLabel;
+import voltaic.prefab.screen.component.types.ScreenComponentVerticalSlider;
+import voltaic.prefab.screen.component.types.guitab.ScreenComponentGuiTab;
+import voltaic.prefab.utilities.VoltaicTextUtils;
+import voltaic.prefab.utilities.math.Color;
 
 public class WrapperSearchFrequencyManager {
 
     private final ScreenSearchRadar screen;
 
-    public ScreenComponentBallistixButton<?> button;
-    private ScreenComponentBallistixButton<?> toggleButton;
-    private ScreenComponentBallistixButton<?> add;
+    public ScreenComponentButton<?> button;
+    private ScreenComponentButton<?> toggleButton;
+    private ScreenComponentButton<?> add;
 
-    private ScreenComponentBallistixLabel whitelistLabel;
+    private ScreenComponentSimpleLabel whitelistLabel;
 
-    private ScreenComponentBallistixButton[] deleteButtons = new ScreenComponentBallistixButton[5];
+    private ScreenComponentButton[] deleteButtons = new ScreenComponentButton[5];
     private ScreenComponentFrequency[] frequencies = new ScreenComponentFrequency[5];
 
     public ScreenComponentEditBox addEditBox;
@@ -40,7 +44,7 @@ public class WrapperSearchFrequencyManager {
     public WrapperSearchFrequencyManager(ScreenSearchRadar screen, int tabX, int tabY, int x, int y) {
         this.screen = screen;
 
-        screen.addComponent(button = (ScreenComponentBallistixButton<?>) new ScreenComponentBallistixButton<>(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR, tabX, tabY).setOnPress(button -> {
+        screen.addComponent(button = (ScreenComponentButton<?>) new ScreenComponentButton<>(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR, tabX, tabY).setOnPress(button -> {
             //
             button.isPressed = !button.isPressed;
 
@@ -62,51 +66,49 @@ public class WrapperSearchFrequencyManager {
 
             }
 
-        }).onTooltip((graphics, but, xAxis, yAxis) -> {
+        }).onTooltip((poseStack, but, xAxis, yAxis) -> {
             //
-            ScreenComponentBallistixButton<?> button = (ScreenComponentBallistixButton<?>) but;
+            ScreenComponentButton<?> button = (ScreenComponentButton<?>) but;
             List<Component> tooltips = new ArrayList<>();
             tooltips.add(BallistixTextUtils.tooltip("radar.frequencymanager").withStyle(ChatFormatting.DARK_GRAY));
             if (!button.isPressed) {
-                tooltips.add(ElectroTextUtils.tooltip("inventoryio.presstoshow").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+                tooltips.add(VoltaicTextUtils.tooltip("inventoryio.presstoshow").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
             } else {
-                tooltips.add(ElectroTextUtils.tooltip("inventoryio.presstohide").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+                tooltips.add(VoltaicTextUtils.tooltip("inventoryio.presstohide").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
             }
 
-            screen.renderComponentTooltip(graphics, tooltips, xAxis, yAxis);
+            screen.renderComponentTooltip(poseStack, tooltips, xAxis, yAxis);
 
         }).setIcon(BallistixIconTypes.FREQUENCY));
 
         //screen.addComponent(titleLabel = new ScreenComponentSimpleLabel(x + 15, y + 20, 10, Color.TEXT_GRAY, BallistixTextUtils.tooltip("radar.frequencymanager")));
 
-        screen.addComponent(whitelistLabel = new ScreenComponentBallistixLabel(x + 15, y + 30, 10, ScreenComponentCustomRender.TEXT_GRAY, BallistixTextUtils.gui("radar.frequencywhitelist.mode")));
-        screen.addComponent(toggleButton = new ScreenComponentBallistixButton<>(x + 90, y + 25, 70, 20).setOnPress(button -> {
+        screen.addComponent(whitelistLabel = new ScreenComponentSimpleLabel(x + 15, y + 30, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("radar.frequencywhitelist.mode")));
+        screen.addComponent(toggleButton = new ScreenComponentButton<>(x + 90, y + 25, 70, 20).setOnPress(button -> {
 
-            TileSearchRadar radar = screen.getMenu().getHostFromIntArray();
+            TileSearchRadar radar = screen.getMenu().getSafeHost();
 
             if(radar == null) {
                 return;
             }
 
-            radar.usingWhitelist.set(!radar.usingWhitelist.get());
-            
-            radar.usingWhitelist.updateServer();
+            radar.usingWhitelist.setValue(!radar.usingWhitelist.getValue());
 
         }).setLabel(() -> {
 
-            TileSearchRadar radar = screen.getMenu().getHostFromIntArray();
+            TileSearchRadar radar = screen.getMenu().getSafeHost();
 
             if(radar == null) {
-                return TextComponent.EMPTY;
+                return new TextComponent("");
             }
 
-            return radar.usingWhitelist.get() ? BallistixTextUtils.gui("radar.frequencywhitelist.enabled") : BallistixTextUtils.gui("radar.frequencywhitelist.disabled");
+            return radar.usingWhitelist.getValue() ? BallistixTextUtils.gui("radar.frequencywhitelist.enabled") : BallistixTextUtils.gui("radar.frequencywhitelist.disabled");
 
         }));
 
-        screen.addComponent(add = new ScreenComponentBallistixButton<>(x + 90, y + 50, 70, 20).setOnPress(button -> {
+        screen.addComponent(add = new ScreenComponentButton<>(x + 90, y + 50, 70, 20).setOnPress(button -> {
 
-            TileSearchRadar radar = screen.getMenu().getHostFromIntArray();
+            TileSearchRadar radar = screen.getMenu().getSafeHost();
 
             if(radar == null) {
                 return;
@@ -116,9 +118,7 @@ public class WrapperSearchFrequencyManager {
 
                 int freq = Integer.parseInt(addEditBox.getValue());
 
-                radar.whitelistedFrequencies.get().add(freq);
-
-                radar.whitelistedFrequencies.updateServer();
+                radar.whitelistedFrequencies.addValue(freq);
 
             } catch (Exception e) {
 
@@ -126,7 +126,7 @@ public class WrapperSearchFrequencyManager {
 
         }).setLabel(BallistixTextUtils.gui("radar.frequencywhitelist.add")));
 
-        screen.addEditBox(addEditBox = new ScreenComponentEditBox(x + 15, y + 52, 70, 15, screen.getFontRenderer()).setTextColor(-1).setTextColorUneditable(-1).setMaxLength(9).setFilter(ScreenComponentEditBox.INTEGER));
+        screen.addEditBox(addEditBox = new ScreenComponentEditBox(x + 15, y + 52, 70, 15, screen.getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(9).setFilter(ScreenComponentEditBox.INTEGER));
 
         int butOffX = 25;
         int butOffY = 80;
@@ -139,23 +139,19 @@ public class WrapperSearchFrequencyManager {
 
             final int index = i;
 
-            deleteButtons[i] = (ScreenComponentBallistixButton) new ScreenComponentBallistixButton<>(x + butOffX + 125, y + butOffY + 15 * i,15, 15).setOnPress(but -> {
+            deleteButtons[i] = (ScreenComponentButton) new ScreenComponentButton<>(x + butOffX + 125, y + butOffY + 15 * i,15, 15).setOnPress(but -> {
 
                 ScreenComponentFrequency frequency = frequencies[index];
 
-                TileSearchRadar tile = screen.getMenu().getHostFromIntArray();
+                TileSearchRadar tile = screen.getMenu().getSafeHost();
 
                 if(frequency.getFrequency() == null) {
                     return;
                 }
 
-                tile.whitelistedFrequencies.get().remove((Integer) frequency.getFrequency().intValue());
+                tile.whitelistedFrequencies.removeValue(frequency.getFrequency());
 
-                tile.whitelistedFrequencies.forceDirty();
-                
-                tile.whitelistedFrequencies.updateServer();
-
-            }).onTooltip((graphics, button, xAxis, yAxis) -> screen.renderTooltip(graphics, BallistixTextUtils.tooltip("radar.frequencymanager.delete"), xAxis, yAxis)).setIcon(BallistixIconTypes.DELETE);
+            }).onTooltip((poseStack, button, xAxis, yAxis) -> screen.renderTooltip(poseStack, BallistixTextUtils.tooltip("radar.frequencymanager.delete"), xAxis, yAxis)).setIcon(BallistixIconTypes.DELETE);
         }
 
         screen.addComponent(button);
@@ -179,12 +175,12 @@ public class WrapperSearchFrequencyManager {
     }
 
     public void tick() {
-        TileSearchRadar tile = screen.getMenu().getHostFromIntArray();
+        TileSearchRadar tile = screen.getMenu().getSafeHost();
         if(tile == null) {
             return;
         }
 
-        List<Integer> frequencyList = tile.whitelistedFrequencies.get();
+        List<Integer> frequencyList = tile.whitelistedFrequencies.getValue();
 
         lastRowCount = frequencyList.size();
 
@@ -296,7 +292,7 @@ public class WrapperSearchFrequencyManager {
             component.setVisible(show);
         }
 
-        for(ScreenComponentBallistixButton<?> button : deleteButtons) {
+        for(ScreenComponentButton<?> button : deleteButtons) {
             button.setVisible(show);
         }
 

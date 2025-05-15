@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "W  ",
+    " SB",
+    "  C"
+  ],
+  "key": {
+    "B": {
+      "tag": "forge:gems/diamond"
+    },
+    "S": {
+      "item": "minecraft:shears"
+    },
+    "C": {
+      "tag": "forge:dusts/redstone"
+    },
+    "W": {
+      "tag": "forge:ingots/copper"
+    }
+  },
+  "result": {
+    "item": "ballistix:defuser"
+  },
+  "conditions": [
+    {
+      "value": {
+        "modid": "electrodynamics",
+        "type": "forge:mod_loaded"
+      },
+      "type": "forge:not"
+    }
+  ]
+}

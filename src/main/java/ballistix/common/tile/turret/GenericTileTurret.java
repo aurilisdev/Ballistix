@@ -6,26 +6,11 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.jetbrains.annotations.NotNull;
-
-import ballistix.References;
+import ballistix.Ballistix;
 import ballistix.api.turret.ITarget;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tile.radar.TileFireControlRadar;
-import electrodynamics.api.capability.ElectrodynamicsCapabilities;
-import electrodynamics.common.item.ItemUpgrade;
-import electrodynamics.common.item.subtype.SubtypeItemUpgrade;
-import electrodynamics.prefab.properties.Property;
-import electrodynamics.prefab.properties.PropertyType;
-import electrodynamics.prefab.tile.GenericTile;
-import electrodynamics.prefab.tile.components.IComponentType;
-import electrodynamics.prefab.tile.components.type.ComponentContainerProvider;
-import electrodynamics.prefab.tile.components.type.ComponentElectrodynamic;
-import electrodynamics.prefab.tile.components.type.ComponentInventory;
-import electrodynamics.prefab.tile.components.type.ComponentPacketHandler;
-import electrodynamics.prefab.tile.components.type.ComponentTickable;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
@@ -38,31 +23,41 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.world.ForgeChunkManager;
+import voltaic.common.item.ItemUpgrade;
+import voltaic.common.item.subtype.SubtypeItemUpgrade;
+import voltaic.prefab.properties.types.PropertyTypes;
+import voltaic.prefab.properties.variant.ListProperty;
+import voltaic.prefab.properties.variant.SingleProperty;
+import voltaic.prefab.tile.GenericTile;
+import voltaic.prefab.tile.components.IComponentType;
+import voltaic.prefab.tile.components.type.*;
+import voltaic.prefab.utilities.BlockEntityUtils;
+import voltaic.registers.VoltaicCapabilities;
 
 public abstract class GenericTileTurret extends GenericTile {
 
-    public final Property<Vec3> turretRotation = property(new Property<>(PropertyType.Vec3, "turrot", getDefaultOrientation()));
-    public final Property<Vec3> desiredRotation = property(new Property<>(PropertyType.Vec3, "currot", getDefaultOrientation()));
-    public final Property<Vec3> targetMovement = property(new Property<>(PropertyType.Vec3, "movevec", Vec3.ZERO));
-    public final Property<Boolean> hasTarget = property(new Property<>(PropertyType.Boolean, "hastarget", false)).onChange((prop, val) -> {
+    public final SingleProperty<Vec3> turretRotation = property(new SingleProperty<>(PropertyTypes.VEC3, "turrot", getDefaultOrientation()));
+    public final SingleProperty<Vec3> desiredRotation = property(new SingleProperty<>(PropertyTypes.VEC3, "currot", getDefaultOrientation()));
+    public final SingleProperty<Vec3> targetMovement = property(new SingleProperty<>(PropertyTypes.VEC3, "movevec", Vec3.ZERO));
+    public final SingleProperty<Boolean> hasTarget = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "hastarget", false)).onChange((prop, val) -> {
 
         if(level == null || level.isClientSide) {
             return;
         }
 
-        if(prop.get() && val != prop.get()) {
+        if(prop.getValue() && val != prop.getValue()) {
             movementCooldown = 0;
-        } else if (prop.get() != val) {
+        } else if (prop.getValue() != val) {
             movementCooldown = 20;
         }
 
     });
-    public final Property<Boolean> hasNoPower = property(new Property<>(PropertyType.Boolean, "haspower", false));
-    public final Property<Boolean> inRange = property(new Property<>(PropertyType.Boolean, "isrange", false));
-    public final Property<Double> currentRange;
-    public final Property<Double> inaccuracyMultiplier = property(new Property<>(PropertyType.Double, "inaccuracymultiplier", 1.0));
-    public final Property<Boolean> canFire = property(new Property<>(PropertyType.Boolean, "canfire", false));
-    public final Property<List<String>> whitelistedPlayers = property(new Property<>(PropertyType.StringList, "whitelistedplayers", new ArrayList<>()));
+    public final SingleProperty<Boolean> hasNoPower = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "haspower", false));
+    public final SingleProperty<Boolean> inRange = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "isrange", false));
+    public final SingleProperty<Double> currentRange;
+    public final SingleProperty<Double> inaccuracyMultiplier = property(new SingleProperty<>(PropertyTypes.DOUBLE, "inaccuracymultiplier", 1.0));
+    public final SingleProperty<Boolean> canFire = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "canfire", false));
+    public final ListProperty<String> whitelistedPlayers = property(new ListProperty<>(PropertyTypes.STRING_LIST, "whitelistedplayers", new ArrayList<>()));
 
     public final double baseRange;
     public final double rotationSpeedRadians;
@@ -77,16 +72,16 @@ public abstract class GenericTileTurret extends GenericTile {
     public GenericTileTurret(BlockEntityType<?> tileEntityTypeIn, BlockPos worldPos, BlockState blockState, double baseRange, double minimumRange, double usage, double rotationSpeedRadians, double inaccuracy) {
         super(tileEntityTypeIn, worldPos, blockState);
         addComponent(new ComponentTickable(this).tickServer(this::tickServer).tickClient(this::tickClient));
-        addComponent(new ComponentPacketHandler(this));
-        addComponent(new ComponentElectrodynamic(this, false, true).setInputDirections(Direction.DOWN).voltage(ElectrodynamicsCapabilities.DEFAULT_VOLTAGE).maxJoules(usage * 20));
+        addComponent(new ComponentElectrodynamic(this, false, true).setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM).voltage(VoltaicCapabilities.DEFAULT_VOLTAGE).maxJoules(usage * 20));
         addComponent(getInventory().validUpgrades(SubtypeItemUpgrade.range));
         addComponent(getContainer());
+        addComponent(new ComponentForgeEnergy(this));
         this.usage = usage;
         this.baseRange = baseRange;
         this.minimumRange = minimumRange;
         this.rotationSpeedRadians = rotationSpeedRadians;
         this.inaccuracy = inaccuracy;
-        currentRange = property(new Property<>(PropertyType.Double, "currentrange", baseRange));
+        currentRange = property(new SingleProperty<>(PropertyTypes.DOUBLE, "currentrange", baseRange));
     }
 
 
@@ -94,9 +89,9 @@ public abstract class GenericTileTurret extends GenericTile {
 
         ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
 
-        hasNoPower.set(electro.getJoulesStored() < usage);
+        hasNoPower.setValue(electro.getJoulesStored() < usage);
 
-        if (hasNoPower.get()) {
+        if (hasNoPower.getValue()) {
             return;
         }
 
@@ -110,11 +105,11 @@ public abstract class GenericTileTurret extends GenericTile {
             return;
         }
 
-        hasTarget.set(target != null);
+        hasTarget.setValue(target != null);
 
         double distanceToTarget = 0;
 
-        if (hasTarget.get()) {
+        if (hasTarget.getValue()) {
 
             Vec3 interceptionPos = getTargetPosition(target);
 
@@ -138,47 +133,47 @@ public abstract class GenericTileTurret extends GenericTile {
 
                 double thetaY = Math.atan(deltaY / magXZ);
 
-                targetMovement.set(new Vec3(deltaX, deltaY, deltaZ).normalize());
+                targetMovement.setValue(new Vec3(deltaX, deltaY, deltaZ).normalize());
 
-                desiredRotation.set(new Vec3(deltaX / magXZ, Math.sin(thetaY), deltaZ / magXZ));
+                desiredRotation.setValue(new Vec3(deltaX / magXZ, Math.sin(thetaY), deltaZ / magXZ));
 
             }
 
         } else if(movementCooldown <= 0) {
-            desiredRotation.set(getDefaultOrientation());
+            desiredRotation.setValue(getDefaultOrientation());
         } else {
             movementCooldown--;
         }
 
-        inRange.set(distanceToTarget >= minimumRange && distanceToTarget <= currentRange.get());
+        inRange.setValue(distanceToTarget >= minimumRange && distanceToTarget <= currentRange.getValue());
 
-        if (turretRotation.get().equals(desiredRotation.get())) {
+        if (turretRotation.getValue().equals(desiredRotation.getValue())) {
 
-            canFire.set(hasTarget.get() && inRange.get());
+            canFire.setValue(hasTarget.getValue() && inRange.getValue());
 
         } else if(movementCooldown <= 0) {
 
-            double thetaDesiredXZ = getXZAngleRadians(desiredRotation.get());
-            double thetaCurrXZ = getXZAngleRadians(turretRotation.get());
+            double thetaDesiredXZ = getXZAngleRadians(desiredRotation.getValue());
+            double thetaCurrXZ = getXZAngleRadians(turretRotation.getValue());
 
             double angleDifXZ = thetaDesiredXZ - thetaCurrXZ;
 
-            double deltaY = desiredRotation.get().y - turretRotation.get().y;
+            double deltaY = desiredRotation.getValue().y - turretRotation.getValue().y;
 
             if (deltaY < 0) {
-                turretRotation.set(turretRotation.get().add(0, -Math.cos(rotationSpeedRadians) * 0.125, 0));
-                if (turretRotation.get().y < getMinElevation()) {
-                    turretRotation.set(new Vec3(turretRotation.get().x, Math.max(getMinElevation(), desiredRotation.get().y), turretRotation.get().z));
-                } else if (turretRotation.get().y < desiredRotation.get().y) {
-                    turretRotation.set(new Vec3(turretRotation.get().x, desiredRotation.get().y, turretRotation.get().z));
+                turretRotation.setValue(turretRotation.getValue().add(0, -Math.cos(rotationSpeedRadians) * 0.125, 0));
+                if (turretRotation.getValue().y < getMinElevation()) {
+                    turretRotation.setValue(new Vec3(turretRotation.getValue().x, Math.max(getMinElevation(), desiredRotation.getValue().y), turretRotation.getValue().z));
+                } else if (turretRotation.getValue().y < desiredRotation.getValue().y) {
+                    turretRotation.setValue(new Vec3(turretRotation.getValue().x, desiredRotation.getValue().y, turretRotation.getValue().z));
                 }
             } else if (deltaY > 0) {
-                turretRotation.set(turretRotation.get().add(0, Math.cos(rotationSpeedRadians) * 0.125, 0));
+                turretRotation.setValue(turretRotation.getValue().add(0, Math.cos(rotationSpeedRadians) * 0.125, 0));
 
-                if (turretRotation.get().y > getMaxElevation()) {
-                    turretRotation.set(new Vec3(turretRotation.get().x, Math.min(getMaxElevation(), desiredRotation.get().y), turretRotation.get().z));
-                } else if (turretRotation.get().y > desiredRotation.get().y) {
-                    turretRotation.set(new Vec3(turretRotation.get().x, desiredRotation.get().y, turretRotation.get().z));
+                if (turretRotation.getValue().y > getMaxElevation()) {
+                    turretRotation.setValue(new Vec3(turretRotation.getValue().x, Math.min(getMaxElevation(), desiredRotation.getValue().y), turretRotation.getValue().z));
+                } else if (turretRotation.getValue().y > desiredRotation.getValue().y) {
+                    turretRotation.setValue(new Vec3(turretRotation.getValue().x, desiredRotation.getValue().y, turretRotation.getValue().z));
                 }
             }
 
@@ -192,27 +187,27 @@ public abstract class GenericTileTurret extends GenericTile {
 
             }
 
-            //thetaCurrXZ = getXZAngleRadians(turretRotation.get());
+            //thetaCurrXZ = getXZAngleRadians(turretRotation.getValue());
 
             if (angleDifXZ >= 0 && thetaCurrXZ > thetaDesiredXZ) {
 
-                turretRotation.set(new Vec3(desiredRotation.get().x, turretRotation.get().y, desiredRotation.get().z));
+                turretRotation.setValue(new Vec3(desiredRotation.getValue().x, turretRotation.getValue().y, desiredRotation.getValue().z));
 
             } else if (angleDifXZ < 0 && thetaCurrXZ < thetaDesiredXZ) {
 
-                turretRotation.set(new Vec3(desiredRotation.get().x, turretRotation.get().y, desiredRotation.get().z));
+                turretRotation.setValue(new Vec3(desiredRotation.getValue().x, turretRotation.getValue().y, desiredRotation.getValue().z));
 
             } else {
-                turretRotation.set(new Vec3(Math.cos(thetaCurrXZ), turretRotation.get().y, Math.sin(thetaCurrXZ)));
+                turretRotation.setValue(new Vec3(Math.cos(thetaCurrXZ), turretRotation.getValue().y, Math.sin(thetaCurrXZ)));
             }
 
-            canFire.set(hasTarget.get() && turretRotation.get().equals(desiredRotation.get()) && inRange.get());
+            canFire.setValue(hasTarget.getValue() && turretRotation.getValue().equals(desiredRotation.getValue()) && inRange.getValue());
 
         } else {
-            canFire.set(false);
+            canFire.setValue(false);
         }
 
-        if (canFire.get()) {
+        if (canFire.getValue()) {
             fireTickServer(tickable.getTicks());
         }
 
@@ -265,14 +260,14 @@ public abstract class GenericTileTurret extends GenericTile {
             double range = baseRange;
 
             for(int i = 0; i < rangeUpgrades; i++) {
-                inaccuracyMulitplier *= Constants.RANGE_INCREASE_INACCURACY_MULTIPLIER;
+                inaccuracyMulitplier *= BallistixConstants.RANGE_INCREASE_INACCURACY_MULTIPLIER;
                 range += 5.55;
             }
 
-            range = Math.min(range, Constants.FIRE_CONTROL_RADAR_RANGE);
+            range = Math.min(range, BallistixConstants.FIRE_CONTROL_RADAR_RANGE);
 
-            currentRange.set(range);
-            inaccuracyMultiplier.set(inaccuracyMulitplier);
+            currentRange.setValue(range);
+            inaccuracyMultiplier.setValue(inaccuracyMulitplier);
 
 
         }
@@ -280,13 +275,13 @@ public abstract class GenericTileTurret extends GenericTile {
     }
 
     @Override
-    public void saveAdditional(@NotNull CompoundTag compound) {
+    protected void saveAdditional(CompoundTag compound) {
         super.saveAdditional(compound);
         compound.putInt("turncooldown", movementCooldown);
     }
 
     @Override
-    public void load(CompoundTag compound) {
+	public void load(CompoundTag compound) {
         super.load(compound);
         movementCooldown = compound.getInt("turncooldown");
     }
@@ -353,8 +348,7 @@ public abstract class GenericTileTurret extends GenericTile {
     public void setPlacedBy(LivingEntity player, ItemStack stack) {
         super.setPlacedBy(player, stack);
         if(player instanceof Player pl) {
-            whitelistedPlayers.get().add(pl.getName().getString());
-            whitelistedPlayers.forceDirty();
+            whitelistedPlayers.addValue(pl.getName().getString());
         }
     }
 
@@ -364,7 +358,7 @@ public abstract class GenericTileTurret extends GenericTile {
 
         if(!level.isClientSide) {
             ChunkPos pos = level.getChunk(getBlockPos()).getPos();
-            ForgeChunkManager.forceChunk((ServerLevel) level, References.ID, getBlockPos(), pos.x, pos.z, false, true);
+            ForgeChunkManager.forceChunk((ServerLevel) level, Ballistix.ID, getBlockPos(), pos.x, pos.z, false, true);
         }
 
 
@@ -375,7 +369,7 @@ public abstract class GenericTileTurret extends GenericTile {
         super.onPlace(oldState, isMoving);
         if(!level.isClientSide) {
             ChunkPos pos = level.getChunk(getBlockPos()).getPos();
-            ForgeChunkManager.forceChunk((ServerLevel) level, References.ID, getBlockPos(), pos.x, pos.z, true, true);
+            ForgeChunkManager.forceChunk((ServerLevel) level, Ballistix.ID, getBlockPos(), pos.x, pos.z, true, true);
         }
     }
 

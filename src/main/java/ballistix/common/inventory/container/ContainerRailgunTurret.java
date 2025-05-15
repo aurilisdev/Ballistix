@@ -2,16 +2,16 @@ package ballistix.common.inventory.container;
 
 import ballistix.common.tile.turret.antimissile.TileTurretRailgun;
 import ballistix.registers.BallistixMenuTypes;
-import electrodynamics.common.item.subtype.SubtypeItemUpgrade;
-import electrodynamics.prefab.inventory.container.GenericContainerBlockEntity;
-import electrodynamics.prefab.inventory.container.slot.item.SlotGeneric;
-import electrodynamics.prefab.inventory.container.slot.item.type.SlotUpgrade;
-import electrodynamics.prefab.utilities.math.Color;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
+import voltaic.common.item.subtype.SubtypeItemUpgrade;
+import voltaic.prefab.inventory.container.slot.item.SlotGeneric;
+import voltaic.prefab.inventory.container.slot.item.type.SlotUpgrade;
+import voltaic.prefab.inventory.container.types.GenericContainerBlockEntity;
+import voltaic.prefab.utilities.math.Color;
 
 public class ContainerRailgunTurret extends GenericContainerBlockEntity<TileTurretRailgun> {
 
@@ -28,7 +28,7 @@ public class ContainerRailgunTurret extends GenericContainerBlockEntity<TileTurr
     @Override
     public void addInventorySlots(Container inv, Inventory player) {
 
-        playerInvOffset = 10;
+        setPlayerInvOffset(10);
 
         addSlot(new SlotGeneric(inv, nextIndex(), 80, 20).setIOColor(new Color(0, 240, 255, 255)));
 

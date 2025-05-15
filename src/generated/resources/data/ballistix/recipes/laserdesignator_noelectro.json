@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "G  ",
+    " C ",
+    "  B"
+  ],
+  "key": {
+    "B": {
+      "tag": "forge:gems/diamond"
+    },
+    "C": {
+      "tag": "forge:ingots/gold"
+    },
+    "G": {
+      "item": "ballistix:radargun"
+    }
+  },
+  "result": {
+    "item": "ballistix:laserdesignator"
+  },
+  "conditions": [
+    {
+      "value": {
+        "modid": "electrodynamics",
+        "type": "forge:mod_loaded"
+      },
+      "type": "forge:not"
+    }
+  ]
+}

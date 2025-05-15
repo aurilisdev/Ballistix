@@ -58,5 +58,17 @@
     "sounds": [
       "ballistix:laserturretfiring"
     ]
+  },
+  "railgunkinetic": {
+    "subtitle": "subtitles.ballistix.railgunkinetic",
+    "sounds": [
+      "ballistix:railgunkinetic"
+    ]
+  },
+  "rodhittingground": {
+    "subtitle": "subtitles.ballistix.rodhittingground",
+    "sounds": [
+      "ballistix:rodhittingground"
+    ]
   }
 }

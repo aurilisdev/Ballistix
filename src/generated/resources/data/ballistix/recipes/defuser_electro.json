@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "W  ",
+    " SB",
+    "  C"
+  ],
+  "key": {
+    "B": {
+      "item": "electrodynamics:battery"
+    },
+    "S": {
+      "item": "minecraft:shears"
+    },
+    "C": {
+      "tag": "forge:circuits/basic"
+    },
+    "W": {
+      "item": "electrodynamics:wirecopper"
+    }
+  },
+  "result": {
+    "item": "ballistix:defuser"
+  },
+  "conditions": [
+    {
+      "modid": "electrodynamics",
+      "type": "forge:mod_loaded"
+    }
+  ]
+}

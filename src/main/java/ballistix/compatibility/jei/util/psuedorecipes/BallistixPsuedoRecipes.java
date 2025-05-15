@@ -2,7 +2,7 @@ package ballistix.compatibility.jei.util.psuedorecipes;
 
 import java.util.ArrayList;
 
-import ballistix.common.block.subtype.SubtypeMissile;
+import ballistix.common.item.ItemMissile;
 import ballistix.registers.BallistixItems;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -19,7 +19,7 @@ public class BallistixPsuedoRecipes {
 
 	private static void addBallistixItems() {
 		/* MISSILES */
-		BALLISTIX_ITEMS.addAll(formItemStacks(BallistixItems.getAllItemForSubtype(SubtypeMissile.values()), 1));
+		BALLISTIX_ITEMS.addAll(formItemStacks(BallistixItems.ITEMS_MISSILE.getAllValuesArray(new ItemMissile[0]), 1));
 
 	}
 

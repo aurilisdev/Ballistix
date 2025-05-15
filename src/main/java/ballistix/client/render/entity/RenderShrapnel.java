@@ -6,7 +6,7 @@ import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 
-import ballistix.client.ClientRegister;
+import ballistix.client.BallistixClientRegister;
 import ballistix.common.entity.EntityShrapnel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -15,10 +15,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class RenderShrapnel extends EntityRenderer<EntityShrapnel> {
 	public RenderShrapnel(Context renderManagerIn) {
 		super(renderManagerIn);
@@ -63,6 +60,6 @@ public class RenderShrapnel extends EntityRenderer<EntityShrapnel> {
 
 	@Override
 	public ResourceLocation getTextureLocation(EntityShrapnel entity) {
-		return ClientRegister.TEXTURE_SHRAPNEL;
+		return BallistixClientRegister.TEXTURE_SHRAPNEL;
 	}
 }

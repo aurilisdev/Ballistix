@@ -34,6 +34,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.network.NetworkHooks;
 
 public class EntityMinecart extends AbstractMinecart implements IDefusable {
+
 	private static final EntityDataAccessor<Integer> FUSE = SynchedEntityData.defineId(EntityMinecart.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(EntityMinecart.class, EntityDataSerializers.INT);
 	private int blastOrdinal = -1;
@@ -137,7 +138,7 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable {
 		super.remove(reason);
 		if (!exploded) {
 			if (blastOrdinal != -1) {
-				ItemEntity item = new ItemEntity(level, getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(BallistixItems.getItem(getExplosiveType())));
+				ItemEntity item = new ItemEntity(level, getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(BallistixItems.ITEMS_MINECART.getValue(getExplosiveType())));
 				level.addFreshEntity(item);
 			}
 		}
@@ -162,11 +163,11 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable {
 	}
 
 	@Override
-	public ItemStack getPickResult() {
+	public ItemStack getCartItem() {
 		if (blastOrdinal != -1) {
-			return new ItemStack(BallistixItems.getItem(getExplosiveType()));
+			return new ItemStack(BallistixItems.ITEMS_MINECART.getValue(getExplosiveType()));
 		}
-		return super.getPickResult();
+		return ItemStack.EMPTY;
 	}
 
 	@Override
@@ -224,9 +225,10 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable {
 		fuse = compound.getInt("Fuse");
 		blastOrdinal = compound.getInt("type");
 	}
-
+	
 	@Override
 	public Packet<?> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
+
 }

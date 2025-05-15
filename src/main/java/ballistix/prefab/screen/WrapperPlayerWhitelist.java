@@ -8,37 +8,41 @@ import ballistix.client.screen.util.ScreenPlayerWhitelistTurret;
 import ballistix.common.tile.turret.GenericTileTurret;
 import ballistix.prefab.BallistixIconTypes;
 import ballistix.prefab.utils.BallistixTextUtils;
-import electrodynamics.prefab.screen.component.editbox.ScreenComponentEditBox;
-import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentGuiTab;
-import electrodynamics.prefab.utilities.ElectroTextUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import voltaic.prefab.screen.component.button.ScreenComponentButton;
+import voltaic.prefab.screen.component.editbox.ScreenComponentEditBox;
+import voltaic.prefab.screen.component.types.ScreenComponentSimpleLabel;
+import voltaic.prefab.screen.component.types.ScreenComponentVerticalSlider;
+import voltaic.prefab.screen.component.types.guitab.ScreenComponentGuiTab;
+import voltaic.prefab.utilities.VoltaicTextUtils;
+import voltaic.prefab.utilities.math.Color;
 
 public class WrapperPlayerWhitelist {
 
     private final ScreenPlayerWhitelistTurret<?> screen;
 
-    public ScreenComponentBallistixButton<?> button;
-    private ScreenComponentBallistixButton<?> add;
+    public ScreenComponentButton<?> button;
+    private ScreenComponentButton<?> add;
 
-    private ScreenComponentBallistixLabel whitelistLabel;
+    private ScreenComponentSimpleLabel whitelistLabel;
 
-    private ScreenComponentBallistixButton[] deleteButtons = new ScreenComponentBallistixButton[4];
-    private ScreenComponentWhitelistedPlayer[] players = new ScreenComponentWhitelistedPlayer[4];
+    private ScreenComponentButton[] deleteButtons = new ScreenComponentButton[5];
+    private ScreenComponentWhitelistedPlayer[] players = new ScreenComponentWhitelistedPlayer[5];
 
     public ScreenComponentEditBox addEditBox;
 
     private int topRowIndex = 0;
     private int lastRowCount = 0;
 
-    private static final int BUTTON_COUNT = 4;
+    private static final int BUTTON_COUNT = 5;
 
     public WrapperPlayerWhitelist(ScreenPlayerWhitelistTurret<?> screen, int tabX, int tabY, int x, int y) {
         this.screen = screen;
 
-        screen.addComponent(button = (ScreenComponentBallistixButton<?>) new ScreenComponentBallistixButton<>(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR, tabX, tabY).setOnPress(button -> {
+        screen.addComponent(button = (ScreenComponentButton<?>) new ScreenComponentButton<>(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR, tabX, tabY).setOnPress(button -> {
             //
             button.isPressed = !button.isPressed;
 
@@ -57,67 +61,61 @@ public class WrapperPlayerWhitelist {
                 screen.updateVisibility(true);
             }
 
-        }).onTooltip((graphics, but, xAxis, yAxis) -> {
+        }).onTooltip((poseStack, but, xAxis, yAxis) -> {
             //
-            ScreenComponentBallistixButton<?> button = (ScreenComponentBallistixButton<?>) but;
+            ScreenComponentButton<?> button = (ScreenComponentButton<?>) but;
             List<Component> tooltips = new ArrayList<>();
             tooltips.add(BallistixTextUtils.tooltip("turret.whitelistmanager").withStyle(ChatFormatting.DARK_GRAY));
             if (!button.isPressed) {
-                tooltips.add(ElectroTextUtils.tooltip("inventoryio.presstoshow").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+                tooltips.add(VoltaicTextUtils.tooltip("inventoryio.presstoshow").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
             } else {
-                tooltips.add(ElectroTextUtils.tooltip("inventoryio.presstohide").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+                tooltips.add(VoltaicTextUtils.tooltip("inventoryio.presstohide").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
             }
 
-            screen.renderComponentTooltip(graphics, tooltips, xAxis, yAxis);
+            screen.renderComponentTooltip(poseStack, tooltips, xAxis, yAxis);
 
         }).setIcon(BallistixIconTypes.PLAYER_WHITELIST));
 
-        screen.addComponent(whitelistLabel = new ScreenComponentBallistixLabel(x + 10, y + 23, 10, ScreenComponentCustomRender.TEXT_GRAY, BallistixTextUtils.gui("turret.playerwhitelist.newplayer")));
+        screen.addComponent(whitelistLabel = new ScreenComponentSimpleLabel(x + 10, y + 23, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("turret.playerwhitelist.newplayer")));
 
-        screen.addComponent(add = new ScreenComponentBallistixButton<>(x + 10, y + 52, 156, 20).setOnPress(button -> {
+        screen.addComponent(add = new ScreenComponentButton<>(x + 10, y + 52, 156, 20).setOnPress(button -> {
 
-            GenericTileTurret turret = screen.getMenu().getHostFromIntArray();
+            GenericTileTurret turret = screen.getMenu().getSafeHost();
 
             if(turret == null) {
                 return;
             }
 
-            turret.whitelistedPlayers.get().add(addEditBox.getValue());
-
-            turret.whitelistedPlayers.updateServer();
+            turret.whitelistedPlayers.addValue(addEditBox.getValue());
 
         }).setLabel(BallistixTextUtils.gui("turret.playerwhitelist.add")));
 
-        screen.addEditBox(addEditBox = new ScreenComponentEditBox(x + 10, y + 35, 156, 15, screen.getFontRenderer()).setTextColor(-1).setTextColorUneditable(-1).setMaxLength(50));
+        screen.addEditBox(addEditBox = new ScreenComponentEditBox(x + 10, y + 35, 156, 15, screen.getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(50));
 
         int butOffX = 25;
         int butOffY = 80;
 
         for (int i = 0; i < BUTTON_COUNT; i++) {
-            players[i] = new ScreenComponentWhitelistedPlayer(x + butOffX, y + butOffY + 20 * i, 125, 20);
+            players[i] = new ScreenComponentWhitelistedPlayer(x + butOffX, y + butOffY + 15 * i, 125, 15);
         }
 
         for (int i = 0; i < BUTTON_COUNT; i++) {
 
             final int index = i;
 
-            deleteButtons[i] = (ScreenComponentBallistixButton) new ScreenComponentBallistixButton<>(x + butOffX + 125, y + butOffY + 20 * i, 15, 20).setOnPress(but -> {
+            deleteButtons[i] = (ScreenComponentButton) new ScreenComponentButton<>(x + butOffX + 125, y + butOffY + 15 * i,15, 15).setOnPress(but -> {
 
                 ScreenComponentWhitelistedPlayer player = players[index];
 
-                GenericTileTurret tile = screen.getMenu().getHostFromIntArray();
+                GenericTileTurret tile = screen.getMenu().getSafeHost();
 
                 if(player.getName() == null) {
                     return;
                 }
 
-                tile.whitelistedPlayers.get().remove(player.getName());
+                tile.whitelistedPlayers.removeValue(player.getName());
 
-                tile.whitelistedPlayers.forceDirty();
-                
-                tile.whitelistedPlayers.updateServer();
-
-            }).onTooltip((graphics, button, xAxis, yAxis) -> screen.renderTooltip(graphics, BallistixTextUtils.tooltip("radar.frequencymanager.delete"), xAxis, yAxis)).setIcon(BallistixIconTypes.DELETE);
+            }).onTooltip((poseStack, button, xAxis, yAxis) -> screen.renderTooltip(poseStack, BallistixTextUtils.tooltip("radar.frequencymanager.delete"), xAxis, yAxis)).setIcon(BallistixIconTypes.DELETE);
         }
 
         screen.addComponent(button);
@@ -129,10 +127,10 @@ public class WrapperPlayerWhitelist {
 
         screen.addComponent(addEditBox);
 
-        for (int i = 0; i < BUTTON_COUNT; i++) {
+        for (int i = 0; i < 5; i++) {
             screen.addComponent(players[i]);
         }
-        for (int i = 0; i < BUTTON_COUNT; i++) {
+        for (int i = 0; i < 5; i++) {
             screen.addComponent(deleteButtons[i]);
         }
 
@@ -141,12 +139,12 @@ public class WrapperPlayerWhitelist {
     }
 
     public void tick() {
-        GenericTileTurret tile = screen.getMenu().getHostFromIntArray();
+        GenericTileTurret tile = screen.getMenu().getSafeHost();
         if(tile == null) {
             return;
         }
 
-        List<String> frequencyList = tile.whitelistedPlayers.get();
+        List<String> frequencyList = tile.whitelistedPlayers.getValue();
 
         lastRowCount = frequencyList.size();
 
@@ -258,7 +256,7 @@ public class WrapperPlayerWhitelist {
             component.setVisible(show);
         }
 
-        for(ScreenComponentBallistixButton<?> button : deleteButtons) {
+        for(ScreenComponentButton<?> button : deleteButtons) {
             button.setVisible(show);
         }
 

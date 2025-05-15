@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "electrodynamics"
+    }
+  ],
+  "key": {
+    "C": {
+      "tag": "forge:circuits/elite"
+    },
+    "G": {
+      "tag": "forge:gunpowder"
+    },
+    "P": {
+      "tag": "forge:plates/steel"
+    },
+    "S": {
+      "item": "ballistix:aamissile"
+    }
+  },
+  "pattern": [
+    " C ",
+    "PSP",
+    "PGP"
+  ],
+  "result": {
+    "item": "ballistix:aamissilemk2"
+  }
+}

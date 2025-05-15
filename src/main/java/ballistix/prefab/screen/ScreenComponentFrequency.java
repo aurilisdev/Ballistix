@@ -2,12 +2,12 @@ package ballistix.prefab.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import electrodynamics.api.screen.ITexture;
-import electrodynamics.prefab.screen.component.editbox.ScreenComponentEditBox;
-import electrodynamics.prefab.screen.component.types.ScreenComponentGeneric;
-import electrodynamics.prefab.utilities.RenderingUtils;
-import electrodynamics.prefab.utilities.math.Color;
 import net.minecraft.network.chat.Component;
+import voltaic.api.screen.ITexture;
+import voltaic.prefab.screen.component.ScreenComponentGeneric;
+import voltaic.prefab.screen.component.editbox.ScreenComponentEditBox;
+import voltaic.prefab.utilities.RenderingUtils;
+import voltaic.prefab.utilities.math.Color;
 
 public class ScreenComponentFrequency extends ScreenComponentGeneric {
 
@@ -18,21 +18,21 @@ public class ScreenComponentFrequency extends ScreenComponentGeneric {
     }
 
     @Override
-    public void renderBackground(PoseStack stack, int xAxis, int yAxis, int guiWidth, int guiHeight) {
+    public void renderBackground(PoseStack poseStack, int xAxis, int yAxis, int guiWidth, int guiHeight) {
         if (!isVisible()) {
             return;
         }
 
         ITexture texture = RadarTextures.FREQUENCY;
-
+        
         RenderingUtils.bindTexture(texture.getLocation());
-        ScreenComponentEditBox.drawExpandedBox(stack, xLocation + guiWidth, yLocation + guiHeight, width, height);
+        ScreenComponentEditBox.drawExpandedBox(poseStack, xLocation + guiWidth, yLocation + guiHeight, width, height);
 
         if (frequency == null) {
             return;
         }
 
-        gui.getFontRenderer().draw(stack, Component.literal(frequency + ""), guiWidth + xLocation + 5, guiHeight + yLocation + 5, Color.WHITE.color());
+        gui.getFontRenderer().draw(poseStack, Component.literal(frequency + ""), guiWidth + xLocation + 5, guiHeight + yLocation + 5, Color.WHITE.color());
 
     }
 

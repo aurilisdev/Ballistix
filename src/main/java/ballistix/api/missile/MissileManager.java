@@ -1,13 +1,13 @@
 package ballistix.api.missile;
 
-import ballistix.References;
-import ballistix.api.capability.BallistixCapabilities;
+import ballistix.Ballistix;
 import ballistix.api.capability.CapabilityActiveBullets;
 import ballistix.api.capability.CapabilityActiveMissiles;
 import ballistix.api.capability.CapabilityActiveRailgunRounds;
 import ballistix.api.capability.CapabilityActiveSAMs;
 import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.api.missile.virtual.VirtualProjectile;
+import ballistix.registers.BallistixCapabilities;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
@@ -21,7 +21,7 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 import javax.annotation.Nullable;
 import java.util.*;
 
-@EventBusSubscriber(modid = References.ID, bus = EventBusSubscriber.Bus.FORGE)
+@EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.FORGE)
 public class MissileManager {
 
 	// Only fires post

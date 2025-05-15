@@ -6,16 +6,16 @@ import ballistix.api.radar.IDetected;
 import ballistix.common.inventory.container.ContainerSearchRadar;
 import ballistix.common.tile.radar.TileSearchRadar;
 import ballistix.prefab.utils.BallistixTextUtils;
-import electrodynamics.api.screen.ITexture;
-import electrodynamics.prefab.screen.GenericScreen;
-import electrodynamics.prefab.screen.component.editbox.ScreenComponentEditBox;
-import electrodynamics.prefab.screen.component.types.ScreenComponentGeneric;
-import electrodynamics.prefab.utilities.RenderingUtils;
-import electrodynamics.prefab.utilities.math.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import voltaic.api.screen.ITexture;
+import voltaic.prefab.screen.GenericScreen;
+import voltaic.prefab.screen.component.ScreenComponentGeneric;
+import voltaic.prefab.screen.component.editbox.ScreenComponentEditBox;
+import voltaic.prefab.utilities.RenderingUtils;
+import voltaic.prefab.utilities.math.Color;
 
 public class ScreenComponentDetection extends ScreenComponentGeneric {
 
@@ -26,7 +26,7 @@ public class ScreenComponentDetection extends ScreenComponentGeneric {
     }
 
     @Override
-    public void renderBackground(PoseStack stack, int xAxis, int yAxis, int guiWidth, int guiHeight) {
+    public void renderBackground(PoseStack poseStack, int xAxis, int yAxis, int guiWidth, int guiHeight) {
 
         if (!isVisible()) {
             return;
@@ -34,7 +34,7 @@ public class ScreenComponentDetection extends ScreenComponentGeneric {
 
         GenericScreen<ContainerSearchRadar> screen = (GenericScreen<ContainerSearchRadar>) gui;
 
-        TileSearchRadar tile = screen.getMenu().getHostFromIntArray();
+        TileSearchRadar tile = screen.getMenu().getSafeHost();
 
         if (tile == null) {
             return;
@@ -43,7 +43,7 @@ public class ScreenComponentDetection extends ScreenComponentGeneric {
         ITexture texture = RadarTextures.FREQUENCY;
 
         RenderingUtils.bindTexture(texture.getLocation());
-        ScreenComponentEditBox.drawExpandedBox(stack, xLocation + guiWidth, yLocation + guiHeight, width, height);
+        ScreenComponentEditBox.drawExpandedBox(poseStack, xLocation + guiWidth, yLocation + guiHeight, width, height);
 
         if(detection == null) {
             return;
@@ -69,15 +69,15 @@ public class ScreenComponentDetection extends ScreenComponentGeneric {
             y += (int) ((font.lineHeight - font.lineHeight * scale) / 2.0F);
         }
 
-        stack.pushPose();
+        poseStack.pushPose();
 
-        stack.translate(guiWidth + x, guiHeight + y, 0);
+        poseStack.translate(guiWidth + x, guiHeight + y, 0);
 
-        stack.scale(scale, scale, 0);
+        poseStack.scale(scale, scale, 0);
 
-        font.draw(stack, text, 0, 0, ScreenComponentCustomRender.TEXT_GRAY.color());
+        font.draw(poseStack, text, 0, 0, Color.TEXT_GRAY.color());
 
-        stack.popPose();
+        poseStack.popPose();
 
         y = yLocation + 15;
 
@@ -108,19 +108,19 @@ public class ScreenComponentDetection extends ScreenComponentGeneric {
                 y += (int) ((font.lineHeight - font.lineHeight * scale) / 2.0F);
             }
 
-            stack.pushPose();
+            poseStack.pushPose();
 
-            stack.translate(guiWidth + x, guiHeight + y, 0);
+            poseStack.translate(guiWidth + x, guiHeight + y, 0);
 
-            stack.scale(scale, scale, 0);
+            poseStack.scale(scale, scale, 0);
 
-            font.draw(stack, text, 0, 0, ScreenComponentCustomRender.TEXT_GRAY.color());
+            font.draw(poseStack, text, 0, 0, Color.TEXT_GRAY.color());
 
-            stack.popPose();
+            poseStack.popPose();
 
 
         } else {
-        	font.draw(stack, BallistixTextUtils.gui("radar.bearingunknown"), guiWidth + x, guiHeight + y, Color.BLACK.color());
+        	font.draw(poseStack, BallistixTextUtils.gui("radar.bearingunknown"), guiWidth + x, guiHeight + y, Color.BLACK.color());
         }
 
     }

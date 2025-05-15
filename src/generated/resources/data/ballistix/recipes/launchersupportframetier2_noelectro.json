@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "electrodynamics"
+      }
+    }
+  ],
+  "key": {
+    "S": {
+      "tag": "forge:ingots/iron"
+    },
+    "V": {
+      "item": "ballistix:launchersupportframetier1"
+    }
+  },
+  "pattern": [
+    "S S",
+    "SVS",
+    "S S"
+  ],
+  "result": {
+    "item": "ballistix:launchersupportframetier2"
+  }
+}

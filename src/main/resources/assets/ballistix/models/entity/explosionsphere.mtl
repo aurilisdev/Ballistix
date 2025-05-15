@@ -1,9 +1,4 @@
-newmtl fireball
-Ns 225.000000
-Ka 1.000000 1.000000 1.000000
-Kd 0.000000 0.000000 0.000000
-Ks 0.500000 0.500000 0.500000
-Ke 0.0 0.0 0.0
-Ni 1.450000
-illum 2
+# Made in Blockbench 4.10.3
+newmtl m_a1495852-f5ed-997a-4a8d-dbad8a39be65
 map_Kd ballistix:block/model/fireball
+newmtl none

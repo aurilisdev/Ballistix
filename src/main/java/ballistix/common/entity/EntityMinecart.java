@@ -27,7 +27,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.IBlockReader;
@@ -127,7 +126,7 @@ public class EntityMinecart extends AbstractMinecartEntity implements IDefusable
 			remove(false);
 			if (blastOrdinal != -1) {
 				SubtypeBlast explosive = SubtypeMinecart.values()[blastOrdinal].explosiveType;
-				Blast b = Blast.createFromSubtype(explosive, level, blockPosition());
+				Blast b = explosive.createBlast(level, blockPosition());
 				if (b != null) {
 					b.performExplosion();
 				}
@@ -140,7 +139,7 @@ public class EntityMinecart extends AbstractMinecartEntity implements IDefusable
 		super.remove(reason);
 		if (!exploded) {
 			if (blastOrdinal != -1) {
-				ItemEntity item = new ItemEntity(level, blockPosition().getX() + 0.5, blockPosition().getY() + 0.5, blockPosition().getZ() + 0.5, new ItemStack(BallistixItems.getItem(getExplosiveType())));
+				ItemEntity item = new ItemEntity(level, blockPosition().getX() + 0.5, blockPosition().getY() + 0.5, blockPosition().getZ() + 0.5, new ItemStack(BallistixItems.ITEMS_MINECART.getValue(getExplosiveType())));
 				level.addFreshEntity(item);
 			}
 		}
@@ -165,11 +164,11 @@ public class EntityMinecart extends AbstractMinecartEntity implements IDefusable
 	}
 
 	@Override
-	public ItemStack getPickedResult(RayTraceResult target) {
+	public ItemStack getCartItem() {
 		if (blastOrdinal != -1) {
-			return new ItemStack(BallistixItems.getItem(getExplosiveType()));
+			return new ItemStack(BallistixItems.ITEMS_MINECART.getValue(getExplosiveType()));
 		}
-		return super.getPickedResult(target);
+		return ItemStack.EMPTY;
 	}
 
 	@Override
@@ -227,9 +226,10 @@ public class EntityMinecart extends AbstractMinecartEntity implements IDefusable
 		fuse = compound.getInt("Fuse");
 		blastOrdinal = compound.getInt("type");
 	}
-
+	
 	@Override
 	public IPacket<?> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
+
 }

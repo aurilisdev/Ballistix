@@ -1,0 +1,575 @@
+package ballistix.api.missile.virtual;
+
+import java.util.UUID;
+
+import ballistix.client.particle.ParticleOptionsMissileSmoke;
+import ballistix.common.settings.BallistixConstants;
+import ballistix.common.tile.radar.TileFireControlRadar;
+import ballistix.common.tile.turret.GenericTileTurret;
+import ballistix.registers.BallistixSounds;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.Explosion.Mode;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import ballistix.api.missile.MissileManager;
+import ballistix.api.silo.ILauncherPlatform;
+import ballistix.api.silo.ILauncherSupportFrame;
+import ballistix.common.entity.EntityBullet;
+import ballistix.common.entity.EntityRailgunRound;
+import ballistix.common.entity.EntitySAM;
+import ballistix.registers.BallistixDamageTypes;
+import voltaic.Voltaic;
+import voltaic.api.multiblock.subnodebased.TileMultiSubnode;
+import voltaic.prefab.utilities.BlockEntityUtils;
+import voltaic.prefab.utilities.CodecUtils;
+
+import javax.annotation.Nullable;
+
+public abstract class VirtualProjectile {
+
+    public float speed;
+    public Vector3d position;
+    public Vector3d deltaMovement;
+    public final float range;
+    public final boolean canHitPlayers;
+    public final UUID id;
+    protected boolean hasExploded = false;
+    protected boolean isSpawned = false;
+    public float distanceTraveled = 0.0F;
+    protected int tickCount = 0;
+    protected int entityId = -1;
+
+    protected VirtualProjectile(float speed, Vector3d position, Vector3d deltaMovement, float range, boolean canHitPlayers, float distanceTraveled, UUID id, boolean hasExploded, boolean isSpawned, int entityId) {
+        this(speed, position, deltaMovement, range, canHitPlayers, id);
+        this.distanceTraveled = distanceTraveled;
+        this.hasExploded = hasExploded;
+        this.isSpawned = isSpawned;
+        this.entityId = entityId;
+    }
+
+    public VirtualProjectile(float speed, Vector3d position, Vector3d deltaMovement, float range, boolean canHitPlayers, UUID id) {
+        this.speed = speed;
+        this.position = position;
+        this.deltaMovement = deltaMovement;
+        this.range = range;
+        this.canHitPlayers = canHitPlayers;
+        this.id = id;
+    }
+
+    // only ticks on server
+    public void tick(ServerWorld level) {
+
+        tickCount++;
+
+        if (tickCount > 30 && deltaMovement.length() <= 0) {
+            hasExploded = true;
+            return;
+        }
+
+        if (distanceTraveled >= range + 5) {
+            onReachMaxDistance(level);
+            hasExploded = true;
+            return;
+        }
+
+        if(hasExploded) {
+            return;
+        }
+
+        BlockPos projected = projectMovementForCollision(level);
+
+        if(projected != null) {
+            BlockState state = level.getBlockState(projected);
+
+            if (!state.getCollisionShape(level, projected).isEmpty() && !isInValidBlockstate(projected, level)) {
+                onHitBlock(level, projected);
+                hasExploded = true;
+                return;
+            }
+        }
+
+        updatePosition(level);
+
+        AxisAlignedBB box = getBoundingBox().inflate(speed);
+
+        for (VirtualMissile missile : MissileManager.getMissilesForLevel(level.dimension())) {
+
+            if (!missile.hasExploded() && missile.getBoundingBox().intersects(box)) {
+                onHitMissile(level, missile);
+                hasExploded = true;
+                return;
+            }
+
+        }
+
+        if (canHitPlayers) {
+            LivingEntity selected = null;
+            double lastMag = 0;
+
+            for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, box)) {
+
+                double deltaX = entity.getX() - position.x;
+                double deltaY = entity.getY() - position.y;
+                double deltaZ = entity.getZ() - position.z;
+
+                double mag = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+
+                if (selected == null) {
+                    selected = entity;
+                    lastMag = mag;
+                } else if (mag < lastMag) {
+                    selected = entity;
+                }
+
+            }
+
+            if (selected != null) {
+                onHitLiving(level, selected);
+                hasExploded = true;
+                return;
+            }
+        }
+
+        distanceTraveled += speed;
+
+        if(!isSpawned && level.hasChunkAt(blockPosition()) && level.getChunkSource().isEntityTickingChunk(new ChunkPos(blockPosition()))) {
+            Entity entity = makeNewEntity(level);
+            if(level.addFreshEntity(entity)) {
+                setSpawned(true, entity.getId());
+            }
+        }
+
+        if(isSpawned && (!level.hasChunkAt(blockPosition()) || level.getEntity(entityId) == null)) {
+            setSpawned(false, -1);
+        }
+    }
+    
+    protected boolean isInValidBlockstate(BlockPos pos, ServerWorld world) {
+
+        TileEntity blockentity = world.getBlockEntity(pos);
+
+        return blockentity instanceof GenericTileTurret;
+
+    }
+
+    public void updatePosition(ServerWorld level) {
+        position = new Vector3d (position.x + deltaMovement.x * speed, position.y + deltaMovement.y * speed, position.z + deltaMovement.z * speed);
+    }
+
+    public abstract void onHitMissile(World world, VirtualMissile missile);
+
+    public abstract void onHitLiving(World world, LivingEntity entity);
+
+    public abstract void onHitBlock(World world, BlockPos block);
+
+    public void onReachMaxDistance(World world) {
+
+    }
+
+    public abstract AxisAlignedBB getBoundingBox();
+
+    public BlockPos blockPosition() {
+        return new BlockPos((int) Math.floor(position.x), (int) Math.floor(position.y), (int) Math.floor(position.z));
+    }
+
+    public void setSpawned(boolean spawned, int id) {
+        isSpawned = spawned;
+        entityId = id;
+    }
+
+    public boolean hasExploded() {
+        return hasExploded;
+    }
+
+    public abstract Entity makeNewEntity(World world);
+
+    @Nullable
+    public BlockPos projectMovementForCollision(ServerWorld world) {
+
+        Vector3d currPos = position.scale(1.0);
+
+        int iterations = Math.abs((int) Math.ceil(speed));
+
+        BlockPos pos;
+        BlockState state;
+
+        for (int i = 0; i < iterations; i++) {
+
+            pos = new BlockPos((int) Math.floor(currPos.x), (int) Math.floor(currPos.y), (int) Math.floor(currPos.z));
+            state = world.getBlockState(pos);
+
+            if (state.getCollisionShape(world, blockPosition()).isEmpty() || isInValidBlockstate(pos, world)) {
+                currPos.add(deltaMovement);
+                continue;
+            }
+
+            return pos;
+
+        }
+
+        return null;
+
+    }
+
+    public static class VirtualBullet extends VirtualProjectile {
+
+        public static final Codec<VirtualBullet> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.FLOAT.fieldOf("speed").forGetter(instance0 -> instance0.speed),
+                CodecUtils.VEC3_CODEC.fieldOf("position").forGetter(instance0 -> instance0.position),
+                CodecUtils.VEC3_CODEC.fieldOf("movement").forGetter(instance0 -> instance0.deltaMovement),
+                Codec.FLOAT.fieldOf("range").forGetter(instance0 -> instance0.range),
+                Codec.FLOAT.fieldOf("distancetraveled").forGetter(instance0 -> instance0.distanceTraveled),
+                CodecUtils.UUID_CODEC.fieldOf("id").forGetter(instance0 -> instance0.id),
+                Codec.BOOL.fieldOf("hasexploded").forGetter(instance0 -> instance0.hasExploded),
+                Codec.BOOL.fieldOf("hasspawned").forGetter(instance0 -> instance0.isSpawned),
+                Codec.INT.fieldOf("entityid").forGetter(instance0 -> instance0.entityId)
+        ).apply(instance, VirtualBullet::new));
+
+        protected VirtualBullet(float speed, Vector3d position, Vector3d deltaMovement, float range, float distanceTraveled, UUID id, boolean hasExploded, boolean isSpawned, int entityId) {
+            super(speed, position, deltaMovement, range, true, distanceTraveled, id, hasExploded, isSpawned, entityId);
+        }
+
+        public VirtualBullet(float speed, Vector3d position, Vector3d deltaMovement, float range) {
+            super(speed, position, deltaMovement, range, true, UUID.randomUUID());
+        }
+
+        @Override
+        public void onHitMissile(World world, VirtualMissile missile) {
+            missile.health = missile.health - 1.0F;
+            if(missile.health <= 0) {
+                world.playSound(null, blockPosition(), SoundEvents.GENERIC_EXPLODE, SoundCategory.HOSTILE, 2.0F, 1.0F);
+            }
+        }
+
+        @Override
+        public void onHitLiving(World world, LivingEntity entity) {
+            entity.hurt(BallistixDamageTypes.CIWS_BULLET, 10);
+        }
+
+        @Override
+        public void onHitBlock(World world, BlockPos block) {
+
+        }
+
+        @Override
+        public AxisAlignedBB getBoundingBox() {
+            return new AxisAlignedBB(position.x - 0.05F, position.y, position.z - 0.05F, position.x + 0.05F, position.y + 0.1F, position.z + 0.05F);
+        }
+
+        @Override
+        public Entity makeNewEntity(World world) {
+            EntityBullet bullet = new EntityBullet(world);
+            bullet.setPos(position.x, position.y, position.z);
+            bullet.setDeltaMovement(deltaMovement);
+            bullet.id = id;
+            bullet.speed = speed;
+            return bullet;
+        }
+    }
+
+    public static class VirtualRailgunRound extends VirtualProjectile {
+
+        public static final Codec<VirtualRailgunRound> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.FLOAT.fieldOf("speed").forGetter(instance0 -> instance0.speed),
+                CodecUtils.VEC3_CODEC.fieldOf("position").forGetter(instance0 -> instance0.position),
+                CodecUtils.VEC3_CODEC.fieldOf("movement").forGetter(instance0 -> instance0.deltaMovement),
+                Codec.FLOAT.fieldOf("range").forGetter(instance0 -> instance0.range),
+                Codec.FLOAT.fieldOf("distancetraveled").forGetter(instance0 -> instance0.distanceTraveled),
+                CodecUtils.UUID_CODEC.fieldOf("id").forGetter(instance0 -> instance0.id),
+                Codec.BOOL.fieldOf("hasexploded").forGetter(instance0 -> instance0.hasExploded),
+                Codec.BOOL.fieldOf("hasspawned").forGetter(instance0 -> instance0.isSpawned),
+                Codec.INT.fieldOf("entityid").forGetter(instance0 -> instance0.entityId)
+        ).apply(instance, VirtualRailgunRound::new));
+
+        protected VirtualRailgunRound(float speed, Vector3d position, Vector3d deltaMovement, float range, float distanceTraveled, UUID id, boolean hasExploded, boolean isSpawned, int entityId) {
+            super(speed, position, deltaMovement, range, true, distanceTraveled, id, hasExploded, isSpawned, entityId);
+        }
+        public VirtualRailgunRound(float speed, Vector3d position, Vector3d deltaMovement, float range) {
+            super(speed, position, deltaMovement, range, true, UUID.randomUUID());
+        }
+
+        @Override
+        public void onHitMissile(World world, VirtualMissile missile) {
+            MissileManager.removeMissile(world.dimension(), missile.getId());
+            world.playSound(null, blockPosition(), SoundEvents.GENERIC_EXPLODE, SoundCategory.HOSTILE, 2.0F, 1.0F);
+        }
+
+        @Override
+        public void onHitLiving(World world, LivingEntity entity) {
+            entity.hurt(BallistixDamageTypes.RAILGUN_ROUND, 20);
+        }
+
+        @Override
+        public void onHitBlock(World world, BlockPos block) {
+            BlockState state = world.getBlockState(block);
+            if(state.getDestroySpeed(world, block) < 50.0F && !state.is(Blocks.BEDROCK)) {
+                world.destroyBlock(block, false);
+            }
+            world.playSound(null, block, BallistixSounds.SOUND_RODHITTINGGROUND.get(), SoundCategory.BLOCKS, 1.0F, 1.0F);
+        }
+
+        @Override
+        public AxisAlignedBB getBoundingBox() {
+            return new AxisAlignedBB(position.x - 0.05F, position.y, position.z - 0.05F, position.x + 0.05F, position.y + 0.1F, position.z + 0.05F);
+        }
+
+        @Override
+        public Entity makeNewEntity(World world) {
+            EntityRailgunRound railgunround = new EntityRailgunRound(world);
+            railgunround.setPos(position.x, position.y, position.z);
+            railgunround.setDeltaMovement(deltaMovement);
+            railgunround.id = id;
+            railgunround.speed = speed;
+            return railgunround;
+        }
+    }
+
+    public static class VirtualSAM extends VirtualProjectile {
+
+        public static final Codec<VirtualSAM> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.FLOAT.fieldOf("speed").forGetter(instance0 -> instance0.speed),
+                CodecUtils.VEC3_CODEC.fieldOf("position").forGetter(instance0 -> instance0.position),
+                CodecUtils.VEC3_CODEC.fieldOf("movement").forGetter(instance0 -> instance0.deltaMovement),
+                Codec.FLOAT.fieldOf("range").forGetter(instance0 -> instance0.range),
+                Codec.FLOAT.fieldOf("distancetraveled").forGetter(instance0 -> instance0.distanceTraveled),
+                CodecUtils.UUID_CODEC.fieldOf("id").forGetter(instance0 -> instance0.id),
+                Codec.BOOL.fieldOf("hasexploded").forGetter(instance0 -> instance0.hasExploded),
+                Codec.BOOL.fieldOf("hasspawned").forGetter(instance0 -> instance0.isSpawned),
+                Codec.INT.fieldOf("entityid").forGetter(instance0 -> instance0.entityId),
+                BlockPos.CODEC.fieldOf("radarpos").forGetter(instance0 -> instance0.radarPos),
+                Codec.INT.fieldOf("variant").forGetter(instance0 -> instance0.variant)
+        ).apply(instance, VirtualSAM::new));
+
+        private BlockPos radarPos = BlockEntityUtils.OUT_OF_REACH;
+        private final int variant;
+        private TileFireControlRadar radar = null;
+
+        protected VirtualSAM(float speed, Vector3d position, Vector3d deltaMovement, float range, float distanceTraveled, UUID id, boolean hasExploded, boolean isSpawned, int entityId, BlockPos radarPos, int variant) {
+            super(speed, position, deltaMovement, range, true, distanceTraveled, id, hasExploded, isSpawned, entityId);
+            this.radarPos = radarPos;
+            this.variant = variant;
+        }
+        public VirtualSAM(float speed, Vector3d position, Vector3d deltaMovement, float range, BlockPos radarPos, int variant) {
+            super(speed, position, deltaMovement, range, false, UUID.randomUUID());
+            this.radarPos = radarPos;
+            this.variant = variant;
+        }
+        
+        @Override
+        protected boolean isInValidBlockstate(BlockPos pos, ServerWorld world) {
+            if(variant == 0) {
+                return super.isInValidBlockstate(pos, world);
+            }
+
+            TileEntity blockentity = world.getBlockEntity(pos);
+
+            if(blockentity instanceof ILauncherPlatform || blockentity instanceof ILauncherSupportFrame) {
+                return true;
+            }
+
+            if(blockentity instanceof TileMultiSubnode) {
+                TileMultiSubnode subnode = (TileMultiSubnode) blockentity;
+                TileEntity owner = world.getBlockEntity(subnode.parentPos.getValue());
+
+                return owner instanceof ILauncherPlatform || owner instanceof ILauncherSupportFrame;
+            }
+
+            return false;
+        }
+
+        @Override
+        public void onHitMissile(World world, VirtualMissile missile) {
+            if(Voltaic.RANDOM.nextDouble() < (variant == 0 ? BallistixConstants.SAM_CHANCE_TO_DESTROY : BallistixConstants.ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY)) {
+                MissileManager.removeMissile(world.dimension(), missile.getId());
+            }
+            world.playSound(null, blockPosition(), SoundEvents.GENERIC_EXPLODE, SoundCategory.HOSTILE, 2.0F, 1.0F);
+        }
+
+        @Override
+        public void onReachMaxDistance(World world) {
+            world.explode(null, null, null, position.x, position.y, position.z,2.0F, false, Mode.BREAK);
+        }
+
+        @Override
+        public void onHitBlock(World world, BlockPos block) {
+            world.explode(null, null, null, position.x, position.y, position.z,2.0F, false, Mode.BREAK);
+        }
+
+        @Override
+        public void onHitLiving(World world, LivingEntity entity) {
+            world.explode(null, null, null, position.x, position.y, position.z,2.0F, false, Mode.BREAK);
+        }
+
+        @Override
+        public AxisAlignedBB getBoundingBox() {
+            return new AxisAlignedBB(position.x - 0.25F, position.y, position.z - 0.25F, position.x + 0.25F, position.y + 0.5F, position.z + 0.25F);
+        }
+
+        @Override
+        public Entity makeNewEntity(World world) {
+            EntitySAM sam = new EntitySAM(world);
+            sam.setPos(position.x, position.y, position.z);
+            sam.setDeltaMovement(deltaMovement);
+            sam.id = id;
+            sam.speed = speed;
+            sam.variant = variant;
+            return sam;
+        }
+
+        @Override
+        public void updatePosition(ServerWorld level) {
+
+            float topSpeed = variant == 0 ? BallistixConstants.SAM_TOP_SPEED : BallistixConstants.ANTIBALLISTICMISSILE_TOP_SPEED;
+
+            float minSpeed = variant == 0 ? topSpeed * BallistixConstants.SAM_MINTURNSPEED_PERC : topSpeed * BallistixConstants.ANTIBALLISTICMISSILE_MINTURNSPEED_PERC;
+
+            if(radarPos == null || radarPos.equals(BlockEntityUtils.OUT_OF_REACH) || speed < minSpeed) {
+                super.updatePosition(level);
+                return;
+            }
+            TileEntity tileentity = level.getBlockEntity(radarPos);
+            if(radar == null && tileentity instanceof TileFireControlRadar) {
+                this.radar = (TileFireControlRadar) tileentity;
+            }
+
+            if(radar != null && radar.isRemoved()) {
+                radar = null;
+            }
+
+            if(radar == null || radar.isRemoved() || radar.tracking == null || radar.tracking.hasExploded()) {
+                super.updatePosition(level);
+                return;
+            }
+
+            VirtualMissile tracking = radar.tracking;
+
+            float trackingSpeed = 0F;//radar.tracking.speed;
+            Vector3d trackingVector = tracking.deltaMovement;
+
+            double timeToIntercept = TileFireControlRadar.getTimeToIntercept(tracking.position, trackingVector, trackingSpeed, topSpeed, position);
+
+            if (timeToIntercept <= 0) {
+                super.updatePosition(level);
+                return;
+            }
+
+            Vector3d interceptionPos = tracking.position.add(trackingVector.scale(trackingSpeed).scale(timeToIntercept));
+
+            double deltaX = interceptionPos.x - position.x;
+            double deltaY = interceptionPos.y - position.y;
+            double deltaZ = interceptionPos.z - position.z;
+            
+            Vector3d newDeltaMovement = new Vector3d (deltaX, deltaY, deltaZ).normalize();
+            
+            double currAlpha = Math.atan2(deltaMovement.z, deltaMovement.x);
+            double newAlpha = Math.atan2(newDeltaMovement.z, newDeltaMovement.x);
+            
+            double currXZMag = Math.sqrt(deltaMovement.x * deltaMovement.x + deltaMovement.z * deltaMovement.z);
+            double newXZMag = Math.sqrt(newDeltaMovement.x * newDeltaMovement.x + newDeltaMovement.z * newDeltaMovement.z);
+            
+            double currBeta = Math.atan2(deltaMovement.y, currXZMag);
+            double newBeta = Math.atan2(newDeltaMovement.y, newXZMag);
+
+            double deltaAlpha = newAlpha - currAlpha;
+            double deltaBeta = newBeta - currBeta;
+
+            double turnRate = 0;
+
+            if(variant == 0) {
+                turnRate = BallistixConstants.SAM_ENTITY_TURNINGSPEEDRADIANS / 2.0;
+            } else if (variant == 1) {
+                turnRate = BallistixConstants.ANTIBALLISTICMISSILE_ENTITY_TURNINGSPEEDRADIANS / 2.0;
+            }
+
+            if(deltaAlpha > 0) {
+
+                currAlpha += turnRate;
+
+                if(currAlpha > newAlpha) {
+                    currAlpha = newAlpha;
+                }
+
+            } else if (deltaAlpha < 0) {
+
+                currAlpha -= turnRate;
+
+                if(currAlpha < newAlpha) {
+                    currAlpha = newAlpha;
+                }
+
+            }
+
+            if(deltaBeta > 0) {
+
+                currBeta += turnRate;
+
+                if(currBeta > newBeta) {
+                    currBeta = newBeta;
+                }
+
+            } else if (deltaBeta < 0) {
+
+                currBeta -= turnRate;
+
+                if(currBeta < newBeta) {
+                    currBeta = newBeta;
+                }
+
+            }
+
+            deltaMovement = new Vector3d (Math.cos(currAlpha) * Math.cos(currBeta), Math.sin(currBeta), Math.sin(currAlpha) * Math.cos(currBeta)).normalize();
+            
+            super.updatePosition(level);
+
+        }
+
+        @Override
+        public void tick(ServerWorld level) {
+            super.tick(level);
+
+            float topSpeed = variant == 0 ? BallistixConstants.SAM_TOP_SPEED : BallistixConstants.ANTIBALLISTICMISSILE_TOP_SPEED;
+
+            if(speed < topSpeed) {
+                speed += variant == 0 ? BallistixConstants.SAM_ACCELERATION : BallistixConstants.ANTIBALLISTICMISSILE_ACCELERATION;
+            }
+
+            if(speed >= topSpeed) {
+                return;
+            }
+
+            float x = (float) position.x;
+            float y = (float) position.y;
+            float z = (float) position.z;
+            float motionX = (float) (speed * deltaMovement.x);
+            float motionY = (float) (speed * deltaMovement.y);
+            float motionZ = (float) (speed * deltaMovement.z);
+            x -= motionX;
+            y -= motionY;
+            z -= motionZ;
+            for (int i = 0; i < 3; i++) {
+                level.addParticle(new ParticleOptionsMissileSmoke().setParameters(1, 1, 1, 0.3f * 1, 50, true), x, y, z,
+                        -motionX * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()),
+                        -motionY * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()),
+                        -motionZ * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()));
+
+            }
+
+        }
+    }
+
+
+}

@@ -1,6 +1,6 @@
 package ballistix.datagen;
 
-import ballistix.References;
+import ballistix.Ballistix;
 import ballistix.datagen.client.BallistixBlockStateProvider;
 import ballistix.datagen.client.BallistixItemModelsProvider;
 import ballistix.datagen.client.BallistixLangKeyProvider;
@@ -9,13 +9,13 @@ import ballistix.datagen.server.BallistixBlockTagsProvider;
 import ballistix.datagen.server.BallistixItemTagsProvider;
 import ballistix.datagen.server.BallistixLootTablesProvider;
 import ballistix.datagen.server.recipe.BallistixRecipeProvider;
-import electrodynamics.datagen.client.ElectrodynamicsLangKeyProvider.Locale;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
+import voltaic.datagen.utils.client.BaseLangKeyProvider.Locale;
 
-@Mod.EventBusSubscriber(modid = References.ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = Ballistix.ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class DataGenerators {
 
 	@SubscribeEvent

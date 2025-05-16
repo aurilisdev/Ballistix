@@ -1,5 +1,6 @@
 package ballistix.common.block.subtype;
 
+import ballistix.common.blast.Blast;
 import ballistix.common.blast.BlastAntimatter;
 import ballistix.common.blast.BlastAttractive;
 import ballistix.common.blast.BlastBreaching;
@@ -18,51 +19,54 @@ import ballistix.common.blast.BlastObsidian;
 import ballistix.common.blast.BlastRepulsive;
 import ballistix.common.blast.BlastShrapnel;
 import ballistix.common.blast.BlastThermobaric;
-import electrodynamics.api.ISubtype;
-import electrodynamics.prefab.utilities.object.FunctionalInterfaces.QuadFunction;
-import net.minecraft.block.BlockState;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
+import voltaic.api.ISubtype;
+import voltaic.common.block.voxelshapes.VoxelShapeProvider;
 
 public enum SubtypeBlast implements ISubtype {
-	obsidian(BlastObsidian.class, 120, false, true),
-	condensive(BlastCondensive.class, 30, true, true),
-	attractive(BlastAttractive.class, 30, true, true),
-	repulsive(BlastRepulsive.class, 30, true, true),
-	incendiary(BlastIncendiary.class, 80, true, true),
-	shrapnel(BlastShrapnel.class, 40, true, true),
-	debilitation(BlastDebilitation.class, 80, true, true),
-	chemical(BlastChemical.class, 100, true, true),
-	emp(BlastEMP.class, 80, false, true),
-	breaching(BlastBreaching.class, 5, false, true),
-	thermobaric(BlastThermobaric.class, 100, false, true),
-	contagious(BlastContagious.class, 100, false, true),
-	fragmentation(BlastFragmentation.class, 100, false, true),
-	landmine(BlastLandmine.class, 5, false, false, (a, b, c, d) -> VoxelShapes.box(0, 0, 0, 1, 3 / 16.0, 1)),
-	nuclear(BlastNuclear.class, 200, false, true),
-	antimatter(BlastAntimatter.class, 400, false, true),
-	largeantimatter(BlastLargeAntimatter.class, 600, false, true),
-	darkmatter(BlastDarkmatter.class, 400, false, true);
 
-	public final Class<?> blastClass;
+	//Tier 0
+	obsidian(BlastObsidian::new, 120, 1),
+	//Tier 1
+	condensive(BlastCondensive::new, 30, 1),
+	attractive(BlastAttractive::new, 30, 1),
+	repulsive(BlastRepulsive::new, 30, 1),
+	incendiary(BlastIncendiary::new, 80, 1),
+	shrapnel(BlastShrapnel::new, 40, 1),
+	chemical(BlastChemical::new, 100, 1),
+	debilitation(BlastDebilitation::new, 80, 1),
+	//Tier 2
+	fragmentation(BlastFragmentation::new, 100, 2),
+	contagious(BlastContagious::new, 100, 2),
+	breaching(BlastBreaching::new, 5, 2),
+	thermobaric(BlastThermobaric::new, 100, 2),
+	//Tier 3
+	emp(BlastEMP::new, 80, 3),
+	nuclear(BlastNuclear::new, 200, 3),
+	//Tier 4
+	antimatter(BlastAntimatter::new, 400, 3),
+	largeantimatter(BlastLargeAntimatter::new, 600, 3),
+	darkmatter(BlastDarkmatter::new, 400, 3),
+	//Other
+	landmine(BlastLandmine::new, 5, VoxelShapeProvider.createOmni(VoxelShapes.create(new AxisAlignedBB(0, 0, 0, 16.0 / 16.0, 3.0 / 16.0, 16.0 / 16.0))), -1);
+
+	public final Blast.BlastFactory<?> factory;
 	public final int fuse;
-	public final boolean hasGrenade;
-	public final boolean hasMinecart;
-	public final QuadFunction<VoxelShape, BlockState, IBlockReader, BlockPos, ISelectionContext> shape;
+	public final VoxelShapeProvider shape;
+	public final int tier;
 
-	SubtypeBlast(Class<?> blastClass, int fuse, boolean hasGrenade, boolean hasMinecart, QuadFunction<VoxelShape, BlockState, IBlockReader, BlockPos, ISelectionContext> shape) {
-		this.blastClass = blastClass;
+	SubtypeBlast(Blast.BlastFactory<?> factory, int fuse, VoxelShapeProvider shape, int tier) {
+		this.factory = factory;
 		this.fuse = fuse;
-		this.hasGrenade = hasGrenade;
 		this.shape = shape;
-		this.hasMinecart = hasMinecart;
+		this.tier = tier;
 	}
 
-	SubtypeBlast(Class<?> blastClass, int fuse, boolean hasGrenade, boolean hasMinecart) {
-		this(blastClass, fuse, hasGrenade, hasMinecart, (a, b, c, d) -> VoxelShapes.block());
+	SubtypeBlast(Blast.BlastFactory<?> factory, int fuse, int tier) {
+		this(factory, fuse, VoxelShapeProvider.DEFAULT, tier);
 	}
 
 	@Override
@@ -78,5 +82,9 @@ public enum SubtypeBlast implements ISubtype {
 	@Override
 	public String tag() {
 		return name();
+	}
+
+	public Blast createBlast(World world, BlockPos pos) {
+		return factory.create(world, pos);
 	}
 }

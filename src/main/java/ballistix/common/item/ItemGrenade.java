@@ -1,9 +1,8 @@
 package ballistix.common.item;
 
-import ballistix.References;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityGrenade;
-import electrodynamics.api.ISubtype;
+import ballistix.registers.BallistixCreativeTabs;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -15,13 +14,15 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
+import voltaic.api.ISubtype;
+import voltaic.common.item.ItemVoltaic;
 
-public class ItemGrenade extends Item {
+public class ItemGrenade extends ItemVoltaic {
 
 	private SubtypeGrenade grenade;
 
 	public ItemGrenade(SubtypeGrenade grenade) {
-		super(new Item.Properties().tab(References.BALLISTIXTAB).stacksTo(16));
+		super(new Item.Properties().stacksTo(16), () -> BallistixCreativeTabs.MAIN);
 		this.grenade = grenade;
 	}
 
@@ -62,7 +63,13 @@ public class ItemGrenade extends Item {
 	}
 
 	public enum SubtypeGrenade implements ISubtype {
-		attractive(SubtypeBlast.attractive), chemical(SubtypeBlast.chemical), condensive(SubtypeBlast.condensive), debilitation(SubtypeBlast.debilitation), incendiary(SubtypeBlast.incendiary), repulsive(SubtypeBlast.repulsive), shrapnel(SubtypeBlast.shrapnel);
+		attractive(SubtypeBlast.attractive),
+		chemical(SubtypeBlast.chemical),
+		condensive(SubtypeBlast.condensive),
+		debilitation(SubtypeBlast.debilitation),
+		incendiary(SubtypeBlast.incendiary),
+		repulsive(SubtypeBlast.repulsive),
+		shrapnel(SubtypeBlast.shrapnel);
 
 		public final SubtypeBlast explosiveType;
 

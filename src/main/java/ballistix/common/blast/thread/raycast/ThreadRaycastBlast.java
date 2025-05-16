@@ -5,20 +5,20 @@ import java.util.HashSet;
 import java.util.Set;
 
 import ballistix.common.blast.thread.ThreadBlast;
-import electrodynamics.prefab.block.HashDistanceBlockPos;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.fluid.Fluids;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.Explosion.Mode;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.IFluidBlock;
+import voltaic.prefab.block.HashDistanceBlockPos;
 
 public class ThreadRaycastBlast extends ThreadBlast {
-	public IResistanceCallback callBack;
-	public HashSet<ThreadRaySideBlast> underBlasts = new HashSet<>();
-	public Set<BlockPos> resultsSync = Collections.synchronizedSet(new HashSet<BlockPos>());
+
+	public final IResistanceCallback callBack;
+	public final HashSet<ThreadRaySideBlast> underBlasts = new HashSet<>();
+	public final Set<BlockPos> resultsSync = Collections.synchronizedSet(new HashSet<>());
 	public boolean locked = false;
 
 	public ThreadRaycastBlast(World world, BlockPos position, int range, float energy, Entity source, IResistanceCallback cb) {
@@ -28,25 +28,11 @@ public class ThreadRaycastBlast extends ThreadBlast {
 	}
 
 	public ThreadRaycastBlast(World world, BlockPos position, int range, float energy, Entity source) {
-		this(world, position, range, energy, source, (world1, pos, targetPosition, source1, block) -> {
-			float resistance = 0;
-
-			if (block.getFluidState() != Fluids.EMPTY.defaultFluidState() || block instanceof IFluidBlock) {
-				resistance = 0.25f;
-			} else {
-				resistance = block.getExplosionResistance(world1, position, new Explosion(world, source, null, null, position.getX(), position.getY(), position.getZ(), range, false, Mode.BREAK));
-				if (resistance > 200) {
-					resistance = 0.75f * (float) Math.sqrt(resistance);
-				}
-			}
-
-			return resistance;
-		});
+		this(world, position, range, energy, source, new IResistanceCallbackImp(new Explosion(world, source, null, null, position.getX(), position.getY(), position.getZ(), range, false, Mode.DESTROY)));
 
 	}
 
 	@Override
-	@SuppressWarnings("java:S2184")
 	public void run() {
 		results.add(new HashDistanceBlockPos(position.getX(), position.getY(), position.getZ(), 0));
 		for (Direction dir : Direction.values()) {
@@ -64,4 +50,32 @@ public class ThreadRaycastBlast extends ThreadBlast {
 		}
 		super.run();
 	}
+
+	public static class IResistanceCallbackImp implements IResistanceCallback {
+
+		private final Explosion explosion;
+
+		public IResistanceCallbackImp(Explosion explosion) {
+			this.explosion = explosion;
+		}
+
+		public Explosion explosion() {
+			return explosion;
+		}
+
+		@Override
+		public float getResistance(World world, BlockPos position, BlockPos targetPosition, Entity source, BlockState block) {
+
+			if (!block.getFluidState().isEmpty()) {
+				return 0.25f;
+			}
+			float resistance = block.getExplosionResistance(world, position, explosion);
+			if (resistance > 200) {
+				resistance = 0.75f * (float) Math.sqrt(resistance);
+			}
+			return resistance;
+
+		}
+	}
+
 }

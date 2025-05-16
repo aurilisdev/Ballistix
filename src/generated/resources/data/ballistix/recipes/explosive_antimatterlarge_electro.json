@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " C ",
+    "CAC",
+    " C "
+  ],
+  "key": {
+    "A": {
+      "item": "ballistix:antimatter"
+    },
+    "C": {
+      "tag": "forge:cells/anti_matter_very_large"
+    }
+  },
+  "result": {
+    "item": "ballistix:largeantimatter"
+  },
+  "conditions": [
+    {
+      "modid": "electrodynamics",
+      "type": "forge:mod_loaded"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "DDD",
+    "WRW",
+    "DDD"
+  ],
+  "key": {
+    "R": {
+      "item": "ballistix:repulsive"
+    },
+    "D": {
+      "tag": "forge:dusts/sulfur"
+    },
+    "W": {
+      "item": "minecraft:water_bucket"
+    }
+  },
+  "result": {
+    "item": "ballistix:debilitation"
+  },
+  "conditions": [
+    {
+      "modid": "electrodynamics",
+      "type": "forge:mod_loaded"
+    }
+  ]
+}

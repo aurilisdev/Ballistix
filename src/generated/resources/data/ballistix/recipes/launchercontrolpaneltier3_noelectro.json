@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SWS",
+    "SCS",
+    "SWS"
+  ],
+  "key": {
+    "S": {
+      "tag": "forge:ingots/iron"
+    },
+    "C": {
+      "tag": "forge:gems/diamond"
+    },
+    "W": {
+      "tag": "forge:ingots/gold"
+    }
+  },
+  "result": {
+    "item": "ballistix:launchercontrolpaneltier3"
+  },
+  "conditions": [
+    {
+      "value": {
+        "modid": "electrodynamics",
+        "type": "forge:mod_loaded"
+      },
+      "type": "forge:not"
+    }
+  ]
+}

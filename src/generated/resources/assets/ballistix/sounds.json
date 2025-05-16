@@ -16,5 +16,59 @@
     "sounds": [
       "ballistix:nuclearexplosion"
     ]
+  },
+  "empexplosion": {
+    "subtitle": "subtitles.ballistix.empexplosion",
+    "sounds": [
+      "ballistix:empexplosion"
+    ]
+  },
+  "missile_launch_rocketlauncher": {
+    "subtitle": "subtitles.ballistix.missile_launch_rocketlauncher",
+    "sounds": [
+      "ballistix:missile_launch_rocketlauncher"
+    ]
+  },
+  "missile_launch_silo": {
+    "subtitle": "subtitles.ballistix.missile_launch_silo",
+    "sounds": [
+      "ballistix:missile_launch_silo"
+    ]
+  },
+  "radar": {
+    "subtitle": "subtitles.ballistix.radar",
+    "sounds": [
+      "ballistix:radar"
+    ]
+  },
+  "firecontrolradar": {
+    "subtitle": "subtitles.ballistix.firecontrolradar",
+    "sounds": [
+      "ballistix:firecontrolradar"
+    ]
+  },
+  "ciwsturretfiring": {
+    "subtitle": "subtitles.ballistix.ciwsturretfiring",
+    "sounds": [
+      "ballistix:ciwsturretfiring"
+    ]
+  },
+  "laserturretfiring": {
+    "subtitle": "subtitles.ballistix.laserturretfiring",
+    "sounds": [
+      "ballistix:laserturretfiring"
+    ]
+  },
+  "railgunkinetic": {
+    "subtitle": "subtitles.ballistix.railgunkinetic",
+    "sounds": [
+      "ballistix:railgunkinetic"
+    ]
+  },
+  "rodhittingground": {
+    "subtitle": "subtitles.ballistix.rodhittingground",
+    "sounds": [
+      "ballistix:rodhittingground"
+    ]
   }
 }

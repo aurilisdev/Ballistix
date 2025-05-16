@@ -1,13 +1,14 @@
 package ballistix.common.item;
 
-import java.util.HashMap;
-
-import ballistix.References;
+import ballistix.api.missile.MissileManager;
+import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.common.block.BlockExplosive;
 import ballistix.common.block.subtype.SubtypeMissile;
-import ballistix.common.entity.EntityMissile;
+import ballistix.common.settings.BallistixConstants;
+import ballistix.registers.BallistixCreativeTabs;
 import ballistix.registers.BallistixItems;
-import electrodynamics.common.blockitem.BlockItemDescriptable;
+import ballistix.registers.BallistixSounds;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -16,89 +17,131 @@ import net.minecraft.item.UseAction;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
+import voltaic.common.blockitem.BlockItemDescriptable;
+import voltaic.common.item.ItemVoltaic;
+import voltaic.prefab.utilities.NBTUtils;
 
-public class ItemRocketLauncher extends Item {
-	
-	private static HashMap<PlayerEntity, Long> millisecondMap = new HashMap<>();
+public class ItemRocketLauncher extends ItemVoltaic {
 
-	public ItemRocketLauncher() {
-		super(new Item.Properties().tab(References.BALLISTIXTAB).stacksTo(1));
-	}
+    public ItemRocketLauncher() {
+        super(new Item.Properties().stacksTo(1), () -> BallistixCreativeTabs.MAIN);
+    }
 
-	@Override
-	public UseAction getUseAnimation(ItemStack stack) {
-		return UseAction.NONE;
-	}
+    @Override
+    public UseAction getUseAnimation(ItemStack stack) {
+        return UseAction.NONE;
+    }
 
-	@Override
-	public int getUseDuration(ItemStack stack) {
-		return Integer.MAX_VALUE;
-	}
+    @Override
+    public int getUseDuration(ItemStack stack) {
+        return Integer.MAX_VALUE;
+    }
 
-	@Override
-	public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
-		ItemStack itemstack = playerIn.getItemInHand(handIn);
-		playerIn.startUsingItem(handIn);
-		return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
-	}
+    @Override
+    public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
+        ItemStack itemstack = playerIn.getItemInHand(handIn);
+        playerIn.startUsingItem(handIn);
+        return new ActionResult<>(ActionResultType.PASS, itemstack);
+    }
 
-	@Override
-	public void releaseUsing(ItemStack stack, World world, LivingEntity entityLiving, int timeLeft) {
+    @Override
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+        return slotChanged;
+    }
 
-		if (world.isClientSide || !(entityLiving instanceof PlayerEntity)) {
-			return;
-		}
+    @Override
+    public void inventoryTick(ItemStack stack, World level, Entity entity, int slotId, boolean isSelected) {
+        super.inventoryTick(stack, level, entity, slotId, isSelected);
+        if (level.isClientSide) {
+            return;
+        }
+        int timeRemaining = stack.getOrCreateTag().getInt(NBTUtils.TIMER);
+        if (timeRemaining > 0) {
+            timeRemaining--;
+            stack.getOrCreateTag().putInt(NBTUtils.TIMER, timeRemaining);
+        }
+    }
 
-		PlayerEntity player = (PlayerEntity) entityLiving;
+    @Override
+    public void releaseUsing(ItemStack stack, World world, LivingEntity entityLiving, int timeLeft) {
 
-		long millisecond = System.currentTimeMillis();
+        if (world.isClientSide || !(entityLiving instanceof PlayerEntity)) {
+            return;
+        }
 
-		if (millisecond - millisecondMap.getOrDefault(player, 0L) <= 3000) {
-			return;
-		}
+        if (stack.getOrCreateTag().getInt(NBTUtils.TIMER) > 0) {
+            return;
+        }
 
-		millisecondMap.put(player, millisecond);
+        PlayerEntity player = (PlayerEntity) entityLiving;
 
-		int blastOrdinal = 0;
+        if (!player.isCreative()) stack.getOrCreateTag().putInt(NBTUtils.TIMER, BallistixConstants.ROCKET_LAUNCHER_COOLDOWN_TICKS);
 
-		boolean hasExplosive = false;
+        int blastOrdinal = 0;
 
-		boolean hasRange = false;
+        boolean hasExplosive = false;
 
-		ItemStack ex = ItemStack.EMPTY;
+        boolean hasRange = false;
 
-		ItemStack missile = ex;
+        ItemStack ex = ItemStack.EMPTY;
 
-		for (ItemStack st : player.inventory.items) {
-			Item it = st.getItem();
-			if (!hasExplosive && it instanceof BlockItemDescriptable) {
-				BlockItemDescriptable bl = (BlockItemDescriptable) it;
-				if (bl.getBlock() instanceof BlockExplosive) {
-					blastOrdinal = ((BlockExplosive) bl.getBlock()).explosive.ordinal();
-					hasExplosive = true;
-					ex = st;
-				}
-			}
-			if (!hasRange && it == BallistixItems.getItem(SubtypeMissile.closerange)) {
-				hasRange = true;
-				missile = st;
-			}
-			if (hasRange && hasExplosive) {
-				break;
-			}
-		}
-		if (hasExplosive && hasRange) {
-			ex.shrink(1);
-			missile.shrink(1);
-			EntityMissile miss = new EntityMissile(world);
-			miss.moveTo(entityLiving.getX(), entityLiving.getY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getZ(), entityLiving.yRot, entityLiving.xRot);
-			miss.setDeltaMovement(entityLiving.getLookAngle().x * 2, entityLiving.getLookAngle().y * 2, entityLiving.getLookAngle().z * 2);
-			miss.blastOrdinal = blastOrdinal;
-			miss.range = 0;
-			miss.isItem = true;
-			world.addFreshEntity(miss);
-		}
+        ItemStack missile = ex;
 
-	}
+        for (ItemStack st : player.inventory.items) {
+            Item it = st.getItem();
+            if (!hasExplosive && it instanceof BlockItemDescriptable) {
+            	BlockItemDescriptable bl = (BlockItemDescriptable) it;
+                if (bl.getBlock() instanceof BlockExplosive && (player.isCreative() || ((BlockExplosive) bl.getBlock()).explosive.tier == 1)) {
+                    blastOrdinal = ((BlockExplosive) bl.getBlock()).explosive.ordinal();
+                    hasExplosive = true;
+                    ex = st;
+                }
+            }
+            if (!hasRange && (it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier1) || (player.isCreative() && (it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier1) || it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier2) || it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier3))))) {
+                hasRange = true;
+                missile = st;
+            }
+            if (hasRange && hasExplosive) {
+                break;
+            }
+        }
+        if (hasExplosive && hasRange) {
+            ex.shrink(1);
+            missile.shrink(1);
+            VirtualMissile virtualMissile = new VirtualMissile(
+                    //
+                    new Vector3d(entityLiving.getX(), entityLiving.getY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getZ()),
+                    //
+                    new Vector3d(entityLiving.getLookAngle().x, entityLiving.getLookAngle().y, entityLiving.getLookAngle().z),
+                    //
+                    1.333F,
+                    //
+                    true,
+                    //
+                    0,
+                    //
+                    0,
+                    //
+                    BlockPos.ZERO,
+                    //
+                    missile.getItem() == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier2) ? 1 : missile.getItem() == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier3) ? 2 : 0,
+                    //
+                    blastOrdinal,
+                    //
+                    0,
+                    //
+                    false
+                    //
+            );
+
+            MissileManager.addMissile(world.dimension(), virtualMissile);
+
+            world.playSound(null, player.blockPosition().above(), BallistixSounds.SOUND_MISSILE_ROCKETLAUNCHER.get(), SoundCategory.BLOCKS, 1.0F, 1.0F);
+        }
+
+    }
 }

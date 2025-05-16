@@ -3,7 +3,7 @@ package ballistix.client.render.entity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
-import ballistix.client.ClientRegister;
+import ballistix.client.BallistixClientRegister;
 import ballistix.common.entity.EntityShrapnel;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
@@ -15,10 +15,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Matrix3f;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3f;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class RenderShrapnel extends EntityRenderer<EntityShrapnel> {
 	public RenderShrapnel(EntityRendererManager renderManagerIn) {
 		super(renderManagerIn);
@@ -63,6 +60,6 @@ public class RenderShrapnel extends EntityRenderer<EntityShrapnel> {
 
 	@Override
 	public ResourceLocation getTextureLocation(EntityShrapnel entity) {
-		return ClientRegister.TEXTURE_SHRAPNEL;
+		return BallistixClientRegister.TEXTURE_SHRAPNEL;
 	}
 }

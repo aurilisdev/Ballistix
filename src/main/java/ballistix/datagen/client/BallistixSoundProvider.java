@@ -1,20 +1,15 @@
 package ballistix.datagen.client;
 
-import ballistix.References;
+import ballistix.Ballistix;
 import ballistix.registers.BallistixSounds;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.common.data.SoundDefinition;
-import net.minecraftforge.common.data.SoundDefinition.Sound;
-import net.minecraftforge.common.data.SoundDefinition.SoundType;
-import net.minecraftforge.common.data.SoundDefinitionsProvider;
-import net.minecraftforge.fml.RegistryObject;
+import voltaic.datagen.utils.client.BaseSoundProvider;
 
-public class BallistixSoundProvider extends SoundDefinitionsProvider {
+public class BallistixSoundProvider extends BaseSoundProvider {
 
-	public BallistixSoundProvider(DataGenerator generator, ExistingFileHelper helper) {
-		super(generator, References.ID, helper);
+	public BallistixSoundProvider(DataGenerator gen, ExistingFileHelper helper) {
+		super(gen, helper, Ballistix.ID);
 	}
 
 	@Override
@@ -22,10 +17,15 @@ public class BallistixSoundProvider extends SoundDefinitionsProvider {
 		add(BallistixSounds.SOUND_ANTIMATTEREXPLOSION);
 		add(BallistixSounds.SOUND_DARKMATTER);
 		add(BallistixSounds.SOUND_NUCLEAREXPLOSION);
-	}
-
-	private void add(RegistryObject<SoundEvent> sound) {
-		add(sound.get(), SoundDefinition.definition().subtitle("subtitles." + References.ID + "." + sound.getId().getPath()).with(Sound.sound(sound.getId(), SoundType.SOUND)));
+		add(BallistixSounds.SOUND_EMPEXPLOSION);
+		add(BallistixSounds.SOUND_MISSILE_ROCKETLAUNCHER);
+		add(BallistixSounds.SOUND_MISSILE_SILO);
+		add(BallistixSounds.SOUND_RADAR);
+		add(BallistixSounds.SOUND_FIRECONTROLRADAR);
+		add(BallistixSounds.SOUND_CIWS_TURRETFIRING);
+		add(BallistixSounds.SOUND_LASER_TURRETFIRING);
+		add(BallistixSounds.SOUND_RAILGUNKINETIC);
+		add(BallistixSounds.SOUND_RODHITTINGGROUND);
 	}
 
 }

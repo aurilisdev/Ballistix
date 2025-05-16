@@ -2,15 +2,18 @@ package ballistix.common.blast;
 
 import java.util.List;
 
-import ballistix.api.damage.DamageSourceChemicalGas;
 import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.common.settings.Constants;
-import net.minecraft.client.world.ClientWorld;
+import ballistix.common.settings.BallistixConstants;
+import ballistix.compatibility.griefdefender.GriefDefenderHandler;
+import ballistix.registers.BallistixDamageTypes;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -28,44 +31,82 @@ public class BlastContagious extends Blast {
 	}
 
 	@Override
+	public void doPreExplode() {
+		if(!world.isClientSide) {
+			world.playSound(null, position, SoundEvents.GENERIC_EXPLODE, SoundCategory.BLOCKS, 25, 1);
+		}
+	}
+
+	@Override
 	public boolean doExplode(int callCount) {
 		hasStarted = true;
-		int radius = (int) Constants.EXPLOSIVE_CONTAGIOUS_SIZE;
-		if (world.isClientSide && world instanceof ClientWorld && callCount % 3 == 0) {
+		int radius = (int) BallistixConstants.EXPLOSIVE_CONTAGIOUS_SIZE;
+		if (world.isClientSide && callCount % 3 == 0) {
 			for (int x = -radius; x <= radius; x++) {
 				for (int y = -radius; y <= radius; y++) {
 					for (int z = -radius; z <= radius; z++) {
-						if (x * x + y * y + z * z < radius * radius && world.random.nextDouble() < 1 / 20.0) {
-							world.addParticle(new RedstoneParticleData(0.5f, 0.4f, 0, 5), position.getX() + x + 0.5 + world.random.nextDouble() - 1.0, position.getY() + y + 0.5 + world.random.nextDouble() - 1.0, position.getZ() + z + 0.5 + world.random.nextDouble() - 1.0, 0.0D, 0.0D, 0.0D);
+
+						double xPos = position.getX() + x + 0.5 + world.random.nextDouble() - 1.0;
+						double yPos = position.getY() + y + 0.5 + world.random.nextDouble() - 1.0;
+						double zPos = position.getZ() + z + 0.5 + world.random.nextDouble() - 1.0;
+
+
+						boolean add = false;
+						switch (griefPreventionMethod) {
+						case GRIEF_DEFENDER:
+							add = GriefDefenderHandler.shouldHarmBlock(new BlockPos(xPos, yPos, zPos));
+							break;
+						default:
+							add = true;
+							break;
+						}
+
+						if (add && x * x + y * y + z * z < radius * radius && world.random.nextDouble() < 1 / 10.0) {
+							Minecraft.getInstance().particleEngine.createParticle(new RedstoneParticleData(0.5f, 0.4f, 0, 5), xPos, yPos , zPos, 0.0D, 0.0D, 0.0D);
 						}
 					}
 				}
 			}
 		}
 		if (!world.isClientSide) {
+
 			float x = position.getX();
 			float y = position.getY();
 			float z = position.getZ();
-			int k1 = MathHelper.floor(x - (double) radius - 1.0D);
-			int l1 = MathHelper.floor(x + (double) radius + 1.0D);
-			int i2 = MathHelper.floor(y - (double) radius - 1.0D);
-			int i1 = MathHelper.floor(y + (double) radius + 1.0D);
-			int j2 = MathHelper.floor(z - (double) radius - 1.0D);
-			int j1 = MathHelper.floor(z + (double) radius + 1.0D);
-			List<Entity> list = world.getEntities(null, new AxisAlignedBB(k1, i2, j2, l1, i1, j1));
-			for (Entity entity : list) {
+
+			int x0 = MathHelper.floor(x - (double) radius - 1.0D);
+			int x1 = MathHelper.floor(x + (double) radius + 1.0D);
+			int y0 = MathHelper.floor(y - (double) radius - 1.0D);
+			int y1 = MathHelper.floor(y + (double) radius + 1.0D);
+			int z0 = MathHelper.floor(z - (double) radius - 1.0D);
+			int z1 = MathHelper.floor(z + (double) radius + 1.0D);
+
+			List<Entity> entities = world.getEntities(null, new AxisAlignedBB(x0, y0, z0, x1, y1, z1));
+
+			for (Entity entity : entities) {
+
+				switch (griefPreventionMethod) {
+					case GRIEF_DEFENDER :
+						if(!GriefDefenderHandler.shouldEntityBeHarmed(entity)) {
+							continue;
+						}
+						break;
+					default:
+						break;
+				}
+
 				if (entity instanceof LivingEntity) {
 					LivingEntity living = (LivingEntity) entity;
-					living.addEffect(new EffectInstance(Effects.POISON, 360, 2));
-					living.addEffect(new EffectInstance(Effects.DIG_SLOWDOWN, 360, 2));
-					living.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, 360, 3));
+					living.addEffect(new EffectInstance(Effects.BLINDNESS, 360, 2));
+					living.addEffect(new EffectInstance(Effects.WEAKNESS, 360, 2));
+					living.addEffect(new EffectInstance(Effects.HUNGER, 360, 3));
 					if (callCount % 10 == 0) {
-						living.hurt(DamageSourceChemicalGas.INSTANCE, 4);
+						living.hurt(BallistixDamageTypes.CHEMICAL_GAS, 4);
 					}
 				}
 			}
 		}
-		return callCount > Constants.EXPLOSIVE_CONTAGIOUS_DURATION;
+		return callCount > BallistixConstants.EXPLOSIVE_CONTAGIOUS_DURATION;
 	}
 
 	@Override

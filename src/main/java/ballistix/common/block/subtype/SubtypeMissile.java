@@ -1,10 +1,17 @@
 package ballistix.common.block.subtype;
 
-import electrodynamics.api.ISubtype;
+
+import voltaic.api.ISubtype;
 
 public enum SubtypeMissile implements ISubtype {
 
-	closerange, mediumrange, longrange;
+	tier1(1), tier2(2), tier3(3);
+
+	public int tier;
+
+	SubtypeMissile(int tier) {
+		this.tier = tier;
+	}
 
 	@Override
 	public String forgeTag() {
@@ -20,5 +27,5 @@ public enum SubtypeMissile implements ISubtype {
 	public String tag() {
 		return "missile" + name();
 	}
-	
+
 }

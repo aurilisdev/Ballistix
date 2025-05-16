@@ -1,0 +1,87 @@
+package ballistix.client.render.tile;
+
+import java.util.Random;
+
+import javax.annotation.Nonnull;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
+
+import ballistix.client.BallistixClientRegister;
+import ballistix.common.tile.turret.antimissile.TileTurretSAM;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.Vector3d;
+import voltaic.client.render.AbstractTileRenderer;
+import voltaic.prefab.tile.components.IComponentType;
+import voltaic.prefab.tile.components.type.ComponentInventory;
+
+public class RenderSAMTurret extends AbstractTileRenderer<TileTurretSAM> {
+	
+    public RenderSAMTurret(TileEntityRendererDispatcher context) {
+        super(context);
+    }
+
+    @Override
+    public void render(@Nonnull TileTurretSAM tileEntityIn, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
+
+        IBakedModel model = getModel(BallistixClientRegister.MODEL_SAMTURRET_BALLJOINT);
+
+        Vector3d rotVec = tileEntityIn.turretRotation.getValue();
+
+        double yRot = TileTurretSAM.getXZAngleRadians(rotVec) / Math.PI * 180.0;
+
+        double yAng = Math.asin(rotVec.y);
+
+        float elevRot = (float) (yAng / Math.PI * 180.0F);
+
+        matrixStackIn.pushPose();
+        //matrixStackIn.translate(7.75 / 16.0, 11.0 / 16.0, 7.75 / 16.0);
+        matrixStackIn.translate(0.5, 0.5, 0.5);
+        matrixStackIn.mulPose(new Quaternion(0, (float) -yRot, 0, true));
+        matrixStackIn.translate(-0.5, -0.5, -0.5);
+
+        // matrixStackIn.mulPose(new Quaternion(0,(float) ((tileEntityIn.savedTickRotation + partial)), 0, true));
+        Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model, tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(), 0);
+
+        matrixStackIn.popPose();
+
+        matrixStackIn.pushPose();
+
+        matrixStackIn.translate(0.5, 0.8125, 0.5);
+        matrixStackIn.mulPose(new Quaternion(0, (float) -yRot, elevRot, true));
+        matrixStackIn.translate(-0.5, -0.8125, -0.5);
+
+        model = getModel(BallistixClientRegister.MODEL_SAMTURRET_RAIL);
+
+        Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model, tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(), 0);
+
+        matrixStackIn.popPose();
+
+        ComponentInventory inv = tileEntityIn.getComponent(IComponentType.Inventory);
+
+        if(inv.getItem(0).isEmpty()) {
+            return;
+        }
+
+        matrixStackIn.pushPose();
+
+        matrixStackIn.translate(0.5, 0.90625, 0.5);
+
+        matrixStackIn.mulPose(new Quaternion(0, (float) -yRot - 180, 90 - elevRot, true));
+
+        matrixStackIn.translate(-0.5, -0.90625, -0.5);
+
+        matrixStackIn.translate(Math.sin(yAng * 0.27 - (Math.PI / 2.0)) + 1.6, 1 - Math.sin(yAng * 0.2 + ((9.4 * Math.PI) / 4)) + 0.39, 0.5); //0 = 0.6, 0.5, 0.5, pi/4 = 0.625, 0.43, 0.5, pi/2 = 0.69, 0.41, 0.5 I fucking hate rotating models in this game
+
+        model = getModel(BallistixClientRegister.MODEL_AAMISSILE);
+        Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model, tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(), 0);
+
+        matrixStackIn.popPose();
+
+    }
+
+}

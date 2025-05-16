@@ -2,18 +2,20 @@ package ballistix.prefab.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
+import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.inventory.container.ContainerESMTower;
 import ballistix.common.tile.TileESMTower;
-import ballistix.registers.BallistixBlocks;
-import electrodynamics.api.screen.ITexture;
-import electrodynamics.prefab.screen.GenericScreen;
-import electrodynamics.prefab.screen.component.editbox.ScreenComponentEditBox;
-import electrodynamics.prefab.screen.component.types.ScreenComponentGeneric;
-import electrodynamics.prefab.utilities.RenderingUtils;
+import ballistix.registers.BallistixItems;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import voltaic.api.screen.ITexture;
+import voltaic.prefab.screen.GenericScreen;
+import voltaic.prefab.screen.component.ScreenComponentGeneric;
+import voltaic.prefab.screen.component.editbox.ScreenComponentEditBox;
+import voltaic.prefab.utilities.RenderingUtils;
+import voltaic.prefab.utilities.math.Color;
 
 public class ScreenComponentFireControlRadar extends ScreenComponentGeneric {
 
@@ -24,7 +26,7 @@ public class ScreenComponentFireControlRadar extends ScreenComponentGeneric {
     }
 
     @Override
-    public void renderBackground(MatrixStack stack, int xAxis, int yAxis, int guiWidth, int guiHeight) {
+    public void renderBackground(MatrixStack poseStack, int xAxis, int yAxis, int guiWidth, int guiHeight) {
 
         if (!isVisible()) {
             return;
@@ -32,7 +34,7 @@ public class ScreenComponentFireControlRadar extends ScreenComponentGeneric {
 
         GenericScreen<ContainerESMTower> screen = (GenericScreen<ContainerESMTower>) gui;
 
-        TileESMTower tile = screen.getMenu().getHostFromIntArray();
+        TileESMTower tile = screen.getMenu().getSafeHost();
 
         if (tile == null) {
             return;
@@ -41,22 +43,22 @@ public class ScreenComponentFireControlRadar extends ScreenComponentGeneric {
         ITexture texture = RadarTextures.FREQUENCY;
 
         RenderingUtils.bindTexture(texture.getLocation());
-        ScreenComponentEditBox.drawExpandedBox(stack, x + guiWidth, y + guiHeight, width, height);
+        ScreenComponentEditBox.drawExpandedBox(poseStack, x + guiWidth, y + guiHeight, width, height);
 
         if(pos == null) {
             return;
         }
 
-        RenderingUtils.renderItemScaled(BallistixBlocks.blockFireControlRadar.asItem(), guiWidth + x + 2, guiHeight + y + 4, 1.0F);
+        RenderingUtils.renderItemScaled(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.firecontrolradar), guiWidth + x + 2, guiHeight + y + 4, 1.0F);
 
         FontRenderer font = screen.getFontRenderer();
 
-        IFormattableTextComponent text = new StringTextComponent(pos.toShortString());
+        ITextComponent text = new StringTextComponent(pos.toShortString());
 
-        int xLoc = x + 20;
-        int yLoc = y + 8;
+        int x = this.x + 20;
+        int y = this.y + 8;
 
-        int maxWidth = width - xLoc - 2;
+        int maxWidth = width - x - 2;
 
         int width = font.width(text);
 
@@ -64,18 +66,18 @@ public class ScreenComponentFireControlRadar extends ScreenComponentGeneric {
 
         if(width > maxWidth) {
             scale = (float) maxWidth / (float) width;
-            yLoc += (int) ((font.lineHeight - font.lineHeight * scale) / 2.0F);
+            y += (int) ((font.lineHeight - font.lineHeight * scale) / 2.0F);
         }
 
-        stack.pushPose();
+        poseStack.pushPose();
 
-        stack.translate(guiWidth + xLoc, guiHeight + yLoc, 0);
+        poseStack.translate(guiWidth + x, guiHeight + y, 0);
 
-        stack.scale(scale, scale, 0);
+        poseStack.scale(scale, scale, 0);
 
-        font.draw(stack, text, 0, 0, ScreenComponentCustomRender.TEXT_GRAY.color());
+        font.draw(poseStack, text, 0, 0, Color.TEXT_GRAY.color());
 
-        stack.popPose();
+        poseStack.popPose();
 
     }
 

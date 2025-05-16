@@ -9,6 +9,9 @@ import ballistix.prefab.utils.BallistixTextUtils;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import voltaic.prefab.screen.component.types.ScreenComponentSimpleLabel;
+import voltaic.prefab.screen.component.types.ScreenComponentVerticalSlider;
+import voltaic.prefab.utilities.math.Color;
 
 public class WrapperESMTowerDetections {
 
@@ -24,7 +27,7 @@ public class WrapperESMTowerDetections {
 	public WrapperESMTowerDetections(ScreenESMTower screen, int x, int y) {
 		this.screen = screen;
 
-		screen.addComponent(new ScreenComponentBallistixLabel(x + 25, y + 30, 10, ScreenComponentCustomRender.TEXT_GRAY, BallistixTextUtils.gui("esmtower.detectedfirecontrolradars")));
+		screen.addComponent(new ScreenComponentSimpleLabel(x + 25, y + 30, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("esmtower.detectedfirecontrolradars")));
 
 		int butOffX = 25;
 		int butOffY = 40;
@@ -40,12 +43,12 @@ public class WrapperESMTowerDetections {
 	}
 
 	public void tick() {
-		TileESMTower tile = screen.getMenu().getHostFromIntArray();
+		TileESMTower tile = screen.getMenu().getSafeHost();
 		if (tile == null) {
 			return;
 		}
 
-		List<BlockPos> frequencyList = tile.fireControlRadars.get();
+		List<BlockPos> frequencyList = tile.fireControlRadars.getValue();
 
 		lastRowCount = frequencyList.size();
 

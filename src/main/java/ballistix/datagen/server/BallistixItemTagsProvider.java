@@ -1,6 +1,6 @@
 package ballistix.datagen.server;
 
-import ballistix.References;
+import ballistix.Ballistix;
 import ballistix.common.tags.BallistixTags;
 import ballistix.registers.BallistixItems;
 import net.minecraft.data.BlockTagsProvider;
@@ -11,7 +11,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 public class BallistixItemTagsProvider extends ItemTagsProvider {
 
 	public BallistixItemTagsProvider(DataGenerator generator, BlockTagsProvider provider, ExistingFileHelper existingFileHelper) {
-		super(generator, provider, References.ID, existingFileHelper);
+		super(generator, provider, Ballistix.ID, existingFileHelper);
 	}
 
 	@Override

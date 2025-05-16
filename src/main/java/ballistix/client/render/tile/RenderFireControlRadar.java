@@ -6,9 +6,8 @@ import javax.annotation.Nonnull;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import ballistix.client.ClientRegister;
+import ballistix.client.BallistixClientRegister;
 import ballistix.common.tile.radar.TileFireControlRadar;
-import electrodynamics.client.render.tile.AbstractTileRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
@@ -16,6 +15,7 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.vector.Quaternion;
+import voltaic.client.render.AbstractTileRenderer;
 
 public class RenderFireControlRadar extends AbstractTileRenderer<TileFireControlRadar> {
 
@@ -26,7 +26,7 @@ public class RenderFireControlRadar extends AbstractTileRenderer<TileFireControl
     @Override
     public void render(@Nonnull TileFireControlRadar tileEntityIn, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
 
-        IBakedModel radardish = getModel(ClientRegister.MODEL_FIRECONTROLRADARDISH);
+        IBakedModel radardish = getModel(BallistixClientRegister.MODEL_FIRECONTROLRADARDISH);
 
         float partial = (float) (partialTicks * tileEntityIn.clientRotationSpeed);
 

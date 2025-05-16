@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import ballistix.registers.BallistixCapabilities;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.Direction;
@@ -22,7 +23,7 @@ public class CapabilitySiloRegistry implements ICapabilitySerializable<CompoundN
 	private HashMap<Integer, HashSet<BlockPos>> siloMap = new HashMap<>();
 
 	@Override
-	public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
+	public <T> LazyOptional<T> getCapability(@Nullable Capability<T> cap, @Nullable Direction side) {
 		if (cap == BallistixCapabilities.SILO_REGISTRY) {
 			return lazyOptional.cast();
 		}
@@ -50,7 +51,7 @@ public class CapabilitySiloRegistry implements ICapabilitySerializable<CompoundN
 
 			}
 
-			tag.put("frequencytag" + (int) key, posTag);
+			tag.put("frequencytag" + key, posTag);
 
 		});
 

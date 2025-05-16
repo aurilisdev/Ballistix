@@ -1,14 +1,11 @@
 package ballistix.common.item;
 
-import ballistix.References;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityMinecart;
-import electrodynamics.api.ISubtype;
+import ballistix.registers.BallistixCreativeTabs;
 import net.minecraft.block.AbstractRailBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.DispenserBlock;
-import net.minecraft.dispenser.DefaultDispenseItemBehavior;
-import net.minecraft.dispenser.IBlockSource;
 import net.minecraft.dispenser.IDispenseItemBehavior;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -20,13 +17,17 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.WorldEvents;
+import voltaic.api.ISubtype;
+import voltaic.common.item.ItemVoltaic;
+import net.minecraft.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.dispenser.IBlockSource;
 
-public class ItemMinecart extends Item {
+public class ItemMinecart extends ItemVoltaic {
 
 	private SubtypeMinecart minecart;
 
 	public ItemMinecart(SubtypeMinecart minecart) {
-		super(new Item.Properties().tab(References.BALLISTIXTAB).stacksTo(1));
+		super(new Item.Properties().stacksTo(1), () -> BallistixCreativeTabs.MAIN);
 		this.minecart = minecart;
 		DispenserBlock.registerBehavior(this, DISPENSE_ITEM_BEHAVIOR);
 	}
@@ -119,37 +120,21 @@ public class ItemMinecart extends Item {
 
 	public enum SubtypeMinecart implements ISubtype {
 		obsidian(SubtypeBlast.obsidian),
-		//
 		condensive(SubtypeBlast.condensive),
-		//
 		attractive(SubtypeBlast.attractive),
-		//
 		repulsive(SubtypeBlast.repulsive),
-		//
 		incendiary(SubtypeBlast.incendiary),
-		//
 		shrapnel(SubtypeBlast.shrapnel),
-		//
 		debilitation(SubtypeBlast.debilitation),
-		//
 		chemical(SubtypeBlast.chemical),
-		//
 		emp(SubtypeBlast.emp),
-		//
 		breaching(SubtypeBlast.breaching),
-		//
 		thermobaric(SubtypeBlast.thermobaric),
-		//
 		contagious(SubtypeBlast.contagious),
-		//
 		fragmentation(SubtypeBlast.fragmentation),
-		//
 		nuclear(SubtypeBlast.nuclear),
-		//
 		antimatter(SubtypeBlast.antimatter),
-		//
 		largeantimatter(SubtypeBlast.largeantimatter),
-		//
 		darkmatter(SubtypeBlast.darkmatter);
 
 		public final SubtypeBlast explosiveType;

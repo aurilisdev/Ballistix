@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SGS",
+    "SCS",
+    "SLS"
+  ],
+  "key": {
+    "S": {
+      "tag": "forge:ingots/iron"
+    },
+    "C": {
+      "tag": "forge:dusts/redstone"
+    },
+    "G": {
+      "tag": "forge:glass"
+    },
+    "L": {
+      "item": "minecraft:lever"
+    }
+  },
+  "result": {
+    "item": "ballistix:launchercontrolpaneltier1"
+  },
+  "conditions": [
+    {
+      "value": {
+        "modid": "electrodynamics",
+        "type": "forge:mod_loaded"
+      },
+      "type": "forge:not"
+    }
+  ]
+}

@@ -5,27 +5,14 @@ import java.util.List;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import ballistix.Ballistix;
 import ballistix.client.screen.util.ScreenPlayerWhitelistTurret;
 import ballistix.common.inventory.container.ContainerLaserTurret;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tile.turret.antimissile.TileTurretLaser;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
 import ballistix.prefab.BallistixIconTypes;
-import ballistix.prefab.screen.ScreenComponentBallistixButton;
-import ballistix.prefab.screen.ScreenComponentBallistixLabel;
-import ballistix.prefab.screen.ScreenComponentCustomRender;
-import ballistix.prefab.screen.ScreenComponentVerticalSlider;
 import ballistix.prefab.screen.WrapperPlayerWhitelist;
 import ballistix.prefab.utils.BallistixTextUtils;
-import electrodynamics.api.electricity.formatting.ChatFormatter;
-import electrodynamics.api.electricity.formatting.DisplayUnit;
-import electrodynamics.prefab.inventory.container.slot.item.SlotGeneric;
-import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentElectricInfo;
-import electrodynamics.prefab.screen.component.types.guitab.ScreenComponentGuiTab;
-import electrodynamics.prefab.screen.component.utils.AbstractScreenComponentInfo;
-import electrodynamics.prefab.utilities.ElectroTextUtils;
-import electrodynamics.prefab.utilities.math.Color;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldVertexBufferUploader;
@@ -36,13 +23,26 @@ import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import voltaic.api.electricity.formatting.ChatFormatter;
+import voltaic.api.electricity.formatting.DisplayUnits;
+import voltaic.prefab.inventory.container.slot.item.SlotGeneric;
+import voltaic.prefab.screen.component.button.ScreenComponentButton;
+import voltaic.prefab.screen.component.types.ScreenComponentCustomRender;
+import voltaic.prefab.screen.component.types.ScreenComponentSimpleLabel;
+import voltaic.prefab.screen.component.types.ScreenComponentVerticalSlider;
+import voltaic.prefab.screen.component.types.guitab.ScreenComponentElectricInfo;
+import voltaic.prefab.screen.component.types.guitab.ScreenComponentGuiTab;
+import voltaic.prefab.screen.component.utils.AbstractScreenComponentInfo;
+import voltaic.prefab.utilities.BlockEntityUtils;
+import voltaic.prefab.utilities.VoltaicTextUtils;
+import voltaic.prefab.utilities.math.Color;
 
 public class ScreenLaserTurret extends ScreenPlayerWhitelistTurret<ContainerLaserTurret> {
 
     private final ScreenComponentCustomRender radarText;
     private final ScreenComponentCustomRender heatBar;
-    private final ScreenComponentBallistixLabel statusLabel;
-    private final ScreenComponentBallistixLabel tempLabel;
+    private final ScreenComponentSimpleLabel statusLabel;
+    private final ScreenComponentSimpleLabel tempLabel;
 
     public ScreenLaserTurret(ContainerLaserTurret vertexconsumer, PlayerInventory inv, ITextComponent title) {
         super(vertexconsumer, inv, title);
@@ -51,44 +51,44 @@ public class ScreenLaserTurret extends ScreenPlayerWhitelistTurret<ContainerLase
         imageHeight += 10;
 
         whitelistWrapper = new WrapperPlayerWhitelist(this, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE * 2 + 2, 0, 0);
-        addComponent(whitelistSlider = new ScreenComponentVerticalSlider(11, 80, 80).setClickConsumer(whitelistWrapper.getSliderClickedConsumer()).setDragConsumer(whitelistWrapper.getSliderDraggedConsumer()));
+        addComponent(whitelistSlider = new ScreenComponentVerticalSlider(11, 80, 75).setClickConsumer(whitelistWrapper.getSliderClickedConsumer()).setDragConsumer(whitelistWrapper.getSliderDraggedConsumer()));
 
         whitelistSlider.setVisible(false);
 
-        addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(Constants.LASER_TURRET_USAGEPERTICK * 20));
+        addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(BallistixConstants.LASER_TURRET_USAGEPERTICK * 20));
 
         addComponent(new ScreenComponentGuiTab(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR, BallistixIconTypes.TARGET_MISSILE, () -> {
             List<IReorderingProcessor> text = new ArrayList<>();
-            TileTurretLaser turret = menu.getHostFromIntArray();
+            TileTurretLaser turret = menu.getSafeHost();
             if (turret == null) {
                 return text;
 
             }
             text.add(BallistixTextUtils.tooltip("turret.blockrange").withStyle(TextFormatting.DARK_GRAY).getVisualOrderText());
-            text.add(BallistixTextUtils.tooltip("turret.maxrange", ChatFormatter.formatDecimals(turret.currentRange.get(), 1).withStyle(TextFormatting.GRAY)).withStyle(TextFormatting.DARK_GRAY).getVisualOrderText());
+            text.add(BallistixTextUtils.tooltip("turret.maxrange", ChatFormatter.formatDecimals(turret.currentRange.getValue(), 1).withStyle(TextFormatting.GRAY)).withStyle(TextFormatting.DARK_GRAY).getVisualOrderText());
             text.add(BallistixTextUtils.tooltip("turret.minrange", ChatFormatter.formatDecimals(turret.minimumRange, 1).withStyle(TextFormatting.GRAY)).withStyle(TextFormatting.DARK_GRAY).getVisualOrderText());
             return text;
         }, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE + 2));
 
         addComponent(new ScreenComponentGuiTab(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR_RIGHT, BallistixIconTypes.TARGET_ENTITY, () -> {
             List<IReorderingProcessor> text = new ArrayList<>();
-            TileTurretLaser turret = menu.getHostFromIntArray();
+            TileTurretLaser turret = menu.getSafeHost();
             if (turret == null) {
                 return text;
 
             }
             text.add(BallistixTextUtils.tooltip("turret.entityrange").withStyle(TextFormatting.DARK_GRAY).getVisualOrderText());
-            text.add(BallistixTextUtils.tooltip("turret.maxrange", ChatFormatter.formatDecimals(turret.currentRange.get() / 4.0, 1).withStyle(TextFormatting.GRAY)).withStyle(TextFormatting.DARK_GRAY).getVisualOrderText());
+            text.add(BallistixTextUtils.tooltip("turret.maxrange", ChatFormatter.formatDecimals(turret.currentRange.getValue() / 4.0, 1).withStyle(TextFormatting.GRAY)).withStyle(TextFormatting.DARK_GRAY).getVisualOrderText());
             text.add(BallistixTextUtils.tooltip("turret.minrange", ChatFormatter.formatDecimals(turret.minimumRange, 1).withStyle(TextFormatting.GRAY)).withStyle(TextFormatting.DARK_GRAY).getVisualOrderText());
             return text;
         }, 176, 2));
 
-        addComponent(radarText = new ScreenComponentCustomRender(10, 50, graphics -> {
-            TileTurretAntimissile turret = menu.getHostFromIntArray();
+        addComponent(radarText = new ScreenComponentCustomRender(10, 50, poseStack -> {
+            TileTurretAntimissile turret = menu.getSafeHost();
             if (turret == null) {
                 return;
             }
-            ITextComponent radar = turret.isNotLinked.get() ? BallistixTextUtils.gui("turret.radarnone").withStyle(TextFormatting.RED) : new StringTextComponent(turret.boundFireControl.get().toShortString()).withStyle(TextFormatting.DARK_GRAY);
+            ITextComponent radar = turret.isNotLinked.getValue() ? BallistixTextUtils.gui("turret.radarnone").withStyle(TextFormatting.RED) : new StringTextComponent(turret.boundFireControl.getValue().toShortString()).withStyle(TextFormatting.DARK_GRAY);
 
             int x = (int) (getGuiWidth() + 10);
             int y = (int) (getGuiHeight() + 50);
@@ -98,7 +98,7 @@ public class ScreenLaserTurret extends ScreenPlayerWhitelistTurret<ContainerLase
             int width = getFontRenderer().width(label);
             int height = getFontRenderer().lineHeight;
 
-            getFontRenderer().draw(graphics, label, x, y, Color.WHITE.color());
+            getFontRenderer().draw(poseStack, label, x, y, Color.WHITE.color());
 
             x += width;
 
@@ -112,48 +112,48 @@ public class ScreenLaserTurret extends ScreenPlayerWhitelistTurret<ContainerLase
 
             float remHeight = (height - height * scale) / 2.0F;
 
-            graphics.pushPose();
+            poseStack.pushPose();
 
-            graphics.translate(x, y + remHeight, 0);
+            poseStack.translate(x, y + remHeight, 0);
 
-            graphics.scale(scale, scale, scale);
+            poseStack.scale(scale, scale, scale);
 
-            getFontRenderer().draw(graphics, radar, 0, 0, Color.WHITE.color());
+            getFontRenderer().draw(poseStack, radar, 0, 0, Color.WHITE.color());
 
-            graphics.popPose();
+            poseStack.popPose();
 
 
         }));
 
-        addComponent(statusLabel = new ScreenComponentBallistixLabel(10, 65, 10, Color.WHITE, () -> {
-            TileTurretLaser turret = menu.getHostFromIntArray();
+        addComponent(statusLabel = new ScreenComponentSimpleLabel(10, 65, 10, Color.WHITE, () -> {
+            TileTurretLaser turret = menu.getSafeHost();
             if (turret == null) {
-                return ElectroTextUtils.empty();
+                return VoltaicTextUtils.empty();
             }
-            ITextComponent status = ElectroTextUtils.empty();
+            ITextComponent status = VoltaicTextUtils.empty();
 
-            if (turret.hasNoPower.get()) {
+            if (turret.hasNoPower.getValue()) {
                 status = BallistixTextUtils.gui("turret.statusnopower").withStyle(TextFormatting.RED);
             } else {
 
-                if (turret.targetingEntity.get()) {
-                    if (!turret.hasTarget.get()) {
+                if (turret.targetingEntity.getValue()) {
+                    if (!turret.hasTarget.getValue()) {
                         status = BallistixTextUtils.gui("turret.statusnotarget").withStyle(TextFormatting.GREEN);
-                    } else if (!turret.inRange.get()) {
+                    } else if (!turret.inRange.getValue()) {
                         status = BallistixTextUtils.gui("turret.statusoutofrange").withStyle(TextFormatting.YELLOW);
-                    } else if (turret.overheated.get()) {
+                    } else if (turret.overheated.getValue()) {
                         status = BallistixTextUtils.gui("turret.statusoverheated").withStyle(TextFormatting.RED);
                     } else {
                         status = BallistixTextUtils.gui("turret.statusgood").withStyle(TextFormatting.GREEN);
                     }
                 } else {
-                    if (turret.boundFireControl.get().equals(Ballistix.OUT_OF_REACH)) {
+                    if (turret.boundFireControl.getValue().equals(BlockEntityUtils.OUT_OF_REACH)) {
                         status = BallistixTextUtils.gui("turret.statusunlinked").withStyle(TextFormatting.RED);
-                    } else if (!turret.hasTarget.get()) {
+                    } else if (!turret.hasTarget.getValue()) {
                         status = BallistixTextUtils.gui("turret.statusnotarget").withStyle(TextFormatting.GREEN);
-                    } else if (!turret.inRange.get()) {
+                    } else if (!turret.inRange.getValue()) {
                         status = BallistixTextUtils.gui("turret.statusoutofrange").withStyle(TextFormatting.YELLOW);
-                    } else if (turret.overheated.get()) {
+                    } else if (turret.overheated.getValue()) {
                         status = BallistixTextUtils.gui("turret.statusoverheated").withStyle(TextFormatting.RED);
                     } else {
                         status = BallistixTextUtils.gui("turret.statusgood").withStyle(TextFormatting.GREEN);
@@ -165,15 +165,15 @@ public class ScreenLaserTurret extends ScreenPlayerWhitelistTurret<ContainerLase
             return BallistixTextUtils.gui("turret.status", status).withStyle(TextFormatting.BLACK);
         }));
 
-        addComponent(tempLabel = new ScreenComponentBallistixLabel(10, 20, 10, Color.BLACK, () -> {
-            TileTurretLaser turret = menu.getHostFromIntArray();
+        addComponent(tempLabel = new ScreenComponentSimpleLabel(10, 20, 10, Color.BLACK, () -> {
+            TileTurretLaser turret = menu.getSafeHost();
             if (turret == null) {
-                return ElectroTextUtils.empty();
+                return VoltaicTextUtils.empty();
             }
-            return BallistixTextUtils.gui("turret.temperature", ChatFormatter.getChatDisplayShort(turret.heat.get() + 32, DisplayUnit.TEMPERATURE_CELCIUS).withStyle(TextFormatting.DARK_GRAY));
+            return BallistixTextUtils.gui("turret.temperature", ChatFormatter.getChatDisplayShort(turret.heat.getValue() + 32, DisplayUnits.TEMPERATURE_CELCIUS).withStyle(TextFormatting.DARK_GRAY));
         }));
 
-        addComponent(heatBar = new ScreenComponentCustomRender(0, 0, graphics -> {
+        addComponent(heatBar = new ScreenComponentCustomRender(0, 0, poseStack -> {
 
             int width = (int) getGuiWidth();
             int height = (int) getGuiHeight();
@@ -181,7 +181,7 @@ public class ScreenLaserTurret extends ScreenPlayerWhitelistTurret<ContainerLase
             int x = width + 10;
             int y = height + 33;
 
-            TileTurretLaser turret = menu.getHostFromIntArray();
+            TileTurretLaser turret = menu.getSafeHost();
             if (turret == null) {
                 return;
             }
@@ -190,23 +190,23 @@ public class ScreenLaserTurret extends ScreenPlayerWhitelistTurret<ContainerLase
 
             Color end = start;
 
-            int maxX = (int) (155.0F * turret.heat.get() / Constants.LASER_TURRET_MAXHEAT);
+            int maxX = (int) (155.0F * turret.heat.getValue() / BallistixConstants.LASER_TURRET_MAXHEAT);
 
-            if (turret.heat.get() > Constants.LASER_TURRET_MAXHEAT * 0.8) {
+            if (turret.heat.getValue() > BallistixConstants.LASER_TURRET_MAXHEAT * 0.8) {
                 start = new Color(255, 255, 0, 255);
                 end = new Color(255, 0, 0, 255);
-            } else if (turret.heat.get() > Constants.LASER_TURRET_MAXHEAT * 0.4) {
+            } else if (turret.heat.getValue() > BallistixConstants.LASER_TURRET_MAXHEAT * 0.4) {
                 end = new Color(255, 255, 0, 255);
             }
 
-            fill(graphics, x, y, x + 156, y + 12, ScreenComponentCustomRender.TEXT_GRAY.color());
+            fill(poseStack, x, y, x + 156, y + 12, Color.TEXT_GRAY.color());
 
             RenderSystem.disableTexture();
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
             BufferBuilder vertex = Tessellator.getInstance().getBuilder();
             vertex.begin(7, DefaultVertexFormats.POSITION_COLOR);
-            Matrix4f matrix4f = graphics.last().pose();
+            Matrix4f matrix4f = poseStack.last().pose();
             vertex.vertex(matrix4f, x + 1, y + 1, 0).color(start.rFloat(), start.gFloat(), start.bFloat(), start.aFloat()).endVertex();
             vertex.vertex(matrix4f, x + 1, y + 11, 0).color(start.rFloat(), start.gFloat(), start.bFloat(), start.aFloat()).endVertex();
             vertex.vertex(matrix4f, x + maxX, y + 11, 0).color(end.rFloat(), end.gFloat(), end.bFloat(), end.aFloat()).endVertex();
@@ -216,33 +216,32 @@ public class ScreenLaserTurret extends ScreenPlayerWhitelistTurret<ContainerLase
             RenderSystem.disableBlend();
             RenderSystem.enableTexture();
 
-            //graphics.fillGradient(x + 1, y + 1, x + maxX, y + 11, start.color(), end.color());
+            //poseStack.fillGradient(x + 1, y + 1, x + maxX, y + 11, start.color(), end.color());
 
 
         }));
 
-        addComponent(new ScreenComponentBallistixButton<>(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR_RIGHT, 176, AbstractScreenComponentInfo.SIZE + 2).setOnPress(button -> {
-            TileTurretLaser turret = menu.getHostFromIntArray();
+        addComponent(new ScreenComponentButton<>(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR_RIGHT, 176, AbstractScreenComponentInfo.SIZE + 2).setOnPress(button -> {
+            TileTurretLaser turret = menu.getSafeHost();
             if(turret == null) {
                 return;
             }
-            turret.onlyTargetPlayers.set(!turret.onlyTargetPlayers.get());
-            turret.onlyTargetPlayers.updateServer();
-        }).onTooltip((graphics, but, xAxis, yAxis) -> {
+            turret.onlyTargetPlayers.setValue(!turret.onlyTargetPlayers.getValue());
+        }).onTooltip((poseStack, but, xAxis, yAxis) -> {
             //
-            TileTurretLaser turret = menu.getHostFromIntArray();
+            TileTurretLaser turret = menu.getSafeHost();
             if(turret == null) {
                 return;
             }
             List<ITextComponent> tooltips = new ArrayList<>();
             tooltips.add(BallistixTextUtils.tooltip("turret.targetmode").withStyle(TextFormatting.DARK_GRAY));
-            if (turret.onlyTargetPlayers.get()) {
+            if (turret.onlyTargetPlayers.getValue()) {
                 tooltips.add(BallistixTextUtils.tooltip("turret.targetmodeplayers").withStyle(TextFormatting.ITALIC, TextFormatting.GRAY));
             } else {
                 tooltips.add(BallistixTextUtils.tooltip("turret.targetmodeliving").withStyle(TextFormatting.ITALIC, TextFormatting.GRAY));
             }
 
-            renderComponentTooltip(graphics, tooltips, xAxis, yAxis);
+            renderComponentTooltip(poseStack, tooltips, xAxis, yAxis);
 
         }).setIcon(BallistixIconTypes.TARGET_ONLY_PLAYERS));
 
@@ -254,7 +253,7 @@ public class ScreenLaserTurret extends ScreenPlayerWhitelistTurret<ContainerLase
         heatBar.setVisible(show);
         statusLabel.setVisible(show);
         tempLabel.setVisible(show);
-        for (int i = menu.slotCount; i < menu.slots.size(); i++) {
+        for (int i = menu.getAdditionalSlotCount(); i < menu.slots.size(); i++) {
 
             ((SlotGeneric) menu.slots.get(i)).setActive(show);
 

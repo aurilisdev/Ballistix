@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import ballistix.api.missile.virtual.VirtualMissile;
+import ballistix.registers.BallistixCapabilities;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTDynamicOps;
 import net.minecraft.util.Direction;
@@ -26,7 +26,7 @@ public class CapabilityActiveMissiles implements ICapabilitySerializable<Compoun
 	private final LazyOptional<CapabilityActiveMissiles> lazyOptional = LazyOptional.of(() -> this);
 	
 	@Override
-	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+	public <T> LazyOptional<T> getCapability(@Nullable Capability<T> cap, @Nullable Direction side) {
 		if(cap == BallistixCapabilities.ACTIVE_MISSILES) {
 			return lazyOptional.cast();
 		}
@@ -51,7 +51,7 @@ public class CapabilityActiveMissiles implements ICapabilitySerializable<Compoun
 
             stored.putString("key", entry.getKey().location().toString());
             
-            //ResourceLocation.CODEC.encode(entry.getKey().location(), NbtOps.INSTANCE, new CompoundNBT()).result().ifPresent(tag -> stored.put("key", tag));
+            //ResourceLocation.CODEC.encode(entry.getKey().location(), NBTDynamicOps.INSTANCE, new CompoundNBT()).result().ifPresent(tag -> stored.put("key", tag));
 
             int activeSize = entry.getValue().size();
 

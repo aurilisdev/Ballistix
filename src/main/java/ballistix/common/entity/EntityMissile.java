@@ -1,16 +1,14 @@
 package ballistix.common.entity;
 
-import java.util.Random;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import ballistix.Ballistix;
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualMissile;
+import ballistix.client.particle.ParticleOptionsMissileSmoke;
 import ballistix.registers.BallistixEntities;
-import electrodynamics.Electrodynamics;
-import electrodynamics.prefab.utilities.CodecUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -20,10 +18,8 @@ import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
@@ -31,6 +27,9 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkHooks;
+import voltaic.Voltaic;
+import voltaic.prefab.utilities.BlockEntityUtils;
+import voltaic.prefab.utilities.CodecUtils;
 
 public class EntityMissile extends Entity {
 
@@ -48,7 +47,7 @@ public class EntityMissile extends Entity {
 	public UUID id;
 	public boolean isItem = false;
 	public boolean isExploding = false;
-	public BlockPos target = Ballistix.OUT_OF_REACH;
+	public BlockPos target = BlockEntityUtils.OUT_OF_REACH;
 	public float startX;
 	public float startZ;
 
@@ -63,7 +62,7 @@ public class EntityMissile extends Entity {
 
 	@Override
 	protected void defineSynchedData() {
-		entityData.define(TARGET, Ballistix.OUT_OF_REACH);
+		entityData.define(TARGET, BlockEntityUtils.OUT_OF_REACH);
 		entityData.define(MISSILE_TYPE, -1);
 		entityData.define(START_X, 0.0F);
 		entityData.define(START_Z, 0.0F);
@@ -73,12 +72,8 @@ public class EntityMissile extends Entity {
 	}
 
 	@Override
-	public AxisAlignedBB getBoundingBoxForCulling() {
-		return super.getBoundingBoxForCulling().expandTowards(20, 20, 20);
-	}
-
-	@Override
 	public void tick() {
+
 		boolean isClientSide = level.isClientSide;
 		boolean isServerSide = !isClientSide;
 
@@ -232,7 +227,7 @@ public class EntityMissile extends Entity {
 
 		setPos(vec.x, vec.y, vec.z);
 
-		if (!isItem && !target.equals(Ballistix.OUT_OF_REACH) && speed < 3.0F) {
+		if (!isItem && !target.equals(BlockEntityUtils.OUT_OF_REACH) && speed < 3.0F) {
 			speed += 0.02F;
 		}
 
@@ -240,29 +235,17 @@ public class EntityMissile extends Entity {
 			return;
 		}
 
-		// exhaust only when missile is accelerating
-
-		float widthOver2 = getDimensions(getPose()).width / 2.0F;
-
-		for (int i = 0; i < 5; i++) {
-
-			float x = (float) (getX() - widthOver2 + nextFloat(Electrodynamics.RANDOM, widthOver2));
-			float y = (float) (getY() - nextFloat(Electrodynamics.RANDOM, 0.5F));
-			float z = (float) (getZ() - widthOver2 + nextFloat(Electrodynamics.RANDOM, widthOver2));
-
-			level.addParticle(ParticleTypes.LARGE_SMOKE, x, y, z, -speed * (getDeltaMovement().x + Electrodynamics.RANDOM.nextFloat()), -speed * (getDeltaMovement().y - 0.075f + Electrodynamics.RANDOM.nextFloat()), -speed * (getDeltaMovement().z + Electrodynamics.RANDOM.nextFloat()));
-
-		}
-
-		float motionX = (float) (-speed * getDeltaMovement().x);
-		float motionY = (float) (-speed * getDeltaMovement().y);
-		float motionZ = (float) (-speed * getDeltaMovement().z);
+		float x = (float) (getX());
+		float y = (float) (getY());
+		float z = (float) (getZ());
+		float motionX = (float) (speed * getDeltaMovement().x);
+		float motionY = (float) (speed * getDeltaMovement().y);
+		float motionZ = (float) (speed * getDeltaMovement().z);
+		x -= motionX;
+		y -= motionY;
+		z -= motionZ;
 		for (int i = 0; i < 4; i++) {
-			level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, false, this.getX(), this.getY(), this.getZ(), random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
-		}
-
-		for (int i = 0; i < 4; i++) {
-			level.addParticle(ParticleTypes.CLOUD, false, this.getX(), this.getY(), this.getZ(), random.nextDouble() / 1.5 - 0.3333 + motionX, random.nextDouble() / 1.5 - 0.3333 + motionY, random.nextDouble() / 1.5 - 0.3333 + motionZ);
+			Minecraft.getInstance().particleEngine.createParticle(new ParticleOptionsMissileSmoke().setParameters(1, 1, 1, missileType == 1 ? 0.3f : missileType == 2 ? 0.5f : 0.2f, 50, true), x, y, z, -motionX * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()), -motionY * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()), -motionZ * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()));
 		}
 
 	}
@@ -270,17 +253,6 @@ public class EntityMissile extends Entity {
 	@Override
 	protected boolean canRide(Entity entityIn) {
 		return true;
-	}
-
-	@Override
-	public ActionResultType interact(PlayerEntity player, Hand hand) {
-		if (player.isSecondaryUseActive()) {
-			return ActionResultType.PASS;
-		}
-		if (!this.level.isClientSide) {
-			return player.startRiding(this, true) ? ActionResultType.CONSUME : ActionResultType.PASS;
-		}
-		return ActionResultType.SUCCESS;
 	}
 
 	@Override
@@ -309,7 +281,23 @@ public class EntityMissile extends Entity {
 	}
 
 	@Override
-	public void remove(boolean keepData) {
+	public ActionResultType interact(PlayerEntity player, Hand hand) {
+		if (player.isSecondaryUseActive()) {
+			return ActionResultType.PASS;
+		}
+		if (!this.level.isClientSide) {
+			return player.startRiding(this, true) ? ActionResultType.CONSUME : ActionResultType.PASS;
+		}
+		return ActionResultType.SUCCESS;
+	}
+
+	@Override
+	public boolean isPickable() {
+		return true;
+	}
+
+	@Override
+	public void remove(boolean reason) {
 		if (!level.isClientSide) {
 			if (id != null) {
 				VirtualMissile missile = MissileManager.getMissile(level.dimension(), id);
@@ -317,21 +305,12 @@ public class EntityMissile extends Entity {
 					missile.setSpawned(false, -1);
 			}
 		}
-		super.remove(keepData);
+		super.remove(reason);
 	}
-
+	
 	@Override
 	public IPacket<?> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
-	}
-
-	private float nextFloat(Random rand, float bound) {
-		float r = rand.nextFloat();
-		r = r * bound;
-		if (r >= bound) { // may need to correct a rounding problem
-			r = Float.intBitsToFloat(Float.floatToIntBits(bound) - 1);
-		}
-		return r;
 	}
 
 }

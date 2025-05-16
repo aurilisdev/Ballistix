@@ -1,14 +1,16 @@
 package ballistix.common.blast.thread;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+
 public abstract class ThreadBlast extends Thread {
 
-	public HashSet<BlockPos> results = new HashSet<>();
+	public Set<BlockPos> results = new HashSet<>();
 
 	public final BlockPos position;
 	public World level;

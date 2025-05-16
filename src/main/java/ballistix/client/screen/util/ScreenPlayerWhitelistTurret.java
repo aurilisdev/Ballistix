@@ -1,13 +1,13 @@
 package ballistix.client.screen.util;
 
 import ballistix.common.tile.turret.GenericTileTurret;
-import ballistix.prefab.screen.ScreenComponentVerticalSlider;
 import ballistix.prefab.screen.WrapperPlayerWhitelist;
-import electrodynamics.prefab.inventory.container.GenericContainerBlockEntity;
-import electrodynamics.prefab.screen.GenericScreen;
 import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
+import voltaic.prefab.inventory.container.types.GenericContainerBlockEntity;
+import voltaic.prefab.screen.GenericScreen;
+import voltaic.prefab.screen.component.types.ScreenComponentVerticalSlider;
 
 public abstract class ScreenPlayerWhitelistTurret<T extends GenericContainerBlockEntity<? extends GenericTileTurret>> extends GenericScreen<T> {
 
@@ -25,25 +25,25 @@ public abstract class ScreenPlayerWhitelistTurret<T extends GenericContainerBloc
         super.initializeComponents();
         playerInvLabel.setVisible(false);
     }
-    
+
     @Override
-    public void tick() {
-    	super.tick();
-    	whitelistWrapper.tick();
+	public void tick() {
+        super.tick();
+        whitelistWrapper.tick();
     }
-    
+
     @Override
-    public boolean mouseScrolled(double pMouseX, double pMouseY, double delta) {
-    	if (whitelistWrapper != null) {
-            if (delta > 0) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
+        if (whitelistWrapper != null) {
+            if (scrollY > 0) {
                 // scroll up
                 whitelistWrapper.handleMouseScroll(-1);
-            } else if (delta < 0) {
+            } else if (scrollY < 0) {
                 // scroll down
                 whitelistWrapper.handleMouseScroll(1);
             }
         }
-    	return super.mouseScrolled(pMouseX, pMouseY, delta);
+        return super.mouseScrolled(mouseX, mouseY, scrollY);
     }
 
     @Override

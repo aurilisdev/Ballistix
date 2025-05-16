@@ -1,55 +1,51 @@
 package ballistix.common.tile.turret.antimissile;
 
-import ballistix.api.missile.MissileManager;
-import ballistix.api.missile.virtual.VirtualProjectile;
-
 import javax.annotation.Nullable;
 
-import com.mojang.datafixers.util.Pair;
-
+import ballistix.api.missile.MissileManager;
+import ballistix.api.missile.virtual.VirtualProjectile;
 import ballistix.api.turret.ITarget;
 import ballistix.common.inventory.container.ContainerCIWSTurret;
-import ballistix.common.settings.Constants;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissileProjectile;
-import ballistix.registers.BallistixBlockTypes;
 import ballistix.registers.BallistixItems;
 import ballistix.registers.BallistixSounds;
-import electrodynamics.common.item.ItemUpgrade;
-import electrodynamics.prefab.properties.Property;
-import electrodynamics.prefab.properties.PropertyType;
-import electrodynamics.prefab.sound.SoundBarrierMethods;
-import electrodynamics.prefab.sound.utils.ITickableSound;
-import electrodynamics.prefab.tile.components.IComponentType;
-import electrodynamics.prefab.tile.components.type.ComponentContainerProvider;
-import electrodynamics.prefab.tile.components.type.ComponentInventory;
-import electrodynamics.prefab.tile.components.type.ComponentTickable;
+import ballistix.registers.BallistixTiles;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
+import voltaic.common.item.ItemUpgrade;
+import voltaic.prefab.properties.types.PropertyTypes;
+import voltaic.prefab.properties.variant.SingleProperty;
+import voltaic.prefab.sound.ITickableSound;
+import voltaic.prefab.sound.SoundBarrierMethods;
+import voltaic.prefab.tile.components.IComponentType;
+import voltaic.prefab.tile.components.type.ComponentContainerProvider;
+import voltaic.prefab.tile.components.type.ComponentInventory;
+import voltaic.prefab.tile.components.type.ComponentTickable;
+import voltaic.prefab.utilities.BlockEntityUtils;
 
 public class TileTurretCIWS extends TileTurretAntimissileProjectile implements ITickableSound {
 
-    public final Property<Boolean> outOfAmmo = property(new Property<>(PropertyType.Boolean, "noammo", false));
-    public final Property<Boolean> firing = property(new Property<>(PropertyType.Boolean, "isfiring", false));
-    public final Property<Boolean> targetingEntity = property(new Property<>(PropertyType.Boolean, "targetingentity", false));
-    public final Property<Boolean> onlyTargetPlayers = property(new Property<>(PropertyType.Boolean, "onlytargetplayers", false));
+    public final SingleProperty<Boolean> outOfAmmo = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "noammo", false));
+    public final SingleProperty<Boolean> firing = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "isfiring", false));
+    public final SingleProperty<Boolean> targetingEntity = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "targetingentity", false));
+    public final SingleProperty<Boolean> onlyTargetPlayers = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "onlytargetplayers", false));
 
     private boolean isPlaying = false;
     private LivingEntity livingTarget = null;
 
     public TileTurretCIWS() {
-        super(BallistixBlockTypes.TILE_CIWSTURRET.get(), Constants.CIWS_TURRET_BASE_RANGE, 0, Constants.CIWS_TURRET_USAGEPERTICK, Constants.CIWS_TURRET_ROTATIONSPEEDRADIANS, Constants.CIWS_INNACCURACY);
+        super(BallistixTiles.TILE_CIWSTURRET.get(), BallistixConstants.CIWS_TURRET_BASE_RANGE, 0, BallistixConstants.CIWS_TURRET_USAGEPERTICK, BallistixConstants.CIWS_TURRET_ROTATIONSPEEDRADIANS, BallistixConstants.CIWS_INNACCURACY);
     }
 
     @Override
     public ComponentInventory getInventory() {
-        return new ComponentInventory(this, ComponentInventory.InventoryBuilder.newInv().inputs(2).upgrades(3)).setDirectionsBySlot(0, Direction.values()).valid((index, stack, inv) -> {
+        return new ComponentInventory(this, ComponentInventory.InventoryBuilder.newInv().inputs(2).upgrades(3)).setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).valid((index, stack, inv) -> {
 
             if (index < 2) {
                 return stack.getItem() == BallistixItems.ITEM_BULLET.get();
@@ -64,13 +60,13 @@ public class TileTurretCIWS extends TileTurretAntimissileProjectile implements I
 
     @Override
     public ComponentContainerProvider getContainer() {
-        return new ComponentContainerProvider("container.ciwsturret", this).createMenu((id, player) -> new ContainerCIWSTurret(id, player, getComponent(IComponentType.Inventory), getCoordsArray()));
+        return new ComponentContainerProvider("ciwsturret", this).createMenu((id, player) -> new ContainerCIWSTurret(id, player, getComponent(IComponentType.Inventory), getCoordsArray()));
     }
 
     @Override
     public void tickServerActive(ComponentTickable tickable) {
-        if(!canFire.get()) {
-            firing.set(false);
+        if(!canFire.getValue()) {
+            firing.setValue(false);
         }
     }
 
@@ -89,19 +85,17 @@ public class TileTurretCIWS extends TileTurretAntimissileProjectile implements I
         }
 
         if (bul.isEmpty()) {
-            outOfAmmo.set(true);
-            firing.set(false);
+            outOfAmmo.setValue(true);
+            firing.setValue(false);
             return;
         }
 
-        outOfAmmo.set(false);
-        firing.set(true);
+        outOfAmmo.setValue(false);
+        firing.setValue(true);
 
-        Pair<Vector3d, Vector3d> projectileVals = getProjectileTrajectoryFromInaccuracy(inaccuracy, baseRange, inaccuracyMultiplier.get(), getProjectileLaunchPosition(), getTargetPosition(getTarget(ticks)));
+        Vector3d trajectory = getProjectileTrajectoryFromInaccuracy(inaccuracy, baseRange, inaccuracyMultiplier.getValue(), getProjectileLaunchPosition(), getTargetPosition(getTarget(ticks)));
 
-        Vector3d rotvec = projectileVals.getSecond();
-
-        VirtualProjectile.VirtualBullet bullet = new VirtualProjectile.VirtualBullet(getProjectileSpeed(), getProjectileLaunchPosition(), projectileVals.getFirst(), currentRange.get().floatValue(), new Vector3f((float) rotvec.x, (float) rotvec.y, (float) rotvec.z));
+        VirtualProjectile.VirtualBullet bullet = new VirtualProjectile.VirtualBullet(getProjectileSpeed(), getProjectileLaunchPosition(), trajectory, currentRange.getValue().floatValue());
 
         MissileManager.addBullet(level.dimension(), bullet);
 
@@ -145,14 +139,14 @@ public class TileTurretCIWS extends TileTurretAntimissileProjectile implements I
 
     @Override
     public boolean shouldPlaySound() {
-        return firing.get();
+        return firing.getValue();
     }
 
     @Nullable
     @Override
     public ITarget getTarget(long ticks) {
 
-        targetingEntity.set(false);
+        targetingEntity.setValue(false);
 
         ITarget target = super.getTarget(ticks);
 
@@ -161,7 +155,7 @@ public class TileTurretCIWS extends TileTurretAntimissileProjectile implements I
             return target;
         }
 
-        if(livingTarget != null && (livingTarget.removed || livingTarget.isDeadOrDying())) {
+        if(livingTarget != null && (!livingTarget.isAlive() || livingTarget.isDeadOrDying())) {
             livingTarget = null;
         }
 
@@ -170,10 +164,10 @@ public class TileTurretCIWS extends TileTurretAntimissileProjectile implements I
             LivingEntity selected = null;
             double lastMag = 0;
 
-            Class<? extends LivingEntity> type = onlyTargetPlayers.get() ? PlayerEntity.class : LivingEntity.class;
+            Class<? extends LivingEntity> type = onlyTargetPlayers.getValue() ? PlayerEntity.class : LivingEntity.class;
 
-            for(LivingEntity entity : level.getEntitiesOfClass(type, new AxisAlignedBB(getBlockPos()).inflate(currentRange.get() / 4.0))) {
-                if(raycastToBlockPos(level, getBlockPos(), entity.blockPosition().above()).isEmpty() && !(entity instanceof PlayerEntity && (((PlayerEntity) entity).isCreative() || whitelistedPlayers.get().contains(((PlayerEntity) entity).getName().getString()))) && !entity.isDeadOrDying() && !entity.removed) {
+            for(LivingEntity entity : level.getEntitiesOfClass(type, new AxisAlignedBB(getBlockPos()).inflate(currentRange.getValue() / 4.0))) {
+                if(raycastToBlockPos(level, getBlockPos(), entity.blockPosition().above()).isEmpty() && !(entity instanceof PlayerEntity && (((PlayerEntity) entity).isCreative() || whitelistedPlayers.getValue().contains(((PlayerEntity) entity).getName().getString()))) && !entity.isDeadOrDying() && entity.isAlive()) {
                     double deltaX = entity.getX() - getBlockPos().getX();
                     double deltaY = entity.getY() - getBlockPos().getY();
                     double deltaZ = entity.getZ() - getBlockPos().getZ();
@@ -193,7 +187,7 @@ public class TileTurretCIWS extends TileTurretAntimissileProjectile implements I
         }
 
         if(livingTarget != null) {
-            targetingEntity.set(true);
+            targetingEntity.setValue(true);
             return new ITarget.TargetLivingEntity(livingTarget);
         }
 
@@ -202,7 +196,7 @@ public class TileTurretCIWS extends TileTurretAntimissileProjectile implements I
 
     @Override
     public boolean isValidPlacement() {
-        return !targetingEntity.get() || super.isValidPlacement();
+        return !targetingEntity.getValue() || super.isValidPlacement();
     }
     
     @Override

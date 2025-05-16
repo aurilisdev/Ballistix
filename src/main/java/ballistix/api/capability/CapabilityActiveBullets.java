@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import ballistix.api.missile.virtual.VirtualProjectile;
+import ballistix.registers.BallistixCapabilities;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTDynamicOps;
 import net.minecraft.util.Direction;
@@ -26,7 +26,7 @@ public class CapabilityActiveBullets implements ICapabilitySerializable<Compound
 	private final LazyOptional<CapabilityActiveBullets> lazyOptional = LazyOptional.of(() -> this);
 
 	@Override
-	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+	public <T> LazyOptional<T> getCapability(@Nullable Capability<T> cap, @Nullable Direction side) {
 		if (cap == BallistixCapabilities.ACTIVE_BULLETS) {
 			return lazyOptional.cast();
 		}

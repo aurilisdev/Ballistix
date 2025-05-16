@@ -6,11 +6,9 @@ import javax.annotation.Nonnull;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import ballistix.client.ClientRegister;
+import ballistix.client.BallistixClientRegister;
 import ballistix.common.tile.turret.antimissile.TileTurretLaser;
 import ballistix.common.tile.turret.antimissile.TileTurretSAM;
-import electrodynamics.client.render.tile.AbstractTileRenderer;
-import electrodynamics.prefab.utilities.RenderingUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
@@ -20,6 +18,9 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
+import voltaic.client.VoltaicClientRegister;
+import voltaic.client.render.AbstractTileRenderer;
+import voltaic.prefab.utilities.RenderingUtils;
 
 public class RenderLaserTurret extends AbstractTileRenderer<TileTurretLaser> {
 
@@ -30,9 +31,9 @@ public class RenderLaserTurret extends AbstractTileRenderer<TileTurretLaser> {
     @Override
     public void render(@Nonnull TileTurretLaser tileEntityIn, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
 
-        IBakedModel model = getModel(ClientRegister.MODEL_LASERTURRET_BALLJOINT);
+        IBakedModel model = getModel(BallistixClientRegister.MODEL_LASERTURRET_BALLJOINT);
 
-        Vector3d rotVec = tileEntityIn.turretRotation.get();
+        Vector3d rotVec = tileEntityIn.turretRotation.getValue();
 
         double yRot = TileTurretSAM.getXZAngleRadians(rotVec) / Math.PI * 180.0;
 
@@ -57,13 +58,13 @@ public class RenderLaserTurret extends AbstractTileRenderer<TileTurretLaser> {
         matrixStackIn.mulPose(new Quaternion(0, (float) -yRot, elevRot, true));
         matrixStackIn.translate(-0.5, -0.8125, -0.5);
 
-        model = getModel(ClientRegister.MODEL_LASERTURRET_HEAD);
+        model = getModel(BallistixClientRegister.MODEL_LASERTURRET_HEAD);
 
         Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model, tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(), 0);
 
         matrixStackIn.popPose();
 
-        if(!tileEntityIn.firing.get() || tileEntityIn.hasNoPower.get()) {
+        if(tileEntityIn.hasNoPower.getValue() || !tileEntityIn.firing.getValue()) {
             return;
         }
 
@@ -76,7 +77,7 @@ public class RenderLaserTurret extends AbstractTileRenderer<TileTurretLaser> {
         //matrixStackIn.translate(0.5, 0.5, 0.5);
 
         Vector3d start = tileEntityIn.getProjectileLaunchPosition();
-        Vector3d end = tileEntityIn.targetPos.get();
+        Vector3d end = tileEntityIn.targetPos.getValue();
 
         double deltaX = end.x - start.x;
         double deltaY = end.y - start.y;
@@ -86,9 +87,9 @@ public class RenderLaserTurret extends AbstractTileRenderer<TileTurretLaser> {
 
         AxisAlignedBB box = new AxisAlignedBB(0.5, 1, 0.46875, mag, 1.0625, 0.53125);
 
-        TextureAtlasSprite sprite = electrodynamics.client.ClientRegister.CACHED_TEXTUREATLASSPRITES.get(electrodynamics.client.ClientRegister.TEXTURE_WHITE);
+        TextureAtlasSprite sprite = VoltaicClientRegister.whiteSprite();
 
-        RenderingUtils.renderFilledBoxNoOverlay(matrixStackIn, bufferIn.getBuffer(RenderType.solid()), box, 1.0F, 0, 0, 1.0F, sprite.getU0(), sprite.getV0(), sprite.getU1(), sprite.getV1(), combinedLightIn);
+        RenderingUtils.renderFilledBoxNoOverlay(matrixStackIn, bufferIn.getBuffer(RenderType.solid()), box, 1.0F, 0, 0, 1.0F, sprite.getU0(), sprite.getV0(), sprite.getU1(), sprite.getV1(), combinedLightIn, RenderingUtils.ALL_FACES);
 
         matrixStackIn.popPose();
 
@@ -98,7 +99,5 @@ public class RenderLaserTurret extends AbstractTileRenderer<TileTurretLaser> {
     public boolean shouldRenderOffScreen(TileTurretLaser blockEntity) {
         return true;
     }
-    
-    
 
 }

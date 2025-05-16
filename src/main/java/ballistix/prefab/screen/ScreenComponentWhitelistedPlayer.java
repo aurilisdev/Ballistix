@@ -2,12 +2,12 @@ package ballistix.prefab.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import electrodynamics.api.screen.ITexture;
-import electrodynamics.prefab.screen.component.editbox.ScreenComponentEditBox;
-import electrodynamics.prefab.screen.component.types.ScreenComponentGeneric;
-import electrodynamics.prefab.utilities.RenderingUtils;
-import electrodynamics.prefab.utilities.math.Color;
 import net.minecraft.util.text.StringTextComponent;
+import voltaic.api.screen.ITexture;
+import voltaic.prefab.screen.component.ScreenComponentGeneric;
+import voltaic.prefab.screen.component.editbox.ScreenComponentEditBox;
+import voltaic.prefab.utilities.RenderingUtils;
+import voltaic.prefab.utilities.math.Color;
 
 public class ScreenComponentWhitelistedPlayer extends ScreenComponentGeneric {
 
@@ -18,7 +18,7 @@ public class ScreenComponentWhitelistedPlayer extends ScreenComponentGeneric {
     }
 
     @Override
-    public void renderBackground(MatrixStack stack, int xAxis, int yAxis, int guiWidth, int guiHeight) {
+    public void renderBackground(MatrixStack poseStack, int xAxis, int yAxis, int guiWidth, int guiHeight) {
         if (!isVisible()) {
             return;
         }
@@ -26,13 +26,13 @@ public class ScreenComponentWhitelistedPlayer extends ScreenComponentGeneric {
         ITexture texture = RadarTextures.FREQUENCY;
         
         RenderingUtils.bindTexture(texture.getLocation());
-        ScreenComponentEditBox.drawExpandedBox(stack, x + guiWidth, y + guiHeight, width, height);
+        ScreenComponentEditBox.drawExpandedBox(poseStack, x + guiWidth, y + guiHeight, width, height);
 
         if (playerName == null) {
             return;
         }
 
-        gui.getFontRenderer().draw(stack, new StringTextComponent(playerName), guiWidth + x + 5, guiHeight + y + 7, Color.WHITE.color());
+        gui.getFontRenderer().draw(poseStack, new StringTextComponent(playerName), guiWidth + x + 5, guiHeight + y + 7, Color.WHITE.color());
 
     }
 

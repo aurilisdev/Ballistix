@@ -1,6 +1,6 @@
 package ballistix.compatibility.jei;
 
-import ballistix.References;
+import ballistix.Ballistix;
 import ballistix.compatibility.jei.util.psuedorecipes.BallistixPsuedoRecipes;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -9,15 +9,16 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.registries.ForgeRegistries;
 
 @JeiPlugin
 public class BallistixJEIPlugin implements IModPlugin {
 
-	private static final String INFO_ITEM = "jei.info.item.";
+	public static final ResourceLocation ID = Ballistix.rl("jei");
 
 	@Override
 	public ResourceLocation getPluginUid() {
-		return new ResourceLocation(References.ID, "jei");
+		return ID;
 	}
 
 	@Override
@@ -31,7 +32,7 @@ public class BallistixJEIPlugin implements IModPlugin {
 	private static void ballistixInfoTabs(IRecipeRegistration registration) {
 
 		for (ItemStack itemStack : BallistixPsuedoRecipes.BALLISTIX_ITEMS) {
-			registration.addIngredientInfo(itemStack, VanillaTypes.ITEM, new TranslationTextComponent(INFO_ITEM + itemStack.getItem().toString()));
+			registration.addIngredientInfo(itemStack, VanillaTypes.ITEM, new TranslationTextComponent("jei.info.item." + ForgeRegistries.ITEMS.getKey(itemStack.getItem()).getPath()));
 		}
 
 	}

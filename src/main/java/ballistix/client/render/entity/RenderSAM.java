@@ -4,7 +4,7 @@ import java.util.Random;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import ballistix.client.ClientRegister;
+import ballistix.client.BallistixClientRegister;
 import ballistix.common.entity.EntitySAM;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
@@ -16,7 +16,7 @@ import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 
 public class RenderSAM extends EntityRenderer<EntitySAM> {
@@ -30,16 +30,26 @@ public class RenderSAM extends EntityRenderer<EntitySAM> {
 
         World world = entity.level;
 
-        if(entity.rotation.x() == 0 && entity.rotation.y() == 0 && entity.rotation.z() == 0) {
+        if(entity.getDeltaMovement().length() <= 0) {
             return;
         }
 
         matrixStackIn.pushPose();
 
-        matrixStackIn.mulPose(new Quaternion(0, (-entity.yRot) - 180, 90 - entity.xRot, true));
+        matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(entity.yRot + 90.0F));
+        matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(90 - entity.xRot));
 
-        IBakedModel model = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_AAMISSILE);
+        IBakedModel model;
+        if(entity.variant == 0) {
+            model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_AAMISSILE);
 
+        } else {
+            model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_AAMISSILE_MK2);
+
+            matrixStackIn.translate(0, 1.05f, 0);
+            matrixStackIn.scale(1f, 1f, 1f);
+
+        }
         Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateWithoutAO(world, model, Blocks.AIR.defaultBlockState(), entity.blockPosition(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, world.random, new Random().nextLong(), 0);
 
         matrixStackIn.popPose();

@@ -2,6 +2,7 @@ package ballistix.common.block;
 
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityExplosive;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -25,18 +26,22 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import voltaic.common.block.states.VoltaicBlockStates;
 
 public class BlockExplosive extends Block {
 	public final SubtypeBlast explosive;
 
 	public BlockExplosive(SubtypeBlast explosive) {
-		super(Properties.copy(Blocks.TNT).instabreak().sound(SoundType.GRASS).noOcclusion().isRedstoneConductor((a, b, c) -> false));
+		super(AbstractBlock.Properties.copy(Blocks.TNT).instabreak().sound(SoundType.GRASS).noOcclusion().isRedstoneConductor((a, b, c) -> false));
 		this.explosive = explosive;
 	}
 
 	@Override
 	public VoxelShape getShape(BlockState state, IBlockReader level, BlockPos pos, ISelectionContext context) {
-		return explosive.shape.apply(state, level, pos, context);
+		if (state.hasProperty(VoltaicBlockStates.FACING)) {
+			return explosive.shape.getShape(state.getValue(VoltaicBlockStates.FACING));
+		}
+		return explosive.shape.getShape(null);
 	}
 
 	@Override

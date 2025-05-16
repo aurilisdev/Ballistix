@@ -5,7 +5,7 @@ import java.util.UUID;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import electrodynamics.prefab.utilities.CodecUtils;
+import voltaic.prefab.utilities.CodecUtils;
 
 public class PlayerData {
 

@@ -1,78 +1,119 @@
 package ballistix.common.blast.thread.raycast;
 
+import java.util.HashSet;
 import java.util.Random;
 
-import electrodynamics.prefab.block.HashDistanceBlockPos;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.World;
+import voltaic.Voltaic;
+import voltaic.prefab.block.HashDistanceBlockPos;
 
 public class ThreadRaySideBlast extends Thread {
 
-	public ThreadRaycastBlast mainBlast;
+	public final ThreadRaycastBlast mainBlast;
 
-	public Direction direction;
+	public final Direction direction;
+	private final Random random = Voltaic.RANDOM;
+
+	private static final float DEFAULT_POWER_DEC = 1.125f;
 
 	public ThreadRaySideBlast(ThreadRaycastBlast threadRaycastBlast, Direction dir) {
 		mainBlast = threadRaycastBlast;
 		direction = dir;
 		setName("Raycast Blast Side Thread");
+		setPriority(MAX_PRIORITY);
 	}
 
 	@Override
-	@SuppressWarnings("java:S2184")
 	public void run() {
-		int explosionRadius = mainBlast.explosionRadius;
-		BlockPos position = mainBlast.position;
-		World world = mainBlast.level;
-		int iMin = -explosionRadius, iMax = explosionRadius, jMax = explosionRadius, jMin = -explosionRadius;
-		Vector3i orientation = direction.getNormal();
+		final int explosionRadius = mainBlast.explosionRadius;
+		final BlockPos position = mainBlast.position;
+		final World world = mainBlast.level;
+		final int iMin = -explosionRadius, iMax = explosionRadius, jMax = explosionRadius, jMin = -explosionRadius;
+		final Vector3i orientation = direction.getNormal();
+		final float explosionEnergy = mainBlast.explosionEnergy;
+		final IResistanceCallback callback = mainBlast.callBack;
+		final Entity explosionSource = mainBlast.explosionSource;
+
+		final boolean xNotZero = orientation.getX() != 0;
+		final boolean yNotZero = orientation.getY() != 0;
+		final boolean zNotZero = orientation.getZ() != 0;
+
+		final int expX = orientation.getX() * explosionRadius;
+		final int expY = orientation.getY() * explosionRadius;
+		final int expZ = orientation.getZ() * explosionRadius;
+		HashSet<HashDistanceBlockPos> toadd = new HashSet<>();
+
 		for (int i = iMin; i < iMax; i++) {
 			for (int j = jMin; j < jMax; j++) {
+
 				int x = 0, y = 0, z = 0;
-				if (orientation.getX() != 0) {
-					x = orientation.getX() * explosionRadius;
+
+				if (xNotZero) {
+					x = expX;
 					y += i;
 					z += j;
-				} else if (orientation.getY() != 0) {
+				} else if (yNotZero) {
 					x += i;
-					y = orientation.getY() * explosionRadius;
+					y = expY;
 					z += j;
-				} else if (orientation.getZ() != 0) {
+				} else if (zNotZero) {
 					x += i;
 					y += j;
-					z = orientation.getZ() * explosionRadius;
+					z = expZ;
 				}
-				Vector3d delta = new Vector3d(x, y, z).normalize();
-				float power = mainBlast.explosionEnergy - mainBlast.explosionEnergy * new Random().nextFloat() / 2;
-				Vector3d currentVector = new Vector3d(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5);
-				BlockPos currentBlockPos = new BlockPos(currentVector);
-				for (float d = 0.3F; power > 0f; power -= d * 0.75F * 5) {
-					BlockPos next = new BlockPos(currentVector);
-					if (!next.equals(currentBlockPos)) {
+
+				float power = explosionEnergy - explosionEnergy * random.nextFloat() / 2;
+
+				BlockPos currentBlockPos = new BlockPos(position);
+
+				float currentX = position.getX() + 0.5F;
+				float currentY = position.getY() + 0.5F;
+				float currentZ = position.getZ() + 0.5F;
+
+				float len = MathHelper.sqrt(x * x + y * y + z * z); // from net.minecraft.util.MathHelper
+				float invLen = (len == 0.0F ? 0.0F : 1.0F / len);
+				float dx = x * invLen;
+				float dy = y * invLen;
+				float dz = z * invLen;
+
+				while (power > 0.0F) {
+					BlockPos next = new BlockPos((int) Math.floor(currentX), (int) Math.floor(currentY),
+							(int) Math.floor(currentZ));
+					if (!next.equals(currentBlockPos) && currentBlockPos != position) {
 						currentBlockPos = next;
 						BlockState block = world.getBlockState(currentBlockPos);
-						if (block != Blocks.AIR.defaultBlockState() && block != Blocks.CAVE_AIR.defaultBlockState() && block != Blocks.VOID_AIR.defaultBlockState()) {
+						if (!block.isAir()) {
 							if (block.getDestroySpeed(world, currentBlockPos) >= 0) {
-								power -= Math.max(1, mainBlast.callBack.getResistance(world, position, currentBlockPos, mainBlast.explosionSource, block));
+								power -= Math.max(DEFAULT_POWER_DEC, callback.getResistance(world, position,
+										currentBlockPos, explosionSource, block));
 								if (power > 0f) {
-									int idistancesq = (int) (Math.pow(currentBlockPos.getX() - position.getX(), 2) + Math.pow(currentBlockPos.getY() - position.getY(), 2) + Math.pow(currentBlockPos.getZ() - position.getZ(), 2));
-									synchronized (mainBlast.resultsSync) {
-										mainBlast.resultsSync.add(new HashDistanceBlockPos(currentBlockPos.getX(), currentBlockPos.getY(), currentBlockPos.getZ(), idistancesq));
-									}
+									int idistancesq = (int) (Math.pow(currentBlockPos.getX() - position.getX(), 2)
+											+ Math.pow(currentBlockPos.getY() - position.getY(), 2)
+											+ Math.pow(currentBlockPos.getZ() - position.getZ(), 2));
+									toadd.add(new HashDistanceBlockPos(currentBlockPos.getX(), currentBlockPos.getY(),
+											currentBlockPos.getZ(), idistancesq));
 								}
 							} else {
 								power = 0;
+								break;
 							}
 						}
 					}
-					currentVector = new Vector3d(currentVector.x + delta.x, currentVector.y + delta.y, currentVector.z + delta.z);
+					currentX += dx;
+					currentY += dy;
+					currentZ += dz;
+					power -= DEFAULT_POWER_DEC;
 				}
 			}
+		}
+		synchronized (mainBlast.resultsSync) {
+			mainBlast.resultsSync.addAll(toadd);
 		}
 		mainBlast.underBlasts.remove(this);
 	}

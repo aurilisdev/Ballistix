@@ -2,12 +2,12 @@ package ballistix.common.inventory.container;
 
 import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.registers.BallistixMenuTypes;
-import electrodynamics.prefab.inventory.container.GenericContainerBlockEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.IntArray;
+import voltaic.prefab.inventory.container.types.GenericContainerBlockEntity;
 
 public class ContainerFireControlRadar extends GenericContainerBlockEntity<TileFireControlRadar> {
 

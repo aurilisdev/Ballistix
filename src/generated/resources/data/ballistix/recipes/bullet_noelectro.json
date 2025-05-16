@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " P ",
+    "PGP",
+    "PGP"
+  ],
+  "key": {
+    "P": {
+      "tag": "forge:ingots/copper"
+    },
+    "G": {
+      "tag": "forge:gunpowder"
+    }
+  },
+  "result": {
+    "item": "ballistix:bullet",
+    "count": 4
+  },
+  "conditions": [
+    {
+      "value": {
+        "modid": "electrodynamics",
+        "type": "forge:mod_loaded"
+      },
+      "type": "forge:not"
+    }
+  ]
+}

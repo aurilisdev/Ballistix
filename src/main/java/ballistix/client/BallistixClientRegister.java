@@ -35,12 +35,21 @@ import ballistix.client.screen.ScreenLauncherPlatformT3;
 import ballistix.client.screen.ScreenRailgunTurret;
 import ballistix.client.screen.ScreenSAMTurret;
 import ballistix.client.screen.ScreenSearchRadar;
+import ballistix.common.item.ItemTracker;
 import ballistix.registers.BallistixTiles;
 import ballistix.registers.BallistixEntities;
+import ballistix.registers.BallistixItems;
 import ballistix.registers.BallistixMenuTypes;
 import ballistix.registers.BallistixParticles;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.decoration.ItemFrame;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -102,6 +111,36 @@ public class BallistixClientRegister {
 		MenuScreens.register(BallistixMenuTypes.CONTAINER_RAILGUNTURRET.get(), ScreenRailgunTurret::new);
 
 		ScreenGuidebook.addGuidebookModule(new ModuleBallistix());
+		
+		ItemProperties.register(BallistixItems.ITEM_TRACKER.get(), ANGLE_PREDICATE, (stack, level, entity, seed) -> {
+			//
+			Entity sourceEntity = entity != null ? entity : stack.getEntityRepresentation();
+			if (sourceEntity == null || !ItemTracker.hasTarget(stack)) {
+				return 0F;
+			}
+
+			double targetX = ItemTracker.getX(stack);
+			double targetZ = ItemTracker.getZ(stack);
+
+			double angleOfSource = 0.0D;
+			if (entity instanceof Player player && player.isLocalPlayer()) {
+				angleOfSource = entity.getYRot();
+			} else if (sourceEntity instanceof ItemFrame itemFrameEntity) {
+				Direction direction = itemFrameEntity.getDirection();
+				int j = direction.getAxis().isVertical() ? 90 * direction.getAxisDirection().getStep() : 0;
+				angleOfSource = Mth.wrapDegrees(180 + direction.get2DDataValue() * 90L + itemFrameEntity.getRotation() * 45L + j);
+			} else if (sourceEntity instanceof ItemEntity item) {
+				angleOfSource = 180.0F - item.getSpin(0.5F) / ((float) Math.PI * 2F) * 360.0F;
+			} else if (entity != null) {
+				angleOfSource = entity.yBodyRot;
+			}
+
+			double rawAngleToTarget = Math.atan2(targetZ - sourceEntity.getZ(), targetX - sourceEntity.getX()) / ((float) Math.PI * 2F);
+			double adjustedAngleToTarget = 0.5D - (Mth.positiveModulo(angleOfSource / 360.0D, 1.0D) - 0.25D - rawAngleToTarget);
+
+			return Mth.positiveModulo((float) adjustedAngleToTarget, 1.0F);
+			//
+		});
 	}
 	
 	@SubscribeEvent

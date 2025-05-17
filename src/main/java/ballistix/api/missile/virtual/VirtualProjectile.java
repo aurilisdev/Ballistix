@@ -159,6 +159,10 @@ public abstract class VirtualProjectile {
 
     protected boolean isInValidBlockstate(BlockPos pos, ServerLevel world) {
 
+        if(pos == null) {
+            return true;
+        }
+
         BlockEntity blockentity = world.getBlockEntity(pos);
 
         return blockentity instanceof GenericTileTurret;
@@ -372,6 +376,10 @@ public abstract class VirtualProjectile {
         protected boolean isInValidBlockstate(BlockPos pos, ServerLevel world) {
             if(variant == 0) {
                 return super.isInValidBlockstate(pos, world);
+            }
+
+            if(pos == null) {
+                return true;
             }
 
             BlockEntity blockentity = world.getBlockEntity(pos);

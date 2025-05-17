@@ -285,6 +285,10 @@ public class VirtualMissile {
     }
     
     private boolean isInValidBlockstate(BlockPos pos, ServerWorld world) {
+    	
+    	if(pos == null) {
+    		return true;
+    	}
 
         TileEntity blockentity = world.getBlockEntity(pos);
 

@@ -5,7 +5,7 @@ import voltaic.api.ISubtype;
 
 public enum SubtypeMissile implements ISubtype {
 
-	tier1(1), tier2(2), tier3(3);
+	tier1(0), tier2(1), tier3(2);
 
 	public int tier;
 

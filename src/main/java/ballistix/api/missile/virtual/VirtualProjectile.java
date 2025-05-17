@@ -159,6 +159,10 @@ public abstract class VirtualProjectile {
     }
     
     protected boolean isInValidBlockstate(BlockPos pos, ServerWorld world) {
+    	
+    	if(pos == null) {
+    		return true;
+    	}
 
         TileEntity blockentity = world.getBlockEntity(pos);
 
@@ -373,6 +377,10 @@ public abstract class VirtualProjectile {
         protected boolean isInValidBlockstate(BlockPos pos, ServerWorld world) {
             if(variant == 0) {
                 return super.isInValidBlockstate(pos, world);
+            }
+            
+            if(pos == null) {
+            	return true;
             }
 
             TileEntity blockentity = world.getBlockEntity(pos);

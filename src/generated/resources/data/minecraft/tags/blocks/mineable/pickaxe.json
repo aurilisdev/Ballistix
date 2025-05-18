@@ -1,20 +1,20 @@
 {
   "values": [
+    "ballistix:launchercontrolpaneltier3",
+    "ballistix:firecontrolradar",
     "ballistix:launchersupportframetier2",
-    "ballistix:launchercontrolpaneltier2",
-    "ballistix:launcherplatformtier2",
-    "ballistix:launcherplatformtier1",
-    "ballistix:launcherplatformtier3",
     "ballistix:esmtower",
-    "ballistix:launchercontrolpaneltier1",
     "ballistix:launchersupportframetier3",
     "ballistix:radar",
-    "ballistix:launchersupportframetier1",
-    "ballistix:samturret",
-    "ballistix:launchercontrolpaneltier3",
-    "ballistix:ciwsturret",
     "ballistix:laserturret",
+    "ballistix:launcherplatformtier2",
+    "ballistix:launcherplatformtier3",
+    "ballistix:launchercontrolpaneltier1",
+    "ballistix:ciwsturret",
+    "ballistix:samturret",
     "ballistix:railgunturret",
-    "ballistix:firecontrolradar"
+    "ballistix:launcherplatformtier1",
+    "ballistix:launchercontrolpaneltier2",
+    "ballistix:launchersupportframetier1"
   ]
 }

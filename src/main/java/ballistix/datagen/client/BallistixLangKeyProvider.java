@@ -26,7 +26,7 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 		case EN_US:
 		default:
 
-			add("itemGroup.itemgroup" + Ballistix.ID + "main", "Nuclear Science");
+			add("itemGroup.itemgroup" + Ballistix.ID + "main", "Ballistix");
 
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.obsidian), "Obsidian TNT");
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.condensive), "Condensive Explosive");

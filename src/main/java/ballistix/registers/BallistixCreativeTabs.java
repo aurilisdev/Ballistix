@@ -4,6 +4,6 @@ import ballistix.common.tab.ItemGroupBallistix;
 
 public class BallistixCreativeTabs {
 
-	public static final ItemGroupBallistix MAIN = new ItemGroupBallistix("itemgroupballistix");
+	public static final ItemGroupBallistix MAIN = new ItemGroupBallistix("itemgroupballistixmain");
 
 }

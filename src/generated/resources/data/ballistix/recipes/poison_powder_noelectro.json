@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:rotten_flesh"
+    }
+  ],
+  "result": {
+    "item": "ballistix:dustpoison",
+    "count": 2
+  },
+  "conditions": [
+    {
+      "value": {
+        "modid": "electrodynamics",
+        "type": "forge:mod_loaded"
+      },
+      "type": "forge:not"
+    }
+  ]
+}

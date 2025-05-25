@@ -86,7 +86,7 @@ public class BallistixItemModelsProvider extends BaseItemModelsProvider {
 		simpleBlockItem(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.laserturret), existingBlock(blockLoc("laserturretitem"))).transforms().transform(ItemDisplayContext.GUI).scale(0.5F).rotation(30.0F, 225.0F, 0.0F).end();
 		simpleBlockItem(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.railgunturret), existingBlock(blockLoc("railgunturretitem"))).transforms().transform(ItemDisplayContext.GUI).scale(0.5F).rotation(30.0F, 225.0F, 0.0F).end();
 
-		layeredBuilder(name(BallistixItems.ITEM_RANGEUPGRADE), Parent.GENERATED, itemLoc("upgrade/" + SubtypeItemUpgrade.range.tag())).transforms().transform(ItemDisplayContext.GUI).scale(0.8F).end();
+		//layeredBuilder(name(BallistixItems.ITEM_RANGEUPGRADE), Parent.GENERATED, itemLoc("upgrade/" + SubtypeItemUpgrade.range.tag())).transforms().transform(ItemDisplayContext.GUI).scale(0.8F).end();
 	}
 
 }

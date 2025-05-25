@@ -41,7 +41,7 @@ public class CameraShakeManager {
 		}
 
 		Minecraft mc = Minecraft.getInstance();
-		if (mc.player == null) {
+		if (mc.player == null || mc.isPaused()) {
 			return;
 		}
 

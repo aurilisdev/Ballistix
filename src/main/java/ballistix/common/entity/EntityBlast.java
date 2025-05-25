@@ -23,6 +23,7 @@ public class EntityBlast extends Entity {
     private static final EntityDataAccessor<Integer> CALLCOUNT = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> SHOULDSTARTCUSTOMRENDER = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> TICKCOUNT = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.INT);
 
     private Blast blast;
     public int blastOrdinal = -1;
@@ -60,6 +61,7 @@ public class EntityBlast extends Entity {
     	entityData.define(CALLCOUNT, 0);
     	entityData.define(TYPE, -1);
     	entityData.define(SHOULDSTARTCUSTOMRENDER, false);
+    	entityData.define(TICKCOUNT, 0);
     }
 
     @Override
@@ -76,6 +78,7 @@ public class EntityBlast extends Entity {
             entityData.set(TYPE, blastOrdinal);
             entityData.set(CALLCOUNT, callcount);
             entityData.set(SHOULDSTARTCUSTOMRENDER, blast instanceof IHasCustomRender has && has.shouldRender());
+            entityData.set(TICKCOUNT, tickCount);
         } else {
             blastOrdinal = entityData.get(TYPE);
             callcount = entityData.get(CALLCOUNT);
@@ -86,6 +89,7 @@ public class EntityBlast extends Entity {
             if (blast != null) {
                 blast.shouldRenderCustomClient = shouldRenderCustom;
             }
+            tickCount = entityData.get(TICKCOUNT);
         }
 
         if (blastOrdinal == -1) {

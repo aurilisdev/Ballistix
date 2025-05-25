@@ -21,7 +21,6 @@ import ballistix.common.item.ItemScanner;
 import ballistix.common.item.ItemTracker;
 import ballistix.common.settings.BallistixConstants;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -30,13 +29,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
-import voltaic.Voltaic;
 import voltaic.api.creativetab.CreativeTabSupplier;
 import voltaic.api.registration.BulkRegistryObject;
 import voltaic.common.blockitem.BlockItemDescriptable;
-import voltaic.common.item.ItemUpgrade;
 import voltaic.common.item.ItemVoltaic;
-import voltaic.common.item.subtype.SubtypeItemUpgrade;
 
 public class BallistixItems {
 
@@ -58,18 +54,6 @@ public class BallistixItems {
 	public static final RegistryObject<ItemScanner> ITEM_SCANNER = ITEMS.register("scanner", ItemScanner::new);
 	public static final RegistryObject<ItemLaserDesignator> ITEM_LASERDESIGNATOR = ITEMS.register("laserdesignator", ItemLaserDesignator::new);
 	public static final RegistryObject<ItemDefuser> ITEM_DEFUSER = ITEMS.register("defuser", ItemDefuser::new);
-	public static final RegistryObject<ItemUpgrade> ITEM_RANGEUPGRADE = ITEMS.register("rangeupgrade", () -> new ItemUpgrade(new Item.Properties(), SubtypeItemUpgrade.range, BallistixCreativeTabs.MAIN) {
-
-		@Override
-		public void addCreativeModeItems(CreativeModeTab tab, List<ItemStack> items) {
-
-			if(Voltaic.isElectroLoaded()) {
-				return;
-			}
-
-			super.addCreativeModeItems(tab, items);
-		}
-	});
 
 	@EventBusSubscriber(value = Dist.CLIENT, modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)
 	private static class BallistixCreativeRegistry {

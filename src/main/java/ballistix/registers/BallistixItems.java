@@ -58,18 +58,6 @@ public class BallistixItems {
 	public static final DeferredHolder<Item, ItemScanner> ITEM_SCANNER = ITEMS.register("scanner", ItemScanner::new);
 	public static final DeferredHolder<Item, ItemLaserDesignator> ITEM_LASERDESIGNATOR = ITEMS.register("laserdesignator", ItemLaserDesignator::new);
 	public static final DeferredHolder<Item, ItemDefuser> ITEM_DEFUSER = ITEMS.register("defuser", ItemDefuser::new);
-	public static final DeferredHolder<Item, ItemUpgrade> ITEM_RANGEUPGRADE = ITEMS.register("rangeupgrade", () -> new ItemUpgrade(new Item.Properties(), SubtypeItemUpgrade.range, BallistixCreativeTabs.MAIN) {
-
-		@Override
-		public void addCreativeModeItems(CreativeModeTab tab, List<ItemStack> items) {
-
-			if(Voltaic.isElectroLoaded()) {
-				return;
-			}
-
-			super.addCreativeModeItems(tab, items);
-		}
-	});
 
 	@EventBusSubscriber(value = Dist.CLIENT, modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)
 	private static class BallistixCreativeRegistry {

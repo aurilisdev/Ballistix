@@ -37,7 +37,7 @@ public class CameraShakeManager {
 	public static void onClientTick(ClientTickEvent.Pre event) {
 
 		Minecraft mc = Minecraft.getInstance();
-		if (mc.player == null) {
+		if (mc.player == null || mc.isPaused()) {
 			return;
 		}
 

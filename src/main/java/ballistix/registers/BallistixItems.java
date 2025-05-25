@@ -17,17 +17,13 @@ import ballistix.common.item.ItemRocketLauncher;
 import ballistix.common.item.ItemScanner;
 import ballistix.common.item.ItemTracker;
 import ballistix.common.settings.BallistixConstants;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-import voltaic.Voltaic;
 import voltaic.api.registration.BulkRegistryObject;
 import voltaic.common.blockitem.BlockItemDescriptable;
-import voltaic.common.item.ItemUpgrade;
 import voltaic.common.item.ItemVoltaic;
-import voltaic.common.item.subtype.SubtypeItemUpgrade;
 
 public class BallistixItems {
 
@@ -49,12 +45,5 @@ public class BallistixItems {
 	public static final RegistryObject<ItemScanner> ITEM_SCANNER = ITEMS.register("scanner", ItemScanner::new);
 	public static final RegistryObject<ItemLaserDesignator> ITEM_LASERDESIGNATOR = ITEMS.register("laserdesignator", ItemLaserDesignator::new);
 	public static final RegistryObject<ItemDefuser> ITEM_DEFUSER = ITEMS.register("defuser", ItemDefuser::new);
-	public static final RegistryObject<ItemUpgrade> ITEM_RANGEUPGRADE = ITEMS.register("rangeupgrade", () -> new ItemUpgrade(new Item.Properties(), SubtypeItemUpgrade.range, () -> BallistixCreativeTabs.MAIN) {
-
-		protected boolean allowdedIn(CreativeModeTab category) {
-			return Voltaic.isElectroLoaded() ? false : super.allowdedIn(category);
-		};
-
-	});
 
 }

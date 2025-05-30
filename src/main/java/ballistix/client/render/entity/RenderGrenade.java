@@ -1,5 +1,7 @@
 package ballistix.client.render.entity;
 
+import ballistix.api.blast.IBlast;
+import ballistix.common.blast.Blast;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import ballistix.common.entity.EntityGrenade;
@@ -28,14 +30,14 @@ public class RenderGrenade extends EntityRenderer<EntityGrenade> {
 
     @Override
     public void render(EntityGrenade entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
-        SubtypeGrenade subtype = entityIn.getExplosiveType();
-        if (subtype != null) {
+        IBlast blast = entityIn.getExplosiveType();
+        if (blast != null) {
             matrixStackIn.pushPose();
             if (itemEntity == null) {
                 itemEntity = new ItemEntity(EntityType.ITEM, entityIn.level());
             }
             itemEntity.setPos(entityIn.getX(), entityIn.getY(), entityIn.getZ());
-            itemEntity.setItem(new ItemStack(BallistixItems.ITEMS_GRENADE.getValue(subtype)));
+            itemEntity.setItem(new ItemStack(Blast.BLAST_TO_GRENADE_MAP.get(blast)));
             matrixStackIn.translate(0, -0.5 / 16.0, 0);
             itemRenderer.render(itemEntity, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
             matrixStackIn.popPose();

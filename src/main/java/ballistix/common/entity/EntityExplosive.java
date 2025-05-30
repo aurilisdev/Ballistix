@@ -1,16 +1,18 @@
 package ballistix.common.entity;
 
+import ballistix.api.blast.IBlast;
 import ballistix.api.entity.IDefusable;
 import ballistix.common.blast.Blast;
 import ballistix.common.blast.BlastDarkmatter;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.registers.BallistixEntities;
-import ballistix.registers.BallistixItems;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
@@ -20,8 +22,8 @@ import net.minecraft.world.level.Level;
 
 public class EntityExplosive extends Entity implements IDefusable {
 	private static final EntityDataAccessor<Integer> FUSE = SynchedEntityData.defineId(EntityExplosive.class, EntityDataSerializers.INT);
-	private static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(EntityExplosive.class, EntityDataSerializers.INT);
-	public int blastOrdinal = -1;
+	private static final EntityDataAccessor<String> TYPE = SynchedEntityData.defineId(EntityExplosive.class, EntityDataSerializers.STRING);
+	public ResourceLocation blastId = null;
 	public int fuse = 80;
 
 	public EntityExplosive(EntityType<? extends EntityExplosive> type, Level worldIn) {
@@ -44,21 +46,21 @@ public class EntityExplosive extends Entity implements IDefusable {
 		return !isRemoved();
 	}
 
-	public void setBlastType(SubtypeBlast explosive) {
-		blastOrdinal = explosive.ordinal();
-		fuse = explosive.fuse;
+	public void setBlastType(IBlast explosive) {
+		blastId = explosive.id();
+		fuse = explosive.fuse();
 	}
 
-	public SubtypeBlast getBlastType() {
-		return blastOrdinal == -1 ? null : SubtypeBlast.values()[blastOrdinal];
+	public IBlast getBlastType() {
+		return blastId == null ? null : Blast.BLAST_MAP.get(blastId);
 	}
 
 	@Override
 	public void defuse() {
 		remove(RemovalReason.DISCARDED);
-		if (blastOrdinal != -1) {
-			SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
-			ItemEntity item = new ItemEntity(level(), getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(BallistixItems.ITEMS_EXPLOSIVE.getValue(explosive)));
+		if (blastId != null) {
+			IBlast blast = Blast.BLAST_MAP.get(blastId);
+			ItemEntity item = new ItemEntity(level(), getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(blast.getExplosiveItem().get()));
 			level().addFreshEntity(item);
 		}
 	}
@@ -66,16 +68,21 @@ public class EntityExplosive extends Entity implements IDefusable {
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		builder.define(FUSE, 80);
-		builder.define(TYPE, -1);
+		builder.define(TYPE, "");
 	}
 
 	@Override
 	public void tick() {
 		if (!level().isClientSide) {
-			entityData.set(TYPE, blastOrdinal);
+			if(blastId != null) {
+				entityData.set(TYPE, blastId.toString());
+			}
 			entityData.set(FUSE, fuse);
 		} else {
-			blastOrdinal = entityData.get(TYPE);
+			String str = entityData.get(TYPE);
+			if(!str.isEmpty()) {
+				blastId = ResourceLocation.parse(str);
+			}
 			fuse = entityData.get(FUSE);
 		}
 		if (!isNoGravity()) {
@@ -88,14 +95,14 @@ public class EntityExplosive extends Entity implements IDefusable {
 			this.setDeltaMovement(getDeltaMovement().multiply(0.7D, -0.5D, 0.7D));
 		}
 
-		if(!level().isClientSide && blastOrdinal > -1 && SubtypeBlast.values()[blastOrdinal] == SubtypeBlast.largeantimatter) {
+		if(!level().isClientSide && blastId != null && Blast.BLAST_MAP.get(blastId) == SubtypeBlast.largeantimatter) {
 
 			for(EntityBlast entity : level().getEntitiesOfClass(EntityBlast.class, getBoundingBox().inflate(getDeltaMovement().length()))) {
-				if(entity.blastOrdinal == SubtypeBlast.darkmatter.ordinal() && entity.getBlast() != null) {
+				if(entity.blastId == SubtypeBlast.darkmatter.id() && entity.getBlast() != null) {
 					BlastDarkmatter blast = (BlastDarkmatter) entity.getBlast();
 					blast.canceled = true;
 					entity.remove(RemovalReason.DISCARDED);
-					SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
+					IBlast explosive = Blast.BLAST_MAP.get(blastId);
 					Blast b = explosive.createBlast(level(), blockPosition());
 					if (b != null) {
 						b.performExplosion();
@@ -112,8 +119,8 @@ public class EntityExplosive extends Entity implements IDefusable {
 			if(!level().isClientSide()) {
 				remove(RemovalReason.DISCARDED);
 			}
-			if (blastOrdinal != -1) {
-				SubtypeBlast explosive = SubtypeBlast.values()[blastOrdinal];
+			if (blastId != null) {
+				IBlast explosive = Blast.BLAST_MAP.get(blastId);
 				Blast b = explosive.createBlast(level(), blockPosition());
 				if (b != null) {
 					b.performExplosion();
@@ -131,13 +138,13 @@ public class EntityExplosive extends Entity implements IDefusable {
 	@Override
 	protected void addAdditionalSaveData(CompoundTag compound) {
 		compound.putInt("Fuse", fuse);
-		compound.putInt("type", blastOrdinal);
+		ResourceLocation.CODEC.encodeStart(NbtOps.INSTANCE, blastId).ifSuccess(tag -> compound.put("type", tag));
 	}
 
 	@Override
 	protected void readAdditionalSaveData(CompoundTag compound) {
 		fuse = compound.getInt("Fuse");
-		blastOrdinal = compound.getInt("type");
+		ResourceLocation.CODEC.decode(NbtOps.INSTANCE, compound.get("type")).ifSuccess(pair -> blastId = pair.getFirst());
 	}
 
 }

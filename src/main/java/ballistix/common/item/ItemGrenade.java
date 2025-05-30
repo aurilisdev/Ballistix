@@ -1,5 +1,6 @@
 package ballistix.common.item;
 
+import ballistix.api.blast.IBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityGrenade;
 import ballistix.registers.BallistixCreativeTabs;
@@ -19,9 +20,9 @@ import voltaic.common.item.ItemVoltaic;
 
 public class ItemGrenade extends ItemVoltaic {
 
-	private SubtypeGrenade grenade;
+	private IBlast grenade;
 
-	public ItemGrenade(SubtypeGrenade grenade) {
+	public ItemGrenade(IBlast grenade) {
 		super(new Item.Properties().stacksTo(16), BallistixCreativeTabs.MAIN);
 		this.grenade = grenade;
 	}

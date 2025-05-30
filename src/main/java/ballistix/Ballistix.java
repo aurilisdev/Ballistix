@@ -1,24 +1,27 @@
 package ballistix;
 
+import ballistix.api.blast.RegisterBlastEvent;
 import ballistix.client.BallistixClientRegister;
+import ballistix.client.event.RegisterBlastRenderersEvent;
 import ballistix.common.blast.thread.ThreadSimpleBlast;
 import ballistix.common.block.BallistixVoxelShapes;
 import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.common.item.ItemGrenade;
+import ballistix.common.item.ItemMinecart;
 import ballistix.common.packet.NetworkHandler;
 import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tags.BallistixTags;
-import ballistix.registers.BallistixCapabilities;
+import ballistix.registers.BallistixItems;
 import ballistix.registers.UnifiedBallistixRegister;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -39,6 +42,9 @@ public class Ballistix {
 		BallistixVoxelShapes.init();
 		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 		UnifiedBallistixRegister.register(bus);
+		//bus.register(bus);
+		bus.register(RegisterBlastEvent.class);
+		bus.register(RegisterBlastRenderersEvent.class);
 	}
 
 	@SubscribeEvent
@@ -60,7 +66,23 @@ public class Ballistix {
 			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.largeantimatter.ordinal()).start();
 			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE * 2, Integer.MAX_VALUE, null, SubtypeBlast.nuclear.ordinal()).start();
 			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_EMP_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.emp.ordinal());
+			RegisterBlastEvent registerBlastEvent = new RegisterBlastEvent();
+			ModLoader.get().postEvent(registerBlastEvent);
+			registerBlastEvent.stashBlasts();
 		});
+	}
+	
+	@SubscribeEvent
+	public static void registerBlasts(RegisterBlastEvent event) {
+		for(SubtypeBlast blast : SubtypeBlast.values()) {
+			event.registerBlast(blast);
+		}
+		for(ItemGrenade.SubtypeGrenade grenade : ItemGrenade.SubtypeGrenade.values()) {
+			event.registerGrenade(grenade.explosiveType, BallistixItems.ITEMS_GRENADE.getValue(grenade));
+		}
+		for(ItemMinecart.SubtypeMinecart minecart : ItemMinecart.SubtypeMinecart.values()) {
+			event.registerMinecart(minecart.explosiveType, BallistixItems.ITEMS_MINECART.getValue(minecart));
+		}
 	}
 
 	public static final ResourceLocation rl(String path) {

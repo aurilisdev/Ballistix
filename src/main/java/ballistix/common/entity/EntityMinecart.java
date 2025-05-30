@@ -1,11 +1,11 @@
 package ballistix.common.entity;
 
+import javax.annotation.Nullable;
+
+import ballistix.api.blast.IBlast;
 import ballistix.api.entity.IDefusable;
 import ballistix.common.blast.Blast;
-import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.common.item.ItemMinecart.SubtypeMinecart;
 import ballistix.registers.BallistixEntities;
-import ballistix.registers.BallistixItems;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -17,6 +17,7 @@ import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.NBTDynamicOps;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -24,6 +25,7 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
@@ -36,8 +38,8 @@ import net.minecraftforge.fml.network.NetworkHooks;
 public class EntityMinecart extends AbstractMinecartEntity implements IDefusable {
 
 	private static final DataParameter<Integer> FUSE = EntityDataManager.defineId(EntityMinecart.class, DataSerializers.INT);
-	private static final DataParameter<Integer> TYPE = EntityDataManager.defineId(EntityMinecart.class, DataSerializers.INT);
-	private int blastOrdinal = -1;
+	private static final DataParameter<String> TYPE = EntityDataManager.defineId(EntityMinecart.class, DataSerializers.STRING);
+	private ResourceLocation blastId = null;
 	private int fuse = -1;
 	private boolean exploded;
 
@@ -54,28 +56,34 @@ public class EntityMinecart extends AbstractMinecartEntity implements IDefusable
 		this(BallistixEntities.ENTITY_MINECART.get(), worldIn);
 	}
 
-	public void setExplosiveType(SubtypeMinecart explosive) {
-		blastOrdinal = explosive.ordinal();
+	public void setExplosiveType(IBlast explosive) {
+		blastId = explosive.id();
 	}
 
-	public SubtypeMinecart getExplosiveType() {
-		return blastOrdinal == -1 ? null : SubtypeMinecart.values()[blastOrdinal];
+	@Nullable
+	public IBlast getExplosiveType() {
+		return blastId == null ? null : Blast.BLAST_MAP.get(blastId);
 	}
 
 	@Override
 	protected void defineSynchedData() {
 		super.defineSynchedData();
 		entityData.define(FUSE, -1);
-		entityData.define(TYPE, -1);
+		entityData.define(TYPE, "");
 	}
 
 	@Override
 	public void tick() {
 		if (!level.isClientSide) {
-			entityData.set(TYPE, blastOrdinal);
+			if(blastId != null) {
+				entityData.set(TYPE, blastId.toString());
+			}
 			entityData.set(FUSE, fuse);
 		} else {
-			blastOrdinal = entityData.get(TYPE);
+			String str = entityData.get(TYPE);
+			if(!str.isEmpty()) {
+				blastId = new ResourceLocation(str);
+			}
 			fuse = entityData.get(FUSE);
 		}
 		super.tick();
@@ -124,8 +132,8 @@ public class EntityMinecart extends AbstractMinecartEntity implements IDefusable
 		if (!level.isClientSide) {
 			exploded = true;
 			remove(false);
-			if (blastOrdinal != -1) {
-				SubtypeBlast explosive = SubtypeMinecart.values()[blastOrdinal].explosiveType;
+			if (blastId != null) {
+				IBlast explosive = Blast.BLAST_MAP.get(blastId);
 				Blast b = explosive.createBlast(level, blockPosition());
 				if (b != null) {
 					b.performExplosion();
@@ -138,8 +146,8 @@ public class EntityMinecart extends AbstractMinecartEntity implements IDefusable
 	public void remove(boolean reason) {
 		super.remove(reason);
 		if (!exploded) {
-			if (blastOrdinal != -1) {
-				ItemEntity item = new ItemEntity(level, blockPosition().getX() + 0.5, blockPosition().getY() + 0.5, blockPosition().getZ() + 0.5, new ItemStack(BallistixItems.ITEMS_MINECART.getValue(getExplosiveType())));
+			if (blastId != null) {
+				ItemEntity item = new ItemEntity(level, blockPosition().getX() + 0.5, blockPosition().getY() + 0.5, blockPosition().getZ() + 0.5, new ItemStack(Blast.BLAST_TO_MINECART_MAP.get(Blast.BLAST_MAP.get(blastId))));
 				level.addFreshEntity(item);
 			}
 		}
@@ -165,8 +173,8 @@ public class EntityMinecart extends AbstractMinecartEntity implements IDefusable
 
 	@Override
 	public ItemStack getCartItem() {
-		if (blastOrdinal != -1) {
-			return new ItemStack(BallistixItems.ITEMS_MINECART.getValue(getExplosiveType()));
+		if (blastId != null) {
+			return new ItemStack(Blast.BLAST_TO_MINECART_MAP.get(Blast.BLAST_MAP.get(blastId)));
 		}
 		return ItemStack.EMPTY;
 	}
@@ -218,13 +226,13 @@ public class EntityMinecart extends AbstractMinecartEntity implements IDefusable
 	@Override
 	protected void addAdditionalSaveData(CompoundNBT compound) {
 		compound.putInt("Fuse", fuse);
-		compound.putInt("type", blastOrdinal);
+		ResourceLocation.CODEC.encodeStart(NBTDynamicOps.INSTANCE, blastId).result().ifPresent(tag -> compound.put("type", tag));
 	}
 
 	@Override
 	protected void readAdditionalSaveData(CompoundNBT compound) {
 		fuse = compound.getInt("Fuse");
-		blastOrdinal = compound.getInt("type");
+		ResourceLocation.CODEC.decode(NBTDynamicOps.INSTANCE, compound.get("type")).result().ifPresent(pair -> blastId = pair.getFirst());
 	}
 	
 	@Override

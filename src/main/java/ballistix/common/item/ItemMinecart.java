@@ -1,5 +1,6 @@
 package ballistix.common.item;
 
+import ballistix.api.blast.IBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityMinecart;
 import ballistix.registers.BallistixCreativeTabs;
@@ -24,11 +25,11 @@ import net.minecraft.dispenser.IBlockSource;
 
 public class ItemMinecart extends ItemVoltaic {
 
-	private SubtypeMinecart minecart;
+	private IBlast blast;
 
-	public ItemMinecart(SubtypeMinecart minecart) {
+	public ItemMinecart(IBlast blast) {
 		super(new Item.Properties().stacksTo(1), () -> BallistixCreativeTabs.MAIN);
-		this.minecart = minecart;
+		this.blast = blast;
 		DispenserBlock.registerBehavior(this, DISPENSE_ITEM_BEHAVIOR);
 	}
 
@@ -53,7 +54,7 @@ public class ItemMinecart extends ItemVoltaic {
 			if (itemstack.hasCustomHoverName()) {
 				cart.setCustomName(itemstack.getHoverName());
 			}
-			cart.setExplosiveType(minecart);
+			cart.setExplosiveType(blast);
 
 			level.addFreshEntity(cart);
 			level.levelEvent(context.getPlayer(), WorldEvents.DISPENSER_DISPENSE_SOUND, blockpos, 0);
@@ -61,10 +62,6 @@ public class ItemMinecart extends ItemVoltaic {
 
 		itemstack.shrink(1);
 		return ActionResultType.sidedSuccess(level.isClientSide);
-	}
-
-	public SubtypeBlast getExplosive() {
-		return minecart.explosiveType;
 	}
 
 	private static final IDispenseItemBehavior DISPENSE_ITEM_BEHAVIOR = new DefaultDispenseItemBehavior() {
@@ -106,7 +103,7 @@ public class ItemMinecart extends ItemVoltaic {
 			if (stack.hasCustomHoverName()) {
 				cart.setCustomName(stack.getHoverName());
 			}
-			cart.setExplosiveType(((ItemMinecart) stack.getItem()).minecart);
+			cart.setExplosiveType(((ItemMinecart) stack.getItem()).blast);
 			level.addFreshEntity(cart);
 			stack.shrink(1);
 			return stack;

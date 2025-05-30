@@ -2,9 +2,9 @@ package ballistix.client.render.entity;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
+import ballistix.api.blast.IBlast;
+import ballistix.common.blast.Blast;
 import ballistix.common.entity.EntityGrenade;
-import ballistix.common.item.ItemGrenade.SubtypeGrenade;
-import ballistix.registers.BallistixItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -30,14 +30,14 @@ public class RenderGrenade extends EntityRenderer<EntityGrenade> {
 
     @Override
     public void render(EntityGrenade entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
-        SubtypeGrenade subtype = entityIn.getExplosiveType();
-        if (subtype != null) {
+    	IBlast blast = entityIn.getExplosiveType();
+        if (blast != null) {
             matrixStackIn.pushPose();
             if (itemEntity == null) {
                 itemEntity = new ItemEntity(EntityType.ITEM, entityIn.level);
             }
             itemEntity.setPos(entityIn.getX(), entityIn.getY(), entityIn.getZ());
-            itemEntity.setItem(new ItemStack(BallistixItems.ITEMS_GRENADE.getValue(subtype)));
+            itemEntity.setItem(new ItemStack(Blast.BLAST_TO_GRENADE_MAP.get(blast)));
             matrixStackIn.translate(0, -0.5 / 16.0, 0);
             itemRenderer.render(itemEntity, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
             matrixStackIn.popPose();

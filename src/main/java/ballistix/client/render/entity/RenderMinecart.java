@@ -4,7 +4,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import ballistix.common.entity.EntityMinecart;
-import ballistix.registers.BallistixBlocks;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -80,7 +79,7 @@ public class RenderMinecart extends EntityRenderer<EntityMinecart> {
 
         int j = entity.getDisplayOffset();
         if (entity.getExplosiveType() != null) {
-            BlockState blockstate = BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(entity.getExplosiveType().explosiveType).defaultBlockState();
+        	BlockState blockstate = entity.getExplosiveType().getExplosiveBlock().get().defaultBlockState();
             if (blockstate != null) {
                 if (blockstate.getRenderShape() != BlockRenderType.INVISIBLE) {
                     stack.pushPose();

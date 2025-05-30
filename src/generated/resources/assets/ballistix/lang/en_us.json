@@ -191,6 +191,7 @@
   "subtitles.ballistix.railgunkinetic": "Railgun Turret Fires",
   "subtitles.ballistix.rodhittingground": "Rod Impacts Ground",
   "tooltip.ballistix.aamissile.hitrate": "Hit rate: %s",
+  "tooltip.ballistix.explosive.tier": "Tier: %s",
   "tooltip.ballistix.laserdesignator.frequency": "Frequency: %s",
   "tooltip.ballistix.laserdesignator.invalidfreq": "Set a frequency for the silo",
   "tooltip.ballistix.laserdesignator.nofrequency": "Unbound",

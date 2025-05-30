@@ -7,16 +7,17 @@ import javax.annotation.Nullable;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.api.silo.ILauncherPlatform;
 import ballistix.api.silo.ILauncherSupportFrame;
 import ballistix.common.blast.Blast;
-import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityBlast;
 import ballistix.common.entity.EntityMissile;
 import ballistix.common.settings.BallistixConstants;
 import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -89,7 +90,7 @@ public class VirtualMissile {
         this.payloadData = payloadData;
     }
 
-    public VirtualMissile(Vector3d startPos, Vector3d initialMovement, float initialSpeed, boolean isItem, float startX, float startZ, BlockPos target, int missileType, int blastOrdinal, int frequency, boolean usingAirburst) {
+    public VirtualMissile(Vector3d startPos, Vector3d initialMovement, float initialSpeed, boolean isItem, float startX, float startZ, BlockPos target, int missileType, IBlast blast, int frequency, boolean usingAirburst) {
 
         this.position = startPos;
         this.deltaMovement = initialMovement;
@@ -98,7 +99,7 @@ public class VirtualMissile {
 
         this.targetData = new MissileTargetData(startX, startZ, target, false, usingAirburst);
         this.entityData = new MissileEntityData(false, -1);
-        this.payloadData = new MissilePayloadData(missileType, blastOrdinal, frequency, isItem);
+        this.payloadData = new MissilePayloadData(missileType, blast.id(), frequency, isItem);
 
     }
 
@@ -113,7 +114,7 @@ public class VirtualMissile {
             return;
         }
 
-        if ((!payloadData.isItem && targetData.target.equals(BlockEntityUtils.OUT_OF_REACH)) || payloadData.blastOrdinal == -1) {
+        if ((!payloadData.isItem && targetData.target.equals(BlockEntityUtils.OUT_OF_REACH)) || payloadData.blastId == null) {
             hasExploded = true;
             return;
         }
@@ -133,7 +134,7 @@ public class VirtualMissile {
 
         if ((collisionPos != null || (targetData.usingAirburst && targetData.pastHalfwayPoint && position.y <= targetData.target.getY())) && (payloadData.isItem || !isInValidBlockstate(collisionPos, level)) || position.y <= 0) {
 
-            SubtypeBlast explosive = SubtypeBlast.values()[payloadData.blastOrdinal];
+        	IBlast explosive = Blast.BLAST_MAP.get(payloadData.blastId);
 
             if(collisionPos == null) {
                 collisionPos = targetData.target;
@@ -415,7 +416,7 @@ public class VirtualMissile {
                 //
                 Codec.INT.fieldOf("missiletype").forGetter(instance0 -> instance0.missileType),
                 //
-                Codec.INT.fieldOf("blastordinal").forGetter(instance0 -> instance0.blastOrdinal),
+                ResourceLocation.CODEC.fieldOf("blastid").forGetter(instance0 -> instance0.blastId),
                 //
                 Codec.INT.fieldOf("frequency").forGetter(instance0 -> instance0.frequency),
                 //
@@ -424,13 +425,13 @@ public class VirtualMissile {
         ).apply(instance, MissilePayloadData::new));
 
         public final int missileType;
-        public final int blastOrdinal;
+        public final ResourceLocation blastId;
         public final int frequency;
         private final boolean isItem;
 
-        public MissilePayloadData(int missileType, int blastOrdinal, int frequency, boolean isItem) {
+        public MissilePayloadData(int missileType, ResourceLocation blastId, int frequency, boolean isItem) {
             this.missileType = missileType;
-            this.blastOrdinal = blastOrdinal;
+            this.blastId = blastId;
             this.frequency = frequency;
             this.isItem = isItem;
         }

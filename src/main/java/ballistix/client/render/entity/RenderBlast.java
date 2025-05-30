@@ -1,29 +1,22 @@
 package ballistix.client.render.entity;
 
+import java.util.HashMap;
+
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import ballistix.client.BallistixClientRegister;
-import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.api.blast.IBlast;
+import ballistix.client.event.RegisterBlastRenderersEvent;
 import ballistix.common.entity.EntityBlast;
-import ballistix.common.settings.BallistixConstants;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.Atlases;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.culling.ClippingHelper;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.texture.AtlasTexture;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraftforge.client.model.data.EmptyModelData;
-import voltaic.prefab.utilities.RenderingUtils;
 
 public class RenderBlast extends EntityRenderer<EntityBlast> {
+	
+	public static final HashMap<ResourceLocation, RegisterBlastRenderersEvent.BlastRenderer> RENDERERS = new HashMap<>();
 
 	public RenderBlast(EntityRendererManager renderManagerIn) {
 		super(renderManagerIn);
@@ -32,70 +25,26 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
 
 	@Override
 	public void render(EntityBlast entityIn, float entityYaw, float partialTicks, MatrixStack matrixStack, IRenderTypeBuffer bufferIn, int packedLightIn) {
-		matrixStack.pushPose();
-		SubtypeBlast subtype = entityIn.getBlastType();
+		IBlast blast = entityIn.getBlastType();
 
-		if (subtype == SubtypeBlast.darkmatter) {
-			double x = entityIn.tickCount;
-			double time = 4.0 / 3.0 * Math.PI * Math.pow(BallistixConstants.EXPLOSIVE_DARKMATTER_RADIUS, 3) / BallistixConstants.EXPLOSIVE_DARKMATTER_DURATION;
-			float scale = (float) (0.1 * Math.log(x * x) + x / (time * 2));
-			IBakedModel modelDisk = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_DARKMATTERDISK);
-			IBakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_BLACKHOLECUBE);
-
-			float animationRadians = (entityIn.tickCount + partialTicks) * 0.05f;
-
-			matrixStack.pushPose();
-			matrixStack.scale(scale * 6, scale * 6, scale * 6);
-			matrixStack.mulPose(new Quaternion(new Vector3f(0, 1, 0), -animationRadians, false));
-			matrixStack.mulPose(new Quaternion(new Vector3f(1, 0, 0), -animationRadians, false));
-			matrixStack.mulPose(new Quaternion(new Vector3f(0, 0, 1), -animationRadians, false));
-			RenderingUtils.renderModel(modelSphere, null, RenderType.solid(), matrixStack, bufferIn, packedLightIn, packedLightIn);
-			matrixStack.popPose();
-
-			matrixStack.pushPose();
-			matrixStack.translate(0, 0.5, 0);
-			matrixStack.scale(scale, scale, scale);
-			matrixStack.mulPose(new Quaternion(new Vector3f(0, 1, 0), -animationRadians, false));
-			matrixStack.scale(1.25f, 1.25f, 1.25f);
-			RenderingUtils.renderModel(modelDisk, null, RenderType.translucent(), matrixStack, bufferIn, packedLightIn, packedLightIn);
-			matrixStack.popPose();
-
-			matrixStack.pushPose();
-			matrixStack.scale(scale, scale, scale);
-			RenderingUtils.renderStar(entityIn.tickCount + partialTicks, 60, 1, 1, 1, 0.3f, true);
-			matrixStack.popPose();
-		} else if (subtype == SubtypeBlast.nuclear && entityIn.shouldRenderCustom) {
-			float scale = (entityIn.tickCount - entityIn.ticksWhenCustomRender) / 20.0f;
-			matrixStack.scale(scale, scale, scale);
-//            IBakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_FIREBALL);
-//            Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(matrixStack.last(), bufferIn.getBuffer(Sheets.translucentItemSheet()), Blocks.BLACK_STAINED_GLASS.defaultBlockState(), modelSphere, 1, 1, 1, 0, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, RenderType.solid());
-			if (entityIn.tickCount - entityIn.ticksWhenCustomRender < 10) {
-				matrixStack.scale(5, 5, 5);
-				RenderingUtils.renderStar(entityIn.tickCount + partialTicks, 500, 1, 1, 1, 0.7f, false);
-			}
-		} else if (subtype == SubtypeBlast.emp && entityIn.shouldRenderCustom) {
-			float scale = (float) ((entityIn.tickCount + partialTicks - entityIn.ticksWhenCustomRender) / BallistixConstants.EXPLOSIVE_ANTIMATTER_DURATION * BallistixConstants.EXPLOSIVE_EMP_RADIUS * 1.2) / 8.0f;
-			matrixStack.scale(scale, scale, scale);
-			IBakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_EMP);
-			Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(matrixStack.last(), bufferIn.getBuffer(Atlases.translucentCullBlockSheet()), Blocks.BLACK_STAINED_GLASS.defaultBlockState(), modelSphere, 1, 1, 1, 0, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
-		} else if (subtype == SubtypeBlast.antimatter && entityIn.shouldRenderCustom) {
-//	    float scale = (float) ((entityIn.tickCount + partialTicks - entityIn.ticksWhenCustomRender)
-//		    / Constants.EXPLOSIVE_ANTIMATTER_DURATION * Constants.EXPLOSIVE_ANTIMATTER_RADIUS);
-//	    matrixStack.scale(0.1f, 0.1f, 0.1f);
-//	    matrixStack.scale(scale, scale, scale);
-//	    IBakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_FIREBALL);
-//	    RenderingUtils.renderModel(modelSphere, null, RenderType.translucent(), matrixStack, bufferIn,
-//		    packedLightIn, packedLightIn);
-		} else if (subtype == SubtypeBlast.largeantimatter && entityIn.shouldRenderCustom) {
-//	    float scale = (float) ((entityIn.tickCount + partialTicks - entityIn.ticksWhenCustomRender)
-//		    / Constants.EXPLOSIVE_ANTIMATTER_DURATION * Constants.EXPLOSIVE_ANTIMATTER_RADIUS);
-//	    matrixStack.scale(0.1f, 0.1f, 0.1f);
-//	    matrixStack.scale(scale, scale, scale);
-//	    IBakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(ClientRegister.MODEL_FIREBALL);
-//	    RenderingUtils.renderModel(modelSphere, null, RenderType.translucent(), matrixStack, bufferIn,
-//		    packedLightIn, packedLightIn);
-		}
+        if(blast == null) {
+            super.render(entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn);
+            return;
+        }
+        
+        RegisterBlastRenderersEvent.BlastRenderer renderer = RENDERERS.get(blast.id());
+        
+        if(renderer == null) {
+            super.render(entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn);
+            return;
+        }
+        
+        matrixStack.pushPose();
+        
+        renderer.render(entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn);
+        
 		matrixStack.popPose();
+		
 		super.render(entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn);
 	}
 

@@ -2,9 +2,8 @@ package ballistix.client.render.entity;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.api.blast.IBlast;
 import ballistix.common.entity.EntityExplosive;
-import ballistix.registers.BallistixBlocks;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -24,8 +23,8 @@ public class RenderExplosive extends EntityRenderer<EntityExplosive> {
 
     @Override
     public void render(EntityExplosive entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
-        SubtypeBlast subtype = entityIn.getBlastType();
-        if (subtype != null) {
+    	IBlast blast = entityIn.getBlastType();
+        if (blast != null) {
             matrixStackIn.pushPose();
             matrixStackIn.translate(0.0D, 0.5D, 0.0D);
             if (entityIn.fuse - partialTicks + 1.0F < 10.0F) {
@@ -40,7 +39,7 @@ public class RenderExplosive extends EntityRenderer<EntityExplosive> {
             matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(-90.0F));
             matrixStackIn.translate(-0.5D, -0.5D, 0.5D);
             matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(90.0F));
-            renderTntFlash(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype).defaultBlockState(), matrixStackIn, bufferIn, packedLightIn, entityIn.fuse / 5 % 2 == 0);
+            renderTntFlash(blast.getExplosiveBlock().get().defaultBlockState(), matrixStackIn, bufferIn, packedLightIn, entityIn.fuse / 5 % 2 == 0);
             matrixStackIn.popPose();
         }
         super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);

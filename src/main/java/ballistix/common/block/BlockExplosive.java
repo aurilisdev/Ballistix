@@ -1,12 +1,16 @@
 package ballistix.common.block;
 
-import ballistix.common.block.subtype.SubtypeBlast;
+import java.util.List;
+
+import ballistix.api.blast.IBlast;
 import ballistix.common.entity.EntityExplosive;
+import ballistix.prefab.utils.BallistixTextUtils;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.SoundType;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -23,15 +27,19 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import voltaic.common.block.states.VoltaicBlockStates;
 
 public class BlockExplosive extends Block {
-	public final SubtypeBlast explosive;
+	
+	public final IBlast explosive;
 
-	public BlockExplosive(SubtypeBlast explosive) {
+	public BlockExplosive(IBlast explosive) {
 		super(AbstractBlock.Properties.copy(Blocks.TNT).instabreak().sound(SoundType.GRASS).noOcclusion().isRedstoneConductor((a, b, c) -> false));
 		this.explosive = explosive;
 	}
@@ -39,9 +47,9 @@ public class BlockExplosive extends Block {
 	@Override
 	public VoxelShape getShape(BlockState state, IBlockReader level, BlockPos pos, ISelectionContext context) {
 		if (state.hasProperty(VoltaicBlockStates.FACING)) {
-			return explosive.shape.getShape(state.getValue(VoltaicBlockStates.FACING));
+			return explosive.getShape().getShape(state.getValue(VoltaicBlockStates.FACING));
 		}
-		return explosive.shape.getShape(null);
+		return explosive.getShape().getShape(null);
 	}
 
 	@Override
@@ -60,10 +68,7 @@ public class BlockExplosive extends Block {
 	@Override
 	public void entityInside(BlockState state, World level, BlockPos pos, Entity ent) {
 		super.entityInside(state, level, pos, ent);
-		if (explosive == SubtypeBlast.landmine) {
-			explode(level, pos, explosive);
-			level.removeBlock(pos, false);
-		}
+		explosive.onEntityInside(state, level, pos, ent);
 	}
 
 	@Override
@@ -82,7 +87,7 @@ public class BlockExplosive extends Block {
 		}
 	}
 
-	private static void explode(World worldIn, BlockPos pos, SubtypeBlast explosive) {
+	public static void explode(World worldIn, BlockPos pos, IBlast explosive) {
 		if (!worldIn.isClientSide) {
 			EntityExplosive explosiveEntity = new EntityExplosive(worldIn, pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D);
 			explosiveEntity.setBlastType(explosive);
@@ -126,4 +131,11 @@ public class BlockExplosive extends Block {
 	public boolean dropFromExplosion(Explosion explosionIn) {
 		return false;
 	}
+	
+	@Override
+    public void appendHoverText(ItemStack stack, IBlockReader context, List<ITextComponent> tooltipComponents, ITooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(BallistixTextUtils.tooltip("explosive.tier", new StringTextComponent(explosive.tier() + "").withStyle(TextFormatting.GRAY)).withStyle(TextFormatting.DARK_GRAY));
+    }
+	
 }

@@ -174,6 +174,7 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			addTooltip("turret.whitelistmanager", "Whitelist Manager");
 
 			addTooltip("aamissile.hitrate", "Hit rate: %s");
+			addTooltip("explosive.tier", "Tier: %s");
 
 			
 			addGuiLabel("turret.radar", "Radar: ");

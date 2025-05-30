@@ -1,17 +1,21 @@
 package ballistix.common.entity;
 
+import javax.annotation.Nullable;
+
 import ballistix.Ballistix;
+import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.common.blast.Blast;
-import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.registers.BallistixEntities;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.NBTDynamicOps;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -21,12 +25,12 @@ import net.minecraftforge.fml.network.NetworkHooks;
 public class EntityBlast extends Entity {
 	
     private static final DataParameter<Integer> CALLCOUNT = EntityDataManager.defineId(EntityBlast.class, DataSerializers.INT);
-    private static final DataParameter<Integer> TYPE = EntityDataManager.defineId(EntityBlast.class, DataSerializers.INT);
+    private static final DataParameter<String> TYPE = EntityDataManager.defineId(EntityBlast.class, DataSerializers.STRING);
     private static final DataParameter<Boolean> SHOULDSTARTCUSTOMRENDER = EntityDataManager.defineId(EntityBlast.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Integer> TICKCOUNT = EntityDataManager.defineId(EntityBlast.class, DataSerializers.INT);
 
     private Blast blast;
-    public int blastOrdinal = -1;
+    public ResourceLocation blastId;
     public int callcount = 0;
     public boolean shouldRenderCustom = false;
     public int ticksWhenCustomRender;
@@ -47,19 +51,20 @@ public class EntityBlast extends Entity {
         this(BallistixEntities.ENTITY_BLAST.get(), worldIn);
     }
 
-    public void setBlastType(SubtypeBlast explosive) {
-        blastOrdinal = explosive.ordinal();
+    public void setBlastType(IBlast explosive) {
+        blastId = explosive.id();
         blast = getBlastType().createBlast(level, blockPosition());
     }
 
-    public SubtypeBlast getBlastType() {
-        return blastOrdinal == -1 ? null : SubtypeBlast.values()[blastOrdinal];
+    @Nullable
+    public IBlast getBlastType() {
+        return blastId == null ? null : Blast.BLAST_MAP.get(blastId);
     }
 
     @Override
     protected void defineSynchedData() {
     	entityData.define(CALLCOUNT, 0);
-    	entityData.define(TYPE, -1);
+    	entityData.define(TYPE, "");
     	entityData.define(SHOULDSTARTCUSTOMRENDER, false);
     	entityData.define(TICKCOUNT, 0);
     }
@@ -75,12 +80,17 @@ public class EntityBlast extends Entity {
         }
 
         if (!level.isClientSide) {
-            entityData.set(TYPE, blastOrdinal);
+        	if(blastId != null) {
+                entityData.set(TYPE, blastId.toString());
+            }
             entityData.set(CALLCOUNT, callcount);
             entityData.set(SHOULDSTARTCUSTOMRENDER, blast instanceof IHasCustomRender && ((IHasCustomRender) blast).shouldRender());
             entityData.set(TICKCOUNT, tickCount);
         } else {
-            blastOrdinal = entityData.get(TYPE);
+        	String str = entityData.get(TYPE);
+            if(!str.isEmpty()) {
+                blastId = new ResourceLocation(str);
+            }
             callcount = entityData.get(CALLCOUNT);
             if (!shouldRenderCustom && entityData.get(SHOULDSTARTCUSTOMRENDER)) {
                 ticksWhenCustomRender = tickCount;
@@ -92,7 +102,7 @@ public class EntityBlast extends Entity {
             tickCount = entityData.get(TICKCOUNT);
         }
 
-        if (blastOrdinal == -1) {
+        if (blastId == null) {
             return;
         }
 
@@ -133,15 +143,15 @@ public class EntityBlast extends Entity {
 
 	@Override
 	protected void addAdditionalSaveData(CompoundNBT compound) {
-		compound.putInt("type", blastOrdinal);
+		ResourceLocation.CODEC.encodeStart(NBTDynamicOps.INSTANCE, blastId).result().ifPresent(tag -> compound.put("type", tag));
 		compound.putInt("callcount", callcount);
 	}
 
 	@Override
 	protected void readAdditionalSaveData(CompoundNBT compound) {
-		blastOrdinal = compound.getInt("type");
+		ResourceLocation.CODEC.decode(NBTDynamicOps.INSTANCE, compound.get("type")).result().ifPresent(pair -> blastId = pair.getFirst());
 		callcount = compound.getInt("callcount");
-		if (blastOrdinal != -1) {
+		if (blastId != null) {
 			setBlastType(getBlastType());
 		}
 	}

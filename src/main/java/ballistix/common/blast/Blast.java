@@ -1,6 +1,7 @@
 package ballistix.common.blast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -8,12 +9,12 @@ import java.util.Map.Entry;
 import ballistix.Ballistix;
 import com.google.common.collect.Maps;
 
+import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.api.event.BlastEvent;
 import ballistix.api.event.BlastEvent.ConstructBlastEvent;
 import ballistix.api.event.BlastEvent.PostBlastEvent;
 import ballistix.api.event.BlastEvent.PreBlastEvent;
-import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityBlast;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import net.minecraft.enchantment.ProtectionEnchantment;
@@ -22,8 +23,10 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.TNTEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.network.play.server.SExplosionPacket;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -36,6 +39,11 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.ModList;
 
 public abstract class Blast {
+	
+	public static final HashMap<ResourceLocation, IBlast> BLAST_MAP = new HashMap<>();
+    public static final HashMap<Item, IBlast> ITEM_TO_BLAST_MAP = new HashMap<>();
+    public static final HashMap<IBlast, Item> BLAST_TO_GRENADE_MAP = new HashMap<>();
+    public static final HashMap<IBlast, Item> BLAST_TO_MINECART_MAP = new HashMap<>();
 
     public BlockPos position;
     public World world;
@@ -60,7 +68,7 @@ public abstract class Blast {
         return true;
     }
 
-    public abstract SubtypeBlast getBlastType();
+    public abstract IBlast getBlastType();
 
     public void doPreExplode() {
     }

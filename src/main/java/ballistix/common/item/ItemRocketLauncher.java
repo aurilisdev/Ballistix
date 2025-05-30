@@ -1,8 +1,9 @@
 package ballistix.common.item;
 
+import ballistix.api.blast.IBlast;
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualMissile;
-import ballistix.common.block.BlockExplosive;
+import ballistix.common.blast.Blast;
 import ballistix.common.block.subtype.SubtypeMissile;
 import ballistix.common.settings.BallistixConstants;
 import ballistix.registers.BallistixCreativeTabs;
@@ -21,7 +22,6 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
-import voltaic.common.blockitem.BlockItemDescriptable;
 import voltaic.common.item.ItemVoltaic;
 import voltaic.prefab.utilities.NBTUtils;
 
@@ -81,7 +81,7 @@ public class ItemRocketLauncher extends ItemVoltaic {
 
         if (!player.isCreative()) stack.getOrCreateTag().putInt(NBTUtils.TIMER, BallistixConstants.ROCKET_LAUNCHER_COOLDOWN_TICKS);
 
-        int blastOrdinal = 0;
+        IBlast blast = null;
 
         boolean hasExplosive = false;
 
@@ -93,13 +93,11 @@ public class ItemRocketLauncher extends ItemVoltaic {
 
         for (ItemStack st : player.inventory.items) {
             Item it = st.getItem();
-            if (!hasExplosive && it instanceof BlockItemDescriptable) {
-            	BlockItemDescriptable bl = (BlockItemDescriptable) it;
-                if (bl.getBlock() instanceof BlockExplosive && (player.isCreative() || ((BlockExplosive) bl.getBlock()).explosive.tier == 1)) {
-                    blastOrdinal = ((BlockExplosive) bl.getBlock()).explosive.ordinal();
-                    hasExplosive = true;
-                    ex = st;
-                }
+            IBlast bl = Blast.ITEM_TO_BLAST_MAP.get(it);
+            if (!hasExplosive && bl != null && (player.isCreative() || bl.tier() <= 1)) {
+                blast = bl;
+                hasExplosive = true;
+                ex = st;
             }
             if (!hasRange && (it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier1) || (player.isCreative() && (it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier1) || it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier2) || it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier3))))) {
                 hasRange = true;
@@ -130,7 +128,7 @@ public class ItemRocketLauncher extends ItemVoltaic {
                     //
                     missile.getItem() == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier2) ? 1 : missile.getItem() == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier3) ? 2 : 0,
                     //
-                    blastOrdinal,
+                    blast,
                     //
                     0,
                     //

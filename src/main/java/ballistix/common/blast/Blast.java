@@ -1,11 +1,13 @@
 package ballistix.common.blast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import ballistix.Ballistix;
+import ballistix.api.blast.IBlast;
 import com.google.common.collect.Maps;
 
 import ballistix.api.blast.IHasCustomRender;
@@ -13,12 +15,12 @@ import ballistix.api.event.BlastEvent;
 import ballistix.api.event.BlastEvent.ConstructBlastEvent;
 import ballistix.api.event.BlastEvent.PostBlastEvent;
 import ballistix.api.event.BlastEvent.PreBlastEvent;
-import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityBlast;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -26,6 +28,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Explosion;
@@ -38,6 +41,11 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.EventHooks;
 
 public abstract class Blast {
+
+    public static final HashMap<ResourceLocation, IBlast> BLAST_MAP = new HashMap<>();
+    public static final HashMap<Item, IBlast> ITEM_TO_BLAST_MAP = new HashMap<>();
+    public static final HashMap<IBlast, Item> BLAST_TO_GRENADE_MAP = new HashMap<>();
+    public static final HashMap<IBlast, Item> BLAST_TO_MINECART_MAP = new HashMap<>();
 
     public BlockPos position;
     public Level world;
@@ -62,7 +70,7 @@ public abstract class Blast {
         return true;
     }
 
-    public abstract SubtypeBlast getBlastType();
+    public abstract IBlast getBlastType();
 
     public void doPreExplode() {
     }

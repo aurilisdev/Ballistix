@@ -1,5 +1,6 @@
 package ballistix.common.item;
 
+import ballistix.api.blast.IBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityMinecart;
 import ballistix.registers.BallistixCreativeTabs;
@@ -25,11 +26,11 @@ import voltaic.common.item.ItemVoltaic;
 
 public class ItemMinecart extends ItemVoltaic {
 
-	private SubtypeMinecart minecart;
+	private IBlast blast;
 
-	public ItemMinecart(SubtypeMinecart minecart) {
+	public ItemMinecart(IBlast blast) {
 		super(new Item.Properties().stacksTo(1), BallistixCreativeTabs.MAIN);
-		this.minecart = minecart;
+		this.blast = blast;
 		DispenserBlock.registerBehavior(this, DISPENSE_ITEM_BEHAVIOR);
 	}
 
@@ -54,7 +55,7 @@ public class ItemMinecart extends ItemVoltaic {
 			if (itemstack.has(DataComponents.CUSTOM_NAME)) {
 				cart.setCustomName(itemstack.get(DataComponents.CUSTOM_NAME));
 			}
-			cart.setExplosiveType(minecart);
+			cart.setExplosiveType(blast);
 
 			level.addFreshEntity(cart);
 			level.gameEvent(context.getPlayer(), GameEvent.ENTITY_PLACE, blockpos);
@@ -62,10 +63,6 @@ public class ItemMinecart extends ItemVoltaic {
 
 		itemstack.shrink(1);
 		return InteractionResult.sidedSuccess(level.isClientSide);
-	}
-
-	public SubtypeBlast getExplosive() {
-		return minecart.explosiveType;
 	}
 
 	private static final DispenseItemBehavior DISPENSE_ITEM_BEHAVIOR = new DefaultDispenseItemBehavior() {
@@ -107,7 +104,7 @@ public class ItemMinecart extends ItemVoltaic {
 			if (stack.has(DataComponents.CUSTOM_NAME)) {
 				cart.setCustomName(stack.get(DataComponents.CUSTOM_NAME));
 			}
-			cart.setExplosiveType(((ItemMinecart) stack.getItem()).minecart);
+			cart.setExplosiveType(((ItemMinecart) stack.getItem()).blast);
 			level.addFreshEntity(cart);
 			stack.shrink(1);
 			return stack;

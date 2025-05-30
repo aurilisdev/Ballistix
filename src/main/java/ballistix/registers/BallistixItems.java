@@ -21,7 +21,6 @@ import ballistix.common.item.ItemScanner;
 import ballistix.common.item.ItemTracker;
 import ballistix.common.settings.BallistixConstants;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -30,13 +29,10 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import voltaic.Voltaic;
 import voltaic.api.creativetab.CreativeTabSupplier;
 import voltaic.api.registration.BulkDeferredHolder;
 import voltaic.common.blockitem.BlockItemDescriptable;
-import voltaic.common.item.ItemUpgrade;
 import voltaic.common.item.ItemVoltaic;
-import voltaic.common.item.subtype.SubtypeItemUpgrade;
 
 public class BallistixItems {
 
@@ -44,8 +40,8 @@ public class BallistixItems {
 
 	public static final BulkDeferredHolder<Item, BlockItemDescriptable, SubtypeBallistixMachine> ITEMS_BALLISTIXMACHINE = new BulkDeferredHolder<>(SubtypeBallistixMachine.values(), subtype -> ITEMS.register(subtype.tag(), () -> new BlockItemDescriptable(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(subtype), new Item.Properties(), BallistixCreativeTabs.MAIN)));
 	public static final BulkDeferredHolder<Item, BlockItemDescriptable, SubtypeBlast> ITEMS_EXPLOSIVE = new BulkDeferredHolder<>(SubtypeBlast.values(), subtype -> ITEMS.register(subtype.tag(), () -> new BlockItemDescriptable(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype), new Item.Properties(), BallistixCreativeTabs.MAIN)));
-	public static final BulkDeferredHolder<Item, ItemGrenade, SubtypeGrenade> ITEMS_GRENADE = new BulkDeferredHolder<>(SubtypeGrenade.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemGrenade(subtype)));
-	public static final BulkDeferredHolder<Item, ItemMinecart, SubtypeMinecart> ITEMS_MINECART = new BulkDeferredHolder<>(SubtypeMinecart.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemMinecart(subtype)));
+	public static final BulkDeferredHolder<Item, ItemGrenade, SubtypeGrenade> ITEMS_GRENADE = new BulkDeferredHolder<>(SubtypeGrenade.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemGrenade(subtype.explosiveType)));
+	public static final BulkDeferredHolder<Item, ItemMinecart, SubtypeMinecart> ITEMS_MINECART = new BulkDeferredHolder<>(SubtypeMinecart.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemMinecart(subtype.explosiveType)));
 	public static final BulkDeferredHolder<Item, ItemMissile, SubtypeMissile> ITEMS_MISSILE = new BulkDeferredHolder<>(SubtypeMissile.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemMissile(subtype)));
 
 	public static final DeferredHolder<Item, ItemVoltaic> ITEM_AAMISSILE = ITEMS.register("aamissile", () -> new ItemAAMissile(new Item.Properties().stacksTo(10), BallistixCreativeTabs.MAIN, BallistixConstants.SAM_CHANCE_TO_DESTROY));

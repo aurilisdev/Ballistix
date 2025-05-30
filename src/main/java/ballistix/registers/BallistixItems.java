@@ -31,8 +31,8 @@ public class BallistixItems {
 
 	public static final BulkRegistryObject<BlockItemDescriptable, SubtypeBallistixMachine> ITEMS_BALLISTIXMACHINE = new BulkRegistryObject<>(SubtypeBallistixMachine.values(), subtype -> ITEMS.register(subtype.tag(), () -> new BlockItemDescriptable(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(subtype), new Item.Properties(), () -> BallistixCreativeTabs.MAIN)));
 	public static final BulkRegistryObject<BlockItemDescriptable, SubtypeBlast> ITEMS_EXPLOSIVE = new BulkRegistryObject<>(SubtypeBlast.values(), subtype -> ITEMS.register(subtype.tag(), () -> new BlockItemDescriptable(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype), new Item.Properties(), () -> BallistixCreativeTabs.MAIN)));
-	public static final BulkRegistryObject<ItemGrenade, SubtypeGrenade> ITEMS_GRENADE = new BulkRegistryObject<>(SubtypeGrenade.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemGrenade(subtype)));
-	public static final BulkRegistryObject<ItemMinecart, SubtypeMinecart> ITEMS_MINECART = new BulkRegistryObject<>(SubtypeMinecart.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemMinecart(subtype)));
+	public static final BulkRegistryObject<ItemGrenade, SubtypeGrenade> ITEMS_GRENADE = new BulkRegistryObject<>(SubtypeGrenade.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemGrenade(subtype.explosiveType)));
+	public static final BulkRegistryObject<ItemMinecart, SubtypeMinecart> ITEMS_MINECART = new BulkRegistryObject<>(SubtypeMinecart.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemMinecart(subtype.explosiveType)));
 	public static final BulkRegistryObject<ItemMissile, SubtypeMissile> ITEMS_MISSILE = new BulkRegistryObject<>(SubtypeMissile.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemMissile(subtype)));
 
 	public static final RegistryObject<ItemVoltaic> ITEM_AAMISSILE = ITEMS.register("aamissile", () -> new ItemAAMissile(new Item.Properties().stacksTo(10), () -> BallistixCreativeTabs.MAIN, BallistixConstants.SAM_CHANCE_TO_DESTROY));

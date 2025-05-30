@@ -1,6 +1,10 @@
 package ballistix.client;
 
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
+
 import ballistix.Ballistix;
+import ballistix.client.event.RegisterBlastRenderersEvent;
 import ballistix.client.guidebook.ModuleBallistix;
 import ballistix.client.particle.ParticleBlastSmoke;
 import ballistix.client.particle.ParticleMissileSmoke;
@@ -35,7 +39,9 @@ import ballistix.client.screen.ScreenLauncherPlatformT3;
 import ballistix.client.screen.ScreenRailgunTurret;
 import ballistix.client.screen.ScreenSAMTurret;
 import ballistix.client.screen.ScreenSearchRadar;
+import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.item.ItemTracker;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.registers.BallistixTiles;
 import ballistix.registers.BallistixEntities;
 import ballistix.registers.BallistixItems;
@@ -44,7 +50,11 @@ import ballistix.registers.BallistixParticles;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.particle.ParticleEngine;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -52,16 +62,20 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.client.model.ForgeModelBakery;
+import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import voltaic.Voltaic;
 import voltaic.client.guidebook.ScreenGuidebook;
+import voltaic.prefab.utilities.RenderingUtils;
 
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD, value = { Dist.CLIENT })
@@ -144,6 +158,10 @@ public class BallistixClientRegister {
 			return Mth.positiveModulo((float) adjustedAngleToTarget, 1.0F);
 			//
 		});
+		
+		RegisterBlastRenderersEvent registerBlastRenderers = new RegisterBlastRenderersEvent();
+		ModLoader.get().postEvent(registerBlastRenderers);
+		registerBlastRenderers.process();
 	}
 	
 	@SubscribeEvent
@@ -202,6 +220,91 @@ public class BallistixClientRegister {
 		engine.register(BallistixParticles.PARTICLE_BLAST_SMOKE.get(),  ParticleBlastSmoke.Factory::new);
 		engine.register(BallistixParticles.PARTICLE_MISSILE_SMOKE.get(),  ParticleMissileSmoke.Factory::new);
 		engine.register(BallistixParticles.PARTICLE_SHOCKWAVE.get(),  ParticleShockwave.Factory::new);
+	}
+	
+	@SubscribeEvent
+	public static void registerBlastRenderers(RegisterBlastRenderersEvent event) {
+
+		event.register(SubtypeBlast.darkmatter, (entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
+			double x = entityIn.tickCount;
+			double time = 4.0 / 3.0 * Math.PI * Math.pow(BallistixConstants.EXPLOSIVE_DARKMATTER_RADIUS, 3) / BallistixConstants.EXPLOSIVE_DARKMATTER_DURATION;
+			float scale = (float) (0.1 * Math.log(x * x) + x / (time * 2));
+			BakedModel modelDisk = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_DARKMATTERDISK);
+			BakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_BLACKHOLECUBE);
+
+			float animationRadians = (entityIn.tickCount + partialTicks) * 0.05f;
+
+			matrixStack.pushPose();
+			matrixStack.scale(scale * 6, scale * 6, scale * 6);
+			matrixStack.mulPose(new Quaternion(new Vector3f(0, 1, 0), -animationRadians, false));
+			matrixStack.mulPose(new Quaternion(new Vector3f(1, 0, 0), -animationRadians, false));
+			matrixStack.mulPose(new Quaternion(new Vector3f(0, 0, 1), -animationRadians, false));
+			RenderingUtils.renderModel(modelSphere, null, RenderType.solid(), matrixStack, bufferIn, packedLightIn, packedLightIn);
+			matrixStack.popPose();
+
+			matrixStack.pushPose();
+			matrixStack.translate(0, 0.5, 0);
+			matrixStack.scale(scale, scale, scale);
+			matrixStack.mulPose(new Quaternion(new Vector3f(0, 1, 0), -animationRadians, false));
+			matrixStack.scale(1.25f, 1.25f, 1.25f);
+			RenderingUtils.renderModel(modelDisk, null, RenderType.translucent(), matrixStack, bufferIn, packedLightIn, packedLightIn);
+			matrixStack.popPose();
+
+			matrixStack.pushPose();
+			matrixStack.scale(scale, scale, scale);
+			RenderingUtils.renderStar(matrixStack, bufferIn, entityIn.tickCount + partialTicks, 60, 1, 1, 1, 0.3f, true);
+			matrixStack.popPose();
+		});
+
+		event.register(SubtypeBlast.nuclear, (entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
+
+			if(!entityIn.shouldRenderCustom) {
+				return;
+			}
+
+			float scale = (entityIn.tickCount - entityIn.ticksWhenCustomRender) / 20.0f;
+			matrixStack.scale(scale, scale, scale);
+
+			if (entityIn.tickCount - entityIn.ticksWhenCustomRender < 10) {
+				matrixStack.scale(5, 5, 5);
+				RenderingUtils.renderStar(matrixStack, bufferIn, entityIn.tickCount + partialTicks, 500, 1, 1, 1, 0.7f, false);
+			}
+
+		});
+
+		event.register(SubtypeBlast.emp, (entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
+
+			if(!entityIn.shouldRenderCustom) {
+				return;
+			}
+
+			float scale = (float) ((entityIn.tickCount + partialTicks - entityIn.ticksWhenCustomRender) / BallistixConstants.EXPLOSIVE_ANTIMATTER_DURATION * BallistixConstants.EXPLOSIVE_EMP_RADIUS * 1.2) / 8.0f;
+			matrixStack.scale(scale, scale, scale);
+			BakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_EMP);
+			Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(matrixStack.last(), bufferIn.getBuffer(Sheets.translucentCullBlockSheet()), Blocks.BLACK_STAINED_GLASS.defaultBlockState(), modelSphere, 1, 1, 1, 0, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+
+		});
+
+		event.register(SubtypeBlast.antimatter, (entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
+
+			if(!entityIn.shouldRenderCustom) {
+				return;
+			}
+
+			//TODO implement?
+
+		});
+
+		event.register(SubtypeBlast.largeantimatter, (entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
+
+			if(!entityIn.shouldRenderCustom) {
+				return;
+			}
+
+			//TODO implement?
+
+		});
+
 	}
 
 }

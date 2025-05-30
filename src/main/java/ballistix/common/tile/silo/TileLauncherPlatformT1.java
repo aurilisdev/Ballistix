@@ -9,11 +9,12 @@ import ballistix.registers.BallistixItems;
 
 import org.jetbrains.annotations.NotNull;
 
+import ballistix.api.blast.IBlast;
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.api.silo.ILauncherControlPanel;
 import ballistix.api.silo.ILauncherPlatform;
-import ballistix.common.block.BlockExplosive;
+import ballistix.common.blast.Blast;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.inventory.container.ContainerLauncherPlatformT1;
 import ballistix.common.inventory.container.ContainerLauncherPlatformT2;
@@ -40,7 +41,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import voltaic.api.multiblock.subnodebased.TileMultiSubnode;
 import voltaic.api.multiblock.subnodebased.parent.IMultiblockParentBlock;
 import voltaic.api.multiblock.subnodebased.parent.IMultiblockParentTile;
-import voltaic.common.blockitem.BlockItemDescriptable;
 import voltaic.prefab.properties.types.PropertyTypes;
 import voltaic.prefab.properties.variant.SingleProperty;
 import voltaic.prefab.tile.GenericTile;
@@ -188,8 +188,9 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
         ItemStack mis = inv.getItem(MISSILE_SLOT);
 
         ItemStack explosive = inv.getItem(EXPLOSIVE_SLOT);
-        if (mis.getItem() instanceof ItemMissile itmissile && explosive.getItem() instanceof BlockItemDescriptable desc && desc.getBlock() instanceof BlockExplosive blexplosive) {
-            if (blexplosive.explosive.tier > itmissile.missile.tier || itmissile.missile.tier > getTier() || blexplosive.explosive.tier > getTier()) {
+        if (mis.getItem() instanceof ItemMissile itmissile && Blast.ITEM_TO_BLAST_MAP.get(explosive.getItem()) != null) {
+            IBlast blast = Blast.ITEM_TO_BLAST_MAP.get(explosive.getItem());
+            if (blast.tier() > itmissile.missile.tier || itmissile.missile.tier > getTier() || blast.tier() > getTier()) {
                 return false;
             }
             VirtualMissile missile = new VirtualMissile(
@@ -210,7 +211,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
                     //
                     itmissile.missile.ordinal(),
                     //
-                    ((BlockExplosive) ((BlockItemDescriptable) explosive.getItem()).getBlock()).explosive.ordinal(),
+                    blast,
                     //
                     frequency,
                     //
@@ -235,7 +236,8 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
         if (index == 0) {
             return (item instanceof ItemMissile missile && missile.missile.tier <= getTier()) || stack.getItem() == BallistixItems.ITEM_AAMISSILEMK2.get();
         } else if (index == 1) {
-            return item instanceof BlockItemDescriptable des && des.getBlock() instanceof BlockExplosive expl && expl.explosive.tier <= getTier() && expl.explosive.tier > -1;
+        	IBlast blast = Blast.ITEM_TO_BLAST_MAP.get(item);
+            return blast != null && blast.tier() <= getTier() && blast.tier() > -1;
         }
         return false;
     }
@@ -276,7 +278,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
     private void handleExplosive(ComponentInventory inv, int index) {
         if (index == 1 || index == -1) {
             ItemStack explosive = inv.getItem(1);
-            if ((!explosive.isEmpty() && explosive.getItem() instanceof BlockItemDescriptable blockItem && blockItem.getBlock() instanceof BlockExplosive) || (explosive.isEmpty() && inv.getItem(MISSILE_SLOT).getItem() == BallistixItems.ITEM_AAMISSILEMK2.get())) {
+            if ((!explosive.isEmpty() && Blast.ITEM_TO_BLAST_MAP.get(explosive.getItem()) != null) || (explosive.isEmpty() && inv.getItem(MISSILE_SLOT).is(BallistixItems.ITEM_AAMISSILEMK2.get()))) {
                 hasExplosive.setValue(true);
             } else {
                 hasExplosive.setValue(false);

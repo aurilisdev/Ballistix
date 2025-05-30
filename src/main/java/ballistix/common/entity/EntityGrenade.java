@@ -1,18 +1,20 @@
 package ballistix.common.entity;
 
+import javax.annotation.Nullable;
+
+import ballistix.api.blast.IBlast;
 import ballistix.api.entity.IDefusable;
 import ballistix.common.blast.Blast;
-import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.common.item.ItemGrenade.SubtypeGrenade;
 import ballistix.registers.BallistixEntities;
-import ballistix.registers.BallistixItems;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -24,8 +26,8 @@ import net.minecraftforge.network.NetworkHooks;
 public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 
 	private static final EntityDataAccessor<Integer> FUSE = SynchedEntityData.defineId(EntityGrenade.class, EntityDataSerializers.INT);
-	private static final EntityDataAccessor<Integer> TYPE = SynchedEntityData.defineId(EntityGrenade.class, EntityDataSerializers.INT);
-	private int grenadeOrdinal = -1;
+	private static final EntityDataAccessor<String> TYPE = SynchedEntityData.defineId(EntityGrenade.class, EntityDataSerializers.STRING);
+	private ResourceLocation blastId = null;
 	private int fuse = 80;
 
 	public EntityGrenade(EntityType<? extends EntityGrenade> type, Level worldIn) {
@@ -36,22 +38,23 @@ public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 		this(BallistixEntities.ENTITY_GRENADE.get(), worldIn);
 	}
 
-	public void setExplosiveType(SubtypeGrenade explosive) {
-		grenadeOrdinal = explosive.ordinal();
-		fuse = explosive.explosiveType.fuse;
+	public void setExplosiveType(IBlast explosive) {
+		blastId = explosive.id();
+		fuse = explosive.fuse();
 	}
 
-	public SubtypeGrenade getExplosiveType() {
-		return grenadeOrdinal == -1 ? null : SubtypeGrenade.values()[grenadeOrdinal];
+	@Nullable
+	public IBlast getExplosiveType() {
+		return blastId == null ? null : Blast.BLAST_MAP.get(blastId);
 	}
 
 
 	@Override
 	public void defuse() {
 		remove(RemovalReason.DISCARDED);
-		if (grenadeOrdinal != -1) {
-			SubtypeBlast explosive = SubtypeGrenade.values()[grenadeOrdinal].explosiveType;
-			ItemEntity item = new ItemEntity(level(), getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(BallistixItems.ITEMS_EXPLOSIVE.getValue(explosive)));
+		if (blastId != null) {
+			IBlast explosive = Blast.BLAST_MAP.get(blastId);
+			ItemEntity item = new ItemEntity(level(), getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5, new ItemStack(explosive.getExplosiveItem().get()));
 			level().addFreshEntity(item);
 		}
 	}
@@ -64,16 +67,21 @@ public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 	@Override
 	protected void defineSynchedData() {
 		entityData.define(FUSE, 80);
-		entityData.define(TYPE, -1);
+		entityData.define(TYPE, "");
 	}
 
 	@Override
 	public void tick() {
 		if (!level().isClientSide) {
-			entityData.set(TYPE, grenadeOrdinal);
+			if(blastId != null) {
+				entityData.set(TYPE, blastId.toString());
+			}
 			entityData.set(FUSE, fuse);
 		} else {
-			grenadeOrdinal = entityData.get(TYPE);
+			String str = entityData.get(TYPE);
+			if(!str.isEmpty()) {
+				blastId = new ResourceLocation(str);
+			}
 			fuse = entityData.get(FUSE);
 		}
 		if (!isNoGravity()) {
@@ -88,8 +96,8 @@ public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 		--fuse;
 		if (fuse <= 0) {
 			remove(RemovalReason.DISCARDED);
-			if (grenadeOrdinal != -1) {
-				SubtypeBlast explosive = SubtypeGrenade.values()[grenadeOrdinal].explosiveType;
+			if (blastId != null) {
+				IBlast explosive = Blast.BLAST_MAP.get(blastId);
 				Blast b = explosive.createBlast(level(), blockPosition());
 				if (b != null) {
 					b.performExplosion();
@@ -106,13 +114,13 @@ public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 	@Override
 	protected void addAdditionalSaveData(CompoundTag compound) {
 		compound.putInt("Fuse", fuse);
-		compound.putInt("type", grenadeOrdinal);
+		ResourceLocation.CODEC.encodeStart(NbtOps.INSTANCE, blastId).result().ifPresent(tag -> compound.put("type", tag));
 	}
 
 	@Override
 	protected void readAdditionalSaveData(CompoundTag compound) {
 		fuse = compound.getInt("Fuse");
-		grenadeOrdinal = compound.getInt("type");
+		ResourceLocation.CODEC.decode(NbtOps.INSTANCE, compound.get("type")).result().ifPresent(pair -> blastId = pair.getFirst());
 	}
 	
 	@Override

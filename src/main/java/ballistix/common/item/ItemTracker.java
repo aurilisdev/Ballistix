@@ -105,9 +105,9 @@ public class ItemTracker extends ItemElectric {
     }
 
     @Override
-    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-        return slotChanged || !oldStack.getItem().equals(newStack.getItem());
-    }
+	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+		return oldStack.getItem() != newStack.getItem();
+	}
     
     public static double getX(ItemStack stack) {
 		return stack.getOrCreateTag().getDouble(X);

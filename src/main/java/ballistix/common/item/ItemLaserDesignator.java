@@ -155,5 +155,10 @@ public class ItemLaserDesignator extends ItemElectric {
 	public static int getFrequency(ItemStack stack) {
 		return stack.getOrCreateTag().getInt(FREQUENCY_KEY);
 	}
+	
+	@Override
+	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+		return oldStack.getItem() != newStack.getItem();
+	}
 
 }

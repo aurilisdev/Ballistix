@@ -49,9 +49,9 @@ public class ItemRocketLauncher extends ItemVoltaic {
     }
 
     @Override
-    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-        return slotChanged;
-    }
+	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+		return oldStack.getItem() != newStack.getItem();
+	}
 
     @Override
     public void inventoryTick(ItemStack stack, World level, Entity entity, int slotId, boolean isSelected) {

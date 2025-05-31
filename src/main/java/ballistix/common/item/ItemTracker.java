@@ -99,7 +99,7 @@ public class ItemTracker extends ItemElectric {
 
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-        return slotChanged || !oldStack.getItem().equals(newStack.getItem());
+        return !oldStack.is(newStack.getItem());
     }
 
     @SubscribeEvent

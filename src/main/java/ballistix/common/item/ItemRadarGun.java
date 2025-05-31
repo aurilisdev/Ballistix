@@ -137,5 +137,10 @@ public class ItemRadarGun extends ItemElectric {
 	public static BlockPos getCoordiantes(ItemStack stack) {
 		return NBTUtil.readBlockPos(stack.getOrCreateTag().getCompound(NBTUtils.LOCATION));
 	}
+	
+	@Override
+	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+		return oldStack.getItem() != newStack.getItem();
+	}
 
 }

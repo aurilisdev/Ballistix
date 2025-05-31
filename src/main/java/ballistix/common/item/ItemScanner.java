@@ -50,4 +50,10 @@ public class ItemScanner extends ItemElectric {
 
 		return super.use(worldIn, playerIn, handIn);
 	}
+	
+	@Override
+	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+		return oldStack.getItem() != newStack.getItem();
+	}
+	
 }

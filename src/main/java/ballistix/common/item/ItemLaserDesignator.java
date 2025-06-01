@@ -71,7 +71,7 @@ public class ItemLaserDesignator extends ItemElectric {
 
 		ItemStack designator = playerIn.getItemInHand(handIn);
 
-		if (getJoulesStored(designator) < USAGE || !!designator.getOrCreateTag().contains(FREQUENCY_KEY)) {
+		if (getJoulesStored(designator) < USAGE || !designator.getOrCreateTag().contains(FREQUENCY_KEY)) {
 			return super.use(worldIn, playerIn, handIn);
 		}
 

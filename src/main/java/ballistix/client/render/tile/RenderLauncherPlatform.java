@@ -41,13 +41,13 @@ public class RenderLauncherPlatform<T extends GenericTile & ILauncherPlatform> e
 
 			BakedModel model;
 
-			if (missile.missile.tier == 0) {
+			if (missile.missile.tier() == 1) {
 
 				model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILETIER1);
 				matrixStackIn.translate(0.5f, 0.87, 0.5f);
 				matrixStackIn.scale(1f, 0.75f, 1f);
 
-			} else if (missile.missile.tier == 1) {
+			} else if (missile.missile.tier() == 2) {
 
 				model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILETIER2);
 				matrixStackIn.translate(0.5f, 1.1f, 0.5f);

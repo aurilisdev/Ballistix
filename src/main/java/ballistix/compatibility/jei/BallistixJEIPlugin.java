@@ -32,7 +32,7 @@ public class BallistixJEIPlugin implements IModPlugin {
 	private static void ballistixInfoTabs(IRecipeRegistration registration) {
 
 		for (ItemStack itemStack : BallistixPsuedoRecipes.BALLISTIX_ITEMS) {
-			registration.addIngredientInfo(itemStack, VanillaTypes.ITEM_STACK, new TranslatableComponent("jei.info.item." + ForgeRegistries.ITEMS.getKey(itemStack.getItem()).getPath()));
+			//registration.addIngredientInfo(itemStack, VanillaTypes.ITEM_STACK, new TranslatableComponent("jei.info.item." + ForgeRegistries.ITEMS.getKey(itemStack.getItem()).getPath()));
 		}
 
 	}

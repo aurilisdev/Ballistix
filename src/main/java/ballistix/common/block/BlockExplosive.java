@@ -135,6 +135,8 @@ public class BlockExplosive extends Block {
 	@Override
     public void appendHoverText(ItemStack stack, BlockGetter context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-        tooltipComponents.add(BallistixTextUtils.tooltip("explosive.tier", new TextComponent(explosive.tier() + "").withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY));
+        if(explosive.tier() >= 0) {
+            tooltipComponents.add(BallistixTextUtils.tooltip("explosive.tier", new TextComponent(explosive.tier() + "").withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY));
+        }
     }
 }

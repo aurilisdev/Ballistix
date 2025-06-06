@@ -34,7 +34,6 @@ import voltaic.prefab.tile.components.type.*;
 import voltaic.prefab.utilities.BlockEntityUtils;
 import voltaic.prefab.utilities.NBTUtils;
 import voltaic.prefab.utilities.object.CachedTileOutput;
-import voltaic.prefab.utilities.object.TransferPack;
 import voltaic.registers.VoltaicCapabilities;
 
 public class TileLauncherControlPanelT1 extends GenericTile implements ILauncherControlPanel {
@@ -144,7 +143,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 		if (newCool != -1) {
 			cooldown = newCool;
 		}
-		electro.extractPower(TransferPack.joulesVoltage(BallistixConstants.MISSILESILO_USAGE * getTier(), electro.getVoltage()), false);
+		electro.joules(electro.getJoulesStored() - BallistixConstants.MISSILESILO_USAGE * getTier());
 	}
 
 	protected boolean isItemValidForSlot(int index, ItemStack stack, ComponentInventory inv) {

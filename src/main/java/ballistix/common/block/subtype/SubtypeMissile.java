@@ -1,13 +1,12 @@
 package ballistix.common.block.subtype;
 
-
 import voltaic.api.ISubtype;
 
 public enum SubtypeMissile implements ISubtype {
 
-	tier1(0), tier2(1), tier3(2);
+	tier1(1), tier2(2), tier3(3);
 
-	public int tier;
+	private int tier;
 
 	SubtypeMissile(int tier) {
 		this.tier = tier;
@@ -26,6 +25,10 @@ public enum SubtypeMissile implements ISubtype {
 	@Override
 	public String tag() {
 		return "missile" + name();
+	}
+
+	public int tier() {
+		return tier;
 	}
 
 }

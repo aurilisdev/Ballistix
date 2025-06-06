@@ -50,12 +50,12 @@ public enum SubtypeBlast implements ISubtype, IBlast {
     incendiary(BlastIncendiary::new, 80, 1),
     shrapnel(BlastShrapnel::new, 40, 1),
     chemical(BlastChemical::new, 100, 1),
-    debilitation(BlastDebilitation::new, 80, 1),
     //Tier 2
     fragmentation(BlastFragmentation::new, 100, 2),
     contagious(BlastContagious::new, 100, 2),
     breaching(BlastBreaching::new, 5, 2),
     thermobaric(BlastThermobaric::new, 100, 2),
+    debilitation(BlastDebilitation::new, 80, 2),
     //Tier 3
     emp(BlastEMP::new, 80, 3),
     nuclear(BlastNuclear::new, 200, 3),

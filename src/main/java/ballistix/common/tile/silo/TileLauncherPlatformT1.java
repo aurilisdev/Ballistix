@@ -195,7 +195,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
         if (mis.getItem() instanceof ItemMissile && Blast.ITEM_TO_BLAST_MAP.get(explosive.getItem()) != null) {
             IBlast blast = Blast.ITEM_TO_BLAST_MAP.get(explosive.getItem());
             ItemMissile itmissile = (ItemMissile) mis.getItem();
-            if (blast.tier() > itmissile.missile.tier || itmissile.missile.tier > getTier() || blast.tier() > getTier()) {
+            if (blast.tier() > itmissile.missile.tier() || itmissile.missile.tier() > getTier() || blast.tier() > getTier()) {
                 return false;
             }
             VirtualMissile missile = new VirtualMissile(
@@ -239,7 +239,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
     protected boolean isItemValidForSlot(int index, ItemStack stack, ComponentInventory inv) {
         Item item = stack.getItem();
         if (index == 0) {
-            return (item instanceof ItemMissile && ((ItemMissile) item).missile.tier <= getTier()) || stack.getItem() == BallistixItems.ITEM_AAMISSILEMK2.get();
+            return (item instanceof ItemMissile && ((ItemMissile) item).missile.tier() <= getTier()) || stack.getItem() == BallistixItems.ITEM_AAMISSILEMK2.get();
         } else if (index == 1) {
         	IBlast blast = Blast.ITEM_TO_BLAST_MAP.get(item);
             return blast != null && blast.tier() <= getTier() && blast.tier() > -1;

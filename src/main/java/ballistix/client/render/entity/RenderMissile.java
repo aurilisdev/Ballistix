@@ -37,7 +37,7 @@ public class RenderMissile extends EntityRenderer<EntityMissile> {
 		// matrixStackIn.mulPose(new Quaternion(new Vector3f(0, 0, 1), 90 - entity.getXRot(), true));
 
 
-		if(type == -1) {
+		if(type < 1) {
 			return;
 		}
 
@@ -47,13 +47,13 @@ public class RenderMissile extends EntityRenderer<EntityMissile> {
 		matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(90 - entity.getXRot(), MathUtils.ZP));
 
 		BakedModel model;
-		if (type == 0) {
+		if (type == 1) {
 
 			model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILETIER1);
 			matrixStackIn.translate(0, 0.82, 0);
 			matrixStackIn.scale(1f, 0.75f, 1f);
 
-		} else if (type == 1) {
+		} else if (type == 2) {
 
 			model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILETIER2);
 			matrixStackIn.translate(0, 1.05f, 0);

@@ -117,6 +117,10 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 			return;
 		}
 
+		if(!(launcherPlatform.getSafe() instanceof ILauncherPlatform)) {
+			return;
+		}
+
 		ILauncherPlatform platform = launcherPlatform.getSafe();
 
 		if (platform == null) { // Should really update the cachedtileoutput so this cant occur. As of before

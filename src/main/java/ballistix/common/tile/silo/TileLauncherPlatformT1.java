@@ -207,7 +207,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
                     //
                     target,
                     //
-                    itmissile.missile.ordinal(),
+                    itmissile.missile.tier(),
                     //
                     blast,
                     //

@@ -112,6 +112,10 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 		if (!launcherPlatform.valid()) {
 			return;
 		}
+		
+		if(!(launcherPlatform.getSafe() instanceof ILauncherPlatform)) {
+			return;
+		}
 
 		ILauncherPlatform platform = launcherPlatform.getSafe();
 

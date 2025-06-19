@@ -10,7 +10,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.SoundType;
-import net.minecraft.client.util.ITooltipFlag;
+//import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -33,6 +33,8 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import voltaic.common.block.states.VoltaicBlockStates;
 
 public class BlockExplosive extends Block {
@@ -132,12 +134,15 @@ public class BlockExplosive extends Block {
 		return false;
 	}
 	
+	/*
 	@Override
+	@OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack stack, IBlockReader context, List<ITextComponent> tooltipComponents, ITooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
         if(explosive.tier() >= 0) {
             tooltipComponents.add(BallistixTextUtils.tooltip("explosive.tier", new StringTextComponent(explosive.tier() + "").withStyle(TextFormatting.GRAY)).withStyle(TextFormatting.DARK_GRAY));
         }
     }
+    */
 	
 }

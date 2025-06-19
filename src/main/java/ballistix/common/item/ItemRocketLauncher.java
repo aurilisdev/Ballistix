@@ -108,8 +108,7 @@ public class ItemRocketLauncher extends ItemVoltaic {
             }
         }
         if (hasExplosive && hasRange) {
-            ex.shrink(1);
-            missile.shrink(1);
+            
             VirtualMissile virtualMissile = new VirtualMissile(
                     //
                     new Vec3(entityLiving.getX(), entityLiving.getY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getZ()),
@@ -135,6 +134,9 @@ public class ItemRocketLauncher extends ItemVoltaic {
                     false
                     //
             );
+            
+            ex.shrink(1);
+            missile.shrink(1);
 
             MissileManager.addMissile(world.dimension(), virtualMissile);
 

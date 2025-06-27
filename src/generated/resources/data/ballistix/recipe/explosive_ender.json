@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "ballistix:attractive"
+    },
+    "P": {
+      "tag": "c:ender_pearls"
+    },
+    "S": {
+      "tag": "c:end_stones"
+    }
+  },
+  "pattern": [
+    "SPS",
+    "SAS",
+    "SPS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ballistix:ender"
+  }
+}

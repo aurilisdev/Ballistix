@@ -42,18 +42,18 @@ public class ItemLaserDesignator extends ItemElectric {
 	@Override
 	public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
 		BlockEntity ent = context.getLevel().getBlockEntity(context.getClickedPos());
-		TileLauncherControlPanelT1 silo = ent instanceof TileLauncherControlPanelT1 s ? s : null;
+		ILauncherControlPanel silo = ent instanceof ILauncherControlPanel s ? s : null;
 		if (ent instanceof TileMultiSubnode node) {
 			BlockEntity core = node.getLevel().getBlockEntity(node.parentPos.getValue());
-			if (core instanceof TileLauncherControlPanelT1 c) {
+			if (core instanceof ILauncherControlPanel c) {
 				silo = c;
 			}
 		}
 		if (silo != null && !context.getLevel().isClientSide) {
 
-			context.getPlayer().displayClientMessage(BallistixTextUtils.chatMessage("laserdesignator.setfrequency", silo.frequency.getValue()), false);
+			context.getPlayer().displayClientMessage(BallistixTextUtils.chatMessage("laserdesignator.setfrequency", silo.getFrequency()), false);
 
-			stack.set(BallistixDataComponentTypes.BOUND_FREQUENCY, silo.frequency.getValue());
+			stack.set(BallistixDataComponentTypes.BOUND_FREQUENCY, silo.getFrequency());
 
 		}
 		return super.onItemUseFirst(stack, context);
@@ -81,7 +81,7 @@ public class ItemLaserDesignator extends ItemElectric {
 		BlockEntity tile = trace.getTile(worldIn);
 
 		// fixes bug of blowing self up
-		if (tile instanceof TileLauncherControlPanelT1 || tile instanceof TileMultiSubnode) {
+		if (tile instanceof ILauncherControlPanel || tile instanceof TileMultiSubnode) {
 			return InteractionResultHolder.pass(playerIn.getItemInHand(handIn));
 		}
 
@@ -148,6 +148,7 @@ public class ItemLaserDesignator extends ItemElectric {
 		} else {
 			tooltip.add(BallistixTextUtils.tooltip("laserdesignator.nofrequency").withStyle(ChatFormatting.GRAY));
 		}
+		tooltip.add(BallistixTextUtils.tooltip("laserdesignator.signalrange", Component.literal("" + BallistixConstants.LASER_DESIGNATOR_RANGE).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY));
 	}
 
 	@Override

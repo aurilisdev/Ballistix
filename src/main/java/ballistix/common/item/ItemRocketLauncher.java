@@ -3,7 +3,7 @@ package ballistix.common.item;
 import ballistix.api.blast.IBlast;
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualMissile;
-import ballistix.common.blast.Blast;
+import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeMissile;
 import ballistix.common.settings.BallistixConstants;
 import ballistix.registers.BallistixCreativeTabs;
@@ -116,7 +116,7 @@ public class ItemRocketLauncher extends ItemVoltaic {
                     //
                     1.333F,
                     //
-                    true,
+                    VirtualMissile.FlightPath.ROCKET_LAUNCHER,
                     //
                     0,
                     //

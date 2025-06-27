@@ -117,19 +117,28 @@ public class ItemMinecart extends ItemVoltaic {
 	};
 
 	public enum SubtypeMinecart implements ISubtype {
+		//Tier 1
 		obsidian(SubtypeBlast.obsidian),
 		condensive(SubtypeBlast.condensive),
 		attractive(SubtypeBlast.attractive),
 		repulsive(SubtypeBlast.repulsive),
 		incendiary(SubtypeBlast.incendiary),
 		shrapnel(SubtypeBlast.shrapnel),
-		debilitation(SubtypeBlast.debilitation),
-		chemical(SubtypeBlast.chemical),
-		emp(SubtypeBlast.emp),
+		anvil(SubtypeBlast.anvil),
+		//Tier 2
+		fragmentation(SubtypeBlast.fragmentation),
+		contagious(SubtypeBlast.contagious),
+		sonic(SubtypeBlast.sonic),
 		breaching(SubtypeBlast.breaching),
 		thermobaric(SubtypeBlast.thermobaric),
-		contagious(SubtypeBlast.contagious),
-		fragmentation(SubtypeBlast.fragmentation),
+		debilitation(SubtypeBlast.debilitation),
+		chemical(SubtypeBlast.chemical),
+		//Tier 3
+		emp(SubtypeBlast.emp),
+		endothermic(SubtypeBlast.endothermic),
+		ender(SubtypeBlast.ender),
+		hypersonic(SubtypeBlast.hypersonic),
+		rejuvination(SubtypeBlast.rejuvination),
 		nuclear(SubtypeBlast.nuclear),
 		antimatter(SubtypeBlast.antimatter),
 		largeantimatter(SubtypeBlast.largeantimatter),

@@ -1,19 +1,7 @@
 package ballistix.registers;
 
 import ballistix.Ballistix;
-import ballistix.common.inventory.container.ContainerCIWSTurret;
-import ballistix.common.inventory.container.ContainerESMTower;
-import ballistix.common.inventory.container.ContainerFireControlRadar;
-import ballistix.common.inventory.container.ContainerLaserTurret;
-import ballistix.common.inventory.container.ContainerLauncherControlPanelT1;
-import ballistix.common.inventory.container.ContainerLauncherControlPanelT2;
-import ballistix.common.inventory.container.ContainerLauncherControlPanelT3;
-import ballistix.common.inventory.container.ContainerLauncherPlatformT1;
-import ballistix.common.inventory.container.ContainerLauncherPlatformT2;
-import ballistix.common.inventory.container.ContainerLauncherPlatformT3;
-import ballistix.common.inventory.container.ContainerRailgunTurret;
-import ballistix.common.inventory.container.ContainerSAMTurret;
-import ballistix.common.inventory.container.ContainerSearchRadar;
+import ballistix.common.inventory.container.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -39,6 +27,7 @@ public class BallistixMenuTypes {
 	public static final DeferredHolder<MenuType<?>, MenuType<ContainerCIWSTurret>> CONTAINER_CIWSTURRET = register("ciwsturret", ContainerCIWSTurret::new);
 	public static final DeferredHolder<MenuType<?>, MenuType<ContainerLaserTurret>> CONTAINER_LASERTURRET = register("laserturret", ContainerLaserTurret::new);
 	public static final DeferredHolder<MenuType<?>, MenuType<ContainerRailgunTurret>> CONTAINER_RAILGUNTURRET = register("railgunturret", ContainerRailgunTurret::new);
+	public static final DeferredHolder<MenuType<?>, MenuType<ContainerVLS>> CONTAINER_VLS = register("vls", ContainerVLS::new);
 
 	private static <T extends AbstractContainerMenu> DeferredHolder<MenuType<?>, MenuType<T>> register(String id, MenuSupplier<T> supplier) {
 		return MENU_TYPES.register(id, () -> new MenuType<>(supplier, FeatureFlags.VANILLA_SET));

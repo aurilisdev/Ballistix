@@ -2,7 +2,7 @@ package ballistix.common.tile.silo;
 
 import ballistix.api.blast.IBlast;
 import ballistix.api.missile.virtual.VirtualProjectile;
-import ballistix.common.blast.Blast;
+import ballistix.common.blast.util.Blast;
 import ballistix.common.tile.TileESMTower;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.radar.TileSearchRadar;
@@ -199,7 +199,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
                     //
                     0.0F,
                     //
-                    false,
+                    VirtualMissile.FlightPath.SILO,
                     //
                     getBlockPos().getX() + 0.5F,
                     //
@@ -224,7 +224,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 
             return true;
         }
-	return false;
+	    return false;
 
 
     }

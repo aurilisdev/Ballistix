@@ -1,0 +1,36 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "electrodynamics"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "c:circuits/advanced"
+    },
+    "C": {
+      "item": "ballistix:launchercontrolpaneltier1"
+    },
+    "F": {
+      "item": "ballistix:launchersupportframetier1"
+    },
+    "L": {
+      "item": "ballistix:launcherplatformtier1"
+    },
+    "S": {
+      "tag": "c:plates/steel"
+    }
+  },
+  "pattern": [
+    "SFS",
+    "SLS",
+    "ACA"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ballistix:vls"
+  }
+}

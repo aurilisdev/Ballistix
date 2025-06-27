@@ -57,6 +57,7 @@ public class ItemTracker extends ItemElectric {
             }
         }
         tooltip.add(BallistixTextUtils.tooltip("tracker.tracking", name.copy().withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY));
+        super.appendHoverText(stack, context, tooltip, flagIn);
     }
 
     @Override

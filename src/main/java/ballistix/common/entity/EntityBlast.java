@@ -3,7 +3,7 @@ package ballistix.common.entity;
 import ballistix.Ballistix;
 import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IHasCustomRender;
-import ballistix.common.blast.Blast;
+import ballistix.common.blast.util.Blast;
 import ballistix.registers.BallistixEntities;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;

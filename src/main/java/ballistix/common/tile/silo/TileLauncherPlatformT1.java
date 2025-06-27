@@ -14,7 +14,7 @@ import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.api.silo.ILauncherControlPanel;
 import ballistix.api.silo.ILauncherPlatform;
-import ballistix.common.blast.Blast;
+import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.inventory.container.ContainerLauncherPlatformT1;
 import ballistix.common.inventory.container.ContainerLauncherPlatformT2;
@@ -201,7 +201,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
                     //
                     0.0F,
                     //
-                    false,
+                    VirtualMissile.FlightPath.SILO,
                     //
                     getBlockPos().getX() + 0.5F,
                     //

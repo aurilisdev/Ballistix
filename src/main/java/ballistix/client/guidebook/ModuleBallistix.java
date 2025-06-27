@@ -3,7 +3,7 @@ package ballistix.client.guidebook;
 import ballistix.Ballistix;
 import ballistix.client.guidebook.chapters.ChapterItems;
 import ballistix.client.guidebook.chapters.ChapterMissileDefense;
-import ballistix.client.guidebook.chapters.ChapterMissileSilo;
+import ballistix.client.guidebook.chapters.ChapterMissileOffense;
 import ballistix.prefab.utils.BallistixTextUtils;
 import net.minecraft.network.chat.MutableComponent;
 import voltaic.client.guidebook.utils.components.Module;
@@ -25,7 +25,7 @@ public class ModuleBallistix extends Module {
 
 	@Override
 	public void addChapters() {
-		chapters.add(new ChapterMissileSilo(this));
+		chapters.add(new ChapterMissileOffense(this));
 		chapters.add(new ChapterItems(this));
 		chapters.add(new ChapterMissileDefense(this));
 	}

@@ -16,6 +16,7 @@ import net.minecraft.world.entity.player.Inventory;
 import voltaic.api.electricity.formatting.ChatFormatter;
 import voltaic.api.electricity.formatting.DisplayUnits;
 import voltaic.prefab.screen.GenericScreen;
+import voltaic.prefab.screen.component.button.ScreenComponentButton;
 import voltaic.prefab.screen.component.editbox.ScreenComponentEditBox;
 import voltaic.prefab.screen.component.types.ScreenComponentSimpleLabel;
 import voltaic.prefab.screen.component.types.guitab.ScreenComponentElectricInfo;
@@ -52,6 +53,16 @@ public class ScreenLauncherControlPanelT3 extends GenericScreen<ContainerLaunche
 		addComponent(new ScreenComponentSimpleLabel(60, 55, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.z")));
 		addComponent(new ScreenComponentSimpleLabel(130, 19, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.freq")));
 		addComponent(new ScreenComponentSimpleLabel(101, 56, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.sync")));
+		
+		addComponent(new ScreenComponentButton<>(130, 49, 20, 20).setOnPress(button -> {
+			//
+			TileLauncherControlPanelT3 silo = getMenu().getSafeHost();
+			if(silo == null) {
+				return;
+			}
+			silo.shouldLaunch.setValue(true);
+
+		}).setColor(new Color(255, 0, 0, 255)).onTooltip((graphics, component, mouseX, mouseY) -> graphics.renderTooltip(getFontRenderer(), BallistixTextUtils.tooltip("silo.launch"), mouseX, mouseY)));
 	}
 
 	@Override

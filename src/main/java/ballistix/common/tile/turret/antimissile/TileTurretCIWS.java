@@ -168,7 +168,7 @@ public class TileTurretCIWS extends TileTurretAntimissileProjectile implements I
             Class<? extends LivingEntity> type = onlyTargetPlayers.getValue() ? Player.class : LivingEntity.class;
 
             for(LivingEntity entity : level.getEntitiesOfClass(type, new AABB(getBlockPos()).inflate(currentRange.getValue() / 4.0))) {
-                if(raycastToBlockPos(level, getBlockPos(), entity.blockPosition().above()).isEmpty() && !(entity instanceof Player player && (player.isCreative() || whitelistedPlayers.getValue().contains(player.getName().getString()))) && !entity.isDeadOrDying() && !entity.isRemoved()) {
+                if(raycastToBlockPos(level, getProjectileLaunchPosition(), entity.position().add(0, entity.getEyeHeight(), 0)).isEmpty() && !(entity instanceof Player player && (player.isCreative() || whitelistedPlayers.getValue().contains(player.getName().getString()))) && !entity.isDeadOrDying() && !entity.isRemoved()) {
                     double deltaX = entity.getX() - getBlockPos().getX();
                     double deltaY = entity.getY() - getBlockPos().getY();
                     double deltaZ = entity.getZ() - getBlockPos().getZ();
@@ -197,7 +197,7 @@ public class TileTurretCIWS extends TileTurretAntimissileProjectile implements I
 
     @Override
     public boolean isValidPlacement() {
-        return !targetingEntity.getValue() || super.isValidPlacement();
+        return targetingEntity.getValue() || super.isValidPlacement();
     }
     
     @Override

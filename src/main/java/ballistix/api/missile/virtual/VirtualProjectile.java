@@ -423,7 +423,11 @@ public abstract class VirtualProjectile {
 
         @Override
         public AABB getBoundingBox() {
-            return new AABB(position.x - 0.25F, position.y, position.z - 0.25F, position.x + 0.25F, position.y + 0.5F, position.z + 0.25F);
+        	return variant == 0 ?
+            //
+                    new AABB(position.x - 0.25 * speed, position.y, position.z - 0.25F * speed, position.x + 0.25F * speed, position.y + 1F * speed, position.z + 0.25F * speed) :
+                    //
+                    new AABB(position.x - 0.25F * speed, position.y, position.z - 0.25F * speed, position.x + 0.25F * speed, position.y + 2.0F * speed, position.z + 0.25F * speed);
         }
 
         @Override
@@ -480,65 +484,26 @@ public abstract class VirtualProjectile {
             double deltaY = interceptionPos.y - position.y;
             double deltaZ = interceptionPos.z - position.z;
             
-            Vec3 newDeltaMovement = new Vec3(deltaX, deltaY, deltaZ).normalize();
-            
-            double currAlpha = Math.atan2(deltaMovement.z, deltaMovement.x);
-            double newAlpha = Math.atan2(newDeltaMovement.z, newDeltaMovement.x);
-            
-            double currXZMag = Math.sqrt(deltaMovement.x * deltaMovement.x + deltaMovement.z * deltaMovement.z);
-            double newXZMag = Math.sqrt(newDeltaMovement.x * newDeltaMovement.x + newDeltaMovement.z * newDeltaMovement.z);
-            
-            double currBeta = Math.atan2(deltaMovement.y, currXZMag);
-            double newBeta = Math.atan2(newDeltaMovement.y, newXZMag);
+            Vec3 desiredVector = new Vec3(deltaX, deltaY, deltaZ).normalize();
+            Vec3 currVector = deltaMovement.normalize();
 
-            double deltaAlpha = newAlpha - currAlpha;
-            double deltaBeta = newBeta - currBeta;
+            double dotProduct = desiredVector.dot(currVector);
+            double maxTurnRadians = variant == 0 ? BallistixConstants.SAM_ENTITY_TURNINGSPEEDRADIANS : BallistixConstants.ANTIBALLISTICMISSILE_ENTITY_TURNINGSPEEDRADIANS;
 
-            double turnRate = 0;
+            if(dotProduct != 0) {
 
-            if(variant == 0) {
-                turnRate = BallistixConstants.SAM_ENTITY_TURNINGSPEEDRADIANS / 2.0;
-            } else if (variant == 1) {
-                turnRate = BallistixConstants.ANTIBALLISTICMISSILE_ENTITY_TURNINGSPEEDRADIANS / 2.0;
-            }
+                if(Math.acos(dotProduct) <= maxTurnRadians) {
+                    deltaMovement = desiredVector;
+                } else {
 
-            if(deltaAlpha > 0) {
+                    Vec3 perpVector = currVector.cross(desiredVector).cross(currVector).normalize();
 
-                currAlpha += turnRate;
+                    Vec3 result = currVector.scale(Math.cos(maxTurnRadians)).add(perpVector.scale(Math.sin(maxTurnRadians)));
 
-                if(currAlpha > newAlpha) {
-                    currAlpha = newAlpha;
-                }
-
-            } else if (deltaAlpha < 0) {
-
-                currAlpha -= turnRate;
-
-                if(currAlpha < newAlpha) {
-                    currAlpha = newAlpha;
+                    deltaMovement = result.normalize();
                 }
 
             }
-
-            if(deltaBeta > 0) {
-
-                currBeta += turnRate;
-
-                if(currBeta > newBeta) {
-                    currBeta = newBeta;
-                }
-
-            } else if (deltaBeta < 0) {
-
-                currBeta -= turnRate;
-
-                if(currBeta < newBeta) {
-                    currBeta = newBeta;
-                }
-
-            }
-
-            deltaMovement = new Vec3(Math.cos(currAlpha) * Math.cos(currBeta), Math.sin(currBeta), Math.sin(currAlpha) * Math.cos(currBeta)).normalize();
             
             super.updatePosition(level);
 

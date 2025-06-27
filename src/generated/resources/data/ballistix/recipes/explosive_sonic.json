@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": {
+      "tag": "forge:ingots/copper"
+    },
+    "N": {
+      "item": "minecraft:note_block"
+    },
+    "R": {
+      "item": "ballistix:repulsive"
+    }
+  },
+  "pattern": [
+    "CNC",
+    "NRN",
+    "CNC"
+  ],
+  "result": {
+    "count": 2,
+    "item": "ballistix:sonic"
+  }
+}

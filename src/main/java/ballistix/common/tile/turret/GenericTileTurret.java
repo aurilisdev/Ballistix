@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import ballistix.Ballistix;
 import ballistix.api.turret.ITarget;
 import ballistix.common.settings.BallistixConstants;
+import ballistix.common.tags.BallistixTags;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -19,6 +20,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -290,54 +293,92 @@ public abstract class GenericTileTurret extends GenericTile {
         return Math.atan2(vector.z, vector.x);
     }
 
-    public static List<Block> raycastToBlockPos(Level world, BlockPos start, BlockPos end) {
+    public static List<Block> raycastToBlockPos(Level world, Vec3 start, Vec3 end) {
 
         List<Block> blocks = new ArrayList<>();
 
-        int deltaX = end.getX() - start.getX();
-        int deltaY = end.getY() - start.getY();
-        int deltaZ = end.getZ() - start.getZ();
+        Vec3 delta = end.subtract(start);
+        int maxChecks = (int) Math.ceil(delta.length());
 
-        double magnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
-
-        int maxChecks = (int) magnitude;
-
-        double incX = deltaX / magnitude;
-        double incY = deltaY / magnitude;
-        double incZ = deltaZ / magnitude;
-
-        double x = 0;
-        double y = 0;
-        double z = 0;
-
-        BlockPos toCheck = start;
-        BlockState state;
+        delta = delta.normalize();
 
         int i = 0;
+        BlockPos toCheck;
+        BlockState state;
 
-        while (i < maxChecks) {
+        while(i < maxChecks) {
 
-            x += incX;
-            y += incY;
-            z += incZ;
-            toCheck = new BlockPos((int) Math.ceil(start.getX() + x), (int) Math.ceil(start.getY() + y), (int) Math.ceil(start.getZ() + z));
+            start = start.add(delta);
+
+            //Cieled Y
+            toCheck = new BlockPos((int) Math.ceil(start.x), (int) Math.ceil(start.y), (int) Math.ceil(start.z));
             if (!toCheck.equals(start) && !toCheck.equals(end)) {
                 state = world.getBlockState(toCheck);
-                if(!state.isAir() && state.isCollisionShapeFullBlock(world, toCheck)) {
+                if (willStopTurrret(state)) {
                     blocks.add(state.getBlock());
                 }
-                //world.setBlockAndUpdate(toCheck, Blocks.COBBLESTONE.defaultBlockState());
             }
-            toCheck = new BlockPos((int) Math.floor(start.getX() + x), (int) Math.ceil(start.getY() + y), (int) Math.floor(start.getZ() + z));
+
+            toCheck = new BlockPos((int) Math.ceil(start.x), (int) Math.ceil(start.y), (int) Math.floor(start.z));
             if (!toCheck.equals(start) && !toCheck.equals(end)) {
                 state = world.getBlockState(toCheck);
-                if(!state.isAir() && state.isCollisionShapeFullBlock(world, toCheck)) {
+                if (willStopTurrret(state)) {
                     blocks.add(state.getBlock());
                 }
-                //world.setBlockAndUpdate(toCheck, Blocks.COBBLESTONE.defaultBlockState());
+            }
+
+            toCheck = new BlockPos((int) Math.floor(start.x), (int) Math.ceil(start.y), (int) Math.ceil(start.z));
+            if (!toCheck.equals(start) && !toCheck.equals(end)) {
+                state = world.getBlockState(toCheck);
+                if (willStopTurrret(state)) {
+                    blocks.add(state.getBlock());
+                }
+            }
+
+            toCheck = new BlockPos((int) Math.floor(start.x), (int) Math.ceil(start.y), (int) Math.floor(start.z));
+            if (!toCheck.equals(start) && !toCheck.equals(end)) {
+                state = world.getBlockState(toCheck);
+                if (willStopTurrret(state)) {
+                    blocks.add(state.getBlock());
+                }
+            }
+
+            // Floored Y
+
+            toCheck = new BlockPos((int) Math.ceil(start.x), (int) Math.floor(start.y), (int) Math.ceil(start.z));
+            if (!toCheck.equals(start) && !toCheck.equals(end)) {
+                state = world.getBlockState(toCheck);
+                if (willStopTurrret(state)) {
+                    blocks.add(state.getBlock());
+                }
+            }
+
+            toCheck = new BlockPos((int) Math.ceil(start.x), (int) Math.floor(start.y), (int) Math.floor(start.z));
+            if (!toCheck.equals(start) && !toCheck.equals(end)) {
+                state = world.getBlockState(toCheck);
+                if (willStopTurrret(state)) {
+                    blocks.add(state.getBlock());
+                }
+            }
+
+            toCheck = new BlockPos((int) Math.floor(start.x), (int) Math.floor(start.y), (int) Math.ceil(start.z));
+            if (!toCheck.equals(start) && !toCheck.equals(end)) {
+                state = world.getBlockState(toCheck);
+                if (willStopTurrret(state)) {
+                    blocks.add(state.getBlock());
+                }
+            }
+
+            toCheck = new BlockPos((int) Math.floor(start.x), (int) Math.floor(start.y), (int) Math.floor(start.z));
+            if (!toCheck.equals(start) && !toCheck.equals(end)) {
+                state = world.getBlockState(toCheck);
+                if (willStopTurrret(state)) {
+                    blocks.add(state.getBlock());
+                }
             }
 
             i++;
+
 
         }
 
@@ -371,6 +412,19 @@ public abstract class GenericTileTurret extends GenericTile {
             ChunkPos pos = level.getChunk(getBlockPos()).getPos();
             ForgeChunkManager.forceChunk((ServerLevel) level, Ballistix.ID, getBlockPos(), pos.x, pos.z, true, true);
         }
+    }
+    
+    public static boolean willStopTurrret(BlockState state) {
+        if(state.isAir()) {
+            return false;
+        }
+        if(state.is(Blocks.SNOW) && state.getValue(SnowLayerBlock.LAYERS) < 4) {
+            return false;
+        }
+        if(state.is(BallistixTags.Blocks.WHITELISTED_TURRET_BLOCKS)) {
+            return false;
+        }
+        return true;
     }
 
 }

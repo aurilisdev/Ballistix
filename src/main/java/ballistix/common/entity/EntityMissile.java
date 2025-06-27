@@ -14,7 +14,6 @@ import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -38,18 +37,20 @@ public class EntityMissile extends Entity {
 	private static final EntityDataAccessor<Float> SPEED = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
 	private static final EntityDataAccessor<Float> START_X = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
 	private static final EntityDataAccessor<Float> START_Z = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.FLOAT);
-	private static final EntityDataAccessor<Boolean> IS_ITEM = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Integer> FLIGHT_PATH = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.INT);
 	private static final EntityDataAccessor<Boolean> CURRENTLYEXPLODING = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Boolean> HASIGNIGHTED = SynchedEntityData.defineId(EntityMissile.class, EntityDataSerializers.BOOLEAN);
 
 	public int missileType = -1;
 	public float speed = 0.0F;
 	@Nullable
 	public UUID id;
-	public boolean isItem = false;
+	public int flightPath = 2;
 	public boolean isExploding = false;
 	public BlockPos target = BlockEntityUtils.OUT_OF_REACH;
 	public float startX;
 	public float startZ;
+	private boolean hasIgnighted = false;
 
 	public EntityMissile(EntityType<? extends EntityMissile> type, Level worldIn) {
 		super(type, worldIn);
@@ -67,8 +68,9 @@ public class EntityMissile extends Entity {
 		entityData.define(START_X, 0.0F);
 		entityData.define(START_Z, 0.0F);
 		entityData.define(SPEED, 0.0F);
-		entityData.define(IS_ITEM, true);
+		entityData.define(FLIGHT_PATH, 2);
 		entityData.define(CURRENTLYEXPLODING, false);
+		entityData.define(HASIGNIGHTED, false);
 	}
 
 	@Override
@@ -113,8 +115,9 @@ public class EntityMissile extends Entity {
 			entityData.set(START_X, startX);
 			entityData.set(START_Z, startZ);
 			entityData.set(SPEED, speed);
-			entityData.set(IS_ITEM, isItem);
+			entityData.set(FLIGHT_PATH, flightPath);
 			entityData.set(CURRENTLYEXPLODING, isExploding);
+			entityData.set(HASIGNIGHTED, hasIgnighted);
 
 		} else {
 
@@ -123,8 +126,9 @@ public class EntityMissile extends Entity {
 			startX = entityData.get(START_X);
 			startZ = entityData.get(START_Z);
 			speed = entityData.get(SPEED);
-			isItem = entityData.get(IS_ITEM);
+			flightPath = entityData.get(FLIGHT_PATH);
 			isExploding = entityData.get(CURRENTLYEXPLODING);
+			hasIgnighted = entityData.get(HASIGNIGHTED);
 		}
 		if (isExploding) {
 			return;
@@ -137,7 +141,9 @@ public class EntityMissile extends Entity {
 
 		}
 
-		if (!isItem) {
+		VirtualMissile.FlightPath path = VirtualMissile.FlightPath.values()[flightPath];
+
+		if (path == VirtualMissile.FlightPath.SILO && missileType != -1) {
 
 			float iDeltaX = target.getX() - startX;
 			float iDeltaZ = target.getZ() - startZ;
@@ -221,17 +227,47 @@ public class EntityMissile extends Entity {
 
 			}
 
+		} else if (path == VirtualMissile.FlightPath.VLS && missileType != -1) {
+			if(!hasIgnighted && speed > -0.15) {
+				speed -= 0.03F;
+			} else if (!hasIgnighted) {
+				hasIgnighted = true;
+			} else if (speed > 0.5) {
+
+				Vec3 desiredVector = new Vec3(target.getX() - getX(), target.getY() - getY(), target.getZ() - getZ()).normalize();
+				Vec3 currVector = getDeltaMovement().normalize();
+
+				double dotProduct = desiredVector.dot(getDeltaMovement().normalize());
+				double maxTurnRadians = 0.05;
+
+				if(dotProduct != 0) {
+
+					if(Math.acos(dotProduct) <= maxTurnRadians) {
+						setDeltaMovement(desiredVector);
+					} else {
+
+						Vec3 perpVector = currVector.cross(desiredVector).cross(currVector).normalize();
+
+						Vec3 result = currVector.scale(Math.cos(maxTurnRadians)).add(perpVector.scale(Math.sin(maxTurnRadians)));
+
+						setDeltaMovement(result.normalize());
+
+
+					}
+				}
+			}
 		}
 
-		Vec3 vec = new Vec3(getX() + speed * getDeltaMovement().x, getY() + speed * getDeltaMovement().y, getZ() + speed * getDeltaMovement().z);
+		if(tickCount != 0) {
+			Vec3 vec = new Vec3(getX() + speed * getDeltaMovement().x, getY() + speed * getDeltaMovement().y, getZ() + speed * getDeltaMovement().z);
+			setPos(vec);
+		}
 
-		setPos(vec);
-
-		if (!isItem && !target.equals(BlockEntityUtils.OUT_OF_REACH) && speed < 3.0F) {
+		if ((path == VirtualMissile.FlightPath.SILO || (path == VirtualMissile.FlightPath.VLS && hasIgnighted)) && !target.equals(BlockEntityUtils.OUT_OF_REACH) && speed < 3.0F) {
 			speed += 0.02F;
 		}
 
-		if (isServerSide || speed >= 3.0F) {
+		if (missileType == -1 || isServerSide || speed >= 3.0F || (path == VirtualMissile.FlightPath.VLS && !hasIgnighted)) {
 			return;
 		}
 
@@ -267,7 +303,8 @@ public class EntityMissile extends Entity {
 		BlockPos.CODEC.encode(target, NbtOps.INSTANCE, new CompoundTag()).result().ifPresent(tag -> compound.put("target", tag));
 		compound.putFloat("startx", startX);
 		compound.putFloat("startz", startZ);
-		compound.putBoolean("isitem", isItem);
+		compound.putInt("flightpath", flightPath);
+		compound.putBoolean("hasignited", hasIgnighted);
 	}
 
 	@Override
@@ -277,7 +314,8 @@ public class EntityMissile extends Entity {
 		BlockPos.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("target")).result().ifPresent(pair -> target = pair.getFirst());
 		startX = compound.getFloat("startx");
 		startZ = compound.getFloat("startz");
-		isItem = compound.getBoolean("isitem");
+		flightPath = compound.getInt("flightpath");
+		hasIgnighted = compound.getBoolean("hasignited");
 	}
 
 	@Override

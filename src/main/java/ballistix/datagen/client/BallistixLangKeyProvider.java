@@ -25,37 +25,49 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 		switch (locale) {
 		case EN_US:
 		default:
-
+			
 			add("itemGroup.itemgroup" + Ballistix.ID + "main", "Ballistix");
 
+			//Tier 0
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.obsidian), "Obsidian TNT");
+			//Tier 1
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.condensive), "Condensive Explosive");
+			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.incendiary), "Incendiary Explosive");
+			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.chemical), "Chemical Explosive");
+			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.anvil), "Anvil Explosive");
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.attractive), "Attractive Explosive");
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.repulsive), "Repulsive Explosive");
-			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.incendiary), "Incendiary Explosive");
-			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.breaching), "Breaching Explosive");
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.shrapnel), "Shrapnel Explosive");
-			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.debilitation), "Debilitation Explosive");
-			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.chemical), "Chemical Explosive");
-			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.thermobaric), "Thermobaric Explosive");
-			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.contagious), "Contagious Explosive");
+			//Tier 2
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.fragmentation), "Fragmentation Explosive");
+			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.contagious), "Contagious Explosive");
+			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.sonic), "Sonic Explosive");
+			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.breaching), "Breaching Explosive");
+			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.thermobaric), "Thermobaric Explosive");
+			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.debilitation), "Debilitation Explosive");
+			//Tier 3
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.emp), "EMP Explosive");
+			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.endothermic), "Endothermic Explosive (WIP)");
+			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.ender), "Ender Explosive");
+			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.hypersonic), "Hypersonic Explosive");
+			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.rejuvination), "Rejuvenation Explosive (WIP)");
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.nuclear), "Nuclear Explosive");
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.antimatter), "Antimatter Explosive");
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.largeantimatter), "Large Antimatter Explosive");
-			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.darkmatter), "Darkmatter Explosive");
+			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.darkmatter), "Dark Matter Explosive");
+			//Other
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.landmine), "Landmine");
 
-			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchercontrolpaneltier1), "Launcher Control Panel T1");
-			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchercontrolpaneltier2), "Launcher Control Panel T2");
-			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchercontrolpaneltier3), "Launcher Control Panel T3");
-			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchersupportframetier1), "Launcher Support Frame T1");
-			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchersupportframetier2), "Launcher Support Frame T2");
-			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchersupportframetier3), "Launcher Support Frame T3");
-			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launcherplatformtier1), "Launcher Platform T1");
-			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launcherplatformtier2), "Launcher Platform T2");
-			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launcherplatformtier3), "Launcher Platform T3");
+			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchercontrolpaneltier1), "Control Panel T1");
+			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchercontrolpaneltier2), "Control Panel T2");
+			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchercontrolpaneltier3), "Control Panel T3");
+			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchersupportframetier1), "Support Frame T1");
+			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchersupportframetier2), "Support Frame T2");
+			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchersupportframetier3), "Support Frame T3");
+			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launcherplatformtier1), "Launch Platform T1");
+			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launcherplatformtier2), "Launch Platform T2");
+			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launcherplatformtier3), "Launch Platform T3");
+			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.vls), "Vertical Launch Silo");
 			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.radar), "Search Radar");
 			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.firecontrolradar), "Fire Control Radar");
 			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.samturret), "SAM Turret");
@@ -71,20 +83,32 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			addItem(BallistixItems.ITEMS_GRENADE.getValue(SubtypeGrenade.shrapnel), "Shrapnel Grenade");
 			addItem(BallistixItems.ITEMS_GRENADE.getValue(SubtypeGrenade.debilitation), "Debilitation Grenade");
 			addItem(BallistixItems.ITEMS_GRENADE.getValue(SubtypeGrenade.chemical), "Chemical Grenade");
+			addItem(BallistixItems.ITEMS_GRENADE.getValue(SubtypeGrenade.anvil), "Anvil Grenade");
 
+
+			//Tier 0
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.obsidian), "Minecart with Obsidian TNT");
+			//Tier 1
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.condensive), "Minecart with Condensive Explosive");
+			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.anvil), "Minecart with Anvil Explosive");
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.attractive), "Minecart with Attractive Explosive");
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.repulsive), "Minecart with Repulsive Explosive");
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.incendiary), "Minecart with Incendiary Explosive");
-			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.breaching), "Minecart with Breaching Explosive");
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.shrapnel), "Minecart with Shrapnel Explosive");
-			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.debilitation), "Minecart with Debilitation Explosive");
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.chemical), "Minecart with Chemical Explosive");
+			//Tier 2
+			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.breaching), "Minecart with Breaching Explosive");
+			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.debilitation), "Minecart with Debilitation Explosive");
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.thermobaric), "Minecart with Thermobaric Explosive");
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.contagious), "Minecart with Contagious Explosive");
-			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.emp), "Minecart with EMP Explosive");
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.fragmentation), "Minecart with Fragmentation Explosive");
+			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.sonic), "Minecart with Sonic Explosive");
+			//Tier 3
+			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.emp), "Minecart with EMP Explosive");
+			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.endothermic), "Minecart with Endothermic Explosive");
+			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.ender), "Minecart with Ender Explosive");
+			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.hypersonic), "Minecart with Hypersonic Explosive");
+			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.rejuvination), "Minecart with Rejuvenation Explosive");
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.nuclear), "Minecart with Nuclear Explosive");
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.antimatter), "Minecart with Antimatter Explosive");
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.largeantimatter), "Minecart with Large Antimatter Explosive");
@@ -93,9 +117,9 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			addItem(BallistixItems.ITEM_DUSTPOISON, "Poison Dust");
 			//addItem(BallistixItems.ITEM_RANGEUPGRADE, "Range Upgrade");
 
-			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier1), "T1 Missile");
-			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier2), "T2 Missile");
-			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier3), "T3 Missile");
+			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier1), "Tier 1 Missile");
+			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier2), "Tier 2 Missile");
+			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier3), "Tier 3 Missile");
 
 			addItem(BallistixItems.ITEM_AAMISSILE, "Surface-to-Air Missile");
 			addItem(BallistixItems.ITEM_AAMISSILEMK2, "Anti-Ballistic Missile");
@@ -108,12 +132,13 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			addItem(BallistixItems.ITEM_SCANNER, "Scanner");
 			addItem(BallistixItems.ITEM_DEFUSER, "Defuser");
 
-			addContainer("launchercontrolpaneltier1", "Launcher Control Panel T1");
-			addContainer("launchercontrolpaneltier2", "Launcher Control Panel T2");
-			addContainer("launchercontrolpaneltier3", "Launcher Control Panel T3");
-			addContainer("launcherplatformtier1", "Launcher Platform T1");
-			addContainer("launcherplatformtier2", "Launcher Platform T2");
-			addContainer("launcherplatformtier3", "Launcher Platform T3");
+			addContainer("launchercontrolpaneltier1", "Control Panel T1");
+			addContainer("launchercontrolpaneltier2", "Control Panel T2");
+			addContainer("launchercontrolpaneltier3", "Control Panel T3");
+			addContainer("launcherplatformtier1", "Launch Platform T1");
+			addContainer("launcherplatformtier2", "Launch Platform T2");
+			addContainer("launcherplatformtier3", "Launch Platform T3");
+			addContainer("vls", "Vertical Launch Silo");
 			addContainer("samturret", "SAM Turret");
 			addContainer("searchradar", "Search Radar");
 			addContainer("firecontrolradar", "Fire Control Radar");
@@ -135,6 +160,9 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			addDamageSource("laserturret", "%s found the green laser pointer!");
 			addDamageSource("ciwsbullet", "%s saw the WIZ!");
 			addDamageSource("railgunround", "%s found that E really does equal MC^2!");
+			addDamageSource("virus", "%s got more than the sniffles!");
+
+			add("effect.ballistix.virus", "Virus");
 
 			addChatMessage("radargun.text", "Coordinates: %s");
 			addChatMessage("radargun.turretsucess", "Bound");
@@ -150,11 +178,15 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			addTooltip("laserdesignator.frequency", "Frequency: %s");
 			addTooltip("laserdesignator.nofrequency", "Unbound");
 			addTooltip("laserdesignator.invalidfreq", "Set a frequency for the silo");
+			addTooltip("laserdesignator.signalrange", "Signal Range: %s Blocks");
 			addTooltip("tracker.tracking", "Tracking: %s");
 			addTooltip("tracker.none", "NONE");
 			addTooltip("missile.range", "Range: %s Blocks");
 			addTooltip("missile.unlimited", "Unlimited");
+			addTooltip("missile.maxbombtier", "Max Tier: %s");
 			addTooltip("missilesilo.charge", "Charge: %1$s / %2$s");
+			addTooltip("missilesilo.maxtier", "Max Tier: %s");
+			addTooltip("missilesilo.accuracy", "Inaccuracy: %s");
 
 			addTooltip("turret.blockrange", "Block Range");
 			addTooltip("turret.entityrange", "Entity Range");
@@ -175,6 +207,7 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 
 			addTooltip("aamissile.hitrate", "Hit rate: %s");
 			addTooltip("explosive.tier", "Tier: %s");
+			addTooltip("silo.launch", "LAUNCH");
 
 			
 			addGuiLabel("turret.radar", "Radar: ");
@@ -207,9 +240,12 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			addGuiLabel("esmtower.detectedfirecontrolradars", "Fire Control Radars");
 
 			addSubtitle(BallistixSounds.SOUND_ANTIMATTEREXPLOSION, "Antimatter bomb detonates");
+			addSubtitle(BallistixSounds.SOUND_LARGE_ANTIMATTEREXPLOSION, "Large Antimatter bomb detonates");
 			addSubtitle(BallistixSounds.SOUND_DARKMATTER, "Dark matter bomb detonates");
 			addSubtitle(BallistixSounds.SOUND_NUCLEAREXPLOSION, "Nuclear bomb detonates");
 			addSubtitle(BallistixSounds.SOUND_EMPEXPLOSION, "EMP detonates");
+			addSubtitle(BallistixSounds.SOUND_SONICEXPLOSION, "Sonic bomb detonates");
+			addSubtitle(BallistixSounds.SOUND_HYPERSONICSONICEXPLOSION, "Hypersonic bomb detonates");
 			addSubtitle(BallistixSounds.SOUND_MISSILE_ROCKETLAUNCHER, "Missile is fired from rocket lancher");
 			addSubtitle(BallistixSounds.SOUND_MISSILE_SILO, "Missile launches from silo");
 			addSubtitle(BallistixSounds.SOUND_RADAR, "Radar pulses");
@@ -218,6 +254,7 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			addSubtitle(BallistixSounds.SOUND_LASER_TURRETFIRING, "Laser Turret fires");
 			addSubtitle(BallistixSounds.SOUND_RODHITTINGGROUND, "Rod Impacts Ground");
 			addSubtitle(BallistixSounds.SOUND_RAILGUNKINETIC, "Railgun Turret Fires");
+			addSubtitle(BallistixSounds.SOUND_VLSLAUNCH, "VLS Fires");
 
 			addDimension(Level.OVERWORLD.location().getPath(), "The Overworld");
 			addDimension(Level.NETHER.location().getPath(), "The Nether");
@@ -225,34 +262,37 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 
 			addGuidebook(Ballistix.ID, "Ballistix");
 
-			addGuidebook("chapter.missilesilo", "Missile Silo");
-			addGuidebook("chapter.missilesilo.l1.1", "The Missile Silo is a multiblock used, as the name suggests, to launch various missiles with different types of warheads. The Silo is composed of three different blocks:");
-			addGuidebook("chapter.missilesilo.controlpanel", "Control Panel");
-			addGuidebook("chapter.missilesilo.launchplatform", "Launch Platform");
-			addGuidebook("chapter.missilesilo.supportframe", "Support Frame");
-			addGuidebook("chapter.missilesilo.l1.2", "Each come in three tiers which provide successive buffs to the silo.");
-			addGuidebook("chapter.missilesilo.l2", "The %s is used to provide targeting information to the silo and instructs the Launch Platform to fire. It requires power to function, and can be instructed to launch with either a redstone signal or by using a Laser Designator. The silo will be on cooldown upon firing a missile, but will continue to fire missiles while it has a redstone " +
-					"signal once the cooldown is over. The Tier 1 Control Panel is the cheapest, but can only specify the X and Z coordinates of a target. The Tier 2 Panel is more expensive, but gains the ability to specify the Y variant. The missile will detonate once it reaches this Y value too, allowing for more precise strikes. The Tier 3 Control Panel is the most expensive, but gains the ability to " +
-					"specify the launch frequency of the silo.");
-			addGuidebook("chapter.missilesilo.l3.1", "The %1$s is what holds the missile and accompanying warhead. The Tier 1 variant can launch missiles %2$s blocks, the Tier 2 variant can launch blocks %3$s blocks, and the Tier 3 Variant can launch missiles %4$s Blocks. There are three types of missiles that can be loaded with increasing ranges:");
-			addGuidebook("chapter.missilesilo.range", "%1$s : %2$s");
-			addGuidebook("chapter.missilesilo.close", "Tier 1");
-			addGuidebook("chapter.missilesilo.medium", "Tier 2");
-			addGuidebook("chapter.missilesilo.long", "Tier 3");
-			addGuidebook("chapter.missilesilo.unlimited", "Unlimited");
-			addGuidebook("chapter.missilesilo.l3.2", "Each missile type is capable of carrying any explosive as a warhead. It should be noted that any Launch Platform can fire any missile tier, but it will only launch the missile as far as either the missile's range or the Launch Platform's range, whichever is less.");
-
-			addGuidebook("chapter.missilesilo.l4", "The %1$s is used to provide increased accuracy to the launched missile. The Launch Platform is able to fire missiles without one, but will incur an default inaccuracy of %2$s blocks, meaning the missile will land within %2$s blocks of the specified X and Z coordinates. The Tier 1 variant decreases the inaccuracy penalty to 30 blocks, " +
-					"the Tier 2 variant decrease the inaccuracy to 15 blocks, while the Tier 3 variant provides perfect accuracy.");
+			addGuidebook("chapter.missileoffense", "Missile Offense");
+			addGuidebook("chapter.missileoffense.l1.1", "Ballistix offers two main methods of missile offense. The first of these is the Missile Silo. The Missile Silo is a multiblock used to launch various missiles with different types of warheads. The Silo is composed of three different blocks:");
+			addGuidebook("chapter.missileoffense.controlpanel", "Control Panel");
+			addGuidebook("chapter.missileoffense.launchplatform", "Launch Platform");
+			addGuidebook("chapter.missileoffense.supportframe", "Support Frame");
+			addGuidebook("chapter.missileoffense.l1.2", "Each come in three tiers which provide successive buffs to the silo and any tier can be combined with the other tier, with a Tier 3 set being the strongest missile silo possible!");
+			addGuidebook("chapter.missileoffense.l2", "The %1$s is used to provide targeting information to the Missile Silo and instructs it to fire. It will require power to function however. The %1$s can be instructed to launch either manually via the GUI, a redstone signal, or by using a Laser Designator. The silo will be on cooldown upon successfully firing a missile. " +
+					"However it will fire again once the cooldown is over if it still has a redstone signal.");
+			addGuidebook("chapter.missileoffense.l3", "The %1$s is the cheapest, but can only specify the X and Z coordinates of a target. The %2$s is more expensive, but gains the ability to specify the Y variant. Also, the missile will detonate once it reaches the specified Y value if launched from a Tier 2 or higher, allowing for more precise strikes. The %3$s is the most " +
+					"expensive, but gains the ability to also specify the launch frequency of the silo and the missile.");
+			addGuidebook("chapter.missileoffense.l4", "The %1$s is what holds the missile and accompanying warhead. It should be noted that a missile must have a warhead to be able to launch. The %2$s has a maximum range of %3$s blocks, and can support up to Tier 1 missiles and explosives. The %4$s has a maximum range of %5$s blocks, and can support up to Tier 2 missiles and " +
+					"explosives. The %6$s has a maximum range of %7$s blocks, and can support up to Tier 3 missiles and explosives.");
+			addGuidebook("chapter.missileoffense.l5", "On the subject of tiers, missiles can support explosives of tiers less than or equal to their tier. This means a Tier 2 missile can support a Tier 1 or Tier 2 explosive warhead, but not a Tier 3 warhead. It is important to keep this in mind when attempting to launch an attack!");
+			addGuidebook("chapter.missileoffense.l6", "The %1$s is used to increase the accuracy of the missile silo when launching a missile. A Missile Silo is more than capable of launching a missile without a support frame. However this will incur an inaccuracy of %2$s blocks. This means the missile will land within a square radius of %3$s blocks of the specified target. The %4$s " +
+					"will reduce this inaccuracy to %5$s blocks. The %6$s will reduce the inaccuracy further to %7$s blocks, while the %8$s will reduce inaccuracy all the way to %9$s blocks!");
+			addGuidebook("chapter.missileoffense.l7", "To assembly the Missile Silo, first place the %1$s. Then place the %2$s next to the %1$s facing the center of the block. Finally place the %3$s opposite the %2$s and facing the center of the %1$s. The %2$s will require power to function. If Electrodynamics is installed, it will require Joules at the appropriate Voltage. " +
+					"Otherwise the block can use FE from any mod. Items can be fed in from any side of the %1$s. Missiles launched from a Missile Silo will fly up to 500 blocks, travel horizontally till they near the target, and then arc back down.");
+			addGuidebook("chapter.missileoffense.l8", "The second method of missile offense Ballistix offers is the %1$s. The VLS is a compact version of the Tier 1 Silo with the missile targeting features of a %2$s. While its range is limited to only %3$s blocks, it allows you to set up mobile attach sites with ease. These can then be used in combination with your main Missile " +
+					"Silos, allowing you attach the enemy from multiple directions. Furthermore, since the VLS can only fire Tier 1 missiles, it can be used to wear down enemy defenses while your more valuable missiles are still on the way!");
+			addGuidebook("chapter.missileoffense.l9", "The VLS requires power to function. If Electrodynamics is installed, it will require Joules at the appropriate Voltage. Otherwise it will use FE from any mod. Power and items can be fed in from any side. Missiles fired from the VLS will launch vertically, arc towards their target, and then travel in a straight line.");
 
 			addGuidebook("chapter.items", "Items");
-			addGuidebook("chapter.items.rocketlauncher1", "The Rocket Launcher is capable of firing Tier 1 missiles with any explosive warhead. To fire it, have a Tier 1 missile in your inventory along with the explosive type of your choice. Note, it must be a Ballistix explosive, and it must be the block form. Once this is done, hold " + "the Launcher and Right-Click to fire!");
+			addGuidebook("chapter.items.rocketlauncher1", "The Rocket Launcher is capable of firing Tier 1 missiles with any Tier 1explosive warhead. To fire it, have a Tier 1 missile in your inventory along with the explosive type of your choice. Once this is done, hold the Launcher in your hand and Right-Click to fire!");
 
-			addGuidebook("chapter.items.radargun1",
-					"The Radar Gun is used to collect coordinates of a target and feed them into the Missile Silo instead of programming them manually. To use the Radar Gun, simply Right-Click on the target with the Gun to store its coordinates. This will expend %s and store the coordinates to the Gun. Then Right-Click on the Missile Silo " + "with the Gun to feed in the coordinates. Alternatively, the coordinates can be imported using the \"Sync\" slot in the GUI.");
+			addGuidebook("chapter.items.radargun1", "The Radar Gun is used to collect coordinates of a target and feed them into the Missile Silo instead of programming them manually. To use the Radar Gun, simply Right-Click on the target with the Gun to store its coordinates. This will expend %s and store the coordinates to the Gun. Then Right-Click on the Silo's Control Panel "
+					+ "with the Gun to feed in the coordinates. Alternatively, the coordinates can be imported using the \"Sync\" slot in the GUI. The Radar Gun is also compatible with the VLS!");
 
-			addGuidebook("chapter.items.laserdesignator1", "The Laser Designator is used to launch missiles from a Missile Silo remotely. To use it, first place a Silo and prepare a missile with your choice of warhead. Next, Right-Click the Designator on the Silo to link the Designator to the Silo's frequency. Alternatively, the frequency can be linked via the \"Sync\" slot. " + "Note, another the benefit of Designator is that you will not need to pre-program coordinates to the Missile Silo.");
-			addGuidebook("chapter.items.laserdesignator2", "With the Silo prepared and the Designator linked to the Silo, all the remains is to find a suitable target. When you find one, simply Right-Click on it with the Designator. This will expend %s, automatically feed the target's coordinates into the Silo, and fire the missile. Note, make sure the target is actually " + "in range of the missile in the Silo!");
+			addGuidebook("chapter.items.laserdesignator1", "The Laser Designator is used to launch missiles from a Missile Silo or VLS remotely up to %1$s blocks away from the silo. To use it, first place a Missile Silo and load it. Next, Right-Click the Designator on the Silo to link the Designator to the Silo's frequency. Alternatively, the frequency can be linked via the " +
+					"\"Sync\" slot.");
+			addGuidebook("chapter.items.laserdesignator2", "With the Silo prepared and the Designator linked to the Silo, all the remains is to find a suitable target. When you find one, simply Right-Click on it with the Designator. This will expend %1$s, automatically feed the target's coordinates into the Silo, and fire the missile. Note, make sure the target is actually "
+					+ "in range of the missile in the Silo! The coordinates entered by the Designator will also persist after firing.");
 
 			addGuidebook("chapter.items.defuser1", "The Defuser is your only hope of stopping an explosive from detonating once it has been activated. To use it, Right-Click on the explosive with the Defuser, and it will, as the name suggests, defuse it! This will expend %s and drop the explosive that was defused on the ground. Note, the Defuser also works on Vanilla TNT.");
 
@@ -263,46 +303,70 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 
 			addGuidebook("chapter.missiledefense", "Missile Defense");
 
-			addGuidebook("chapter.missiledefense.l1", "While the best defense is not to be found, what do you do if your base gets discovered, and now someone has launched a nuclear missile at it? The answer is quite simple: shoot the missile down. Ballistix offers a wide selections of methods to accomplish this task. The following pages will cover these various methods, their " + "strengths, and their weaknesses.");
+			addGuidebook("chapter.missiledefense.l1", "While the best defense is not to be found, what do you do if your base gets discovered, and now someone has launched a nuclear missile at it? The answer is quite simple: shoot the missile down. Ballistix offers a wide selections of methods to accomplish this task. The following pages will cover these various methods, their "
+					+ "strengths, and their weaknesses.");
+			addGuidebook("chapter.missiledefense.l2", "The cornerstone of all Ballistix missile defenses is the %1$s. The %1$s tracks incoming missiles and provides the targeting information to turrets that are linked to it. The Radar has a range of %2$s blocks and can only track one missile at a time. It will track the missile closest to it, and all turrets bound to the radar " +
+					"will target the same missile. The Radar is powered from the bottom. If Electrodynamics is installed, it will require Joules at the appropriate Voltage. Otherwise it will use FE. The radar can be toggled with redstone if enabled, and will read a comparitor signal of 15 if actively tracking a missile.");
+			addGuidebook("chapter.missiledefense.l3.1", "To link a turret to the radar, hover over the block with a %1$s and Shift + Right-Click the block:");
+			addGuidebook("chapter.missiledefense.l3.2", "This will store the radar's position. Then, hover over the turret of choice and Shift + Right-Click with the %1$s in hand:");
+			addGuidebook("chapter.missiledefense.l3.3", "Note the turret must be within %1$s blocks of the radar to be able to be bound. Next we will cover the different turrets offered, their stats, and their strengths and weaknesses.");
 
-			addGuidebook("chapter.missiledefense.searchradar1", "The Search Radar is a highly valuable tool, as it serves as an early warning device for incoming missiles. Being able to detect missiles or ESM Towers out to a range of %s blocks, the device will emit a redstone signal upon detection, and will continue to emit a signal while it is detecting something. The Radar will " +
-					"read a comparator signal of 8 if it is only detecting an ESM Tower, and will read a signal of 15 if it is detecting both missiles and ESM Towers. Note however that the Search Radar does not discriminate between the missiles it detects, meaning it can detect the missiles you launch as well! To prevent this, you can whitelist certain launch frequencies to exclude them from " +
-					"detection. To add frequencies, select the Frequency Manager tab inside the radar's GUI:");
-			addGuidebook("chapter.missiledefense.searchradar2", "Note the whitelist mode must be enabled for the frequencies to actually be ignored. Disabling whitelist mode won't wipe any stored frequencies! The radar must also be placed above-ground in order to work.");
+			addGuidebook("chapter.missiledefense.turretminrange", "Min Range: %s");
+			addGuidebook("chapter.missiledefense.turretmaxrange", "Max Range: %s");
+			addGuidebook("chapter.missiledefense.turretammo", "Ammo: %s");
+			addGuidebook("chapter.missiledefense.turretelevation", "Elevation: +%s" + '\u02DA');
+			addGuidebook("chapter.missiledefense.turretdepression", "Depression: -%s" + '\u02DA');
 
-			addGuidebook("chapter.missiledefense.firecontrolradar1", "The Fire Control Radar is an upgraded and more powerful variant of the Search Radar. The radar is able to lock onto an incoming missile and relay the target information to linked turrets. To link a turret, shift+right-click the radar with a %1$s. Then, shift+right-click the Radar Gun on the turret of choice. There is no limit "
-					+ "to the number of turrets that can be bound to a single Fire Control Radar, however the turret can be no more than %2$s blocks away. Note that all turrets bound to a radar will fire at the same target the radar is tracking! A turret will not be able to lock onto a missile if it is not bound to a radar.");
-			addGuidebook("chapter.missiledefense.firecontrolradar2", "Similarly to the Search Radar, the Fire Control Radar must be placed above-ground in order to work. Unlike the Search variant, it has a more limited range of %s blocks. A useful feature to note is the radar can be controlled via redstone.");
+			addGuidebook("chapter.missiledefense.samturret1", "The SAM Turret specializes in long-range missile defense. Its base maximum range can also be further upgraded with Range Upgrades. The %1$s it fires is homing so long as the radar the turret is linked to remains operational, thus increasing the chance of a successful hit. A SAM has a %2$s chance to destroy a missile upon impact! " +
+					"Upon firing, the turret will need to wait %3$s ticks before it is able to fire again. The effectiveness of the turret comes at a price however, as it can only engage missiles. Also, once a missile is within the minimum range of the turret, it will not be able to fire! The turret is powered from the bottom. If Electrodynamics is installed, it will require Joules at the appropriate " +
+					"Voltage. Otherwise it will use FE.");
 
-			addGuidebook("chapter.missiledefense.esmtower1", "The ESM Tower is used to detect nearby radars. The Tower can detect radars within a %s block range. Search Radars are weaker by nature, so the tower will only be able to identify if one is within its detection range. Fire Control Radars on the other hand will have their exact positions listed if they are active! Note "
-					+ "that an ESM Tower will have its exact position detected by a Search Radar! A detected ESM Tower will cause the radar to emit a redstone signal just as with a missile.");
-			addGuidebook("chapter.missiledefense.esmtower2", "Using the tower does not come with risks however! A missile silo can be configured to counter-launch if an ESM Tower is picked up by the Search Radar. A silo can be linked to a Search Radar by inputting the Radar's coordinates into the silo's target fields. Upon receiving a redstone signal, the silo will launch at the " +
-					"ESM Tower's position.");
+			addGuidebook("chapter.missiledefense.ciwsturret1", "The Close-In Weapons System or CIWS Turret is designed as a last line of defense against an incoming missile, boasting an impressive 20 rounds / second! The turret is reasonably accurate, but accuracy quickly decreases the further a target is from it. Its base range can be increased with Range Upgrades. Each %1$s will " +
+					"inflict one damage to an incoming missile with each missile having %2$s health. The turret must have a direct line of sight to the missile, and it can only hold up to 128 rounds. The CIWS is able to engage both missiles and entities, and bullets deal 10 damage upon hitting an entity. The turret is powered from the bottom. If Electrodynamics is installed, it will require Joules " +
+					"at the appropriate Voltage. Otherwise it will use FE.");
 
-			addGuidebook("chapter.missiledefense.samturret1", "The SAM Turret is a turret dedicated to long-range missile defense. Firing %1$ss, the turret can engage targets up to %2$s blocks! This range can be further increased with range upgrades. On top of this, the missiles launched are homing so long as the Fire Control Radar is tracking a target, granting an increased chance " +
-					"to hit the target!. The turret is highly accurate, and can hold up to 10 rockets at a time. A Smart Missile will outright destroy a Ballistic Missile, however it only has a %4$s chance to do so! Note the turret will need to wait %3$s ticks between firing! The turret has a maximum elevation of 90 degrees and a maximum depression of 45 degrees. It should be noted that the turret " +
-					"can only engage missiles. Furthermore, once a missile is within 100 blocks, the turret will no longer be able to engage it!");
+			addGuidebook("chapter.missiledefense.laserturret1", "The Laser Turret offers an alternative to the CIWS and SAM turrets, as it does not utilize ammunition. However this comes at the cost of being incredibly power hungry. On top of being incredibly power hungry, the turret also has a heat buffer that builds up while firing. If the temperature of the turret reaches past " +
+					"a certain point, the turret will need to cool down before it can engage targets again. The turret deals a maximum of one damage/tick, however the further a target is from the turret, the less damage it will deal. The maximum range of the turret also cannot be upgraded. The Laser Turret can engage both missiles and entities, however it must have a clear line of sight to the target. " +
+					"Entities damaged by the turret will also be set on fire! The turret is powered from the bottom. If Electrodynamics is installed, it will require Joules at the appropriate Voltage. Otherwise it will use FE.");
+			addGuidebook("chapter.missiledefense.laserturret.energy", "Energy");
 
-			addGuidebook("chapter.missiledefense.ciwsturret1", "The Close-In Weapons System or CIWS Turret is designed as a last line of defense against an incoming missile. It fires %1$ss at an impressive 20 rounds / second! The turret is reasonably accurate, but accuracy quickly decreases the further a target is from it. It has a base range of %2$s blocks that can be increased "
-					+ "with range upgrades. Each bullet will inflict one damage to an incoming missile with each missile having %3$s health. The turret must have a direct line of site to the missile however. The turret can only hold up to 128 rounds. Unlike the SAM Turret, the CIWS has no minimum range. The turret has a maximum elevation of 90 degrees and a maximum depression of 45 degrees.");
-			addGuidebook("chapter.missiledefense.ciwsturret2",
-					"The CIWS can also be used against players and other mobs, and does not need to be bound to a radar to do so. Note it still will be able to engage mobs if bound to a radar, but will prioritize any detected missiles. The detection range is one quarter the turret's current missile engagement range, and the turret must " + "have a clear line of site to engage. While it will target all mobs, you are able to whitelist certain players. To do so, select the Whitelist Manager tab:");
-			addGuidebook("chapter.missiledefense.ciwsturret3", "There, you can enter the name of the players you wish to whitelist to the turret. Note the name of the player who places the turret is added automatically. Bullets deal 10 damage upon impact!");
-			addGuidebook("chapter.missiledefense.ciwsturret4", "While you may not be able to whitelist certain mobs, the turret can have its firing mode programmed to include or exclude mobs when searching for a target. This can be selected via the \"Targeting Mode\" tab:");
+			addGuidebook("chapter.missiledefense.railgunturret1", "The Railgun Turret is a hybrid between the CIWS and SAM turrets. It fires Steel Rods that destroy a missile on contact. Its maximum range can also be increased with Range Upgrades. The turret must wait %1$s ticks between shots, and like with the Laser Turret, it is incredibly power-hungry. The Railgun Turret can " +
+					"engage both missiles and entities. The steel rod will deal 20 damage on hitting and entity, but the turret must have a clear line of sight to engage! The turret is powered from the bottom. If Electrodynamics is installed, it will require Joules at the appropriate Voltage. Otherwise it will use FE.");
+			addGuidebook("chapter.missiledefense.railgunturret.rod", "Steel Rod");
 
-			addGuidebook("chapter.missiledefense.laserturret1", "The Laser Turret offers an alternative to the CIWS and SAM turrets, as it does not utilize ammunition. However this comes at the cost of being incredibly power hungry. The turret deals 1 damage/tick, however this is dependent on range. The further a target is from the turret, the less damage it will deal. The turret "
-					+ "has a range of %s blocks, however this cannot be upgraded. It has no minimum engagement range. The turret has a maximum elevation of 90 degrees and a maximum depression of 45 degrees.");
-			addGuidebook("chapter.missiledefense.laserturret2", "On top of being incredibly power hungry, the turret also has a heat buffer that builds up while firing. If the temperature of the turret reaches past a certain point, it will need to cool down before it can engage targets again! Like with the CIWS, the Laser Turret can attack entities and players within a quarter of its "
-					+ "missile targeting range. Mobs and players are additionally set on fire when damaged by the laser turret. It must have a clear line of site to the mob also.");
+			addGuidebook("chapter.missiledefense.l4", "Turrets that can engage entities as well as players can only target entities up to 1/4 their maximum range away. They will not require a radar however to be able to do this. Turrets that are linked to a radar can still engage entities, however they will prioritize any missile the radar is tracking.");
 
-			addGuidebook("chapter.missiledefense.railgunturret1", "The Railgun Turret is a hybrid between the CIWS and SAM turrets. It fires Steel Rods that destroy a missile on contact. It is able to engage missiles up to %2$s blocks, and this range can be increased with range upgrades. It has no minimum engagement range. The turret must wait %3$s ticks between shots, and can "
-					+ "only hold up to 64 rods at a time. Like with the Laser Turret, it is incredibly power-hungry. The turret has a maximum elevation of 45 degrees and a maximum depression of 45 degrees.");
-			addGuidebook("chapter.missiledefense.railgunturret2", "Like with the CIWS and Laser Turrets, the Railgun Turret can engage players and mobs up to one quarter the distance of its missile engagement range. The steel rod will deal 20 damage on impact, but the turret must have a clear line of site to engage!");
+			addGuidebook("chapter.missiledefense.l5.1", "Turrets that can target entities will be able to be toggled between targeting only players or all living entities via  the \"Targeting Mode\" tab:");
+			addGuidebook("chapter.missiledefense.l5.2", "There is no ability to specify the mobs the turret targets, however you are able to whitelist certain players. This can be accomplished via the Whitelist Manager tab:");
+			addGuidebook("chapter.missiledefense.l5.3", "There, you can enter the name of the players you wish to whitelist to the turret. The name of the player who places the turret is added automatically. Note that whitelist mode must be enabled to actually work! If you disable whitelist mode on a previously white-listed turret, the names in the list won't be wiped!");
 
-			addGuidebook("chapter.missiledefense.missilesilo", "Missile Silo");
-			addGuidebook("chapter.missiledefense.missilesilo1", "Another method of missile defense altogether is to repurpose a missile silo to fire %1$ss. The Smart Missile MK2 is capable of reaching higher speeds than its MK1 counterpart, and boasts a %2$s chance to destroy a missile! However, the silo can only hold five at a time, and must be linked to a Fire Control Radar. " +
-					"To link a missile silo to a radar, enter the radar's XYZ coordinates into the silo where the target coordinates typically go. The MK2 can only be fired with a redstone signal, and the explosives slot must be empty. The Fire Control Radar will emit a comparator signal of 15 if actively tracking a target. However, as with the MK1, a MK2 can only be fired if the incoming missile " +
-					"is more than 100 blocks away. It should be noted that the MK2, while faster, cannot turn as fast due to its size.");
+			addGuidebook("chapter.missiledefense.antiballisticmissile1", "The most powerful form of missile defense available is the %1$s. The %1$s is capable of reaching higher speeds than its SAM counterpart, and boasts a %2$s chance to destroy a missile! To launch one, place it in a Missile Silo with the warhead slot empty. The Silo must be linked to a Fire Control Radar, and will only " +
+					"fire if the radar is actively tracking an incoming missile and receives a redstone signal. To link a missile silo to a radar, enter the radar's coordinates into the silo where the target coordinates typically go.");
+			addGuidebook("chapter.missiledefense.antiballisticmissile2", "While the redstone requirement may sound complicated, recall the Fire Control Radar will read a redstone signal of 15 via a comparator while actively tracking an incoming missile. Therefore, automating the sequence is as simple as this:");
+
+			addGuidebook("chapter.missiledefense.l6", "It is important to note at this point that having only one turret or Anti-Ballistic missile silo is not a good defense. Optimal defenses will have multiple turrets of different types to ensure they are not easily overwhelmed. Before we continue, if you stop reading here you will be able to successfully set up missile defenses " +
+					"to protect your base. However if you continue reading, you will see that there is a higher skill ceiling for Ballistix Defenses!");
+
+			addGuidebook("chapter.missiledefense.esmtower1", "The ESM Tower is used to detect nearby radars within a %s block range. Fire Control Radars have their exact positions listed by the Tower if they are active! The Tower is powered from the bottom. If Electrodynamics is installed, it will require Joules at the appropriate Voltage. Otherwise it will use FE. Note the tower " +
+					"must be above ground to work!");
+
+			addGuidebook("chapter.missiledefense.l7", "The ESM Tower's existence means that if you leave your Fire Control Radar running all the time, you will be a very easy target for base hunters! However simply turning the Radar off is not a good solution, as then you will be left a sitting duck. Fortunately, there is a way you can fight back against any potential base hunter.");
+
+			addGuidebook("chapter.missiledefense.searchradar1", "The Search Radar is a lower-powered radar that can be utilized as an early warning device. It is able to detect missiles or ESM Towers out to a range of %s blocks. Due to the block being a weaker radiation source, the ESM Tower will only be able to determine that a Search Radar is in its detection range without listing " +
+					"any coordinates. The Radar can detect an unlimited amount of incoming missiles or ESM Towers, but more importantly however, the Radar will emit a redstone signal upon detecting something. It will also read a comparator signal of 0 if only detecting missiles, a signal of 8 if it is only detecting ESM Towers, and will read a signal of 15 if it is detecting both missiles " +
+					"and ESM Towers. You can therefore use these redstone signals to automate when your defenses flip on!");
+			addGuidebook("chapter.missiledefense.searchradar2", "It is important to note however that the Search Radar does not discriminate between the missiles it detects, meaning it can detect the missiles you launch as well! To prevent this, you can whitelist certain launch frequencies to exclude them from detection. To add frequencies, select the Frequency Manager tab inside " +
+					"the radar's GUI:");
+			addGuidebook("chapter.missiledefense.searchradar3", "Note the whitelist mode must be enabled for the frequencies to actually be ignored. Disabling whitelist mode won't wipe any stored frequencies! The Fire Control Radar has an identical whitelist feature for reference. The Search Radar must be placed above-ground in order to work and is powered from the bottom. " +
+					"If Electrodynamics is installed, it will require Joules at the appropriate Voltage. Otherwise it will use FE.");
+
+			addGuidebook("chapter.missiledefense.l8", "\"The Search Radar is great and all, but I can still be detected by an ESM Tower even with all of my fancy redstone\" you might be saying to yourself right now. Don't worry, as there is one final trick you can implement. While the Search Radar is not strong enough to actively provide " +
+					"targeting data to turrets, it can still provide location data. We can make use of this fact!");
+			addGuidebook("chapter.missiledefense.l9", "By feeding the coordinates of a detected ESM Tower into a missile silo prepped to launch, you can effectively counter-fire upon any ESM Tower the moment one is detected. The threat of a nuclear missile being inbound will give any ESM Tower user pause!");
+			addGuidebook("chapter.missiledefense.l10", "To configure this counter-launch feature is identical to how the Anti-Ballistic missile setup is configured with the Fire Control radar. Input the Search Radar's coordinates into the targeting field of the silo, and provide it a redstone signal to fire when the Search Radar detects an ESM Tower:");
+
+			addGuidebook("chapter.missiledefense.l11", "Remember the best Ballistix defense is still not being found. Any active defenses you do construct should have redundancies built in. ");
+
 
 			addJei("info.item.missilecloserange", "Specs:\n    Range: 3000 Blocks");
 			addJei("info.item.missilemediumrange", "Specs:\n    Range: 10 000 Blocks");

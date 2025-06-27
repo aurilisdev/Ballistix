@@ -54,7 +54,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 	public SingleProperty<BlockPos> target = property(new SingleProperty<>(PropertyTypes.BLOCK_POS, "target", BlockPos.ZERO));
 
 	private int cooldown = 100;
-	public boolean shouldLaunch = false;
+	public final SingleProperty<Boolean> shouldLaunch = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "shouldlaunch", false));
 	public CachedTileOutput launcherPlatform;
 	public CachedTileOutput supportFrame;
 
@@ -125,7 +125,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 			return;
 		}
 
-		if (!platform.hasMissile() || (platform.hasExplosive() && platform.hasSAM()) || (!platform.hasExplosive() && !platform.hasSAM()) || (!hasRedstone && !shouldLaunch)) {
+		if (!platform.hasMissile() || (platform.hasExplosive() && platform.hasSAM()) || (!platform.hasExplosive() && !platform.hasSAM()) || (!hasRedstone && !shouldLaunch.getValue())) {
 			return;
 		}
 
@@ -135,7 +135,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 			inaccuracy = frame.getInaccuracy();
 		}
 
-		shouldLaunch = false;
+		shouldLaunch.setValue(false);
 
 		double dist = calculateDistance(worldPosition, target.getValue());
 
@@ -216,14 +216,12 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 	protected void saveAdditional(CompoundTag compound) {
 		super.saveAdditional(compound);
 		compound.putInt("silocooldown", cooldown);
-		compound.putBoolean("shouldlaunch", shouldLaunch);
 	}
 
 	@Override
 	public void load(CompoundTag compound) {
 		super.load(compound);
 		cooldown = compound.getInt("silocooldown");
-		shouldLaunch = compound.getBoolean("shouldlaunch");
 	}
 	
 	@Override
@@ -247,7 +245,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 
 	@Override
 	public void launch() {
-		shouldLaunch = true;
+		shouldLaunch.setValue(true);
 	}
 
 	@Override

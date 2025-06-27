@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 
 import ballistix.common.block.BallistixVoxelShapes;
 import ballistix.common.tile.TileESMTower;
+import ballistix.common.tile.TileVerticalLaunchSilo;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.radar.TileSearchRadar;
 import ballistix.common.tile.silo.TileLauncherControlPanelT1;
@@ -55,6 +56,8 @@ public enum SubtypeBallistixMachine implements ISubtype, IMachine {
 	launcherplatformtier2(true, TileLauncherPlatformT2::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.LAUNCHER_PLATFORM_TIER2).setSubnodes(Subnodes.LAUNCHER_PLATFORM_TIER2)),
 	//
 	launcherplatformtier3(true, TileLauncherPlatformT3::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.LAUNCHER_PLATFORM_TIER3).setSubnodes(Subnodes.LAUNCHER_PLATFORM_TIER3)),
+	//
+	vls(true, TileVerticalLaunchSilo::new, MachineProperties.builder().setSubnodes(Subnodes.VLS)),
 	//
 	radar(true, TileSearchRadar::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.RADAR)),
 	//
@@ -358,6 +361,8 @@ public enum SubtypeBallistixMachine implements ISubtype, IMachine {
 			subnodesWest[4] = new Subnode(new BlockPos(0, 1, 1), rotate(Direction.EAST, topRightShape));
 			return IMultiblockParentBlock.SubnodeWrapper.createDirectional(subnodesNorth, subnodesEast, subnodesSouth, subnodesWest);
 		});
+		
+		public static final IMultiblockParentBlock.SubnodeWrapper VLS = make(() -> IMultiblockParentBlock.SubnodeWrapper.createOmni(new Subnode[]{new Subnode(new BlockPos(0, 1, 0), Shapes.block())}));
 
 		public static IMultiblockParentBlock.SubnodeWrapper make(Supplier<IMultiblockParentBlock.SubnodeWrapper> sup) {
 			return sup.get();

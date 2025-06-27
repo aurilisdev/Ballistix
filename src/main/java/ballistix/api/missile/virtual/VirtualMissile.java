@@ -11,10 +11,11 @@ import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.api.silo.ILauncherPlatform;
 import ballistix.api.silo.ILauncherSupportFrame;
-import ballistix.common.blast.Blast;
+import ballistix.common.blast.util.Blast;
 import ballistix.common.entity.EntityBlast;
 import ballistix.common.entity.EntityMissile;
 import ballistix.common.settings.BallistixConstants;
+import ballistix.registers.BallistixSounds;
 import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -90,7 +91,7 @@ public class VirtualMissile {
         this.payloadData = payloadData;
     }
 
-    public VirtualMissile(Vector3d startPos, Vector3d initialMovement, float initialSpeed, boolean isItem, float startX, float startZ, BlockPos target, int missileType, IBlast blast, int frequency, boolean usingAirburst) {
+    public VirtualMissile(Vector3d startPos, Vector3d initialMovement, float initialSpeed, FlightPath flightPath, float startX, float startZ, BlockPos target, int missileType, IBlast blast, int frequency, boolean usingAirburst) {
 
         this.position = startPos;
         this.deltaMovement = initialMovement;
@@ -99,7 +100,7 @@ public class VirtualMissile {
 
         this.targetData = new MissileTargetData(startX, startZ, target, false, usingAirburst);
         this.entityData = new MissileEntityData(false, -1);
-        this.payloadData = new MissilePayloadData(missileType, blast.id(), frequency, isItem);
+        this.payloadData = new MissilePayloadData(missileType, blast.id(), frequency, flightPath.ordinal(), false);
 
     }
 
@@ -114,7 +115,7 @@ public class VirtualMissile {
             return;
         }
 
-        if ((!payloadData.isItem && targetData.target.equals(BlockEntityUtils.OUT_OF_REACH)) || payloadData.blastId == null) {
+        if ((payloadData.getFlightPath() != FlightPath.ROCKET_LAUNCHER && targetData.target.equals(BlockEntityUtils.OUT_OF_REACH)) || payloadData.blastId == null) {
             hasExploded = true;
             return;
         }
@@ -132,7 +133,7 @@ public class VirtualMissile {
 
         BlockPos collisionPos = projectMovementForCollision(level);
 
-        if ((collisionPos != null || (targetData.usingAirburst && targetData.pastHalfwayPoint && position.y <= targetData.target.getY())) && (payloadData.isItem || !isInValidBlockstate(collisionPos, level)) || position.y <= 0) {
+        if ((collisionPos != null || (targetData.usingAirburst && targetData.pastHalfwayPoint && position.y <= targetData.target.getY())) && (payloadData.getFlightPath() == FlightPath.ROCKET_LAUNCHER || !isInValidBlockstate(collisionPos, level)) || position.y <= 0) {
 
         	IBlast explosive = Blast.BLAST_MAP.get(payloadData.blastId);
 
@@ -161,7 +162,7 @@ public class VirtualMissile {
 
         }
 
-        if (!payloadData.isItem) {
+        if (payloadData.getFlightPath() == FlightPath.SILO) {
 
             float iDeltaX = targetData.target.getX() - targetData.startX;
             float iDeltaZ = targetData.target.getZ() - targetData.startZ;
@@ -250,13 +251,49 @@ public class VirtualMissile {
 
             }
 
+        } else if (payloadData.getFlightPath() == FlightPath.VLS) {
+
+            if(!payloadData.hasIgnighted && speed > - 0.15) {
+                speed -= 0.03F;
+            } else if (!payloadData.hasIgnighted) {
+                payloadData.hasIgnighted = true;
+                level.playSound(null, blockPosition(), BallistixSounds.SOUND_MISSILE_SILO.get(), SoundCategory.BLOCKS, 1.0F, 1.0F);
+            } else if (speed > 0.5) {
+
+                Vector3d desiredVector = new Vector3d(targetData.target.getX() - position.x, targetData.target.getY() - position.y, targetData.target.getZ() - position.z).normalize();
+                Vector3d currVector = deltaMovement.normalize();
+
+                double dotProduct = desiredVector.dot(currVector);
+                double maxTurnRadians = 0.05;
+
+                if(dotProduct != 0) {
+
+                    if(Math.acos(dotProduct) <= maxTurnRadians) {
+                        deltaMovement = desiredVector;
+                    } else {
+
+                        Vector3d perpVector = currVector.cross(desiredVector).cross(currVector).normalize();
+
+                        Vector3d result = currVector.scale(Math.cos(maxTurnRadians)).add(perpVector.scale(Math.sin(maxTurnRadians)));
+
+                        deltaMovement = result.normalize();
+
+
+
+                    }
+
+                }
+
+            }
+
+
         }
 
         if (blastEntity == null) {
             position = new Vector3d (position.x + speed * deltaMovement.x, position.y + speed * deltaMovement.y, position.z + speed * deltaMovement.z);
         }
 
-        if (!payloadData.isItem && !targetData.target.equals(BlockEntityUtils.OUT_OF_REACH) && speed < 3.0F) {
+        if ((payloadData.getFlightPath() == FlightPath.SILO || (payloadData.getFlightPath() == FlightPath.VLS && payloadData.hasIgnighted)) && !targetData.target.equals(BlockEntityUtils.OUT_OF_REACH) && speed < 3.0F) {
             speed += 0.02F;
         }
 
@@ -268,7 +305,7 @@ public class VirtualMissile {
             missile.missileType = payloadData.missileType;
             missile.speed = speed;
             missile.id = id;
-            missile.isItem = payloadData.isItem;
+            missile.flightPath = payloadData.flightPath;
             missile.target = targetData.target;
             missile.startX = targetData.startX;
             missile.startZ = targetData.startZ;
@@ -420,21 +457,35 @@ public class VirtualMissile {
                 //
                 Codec.INT.fieldOf("frequency").forGetter(instance0 -> instance0.frequency),
                 //
-                Codec.BOOL.fieldOf("isitem").forGetter(instance0 -> instance0.isItem)
+                Codec.INT.fieldOf("fligthpath").forGetter(instance0 -> instance0.flightPath),
+                Codec.BOOL.fieldOf("hasignighted").forGetter(instance0 -> instance0.hasIgnighted)
+                //
                 //
         ).apply(instance, MissilePayloadData::new));
 
         public final int missileType;
         public final ResourceLocation blastId;
         public final int frequency;
-        private final boolean isItem;
+        private final int flightPath;
+        public boolean hasIgnighted;
 
-        public MissilePayloadData(int missileType, ResourceLocation blastId, int frequency, boolean isItem) {
+        public MissilePayloadData(int missileType, ResourceLocation blastId, int frequency, int flightPath, boolean hasIgnighted) {
             this.missileType = missileType;
             this.blastId = blastId;
             this.frequency = frequency;
-            this.isItem = isItem;
+            this.flightPath = flightPath;
+            this.hasIgnighted = hasIgnighted;
         }
+        
+        public FlightPath getFlightPath() {
+            return FlightPath.values()[flightPath];
+        }
+
+    }
+    
+    public static enum FlightPath {
+
+        ROCKET_LAUNCHER, VLS, SILO;
 
     }
 

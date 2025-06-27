@@ -1,6 +1,8 @@
 package ballistix.common.tags;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag.INamedTag;
 import net.minecraft.tags.ItemTags;
 import voltaic.Voltaic;
@@ -9,6 +11,7 @@ public class BallistixTags {
 
 	public static void init() {
 		Items.init();
+		Blocks.init();
 	}
 
 	public static class Items {
@@ -24,6 +27,19 @@ public class BallistixTags {
 
 		private static INamedTag<Item> forgeTag(String name) {
 			return ItemTags.createOptional(Voltaic.forgerl(name));
+		}
+
+	}
+	
+	public static class Blocks {
+
+		public static final INamedTag<Block> WHITELISTED_TURRET_BLOCKS = forgeTag("whitelistedturretblocks");
+
+		private static void init() {
+		}
+
+		private static INamedTag<Block> forgeTag(String name) {
+			return BlockTags.createOptional(Voltaic.forgerl(name));
 		}
 
 	}

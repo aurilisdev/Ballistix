@@ -2,7 +2,7 @@ package ballistix.common.item;
 
 import java.util.List;
 
-import ballistix.common.tile.silo.TileLauncherControlPanelT1;
+import ballistix.api.silo.ILauncherControlPanel;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixCreativeTabs;
@@ -43,13 +43,13 @@ public class ItemRadarGun extends ItemElectric {
         }
         TileEntity tile = context.getLevel().getBlockEntity(context.getClickedPos());
 
-        if (tile instanceof TileLauncherControlPanelT1) {
+        if (tile instanceof ILauncherControlPanel) {
 
-            ((TileLauncherControlPanelT1) tile).target.setValue(getCoordiantes(stack));
+            ((ILauncherControlPanel) tile).setTarget(getCoordiantes(stack));
 
-        } else if (tile instanceof TileMultiSubnode && ((TileMultiSubnode) tile).getLevel().getBlockEntity(((TileMultiSubnode) tile).parentPos.getValue()) instanceof TileLauncherControlPanelT1) {
+        } else if (tile instanceof TileMultiSubnode && ((TileMultiSubnode) tile).getLevel().getBlockEntity(((TileMultiSubnode) tile).parentPos.getValue()) instanceof ILauncherControlPanel) {
 
-        	((TileLauncherControlPanelT1) ((TileMultiSubnode) tile).getLevel().getBlockEntity(((TileMultiSubnode) tile).parentPos.getValue())).target.setValue(getCoordiantes(stack));
+        	((ILauncherControlPanel) ((TileMultiSubnode) tile).getLevel().getBlockEntity(((TileMultiSubnode) tile).parentPos.getValue())).setTarget(getCoordiantes(stack));
 
         } else if (tile instanceof TileTurretAntimissile) {
             if (((TileTurretAntimissile) tile).bindFireControlRadar(getCoordiantes(stack))) {
@@ -90,7 +90,7 @@ public class ItemRadarGun extends ItemElectric {
 
         TileEntity tileentity = trace.getTile(playerIn.level);
         
-        if (tileentity instanceof TileLauncherControlPanelT1 || tileentity instanceof TileMultiSubnode && ((TileMultiSubnode) tileentity).getLevel().getBlockEntity(((TileMultiSubnode) tileentity).parentPos.getValue()) instanceof TileLauncherControlPanelT1 || tileentity instanceof TileTurretAntimissile) {
+        if (tileentity instanceof ILauncherControlPanel || tileentity instanceof TileMultiSubnode && ((TileMultiSubnode) tileentity).getLevel().getBlockEntity(((TileMultiSubnode) tileentity).parentPos.getValue()) instanceof ILauncherControlPanel || tileentity instanceof TileTurretAntimissile) {
             return super.use(worldIn, playerIn, handIn);
         }
 

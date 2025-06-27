@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import ballistix.common.blast.Blast;
+import ballistix.common.blast.util.Blast;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixDamageTypes;
 import ballistix.registers.BallistixEntities;

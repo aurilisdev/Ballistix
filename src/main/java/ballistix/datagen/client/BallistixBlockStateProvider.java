@@ -10,6 +10,7 @@ import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
+import net.minecraftforge.client.model.generators.ModelBuilder.Perspective;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import voltaic.datagen.utils.client.BaseBlockstateProvider;
 
@@ -60,16 +61,21 @@ public class BallistixBlockStateProvider extends BaseBlockstateProvider {
 		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.incendiary), existingBlock(blockLoc("explosiveincendiary")), true);
 		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.shrapnel), existingBlock(blockLoc("explosiveshrapnel")), true);
 		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.condensive), existingBlock(blockLoc("explosivecondensive")), true);
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.anvil), existingBlock(blockLoc("explosiveanvil")), true);
 		// Tier 2
 		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.thermobaric), existingBlock(blockLoc("explosivethermobaric")), true);
 		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.breaching), existingBlock(blockLoc("explosivebreaching")), true);
 		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.debilitation), existingBlock(blockLoc("explosivedebilitation")), true);
 		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.contagious), existingBlock(blockLoc("explosivecontagious")), true);
 		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.fragmentation), existingBlock(blockLoc("explosivefragmentation")), true);
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.sonic), existingBlock(blockLoc("explosivesonic")), true);
 		// Tier 3
 		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.emp), existingBlock(blockLoc("explosiveemp")), true);
 		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.nuclear), existingBlock(blockLoc("explosivenuclear")), true);
-		// Tier 4
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.endothermic), existingBlock(blockLoc("explosiveendothermic")), true);
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.ender), existingBlock(blockLoc("explosiveender")), true);
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.hypersonic), existingBlock(blockLoc("explosivehypersonic")), true);
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.rejuvination), existingBlock(blockLoc("explosiverejuvination")), true);
 		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.antimatter), existingBlock(blockLoc("explosiveantimatter")), true);
 		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.darkmatter), existingBlock(blockLoc("explosivedarkmatter")), true);
 		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.largeantimatter), existingBlock(blockLoc("explosivelargeantimatter")), true);
@@ -95,6 +101,8 @@ public class BallistixBlockStateProvider extends BaseBlockstateProvider {
 		horrRotatedBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.ciwsturret), existingBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.ciwsturret)), false);
 		horrRotatedBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.laserturret), existingBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.laserturret)), false);
 		horrRotatedBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.railgunturret), existingBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.railgunturret)), false);
+		simpleBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.vls), existingBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.vls)), true).transforms().transform(Perspective.GUI).rotation(30, 225, 0).translation(0, -2.8F, 0).scale(0.4F).end();
+
 
 	}
 

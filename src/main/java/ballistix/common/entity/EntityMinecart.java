@@ -4,7 +4,7 @@ import javax.annotation.Nullable;
 
 import ballistix.api.blast.IBlast;
 import ballistix.api.entity.IDefusable;
-import ballistix.common.blast.Blast;
+import ballistix.common.blast.util.Blast;
 import ballistix.registers.BallistixEntities;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;

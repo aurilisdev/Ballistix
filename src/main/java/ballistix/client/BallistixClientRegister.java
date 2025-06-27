@@ -9,6 +9,7 @@ import ballistix.client.particle.ParticleShockwave;
 import ballistix.client.render.entity.RenderBlast;
 import ballistix.client.render.entity.RenderBullet;
 import ballistix.client.render.entity.RenderExplosive;
+import ballistix.client.render.entity.RenderFallingBlock;
 import ballistix.client.render.entity.RenderGrenade;
 import ballistix.client.render.entity.RenderMinecart;
 import ballistix.client.render.entity.RenderMissile;
@@ -36,6 +37,7 @@ import ballistix.client.screen.ScreenLauncherPlatformT3;
 import ballistix.client.screen.ScreenRailgunTurret;
 import ballistix.client.screen.ScreenSAMTurret;
 import ballistix.client.screen.ScreenSearchRadar;
+import ballistix.client.screen.ScreenVLS;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.item.ItemTracker;
 import ballistix.common.settings.BallistixConstants;
@@ -126,6 +128,7 @@ public class BallistixClientRegister {
 		ScreenManager.register(BallistixMenuTypes.CONTAINER_CIWSTURRET.get(), ScreenCIWSTurret::new);
 		ScreenManager.register(BallistixMenuTypes.CONTAINER_LASERTURRET.get(), ScreenLaserTurret::new);
 		ScreenManager.register(BallistixMenuTypes.CONTAINER_RAILGUNTURRET.get(), ScreenRailgunTurret::new);
+		ScreenManager.register(BallistixMenuTypes.CONTAINER_VLS.get(), ScreenVLS::new);
 
 		ScreenGuidebook.addGuidebookModule(new ModuleBallistix());
 
@@ -183,6 +186,7 @@ public class BallistixClientRegister {
 		manager.register(BallistixEntities.ENTITY_SAM.get(), new RenderSAM(manager));
 		manager.register(BallistixEntities.ENTITY_BULLET.get(), new RenderBullet(manager));
 		manager.register(BallistixEntities.ENTITY_RAILGUNROUND.get(), new RenderRailgunRound(manager));
+		manager.register(BallistixEntities.ENTITY_FALLINGBLOCK.get(), new RenderFallingBlock(manager));
 		
 		RegisterBlastRenderersEvent registerBlastRenderers = new RegisterBlastRenderersEvent();
 		ModLoader.get().postEvent(registerBlastRenderers);

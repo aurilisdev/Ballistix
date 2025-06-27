@@ -54,7 +54,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 	public SingleProperty<BlockPos> target = property(new SingleProperty<>(PropertyTypes.BLOCK_POS, "target", BlockPos.ZERO));
 
 	private int cooldown = 100;
-	public boolean shouldLaunch = false;
+	public final SingleProperty<Boolean> shouldLaunch = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "shouldlaunch", false));
 	public CachedTileOutput launcherPlatform;
 	public CachedTileOutput supportFrame;
 
@@ -125,7 +125,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 			return;
 		}
 
-		if (!platform.hasMissile() || (platform.hasExplosive() && platform.hasSAM()) || (!platform.hasExplosive() && !platform.hasSAM()) || (!hasRedstone && !shouldLaunch)) {
+		if (!platform.hasMissile() || (platform.hasExplosive() && platform.hasSAM()) || (!platform.hasExplosive() && !platform.hasSAM()) || (!hasRedstone && !shouldLaunch.getValue())) {
 			return;
 		}
 
@@ -135,7 +135,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 			inaccuracy = ((ILauncherSupportFrame) supportFrame.getSafe()).getInaccuracy();
 		}
 
-		shouldLaunch = false;
+		shouldLaunch.setValue(false);
 
 		double dist = calculateDistance(worldPosition, target.getValue());
 
@@ -215,7 +215,6 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 	@Override
 	public CompoundNBT save(CompoundNBT compound) {
 		compound.putInt("silocooldown", cooldown);
-		compound.putBoolean("shouldlaunch", shouldLaunch);
 		return super.save(compound);
 	}
 
@@ -223,7 +222,6 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 	public void load(BlockState state, CompoundNBT compound) {
 		super.load(state, compound);
 		cooldown = compound.getInt("silocooldown");
-		shouldLaunch = compound.getBoolean("shouldlaunch");
 	}
 	
 	@Override
@@ -247,7 +245,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 
 	@Override
 	public void launch() {
-		shouldLaunch = true;
+		shouldLaunch.setValue(true);
 	}
 
 	@Override

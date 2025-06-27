@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 import ballistix.Ballistix;
 import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IHasCustomRender;
-import ballistix.common.blast.Blast;
+import ballistix.common.blast.util.Blast;
 import ballistix.registers.BallistixEntities;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;

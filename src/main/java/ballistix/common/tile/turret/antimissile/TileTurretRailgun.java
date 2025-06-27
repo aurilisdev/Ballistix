@@ -146,7 +146,7 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
             Class<? extends LivingEntity> type = onlyTargetPlayers.getValue() ? PlayerEntity.class : LivingEntity.class;
 
             for(LivingEntity entity : level.getEntitiesOfClass(type, new AxisAlignedBB(getBlockPos()).inflate(currentRange.getValue() / 4.0))) {
-                if(raycastToBlockPos(level, getBlockPos(), entity.blockPosition().above()).isEmpty() && !(entity instanceof PlayerEntity && (((PlayerEntity) entity).isCreative() || whitelistedPlayers.getValue().contains(((PlayerEntity) entity).getName().getString()))) && !entity.isDeadOrDying() && entity.isAlive()) {
+                if(raycastToBlockPos(level, getProjectileLaunchPosition(), entity.position().add(0, entity.getEyeHeight(), 0)).isEmpty() && !(entity instanceof PlayerEntity && (((PlayerEntity) entity).isCreative() || whitelistedPlayers.getValue().contains(((PlayerEntity) entity).getName().getString()))) && !entity.isDeadOrDying() && entity.isAlive()) {
                     double deltaX = entity.getX() - getBlockPos().getX();
                     double deltaY = entity.getY() - getBlockPos().getY();
                     double deltaZ = entity.getZ() - getBlockPos().getZ();
@@ -175,7 +175,7 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
 
     @Override
     public boolean isValidPlacement() {
-        return !targetingEntity.getValue() || super.isValidPlacement();
+        return targetingEntity.getValue() || super.isValidPlacement();
     }
 
 }

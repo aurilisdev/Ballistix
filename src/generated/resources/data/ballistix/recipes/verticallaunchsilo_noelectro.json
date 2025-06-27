@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SFS",
+    "SLS",
+    "ACA"
+  ],
+  "key": {
+    "A": {
+      "tag": "forge:dusts/redstone"
+    },
+    "S": {
+      "tag": "forge:ingots/iron"
+    },
+    "C": {
+      "item": "ballistix:launchercontrolpaneltier1"
+    },
+    "F": {
+      "item": "ballistix:launchersupportframetier1"
+    },
+    "L": {
+      "item": "ballistix:launcherplatformtier1"
+    }
+  },
+  "result": {
+    "item": "ballistix:vls"
+  },
+  "conditions": [
+    {
+      "value": {
+        "modid": "electrodynamics",
+        "type": "forge:mod_loaded"
+      },
+      "type": "forge:not"
+    }
+  ]
+}

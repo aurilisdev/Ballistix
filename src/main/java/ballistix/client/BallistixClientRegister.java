@@ -39,6 +39,7 @@ import ballistix.client.screen.ScreenLauncherPlatformT3;
 import ballistix.client.screen.ScreenRailgunTurret;
 import ballistix.client.screen.ScreenSAMTurret;
 import ballistix.client.screen.ScreenSearchRadar;
+import ballistix.client.screen.ScreenVLS;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.item.ItemTracker;
 import ballistix.common.settings.BallistixConstants;
@@ -126,6 +127,7 @@ public class BallistixClientRegister {
 		MenuScreens.register(BallistixMenuTypes.CONTAINER_CIWSTURRET.get(), ScreenCIWSTurret::new);
 		MenuScreens.register(BallistixMenuTypes.CONTAINER_LASERTURRET.get(), ScreenLaserTurret::new);
 		MenuScreens.register(BallistixMenuTypes.CONTAINER_RAILGUNTURRET.get(), ScreenRailgunTurret::new);
+		MenuScreens.register(BallistixMenuTypes.CONTAINER_VLS.get(), ScreenVLS::new);
 
 		ScreenGuidebook.addGuidebookModule(new ModuleBallistix());
 		

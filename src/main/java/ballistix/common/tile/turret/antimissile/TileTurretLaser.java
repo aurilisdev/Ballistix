@@ -152,7 +152,7 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
 
         ITarget target = super.getTarget(ticks);
 
-        if (target != null && raycastToBlockPos(level, getBlockPos(), target.getTargetBlockPos()).isEmpty()) {
+        if (target != null && raycastToBlockPos(level, getProjectileLaunchPosition(), target.getTargetLocation()).isEmpty()) {
 
             livingTarget = null;
             targetPos.setValue(target.getTargetLocation());
@@ -172,7 +172,7 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
             Class<? extends LivingEntity> type = onlyTargetPlayers.getValue() ? Player.class : LivingEntity.class;
 
             for (LivingEntity entity : level.getEntitiesOfClass(type, new AABB(getBlockPos()).inflate(currentRange.getValue() / 4.0))) {
-                if (raycastToBlockPos(level, getBlockPos(), entity.blockPosition()).isEmpty() && !(entity instanceof Player player && (player.isCreative() || whitelistedPlayers.getValue().contains(player.getName().getString()))) && !entity.isDeadOrDying() && !entity.isRemoved()) {
+                if (raycastToBlockPos(level, getProjectileLaunchPosition(), entity.position().add(0, entity.getEyeHeight(), 0)).isEmpty() && !(entity instanceof Player player && (player.isCreative() || whitelistedPlayers.getValue().contains(player.getName().getString()))) && !entity.isDeadOrDying() && !entity.isRemoved()) {
                     double deltaX = entity.getX() - getBlockPos().getX();
                     double deltaY = entity.getY() - getBlockPos().getY();
                     double deltaZ = entity.getZ() - getBlockPos().getZ();
@@ -205,7 +205,7 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
 
     @Override
     public boolean isValidPlacement() {
-        return !targetingEntity.getValue() || super.isValidPlacement();
+        return targetingEntity.getValue() || super.isValidPlacement();
     }
 
     @Override

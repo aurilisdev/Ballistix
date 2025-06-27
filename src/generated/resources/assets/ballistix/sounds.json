@@ -5,6 +5,18 @@
       "ballistix:antimatterexplosion"
     ]
   },
+  "sonicexplosion": {
+    "subtitle": "subtitles.ballistix.sonicexplosion",
+    "sounds": [
+      "ballistix:sonicexplosion"
+    ]
+  },
+  "hypersonicexplosion": {
+    "subtitle": "subtitles.ballistix.hypersonicexplosion",
+    "sounds": [
+      "ballistix:hypersonicexplosion"
+    ]
+  },
   "darkmatter": {
     "subtitle": "subtitles.ballistix.darkmatter",
     "sounds": [
@@ -69,6 +81,12 @@
     "subtitle": "subtitles.ballistix.rodhittingground",
     "sounds": [
       "ballistix:rodhittingground"
+    ]
+  },
+  "vlslaunch": {
+    "subtitle": "subtitles.ballistix.vlslaunch",
+    "sounds": [
+      "ballistix:vlslaunch"
     ]
   }
 }

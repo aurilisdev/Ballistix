@@ -1,0 +1,20 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:flowers",
+    "#minecraft:corals",
+    "#minecraft:fire",
+    "#minecraft:saplings",
+    "#minecraft:crops",
+    "#minecraft:buttons",
+    "#minecraft:pressure_plates",
+    "#minecraft:climbable",
+    "minecraft:snow",
+    "minecraft:grass",
+    "minecraft:tall_grass",
+    "minecraft:brown_mushroom",
+    "minecraft:red_mushroom",
+    "minecraft:vine",
+    "minecraft:cake"
+  ]
+}

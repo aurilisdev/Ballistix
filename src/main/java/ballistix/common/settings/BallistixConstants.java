@@ -60,6 +60,30 @@ public class BallistixConstants {
 	public static double EXPLOSIVE_THERMOBARIC_DURATION = 45.0;
 	@DoubleValue(def = 60.0)
 	public static double EXPLOSIVE_THERMOBARIC_ENERGY = 60.0;
+	@IntValue(def = 20)
+	public static int EXPLOSIVE_ANVIL_ANVILSPERBLAST = 10;
+	@DoubleValue(def = 2.0)
+	public static double EXPLOSIVE_SONIC_MAXHARDNESS = 2.0;
+	@DoubleValue(def = 15.0)
+	public static double EXPLOSIVE_SONIC_RADIUS = 20;
+	@DoubleValue(def = 5.0)
+	public static double EXPLOSIVE_SONIC_VELOCITY = 5.0;
+	@DoubleValue(def = 20.0, comment = "Value is in ticks.")
+	public static double EXPLOSIVE_SONIC_DURATION = 20.0;
+	@DoubleValue(def = 3.0)
+	public static double EXPLOSIVE_HYPERSONIC_MAXHARDNESS = 3.0;
+	@DoubleValue(def = 30.0)
+	public static double EXPLOSIVE_HYPERSONIC_RADIUS = 30;
+	@DoubleValue(def = 5.0)
+	public static double EXPLOSIVE_HYPERSONIC_VELOCITY = 5.0;
+	@DoubleValue(def = 160.0, comment = "Value is in ticks.")
+	public static double EXPLOSIVE_HYPERSONIC_DURATION = 160.0;
+	@DoubleValue(def = 9.0)
+	public static double EXPLOSIVE_ENDER_RADIUS = 9.0;
+	@IntValue(def = 10)
+	public static int EXPLOSIVE_ENDER_ENDERMANCOUNT = 10;
+
+
 	@DoubleValue(def = 10000, comment = "Usage per launch in joules")
 	public static double MISSILESILO_USAGE = 10000;
 	@IntValue(def = 60)
@@ -106,10 +130,13 @@ public class BallistixConstants {
 	public static double ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY = 0.85;
 	@FloatValue(def = 5.0F)
 	public static float ANTIBALLISTICMISSILE_TOP_SPEED = 5.0F;
-	@FloatValue(def = 0.01F)
-	public static float ANTIBALLISTICMISSILE_ACCELERATION = 0.01F;
+	@FloatValue(def = 0.04F)
+	public static float ANTIBALLISTICMISSILE_ACCELERATION = 0.04F;
 	@FloatValue(def = 0.15F)
 	public static float ANTIBALLISTICMISSILE_MINTURNSPEED_PERC = 0.15F;
+
+	@IntValue(def = 10)
+	public static int VIRUS_EFFECT_RADIUS = 10;
 
 	@DoubleValue(def = 1000)
 	public static double CIWS_TURRET_USAGEPERTICK = 1000;
@@ -155,6 +182,9 @@ public class BallistixConstants {
 	public static int LAUNCHER_PLATFORM_RANGE_T2 = 3000;
 	@IntValue(def = 10000)
 	public static int LAUNCHER_PLATFORM_RANGE_T3 = 10000;
+
+	@IntValue(def = 500)
+	public static int VLS_RANGE = 500;
 	@IntValue(def = 45)
 	public static int LAUNCH_PLATFORM_DEFAULT_INACCURACY = 45;
 

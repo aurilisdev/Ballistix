@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "DDD",
+    "DED",
+    "DDD"
+  ],
+  "key": {
+    "D": {
+      "tag": "forge:cells/dark_matter"
+    },
+    "E": {
+      "item": "ballistix:condensive"
+    }
+  },
+  "result": {
+    "item": "ballistix:rejuvination"
+  },
+  "conditions": [
+    {
+      "modid": "electrodynamics",
+      "type": "forge:mod_loaded"
+    }
+  ]
+}

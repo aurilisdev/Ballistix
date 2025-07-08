@@ -1,6 +1,7 @@
 package ballistix.registers;
 
 import ballistix.Ballistix;
+import ballistix.common.inventory.container.ContainerAirRaidSiren;
 import ballistix.common.inventory.container.ContainerCIWSTurret;
 import ballistix.common.inventory.container.ContainerESMTower;
 import ballistix.common.inventory.container.ContainerFireControlRadar;
@@ -11,6 +12,7 @@ import ballistix.common.inventory.container.ContainerLauncherControlPanelT3;
 import ballistix.common.inventory.container.ContainerLauncherPlatformT1;
 import ballistix.common.inventory.container.ContainerLauncherPlatformT2;
 import ballistix.common.inventory.container.ContainerLauncherPlatformT3;
+import ballistix.common.inventory.container.ContainerProximityDetector;
 import ballistix.common.inventory.container.ContainerRailgunTurret;
 import ballistix.common.inventory.container.ContainerSAMTurret;
 import ballistix.common.inventory.container.ContainerSearchRadar;
@@ -40,6 +42,8 @@ public class BallistixMenuTypes {
 	public static final RegistryObject<MenuType<ContainerLaserTurret>> CONTAINER_LASERTURRET = register("laserturret", ContainerLaserTurret::new);
 	public static final RegistryObject<MenuType<ContainerRailgunTurret>> CONTAINER_RAILGUNTURRET = register("railgunturret", ContainerRailgunTurret::new);
 	public static final RegistryObject<MenuType<ContainerVLS>> CONTAINER_VLS = register("vls", ContainerVLS::new);
+	public static final RegistryObject<MenuType<ContainerProximityDetector>> CONTAINER_PROXIMITYDETECTOR = register("proximitydetector", ContainerProximityDetector::new);
+	public static final RegistryObject<MenuType<ContainerAirRaidSiren>> CONTAINER_AIRRAIDSIREN = register("airraidsiren", ContainerAirRaidSiren::new);
 
 	private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> register(String id, MenuSupplier<T> supplier) {
 		return MENU_TYPES.register(id, () -> new MenuType<>(supplier));

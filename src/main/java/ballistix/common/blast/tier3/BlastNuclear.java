@@ -142,7 +142,7 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
             };
 
             if (add) {
-            	RadiationSystem.addRadiationSource(world, new SimpleRadiationSource(150000.0, 2, (int) (BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE), false, 86400 * 20, position, true, false));
+            	RadiationSystem.addRadiationSource(world, new SimpleRadiationSource(150000.0, 2, (int) (BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS), false, 86400 * 20, position, true, false));
             }
             if (perticksimple == -1) {
                 cachedIterator = threadSimple.results.iterator();

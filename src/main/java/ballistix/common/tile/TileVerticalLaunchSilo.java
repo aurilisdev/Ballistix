@@ -328,7 +328,7 @@ public class TileVerticalLaunchSilo extends GenericTile implements ILauncherCont
                     //
                     target,
                     //
-                    itmissile.missile.tier(),
+                    itmissile.missile.ordinal() + 1,
                     //
                     blast,
                     //

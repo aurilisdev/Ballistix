@@ -8,16 +8,20 @@ import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.registers.BallistixBlocks;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.common.data.ExistingFileHelper.ResourceType;
+import voltaic.Voltaic;
 import voltaic.datagen.utils.client.BaseBlockstateProvider;
 
 public class BallistixBlockStateProvider extends BaseBlockstateProvider {
 
 	public BallistixBlockStateProvider(DataGenerator gen, ExistingFileHelper exFileHelper) {
 		super(gen, exFileHelper, Ballistix.ID);
+		exFileHelper.trackGenerated(Voltaic.rl("block/steelcasing"), new ResourceType(PackType.CLIENT_RESOURCES, ".png", "textures"));
 	}
 
 	@Override
@@ -62,6 +66,7 @@ public class BallistixBlockStateProvider extends BaseBlockstateProvider {
 		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.shrapnel), existingBlock(blockLoc("explosiveshrapnel")), true);
 		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.condensive), existingBlock(blockLoc("explosivecondensive")), true);
 		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.anvil), existingBlock(blockLoc("explosiveanvil")), true);
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.infestive), existingBlock(blockLoc("explosiveinfestive")), true);
 		// Tier 2
 		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.thermobaric), existingBlock(blockLoc("explosivethermobaric")), true);
 		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.breaching), existingBlock(blockLoc("explosivebreaching")), true);
@@ -70,7 +75,9 @@ public class BallistixBlockStateProvider extends BaseBlockstateProvider {
 		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.fragmentation), existingBlock(blockLoc("explosivefragmentation")), true);
 		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.sonic), existingBlock(blockLoc("explosivesonic")), true);
 		// Tier 3
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.antigravity), existingBlock(blockLoc("explosiveantigravity")), true);
 		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.emp), existingBlock(blockLoc("explosiveemp")), true);
+		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.exothermic), existingBlock(blockLoc("explosiveexothermic")), true);
 		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.nuclear), existingBlock(blockLoc("explosivenuclear")), true);
 		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.endothermic), existingBlock(blockLoc("explosiveendothermic")), true);
 		simpleBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.ender), existingBlock(blockLoc("explosiveender")), true);
@@ -102,6 +109,11 @@ public class BallistixBlockStateProvider extends BaseBlockstateProvider {
 		horrRotatedBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.laserturret), existingBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.laserturret)), false);
 		horrRotatedBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.railgunturret), existingBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.railgunturret)), false);
 		simpleBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.vls), existingBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.vls)), true).transforms().transform(TransformType.GUI).rotation(30, 225, 0).translation(0, -2.8F, 0).scale(0.4F).end();
+		horrRotatedLitBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.airraidsiren), existingBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.airraidsiren)), existingBlock(blockLoc("airraidsirenon")), 90, 0, true);
+		simpleBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.proximitydetector), //
+				models().cube(SubtypeBallistixMachine.proximitydetector.tag(), blockLoc("proximitydetector_bottom"), blockLoc("proximitydetector_top"), blockLoc("proximitydetector_side"), blockLoc("proximitydetector_side"), blockLoc("proximitydetector_side"), blockLoc("proximitydetector_side")).texture("particle", Voltaic.rl("block/steelcasing")),
+				//
+				true);
 
 	}
 

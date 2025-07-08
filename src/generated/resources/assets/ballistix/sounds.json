@@ -35,6 +35,12 @@
       "ballistix:empexplosion"
     ]
   },
+  "endothermicbeam": {
+    "subtitle": "subtitles.ballistix.endothermicbeam",
+    "sounds": [
+      "ballistix:endothermicbeam"
+    ]
+  },
   "missile_launch_rocketlauncher": {
     "subtitle": "subtitles.ballistix.missile_launch_rocketlauncher",
     "sounds": [
@@ -87,6 +93,12 @@
     "subtitle": "subtitles.ballistix.vlslaunch",
     "sounds": [
       "ballistix:vlslaunch"
+    ]
+  },
+  "airraidsiren": {
+    "subtitle": "subtitles.ballistix.airraidsiren",
+    "sounds": [
+      "ballistix:airraidsiren"
     ]
   }
 }

@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "ballistix:block/proximitydetector_bottom",
+    "up": "ballistix:block/proximitydetector_top",
+    "north": "ballistix:block/proximitydetector_side",
+    "south": "ballistix:block/proximitydetector_side",
+    "east": "ballistix:block/proximitydetector_side",
+    "west": "ballistix:block/proximitydetector_side",
+    "particle": "voltaic:block/steelcasing"
+  }
+}

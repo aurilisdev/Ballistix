@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import ballistix.api.blast.IBlast;
+import ballistix.api.blast.IMovingBlast;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.blast.util.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
@@ -28,7 +29,7 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import voltaic.prefab.utilities.WorldUtils;
 
-public class BlastDarkmatter extends Blast {
+public class BlastDarkmatter extends Blast implements IMovingBlast {
 
     public BlastDarkmatter(World world, BlockPos position) {
         super(world, position);
@@ -39,7 +40,9 @@ public class BlastDarkmatter extends Blast {
         if (!world.isClientSide) {
             thread = new ThreadSimpleBlast(world, position, (int) BallistixConstants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null, getBlastType().id());
             thread.start();
-            world.playSound(null, position, BallistixSounds.SOUND_DARKMATTER.get(), SoundCategory.BLOCKS, 1, 1);
+            if(!isRepeating) {
+                world.playSound(null, position, BallistixSounds.SOUND_DARKMATTER.get(), SoundCategory.BLOCKS, 1, 1);
+            }
         }
     }
 
@@ -66,7 +69,7 @@ public class BlastDarkmatter extends Blast {
                 callAtStart = callCount;
             }
             if (pertick == -1) {
-                pertick = (int) (thread.results.size() / BallistixConstants.EXPLOSIVE_DARKMATTER_DURATION);
+            	pertick = (int) (thread.results.size() / (isRepeating ? BallistixConstants.EXPLOSIVE_DARKMATTER_REPEATDURATION : BallistixConstants.EXPLOSIVE_DARKMATTER_DURATION));
                 cachedIterator = thread.results.iterator();
             }
             int finished = pertick;
@@ -165,6 +168,16 @@ public class BlastDarkmatter extends Blast {
     @Override
     public IBlast getBlastType() {
         return SubtypeBlast.darkmatter;
+    }
+    
+    @Override
+    public int movementTicks() {
+        return BallistixConstants.EXPLOSIVE_DARKMATTER_MOVEMENTTICKS;
+    }
+
+    @Override
+    public int persistenceTicks() {
+        return BallistixConstants.EXPLOSIVE_DARKMATTER_PERSISTANCE;
     }
 
 }

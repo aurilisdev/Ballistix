@@ -45,6 +45,9 @@ public class UnifiedBallistixRegister {
 		BlockItemDescriptable.addDescription(() -> BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.ciwsturret), VoltaicTextUtils.voltageTooltip(120));
 		BlockItemDescriptable.addDescription(() -> BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.laserturret), VoltaicTextUtils.voltageTooltip(120));
 		BlockItemDescriptable.addDescription(() -> BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.railgunturret), VoltaicTextUtils.voltageTooltip(120));
+		
+		BlockItemDescriptable.addDescription(() -> BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.proximitydetector), VoltaicTextUtils.voltageTooltip(120));
+		BlockItemDescriptable.addDescription(() -> BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.airraidsiren), BallistixTextUtils.tooltip("airraidsiren.toggle").withStyle(TextFormatting.DARK_GRAY));
 
 	}
 

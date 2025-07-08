@@ -4,7 +4,7 @@ import java.util.Random;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
-import ballistix.common.entity.EntityFallingBlock;
+import ballistix.common.entity.EntityBallistixFallingBlock;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -19,15 +19,15 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class RenderFallingBlock extends EntityRenderer<EntityFallingBlock> {
+public class RenderBallistixFallingBlock extends EntityRenderer<EntityBallistixFallingBlock> {
 
-	public RenderFallingBlock(EntityRendererManager manager) {
+	public RenderBallistixFallingBlock(EntityRendererManager manager) {
 		super(manager);
 		this.shadowRadius = 0.5F;
 	}
 
 	@Override
-	public void render(EntityFallingBlock entity, float yaw, float pitch, MatrixStack matrixstack, IRenderTypeBuffer buffer, int packedlight) {
+	public void render(EntityBallistixFallingBlock entity, float yaw, float pitch, MatrixStack matrixstack, IRenderTypeBuffer buffer, int packedlight) {
 		BlockState blockstate = entity.getBlockState();
 		if (blockstate.getRenderShape() == BlockRenderType.MODEL) {
 			World world = entity.getLevel();
@@ -50,7 +50,7 @@ public class RenderFallingBlock extends EntityRenderer<EntityFallingBlock> {
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(EntityFallingBlock p_110775_1_) {
+	public ResourceLocation getTextureLocation(EntityBallistixFallingBlock p_110775_1_) {
 		return AtlasTexture.LOCATION_BLOCKS;
 	}
 

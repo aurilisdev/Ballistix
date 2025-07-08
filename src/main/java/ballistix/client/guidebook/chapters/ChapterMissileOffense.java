@@ -130,7 +130,7 @@ public class ChapterMissileOffense extends Chapter {
 
         // VLS
 
-        pageData.add(new TextWrapperObject(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.vls).getDescription().copy().withStyle(TextFormatting.BOLD)).setCentered().setSeparateStart());
+        pageData.add(new TextWrapperObject(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.vls).getDescription().copy().withStyle(TextFormatting.BOLD)).setCentered().setNewPage());
         pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.vls)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missileoffense.l8",
                 //

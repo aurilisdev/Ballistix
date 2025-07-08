@@ -3,7 +3,7 @@ package ballistix.common.blast.tier1;
 import ballistix.api.blast.IBlast;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.common.entity.EntityFallingBlock;
+import ballistix.common.entity.EntityBallistixFallingBlock;
 import ballistix.common.settings.BallistixConstants;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.SoundCategory;
@@ -29,7 +29,7 @@ public class BlastAnvil extends Blast {
                 float xVel = (world.random.nextBoolean() ? 1.0F : -1.0F) * world.random.nextFloat();
                 float yVel = 1.0F;
                 float zVel = (world.random.nextBoolean() ? 1.0F : -1.0F) * world.random.nextFloat();
-                EntityFallingBlock anvil = new EntityFallingBlock(world, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, Blocks.ANVIL.defaultBlockState());
+                EntityBallistixFallingBlock anvil = new EntityBallistixFallingBlock(world, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, Blocks.ANVIL.defaultBlockState());
                 anvil.setDeltaMovement(xVel, yVel, zVel);
                 anvil.dropItem = false;
                 world.addFreshEntity(anvil);

@@ -7,6 +7,7 @@ import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.BallistixConstants;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixDamageTypes;
+import ballistix.registers.BallistixEffects;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -99,11 +100,13 @@ public class BlastChemical extends Blast {
 
 					LivingEntity living = (LivingEntity) entity;
 
-					living.addEffect(new EffectInstance(Effects.POISON, 360, 2));
+					living.addEffect(new EffectInstance(Effects.CONFUSION, 360, 2));
 
 					living.addEffect(new EffectInstance(Effects.DIG_SLOWDOWN, 360));
 
 					living.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, 360, 2));
+					
+					living.addEffect(new EffectInstance(BallistixEffects.TOXIN, 360));
 
 					if (callCount % 10 == 0) {
 

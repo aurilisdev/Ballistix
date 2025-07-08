@@ -34,7 +34,6 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
     public final SingleProperty<Double> heat = property(new SingleProperty<>(PropertyTypes.DOUBLE, "heat", 0.0));
     public final SingleProperty<Boolean> overheated = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "overheated", false));
     public final SingleProperty<Boolean> firing = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "isfiring", false));
-    public final SingleProperty<Boolean> onlyTargetPlayers = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "onlytargetplayers", false));
 
     private LivingEntity livingTarget = null;
     private boolean isPlaying = false;
@@ -149,6 +148,8 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
         targetingEntity.setValue(false);
 
         ITarget target = super.getTarget(ticks);
+        
+        TargetingMode mode = TargetingMode.values()[entityTargetingMode.getValue()];
 
         if (target != null && raycastToBlockPos(level, getProjectileLaunchPosition(), target.getTargetLocation()).isEmpty()) {
 
@@ -156,6 +157,12 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
             targetPos.setValue(target.getTargetLocation());
             return target;
 
+        }
+        
+        if(mode == TargetingMode.NONE) {
+            livingTarget = null;
+            targetPos.setValue(TileFireControlRadar.OUT_OF_REACH);
+            return null;
         }
 
         if (livingTarget != null && (!livingTarget.isAlive() || livingTarget.isDeadOrDying())) {
@@ -167,7 +174,7 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
             LivingEntity selected = null;
             double lastMag = 0;
 
-            Class<? extends LivingEntity> type = onlyTargetPlayers.getValue() ? PlayerEntity.class : LivingEntity.class;
+            Class<? extends LivingEntity> type = mode == TargetingMode.ONLY_PLAYERS ? PlayerEntity.class : LivingEntity.class;
 
             for (LivingEntity entity : level.getEntitiesOfClass(type, new AxisAlignedBB(getBlockPos()).inflate(currentRange.getValue() / 4.0))) {
                 if (raycastToBlockPos(level, getProjectileLaunchPosition(), entity.position().add(0, entity.getEyeHeight(), 0)).isEmpty() && !(entity instanceof PlayerEntity && (((PlayerEntity) entity).isCreative() || whitelistedPlayers.getValue().contains(((PlayerEntity) entity).getName().getString()))) && !entity.isDeadOrDying() && entity.isAlive()) {

@@ -1,5 +1,7 @@
 package ballistix.client;
 
+import java.util.Random;
+
 import ballistix.Ballistix;
 import ballistix.client.event.RegisterBlastRenderersEvent;
 import ballistix.client.guidebook.ModuleBallistix;
@@ -9,7 +11,7 @@ import ballistix.client.particle.ParticleShockwave;
 import ballistix.client.render.entity.RenderBlast;
 import ballistix.client.render.entity.RenderBullet;
 import ballistix.client.render.entity.RenderExplosive;
-import ballistix.client.render.entity.RenderFallingBlock;
+import ballistix.client.render.entity.RenderBallistixFallingBlock;
 import ballistix.client.render.entity.RenderGrenade;
 import ballistix.client.render.entity.RenderMinecart;
 import ballistix.client.render.entity.RenderMissile;
@@ -24,6 +26,7 @@ import ballistix.client.render.tile.RenderLauncherPlatform;
 import ballistix.client.render.tile.RenderRadar;
 import ballistix.client.render.tile.RenderRailgunTurret;
 import ballistix.client.render.tile.RenderSAMTurret;
+import ballistix.client.screen.ScreenAirRaidSiren;
 import ballistix.client.screen.ScreenCIWSTurret;
 import ballistix.client.screen.ScreenESMTower;
 import ballistix.client.screen.ScreenFireControlRadar;
@@ -34,6 +37,7 @@ import ballistix.client.screen.ScreenLauncherControlPanelT3;
 import ballistix.client.screen.ScreenLauncherPlatformT1;
 import ballistix.client.screen.ScreenLauncherPlatformT2;
 import ballistix.client.screen.ScreenLauncherPlatformT3;
+import ballistix.client.screen.ScreenProximityDetector;
 import ballistix.client.screen.ScreenRailgunTurret;
 import ballistix.client.screen.ScreenSAMTurret;
 import ballistix.client.screen.ScreenSearchRadar;
@@ -55,11 +59,13 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.tileentity.BeaconTileEntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.item.ItemFrameEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemModelsProperties;
+import net.minecraft.tileentity.BeaconTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -78,6 +84,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import voltaic.Voltaic;
 import voltaic.client.guidebook.ScreenGuidebook;
 import voltaic.prefab.utilities.RenderingUtils;
+import voltaic.prefab.utilities.math.Color;
 
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD, value = { Dist.CLIENT })
@@ -95,6 +102,8 @@ public class BallistixClientRegister {
 	public static final ResourceLocation MODEL_MISSILETIER1 = Ballistix.rl("entity/missiles/missiletier1");
 	public static final ResourceLocation MODEL_MISSILETIER2 = Ballistix.rl("entity/missiles/missiletier2");
 	public static final ResourceLocation MODEL_MISSILETIER3 = Ballistix.rl("entity/missiles/missiletier3");
+	public static final ResourceLocation MODEL_MISSILECLUSTER = Ballistix.rl("entity/missiles/missilecluster");
+	public static final ResourceLocation MODEL_MISSILECLUSTERSHARD = Ballistix.rl("entity/missiles/missileclustershard");
 	public static final ResourceLocation MODEL_DARKMATTERSPHERE = Ballistix.rl("entity/darkmattersphere");
 	public static final ResourceLocation MODEL_DARKMATTERDISK = Ballistix.rl("entity/darkmatterdisk");
 	public static final ResourceLocation MODEL_FIREBALL = Ballistix.rl("entity/explosionsphere");
@@ -129,6 +138,10 @@ public class BallistixClientRegister {
 		ScreenManager.register(BallistixMenuTypes.CONTAINER_LASERTURRET.get(), ScreenLaserTurret::new);
 		ScreenManager.register(BallistixMenuTypes.CONTAINER_RAILGUNTURRET.get(), ScreenRailgunTurret::new);
 		ScreenManager.register(BallistixMenuTypes.CONTAINER_VLS.get(), ScreenVLS::new);
+		ScreenManager.register(BallistixMenuTypes.CONTAINER_PROXIMITYDETECTOR.get(), ScreenProximityDetector::new);
+		ScreenManager.register(BallistixMenuTypes.CONTAINER_AIRRAIDSIREN.get(), ScreenAirRaidSiren::new);
+		
+		BallistixClientEvents.init();
 
 		ScreenGuidebook.addGuidebookModule(new ModuleBallistix());
 
@@ -186,7 +199,7 @@ public class BallistixClientRegister {
 		manager.register(BallistixEntities.ENTITY_SAM.get(), new RenderSAM(manager));
 		manager.register(BallistixEntities.ENTITY_BULLET.get(), new RenderBullet(manager));
 		manager.register(BallistixEntities.ENTITY_RAILGUNROUND.get(), new RenderRailgunRound(manager));
-		manager.register(BallistixEntities.ENTITY_FALLINGBLOCK.get(), new RenderFallingBlock(manager));
+		manager.register(BallistixEntities.ENTITY_BALLISTIXFALLINGBLOCK.get(), new RenderBallistixFallingBlock(manager));
 		
 		RegisterBlastRenderersEvent registerBlastRenderers = new RegisterBlastRenderersEvent();
 		ModLoader.get().postEvent(registerBlastRenderers);
@@ -201,6 +214,8 @@ public class BallistixClientRegister {
 		ModelLoader.addSpecialModel(MODEL_MISSILETIER1);
 		ModelLoader.addSpecialModel(MODEL_MISSILETIER2);
 		ModelLoader.addSpecialModel(MODEL_MISSILETIER3);
+		ModelLoader.addSpecialModel(MODEL_MISSILECLUSTER);
+		ModelLoader.addSpecialModel(MODEL_MISSILECLUSTERSHARD);
 		ModelLoader.addSpecialModel(MODEL_DARKMATTERSPHERE);
 		ModelLoader.addSpecialModel(MODEL_DARKMATTERDISK);
 		ModelLoader.addSpecialModel(MODEL_FIREBALL);
@@ -232,13 +247,13 @@ public class BallistixClientRegister {
 	public static void registerBlastRenderers(RegisterBlastRenderersEvent event) {
 
 		event.register(SubtypeBlast.darkmatter, (entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
-			double x = entityIn.tickCount;
+			double x = entityIn.hasMatured ? entityIn.ticksAtMaturity : entityIn.tickCount;
 			double time = 4.0 / 3.0 * Math.PI * Math.pow(BallistixConstants.EXPLOSIVE_DARKMATTER_RADIUS, 3) / BallistixConstants.EXPLOSIVE_DARKMATTER_DURATION;
 			float scale = (float) (0.1 * Math.log(x * x) + x / (time * 2));
 			IBakedModel modelDisk = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_DARKMATTERDISK);
 			IBakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_BLACKHOLECUBE);
 
-			float animationRadians = (entityIn.tickCount + partialTicks) * 0.05f;
+			float animationRadians = Math.abs(entityIn.tickCount * 0.05F + partialTicks * 0.05F); // tweaked to prevent weird behavior with Integer.MAX_VALUE
 
 			matrixStack.pushPose();
 			matrixStack.scale(scale * 6, scale * 6, scale * 6);
@@ -310,7 +325,114 @@ public class BallistixClientRegister {
 			//TODO implement?
 
 		});
+		
+		event.register(SubtypeBlast.endothermic, (entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
+
+			if(!entityIn.shouldRenderCustom) {
+				return;
+			}
+
+			int height = (int) Math.ceil(entityIn.level.getMaxBuildHeight() - entityIn.getY());
+
+			long i = entityIn.level.getGameTime();
+			int j = 0;
+
+			matrixStack.pushPose();
+			matrixStack.translate(-0.5, -0.5, -0.5);
+
+
+			int g = boundedNextInt(entityIn.level.random, 0, 71) + 102;
+
+			for (int k = 0; k <= height; k++) {
+				BeaconTileEntity.BeamSegment section = new BeaconTileEntity.BeamSegment(new Color(0, g, 255, 255).colorFloatArr());
+				BeaconTileEntityRenderer.renderBeaconBeam(
+						matrixStack,
+						bufferIn,
+						BeaconTileEntityRenderer.BEAM_LOCATION,
+						partialTicks,
+						1.0F,
+						i,
+						j,
+						k == height - 1 ? 1024 : section.getHeight(),
+						section.getColor(),
+						0.4F,
+						0.45F
+				);
+				j += section.getHeight();
+			}
+
+
+
+			matrixStack.popPose();
+
+		});
+
+		event.register(SubtypeBlast.exothermic, (entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
+
+			if (!entityIn.shouldRenderCustom) {
+				return;
+			}
+
+			int height = (int) Math.ceil(entityIn.level.getMaxBuildHeight() - entityIn.getY());
+
+			long i = entityIn.level.getGameTime();
+			int j = 0;
+
+			matrixStack.pushPose();
+			matrixStack.translate(-0.5, -0.5, -0.5);
+
+
+			int g = boundedNextInt(entityIn.level.random, 0, 71) + 60;
+
+			for (int k = 0; k <= height; k++) {
+				BeaconTileEntity.BeamSegment section = new BeaconTileEntity.BeamSegment(new Color(255, g, 0, 255).colorFloatArr());
+				BeaconTileEntityRenderer.renderBeaconBeam(
+						matrixStack,
+						bufferIn,
+						BeaconTileEntityRenderer.BEAM_LOCATION,
+						partialTicks,
+						1.0F,
+						i,
+						j,
+						k == height - 1 ? 1024 : section.getHeight(),
+						section.getColor(),
+						0.4F,
+						0.45F
+				);
+				j += section.getHeight();
+			}
+
+			matrixStack.popPose();
+
+		});
 
 	}
+	
+	public static int boundedNextInt(Random rng, int origin, int bound) {
+        int r = rng.nextInt();
+        if (origin < bound) {
+            // It's not case (1).
+            final int n = bound - origin;
+            final int m = n - 1;
+            if ((n & m) == 0) {
+                // It is case (2): length of range is a power of 2.
+                r = (r & m) + origin;
+            } else if (n > 0) {
+                // It is case (3): need to reject over-represented candidates.
+                for (int u = r >>> 1;
+                     u + m - (r = u % n) < 0;
+                     u = rng.nextInt() >>> 1)
+                    ;
+                r += origin;
+            }
+            else {
+                // It is case (4): length of range not representable as long.
+                while (r < origin || r >= bound) {
+                    r = rng.nextInt();
+                }
+            }
+        }
+        return r;
+    }
 
 }

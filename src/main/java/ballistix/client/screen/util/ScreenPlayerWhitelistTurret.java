@@ -1,7 +1,7 @@
 package ballistix.client.screen.util;
 
 import ballistix.common.tile.turret.GenericTileTurret;
-import ballistix.prefab.screen.WrapperPlayerWhitelist;
+import ballistix.prefab.screen.WrapperPlayerWhitelistTurret;
 import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
@@ -12,7 +12,7 @@ import voltaic.prefab.screen.component.types.ScreenComponentVerticalSlider;
 public abstract class ScreenPlayerWhitelistTurret<T extends GenericContainerBlockEntity<? extends GenericTileTurret>> extends GenericScreen<T> {
 
     public ScreenComponentVerticalSlider whitelistSlider;
-    public WrapperPlayerWhitelist whitelistWrapper;
+    public WrapperPlayerWhitelistTurret whitelistWrapper;
 
     public ScreenPlayerWhitelistTurret(T container, PlayerInventory inv, ITextComponent title) {
         super(container, inv, title);

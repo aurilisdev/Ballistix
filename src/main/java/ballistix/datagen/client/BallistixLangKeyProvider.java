@@ -38,23 +38,26 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.attractive), "Attractive Explosive");
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.repulsive), "Repulsive Explosive");
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.shrapnel), "Shrapnel Explosive");
+			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.infestive), "Infestive Explosive");
+			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.debilitation), "Debilitation Explosive");
 			//Tier 2
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.fragmentation), "Fragmentation Explosive");
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.contagious), "Contagious Explosive");
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.sonic), "Sonic Explosive");
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.breaching), "Breaching Explosive");
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.thermobaric), "Thermobaric Explosive");
-			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.debilitation), "Debilitation Explosive");
 			//Tier 3
+			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.antigravity), "Anti-Gravity Explosive");
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.emp), "EMP Explosive");
-			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.endothermic), "Endothermic Explosive (WIP)");
+			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.endothermic), "Endothermic Explosive");
+			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.exothermic), "Exothermic Explosive");
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.ender), "Ender Explosive");
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.hypersonic), "Hypersonic Explosive");
-			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.rejuvination), "Rejuvenation Explosive (WIP)");
+			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.rejuvination), "Rejuvenation Explosive");
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.nuclear), "Nuclear Explosive");
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.antimatter), "Antimatter Explosive");
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.largeantimatter), "Large Antimatter Explosive");
-			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.darkmatter), "Dark Matter Explosive");
+			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.darkmatter), "Dark Matter Explosive (WIP)");
 			//Other
 			addBlock(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(SubtypeBlast.landmine), "Landmine");
 
@@ -75,6 +78,8 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.ciwsturret), "CIWS Turret");
 			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.laserturret), "Laser Turret");
 			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.railgunturret), "Railgun Turret");
+			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.airraidsiren), "Air Raid Siren");
+			addBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.proximitydetector), "Proximity Detector");
 
 			addItem(BallistixItems.ITEMS_GRENADE.getValue(SubtypeGrenade.condensive), "Condensive Grenade");
 			addItem(BallistixItems.ITEMS_GRENADE.getValue(SubtypeGrenade.attractive), "Attractive Grenade");
@@ -84,7 +89,7 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			addItem(BallistixItems.ITEMS_GRENADE.getValue(SubtypeGrenade.debilitation), "Debilitation Grenade");
 			addItem(BallistixItems.ITEMS_GRENADE.getValue(SubtypeGrenade.chemical), "Chemical Grenade");
 			addItem(BallistixItems.ITEMS_GRENADE.getValue(SubtypeGrenade.anvil), "Anvil Grenade");
-
+			addItem(BallistixItems.ITEMS_GRENADE.getValue(SubtypeGrenade.infestive), "Infestive Grenade");
 
 			//Tier 0
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.obsidian), "Minecart with Obsidian TNT");
@@ -96,16 +101,19 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.incendiary), "Minecart with Incendiary Explosive");
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.shrapnel), "Minecart with Shrapnel Explosive");
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.chemical), "Minecart with Chemical Explosive");
+			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.infestive), "Minecart with Infestive Explosive");
+			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.debilitation), "Minecart with Debilitation Explosive");
 			//Tier 2
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.breaching), "Minecart with Breaching Explosive");
-			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.debilitation), "Minecart with Debilitation Explosive");
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.thermobaric), "Minecart with Thermobaric Explosive");
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.contagious), "Minecart with Contagious Explosive");
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.fragmentation), "Minecart with Fragmentation Explosive");
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.sonic), "Minecart with Sonic Explosive");
 			//Tier 3
+			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.antigravity), "Minecart with Anti-Gravity Explosive");
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.emp), "Minecart with EMP Explosive");
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.endothermic), "Minecart with Endothermic Explosive");
+			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.exothermic), "Minecart with Exothermic Explosive");
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.ender), "Minecart with Ender Explosive");
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.hypersonic), "Minecart with Hypersonic Explosive");
 			addItem(BallistixItems.ITEMS_MINECART.getValue(SubtypeMinecart.rejuvination), "Minecart with Rejuvenation Explosive");
@@ -120,6 +128,8 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier1), "Tier 1 Missile");
 			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier2), "Tier 2 Missile");
 			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier3), "Tier 3 Missile");
+			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.cluster), "Cluster Missile");
+			addItem(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.clustershard), "Cluster Missile Warhead");
 
 			addItem(BallistixItems.ITEM_AAMISSILE, "Surface-to-Air Missile");
 			addItem(BallistixItems.ITEM_AAMISSILEMK2, "Anti-Ballistic Missile");
@@ -129,7 +139,7 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			addItem(BallistixItems.ITEM_RADARGUN, "Radar Gun");
 			addItem(BallistixItems.ITEM_LASERDESIGNATOR, "Laser Designator");
 			addItem(BallistixItems.ITEM_TRACKER, "Tracker");
-			addItem(BallistixItems.ITEM_SCANNER, "Scanner");
+			addItem(BallistixItems.ITEM_SCANNER, "Jammer");
 			addItem(BallistixItems.ITEM_DEFUSER, "Defuser");
 
 			addContainer("launchercontrolpaneltier1", "Control Panel T1");
@@ -146,6 +156,8 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			addContainer("ciwsturret", "CIWS Turret");
 			addContainer("laserturret", "Laser Turret");
 			addContainer("railgunturret", "Railgun Turret");
+			addContainer("proximitydetector", "Proximity Detector");
+			addContainer("airraidsiren", "Air Raid Siren");
 
 			addGuiLabel("missilesilo.missile", "Missile");
 			addGuiLabel("missilesilo.explosive", "Explosive");
@@ -163,6 +175,8 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			addDamageSource("virus", "%s got more than the sniffles!");
 
 			add("effect.ballistix.virus", "Virus");
+			add("effect.ballistix.toxin", "Toxin");
+			add("effect.ballistix.frostbite", "Frostbite");
 
 			addChatMessage("radargun.text", "Coordinates: %s");
 			addChatMessage("radargun.turretsucess", "Bound");
@@ -195,6 +209,7 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			addTooltip("turret.targetmode", "Target Mode");
 			addTooltip("turret.targetmodeplayers", "Only Players");
 			addTooltip("turret.targetmodeliving", "All Living");
+			addTooltip("turret.targetmodenone", "None");
 
 			addTooltip("radar.frequencymanager", "Frequency Manager");
 			addTooltip("radar.frequencymanager.delete", "Delete");
@@ -209,6 +224,7 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			addTooltip("explosive.tier", "Tier: %s");
 			addTooltip("silo.launch", "LAUNCH");
 
+			addTooltip("airraidsiren.toggle", "Redstone-activated");
 			
 			addGuiLabel("turret.radar", "Radar: ");
 			addGuiLabel("turret.radarnone", "None");
@@ -239,6 +255,20 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			addGuiLabel("esmtower.searchradardetected", "Search Radar Detected");
 			addGuiLabel("esmtower.detectedfirecontrolradars", "Fire Control Radars");
 
+			addGuiLabel("proximitydetector.detectionrange", "Detection Range");
+			addGuiLabel("proximitydetector.xcoord", "X-Coord:");
+			addGuiLabel("proximitydetector.ycoord", "Y-Coord:");
+			addGuiLabel("proximitydetector.zcoord", "Z-Coord:");
+			addGuiLabel("proximitydetector.min", "Min");
+			addGuiLabel("proximitydetector.max", "Max");
+			addGuiLabel("proximitydetector.detectionfield", "Detection Field");
+			addGuiLabel("proximitydetector.showfield", "Show");
+			addGuiLabel("proximitydetector.hidefield", "Hide");
+
+			addGuiLabel("airraidsiren.volume", "Volume");
+			addGuiLabel("airraidsiren.pitch", "Pitch");
+			addGuiLabel("airraidsiren.radius", "Radius");
+
 			addSubtitle(BallistixSounds.SOUND_ANTIMATTEREXPLOSION, "Antimatter bomb detonates");
 			addSubtitle(BallistixSounds.SOUND_LARGE_ANTIMATTEREXPLOSION, "Large Antimatter bomb detonates");
 			addSubtitle(BallistixSounds.SOUND_DARKMATTER, "Dark matter bomb detonates");
@@ -246,6 +276,7 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			addSubtitle(BallistixSounds.SOUND_EMPEXPLOSION, "EMP detonates");
 			addSubtitle(BallistixSounds.SOUND_SONICEXPLOSION, "Sonic bomb detonates");
 			addSubtitle(BallistixSounds.SOUND_HYPERSONICSONICEXPLOSION, "Hypersonic bomb detonates");
+			addSubtitle(BallistixSounds.SOUND_ENDOTHERMICBEAM, "Endothermic bomb detonates");
 			addSubtitle(BallistixSounds.SOUND_MISSILE_ROCKETLAUNCHER, "Missile is fired from rocket lancher");
 			addSubtitle(BallistixSounds.SOUND_MISSILE_SILO, "Missile launches from silo");
 			addSubtitle(BallistixSounds.SOUND_RADAR, "Radar pulses");
@@ -255,12 +286,54 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			addSubtitle(BallistixSounds.SOUND_RODHITTINGGROUND, "Rod Impacts Ground");
 			addSubtitle(BallistixSounds.SOUND_RAILGUNKINETIC, "Railgun Turret Fires");
 			addSubtitle(BallistixSounds.SOUND_VLSLAUNCH, "VLS Fires");
+			addSubtitle(BallistixSounds.SOUND_AIRRAIDSIREN, "Air Raid Siren sounds");
 
 			addDimension(World.OVERWORLD.location().getPath(), "The Overworld");
 			addDimension(World.NETHER.location().getPath(), "The Nether");
 			addDimension(World.END.location().getPath(), "The End");
 
 			addGuidebook(Ballistix.ID, "Ballistix");
+
+			addGuidebook("chapter.explosives", "Explosives");
+
+			addGuidebook("chapter.explosives.l1", "Ballistix offers a wide variety of explosives to choose from. Each explosive will have its own specialty, with some focusing on maximum destruction while others focus on biological and chemical warfare. Before we continue, it is important to note that some explosives will have both a \"radius\" and an \"energy\". The radius of " +
+					"an explosive determines the overall area it can effect. The energy on the other hand determines what amount of blocks in that area will be destroyed starting at the center of the blast. The harder a block, the more energy the blast will lose destroying it, reducing the effective area of the explosive. For example, a blast with a small radius and a high energy will destroy a " +
+					"smaller area, but will be able to more effectively destroy the blocks inside of its radius. Keep this in mind when selecting explosives for a task! It should be noted here that most explosives can have their parameters tweaked in the config file.");
+			addGuidebook("chapter.explosives.tier", "Tier: %s");
+			addGuidebook("chapter.explosives.radius", "Radius: %s blocks");
+			addGuidebook("chapter.explosives.energy", "Energy: %s");
+			addGuidebook("chapter.explosives.fuse", "Fuse: %s ticks");
+			addGuidebook("chapter.explosives.duration", "Duration: %s ticks");
+
+			addGuidebook("chapter.explosives.obsidian1", "An enhanced form of TNT.");
+			addGuidebook("chapter.explosives.condensive1", "A weaker but fast-detonating TNT.");
+			addGuidebook("chapter.explosives.attractive1", "Does a small amount of terrain damage and pulls entities towards its center and hurts them.");
+			addGuidebook("chapter.explosives.repulsive1", "Does a small amount of terrain damage pushes entities away from its center and hurts them.");
+			addGuidebook("chapter.explosives.incendiary1", "Sets all blocks inside its radius on fire.");
+			addGuidebook("chapter.explosives.shrapnel1", "Shoots %s shrapnel pieces in a spherical pattern that hurt entities on contact.");
+			addGuidebook("chapter.explosives.chemical1", "Emits a cloud of gas that gives entities inside of it Nausea, Mining Fatigue, Slowness, and Toxin effects for %s ticks. Entities standing within the gas cloud will also be hurt while inside.");
+			addGuidebook("chapter.explosives.anvil1", "Shoots %s anvils in a spherical pattern that hurt entities on contact.");
+			addGuidebook("chapter.explosives.infestive1", "Does no terrain damage, but infests blocks within its radius with Silverfish.");
+			addGuidebook("chapter.explosives.debilitation1", "Emits a cloud of gas that gives entities inside of it the Nausea effect for %1$s ticks and Mining Fatigue and Slowness effects for %2$s ticks.");
+
+			addGuidebook("chapter.explosives.fragmentation1", "Shoots %s shrapnel pieces in a spherical pattern that explode and hurt entities on contact.");
+			addGuidebook("chapter.explosives.contagious1", "Emits a cloud of gas that gives entities inside of it Blindness, Weakness, and Hunger effects for %s ticks. Entities standing within the gas cloud will also be hurt while inside. Entities will also be infected with a deadly virus that deals damage over time, will infect other nearby entities, and can only be removed with " +
+					"curative items!");
+			addGuidebook("chapter.explosives.breaching1", "A specialized small explosive for destroying hardened materials.");
+			addGuidebook("chapter.explosives.thermobaric1", "A very large and powerful conventional explosive.");
+			addGuidebook("chapter.explosives.sonic1", "Emits a powerful sonic wave that sends weaker blocks flying and harms enemies within its radius. It does not actually destroy blocks though.");
+
+			addGuidebook("chapter.explosives.antigravity1", "Inverts gravity in a %1$s by %1$s chunk radius for %2$s ticks. This impacts all entities and missiles immediately, and will start to impact blocks over time.");
+			addGuidebook("chapter.explosives.emp1", "Drains all machines and items of energy that are within its radius.");
+			addGuidebook("chapter.explosives.nuclear1", "Nuke go boom. Radiation go oww.");
+			addGuidebook("chapter.explosives.endothermic1", "Freezes blocks, liquids, and entities within its radius, then scatters them like a Sonic Explosive would.");
+			addGuidebook("chapter.explosives.exothermic1", "Destroys, burns, and melts blocks within its radius. Also sets all entities within its radius on fire.");
+			addGuidebook("chapter.explosives.ender1", "Teleports all entities caught within its radius to the End.");
+			addGuidebook("chapter.explosives.hypersonic1", "A more powerful version of the Sonic Explosive.");
+			addGuidebook("chapter.explosives.rejuvination1", "Resets the chunk it is detonated in.");
+			addGuidebook("chapter.explosives.antimatter1", "A very powerful explosive that uses Antimatter to generate the explosion energy.");
+			addGuidebook("chapter.explosives.largeantimatter1", "A more powerful version of the Antimatter Explosive.");
+			addGuidebook("chapter.explosives.darkmatter1", "Creates a singularity that sucks in blocks and entities. After reaching its full size, the singularity will begin to move freely!");
 
 			addGuidebook("chapter.missileoffense", "Missile Offense");
 			addGuidebook("chapter.missileoffense.l1.1", "Ballistix offers two main methods of missile offense. The first of these is the Missile Silo. The Missile Silo is a multiblock used to launch various missiles with different types of warheads. The Silo is composed of three different blocks:");
@@ -298,8 +371,10 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 
 			addGuidebook("chapter.items.tracker1", "The Tracker is capable of tracking the location of any entity in the world, player or otherwise. This is especially useful, as it allows you to track other players and send them Thermonuclear War...care packages from afar. To start tracking an entity, simply Right-Click on it with the Tracker. This will expend %s. Note the "
 					+ "Tracker only keeps tabs on the X and Z coordinates of the entity along with what dimension they're in, meaning there is still a little guesswork involved. If the entity dies or the player disconnects from the server, the Tracker will stop tracking them!");
+			addGuidebook("chapter.items.tracker2", "Another fun trick you can do with the Tracker is to use it to launch missiles at the entity it is tracking. Simply right-click the tracker on a Control Panel or VLS as you would with the Radar Gun, and it will input the X and Z coordinates to their respective targeting fields. Note, the Y value will always be input as 0 since "
+					+ "the Tracker does not store that, and this will not work if nothing is currently being tracked!");
 
-			addGuidebook("chapter.items.scanner1", "The Scanner is every paranoid player's best friend. Think someone has tagged you with a Tracker and is trying to nuke your prestigious dirt house? Fear not; Simply right-click with the Scanner. This will expend %s and jam any tracking signals if they are present!");
+			addGuidebook("chapter.items.scanner1", "The Jammer is every paranoid player's best friend. Think someone has tagged you with a Tracker and is trying to nuke your prestigious dirt house? Fear not; Simply right-click with the Jammer. This will expend %s and jam any tracking signals if they are present!");
 
 			addGuidebook("chapter.missiledefense", "Missile Defense");
 
@@ -338,7 +413,8 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 
 			addGuidebook("chapter.missiledefense.l5.1", "Turrets that can target entities will be able to be toggled between targeting only players or all living entities via  the \"Targeting Mode\" tab:");
 			addGuidebook("chapter.missiledefense.l5.2", "There is no ability to specify the mobs the turret targets, however you are able to whitelist certain players. This can be accomplished via the Whitelist Manager tab:");
-			addGuidebook("chapter.missiledefense.l5.3", "There, you can enter the name of the players you wish to whitelist to the turret. The name of the player who places the turret is added automatically. Note that whitelist mode must be enabled to actually work! If you disable whitelist mode on a previously white-listed turret, the names in the list won't be wiped!");
+			addGuidebook("chapter.missiledefense.l5.3", "There, you can enter the name of the players you wish to whitelist to the turret. The name of the player who places the turret is added automatically. Note that whitelist mode must be enabled to actually work! If you disable whitelist mode on a previously white-listed turret, the names in the list won't be wiped! You can " +
+					"disable a turret from attacking all entities and players by setting the Targeting Mode to \"None\".");
 
 			addGuidebook("chapter.missiledefense.antiballisticmissile1", "The most powerful form of missile defense available is the %1$s. The %1$s is capable of reaching higher speeds than its SAM counterpart, and boasts a %2$s chance to destroy a missile! To launch one, place it in a Missile Silo with the warhead slot empty. The Silo must be linked to a Fire Control Radar, and will only " +
 					"fire if the radar is actively tracking an incoming missile and receives a redstone signal. To link a missile silo to a radar, enter the radar's coordinates into the silo where the target coordinates typically go.");
@@ -366,6 +442,23 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			addGuidebook("chapter.missiledefense.l10", "To configure this counter-launch feature is identical to how the Anti-Ballistic missile setup is configured with the Fire Control radar. Input the Search Radar's coordinates into the targeting field of the silo, and provide it a redstone signal to fire when the Search Radar detects an ESM Tower:");
 
 			addGuidebook("chapter.missiledefense.l11", "Remember the best Ballistix defense is still not being found. Any active defenses you do construct should have redundancies built in. ");
+
+			addGuidebook("chapter.misc", "Misc.");
+
+			addGuidebook("chapter.misc.clustermissile1", "The Cluster Missile is the most lethal attack option Ballistix has to offer. The missile can carry up to Tier 3 explosives. Its lethality comes from the fact that upon final decent, the missile splits into 5 separate warheads, instantly creating 5 times the targets for air defense to shoot down! The catch however is " +
+					"that it takes 5 explosive warheads to launch in the first place, and can only be fired from the Missile Silo. This means if the missile is destroyed before splitting, you end up losing 5 times the resources. Ideally, Cluster Missiles will be apart of larger attacks.");
+
+			addGuidebook("chapter.misc.airraidsiren1", "The Air Raid Siren is as the name suggests. It is activated with a redstone signal and does not require power. It can have its range, pitch, and volume adjusted via the GUI.");
+
+			addGuidebook("chapter.misc.proximitydetector1", "The Proximity Detector can be used to detect entities inside of its detection range. When detecting an entity, it will emit a redstone signal of 15. It requires energy to function however. If Electodynamics is installed, it will require joules at the appropriate voltage. Otherwise it will use FE.");
+			addGuidebook("chapter.misc.proximitydetector2.1", "The Detector has a maximum range of 9 blocks in any direction. This can be programmed via the detection range fields in its GUI:");
+			addGuidebook("chapter.misc.proximitydetector2.2", "It should be noted that the minimum fields will be interpreted as negative even though the value entered is positive. To visualize the area the Detector will be checking, you can use the \"Detection Field\" button to toggle displaying it.");
+			addGuidebook("chapter.misc.proximitydetector3.1", "The Detector can toggle between detecting all living entities, only players, or nothing at all. This can be cycled via the \"Targeting Mode\" tab in its GUI:");
+			addGuidebook("chapter.misc.proximitydetector3.2", "If the Detector is set to \"None\", then it will effectively be disabled. When it comes to player detection, you are able to exclude certain players from detection via the \"Whitelist Manager\" tab in the GUI. Players who are in this list will not trip the Detector when inside its field. It should be noted the player " +
+					"who placed the Detector will be automatically added to the list.");
+			addGuidebook("chapter.misc.proximitydetector3.3", "Please note all of the above functionality assumes that the \"Whitelist Mode\" is disabled:");
+			addGuidebook("chapter.misc.proximitydetector3.4", "If this mode is enabled, the Detector will now exclusively emit a redstone signal only if a player in its Whitelist is detected. This is regardless if the Targeting Mode is set to all living or not.");
+			addGuidebook("chapter.misc.proximitydetector4", "One final note on the Proximity Detector is that any player or entity holding a Jammer will not be picked up by it, even if they are on the Whitelist. This can be especially useful when trying to bypass someone's base defenses!");
 
 			addJei("info.item.missilecloserange", "Specs:\n    Range: 3000 Blocks");
 			addJei("info.item.missilemediumrange", "Specs:\n    Range: 10 000 Blocks");

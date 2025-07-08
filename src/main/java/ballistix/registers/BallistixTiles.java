@@ -4,7 +4,9 @@ import com.google.common.collect.Sets;
 
 import ballistix.Ballistix;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
+import ballistix.common.tile.TileAirRaidSiren;
 import ballistix.common.tile.TileESMTower;
+import ballistix.common.tile.TileProximityDetector;
 import ballistix.common.tile.TileVerticalLaunchSilo;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.radar.TileSearchRadar;
@@ -46,6 +48,8 @@ public class BallistixTiles {
 	public static final RegistryObject<TileEntityType<TileTurretLaser>> TILE_LASERTURRET = BLOCK_ENTITY_TYPES.register("laserturret", () -> new TileEntityType<>(TileTurretLaser::new, Sets.newHashSet(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.laserturret)), null));
 	public static final RegistryObject<TileEntityType<TileTurretRailgun>> TILE_RAILGUNTURRET = BLOCK_ENTITY_TYPES.register("railgunturret", () -> new TileEntityType<>(TileTurretRailgun::new, Sets.newHashSet(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.railgunturret)), null));
 	public static final RegistryObject<TileEntityType<TileVerticalLaunchSilo>> TILE_VLS = BLOCK_ENTITY_TYPES.register("vls", () -> new TileEntityType<>(TileVerticalLaunchSilo::new, Sets.newHashSet(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.vls)), null));
+	public static final RegistryObject<TileEntityType<TileProximityDetector>> TILE_PROXIMITYDETECTOR = BLOCK_ENTITY_TYPES.register("proximitydetector", () -> new TileEntityType<>(TileProximityDetector::new, Sets.newHashSet(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.proximitydetector)), null));
+	public static final RegistryObject<TileEntityType<TileAirRaidSiren>> TILE_AIRRAIDSIREN = BLOCK_ENTITY_TYPES.register("airraidsiren", () -> new TileEntityType<>(TileAirRaidSiren::new, Sets.newHashSet(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.airraidsiren)), null));
 
 
 }

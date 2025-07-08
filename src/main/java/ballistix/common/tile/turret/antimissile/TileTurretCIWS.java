@@ -34,7 +34,6 @@ public class TileTurretCIWS extends TileTurretAntimissileProjectile implements I
     public final SingleProperty<Boolean> outOfAmmo = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "noammo", false));
     public final SingleProperty<Boolean> firing = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "isfiring", false));
     public final SingleProperty<Boolean> targetingEntity = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "targetingentity", false));
-    public final SingleProperty<Boolean> onlyTargetPlayers = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "onlytargetplayers", false));
 
     private boolean isPlaying = false;
     private LivingEntity livingTarget = null;
@@ -150,7 +149,9 @@ public class TileTurretCIWS extends TileTurretAntimissileProjectile implements I
 
         ITarget target = super.getTarget(ticks);
 
-        if(target != null) {
+        TargetingMode mode = TargetingMode.values()[entityTargetingMode.getValue()];
+
+        if(target != null || mode == TargetingMode.NONE) {
             livingTarget = null;
             return target;
         }
@@ -164,7 +165,7 @@ public class TileTurretCIWS extends TileTurretAntimissileProjectile implements I
             LivingEntity selected = null;
             double lastMag = 0;
 
-            Class<? extends LivingEntity> type = onlyTargetPlayers.getValue() ? PlayerEntity.class : LivingEntity.class;
+            Class<? extends LivingEntity> type = mode == TargetingMode.ONLY_PLAYERS ? PlayerEntity.class : LivingEntity.class;
 
             for(LivingEntity entity : level.getEntitiesOfClass(type, new AxisAlignedBB(getBlockPos()).inflate(currentRange.getValue() / 4.0))) {
                 if(raycastToBlockPos(level, getProjectileLaunchPosition(), entity.position().add(0, entity.getEyeHeight(), 0)).isEmpty() && !(entity instanceof PlayerEntity && (((PlayerEntity) entity).isCreative() || whitelistedPlayers.getValue().contains(((PlayerEntity) entity).getName().getString()))) && !entity.isDeadOrDying() && entity.isAlive()) {

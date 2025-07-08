@@ -25,6 +25,7 @@ import voltaic.api.registration.BulkRegistryObject;
 import voltaic.common.blockitem.BlockItemDescriptable;
 import voltaic.common.item.ItemVoltaic;
 import net.minecraft.item.Rarity;
+import ballistix.common.blockitem.BlockItemExplosive;
 
 public class BallistixItems {
 
@@ -33,11 +34,11 @@ public class BallistixItems {
 	public static final BulkRegistryObject<BlockItemDescriptable, SubtypeBallistixMachine> ITEMS_BALLISTIXMACHINE = new BulkRegistryObject<>(SubtypeBallistixMachine.values(), subtype -> ITEMS.register(subtype.tag(), () -> new BlockItemDescriptable(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(subtype), new Item.Properties(), () -> BallistixCreativeTabs.MAIN)));
 	public static final BulkRegistryObject<BlockItemDescriptable, SubtypeBlast> ITEMS_EXPLOSIVE = new BulkRegistryObject<>(SubtypeBlast.values(), subtype -> ITEMS.register(subtype.tag(), () -> {
 		if(subtype == SubtypeBlast.antimatter || subtype == SubtypeBlast.darkmatter || subtype == SubtypeBlast.largeantimatter) {
-			return new BlockItemDescriptable(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype), new Item.Properties().rarity(Rarity.EPIC), () -> BallistixCreativeTabs.MAIN);
-		} else if (subtype == SubtypeBlast.nuclear) {
-			return new BlockItemDescriptable(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype), new Item.Properties().rarity(Rarity.UNCOMMON), () -> BallistixCreativeTabs.MAIN);
+			return new BlockItemExplosive(subtype, BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype), new Item.Properties().rarity(Rarity.EPIC), () -> BallistixCreativeTabs.MAIN);
+		} else if (subtype == SubtypeBlast.nuclear || subtype == SubtypeBlast.rejuvination) {
+			return new BlockItemExplosive(subtype, BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype), new Item.Properties().rarity(Rarity.UNCOMMON), () -> BallistixCreativeTabs.MAIN);
 		} else {
-			return new BlockItemDescriptable(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype), new Item.Properties(), () -> BallistixCreativeTabs.MAIN);
+			return new BlockItemExplosive(subtype, BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype), new Item.Properties(), () -> BallistixCreativeTabs.MAIN);
 		}
 	}));
 	public static final BulkRegistryObject<ItemGrenade, SubtypeGrenade> ITEMS_GRENADE = new BulkRegistryObject<>(SubtypeGrenade.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemGrenade(subtype.explosiveType)));

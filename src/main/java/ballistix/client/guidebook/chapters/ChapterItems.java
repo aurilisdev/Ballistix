@@ -64,6 +64,7 @@ public class ChapterItems extends Chapter {
 		pageData.add(new TextWrapperObject(BallistixItems.ITEM_TRACKER.get().getDescription().copy().withStyle(TextFormatting.BOLD)).setCentered().setNewPage());
 		pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEM_TRACKER.get()));
 		pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.items.tracker1", ChatFormatter.getChatDisplayShort(ItemTracker.USAGE, DisplayUnits.JOULES))).setSeparateStart().setIndentions(1));
+		pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.items.tracker2", ChatFormatter.getChatDisplayShort(ItemTracker.USAGE, DisplayUnits.JOULES))).setSeparateStart().setIndentions(1));
 
 		// Scanner
 		pageData.add(new TextWrapperObject(BallistixItems.ITEM_SCANNER.get().getDescription().copy().withStyle(TextFormatting.BOLD)).setCentered().setNewPage());

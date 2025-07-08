@@ -4,7 +4,7 @@ import ballistix.api.blast.IBlast;
 import ballistix.common.blast.util.BlastLasting;
 import ballistix.common.blast.util.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.common.entity.EntityFallingBlock;
+import ballistix.common.entity.EntityBallistixFallingBlock;
 import ballistix.common.settings.BallistixConstants;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixSounds;
@@ -96,7 +96,7 @@ public class BlastHypersonic extends BlastLasting {
             double velY = deltaY * inverseMag * BallistixConstants.EXPLOSIVE_HYPERSONIC_VELOCITY;
             double velZ = deltaZ * inverseMag * BallistixConstants.EXPLOSIVE_HYPERSONIC_VELOCITY;
 
-            EntityFallingBlock movingBlock = new EntityFallingBlock(world, p.getX() + 0.5, p.getY() + 0.5, p.getZ() + 0.5, state);
+            EntityBallistixFallingBlock movingBlock = new EntityBallistixFallingBlock(world, p.getX() + 0.5, p.getY() + 0.5, p.getZ() + 0.5, state);
             movingBlock.setDeltaMovement(velX, velY, velZ);
             movingBlock.dropItem = false;
             world.setBlock(p, state.getFluidState().createLegacyBlock(), 3);

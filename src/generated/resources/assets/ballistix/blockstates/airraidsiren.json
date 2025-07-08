@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=north,lit=false": {
+      "model": "ballistix:block/airraidsiren"
+    },
+    "facing=south,lit=false": {
+      "model": "ballistix:block/airraidsiren",
+      "y": 180
+    },
+    "facing=west,lit=false": {
+      "model": "ballistix:block/airraidsiren",
+      "y": 270
+    },
+    "facing=east,lit=false": {
+      "model": "ballistix:block/airraidsiren",
+      "y": 90
+    },
+    "facing=north,lit=true": {
+      "model": "ballistix:block/airraidsirenon"
+    },
+    "facing=south,lit=true": {
+      "model": "ballistix:block/airraidsirenon",
+      "y": 180
+    },
+    "facing=west,lit=true": {
+      "model": "ballistix:block/airraidsirenon",
+      "y": 270
+    },
+    "facing=east,lit=true": {
+      "model": "ballistix:block/airraidsirenon",
+      "y": 90
+    }
+  }
+}

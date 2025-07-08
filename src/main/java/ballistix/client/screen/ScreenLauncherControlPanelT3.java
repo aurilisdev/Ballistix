@@ -55,7 +55,7 @@ public class ScreenLauncherControlPanelT3 extends GenericScreen<ContainerLaunche
 		addComponent(new ScreenComponentSimpleLabel(130, 19, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.freq")));
 		addComponent(new ScreenComponentSimpleLabel(101, 56, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.sync")));
 		
-		addComponent(new ScreenComponentButton<>(100, 25, 40, 40).setOnPress(button -> {
+		addComponent(new ScreenComponentButton<>(130, 49, 20, 20).setOnPress(button -> {
 			//
 			TileLauncherControlPanelT3 silo = getMenu().getSafeHost();
 			if(silo == null) {

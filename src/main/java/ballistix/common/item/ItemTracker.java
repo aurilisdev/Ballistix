@@ -7,6 +7,7 @@ import java.util.List;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import ballistix.api.silo.ILauncherControlPanel;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixCreativeTabs;
 import net.minecraft.client.util.ITooltipFlag;
@@ -15,10 +16,13 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -26,6 +30,7 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import voltaic.api.codec.StreamCodec;
+import voltaic.api.multiblock.subnodebased.TileMultiSubnode;
 import voltaic.prefab.item.ElectricItemProperties;
 import voltaic.prefab.item.ItemElectric;
 import voltaic.prefab.utilities.object.TransferPack;
@@ -43,6 +48,28 @@ public class ItemTracker extends ItemElectric {
 
     public ItemTracker() {
         super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1), () -> BallistixCreativeTabs.MAIN);
+    }
+    
+    @Override
+    public ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext context) {
+        if (context.getLevel().isClientSide || !hasTarget(stack)) {
+            return super.onItemUseFirst(stack, context);
+        }
+
+        Entity entity = context.getLevel().getEntity(getUUID(stack));
+        TileEntity tile = context.getLevel().getBlockEntity(context.getClickedPos());
+
+        if (tile instanceof ILauncherControlPanel) {
+
+        	((ILauncherControlPanel) tile).setTarget(new BlockPos((int) entity.getX(), 0, (int) entity.getZ()));
+
+        } else if (tile instanceof TileMultiSubnode && ((TileMultiSubnode) tile).getLevel().getBlockEntity(((TileMultiSubnode) tile).parentPos.getValue()) instanceof ILauncherControlPanel) {
+
+        	((ILauncherControlPanel) ((TileMultiSubnode) tile).getLevel().getBlockEntity(((TileMultiSubnode) tile).parentPos.getValue())).setTarget(new BlockPos((int) entity.getX(), 0, (int) entity.getZ()));
+
+        }
+
+        return super.onItemUseFirst(stack, context);
     }
 
     @Override

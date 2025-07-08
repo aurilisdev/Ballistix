@@ -20,7 +20,7 @@ import voltaic.prefab.screen.component.types.guitab.ScreenComponentGuiTab;
 import voltaic.prefab.utilities.VoltaicTextUtils;
 import voltaic.prefab.utilities.math.Color;
 
-public class WrapperPlayerWhitelist {
+public class WrapperPlayerWhitelistTurret {
 
     private final ScreenPlayerWhitelistTurret<?> screen;
 
@@ -39,7 +39,7 @@ public class WrapperPlayerWhitelist {
 
     private static final int BUTTON_COUNT = 5;
 
-    public WrapperPlayerWhitelist(ScreenPlayerWhitelistTurret<?> screen, int tabX, int tabY, int x, int y) {
+    public WrapperPlayerWhitelistTurret(ScreenPlayerWhitelistTurret<?> screen, int tabX, int tabY, int x, int y) {
         this.screen = screen;
 
         screen.addComponent(button = (ScreenComponentButton<?>) new ScreenComponentButton<>(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR, tabX, tabY).setOnPress(button -> {

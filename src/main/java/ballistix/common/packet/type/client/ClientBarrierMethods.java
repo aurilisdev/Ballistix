@@ -1,12 +1,15 @@
 package ballistix.common.packet.type.client;
 
 import java.util.HashSet;
+import java.util.UUID;
 
 import ballistix.api.radar.IDetected;
 import ballistix.common.packet.type.client.particle.BlastParticleSpawnType;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tile.radar.TileSearchRadar;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -42,5 +45,23 @@ public class ClientBarrierMethods {
 
 		}
 	}
+    
+    public static void handlePushPlayer(UUID id) {
+
+		ClientWorld world = Minecraft.getInstance().level;
+
+		if(world == null) {
+			return;
+		}
+
+		PlayerEntity player = world.getPlayerByUUID(id);
+
+		if(player == null) {
+			return;
+		}
+
+		player.push(0, 0.1 * BallistixConstants.EXPLOSIVE_ANTIGRAVITY_GRAVITYFACTOR, 0);
+
+    }
     
 }

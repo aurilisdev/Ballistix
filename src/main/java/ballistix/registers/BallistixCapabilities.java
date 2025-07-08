@@ -4,6 +4,7 @@ import ballistix.api.capability.CapabilityActiveBullets;
 import ballistix.api.capability.CapabilityActiveMissiles;
 import ballistix.api.capability.CapabilityActiveRailgunRounds;
 import ballistix.api.capability.CapabilityActiveSAMs;
+import ballistix.api.capability.CapabilityAntigravedChunks;
 import ballistix.api.capability.CapabilitySiloRegistry;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
@@ -25,6 +26,8 @@ public class BallistixCapabilities {
 	public static Capability<CapabilityActiveSAMs> ACTIVE_SAMS;
 	@CapabilityInject(CapabilityActiveMissiles.class)
 	public static Capability<CapabilityActiveMissiles> ACTIVE_MISSILES;
+	@CapabilityInject(CapabilityAntigravedChunks.class)
+	public static Capability<CapabilityAntigravedChunks> ANTIGRAVED_CHUNKS;
 	
 	public static void register() {
 		
@@ -107,6 +110,23 @@ public class BallistixCapabilities {
 			}
 			
 		}, () -> new CapabilityActiveMissiles());
+		
+		CapabilityManager.INSTANCE.register(CapabilityAntigravedChunks.class, new IStorage<CapabilityAntigravedChunks>() {
+
+			@Override
+			public INBT writeNBT(Capability<CapabilityAntigravedChunks> capability, CapabilityAntigravedChunks instance, Direction side) {
+				return instance.serializeNBT();
+			}
+
+			@Override
+			public void readNBT(Capability<CapabilityAntigravedChunks> capability, CapabilityAntigravedChunks instance, Direction side, INBT nbt) {
+				if(nbt instanceof CompoundNBT) {
+					instance.deserializeNBT((CompoundNBT) nbt);
+				}
+				
+			}
+			
+		}, () -> new CapabilityAntigravedChunks());
 		
 	}
 

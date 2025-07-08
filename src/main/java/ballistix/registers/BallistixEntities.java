@@ -4,7 +4,7 @@ import ballistix.Ballistix;
 import ballistix.common.entity.EntityBlast;
 import ballistix.common.entity.EntityBullet;
 import ballistix.common.entity.EntityExplosive;
-import ballistix.common.entity.EntityFallingBlock;
+import ballistix.common.entity.EntityBallistixFallingBlock;
 import ballistix.common.entity.EntityGrenade;
 import ballistix.common.entity.EntityMinecart;
 import ballistix.common.entity.EntityMissile;
@@ -29,5 +29,5 @@ public class BallistixEntities {
 	public static final RegistryObject<EntityType<EntitySAM>> ENTITY_SAM = ENTITIES.register("sam", () -> EntityType.Builder.<EntitySAM>of(EntitySAM::new, EntityClassification.MISC).fireImmune().sized(0.5F, 2.0F).clientTrackingRange(10).build(Ballistix.ID + ".sam"));
 	public static final RegistryObject<EntityType<EntityBullet>> ENTITY_BULLET = ENTITIES.register("bullet", () -> EntityType.Builder.<EntityBullet>of(EntityBullet::new, EntityClassification.MISC).fireImmune().sized(0.1F, 0.1F).clientTrackingRange(10).build(Ballistix.ID + ".bullet"));
 	public static final RegistryObject<EntityType<EntityRailgunRound>> ENTITY_RAILGUNROUND = ENTITIES.register("railgunround", () -> EntityType.Builder.<EntityRailgunRound>of(EntityRailgunRound::new, EntityClassification.MISC).fireImmune().sized(0.1F, 0.1F).clientTrackingRange(10).build(Ballistix.ID + ".railgunround"));
-	public static final RegistryObject<EntityType<EntityFallingBlock>> ENTITY_FALLINGBLOCK = ENTITIES.register("fallingblock", () -> EntityType.Builder.<EntityFallingBlock>of(EntityFallingBlock::new, EntityClassification.MISC).fireImmune().sized(1F, 1F).clientTrackingRange(10).build(Ballistix.ID + ".fallingentity"));
+	public static final RegistryObject<EntityType<EntityBallistixFallingBlock>> ENTITY_BALLISTIXFALLINGBLOCK = ENTITIES.register("fallingblock", () -> EntityType.Builder.<EntityBallistixFallingBlock>of(EntityBallistixFallingBlock::new, EntityClassification.MISC).fireImmune().sized(1F, 1F).clientTrackingRange(10).build(Ballistix.ID + ".fallingentity"));
 }

@@ -1,5 +1,7 @@
 {
   "values": [
-    "ballistix:chemicalgas"
+    "ballistix:chemicalgas",
+    "ballistix:toxin",
+    "ballistix:frostbite"
   ]
 }

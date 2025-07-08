@@ -20,7 +20,6 @@ import ballistix.registers.BallistixSounds;
 import ballistix.registers.BallistixTiles;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
@@ -329,7 +328,7 @@ public class TileVerticalLaunchSilo extends GenericTile implements ILauncherCont
                     //
                     target,
                     //
-                    itmissile.missile.tier(),
+                    itmissile.missile.ordinal() + 1,
                     //
                     blast,
                     //

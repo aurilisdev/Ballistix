@@ -13,6 +13,8 @@ public class BallistixDamageTypes {
 
 	public static final ResourceKey<DamageType> CHEMICAL_GAS = create("chemicalgas");
 	public static final ResourceKey<DamageType> VIRUS = create("virus");
+	public static final ResourceKey<DamageType> TOXIN = create("toxin");
+	public static final ResourceKey<DamageType> FROSTBITE = create("frostbite");
 	public static final ResourceKey<DamageType> SHRAPNEL = create("shrapnel");
 	public static final ResourceKey<DamageType> CIWS_BULLET = create("ciwsbullet");
 	public static final ResourceKey<DamageType> LASER_TURRET = create("laserturret");
@@ -25,6 +27,8 @@ public class BallistixDamageTypes {
 	public static void registerTypes(BootstapContext<DamageType> context) {
 		context.register(CHEMICAL_GAS, new DamageType("chemicalgas", DamageScaling.NEVER, 0.1F, DamageEffects.HURT));
 		context.register(VIRUS, new DamageType("virus", DamageScaling.NEVER, 0.1F, DamageEffects.HURT));
+		context.register(TOXIN, new DamageType("toxin", DamageScaling.NEVER, 0.1F, DamageEffects.HURT));
+		context.register(FROSTBITE, new DamageType("frostbite", DamageScaling.NEVER, 0.1F, DamageEffects.HURT));
 		context.register(SHRAPNEL, new DamageType("shrapnel", DamageScaling.NEVER, 0, DamageEffects.HURT));
 		context.register(CIWS_BULLET, new DamageType("ciwsbullet", DamageScaling.NEVER, 0, DamageEffects.HURT));
 		context.register(LASER_TURRET, new DamageType("laserturret", DamageScaling.NEVER, 0, DamageEffects.HURT));

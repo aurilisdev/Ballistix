@@ -3,7 +3,7 @@ package ballistix.client.screen.util;
 import com.mojang.blaze3d.platform.InputConstants;
 
 import ballistix.common.tile.turret.GenericTileTurret;
-import ballistix.prefab.screen.WrapperPlayerWhitelist;
+import ballistix.prefab.screen.WrapperPlayerWhitelistTurret;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import voltaic.prefab.inventory.container.types.GenericContainerBlockEntity;
@@ -13,7 +13,7 @@ import voltaic.prefab.screen.component.types.ScreenComponentVerticalSlider;
 public abstract class ScreenPlayerWhitelistTurret<T extends GenericContainerBlockEntity<? extends GenericTileTurret>> extends GenericScreen<T> {
 
     public ScreenComponentVerticalSlider whitelistSlider;
-    public WrapperPlayerWhitelist whitelistWrapper;
+    public WrapperPlayerWhitelistTurret whitelistWrapper;
 
     public ScreenPlayerWhitelistTurret(T container, Inventory inv, Component title) {
         super(container, inv, title);

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "ballistix:sonic"
+    },
+    "I": {
+      "item": "minecraft:ice"
+    },
+    "S": {
+      "item": "minecraft:snow_block"
+    }
+  },
+  "pattern": [
+    "ISI",
+    "SAS",
+    "ISI"
+  ],
+  "result": {
+    "item": "ballistix:endothermic"
+  },
+  "show_notification": false
+}

@@ -1,4 +1,10 @@
 {
+  "airraidsiren": {
+    "sounds": [
+      "ballistix:airraidsiren"
+    ],
+    "subtitle": "subtitles.ballistix.airraidsiren"
+  },
   "antimatterexplosion": {
     "sounds": [
       "ballistix:antimatterexplosion"
@@ -22,6 +28,12 @@
       "ballistix:empexplosion"
     ],
     "subtitle": "subtitles.ballistix.empexplosion"
+  },
+  "endothermicbeam": {
+    "sounds": [
+      "ballistix:endothermicbeam"
+    ],
+    "subtitle": "subtitles.ballistix.endothermicbeam"
   },
   "firecontrolradar": {
     "sounds": [

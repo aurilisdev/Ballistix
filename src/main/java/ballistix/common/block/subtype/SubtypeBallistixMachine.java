@@ -4,7 +4,9 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import ballistix.common.block.BallistixVoxelShapes;
+import ballistix.common.tile.TileAirRaidSiren;
 import ballistix.common.tile.TileESMTower;
+import ballistix.common.tile.TileProximityDetector;
 import ballistix.common.tile.TileVerticalLaunchSilo;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.radar.TileSearchRadar;
@@ -70,8 +72,11 @@ public enum SubtypeBallistixMachine implements ISubtype, IMachine {
 	//
 	laserturret(true, TileTurretLaser::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.LASER_TURRET)),
 	//
-	railgunturret(true, TileTurretRailgun::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.RAILGUN_TURRET));
+	railgunturret(true, TileTurretRailgun::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.RAILGUN_TURRET)),
 	//
+	proximitydetector(true, TileProximityDetector::new),
+	//
+	airraidsiren(true, TileAirRaidSiren::new, MachineProperties.builder().setShapeProvider(BallistixVoxelShapes.AIR_RAID_SIREN));
 
 	private final BlockEntityType.BlockEntitySupplier<BlockEntity> blockEntitySupplier;
 	private final boolean showInItemGroup;

@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "electrodynamics"
+    }
+  ],
+  "key": {
+    "M": {
+      "item": "electrodynamics:motor"
+    },
+    "N": {
+      "item": "minecraft:note_block"
+    },
+    "P": {
+      "tag": "forge:plates/steel"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "MNM",
+    "PPP"
+  ],
+  "result": {
+    "item": "ballistix:airraidsiren"
+  },
+  "show_notification": false
+}

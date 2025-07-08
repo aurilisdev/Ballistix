@@ -86,6 +86,9 @@ public class Ballistix {
 			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_EMP_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.emp.id());
 			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_SONIC_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.sonic.id());
 			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_HYPERSONIC_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.hypersonic.id());
+			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_ENDOTHERMIC_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.endothermic.id());
+			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_INFESTIVE_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.infestive.id());
+			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_EXOTHERMIC_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.exothermic.id());
 		});
 	}
 

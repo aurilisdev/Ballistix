@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "ballistix:condensive"
+    },
+    "M": {
+      "item": "ballistix:missiletier3"
+    }
+  },
+  "pattern": [
+    " M ",
+    "MBM",
+    " M "
+  ],
+  "result": {
+    "item": "ballistix:missilecluster"
+  },
+  "show_notification": false
+}

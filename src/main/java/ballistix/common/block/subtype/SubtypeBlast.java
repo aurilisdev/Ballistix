@@ -9,20 +9,23 @@ import ballistix.common.blast.tier1.BlastAnvil;
 import ballistix.common.blast.tier1.BlastAttractive;
 import ballistix.common.blast.tier1.BlastChemical;
 import ballistix.common.blast.tier1.BlastCondensive;
+import ballistix.common.blast.tier1.BlastDebilitation;
 import ballistix.common.blast.tier1.BlastIncendiary;
+import ballistix.common.blast.tier1.BlastInfestive;
 import ballistix.common.blast.tier1.BlastRepulsive;
 import ballistix.common.blast.tier1.BlastShrapnel;
 import ballistix.common.blast.tier2.BlastBreaching;
 import ballistix.common.blast.tier2.BlastContagious;
-import ballistix.common.blast.tier2.BlastDebilitation;
 import ballistix.common.blast.tier2.BlastFragmentation;
 import ballistix.common.blast.tier2.BlastSonic;
 import ballistix.common.blast.tier2.BlastThermobaric;
+import ballistix.common.blast.tier3.BlastAntigravity;
 import ballistix.common.blast.tier3.BlastAntimatter;
 import ballistix.common.blast.tier3.BlastDarkmatter;
 import ballistix.common.blast.tier3.BlastEMP;
 import ballistix.common.blast.tier3.BlastEnder;
 import ballistix.common.blast.tier3.BlastEndothermic;
+import ballistix.common.blast.tier3.BlastExothermic;
 import ballistix.common.blast.tier3.BlastHypersonic;
 import ballistix.common.blast.tier3.BlastLargeAntimatter;
 import ballistix.common.blast.tier3.BlastNuclear;
@@ -56,17 +59,20 @@ public enum SubtypeBlast implements ISubtype, IBlast {
     shrapnel(BlastShrapnel::new, 40, 1),
     chemical(BlastChemical::new, 100, 1),
     anvil(BlastAnvil::new, 100, 1),
+    infestive(BlastInfestive::new, 40, 1),
+    debilitation(BlastDebilitation::new, 80, 1),
     //Tier 2
     fragmentation(BlastFragmentation::new, 100, 2),
     contagious(BlastContagious::new, 100, 2),
     breaching(BlastBreaching::new, 5, 2),
     thermobaric(BlastThermobaric::new, 100, 2),
-    debilitation(BlastDebilitation::new, 80, 2),
     sonic(BlastSonic::new, 80, 2),
     //Tier 3
+    antigravity(BlastAntigravity::new, 100, 3),
     emp(BlastEMP::new, 80, 3),
     nuclear(BlastNuclear::new, 200, 3),
     endothermic(BlastEndothermic::new, 80, 3),
+    exothermic(BlastExothermic::new, 80, 3),
     ender(BlastEnder::new, 100, 3),
     hypersonic(BlastHypersonic::new, 150, 3),
     rejuvination(BlastRejuvination::new, 400, 3),

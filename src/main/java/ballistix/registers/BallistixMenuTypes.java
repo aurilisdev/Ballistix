@@ -28,6 +28,8 @@ public class BallistixMenuTypes {
 	public static final DeferredHolder<MenuType<?>, MenuType<ContainerLaserTurret>> CONTAINER_LASERTURRET = register("laserturret", ContainerLaserTurret::new);
 	public static final DeferredHolder<MenuType<?>, MenuType<ContainerRailgunTurret>> CONTAINER_RAILGUNTURRET = register("railgunturret", ContainerRailgunTurret::new);
 	public static final DeferredHolder<MenuType<?>, MenuType<ContainerVLS>> CONTAINER_VLS = register("vls", ContainerVLS::new);
+	public static final DeferredHolder<MenuType<?>, MenuType<ContainerProximityDetector>> CONTAINER_PROXIMITYDETECTOR = register("proximitydetector", ContainerProximityDetector::new);
+	public static final DeferredHolder<MenuType<?>, MenuType<ContainerAirRaidSiren>> CONTAINER_AIRRAIDSIREN = register("airraidsiren", ContainerAirRaidSiren::new);
 
 	private static <T extends AbstractContainerMenu> DeferredHolder<MenuType<?>, MenuType<T>> register(String id, MenuSupplier<T> supplier) {
 		return MENU_TYPES.register(id, () -> new MenuType<>(supplier, FeatureFlags.VANILLA_SET));

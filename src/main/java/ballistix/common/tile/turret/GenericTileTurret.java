@@ -66,6 +66,7 @@ public abstract class GenericTileTurret extends GenericTile {
     public final SingleProperty<Double> inaccuracyMultiplier = property(new SingleProperty<>(PropertyTypes.DOUBLE, "inaccuracymultiplier", 1.0));
     public final SingleProperty<Boolean> canFire = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "canfire", false));
     public final ListProperty<String> whitelistedPlayers = property(new ListProperty<>(PropertyTypes.STRING_LIST, "whitelistedplayers", new ArrayList<>()));
+    public final SingleProperty<Integer> entityTargetingMode = property(new SingleProperty<>(PropertyTypes.INTEGER, "entitytargetingmode", 0));
 
     public final double baseRange;
     public final double rotationSpeedRadians;
@@ -435,6 +436,10 @@ public abstract class GenericTileTurret extends GenericTile {
         }
 
 
+    }
+
+    public static enum TargetingMode {
+        ALL, ONLY_PLAYERS, NONE;
     }
 
 }

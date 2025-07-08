@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import ballistix.Ballistix;
+import ballistix.api.silo.ILauncherControlPanel;
+import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -15,6 +17,7 @@ import ballistix.registers.BallistixCreativeTabs;
 import ballistix.registers.BallistixDataComponentTypes;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -28,13 +31,17 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import voltaic.api.multiblock.subnodebased.TileMultiSubnode;
 import voltaic.prefab.item.ElectricItemProperties;
 import voltaic.prefab.item.ItemElectric;
 import voltaic.prefab.utilities.object.TransferPack;
+import voltaic.registers.VoltaicDataComponentTypes;
 
 @EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.GAME)
 public class ItemTracker extends ItemElectric {
@@ -45,6 +52,29 @@ public class ItemTracker extends ItemElectric {
 
     public ItemTracker() {
         super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1), BallistixCreativeTabs.MAIN, item -> Items.AIR);
+    }
+
+
+    @Override
+    public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
+        if (context.getLevel().isClientSide || !stack.has(BallistixDataComponentTypes.TRACKER_TARGET) || !stack.has(BallistixDataComponentTypes.TRACKER_ID)) {
+            return super.onItemUseFirst(stack, context);
+        }
+
+        Entity entity = context.getLevel().getEntity(stack.get(BallistixDataComponentTypes.TRACKER_ID));
+        BlockEntity tile = context.getLevel().getBlockEntity(context.getClickedPos());
+
+        if (tile instanceof ILauncherControlPanel silo) {
+
+            silo.setTarget(new BlockPos((int) entity.getX(), 0, (int) entity.getZ()));
+
+        } else if (tile instanceof TileMultiSubnode subnode && subnode.getLevel().getBlockEntity(subnode.parentPos.getValue()) instanceof ILauncherControlPanel silo) {
+
+            silo.setTarget(new BlockPos((int) entity.getX(), 0, (int) entity.getZ()));
+
+        }
+
+        return super.onItemUseFirst(stack, context);
     }
 
     @Override

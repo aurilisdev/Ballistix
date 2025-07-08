@@ -8,6 +8,9 @@ import java.util.Map.Entry;
 
 import ballistix.Ballistix;
 import ballistix.api.blast.IBlast;
+import ballistix.api.blast.IMovingBlast;
+import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.common.settings.BallistixConstants;
 import com.google.common.collect.Maps;
 
 import ballistix.api.blast.IHasCustomRender;
@@ -52,6 +55,7 @@ public abstract class Blast {
     public boolean hasStarted;
     public final GriefPreventionMethod griefPreventionMethod;
     public boolean shouldRenderCustomClient;
+    public boolean isRepeating = false;
 
     protected Blast(Level world, BlockPos position) {
         this.world = world;
@@ -128,6 +132,9 @@ public abstract class Blast {
                 EntityBlast entity = new EntityBlast(world);
                 entity.setPos(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5);
                 entity.setBlastType(getBlastType());
+                if(this instanceof IMovingBlast moving) {
+                    entity.setPersistant(moving.persistenceTicks(), moving.movementTicks());
+                }
                 world.addFreshEntity(entity);
                 return entity;
             }

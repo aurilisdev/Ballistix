@@ -7,6 +7,7 @@ import ballistix.Ballistix;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.block.subtype.SubtypeMissile;
+import ballistix.common.blockitem.BlockItemExplosive;
 import ballistix.common.item.ItemAAMissile;
 import ballistix.common.item.ItemDefuser;
 import ballistix.common.item.ItemGrenade;
@@ -42,11 +43,11 @@ public class BallistixItems {
 	public static final BulkDeferredHolder<Item, BlockItemDescriptable, SubtypeBallistixMachine> ITEMS_BALLISTIXMACHINE = new BulkDeferredHolder<>(SubtypeBallistixMachine.values(), subtype -> ITEMS.register(subtype.tag(), () -> new BlockItemDescriptable(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(subtype), new Item.Properties(), BallistixCreativeTabs.MAIN)));
 	public static final BulkDeferredHolder<Item, BlockItemDescriptable, SubtypeBlast> ITEMS_EXPLOSIVE = new BulkDeferredHolder<>(SubtypeBlast.values(), subtype -> ITEMS.register(subtype.tag(), () -> {
 		if(subtype == SubtypeBlast.antimatter || subtype == SubtypeBlast.darkmatter || subtype == SubtypeBlast.largeantimatter) {
-			return new BlockItemDescriptable(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype), new Item.Properties().rarity(Rarity.EPIC), BallistixCreativeTabs.MAIN);
-		} else if (subtype == SubtypeBlast.nuclear) {
-			return new BlockItemDescriptable(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype), new Item.Properties().rarity(Rarity.UNCOMMON), BallistixCreativeTabs.MAIN);
+			return new BlockItemExplosive(subtype, BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype), new Item.Properties().rarity(Rarity.EPIC), BallistixCreativeTabs.MAIN);
+		} else if (subtype == SubtypeBlast.nuclear || subtype == SubtypeBlast.rejuvination) {
+			return new BlockItemExplosive(subtype, BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype), new Item.Properties().rarity(Rarity.UNCOMMON), BallistixCreativeTabs.MAIN);
 		} else {
-			return new BlockItemDescriptable(BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype), new Item.Properties(), BallistixCreativeTabs.MAIN);
+			return new BlockItemExplosive(subtype, BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype), new Item.Properties(), BallistixCreativeTabs.MAIN);
 		}
 	}));
 	public static final BulkDeferredHolder<Item, ItemGrenade, SubtypeGrenade> ITEMS_GRENADE = new BulkDeferredHolder<>(SubtypeGrenade.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemGrenade(subtype.explosiveType)));

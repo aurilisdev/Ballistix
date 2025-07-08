@@ -143,7 +143,7 @@ public class EntityMissile extends Entity {
 
 		VirtualMissile.FlightPath path = VirtualMissile.FlightPath.values()[flightPath];
 
-		if (path == VirtualMissile.FlightPath.SILO && missileType != -1) {
+		if ((path == VirtualMissile.FlightPath.SILO || path == VirtualMissile.FlightPath.SILO_CLUSTER) && missileType != -1) {
 
 			float iDeltaX = target.getX() - startX;
 			float iDeltaZ = target.getZ() - startZ;
@@ -176,6 +176,10 @@ public class EntityMissile extends Entity {
 					phi = (float) Math.asin(Mth.clamp((initialDistance - distanceTraveled) / turnRadius, 0, 1));
 					signY = -1;
 
+					if(path == VirtualMissile.FlightPath.SILO_CLUSTER) {
+						removeAfterChangingDimensions();
+					}
+
 				} else if (distanceTraveled >= initialDistance) {
 
 					signY = -1;
@@ -207,6 +211,10 @@ public class EntityMissile extends Entity {
 
 						phi = (float) Math.asin(Mth.clamp((initialDistance - distanceTraveled) / turnRadius, 0, 1));
 						signY = -1;
+
+						if(path == VirtualMissile.FlightPath.SILO_CLUSTER) {
+							removeAfterChangingDimensions();
+						}
 
 					} else {
 
@@ -263,7 +271,7 @@ public class EntityMissile extends Entity {
 			setPos(vec);
 		}
 
-		if ((path == VirtualMissile.FlightPath.SILO || (path == VirtualMissile.FlightPath.VLS && hasIgnighted)) && !target.equals(BlockEntityUtils.OUT_OF_REACH) && speed < 3.0F) {
+		if ((path == VirtualMissile.FlightPath.SILO || path == VirtualMissile.FlightPath.SILO_CLUSTER || (path == VirtualMissile.FlightPath.VLS && hasIgnighted)) && !target.equals(BlockEntityUtils.OUT_OF_REACH) && speed < 3.0F) {
 			speed += 0.02F;
 		}
 

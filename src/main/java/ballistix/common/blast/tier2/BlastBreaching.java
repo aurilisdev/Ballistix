@@ -5,32 +5,94 @@ import ballistix.client.particle.ParticleOptionsBlastSmoke;
 import ballistix.client.shake.CameraShakeEffect;
 import ballistix.client.shake.CameraShakeManager;
 import ballistix.common.blast.util.BlastLasting;
+import ballistix.common.blast.util.thread.raycast.ThreadRaycastBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.BallistixConstants;
+import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.prefab.utils.ParticleUtilities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.Level.ExplosionInteraction;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
+import java.util.Iterator;
+
 public class BlastBreaching extends BlastLasting implements IHasCustomRender {
+
+    private ThreadRaycastBlast thread;
+    private Iterator<BlockPos> iterator;
+    private int pertick = -1;
 
     public BlastBreaching(Level world, BlockPos position) {
         super(world, position);
     }
 
     @Override
-    public boolean doExplode(int callCount) {
-        super.doExplode(callCount);
-        if (!world.isClientSide && !hasStarted) {
+    public void doPreExplode() {
+        if (!world.isClientSide) {
+            thread = new ThreadRaycastBlast(world, position, (int) BallistixConstants.EXPLOSIVE_BREACHING_SIZE, (float) BallistixConstants.EXPLOSIVE_BREACHING_ENERGY, null);
+            thread.start();
             world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) BallistixConstants.EXPLOSIVE_BREACHING_SIZE, ExplosionInteraction.BLOCK);
+            world.playSound(null, position, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 25, 1);
         }
+    }
+
+    @Override
+    public boolean doExplode(int callCount) {
         hasStarted = true;
+        super.doExplode(callCount);
+        if (thread == null) {
+            return ticksSinceBlastStart > BallistixConstants.EXPLOSIVE_BREACHING_SIZE * 3;
+        }
+        if (world.isClientSide || !thread.isComplete) {
+            return ticksSinceBlastStart > BallistixConstants.EXPLOSIVE_BREACHING_SIZE * 3;
+        }
+
+        if (pertick == -1) {
+            hasStarted = true;
+            pertick = (int) (thread.results.size() * 1.5 / BallistixConstants.EXPLOSIVE_BREACHING_DURATION + 1);
+            iterator = thread.results.iterator();
+        }
+        int finished = pertick;
+        while (iterator.hasNext()) {
+            if (finished-- < 0) {
+                break;
+            }
+            BlockPos p = new BlockPos(iterator.next()).offset(position);
+            BlockState state = world.getBlockState(p);
+
+            if(state.isAir()) {
+                continue;
+            }
+
+            boolean shouldDestroy = true;
+
+            switch (griefPreventionMethod) {
+                case NONE:
+                    break;
+                case GRIEF_DEFENDER:
+                    shouldDestroy = GriefDefenderHandler.shouldHarmBlock(p);
+                    break;
+                case SABER_FACTIONS:
+                    break;
+            }
+
+            if(!shouldDestroy) {
+                continue;
+            }
+
+            world.setBlockAndUpdate(p, Blocks.AIR.defaultBlockState());
+        }
+
         return ticksSinceBlastStart > BallistixConstants.EXPLOSIVE_BREACHING_SIZE * 3;
     }
 

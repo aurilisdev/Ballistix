@@ -6,15 +6,7 @@ import ballistix.client.guidebook.ModuleBallistix;
 import ballistix.client.particle.ParticleBlastSmoke;
 import ballistix.client.particle.ParticleMissileSmoke;
 import ballistix.client.particle.ParticleShockwave;
-import ballistix.client.render.entity.RenderBlast;
-import ballistix.client.render.entity.RenderBullet;
-import ballistix.client.render.entity.RenderExplosive;
-import ballistix.client.render.entity.RenderGrenade;
-import ballistix.client.render.entity.RenderMinecart;
-import ballistix.client.render.entity.RenderMissile;
-import ballistix.client.render.entity.RenderRailgunRound;
-import ballistix.client.render.entity.RenderSAM;
-import ballistix.client.render.entity.RenderShrapnel;
+import ballistix.client.render.entity.*;
 import ballistix.client.render.tile.RenderCIWSTurret;
 import ballistix.client.render.tile.RenderESMTower;
 import ballistix.client.render.tile.RenderFireControlRadar;
@@ -36,6 +28,7 @@ import ballistix.registers.BallistixTiles;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.blockentity.BeaconRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
@@ -48,6 +41,7 @@ import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -61,6 +55,7 @@ import net.neoforged.neoforge.client.model.data.ModelData;
 import voltaic.Voltaic;
 import voltaic.client.guidebook.ScreenGuidebook;
 import voltaic.prefab.utilities.RenderingUtils;
+import voltaic.prefab.utilities.math.Color;
 import voltaic.prefab.utilities.math.MathUtils;
 
 @OnlyIn(Dist.CLIENT)
@@ -79,6 +74,8 @@ public class BallistixClientRegister {
 	public static final ModelResourceLocation MODEL_MISSILETIER1 = ModelResourceLocation.standalone(Ballistix.rl("entity/missiles/missiletier1"));
 	public static final ModelResourceLocation MODEL_MISSILETIER2 = ModelResourceLocation.standalone(Ballistix.rl("entity/missiles/missiletier2"));
 	public static final ModelResourceLocation MODEL_MISSILETIER3 = ModelResourceLocation.standalone(Ballistix.rl("entity/missiles/missiletier3"));
+	public static final ModelResourceLocation MODEL_MISSILECLUSTER = ModelResourceLocation.standalone(Ballistix.rl("entity/missiles/missilecluster"));
+	public static final ModelResourceLocation MODEL_MISSILECLUSTERSHARD = ModelResourceLocation.standalone(Ballistix.rl("entity/missiles/missileclustershard"));
 	public static final ModelResourceLocation MODEL_DARKMATTERSPHERE = ModelResourceLocation.standalone(Ballistix.rl("entity/darkmattersphere"));
 	public static final ModelResourceLocation MODEL_DARKMATTERDISK = ModelResourceLocation.standalone(Ballistix.rl("entity/darkmatterdisk"));
 	public static final ModelResourceLocation MODEL_FIREBALL = ModelResourceLocation.standalone(Ballistix.rl("entity/explosionsphere"));
@@ -132,6 +129,8 @@ public class BallistixClientRegister {
 		ModLoader.postEvent(registerBlastRenderers);
 		registerBlastRenderers.process();
 
+		BallistixClientEvents.init();
+
 		ScreenGuidebook.addGuidebookModule(new ModuleBallistix());
 	}
 
@@ -151,6 +150,8 @@ public class BallistixClientRegister {
 		event.register(BallistixMenuTypes.CONTAINER_CIWSTURRET.get(), ScreenCIWSTurret::new);
 		event.register(BallistixMenuTypes.CONTAINER_LASERTURRET.get(), ScreenLaserTurret::new);
 		event.register(BallistixMenuTypes.CONTAINER_RAILGUNTURRET.get(), ScreenRailgunTurret::new);
+		event.register(BallistixMenuTypes.CONTAINER_PROXIMITYDETECTOR.get(), ScreenProximityDetector::new);
+		event.register(BallistixMenuTypes.CONTAINER_AIRRAIDSIREN.get(), ScreenAirRaidSiren::new);
 	}
 
 	@SubscribeEvent
@@ -160,6 +161,8 @@ public class BallistixClientRegister {
 		event.register(MODEL_MISSILETIER1);
 		event.register(MODEL_MISSILETIER2);
 		event.register(MODEL_MISSILETIER3);
+		event.register(MODEL_MISSILECLUSTER);
+		event.register(MODEL_MISSILECLUSTERSHARD);
 		event.register(MODEL_DARKMATTERSPHERE);
 		event.register(MODEL_DARKMATTERDISK);
 		event.register(MODEL_FIREBALL);
@@ -190,6 +193,7 @@ public class BallistixClientRegister {
 		event.registerEntityRenderer(BallistixEntities.ENTITY_SAM.get(), RenderSAM::new);
 		event.registerEntityRenderer(BallistixEntities.ENTITY_BULLET.get(), RenderBullet::new);
 		event.registerEntityRenderer(BallistixEntities.ENTITY_RAILGUNROUND.get(), RenderRailgunRound::new);
+		event.registerEntityRenderer(BallistixEntities.ENTITY_BALLISTIXFALLINGBLOCK.get(), RenderBallistixFallingBlock::new);
 		event.registerBlockEntityRenderer(BallistixTiles.TILE_LAUNCHER_PLATFORM_TIER1.get(), RenderLauncherPlatform::new);
 		event.registerBlockEntityRenderer(BallistixTiles.TILE_LAUNCHER_PLATFORM_TIER2.get(), RenderLauncherPlatform::new);
 		event.registerBlockEntityRenderer(BallistixTiles.TILE_LAUNCHER_PLATFORM_TIER3.get(), RenderLauncherPlatform::new);
@@ -213,13 +217,13 @@ public class BallistixClientRegister {
 	public static void registerBlastRenderers(RegisterBlastRenderersEvent event) {
 
 		event.register(SubtypeBlast.darkmatter, (entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
-			double x = entityIn.tickCount;
+			double x = entityIn.hasMatured ? entityIn.ticksAtMaturity : entityIn.tickCount;
 			double time = 4.0 / 3.0 * Math.PI * Math.pow(BallistixConstants.EXPLOSIVE_DARKMATTER_RADIUS, 3) / BallistixConstants.EXPLOSIVE_DARKMATTER_DURATION;
 			float scale = (float) (0.1 * Math.log(x * x) + x / (time * 2));
 			BakedModel modelDisk = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_DARKMATTERDISK);
 			BakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_BLACKHOLECUBE);
 
-			float animationRadians = (entityIn.tickCount + partialTicks) * 0.05f;
+			float animationRadians = Math.abs(entityIn.tickCount * 0.05F + partialTicks * 0.05F); // tweaked to prevent weird behavior with Integer.MAX_VALUE
 
 			matrixStack.pushPose();
 			matrixStack.scale(scale * 6, scale * 6, scale * 6);
@@ -297,6 +301,86 @@ public class BallistixClientRegister {
 			}
 
 			//TODO implement?
+
+		});
+
+		event.register(SubtypeBlast.endothermic, (entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
+
+			if(!entityIn.shouldRenderCustom) {
+				return;
+			}
+
+			int height = (int) Math.ceil(entityIn.level().getMaxBuildHeight() - entityIn.getY());
+
+			long i = entityIn.level().getGameTime();
+			int j = 0;
+
+			matrixStack.pushPose();
+			matrixStack.translate(-0.5, -0.5, -0.5);
+
+
+			int g = entityIn.level().random.nextIntBetweenInclusive(0, 70) + 102;
+
+			for (int k = 0; k <= height; k++) {
+				BeaconBlockEntity.BeaconBeamSection section = new BeaconBlockEntity.BeaconBeamSection(new Color(0, g, 255, 255).color());
+				BeaconRenderer.renderBeaconBeam(
+						matrixStack,
+						bufferIn,
+						BeaconRenderer.BEAM_LOCATION,
+						partialTicks,
+						1.0F,
+						i,
+						j,
+						k == height - 1 ? 1024 : section.getHeight(),
+						section.getColor(),
+						0.4F,
+						0.45F
+				);
+				j += section.getHeight();
+			}
+
+
+
+			matrixStack.popPose();
+
+		});
+
+		event.register(SubtypeBlast.exothermic, (entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
+
+			if (!entityIn.shouldRenderCustom) {
+				return;
+			}
+
+			int height = (int) Math.ceil(entityIn.level().getMaxBuildHeight() - entityIn.getY());
+
+			long i = entityIn.level().getGameTime();
+			int j = 0;
+
+			matrixStack.pushPose();
+			matrixStack.translate(-0.5, -0.5, -0.5);
+
+
+			int g = entityIn.level().random.nextIntBetweenInclusive(0, 70) + 60;
+
+			for (int k = 0; k <= height; k++) {
+				BeaconBlockEntity.BeaconBeamSection section = new BeaconBlockEntity.BeaconBeamSection(new Color(255, g, 0, 255).color());
+				BeaconRenderer.renderBeaconBeam(
+						matrixStack,
+						bufferIn,
+						BeaconRenderer.BEAM_LOCATION,
+						partialTicks,
+						1.0F,
+						i,
+						j,
+						k == height - 1 ? 1024 : section.getHeight(),
+						section.getColor(),
+						0.4F,
+						0.45F
+				);
+				j += section.getHeight();
+			}
+
+			matrixStack.popPose();
 
 		});
 

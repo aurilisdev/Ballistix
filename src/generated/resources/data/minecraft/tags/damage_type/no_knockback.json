@@ -2,6 +2,8 @@
   "values": [
     "ballistix:chemicalgas",
     "ballistix:laserturret",
-    "ballistix:virus"
+    "ballistix:virus",
+    "ballistix:toxin",
+    "ballistix:frostbite"
   ]
 }

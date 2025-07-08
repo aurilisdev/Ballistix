@@ -1,4 +1,4 @@
-package ballistix.common.blast.tier2;
+package ballistix.common.blast.tier1;
 
 import java.util.List;
 
@@ -90,9 +90,9 @@ public class BlastDebilitation extends Blast {
 				}
 
 				if (entity instanceof LivingEntity living) {
-					living.addEffect(new MobEffectInstance(MobEffects.POISON, 360));
-					living.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 360));
-					living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 360, 2));
+					living.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 360));
+					living.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 1200));
+					living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 1200, 2));
 				}
 			}
 		}

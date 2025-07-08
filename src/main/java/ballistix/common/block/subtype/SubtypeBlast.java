@@ -8,7 +8,7 @@ import ballistix.common.blast.tier3.*;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.blast.tier2.BlastBreaching;
 import ballistix.common.blast.tier2.BlastContagious;
-import ballistix.common.blast.tier2.BlastDebilitation;
+import ballistix.common.blast.tier1.BlastDebilitation;
 import ballistix.common.blast.tier2.BlastFragmentation;
 import ballistix.common.blast.tierother.BlastLandmine;
 import ballistix.common.blast.tierother.BlastObsidian;
@@ -42,17 +42,20 @@ public enum SubtypeBlast implements ISubtype, IBlast {
     shrapnel(BlastShrapnel::new, 40, 1),
     chemical(BlastChemical::new, 100, 1),
     anvil(BlastAnvil::new, 100, 1),
+    infestive(BlastInfestive::new, 40, 1),
+    debilitation(BlastDebilitation::new, 80, 1),
     //Tier 2
     fragmentation(BlastFragmentation::new, 100, 2),
     contagious(BlastContagious::new, 100, 2),
     breaching(BlastBreaching::new, 5, 2),
     thermobaric(BlastThermobaric::new, 100, 2),
-    debilitation(BlastDebilitation::new, 80, 2),
     sonic(BlastSonic::new, 80, 2),
     //Tier 3
+    antigravity(BlastAntigravity::new, 100, 3),
     emp(BlastEMP::new, 80, 3),
     nuclear(BlastNuclear::new, 200, 3),
     endothermic(BlastEndothermic::new, 80, 3),
+    exothermic(BlastExothermic::new, 80, 3),
     ender(BlastEnder::new, 100, 3),
     hypersonic(BlastHypersonic::new, 150, 3),
     rejuvination(BlastRejuvination::new, 400, 3),

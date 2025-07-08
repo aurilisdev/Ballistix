@@ -33,7 +33,6 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
     public final SingleProperty<Integer> cooldown = property(new SingleProperty<>(PropertyTypes.INTEGER, "cooldown", 0));
     public final SingleProperty<Boolean> outOfAmmo = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "noammo", false));
     public final SingleProperty<Boolean> targetingEntity = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "targetingentity", false));
-    public final SingleProperty<Boolean> onlyTargetPlayers = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "onlytargetplayers", false));
 
     private LivingEntity livingTarget = null;
 
@@ -129,7 +128,9 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
 
         ITarget target = super.getTarget(ticks);
 
-        if(target != null) {
+        TargetingMode mode = TargetingMode.values()[entityTargetingMode.getValue()];
+
+        if(target != null || mode == TargetingMode.NONE) {
             livingTarget = null;
             return target;
         }
@@ -143,7 +144,7 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
             LivingEntity selected = null;
             double lastMag = 0;
 
-            Class<? extends LivingEntity> type = onlyTargetPlayers.getValue() ? Player.class : LivingEntity.class;
+            Class<? extends LivingEntity> type = mode == TargetingMode.ONLY_PLAYERS ? Player.class : LivingEntity.class;
 
             for(LivingEntity entity : level.getEntitiesOfClass(type, new AABB(getBlockPos()).inflate(currentRange.getValue() / 4.0))) {
                 if(raycastToBlockPos(level, getProjectileLaunchPosition(), entity.position().add(0, entity.getEyeHeight(), 0)).isEmpty() && !(entity instanceof Player player && (player.isCreative() || whitelistedPlayers.getValue().contains(player.getName().getString()))) && !entity.isDeadOrDying() && !entity.isRemoved()) {

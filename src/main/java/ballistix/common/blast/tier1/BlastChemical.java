@@ -3,12 +3,13 @@ package ballistix.common.blast.tier1;
 import java.util.List;
 
 import ballistix.common.blast.util.Blast;
+import ballistix.registers.BallistixDamageTypes;
+import ballistix.registers.BallistixEffects;
 import org.joml.Vector3f;
 
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.BallistixConstants;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
-import ballistix.registers.BallistixDamageTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -94,11 +95,13 @@ public class BlastChemical extends Blast {
 
 				if (entity instanceof LivingEntity living) {
 
-					living.addEffect(new MobEffectInstance(MobEffects.POISON, 360, 2));
+					living.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 360, 2));
 
 					living.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 360));
 
 					living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 360, 2));
+
+					living.addEffect(new MobEffectInstance(BallistixEffects.TOXIN, 360));
 
 					if (callCount % 10 == 0) {
 

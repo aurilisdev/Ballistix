@@ -124,7 +124,7 @@ public class ItemRocketLauncher extends ItemVoltaic {
                     //
                     BlockPos.ZERO,
                     //
-                    ((ItemMissile) missile.getItem()).missile.tier(),
+                    ((ItemMissile) missile.getItem()).missile.ordinal() + 1,
                     //
                     blast,
                     //

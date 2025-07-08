@@ -3,6 +3,7 @@ package ballistix.common.tile.silo;
 import ballistix.api.blast.IBlast;
 import ballistix.api.missile.virtual.VirtualProjectile;
 import ballistix.common.blast.util.Blast;
+import ballistix.common.block.subtype.SubtypeMissile;
 import ballistix.common.tile.TileESMTower;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.radar.TileSearchRadar;
@@ -186,9 +187,14 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
         ItemStack mis = inv.getItem(MISSILE_SLOT);
 
         ItemStack explosive = inv.getItem(EXPLOSIVE_SLOT);
+        boolean isCluster = false;
         if (mis.getItem() instanceof ItemMissile itmissile && Blast.ITEM_TO_BLAST_MAP.get(explosive.getItem()) != null) {
             IBlast blast = Blast.ITEM_TO_BLAST_MAP.get(explosive.getItem());
             if (blast.tier() > itmissile.missile.tier() || itmissile.missile.tier() > getTier() || blast.tier() > getTier()) {
+                return false;
+            }
+            isCluster = itmissile.missile == SubtypeMissile.cluster;
+            if(isCluster && inv.getItem(EXPLOSIVE_SLOT).getCount() < 5) {
                 return false;
             }
             VirtualMissile missile = new VirtualMissile(
@@ -199,7 +205,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
                     //
                     0.0F,
                     //
-                    VirtualMissile.FlightPath.SILO,
+                    isCluster ? VirtualMissile.FlightPath.SILO_CLUSTER : VirtualMissile.FlightPath.SILO,
                     //
                     getBlockPos().getX() + 0.5F,
                     //
@@ -207,7 +213,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
                     //
                     target,
                     //
-                    itmissile.missile.tier(),
+                    itmissile.missile.ordinal() + 1,
                     //
                     blast,
                     //
@@ -220,7 +226,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
             MissileManager.addMissile(level.dimension(), missile);
 
             inv.removeItem(MISSILE_SLOT, 1);
-            inv.removeItem(EXPLOSIVE_SLOT, 1);
+            inv.removeItem(EXPLOSIVE_SLOT, isCluster ? 5 : 1);
 
             return true;
         }

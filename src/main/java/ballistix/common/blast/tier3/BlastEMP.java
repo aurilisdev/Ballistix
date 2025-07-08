@@ -1,6 +1,8 @@
 package ballistix.common.blast.tier3;
 
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IHasCustomRender;
@@ -10,16 +12,25 @@ import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.BallistixConstants;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixSounds;
+import com.google.common.collect.Maps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import voltaic.api.electricity.ICapabilityElectrodynamic;
+import voltaic.api.item.IItemElectric;
 import voltaic.registers.VoltaicCapabilities;
 
 public class BlastEMP extends Blast implements IHasCustomRender {
@@ -99,9 +110,84 @@ public class BlastEMP extends Blast implements IHasCustomRender {
                         }
                     }
                 }
-            } // TODO: Implement player inventory energy clearing
+            }
         }
         if (!cachedIterator.hasNext()) {
+            Map<Player, Vec3> playerKnockbackMap = Maps.newHashMap();
+            float doubleSize = (float) (BallistixConstants.EXPLOSIVE_EMP_RADIUS * 2.0F);
+            int x0 = Mth.floor(position.getX() - (double) doubleSize - 1.0D);
+            int x1 = Mth.floor(position.getX() + (double) doubleSize + 1.0D);
+            int y0 = Mth.floor(position.getY() - (double) doubleSize - 1.0D);
+            int y1 = Mth.floor(position.getY() + (double) doubleSize + 1.0D);
+            int z0 = Mth.floor(position.getZ() - (double) doubleSize - 1.0D);
+            int z1 = Mth.floor(position.getZ() + (double) doubleSize + 1.0D);
+
+            List<Entity> entities = world.getEntities(null, new AABB(x0, y0, z0, x1, y1, z1));
+
+            Vec3 posVector = new Vec3(position.getX(), position.getY(), position.getZ());
+
+            for (Entity entity : entities) {
+
+                if(!entity.isAlive()) {
+                    continue;
+                }
+
+                boolean shouldDrain = true;
+
+                switch (griefPreventionMethod) {
+                    case NONE:
+                        break;
+                    case GRIEF_DEFENDER:
+                        if (!GriefDefenderHandler.shouldEntityBeHarmed(entity)) {
+                            continue;
+                        }
+                        break;
+                    case SABER_FACTIONS:
+                        break;
+
+                }
+
+                IEnergyStorage entityFE = entity.getCapability(Capabilities.EnergyStorage.ENTITY, null);
+
+                if(entityFE != null && entityFE.canExtract()) {
+                    while(entityFE.getEnergyStored() > 0) {
+                        entityFE.extractEnergy(Integer.MAX_VALUE, false);
+                    }
+                }
+
+                if(entity instanceof Player player) {
+                    Inventory inv = player.getInventory();
+                    for(int i = 0; i < inv.getContainerSize(); i++) {
+
+                        ItemStack stack = inv.getItem(i);
+
+                        if(stack.isEmpty()) {
+                            continue;
+                        }
+
+                        IEnergyStorage itemFE = stack.getCapability(Capabilities.EnergyStorage.ITEM);
+
+                        if(itemFE != null && itemFE.canExtract()) {
+                            while(itemFE.getEnergyStored() > 0) {
+                                itemFE.extractEnergy(Integer.MAX_VALUE, false);
+                            }
+                        }
+
+                        if(stack.getItem() instanceof IItemElectric electric) {
+                            while(electric.getJoulesStored(stack) > 0) {
+                                electric.extractPower(stack, Double.MAX_VALUE, false);
+                            }
+                        }
+
+                        inv.setItem(i, stack);
+
+                    }
+
+                    inv.setChanged();
+                }
+
+            }
+
             return true;
         }
         return false;

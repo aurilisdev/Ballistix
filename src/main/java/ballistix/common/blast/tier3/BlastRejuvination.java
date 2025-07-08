@@ -3,18 +3,32 @@ package ballistix.common.blast.tier3;
 import ballistix.api.blast.IBlast;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
+import com.google.common.collect.ImmutableList;
+import com.google.common.util.concurrent.Futures;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket;
-import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.progress.LoggerChunkProgressListener;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.storage.LevelStorageSource;
+import net.minecraft.world.level.storage.PrimaryLevelData;
+import net.minecraft.world.level.storage.ServerLevelData;
+import org.apache.commons.io.FileUtils;
+import voltaic.Voltaic;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.concurrent.CompletableFuture;
 
 public class BlastRejuvination extends Blast {
     public BlastRejuvination(Level world, BlockPos position) {
@@ -24,7 +38,7 @@ public class BlastRejuvination extends Blast {
     @Override
     public void doPreExplode() {
         if(!world.isClientSide) {
-            world.playSound(null, position, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 25, 1);
+            world.playSound(null, position, SoundEvents.WITHER_SPAWN, SoundSource.BLOCKS, 25, 1);
         }
     }
 
@@ -41,20 +55,109 @@ public class BlastRejuvination extends Blast {
             return true;
         }
 
-        ChunkPos pos = new ChunkPos(position);
+        // Based upon implementation from World Edit
+        // https://github.com/EngineHub/WorldEdit/blob/version/7.3.x/worldedit-neoforge/src/main/java/com/sk89q/worldedit/neoforge/NeoForgeWorld.java#L228
 
-        ServerChunkCache cache = (ServerChunkCache) world.getChunkSource();
+        try {
 
-        for(ChunkStatus status : ChunkStatus.getStatusList()) {
-            cache.chunkMap.scheduleGenerationTask(status, pos);
+            Path tempDir = Paths.get("BallistixRejuvinationBlast");
+            LevelStorageSource levelStorage = LevelStorageSource.createDefault(tempDir);
+
+            try {
+
+                LevelStorageSource.LevelStorageAccess session = levelStorage.createAccess("BallistixRejuvinationBlast");
+
+                ServerLevel currentWorld = (ServerLevel) world;
+
+                PrimaryLevelData levelProperties = (PrimaryLevelData) currentWorld.getServer().getWorldData().overworldData();
+
+                try {
+
+                    ServerLevel newWorld = new ServerLevel(
+                            //
+                            currentWorld.getServer(),
+                            //
+                            Util.backgroundExecutor(),
+                            //
+                            session,
+                            //
+                            (ServerLevelData) currentWorld.getLevelData(),
+                            //
+                            currentWorld.dimension(),
+                            //
+                            new LevelStem(currentWorld.dimensionTypeRegistration(), currentWorld.getChunkSource().getGenerator()),
+                            //
+                            LoggerChunkProgressListener.create(32),
+                            //
+                            currentWorld.isDebug(),
+                            //
+                            levelProperties.worldGenOptions().seed(),
+                            //
+                            ImmutableList.of(),
+                            //
+                            false,
+                            //
+                            currentWorld.getRandomSequences()
+                            //
+                    );
+
+                    ChunkPos pos = new ChunkPos(position);
+
+                    CompletableFuture<ChunkAccess> loadedChunk = newWorld.getChunkSource().getChunkFuture(pos.x, pos.z, ChunkStatus.FEATURES, true).thenApply(either -> either.orElse(null));
+
+                    BlockableEventLoop<Runnable> executor = newWorld.getChunkSource().mainThreadProcessor;
+
+                    executor.managedBlock(() -> {
+                        if (loadedChunk.isDone() && Futures.getUnchecked(loadedChunk) == null) {
+                            return false;
+                        }
+                        return loadedChunk.isDone();
+                    });
+
+                    ChunkAccess newChunk = loadedChunk.getNow(null);
+                    ChunkAccess currChunk = currentWorld.getChunk(pos.x, pos.z);
+
+                    BlockPos start = new BlockPos(pos.getMinBlockX(), newWorld.getMinBuildHeight(), pos.getMinBlockZ());
+                    BlockPos end = new BlockPos(pos.getMaxBlockX(), newWorld.getMaxBuildHeight(), pos.getMaxBlockZ());
+
+                    BlockPos.betweenClosedStream(start, end).forEach(blockPos -> {
+
+                        BlockState newState = newChunk.getBlockState(blockPos);
+                        BlockState currState = currChunk.getBlockState(blockPos);
+
+                        if(newState == currState) {
+                            return;
+                        }
+
+                        currentWorld.setBlockAndUpdate(blockPos, newState);
+
+                    });
+
+
+                    while(currentWorld.getServer().pollTask()) {
+                        Thread.yield();
+                    }
+
+                } catch(Exception e) {
+                    e.printStackTrace();
+                    Voltaic.LOGGER.info("Rejuvenation Blast at " + position + " has failed.");
+                }
+
+            } catch(Exception e) {
+                e.printStackTrace();
+                Voltaic.LOGGER.info("Rejuvenation Blast at " + position + " has failed.");
+            } finally {
+                FileUtils.deleteDirectory(new File(tempDir.toUri()));
+                if(Files.exists(tempDir)) {
+                    Voltaic.LOGGER.info(tempDir + " still exists!");
+                }
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            Voltaic.LOGGER.info("Rejuvenation Blast at " + position + " has failed.");
         }
-
-        cache.chunkMap.runGenerationTasks();
-
-        cache.save(true);
-
-        //cache.chunkMap.getPlayers(pos, false).forEach(pl -> cache.broadcastAndSend(pl, new ClientboundLevelChunkWithLightPacket(cache.chunkMap.getChunkToSend(pos.toLong()), world.getLightEngine(), null, null)));
 
         return true;
     }
+
 }

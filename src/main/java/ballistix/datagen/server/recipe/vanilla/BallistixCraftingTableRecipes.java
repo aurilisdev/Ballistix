@@ -9,7 +9,6 @@ import ballistix.common.item.ItemMinecart.SubtypeMinecart;
 import ballistix.common.recipe.recipeutils.ChargedItemIngredient;
 import ballistix.common.tags.BallistixTags;
 import ballistix.registers.BallistixItems;
-import electrodynamics.Electrodynamics;
 import electrodynamics.common.block.subtype.SubtypeMachine;
 import electrodynamics.common.block.subtype.SubtypeWire;
 import electrodynamics.registers.ElectrodynamicsItems;
@@ -18,7 +17,6 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
 import net.neoforged.neoforge.common.conditions.NotCondition;
@@ -695,6 +693,78 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
                 //
                 .complete(Ballistix.ID, "turret_railgun_noelectro", output);
 
+        ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.airraidsiren), 1)
+                //
+                .addPattern("PPP")
+                //
+                .addPattern("MNM")
+                //
+                .addPattern("PPP")
+                //
+                .addKey('P', VoltaicTags.Items.PLATE_STEEL)
+                //
+                .addKey('M', ElectrodynamicsItems.ITEM_MOTOR.get())
+                //
+                .addKey('N', Items.NOTE_BLOCK)
+                //
+                .addConditions(ELECTRO_LOADED)
+                //
+                .complete(Ballistix.ID, "airraidsiren_electro", output);
+
+        ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.airraidsiren), 1)
+                //
+                .addPattern("III")
+                //
+                .addPattern("RNR")
+                //
+                .addPattern("III")
+                //
+                .addKey('I', Tags.Items.INGOTS_IRON)
+                //
+                .addKey('R', Tags.Items.DUSTS_REDSTONE)
+                //
+                .addKey('N', Items.NOTE_BLOCK)
+                //
+                .addConditions(ELECTRO_NOT_LOADED)
+                //
+                .complete(Ballistix.ID, "airraidsiren_noelectro", output);
+
+        ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.proximitydetector), 1)
+                //
+                .addPattern("PPP")
+                //
+                .addPattern("COC")
+                //
+                .addPattern("PPP")
+                //
+                .addKey('P', VoltaicTags.Items.PLATE_STEEL)
+                //
+                .addKey('O', Items.OBSERVER)
+                //
+                .addKey('C', VoltaicTags.Items.CIRCUITS_BASIC)
+                //
+                .addConditions(ELECTRO_LOADED)
+                //
+                .complete(Ballistix.ID, "proximitydetector_electro", output);
+
+        ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.proximitydetector), 1)
+                //
+                .addPattern("III")
+                //
+                .addPattern("ROR")
+                //
+                .addPattern("III")
+                //
+                .addKey('I', Tags.Items.INGOTS_IRON)
+                //
+                .addKey('R', Tags.Items.DUSTS_REDSTONE)
+                //
+                .addKey('O', Items.OBSERVER)
+                //
+                .addConditions(ELECTRO_NOT_LOADED)
+                //
+                .complete(Ballistix.ID, "observer_noelectro", output);
+
         ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier1), 1)
                 //
                 .addPattern(" P ")
@@ -814,6 +884,20 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
                 .addConditions(ELECTRO_NOT_LOADED)
                 //
                 .complete(Ballistix.ID, "missile_tier3_noelectro", output);
+
+        ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.cluster), 1)
+                //
+                .addPattern(" M ")
+                //
+                .addPattern("MBM")
+                //
+                .addPattern(" M ")
+                //
+                .addKey('M', BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier3))
+                //
+                .addKey('B', BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.condensive))
+                //
+                .complete(Ballistix.ID, "missile_cluster", output);
 
         ShapedCraftingRecipeBuilder.start(BallistixItems.ITEM_AAMISSILE.get(), 1)
                 //
@@ -1011,6 +1095,20 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
                 //
                 .complete(Ballistix.ID, "explosive_attractive", output);
 
+        ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.antigravity), 1)
+                //
+                .addPattern("EEE")
+                //
+                .addPattern("EAE")
+                //
+                .addPattern("EEE")
+                //
+                .addKey('E', Items.ENDER_EYE)
+                //
+                .addKey('A', BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.attractive))
+                //
+                .complete(Ballistix.ID, "explosive_antigravity", output);
+
         ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.anvil), 10)
                 //
                 .addPattern("CCC")
@@ -1200,6 +1298,36 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
                 //
                 .complete(Ballistix.ID, "explosive_ender", output);
 
+        ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.endothermic), 1)
+                //
+                .addPattern("ISI")
+                //
+                .addPattern("SAS")
+                //
+                .addPattern("ISI")
+                //
+                .addKey('I', Items.ICE)
+                //
+                .addKey('S', Items.SNOW_BLOCK)
+                //
+                .addKey('A', BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.sonic))
+                //
+                .complete(Ballistix.ID, "explosive_endothermic", output);
+
+        ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.exothermic), 1)
+                //
+                .addPattern("III")
+                //
+                .addPattern("IGI")
+                //
+                .addPattern("III")
+                //
+                .addKey('G', Tags.Items.GLASS_BLOCKS)
+                //
+                .addKey('I', BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.incendiary))
+                //
+                .complete(Ballistix.ID, "explosive_exothermic", output);
+
         ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.fragmentation), 1)
                 //
                 .addPattern(" S ")
@@ -1249,6 +1377,20 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
                 .addConditions(ELECTRO_NOT_LOADED)
                 //
                 .complete(Ballistix.ID, "explosive_incendiary_noelectro", output);
+
+        ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.infestive), 8)
+                //
+                .addPattern("SSS")
+                //
+                .addPattern("SCS")
+                //
+                .addPattern("SSS")
+                //
+                .addKey('S', Tags.Items.STONES)
+                //
+                .addKey('C', BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.chemical))
+                //
+                .complete(Ballistix.ID, "explosive_infestive", output);
 
         ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.nuclear), 1)
                 //
@@ -1311,6 +1453,38 @@ public class BallistixCraftingTableRecipes extends AbstractRecipeGenerator {
                 .addKey('C', BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.condensive))
                 //
                 .complete(Ballistix.ID, "explosive_repulsive", output);
+
+        ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.rejuvination), 1)
+                //
+                .addPattern("DDD")
+                //
+                .addPattern("DED")
+                //
+                .addPattern("DDD")
+                //
+                .addKey('D', BallistixTags.Items.CELL_DARK_MATTER)
+                //
+                .addKey('E', BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.condensive))
+                //
+                .addConditions(ELECTRO_LOADED)
+                //
+                .complete(Ballistix.ID, "explosive_rejuvination_electro", output);
+
+        ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.rejuvination), 1)
+                //
+                .addPattern("DDD")
+                //
+                .addPattern("DED")
+                //
+                .addPattern("DDD")
+                //
+                .addKey('D', Tags.Items.NETHER_STARS)
+                //
+                .addKey('E', BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.condensive))
+                //
+                .addConditions(ELECTRO_NOT_LOADED)
+                //
+                .complete(Ballistix.ID, "explosive_rejuvination_noelectro", output);
 
         ShapedCraftingRecipeBuilder.start(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.shrapnel), 1)
                 //

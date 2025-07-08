@@ -18,9 +18,9 @@ public class BallistixDamageTagsProvider extends DamageTypeTagsProvider {
 
 	@Override
 	protected void addTags(Provider provider) {
-		tag(DamageTypeTags.BYPASSES_ARMOR).add(BallistixDamageTypes.CHEMICAL_GAS);
+		tag(DamageTypeTags.BYPASSES_ARMOR).add(BallistixDamageTypes.CHEMICAL_GAS, BallistixDamageTypes.TOXIN, BallistixDamageTypes.FROSTBITE);
 		tag(DamageTypeTags.BYPASSES_EFFECTS).add(BallistixDamageTypes.CHEMICAL_GAS, BallistixDamageTypes.SHRAPNEL, BallistixDamageTypes.CIWS_BULLET, BallistixDamageTypes.LASER_TURRET, BallistixDamageTypes.RAILGUN_ROUND); // bypasses magic
-		tag(DamageTypeTags.NO_KNOCKBACK).add(BallistixDamageTypes.CHEMICAL_GAS, BallistixDamageTypes.LASER_TURRET, BallistixDamageTypes.VIRUS);
+		tag(DamageTypeTags.NO_KNOCKBACK).add(BallistixDamageTypes.CHEMICAL_GAS, BallistixDamageTypes.LASER_TURRET, BallistixDamageTypes.VIRUS, BallistixDamageTypes.TOXIN, BallistixDamageTypes.FROSTBITE);
 		//tag(DamageTypeTags.BYPASSES_COOLDOWN).add(BallistixDamageTypes.CIWS_BULLET, BallistixDamageTypes.LASER_TURRET);
 	}
 

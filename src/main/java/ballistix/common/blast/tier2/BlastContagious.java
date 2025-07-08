@@ -8,6 +8,7 @@ import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.BallistixConstants;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
+import ballistix.registers.BallistixDamageTypes;
 import ballistix.registers.BallistixEffects;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -100,6 +101,12 @@ public class BlastContagious extends Blast {
 					MobEffectInstance effect = new MobEffectInstance(BallistixEffects.VIRUS.get(), Integer.MAX_VALUE);
 					effect.setNoCounter(true);
 					living.addEffect(effect);
+					
+					if (callCount % 10 == 0) {
+
+						living.hurt(BallistixDamageTypes.CHEMICAL_GAS, 2);
+
+					}
 				}
 			}
 		}

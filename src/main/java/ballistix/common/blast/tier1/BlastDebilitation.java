@@ -1,4 +1,4 @@
-package ballistix.common.blast.tier2;
+package ballistix.common.blast.tier1;
 
 import java.util.List;
 

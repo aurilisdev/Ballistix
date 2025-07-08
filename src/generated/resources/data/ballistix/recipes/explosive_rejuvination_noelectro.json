@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "conditions": [
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "electrodynamics"
+      }
+    }
+  ],
+  "key": {
+    "D": {
+      "tag": "forge:nether_stars"
+    },
+    "E": {
+      "item": "ballistix:condensive"
+    }
+  },
+  "pattern": [
+    "DDD",
+    "DED",
+    "DDD"
+  ],
+  "result": {
+    "item": "ballistix:rejuvination"
+  }
+}

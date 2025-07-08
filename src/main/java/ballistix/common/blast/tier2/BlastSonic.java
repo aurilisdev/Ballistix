@@ -4,15 +4,14 @@ import ballistix.api.blast.IBlast;
 import ballistix.common.blast.util.BlastLasting;
 import ballistix.common.blast.util.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
+import ballistix.common.entity.EntityBallistixFallingBlock;
 import ballistix.common.settings.BallistixConstants;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -98,16 +97,8 @@ public class BlastSonic extends BlastLasting {
             double velY = deltaY * inverseMag * BallistixConstants.EXPLOSIVE_SONIC_VELOCITY;
             double velZ = deltaZ * inverseMag * BallistixConstants.EXPLOSIVE_SONIC_VELOCITY;
 
-            FallingBlockEntity movingBlock = new FallingBlockEntity(EntityType.FALLING_BLOCK, world);
-            movingBlock.blockState = state;
-            movingBlock.blocksBuilding = true;
-            movingBlock.setPos(p.getX() + 0.5, p.getY() + 0.5, p.getZ() + 0.5);
-            movingBlock.xo = movingBlock.getX();
-            movingBlock.yo = movingBlock.getY();
-            movingBlock.zo = movingBlock.getZ();
-            movingBlock.setStartPos(movingBlock.blockPosition());
+            EntityBallistixFallingBlock movingBlock = new EntityBallistixFallingBlock(world, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, state);
             movingBlock.setDeltaMovement(velX, velY, velZ);
-            movingBlock.dropItem = false;
             world.setBlock(p, state.getFluidState().createLegacyBlock(), 3);
             world.addFreshEntity(movingBlock);
         }

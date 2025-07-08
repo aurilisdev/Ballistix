@@ -4,6 +4,7 @@ import ballistix.api.capability.CapabilityActiveBullets;
 import ballistix.api.capability.CapabilityActiveMissiles;
 import ballistix.api.capability.CapabilityActiveRailgunRounds;
 import ballistix.api.capability.CapabilityActiveSAMs;
+import ballistix.api.capability.CapabilityAntigravedChunks;
 import ballistix.api.capability.CapabilitySiloRegistry;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -26,6 +27,10 @@ public class BallistixCapabilities {
 	
 	public static final Capability<CapabilityActiveSAMs> ACTIVE_SAMS = CapabilityManager.get(new CapabilityToken<>() {
 	});
+	
+	public static final Capability<CapabilityAntigravedChunks> ANTIGRAVED_CHUNKS = CapabilityManager.get(new CapabilityToken<>() {
+	});
+
 
 	public static void register(RegisterCapabilitiesEvent event) {
 		event.register(CapabilitySiloRegistry.class);
@@ -33,6 +38,7 @@ public class BallistixCapabilities {
 		event.register(CapabilityActiveBullets.class);
 		event.register(CapabilityActiveRailgunRounds.class);
 		event.register(CapabilityActiveSAMs.class);
+		event.register(CapabilityAntigravedChunks.class);
 	}
 
 }

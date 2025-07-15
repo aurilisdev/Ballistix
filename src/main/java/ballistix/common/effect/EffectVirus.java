@@ -36,7 +36,9 @@ public class EffectVirus extends MobEffect {
             List<LivingEntity> list = level.getEntitiesOfClass(LivingEntity.class, new AABB(livingEntity.blockPosition()).inflate(BallistixConstants.VIRUS_EFFECT_RADIUS));
 
             for(LivingEntity entity : list) {
-                entity.addEffect(new MobEffectInstance(BallistixEffects.VIRUS.get(), -1));
+            	MobEffectInstance effect = new MobEffectInstance(BallistixEffects.VIRUS.get(), Integer.MAX_VALUE);
+				effect.setNoCounter(true);
+				entity.addEffect(effect);
             }
 
         }

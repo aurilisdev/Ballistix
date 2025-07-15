@@ -89,7 +89,7 @@ public class BlastLargeAntimatter extends BlastLasting implements IHasCustomRend
 				switch (griefPreventionMethod) {
 				case NONE:
 					block.wasExploded(world, p, ex);
-					world.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
+					world.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
 					break;
 				case GRIEF_DEFENDER:
 					GriefDefenderHandler.destroyBlock(block, ex, p, world);

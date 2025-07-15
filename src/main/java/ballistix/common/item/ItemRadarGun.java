@@ -45,11 +45,11 @@ public class ItemRadarGun extends ItemElectric {
 
         if (tile instanceof ILauncherControlPanel) {
 
-            ((ILauncherControlPanel) tile).setTarget(getCoordiantes(stack));
+            ((ILauncherControlPanel) tile).setTargetFromDesignator(getCoordiantes(stack));
 
         } else if (tile instanceof TileMultiSubnode && ((TileMultiSubnode) tile).getLevel().getBlockEntity(((TileMultiSubnode) tile).parentPos.getValue()) instanceof ILauncherControlPanel) {
 
-        	((ILauncherControlPanel) ((TileMultiSubnode) tile).getLevel().getBlockEntity(((TileMultiSubnode) tile).parentPos.getValue())).setTarget(getCoordiantes(stack));
+        	((ILauncherControlPanel) ((TileMultiSubnode) tile).getLevel().getBlockEntity(((TileMultiSubnode) tile).parentPos.getValue())).setTargetFromDesignator(getCoordiantes(stack));
 
         } else if (tile instanceof TileTurretAntimissile) {
             if (((TileTurretAntimissile) tile).bindFireControlRadar(getCoordiantes(stack))) {

@@ -36,7 +36,9 @@ public class EffectVirus extends Effect {
             List<LivingEntity> list = level.getEntitiesOfClass(LivingEntity.class, new AxisAlignedBB(livingEntity.blockPosition()).inflate(BallistixConstants.VIRUS_EFFECT_RADIUS));
 
             for(LivingEntity entity : list) {
-                entity.addEffect(new EffectInstance(BallistixEffects.VIRUS, -1));
+            	EffectInstance effect = new EffectInstance(BallistixEffects.VIRUS, Integer.MAX_VALUE);
+				effect.setNoCounter(true);
+				entity.addEffect(effect);
             }
 
         }

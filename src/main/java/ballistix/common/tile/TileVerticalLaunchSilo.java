@@ -385,6 +385,11 @@ public class TileVerticalLaunchSilo extends GenericTile implements ILauncherCont
     public void setTarget(BlockPos blockPos) {
         target.setValue(blockPos);
     }
+    
+    @Override
+    public void setTargetFromDesignator(BlockPos target) {
+    	setTarget(target);
+    }
 
     @Override
     public IMultiblockParentBlock.SubnodeWrapper getSubNodes() {

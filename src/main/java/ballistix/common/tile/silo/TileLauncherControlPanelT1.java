@@ -256,6 +256,11 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 	}
 
 	@Override
+	public void setTargetFromDesignator(BlockPos target) {
+		setTarget(new BlockPos(target.getX(), this.target.getValue().getY(), target.getZ()));
+	}
+
+	@Override
 	public BlockPos getTarget() {
 		return target.getValue();
 	}

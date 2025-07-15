@@ -389,6 +389,11 @@ public class TileVerticalLaunchSilo extends GenericTile implements ILauncherCont
     }
 
     @Override
+    public void setTargetFromDesignator(BlockPos target) {
+        setTarget(target);
+    }
+
+    @Override
     public IMultiblockParentBlock.SubnodeWrapper getSubNodes() {
         return SubtypeBallistixMachine.Subnodes.VLS;
     }
@@ -411,7 +416,6 @@ public class TileVerticalLaunchSilo extends GenericTile implements ILauncherCont
     public Direction getFacingDirection() {
         return getFacing();
     }
-
 
     @EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)
     private static final class ChunkloaderManager {

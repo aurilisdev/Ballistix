@@ -40,7 +40,7 @@ public class ScreenLauncherControlPanelT1 extends GenericScreen<ContainerLaunche
 		addComponent(new ScreenComponentElectricInfo(this::getElectricInformation, -AbstractScreenComponentInfo.SIZE + 1, 2).wattage(BallistixConstants.MISSILESILO_USAGE * 20));
 
 		addEditBox(xCoordField = new ScreenComponentEditBox(10, 28, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setX).setFilter(ScreenComponentEditBox.INTEGER));
-		addEditBox(zCoordField = new ScreenComponentEditBox(10, 46, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setY).setFilter(ScreenComponentEditBox.INTEGER));
+		addEditBox(zCoordField = new ScreenComponentEditBox(10, 46, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setZ).setFilter(ScreenComponentEditBox.INTEGER));
 
 		addComponent(new ScreenComponentSimpleLabel(60, 32, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.x")));
 		addComponent(new ScreenComponentSimpleLabel(60, 50, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.z")));
@@ -85,7 +85,7 @@ public class ScreenLauncherControlPanelT1 extends GenericScreen<ContainerLaunche
 
 	}
 
-	private void setSiloTargetY(String coord) {
+	private void setSiloTargetZ(String coord) {
 
 		if (coord.isEmpty()) {
 			return;
@@ -97,15 +97,15 @@ public class ScreenLauncherControlPanelT1 extends GenericScreen<ContainerLaunche
 			return;
 		}
 
-		int y = silo.target.getValue().getY();
+		int z = silo.target.getValue().getZ();
 
 		try {
-			y = Integer.parseInt(coord);
+			z = Integer.parseInt(coord);
 		} catch (Exception e) {
 			// Filler
 		}
 
-		updateSiloCoords(silo.target.getValue().getX(), y, silo.target.getValue().getZ(), silo);
+		updateSiloCoords(silo.target.getValue().getX(), silo.target.getValue().getY(), z, silo);
 
 	}
 
@@ -119,10 +119,10 @@ public class ScreenLauncherControlPanelT1 extends GenericScreen<ContainerLaunche
 		setSiloTargetX(val);
 	}
 
-	private void setY(String val) {
+	private void setZ(String val) {
 		zCoordField.setFocus(true);
 		xCoordField.setFocus(false);
-		setSiloTargetY(val);
+		setSiloTargetZ(val);
 	}
 
 	@Override

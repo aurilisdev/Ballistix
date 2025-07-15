@@ -44,11 +44,11 @@ public class ItemRadarGun extends ItemElectric {
 
         if (tile instanceof ILauncherControlPanel silo) {
 
-            silo.setTarget(stack.get(VoltaicDataComponentTypes.BLOCK_POS));
+            silo.setTargetFromDesignator(stack.get(VoltaicDataComponentTypes.BLOCK_POS));
 
         } else if (tile instanceof TileMultiSubnode subnode && subnode.getLevel().getBlockEntity(subnode.parentPos.getValue()) instanceof ILauncherControlPanel silo) {
 
-            silo.setTarget(stack.get(VoltaicDataComponentTypes.BLOCK_POS));
+            silo.setTargetFromDesignator(stack.get(VoltaicDataComponentTypes.BLOCK_POS));
 
         } else if (tile instanceof TileTurretAntimissile turret) {
             if (turret.bindFireControlRadar(stack.get(VoltaicDataComponentTypes.BLOCK_POS))) {

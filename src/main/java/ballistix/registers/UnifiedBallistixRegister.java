@@ -34,7 +34,7 @@ public class UnifiedBallistixRegister {
 
 		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.launcherplatformtier1), BallistixTextUtils.tooltip("missilesilo.maxtier", Component.literal("1").withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY));
 		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.launcherplatformtier2), BallistixTextUtils.tooltip("missilesilo.maxtier", Component.literal("2").withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY));
-		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.launcherplatformtier3), BallistixTextUtils.tooltip("missilesilo.maxtier", Component.literal("2").withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY));
+		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.launcherplatformtier3), BallistixTextUtils.tooltip("missilesilo.maxtier", Component.literal("3").withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY));
 
 		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.launchersupportframetier1), BallistixTextUtils.tooltip("missilesilo.accuracy", Component.literal("30").withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY));
 		BlockItemDescriptable.addDescription(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getHolder(SubtypeBallistixMachine.launchersupportframetier2), BallistixTextUtils.tooltip("missilesilo.accuracy", Component.literal("15").withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY));

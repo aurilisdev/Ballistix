@@ -95,13 +95,12 @@ public class ItemLaserDesignator extends ItemElectric {
 
 		for (ILauncherControlPanel silo : SiloRegistry.getSilos(frequency)) {
 
-			if (!silo.getPlatform().valid()) {
-				continue;
-			}
-			ILauncherPlatform platform = silo.getPlatform().getSafe();
+			ILauncherPlatform platform = silo.getPlatform();
+
 			if (platform == null) {
 				continue;
 			}
+
 			range = platform.getRange();
 			distance = TileLauncherControlPanelT1.calculateDistance(silo.getPos(), target);
 

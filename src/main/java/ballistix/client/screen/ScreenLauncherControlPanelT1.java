@@ -133,7 +133,7 @@ public class ScreenLauncherControlPanelT1 extends GenericScreen<ContainerLaunche
 			TileLauncherControlPanelT1 silo = menu.getSafeHost();
 			if (silo != null) {
 				xCoordField.setValue("" + silo.target.getValue().getX());
-				zCoordField.setValue("" + silo.target.getValue().getY());
+				zCoordField.setValue("" + silo.target.getValue().getZ());
 			}
 		}
 	}

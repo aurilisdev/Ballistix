@@ -1,7 +1,8 @@
 package ballistix.api.silo;
 
 import net.minecraft.core.BlockPos;
-import voltaic.prefab.utilities.object.CachedTileOutput;
+
+import javax.annotation.Nullable;
 
 public interface ILauncherControlPanel {
 
@@ -13,9 +14,11 @@ public interface ILauncherControlPanel {
 
 	public BlockPos getPos();
 
-	public CachedTileOutput getPlatform();
+	@Nullable
+	public ILauncherPlatform getPlatform();
 
-	public CachedTileOutput getSupportFrame();
+	@Nullable
+	public ILauncherSupportFrame getSupportFrame();
 
 	public void launch();
 

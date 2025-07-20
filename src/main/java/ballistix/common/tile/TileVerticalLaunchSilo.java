@@ -6,6 +6,7 @@ import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.api.silo.ILauncherControlPanel;
 import ballistix.api.silo.ILauncherPlatform;
+import ballistix.api.silo.ILauncherSupportFrame;
 import ballistix.api.silo.SiloRegistry;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
@@ -50,7 +51,7 @@ import voltaic.prefab.utilities.object.CachedTileOutput;
 import voltaic.registers.VoltaicCapabilities;
 import voltaic.registers.VoltaicDataComponentTypes;
 
-public class TileVerticalLaunchSilo extends GenericTile implements ILauncherControlPanel, ILauncherPlatform, IMultiblockParentTile {
+public class TileVerticalLaunchSilo extends GenericTile implements ILauncherControlPanel, ILauncherPlatform, ILauncherSupportFrame, IMultiblockParentTile {
 
     public static final int COOLDOWN = 100;
 
@@ -369,13 +370,13 @@ public class TileVerticalLaunchSilo extends GenericTile implements ILauncherCont
     }
 
     @Override
-    public CachedTileOutput getPlatform() {
-        return new CachedTileOutput(getLevel(), getPos());
+    public ILauncherPlatform getPlatform() {
+        return this;
     }
 
     @Override
-    public CachedTileOutput getSupportFrame() {
-        throw new UnsupportedOperationException("Need to implement this");
+    public ILauncherSupportFrame getSupportFrame() {
+        return this;
     }
 
     @Override
@@ -415,6 +416,11 @@ public class TileVerticalLaunchSilo extends GenericTile implements ILauncherCont
     @Override
     public Direction getFacingDirection() {
         return getFacing();
+    }
+
+    @Override
+    public int getInaccuracy() {
+        return 10;
     }
 
     @EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)

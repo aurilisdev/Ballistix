@@ -22,6 +22,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -269,13 +270,27 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 	}
 
 	@Override
-	public CachedTileOutput getPlatform() {
-		return launcherPlatform;
+	public ILauncherPlatform getPlatform() {
+
+		BlockEntity tile = launcherPlatform.getSafe();
+
+		if(tile instanceof ILauncherPlatform) {
+			return (ILauncherPlatform) tile;
+		}
+
+		return null;
 	}
 
 	@Override
-	public CachedTileOutput getSupportFrame() {
-		return supportFrame;
+	public ILauncherSupportFrame getSupportFrame() {
+
+		BlockEntity tile = supportFrame.getSafe();
+
+		if(tile instanceof ILauncherSupportFrame) {
+			return (ILauncherSupportFrame) tile;
+		}
+
+		return null;
 	}
 
 	public static double calculateDistance(BlockPos fromPos, BlockPos toPos) {

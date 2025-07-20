@@ -18,7 +18,7 @@ public class ContainerCIWSTurret extends GenericContainerBlockEntity<TileTurretC
     public static final SubtypeItemUpgrade[] VALID_UPGRADES = { SubtypeItemUpgrade.range };
 
     public ContainerCIWSTurret(int id, Inventory playerinv) {
-        this(id, playerinv, new SimpleContainer(5), new SimpleContainerData(3));
+        this(id, playerinv, new SimpleContainer(5), new SimpleContainerData(5));
     }
 
     public ContainerCIWSTurret(int id, Inventory playerinv, Container inventory, ContainerData inventorydata) {

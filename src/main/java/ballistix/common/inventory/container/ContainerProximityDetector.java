@@ -13,7 +13,7 @@ public class ContainerProximityDetector extends GenericContainerBlockEntity<Tile
 
 
     public ContainerProximityDetector(int id, Inventory playerinv) {
-        this(id, playerinv, new SimpleContainer(0), new SimpleContainerData(3));
+        this(id, playerinv, new SimpleContainer(0), new SimpleContainerData(5));
     }
 
     public ContainerProximityDetector(int id, Inventory playerinv, Container inventory, ContainerData inventorydata) {

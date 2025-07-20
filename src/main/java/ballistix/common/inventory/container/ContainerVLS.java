@@ -16,7 +16,7 @@ import voltaic.prefab.utilities.math.Color;
 public class ContainerVLS extends GenericContainerBlockEntity<TileVerticalLaunchSilo> {
 
     public ContainerVLS(int id, Inventory playerinv) {
-        this(id, playerinv, new SimpleContainer(3), new SimpleContainerData(3));
+        this(id, playerinv, new SimpleContainer(3), new SimpleContainerData(5));
     }
 
     public ContainerVLS(int id, Inventory playerinv, Container inventory, ContainerData inventorydata) {

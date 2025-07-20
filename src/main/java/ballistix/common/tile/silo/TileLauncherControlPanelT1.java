@@ -17,6 +17,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
@@ -269,13 +270,27 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 	}
 
 	@Override
-	public CachedTileOutput getPlatform() {
-		return launcherPlatform;
+	public ILauncherPlatform getPlatform() {
+
+		TileEntity tile = launcherPlatform.getSafe();
+
+		if(tile instanceof ILauncherPlatform) {
+			return (ILauncherPlatform) tile;
+		}
+
+		return null;
 	}
 
 	@Override
-	public CachedTileOutput getSupportFrame() {
-		return supportFrame;
+	public ILauncherSupportFrame getSupportFrame() {
+
+		TileEntity tile = supportFrame.getSafe();
+
+		if(tile instanceof ILauncherSupportFrame) {
+			return (ILauncherSupportFrame) tile;
+		}
+
+		return null;
 	}
 
 	public static double calculateDistance(BlockPos fromPos, BlockPos toPos) {

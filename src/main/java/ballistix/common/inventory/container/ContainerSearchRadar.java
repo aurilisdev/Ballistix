@@ -18,7 +18,7 @@ import voltaic.prefab.inventory.container.types.GenericContainerBlockEntity;
 public class ContainerSearchRadar extends GenericContainerBlockEntity<TileSearchRadar> {
 
     public ContainerSearchRadar(int id, PlayerInventory playerinv) {
-        this(id, playerinv, new Inventory(0), new IntArray(3));
+        this(id, playerinv, new Inventory(0), new IntArray(5));
     }
 
     public ContainerSearchRadar(int id, PlayerInventory playerinv, IInventory inventory, IIntArray inventorydata) {

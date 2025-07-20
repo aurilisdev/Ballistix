@@ -16,7 +16,7 @@ import voltaic.prefab.utilities.math.Color;
 public class ContainerLauncherPlatformT3 extends GenericContainerBlockEntity<TileLauncherPlatformT3> {
 
 	public ContainerLauncherPlatformT3(int id, PlayerInventory playerinv) {
-		this(id, playerinv, new Inventory(2), new IntArray(3));
+		this(id, playerinv, new Inventory(2), new IntArray(5));
 	}
 
 	public ContainerLauncherPlatformT3(int id, PlayerInventory playerinv, IInventory inventory, IIntArray inventorydata) {

@@ -2,14 +2,12 @@ package ballistix.common.item;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 
-import ballistix.Ballistix;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import ballistix.api.silo.ILauncherControlPanel;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixCreativeTabs;
 import net.minecraft.client.util.ITooltipFlag;
@@ -18,24 +16,25 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.TickEvent.ServerTickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import voltaic.api.codec.StreamCodec;
+import voltaic.api.multiblock.subnodebased.TileMultiSubnode;
 import voltaic.prefab.item.ElectricItemProperties;
 import voltaic.prefab.item.ItemElectric;
 import voltaic.prefab.utilities.object.TransferPack;
 
-@EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.FORGE)
 public class ItemTracker extends ItemElectric {
 
     public static final double USAGE = 150;
@@ -45,13 +44,36 @@ public class ItemTracker extends ItemElectric {
 
 	public static final String UUID = "uuid";
 
-    public static HashMap<ServerWorld, HashSet<Integer>> validuuids = new HashMap<>();
+    public static final HashMap<ServerWorld, HashSet<Integer>> VALID_UUIDS = new HashMap<>();
 
     public ItemTracker() {
         super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667).receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1), () -> BallistixCreativeTabs.MAIN);
     }
+    
+    @Override
+    public ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext context) {
+        if (context.getLevel().isClientSide || !hasTarget(stack)) {
+            return super.onItemUseFirst(stack, context);
+        }
+
+        Entity entity = context.getLevel().getEntity(getUUID(stack));
+        TileEntity tile = context.getLevel().getBlockEntity(context.getClickedPos());
+
+        if (tile instanceof ILauncherControlPanel) {
+
+        	((ILauncherControlPanel) tile).setTarget(new BlockPos((int) entity.getX(), 0, (int) entity.getZ()));
+
+        } else if (tile instanceof TileMultiSubnode && ((TileMultiSubnode) tile).getLevel().getBlockEntity(((TileMultiSubnode) tile).parentPos.getValue()) instanceof ILauncherControlPanel) {
+
+        	((ILauncherControlPanel) ((TileMultiSubnode) tile).getLevel().getBlockEntity(((TileMultiSubnode) tile).parentPos.getValue())).setTarget(new BlockPos((int) entity.getX(), 0, (int) entity.getZ()));
+
+        }
+
+        return super.onItemUseFirst(stack, context);
+    }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack stack, World context, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
     	ITextComponent name = BallistixTextUtils.tooltip("tracker.none");
 		if (hasTarget(stack)) {
@@ -71,7 +93,7 @@ public class ItemTracker extends ItemElectric {
         	ServerWorld slevel = (ServerWorld) level;
 			if ((selected || entity instanceof PlayerEntity && ((PlayerEntity) entity).getOffhandItem() == stack) && hasTarget(stack)) {
 				int uuid = getUUID(stack);
-				if (validuuids.containsKey(level) && validuuids.get(level).contains(uuid)) {
+				if (VALID_UUIDS.containsKey(level) && VALID_UUIDS.get(level).contains(uuid)) {
 					Entity ent = slevel.getEntity(uuid);
 					if (ent != null) {
 						setX(stack, ent.position().x);
@@ -91,9 +113,9 @@ public class ItemTracker extends ItemElectric {
 			PlayerInventory inv = player.inventory;
 			inv.removeItem(stack);
 			setUUID(stack, entity.getId());
-			HashSet<Integer> set = validuuids.getOrDefault(server, new HashSet<>());
+			HashSet<Integer> set = VALID_UUIDS.getOrDefault(server, new HashSet<>());
 			set.add(entity.getId());
-			validuuids.put(server, set);
+			VALID_UUIDS.put(server, set);
 			if (hand == Hand.MAIN_HAND) {
 				inv.setItem(inv.selected, stack);
 			} else {
@@ -149,23 +171,7 @@ public class ItemTracker extends ItemElectric {
 		return stack.getOrCreateTag().contains(UUID);
 	}
 
-    @SubscribeEvent
-    public static void tick(ServerTickEvent event) {
-    	if(event.phase != Phase.START) {
-    		return;
-    	}
-        for (Entry<ServerWorld, HashSet<Integer>> en : validuuids.entrySet()) {
-            Iterator<Integer> it = en.getValue().iterator();
-            while (it.hasNext()) {
-                int uuid = it.next();
-                Entity ent = en.getKey().getEntity(uuid);
-                if (ent == null || !ent.isAlive()) {
-                    it.remove();
-                }
-            }
-        }
-    }
-
+ 
     public static class Target {
 
         public static final Codec<Target> CODEC = RecordCodecBuilder.create(instance -> instance.group(

@@ -43,24 +43,28 @@ public class RenderLauncherPlatform<T extends GenericTile & ILauncherPlatform> e
 
 			IBakedModel model;
 
-			if (missile.missile.tier() == 1) {
+			if (missile.missile.ordinal() == 0) {
 
 				model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILETIER1);
 				matrixStackIn.translate(0.5f, 0.87, 0.5f);
 				matrixStackIn.scale(1f, 0.75f, 1f);
 
-			} else if (missile.missile.tier() == 2) {
+			} else if (missile.missile.ordinal() == 1) {
 
 				model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILETIER2);
 				matrixStackIn.translate(0.5f, 1.1f, 0.5f);
 				matrixStackIn.scale(1f, 1f, 1f);
 
-			} else {
+			} else if(missile.missile.ordinal() == 2) {
 
 				model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILETIER3);
 				matrixStackIn.translate(0.5f, 1.1f, 0.5f);
 				matrixStackIn.scale(1f, 1.25f, 1f);
 
+			} else {
+				model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILECLUSTER);
+				matrixStackIn.translate(0.5f, 1.1f, 0.5f);
+				matrixStackIn.scale(1f, 1.25f, 1f);
 			}
 
 			Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model, tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(), 0);

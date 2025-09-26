@@ -1,6 +1,6 @@
 package ballistix.api.event;
 
-import ballistix.common.blast.Blast;
+import ballistix.common.blast.util.Blast;
 import net.minecraft.world.World;
 import net.minecraftforge.eventbus.api.Event;
 

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SPS",
+    "SAS",
+    "SPS"
+  ],
+  "key": {
+    "P": {
+      "tag": "forge:ender_pearls"
+    },
+    "A": {
+      "item": "ballistix:attractive"
+    },
+    "S": {
+      "tag": "forge:end_stones"
+    }
+  },
+  "result": {
+    "item": "ballistix:ender"
+  }
+}

@@ -5,6 +5,7 @@ import ballistix.common.item.ItemLaserDesignator;
 import ballistix.common.item.ItemRadarGun;
 import ballistix.common.item.ItemScanner;
 import ballistix.common.item.ItemTracker;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixItems;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -51,7 +52,7 @@ public class ChapterItems extends Chapter {
 		// Laser Designator
 		pageData.add(new TextWrapperObject(BallistixItems.ITEM_LASERDESIGNATOR.get().getDescription().copy().withStyle(TextFormatting.BOLD)).setCentered().setNewPage());
 		pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEM_LASERDESIGNATOR.get()));
-		pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.items.laserdesignator1")).setSeparateStart().setIndentions(1));
+		pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.items.laserdesignator1", BallistixConstants.LASER_DESIGNATOR_RANGE)).setSeparateStart().setIndentions(1));
 		pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.items.laserdesignator2", ChatFormatter.getChatDisplayShort(ItemLaserDesignator.USAGE, DisplayUnits.JOULES))).setSeparateStart().setIndentions(1));
 
 		// Defuser
@@ -63,6 +64,7 @@ public class ChapterItems extends Chapter {
 		pageData.add(new TextWrapperObject(BallistixItems.ITEM_TRACKER.get().getDescription().copy().withStyle(TextFormatting.BOLD)).setCentered().setNewPage());
 		pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEM_TRACKER.get()));
 		pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.items.tracker1", ChatFormatter.getChatDisplayShort(ItemTracker.USAGE, DisplayUnits.JOULES))).setSeparateStart().setIndentions(1));
+		pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.items.tracker2", ChatFormatter.getChatDisplayShort(ItemTracker.USAGE, DisplayUnits.JOULES))).setSeparateStart().setIndentions(1));
 
 		// Scanner
 		pageData.add(new TextWrapperObject(BallistixItems.ITEM_SCANNER.get().getDescription().copy().withStyle(TextFormatting.BOLD)).setCentered().setNewPage());

@@ -28,7 +28,7 @@ public class ItemScanner extends ItemElectric {
 	public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
 		boolean action = false;
 		ItemStack stack = playerIn.getItemInHand(handIn);
-		for (Entry<ServerWorld, HashSet<Integer>> en : ItemTracker.validuuids.entrySet()) {
+		for (Entry<ServerWorld, HashSet<Integer>> en : ItemTracker.VALID_UUIDS.entrySet()) {
 			Iterator<Integer> it = en.getValue().iterator();
 			while (it.hasNext()) {
 				int uuid = it.next();

@@ -18,7 +18,7 @@ public class ContainerRailgunTurret extends GenericContainerBlockEntity<TileTurr
     public static final SubtypeItemUpgrade[] VALID_UPGRADES = { SubtypeItemUpgrade.range };
 
     public ContainerRailgunTurret(int id, PlayerInventory playerinv) {
-        this(id, playerinv, new Inventory(4), new IntArray(3));
+        this(id, playerinv, new Inventory(4), new IntArray(5));
     }
 
     public ContainerRailgunTurret(int id, PlayerInventory playerinv, IInventory inventory, IIntArray inventorydata) {

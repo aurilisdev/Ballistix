@@ -18,7 +18,7 @@ public class ContainerSAMTurret extends GenericContainerBlockEntity<TileTurretSA
     public static final SubtypeItemUpgrade[] VALID_UPGRADES = { SubtypeItemUpgrade.range };
 
     public ContainerSAMTurret(int id, PlayerInventory playerinv) {
-        this(id, playerinv, new Inventory(4), new IntArray(3));
+        this(id, playerinv, new Inventory(4), new IntArray(5));
     }
 
     public ContainerSAMTurret(int id, PlayerInventory playerinv, IInventory inventory, IIntArray inventorydata) {

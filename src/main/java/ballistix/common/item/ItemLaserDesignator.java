@@ -43,19 +43,19 @@ public class ItemLaserDesignator extends ItemElectric {
 	@Override
 	public ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext context) {
 		TileEntity ent = context.getLevel().getBlockEntity(context.getClickedPos());
-		TileLauncherControlPanelT1 silo = ent instanceof TileLauncherControlPanelT1 ? (TileLauncherControlPanelT1) ent : null;
+		ILauncherControlPanel silo = ent instanceof ILauncherControlPanel ? (ILauncherControlPanel) ent : null;
 		if (ent instanceof TileMultiSubnode) {
 			TileEntity core = ((TileMultiSubnode) ent).getLevel().getBlockEntity(((TileMultiSubnode) ent).parentPos.getValue());
-			if (core instanceof TileLauncherControlPanelT1) {
-				silo = (TileLauncherControlPanelT1) core;
+			if (core instanceof ILauncherControlPanel) {
+				silo = (ILauncherControlPanel) core;
 			}
 		}
 		if (silo != null && !context.getLevel().isClientSide) {
 
-			context.getPlayer().displayClientMessage(BallistixTextUtils.chatMessage("laserdesignator.setfrequency", silo.frequency.getValue()), false);
+			context.getPlayer().displayClientMessage(BallistixTextUtils.chatMessage("laserdesignator.setfrequency", silo.getFrequency()), false);
 
 			CompoundNBT nbt = stack.getOrCreateTag();
-			nbt.putInt(FREQUENCY_KEY, silo.frequency.getValue());
+			nbt.putInt(FREQUENCY_KEY, silo.getFrequency());
 
 		}
 		return super.onItemUseFirst(stack, context);
@@ -83,7 +83,7 @@ public class ItemLaserDesignator extends ItemElectric {
 		TileEntity tile = trace.getTile(worldIn);
 
 		// fixes bug of blowing self up
-		if (tile instanceof TileLauncherControlPanelT1 || tile instanceof TileMultiSubnode) {
+		if (tile instanceof ILauncherControlPanel || tile instanceof TileMultiSubnode) {
 			return ActionResult.pass(playerIn.getItemInHand(handIn));
 		}
 
@@ -96,12 +96,13 @@ public class ItemLaserDesignator extends ItemElectric {
 		double distance;
 
 		for (ILauncherControlPanel silo : SiloRegistry.getSilos(frequency, worldIn)) {
+			
+			ILauncherPlatform platform = silo.getPlatform();
 
-			if (!silo.getPlatform().valid() || silo.getTier() < 3)
+			if (platform == null) {
 				continue;
-			ILauncherPlatform platform = silo.getPlatform().<ILauncherPlatform>getSafe();
-			if (platform == null)
-				continue;
+			}	
+			
 			range = platform.getRange();
 			distance = TileLauncherControlPanelT1.calculateDistance(silo.getPos(), target);
 
@@ -109,7 +110,7 @@ public class ItemLaserDesignator extends ItemElectric {
 				continue;
 			}
 
-			silo.setTarget(trace.toBlockPos());
+			silo.setTargetFromDesignator(trace.toBlockPos());
 
 			silo.launch();
 

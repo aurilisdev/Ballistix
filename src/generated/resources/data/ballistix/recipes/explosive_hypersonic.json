@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " S ",
+    "SSS",
+    " S "
+  ],
+  "key": {
+    "S": {
+      "item": "ballistix:sonic"
+    }
+  },
+  "result": {
+    "item": "ballistix:hypersonic"
+  }
+}

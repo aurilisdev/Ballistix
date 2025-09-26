@@ -3,6 +3,7 @@ package ballistix.common.packet;
 import java.util.Optional;
 
 import ballistix.Ballistix;
+import ballistix.common.packet.type.client.PacketPushPlayer;
 import ballistix.common.packet.type.client.PacketSetSearchRadarTrackedClient;
 import ballistix.common.packet.type.client.particle.PacketSpawnBlastParticle;
 import net.minecraft.util.ResourceLocation;
@@ -18,5 +19,6 @@ public class NetworkHandler {
 	public static void init() {
 		CHANNEL.registerMessage(disc++, PacketSetSearchRadarTrackedClient.class, PacketSetSearchRadarTrackedClient::encode, PacketSetSearchRadarTrackedClient::decode, PacketSetSearchRadarTrackedClient::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 		CHANNEL.registerMessage(disc++, PacketSpawnBlastParticle.class, PacketSpawnBlastParticle::encode, PacketSpawnBlastParticle::decode, PacketSpawnBlastParticle::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+		CHANNEL.registerMessage(disc++, PacketPushPlayer.class, PacketPushPlayer::encode, PacketPushPlayer::decode, PacketPushPlayer::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 	}
 }

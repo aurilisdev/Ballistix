@@ -1,19 +1,23 @@
 package ballistix.api.blast;
 
-import ballistix.common.blast.Blast;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import ballistix.common.blast.util.Blast;
 
 public class RegisterBlastEvent extends Event implements IModBusEvent {
 
     private final HashMap<ResourceLocation, IBlast> registeredBlasts = new HashMap<>();
     private final HashMap<IBlast, Item> registeredMinecarts = new HashMap<>();
     private final HashMap<IBlast, Item> registeredGrenades = new HashMap<>();
+    private final List<Runnable> threadsToCache = new ArrayList<>();
 
     public void registerBlast(IBlast blast) {
         registeredBlasts.put(blast.id(), blast);
@@ -25,6 +29,10 @@ public class RegisterBlastEvent extends Event implements IModBusEvent {
 
     public void registerMinecart(IBlast blast, Item item) {
         registeredMinecarts.put(blast, item);
+    }
+    
+    public void submitCachedThreads(Runnable threadsSupplier) {
+        threadsToCache.add(threadsSupplier);
     }
 
     public void stashBlasts() {
@@ -38,5 +46,10 @@ public class RegisterBlastEvent extends Event implements IModBusEvent {
         Blast.BLAST_TO_GRENADE_MAP.putAll(registeredGrenades);
         Blast.BLAST_TO_MINECART_MAP.clear();
         Blast.BLAST_TO_MINECART_MAP.putAll(registeredMinecarts);
+        
+        for(Runnable runnable : threadsToCache) {
+            runnable.run();
+        }
+        
     }
 }

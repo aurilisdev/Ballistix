@@ -3,7 +3,7 @@ package ballistix.client.render.entity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import ballistix.api.blast.IBlast;
-import ballistix.common.blast.Blast;
+import ballistix.common.blast.util.Blast;
 import ballistix.common.entity.EntityGrenade;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;

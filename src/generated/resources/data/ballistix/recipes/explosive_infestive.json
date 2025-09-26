@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SSS",
+    "SCS",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "tag": "forge:stone"
+    },
+    "C": {
+      "item": "ballistix:chemical"
+    }
+  },
+  "result": {
+    "item": "ballistix:infestive",
+    "count": 8
+  }
+}

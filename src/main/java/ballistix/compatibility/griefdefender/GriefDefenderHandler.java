@@ -12,40 +12,40 @@ import net.minecraft.world.level.block.Blocks;
 
 public class GriefDefenderHandler {
 
-    public static void destroyBlock(Block block, Explosion explosion, BlockPos pos, Level world) {
+	public static void destroyBlock(Block block, Explosion explosion, BlockPos pos, Level world) {
 
-	Claim claim = GriefDefender.getCore().getClaimAt(pos);
+		Claim claim = GriefDefender.getCore().getClaimAt(pos);
 
-	if (claim == null || claim.isWilderness()) {
-	    return;
+		if (claim == null || claim.isWilderness()) {
+			return;
+		}
+
+		block.wasExploded(world, pos, explosion);
+		world.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+
 	}
 
-	block.wasExploded(world, pos, explosion);
-	world.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
+	public static boolean shouldEntityBeHarmed(Entity entity) {
 
-    }
+		Claim claim = GriefDefender.getCore().getClaimAt(entity.getOnPos());
 
-    public static boolean shouldEntityBeHarmed(Entity entity) {
+		return claim == null || !claim.isWilderness();
+	}
 
-	Claim claim = GriefDefender.getCore().getClaimAt(entity.getOnPos());
+	public static boolean shouldAddParticle(BlockPos pos) {
 
-	return claim == null || !claim.isWilderness();
-    }
+		Claim claim = GriefDefender.getCore().getClaimAt(pos);
 
-    public static boolean shouldAddParticle(BlockPos pos) {
+		return claim == null || !claim.isWilderness();
 
-	Claim claim = GriefDefender.getCore().getClaimAt(pos);
+	}
 
-	return claim == null || !claim.isWilderness();
+	public static boolean shouldHarmBlock(BlockPos pos) {
 
-    }
+		Claim claim = GriefDefender.getCore().getClaimAt(pos);
 
-    public static boolean shouldHarmBlock(BlockPos pos) {
+		return claim == null || !claim.isWilderness();
 
-	Claim claim = GriefDefender.getCore().getClaimAt(pos);
-
-	return claim == null || !claim.isWilderness();
-
-    }
+	}
 
 }

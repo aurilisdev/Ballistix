@@ -6,10 +6,11 @@ import java.util.List;
 import ballistix.client.screen.util.ScreenPlayerWhitelistTurret;
 import ballistix.common.inventory.container.ContainerRailgunTurret;
 import ballistix.common.settings.BallistixConstants;
+import ballistix.common.tile.turret.GenericTileTurret;
 import ballistix.common.tile.turret.antimissile.TileTurretRailgun;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
 import ballistix.prefab.BallistixIconTypes;
-import ballistix.prefab.screen.WrapperPlayerWhitelist;
+import ballistix.prefab.screen.WrapperPlayerWhitelistTurret;
 import ballistix.prefab.utils.BallistixTextUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -41,7 +42,7 @@ public class ScreenRailgunTurret extends ScreenPlayerWhitelistTurret<ContainerRa
         inventoryLabelY += 10;
         imageHeight += 10;
 
-        whitelistWrapper = new WrapperPlayerWhitelist(this, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE + 2, 0, 0);
+        whitelistWrapper = new WrapperPlayerWhitelistTurret(this, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE + 2, 0, 0);
         addComponent(whitelistSlider = new ScreenComponentVerticalSlider(11, 80, 75).setClickConsumer(whitelistWrapper.getSliderClickedConsumer()).setDragConsumer(whitelistWrapper.getSliderDraggedConsumer()));
 
         whitelistSlider.setVisible(false);
@@ -178,7 +179,12 @@ public class ScreenRailgunTurret extends ScreenPlayerWhitelistTurret<ContainerRa
             if (turret == null) {
                 return;
             }
-            turret.onlyTargetPlayers.setValue(!turret.onlyTargetPlayers.getValue());
+            int mode = turret.entityTargetingMode.getValue();
+            mode++;
+            if(mode >= GenericTileTurret.TargetingMode.values().length) {
+                mode = 0;
+            }
+            turret.entityTargetingMode.setValue(mode);
         }).onTooltip((poseStack, but, xAxis, yAxis) -> {
             //
             TileTurretRailgun turret = menu.getSafeHost();
@@ -187,10 +193,13 @@ public class ScreenRailgunTurret extends ScreenPlayerWhitelistTurret<ContainerRa
             }
             List<Component> tooltips = new ArrayList<>();
             tooltips.add(BallistixTextUtils.tooltip("turret.targetmode").withStyle(ChatFormatting.DARK_GRAY));
-            if (turret.onlyTargetPlayers.getValue()) {
+            GenericTileTurret.TargetingMode mode = GenericTileTurret.TargetingMode.values()[turret.entityTargetingMode.getValue()];
+            if (mode == GenericTileTurret.TargetingMode.ONLY_PLAYERS) {
                 tooltips.add(BallistixTextUtils.tooltip("turret.targetmodeplayers").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
-            } else {
+            } else if (mode == GenericTileTurret.TargetingMode.ALL) {
                 tooltips.add(BallistixTextUtils.tooltip("turret.targetmodeliving").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+            } else {
+                tooltips.add(BallistixTextUtils.tooltip("turret.targetmodenone").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
             }
 
             renderComponentTooltip(poseStack, tooltips, xAxis, yAxis);

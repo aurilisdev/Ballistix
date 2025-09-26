@@ -5,6 +5,18 @@
       "ballistix:antimatterexplosion"
     ]
   },
+  "sonicexplosion": {
+    "subtitle": "subtitles.ballistix.sonicexplosion",
+    "sounds": [
+      "ballistix:sonicexplosion"
+    ]
+  },
+  "hypersonicexplosion": {
+    "subtitle": "subtitles.ballistix.hypersonicexplosion",
+    "sounds": [
+      "ballistix:hypersonicexplosion"
+    ]
+  },
   "darkmatter": {
     "subtitle": "subtitles.ballistix.darkmatter",
     "sounds": [
@@ -21,6 +33,12 @@
     "subtitle": "subtitles.ballistix.empexplosion",
     "sounds": [
       "ballistix:empexplosion"
+    ]
+  },
+  "endothermicbeam": {
+    "subtitle": "subtitles.ballistix.endothermicbeam",
+    "sounds": [
+      "ballistix:endothermicbeam"
     ]
   },
   "missile_launch_rocketlauncher": {
@@ -69,6 +87,18 @@
     "subtitle": "subtitles.ballistix.rodhittingground",
     "sounds": [
       "ballistix:rodhittingground"
+    ]
+  },
+  "vlslaunch": {
+    "subtitle": "subtitles.ballistix.vlslaunch",
+    "sounds": [
+      "ballistix:vlslaunch"
+    ]
+  },
+  "airraidsiren": {
+    "subtitle": "subtitles.ballistix.airraidsiren",
+    "sounds": [
+      "ballistix:airraidsiren"
     ]
   }
 }

@@ -294,6 +294,24 @@ public class MissileManager {
 		return null;
 	}
 	
+	public static Collection<VirtualProjectile.VirtualBullet> getBulletsForLevel(ResourceKey<Level> level) {
+		ServerLevel overworld = getOverworld();
+
+		LazyOptional<CapabilityActiveBullets> lazyOptionalMissiles = overworld.getCapability(BallistixCapabilities.ACTIVE_BULLETS);
+
+		if (lazyOptionalMissiles.isPresent()) {
+
+			CapabilityActiveBullets bullets = lazyOptionalMissiles.resolve().get();
+
+			HashMap<UUID, VirtualProjectile.VirtualBullet> virtual = bullets.activeBullets.getOrDefault(level, new HashMap<>());
+
+			return virtual.values();
+
+		}
+
+		return new HashSet<>();
+	}
+	
 	public static void wipeAllBullets() {
 		ServerLevel overworld = getOverworld();
 
@@ -343,6 +361,24 @@ public class MissileManager {
 		}	
 
 		return null;
+	}
+	
+	public static Collection<VirtualProjectile.VirtualRailgunRound> getRailgunRoundsForLevel(ResourceKey<Level> level) {
+		ServerLevel overworld = getOverworld();
+
+		LazyOptional<CapabilityActiveRailgunRounds> lazyOptionalMissiles = overworld.getCapability(BallistixCapabilities.ACTIVE_RAILGUN_ROUNDS);
+
+		if (lazyOptionalMissiles.isPresent()) {
+
+			CapabilityActiveRailgunRounds rounds = lazyOptionalMissiles.resolve().get();
+
+			HashMap<UUID, VirtualProjectile.VirtualRailgunRound> virtual = rounds.activeRailgunRounds.getOrDefault(level, new HashMap<>());
+
+			return virtual.values();
+
+		}
+
+		return new HashSet<>();
 	}
 	
 	public static void wipeAllRailgunRounds() {
@@ -396,6 +432,24 @@ public class MissileManager {
 			
 		}	
 		return null;
+	}
+	
+	public static Collection<VirtualProjectile.VirtualSAM> getSAMsForLevel(ResourceKey<Level> level) {
+		ServerLevel overworld = getOverworld();
+
+		LazyOptional<CapabilityActiveSAMs> lazyOptionalMissiles = overworld.getCapability(BallistixCapabilities.ACTIVE_SAMS);
+
+		if (lazyOptionalMissiles.isPresent()) {
+
+			CapabilityActiveSAMs rounds = lazyOptionalMissiles.resolve().get();
+
+			HashMap<UUID, VirtualProjectile.VirtualSAM> virtual = rounds.activeSAMs.getOrDefault(level, new HashMap<>());
+
+			return virtual.values();
+
+		}
+
+		return new HashSet<>();
 	}
 	
 	public static void wipeAllSAMs() {

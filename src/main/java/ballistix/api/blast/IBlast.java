@@ -1,6 +1,5 @@
 package ballistix.api.blast;
 
-import ballistix.common.blast.Blast;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -11,6 +10,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import voltaic.common.block.voxelshapes.VoxelShapeProvider;
 
 import java.util.function.Supplier;
+
+import ballistix.common.blast.util.Blast;
 
 /**
  * @author Skip999

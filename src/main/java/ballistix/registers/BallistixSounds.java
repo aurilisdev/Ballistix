@@ -16,6 +16,9 @@ public class BallistixSounds {
     public static final RegistryObject<SoundEvent> SOUND_DARKMATTER = sound("darkmatter", 100);
     public static final RegistryObject<SoundEvent> SOUND_NUCLEAREXPLOSION = sound("nuclearexplosion", 90);
     public static final RegistryObject<SoundEvent> SOUND_EMPEXPLOSION = sound("empexplosion", 100);
+    public static final RegistryObject<SoundEvent> SOUND_SONICEXPLOSION = sound("sonicexplosion", 50);
+    public static final RegistryObject<SoundEvent> SOUND_HYPERSONICSONICEXPLOSION = sound("hypersonicexplosion", 70);
+    public static final RegistryObject<SoundEvent> SOUND_ENDOTHERMICBEAM = sound("endothermicbeam", 70);
     public static final RegistryObject<SoundEvent> SOUND_MISSILE_ROCKETLAUNCHER = sound("missile_launch_rocketlauncher", 32);
     public static final RegistryObject<SoundEvent> SOUND_MISSILE_SILO = sound("missile_launch_silo", 64);
     public static final RegistryObject<SoundEvent> SOUND_RADAR = sound("radar", 16);
@@ -24,6 +27,8 @@ public class BallistixSounds {
     public static final RegistryObject<SoundEvent> SOUND_LASER_TURRETFIRING = sound("laserturretfiring", 32);
     public static final RegistryObject<SoundEvent> SOUND_RODHITTINGGROUND = sound("rodhittingground", 16);
     public static final RegistryObject<SoundEvent> SOUND_RAILGUNKINETIC = sound("railgunkinetic", 16);
+    public static final RegistryObject<SoundEvent> SOUND_VLSLAUNCH = sound("vlslaunch", 16);
+    public static final RegistryObject<SoundEvent> SOUND_AIRRAIDSIREN = sound("airraidsiren", 32);
 
 	private static RegistryObject<SoundEvent> sound(String name, float range) {
 		return sound(name, name, range);

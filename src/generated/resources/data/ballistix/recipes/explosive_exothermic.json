@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "tag": "forge:glass"
+    },
+    "I": {
+      "item": "ballistix:incendiary"
+    }
+  },
+  "pattern": [
+    "III",
+    "IGI",
+    "III"
+  ],
+  "result": {
+    "item": "ballistix:exothermic"
+  },
+  "show_notification": false
+}

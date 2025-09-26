@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 import ballistix.Ballistix;
 import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IHasCustomRender;
-import ballistix.common.blast.Blast;
+import ballistix.common.blast.util.Blast;
 import ballistix.registers.BallistixEntities;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -28,19 +28,29 @@ public class EntityBlast extends Entity {
     private static final EntityDataAccessor<String> TYPE = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Boolean> SHOULDSTARTCUSTOMRENDER = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> TICKCOUNT = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> SHOULD_PERSIST = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> PERSISTANCE_TICKS = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> TICKS_PERSISTED = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> HAS_MATURED = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> TICKS_AT_MATURITY = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> MOVEMENT_TICKS = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> TICKS_MOVING = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> MOVING = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.BOOLEAN);
 
     private Blast blast;
     public ResourceLocation blastId;
     public int callcount = 0;
     public boolean shouldRenderCustom = false;
     public int ticksWhenCustomRender;
-
-    public boolean detonated = false;
-
-    @Override
-    public boolean shouldRender(double x, double y, double z) {
-        return true;
-    }
+    private boolean detonated = false;
+    private boolean shouldPersist = false;
+    private int persistanceTicks = 0;
+    private int ticksPersisted = 0;
+    private int movementTicks = 0;
+    private int ticksMoving = 0;
+    public boolean hasMatured = false; // has the blast completed its initial explosion
+    public int ticksAtMaturity = 0; // keeps track of ticks at maturity for rendering purposes if needed
+    private boolean moving = false;
 
     public EntityBlast(EntityType<? extends EntityBlast> type, Level worldIn) {
         super(type, worldIn);
@@ -49,6 +59,17 @@ public class EntityBlast extends Entity {
 
     public EntityBlast(Level worldIn) {
         this(BallistixEntities.ENTITY_BLAST.get(), worldIn);
+    }
+    
+    @Override
+    public boolean shouldRender(double x, double y, double z) {
+        return true;
+    }
+    
+    public void setPersistant(int tickCount, int movementTicks) { // set to -1 for infinite
+        //shouldPersist = true;
+        persistanceTicks = tickCount;
+        this.movementTicks = movementTicks;
     }
 
     public void setBlastType(IBlast explosive) {
@@ -67,6 +88,14 @@ public class EntityBlast extends Entity {
     	entityData.define(TYPE, "");
     	entityData.define(SHOULDSTARTCUSTOMRENDER, false);
     	entityData.define(TICKCOUNT, 0);
+    	entityData.define(SHOULD_PERSIST, false);
+        entityData.define(PERSISTANCE_TICKS, 0);
+        entityData.define(HAS_MATURED, false);
+        entityData.define(TICKS_AT_MATURITY, 0);
+        entityData.define(TICKS_PERSISTED, 0);
+        entityData.define(MOVEMENT_TICKS, 0);
+        entityData.define(MOVING, false);
+        entityData.define(TICKS_MOVING, 0);
     }
 
     @Override
@@ -86,6 +115,14 @@ public class EntityBlast extends Entity {
             entityData.set(CALLCOUNT, callcount);
             entityData.set(SHOULDSTARTCUSTOMRENDER, blast instanceof IHasCustomRender has && has.shouldRender());
             entityData.set(TICKCOUNT, tickCount);
+            entityData.set(SHOULD_PERSIST, shouldPersist);
+            entityData.set(PERSISTANCE_TICKS, persistanceTicks);
+            entityData.set(TICKS_PERSISTED, ticksPersisted);
+            entityData.set(HAS_MATURED, hasMatured);
+            entityData.set(TICKS_AT_MATURITY, ticksAtMaturity);
+            entityData.set(MOVEMENT_TICKS, movementTicks);
+            entityData.set(MOVING, moving);
+            entityData.set(TICKS_MOVING, ticksMoving);
         } else {
         	String str = entityData.get(TYPE);
             if(!str.isEmpty()) {
@@ -100,6 +137,14 @@ public class EntityBlast extends Entity {
                 blast.shouldRenderCustomClient = shouldRenderCustom;
             }
             tickCount = entityData.get(TICKCOUNT);
+            shouldPersist = entityData.get(SHOULD_PERSIST);
+            persistanceTicks = entityData.get(PERSISTANCE_TICKS);
+            ticksPersisted = entityData.get(TICKS_PERSISTED);
+            hasMatured = entityData.get(HAS_MATURED);
+            ticksAtMaturity = entityData.get(TICKS_AT_MATURITY);
+            movementTicks = entityData.get(MOVEMENT_TICKS);
+            moving = entityData.get(MOVING);
+            ticksMoving = entityData.get(TICKS_MOVING);
         }
 
         if (blastId == null) {
@@ -108,25 +153,141 @@ public class EntityBlast extends Entity {
 
         if (blast == null) {
             blast = getBlastType().createBlast(level(), blockPosition());
+            if(shouldPersist && hasMatured) {
+                blast.isRepeating = true;
+            }
         }
 
         if (blast != null) {
-            if (callcount == 0) {
-                blast.preExplode();
-            } else {
-                if (blast.explode(callcount)) {
+
+            if(shouldPersist) {
+
+                if(persistanceTicks == -1 || ticksPersisted > persistanceTicks) {
                     detonated = true;
-                    blast.postExplode();
+                    return;
                 }
+
+                if(hasMatured) {
+
+                    if(moving) {
+
+                        setPos(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z);
+
+                        ticksMoving++;
+
+                        if(ticksMoving >= movementTicks) {
+                            moving = false;
+                            ticksMoving = 0;
+                            callcount = 0;
+                            blast = getBlastType().createBlast(level(), blockPosition());
+                            blast.isRepeating = true;
+                        }
+
+                    } else {
+
+                        if (callcount == 0) {
+                            blast.preExplode();
+                        } else {
+                            if (blast.explode(callcount)) {
+                                blast.postExplode();
+                                if(!level().isClientSide) {
+                                    double dX = level().random.nextDouble() * (level().random.nextBoolean() ? 1 : -1);
+                                    double dY = level().random.nextDouble() * (level().random.nextBoolean() ? 1 : -1);
+                                    double dZ = level().random.nextDouble() * (level().random.nextBoolean() ? 1 : -1);
+
+                                    //Weights to keep it between min and max build heights
+
+                                    int deltaHeight = level().getMaxBuildHeight() - level().getMinBuildHeight();
+
+                                    float fifths = deltaHeight / 5.0F;
+
+                                    // min weight
+
+                                    if(dY < 0 && getY() <= (level().getMinBuildHeight() + fifths)) {
+
+                                        float relativeHeight = (float) (getY() - level().getMinBuildHeight());
+                                        float perc = 1.0F - relativeHeight / fifths;
+
+                                        if(level().random.nextFloat() <= perc) {
+                                            dY = Math.abs(dY);
+                                        }
+
+
+                                    }
+
+                                    // max weight
+
+                                    if(dY > 0 && getY() >= (level().getMinBuildHeight() + fifths * 3)) {
+
+                                        float relativeHeight = (float) (getY() - level().getMinBuildHeight());
+                                        float perc = relativeHeight / (fifths * 5);
+
+                                        if(level().random.nextFloat() <= perc) {
+                                            dY = -dY;
+                                        }
+
+
+                                    }
+
+
+
+                                    setDeltaMovement(dX, dY, dZ);
+
+                                }
+                                moving = true;
+                                persistanceTicks++;
+                            }
+                        }
+                        callcount++;
+
+                    }
+
+
+                } else {
+
+                    if (callcount == 0) {
+                        blast.preExplode();
+                    } else {
+                        if (blast.explode(callcount)) {
+                            blast.postExplode();
+                            hasMatured = true;
+                            ticksAtMaturity = tickCount;
+                            ticksPersisted = 0;
+                            ticksMoving = 0;
+                            callcount = 0;
+                            //unload the chunk at this point
+                            ChunkPos pos = level().getChunk(blockPosition()).getPos();
+                            ForgeChunkManager.forceChunk((ServerLevel) level(), Ballistix.ID, blockPosition(), pos.x, pos.z, false, true);
+                        }
+                    }
+
+                    callcount++;
+                }
+
+            } else {
+                if (callcount == 0) {
+                    blast.preExplode();
+                } else {
+                    if (blast.explode(callcount)) {
+                        detonated = true;
+                        blast.postExplode();
+                    }
+                }
+
+                callcount++;
+
             }
-            callcount++;
+
+
+
+
         }
     }
 
     @Override
 	public void onAddedToWorld() {
 		super.onAddedToWorld();
-		if (!level().isClientSide()) {
+		if (!level().isClientSide() && !hasMatured) {
 			ChunkPos pos = level().getChunk(blockPosition()).getPos();
 			ForgeChunkManager.forceChunk((ServerLevel) level(), Ballistix.ID, blockPosition(), pos.x, pos.z, true, true);
 		}
@@ -134,7 +295,7 @@ public class EntityBlast extends Entity {
 
 	@Override
 	public void remove(RemovalReason reason) {
-		if (!level().isClientSide && reason == RemovalReason.DISCARDED) {
+		if (!level().isClientSide && reason == RemovalReason.DISCARDED && !hasMatured) {
 			ChunkPos pos = level().getChunk(blockPosition()).getPos();
 			ForgeChunkManager.forceChunk((ServerLevel) level(), Ballistix.ID, blockPosition(), pos.x, pos.z, false, true);
 		}
@@ -145,6 +306,14 @@ public class EntityBlast extends Entity {
 	protected void addAdditionalSaveData(CompoundTag compound) {
 		ResourceLocation.CODEC.encodeStart(NbtOps.INSTANCE, blastId).result().ifPresent(tag -> compound.put("type", tag));
 		compound.putInt("callcount", callcount);
+		compound.putInt("persistanceticks", persistanceTicks);
+        compound.putInt("tickspersisted", ticksPersisted);
+        compound.putInt("ticksatmaturity", ticksAtMaturity);
+        compound.putInt("movementticks", movementTicks);
+        compound.putInt("ticksmoving", ticksMoving);
+        compound.putBoolean("moivng", moving);
+        compound.putBoolean("shouldpersist", shouldPersist);
+        compound.putBoolean("hasmatured", hasMatured);
 	}
 
 	@Override
@@ -154,6 +323,14 @@ public class EntityBlast extends Entity {
 		if (blastId != null) {
 			setBlastType(getBlastType());
 		}
+		persistanceTicks = compound.getInt("persistanceticks");
+        ticksPersisted = compound.getInt("tickspersisted");
+        ticksAtMaturity = compound.getInt("ticksatmaturity");
+        shouldPersist = compound.getBoolean("shouldpersist");
+        hasMatured = compound.getBoolean("hasmatured");
+        movementTicks = compound.getInt("movementticks");
+        moving = compound.getBoolean("moving");
+        ticksMoving = compound.getInt("ticksmoving");
 	}
 
 	@Override

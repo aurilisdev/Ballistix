@@ -1,6 +1,6 @@
 package ballistix.api.blast;
 
-import ballistix.common.blast.Blast;
+import ballistix.common.blast.util.Blast;
 
 public interface IHasCustomRender {
 

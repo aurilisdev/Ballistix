@@ -1,4 +1,10 @@
 {
+  "airraidsiren": {
+    "sounds": [
+      "ballistix:airraidsiren"
+    ],
+    "subtitle": "subtitles.ballistix.airraidsiren"
+  },
   "antimatterexplosion": {
     "sounds": [
       "ballistix:antimatterexplosion"
@@ -23,11 +29,23 @@
     ],
     "subtitle": "subtitles.ballistix.empexplosion"
   },
+  "endothermicbeam": {
+    "sounds": [
+      "ballistix:endothermicbeam"
+    ],
+    "subtitle": "subtitles.ballistix.endothermicbeam"
+  },
   "firecontrolradar": {
     "sounds": [
       "ballistix:firecontrolradar"
     ],
     "subtitle": "subtitles.ballistix.firecontrolradar"
+  },
+  "hypersonicexplosion": {
+    "sounds": [
+      "ballistix:hypersonicexplosion"
+    ],
+    "subtitle": "subtitles.ballistix.hypersonicexplosion"
   },
   "laserturretfiring": {
     "sounds": [
@@ -70,5 +88,17 @@
       "ballistix:rodhittingground"
     ],
     "subtitle": "subtitles.ballistix.rodhittingground"
+  },
+  "sonicexplosion": {
+    "sounds": [
+      "ballistix:sonicexplosion"
+    ],
+    "subtitle": "subtitles.ballistix.sonicexplosion"
+  },
+  "vlslaunch": {
+    "sounds": [
+      "ballistix:vlslaunch"
+    ],
+    "subtitle": "subtitles.ballistix.vlslaunch"
   }
 }

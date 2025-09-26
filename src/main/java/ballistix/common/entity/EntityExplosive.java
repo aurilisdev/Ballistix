@@ -2,8 +2,8 @@ package ballistix.common.entity;
 
 import ballistix.api.blast.IBlast;
 import ballistix.api.entity.IDefusable;
-import ballistix.common.blast.Blast;
-import ballistix.common.blast.BlastDarkmatter;
+import ballistix.common.blast.util.Blast;
+import ballistix.common.blast.tier3.BlastDarkmatter;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.registers.BallistixEntities;
 import net.minecraft.core.particles.ParticleTypes;

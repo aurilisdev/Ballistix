@@ -1,14 +1,17 @@
 package ballistix.common.packet.type.client;
 
 import java.util.HashSet;
+import java.util.UUID;
 
 import ballistix.api.radar.IDetected;
 import ballistix.common.packet.type.client.particle.BlastParticleSpawnType;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tile.radar.TileSearchRadar;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.entity.player.Player;
 
 public class ClientBarrierMethods {
 	public static void handleSetSearchRadarTrackedClient(HashSet<IDetected.Detected> detected, BlockPos tilePos) {
@@ -38,4 +41,22 @@ public class ClientBarrierMethods {
 
 		}
 	}
+
+    public static void handlePushPlayer(UUID id) {
+
+		ClientLevel world = Minecraft.getInstance().level;
+
+		if(world == null) {
+			return;
+		}
+
+		Player player = world.getPlayerByUUID(id);
+
+		if(player == null) {
+			return;
+		}
+
+		player.push(0, player.getGravity() * BallistixConstants.EXPLOSIVE_ANTIGRAVITY_GRAVITYFACTOR, 0);
+
+    }
 }

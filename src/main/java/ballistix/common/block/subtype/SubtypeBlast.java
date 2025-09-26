@@ -2,25 +2,17 @@ package ballistix.common.block.subtype;
 
 import ballistix.Ballistix;
 import ballistix.api.blast.IBlast;
-import ballistix.common.blast.Blast;
-import ballistix.common.blast.BlastAntimatter;
-import ballistix.common.blast.BlastAttractive;
-import ballistix.common.blast.BlastBreaching;
-import ballistix.common.blast.BlastChemical;
-import ballistix.common.blast.BlastCondensive;
-import ballistix.common.blast.BlastContagious;
-import ballistix.common.blast.BlastDarkmatter;
-import ballistix.common.blast.BlastDebilitation;
-import ballistix.common.blast.BlastEMP;
-import ballistix.common.blast.BlastFragmentation;
-import ballistix.common.blast.BlastIncendiary;
-import ballistix.common.blast.BlastLandmine;
-import ballistix.common.blast.BlastLargeAntimatter;
-import ballistix.common.blast.BlastNuclear;
-import ballistix.common.blast.BlastObsidian;
-import ballistix.common.blast.BlastRepulsive;
-import ballistix.common.blast.BlastShrapnel;
-import ballistix.common.blast.BlastThermobaric;
+import ballistix.common.blast.tier1.*;
+import ballistix.common.blast.tier2.BlastSonic;
+import ballistix.common.blast.tier3.*;
+import ballistix.common.blast.util.Blast;
+import ballistix.common.blast.tier2.BlastBreaching;
+import ballistix.common.blast.tier2.BlastContagious;
+import ballistix.common.blast.tier1.BlastDebilitation;
+import ballistix.common.blast.tier2.BlastFragmentation;
+import ballistix.common.blast.tierother.BlastLandmine;
+import ballistix.common.blast.tierother.BlastObsidian;
+import ballistix.common.blast.tier2.BlastThermobaric;
 import ballistix.common.block.BlockExplosive;
 import ballistix.registers.BallistixBlocks;
 import ballistix.registers.BallistixItems;
@@ -49,16 +41,24 @@ public enum SubtypeBlast implements ISubtype, IBlast {
     incendiary(BlastIncendiary::new, 80, 1),
     shrapnel(BlastShrapnel::new, 40, 1),
     chemical(BlastChemical::new, 100, 1),
+    anvil(BlastAnvil::new, 100, 1),
+    infestive(BlastInfestive::new, 40, 1),
+    debilitation(BlastDebilitation::new, 80, 1),
     //Tier 2
     fragmentation(BlastFragmentation::new, 100, 2),
     contagious(BlastContagious::new, 100, 2),
     breaching(BlastBreaching::new, 5, 2),
     thermobaric(BlastThermobaric::new, 100, 2),
-    debilitation(BlastDebilitation::new, 80, 2),
+    sonic(BlastSonic::new, 80, 2),
     //Tier 3
+    antigravity(BlastAntigravity::new, 100, 3),
     emp(BlastEMP::new, 80, 3),
     nuclear(BlastNuclear::new, 200, 3),
-    //Tier 4
+    endothermic(BlastEndothermic::new, 80, 3),
+    exothermic(BlastExothermic::new, 80, 3),
+    ender(BlastEnder::new, 100, 3),
+    hypersonic(BlastHypersonic::new, 150, 3),
+    rejuvination(BlastRejuvination::new, 400, 3),
     antimatter(BlastAntimatter::new, 400, 3),
     largeantimatter(BlastLargeAntimatter::new, 600, 3),
     darkmatter(BlastDarkmatter::new, 400, 3),

@@ -1,12 +1,10 @@
 package ballistix.client.render.entity;
 
 import ballistix.api.blast.IBlast;
-import ballistix.common.blast.Blast;
+import ballistix.common.blast.util.Blast;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import ballistix.common.entity.EntityGrenade;
-import ballistix.common.item.ItemGrenade.SubtypeGrenade;
-import ballistix.registers.BallistixItems;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;

@@ -1,6 +1,6 @@
 package ballistix.api.event;
 
-import ballistix.common.blast.Blast;
+import ballistix.common.blast.util.Blast;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.ICancellableEvent;

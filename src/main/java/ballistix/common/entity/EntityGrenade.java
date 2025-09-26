@@ -2,7 +2,7 @@ package ballistix.common.entity;
 
 import ballistix.api.blast.IBlast;
 import ballistix.api.entity.IDefusable;
-import ballistix.common.blast.Blast;
+import ballistix.common.blast.util.Blast;
 import ballistix.registers.BallistixEntities;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;

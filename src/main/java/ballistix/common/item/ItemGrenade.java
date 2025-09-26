@@ -70,7 +70,9 @@ public class ItemGrenade extends ItemVoltaic {
 		debilitation(SubtypeBlast.debilitation),
 		incendiary(SubtypeBlast.incendiary),
 		repulsive(SubtypeBlast.repulsive),
-		shrapnel(SubtypeBlast.shrapnel);
+		anvil(SubtypeBlast.anvil),
+		shrapnel(SubtypeBlast.shrapnel),
+		infestive(SubtypeBlast.infestive);
 
 		public final SubtypeBlast explosiveType;
 

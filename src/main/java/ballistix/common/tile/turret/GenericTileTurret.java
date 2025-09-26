@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import ballistix.Ballistix;
 import ballistix.api.turret.ITarget;
 import ballistix.common.settings.BallistixConstants;
+import ballistix.common.tags.BallistixTags;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -20,6 +21,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -27,6 +30,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
 import net.neoforged.neoforge.common.world.chunk.TicketController;
+import voltaic.Voltaic;
 import voltaic.common.item.ItemUpgrade;
 import voltaic.common.item.subtype.SubtypeItemUpgrade;
 import voltaic.prefab.properties.types.PropertyTypes;
@@ -62,6 +66,7 @@ public abstract class GenericTileTurret extends GenericTile {
     public final SingleProperty<Double> inaccuracyMultiplier = property(new SingleProperty<>(PropertyTypes.DOUBLE, "inaccuracymultiplier", 1.0));
     public final SingleProperty<Boolean> canFire = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "canfire", false));
     public final ListProperty<String> whitelistedPlayers = property(new ListProperty<>(PropertyTypes.STRING_LIST, "whitelistedplayers", new ArrayList<>()));
+    public final SingleProperty<Integer> entityTargetingMode = property(new SingleProperty<>(PropertyTypes.INTEGER, "entitytargetingmode", 0));
 
     public final double baseRange;
     public final double rotationSpeedRadians;
@@ -138,8 +143,9 @@ public abstract class GenericTileTurret extends GenericTile {
                 double thetaY = Math.atan(deltaY / magXZ);
 
                 targetMovement.setValue(new Vec3(deltaX, deltaY, deltaZ).normalize());
+                Vec3 rot = new Vec3(deltaX / magXZ, 0, deltaZ / magXZ).normalize();
 
-                desiredRotation.setValue(new Vec3(deltaX / magXZ, Math.sin(thetaY), deltaZ / magXZ));
+                desiredRotation.setValue(new Vec3(rot.x, Math.sin(thetaY), rot.z));
 
             }
 
@@ -157,10 +163,23 @@ public abstract class GenericTileTurret extends GenericTile {
 
         } else if(movementCooldown <= 0) {
 
-            double thetaDesiredXZ = getXZAngleRadians(desiredRotation.getValue());
-            double thetaCurrXZ = getXZAngleRadians(turretRotation.getValue());
+            Vec3 desiredRot = new Vec3(desiredRotation.getValue().x, 0, desiredRotation.getValue().z);
+            desiredRot = desiredRot.normalize();
 
-            double angleDifXZ = thetaDesiredXZ - thetaCurrXZ;
+            Vec3 currRot = new Vec3(turretRotation.getValue().x, 0, turretRotation.getValue().z);
+            currRot = currRot.normalize();
+
+            double cosAngle = desiredRot.dot(currRot);
+
+            Vec3 newXZ;
+
+            if(Math.acos(cosAngle) <= rotationSpeedRadians) {
+                newXZ = desiredRot;
+            } else {
+                Vec3 perpVector = currRot.cross(desiredRot).cross(currRot).normalize();
+                newXZ = currRot.scale(Math.cos(rotationSpeedRadians)).add(perpVector.scale(Math.sin(rotationSpeedRadians)));
+            }
+
 
             double deltaY = desiredRotation.getValue().y - turretRotation.getValue().y;
 
@@ -181,29 +200,7 @@ public abstract class GenericTileTurret extends GenericTile {
                 }
             }
 
-            if (angleDifXZ >= 0) {
-
-                thetaCurrXZ += rotationSpeedRadians;
-
-            } else {
-
-                thetaCurrXZ -= rotationSpeedRadians;
-
-            }
-
-            //thetaCurrXZ = getXZAngleRadians(turretRotation.getValue());
-
-            if (angleDifXZ >= 0 && thetaCurrXZ > thetaDesiredXZ) {
-
-                turretRotation.setValue(new Vec3(desiredRotation.getValue().x, turretRotation.getValue().y, desiredRotation.getValue().z));
-
-            } else if (angleDifXZ < 0 && thetaCurrXZ < thetaDesiredXZ) {
-
-                turretRotation.setValue(new Vec3(desiredRotation.getValue().x, turretRotation.getValue().y, desiredRotation.getValue().z));
-
-            } else {
-                turretRotation.setValue(new Vec3(Math.cos(thetaCurrXZ), turretRotation.getValue().y, Math.sin(thetaCurrXZ)));
-            }
+            turretRotation.setValue(new Vec3(newXZ.x, turretRotation.getValue().y, newXZ.z));
 
             canFire.setValue(hasTarget.getValue() && turretRotation.getValue().equals(desiredRotation.getValue()) && inRange.getValue());
 
@@ -294,54 +291,92 @@ public abstract class GenericTileTurret extends GenericTile {
         return Math.atan2(vector.z, vector.x);
     }
 
-    public static List<Block> raycastToBlockPos(Level world, BlockPos start, BlockPos end) {
+    public static List<Block> raycastToBlockPos(Level world, Vec3 start, Vec3 end) {
 
         List<Block> blocks = new ArrayList<>();
 
-        int deltaX = end.getX() - start.getX();
-        int deltaY = end.getY() - start.getY();
-        int deltaZ = end.getZ() - start.getZ();
+        Vec3 delta = end.subtract(start);
+        int maxChecks = (int) Math.ceil(delta.length());
 
-        double magnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
-
-        int maxChecks = (int) magnitude;
-
-        double incX = deltaX / magnitude;
-        double incY = deltaY / magnitude;
-        double incZ = deltaZ / magnitude;
-
-        double x = 0;
-        double y = 0;
-        double z = 0;
-
-        BlockPos toCheck = start;
-        BlockState state;
+        delta = delta.normalize();
 
         int i = 0;
+        BlockPos toCheck;
+        BlockState state;
 
-        while (i < maxChecks) {
+        while(i < maxChecks) {
 
-            x += incX;
-            y += incY;
-            z += incZ;
-            toCheck = new BlockPos((int) Math.ceil(start.getX() + x), (int) Math.ceil(start.getY() + y), (int) Math.ceil(start.getZ() + z));
+            start = start.add(delta);
+
+            //Cieled Y
+            toCheck = new BlockPos((int) Math.ceil(start.x), (int) Math.ceil(start.y), (int) Math.ceil(start.z));
             if (!toCheck.equals(start) && !toCheck.equals(end)) {
                 state = world.getBlockState(toCheck);
-                if(!state.isAir() && state.isCollisionShapeFullBlock(world, toCheck)) {
+                if (willStopTurrret(state)) {
                     blocks.add(state.getBlock());
                 }
-                //world.setBlockAndUpdate(toCheck, Blocks.COBBLESTONE.defaultBlockState());
             }
-            toCheck = new BlockPos((int) Math.floor(start.getX() + x), (int) Math.ceil(start.getY() + y), (int) Math.floor(start.getZ() + z));
+
+            toCheck = new BlockPos((int) Math.ceil(start.x), (int) Math.ceil(start.y), (int) Math.floor(start.z));
             if (!toCheck.equals(start) && !toCheck.equals(end)) {
                 state = world.getBlockState(toCheck);
-                if(!state.isAir() && state.isCollisionShapeFullBlock(world, toCheck)) {
+                if (willStopTurrret(state)) {
                     blocks.add(state.getBlock());
                 }
-                //world.setBlockAndUpdate(toCheck, Blocks.COBBLESTONE.defaultBlockState());
+            }
+
+            toCheck = new BlockPos((int) Math.floor(start.x), (int) Math.ceil(start.y), (int) Math.ceil(start.z));
+            if (!toCheck.equals(start) && !toCheck.equals(end)) {
+                state = world.getBlockState(toCheck);
+                if (willStopTurrret(state)) {
+                    blocks.add(state.getBlock());
+                }
+            }
+
+            toCheck = new BlockPos((int) Math.floor(start.x), (int) Math.ceil(start.y), (int) Math.floor(start.z));
+            if (!toCheck.equals(start) && !toCheck.equals(end)) {
+                state = world.getBlockState(toCheck);
+                if (willStopTurrret(state)) {
+                    blocks.add(state.getBlock());
+                }
+            }
+
+            // Floored Y
+
+            toCheck = new BlockPos((int) Math.ceil(start.x), (int) Math.floor(start.y), (int) Math.ceil(start.z));
+            if (!toCheck.equals(start) && !toCheck.equals(end)) {
+                state = world.getBlockState(toCheck);
+                if (willStopTurrret(state)) {
+                    blocks.add(state.getBlock());
+                }
+            }
+
+            toCheck = new BlockPos((int) Math.ceil(start.x), (int) Math.floor(start.y), (int) Math.floor(start.z));
+            if (!toCheck.equals(start) && !toCheck.equals(end)) {
+                state = world.getBlockState(toCheck);
+                if (willStopTurrret(state)) {
+                    blocks.add(state.getBlock());
+                }
+            }
+
+            toCheck = new BlockPos((int) Math.floor(start.x), (int) Math.floor(start.y), (int) Math.ceil(start.z));
+            if (!toCheck.equals(start) && !toCheck.equals(end)) {
+                state = world.getBlockState(toCheck);
+                if (willStopTurrret(state)) {
+                    blocks.add(state.getBlock());
+                }
+            }
+
+            toCheck = new BlockPos((int) Math.floor(start.x), (int) Math.floor(start.y), (int) Math.floor(start.z));
+            if (!toCheck.equals(start) && !toCheck.equals(end)) {
+                state = world.getBlockState(toCheck);
+                if (willStopTurrret(state)) {
+                    blocks.add(state.getBlock());
+                }
             }
 
             i++;
+
 
         }
 
@@ -377,6 +412,19 @@ public abstract class GenericTileTurret extends GenericTile {
         }
     }
 
+    public static boolean willStopTurrret(BlockState state) {
+        if(state.isAir()) {
+            return false;
+        }
+        if(state.is(Blocks.SNOW) && state.getValue(SnowLayerBlock.LAYERS) < 4) {
+            return false;
+        }
+        if(state.is(BallistixTags.Blocks.WHITELISTED_TURRET_BLOCKS)) {
+            return false;
+        }
+        return true;
+    }
+
     @EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)
     private static final class ChunkloaderManager {
 
@@ -388,6 +436,10 @@ public abstract class GenericTileTurret extends GenericTile {
         }
 
 
+    }
+
+    public static enum TargetingMode {
+        ALL, ONLY_PLAYERS, NONE;
     }
 
 }

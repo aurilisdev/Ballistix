@@ -32,7 +32,7 @@ public class ScreenComponentWhitelistedPlayer extends ScreenComponentGeneric {
             return;
         }
 
-        gui.getFontRenderer().draw(poseStack, Component.literal(playerName), guiWidth + xLocation + 5, guiHeight + yLocation + 7, Color.WHITE.color());
+        gui.getFontRenderer().draw(poseStack, Component.literal(playerName), guiWidth + xLocation + 5, guiHeight + yLocation + 5, Color.WHITE.color());
 
     }
 

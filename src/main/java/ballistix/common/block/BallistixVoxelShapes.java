@@ -239,4 +239,89 @@ public class BallistixVoxelShapes {
 			Shapes.or(Block.box(0, 0, 0, 16, 5, 16), Block.box(2.5, 5, 2.5, 13.5, 6, 13.5))
 	//
 	);
+	
+	public static final VoxelShapeProvider AIR_RAID_SIREN = VoxelShapeProvider.createDirectional(
+            ///
+            Direction.NORTH,
+            //
+            Stream.of(
+                    //
+                    Stream.of(
+                            //
+                            Block.box(2, 0, 2, 14, 1, 14),
+                            //
+                            Block.box(4, 1, 4, 12, 3, 12),
+                            //
+                            Block.box(5, 3, 5, 11, 6, 11),
+                            //
+                            Block.box(4, 6, 5, 12, 7, 11),
+                            //
+                            Block.box(4, 7, 4, 12, 13, 12),
+                            //
+                            Block.box(4, 13, 5, 12, 14, 11)
+                            //
+                    ).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get(),
+                    //
+                    Stream.of(
+                            //
+                            Block.box(1, 5, 3, 4, 15, 13),
+                            //
+                            Block.box(0, 6, 13, 4, 14, 14),
+                            //
+                            Block.box(0, 6, 2, 4, 14, 3),
+                            //
+                            Block.box(0, 15, 4, 4, 16, 12),
+                            //
+                            Block.box(0, 4, 4, 4, 5, 12),
+                            //
+                            Block.box(0, 5, 3, 1, 15, 4),
+                            //
+                            Block.box(0, 5, 12, 1, 15, 13),
+                            //
+                            Block.box(0, 5, 4, 1, 6, 12),
+                            //
+                            Block.box(0, 14, 4, 1, 15, 12),
+                            //
+                            Block.box(0, 6, 4, 1, 7, 5),
+                            //
+                            Block.box(0, 13, 4, 1, 14, 5),
+                            //
+                            Block.box(0, 13, 11, 1, 14, 12),
+                            //
+                            Block.box(0, 6, 11, 1, 7, 12)
+                            //
+                    ).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get(),
+                    //
+                    Stream.of(
+                            //
+                            Block.box(12, 5, 3, 15, 15, 13),
+                            //
+                            Block.box(12, 6, 13, 16, 14, 14),
+                            //
+                            Block.box(12, 6, 2, 16, 14, 3),
+                            //
+                            Block.box(12, 15, 4, 16, 16, 12),
+                            //
+                            Block.box(12, 4, 4, 16, 5, 12),
+                            //
+                            Block.box(15, 5, 3, 16, 15, 4),
+                            //
+                            Block.box(15, 5, 12, 16, 15, 13),
+                            //
+                            Block.box(15, 5, 4, 16, 6, 12),
+                            //
+                            Block.box(15, 14, 4, 16, 15, 12),
+                            //
+                            Block.box(15, 6, 11, 16, 7, 12),
+                            //
+                            Block.box(15, 13, 11, 16, 14, 12),
+                            //
+                            Block.box(15, 13, 4, 16, 14, 5),
+                            //
+                            Block.box(15, 6, 4, 16, 7, 5)
+                            //
+                    ).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()
+                    //
+            ).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get());
+	
 }

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": {
+      "tag": "minecraft:anvil"
+    },
+    "C": {
+      "item": "ballistix:condensive"
+    }
+  },
+  "pattern": [
+    "CCC",
+    "CAC",
+    "CCC"
+  ],
+  "result": {
+    "count": 10,
+    "item": "ballistix:anvil"
+  }
+}

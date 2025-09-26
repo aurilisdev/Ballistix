@@ -9,12 +9,15 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IHasCustomRender;
+import ballistix.api.missile.MissileManager;
 import ballistix.api.silo.ILauncherPlatform;
 import ballistix.api.silo.ILauncherSupportFrame;
-import ballistix.common.blast.Blast;
+import ballistix.common.blast.util.Blast;
+import ballistix.common.block.subtype.SubtypeMissile;
 import ballistix.common.entity.EntityBlast;
 import ballistix.common.entity.EntityMissile;
 import ballistix.common.settings.BallistixConstants;
+import ballistix.registers.BallistixSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.resources.ResourceLocation;
@@ -28,6 +31,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import voltaic.api.multiblock.subnodebased.TileMultiSubnode;
 import voltaic.prefab.utilities.BlockEntityUtils;
+import voltaic.prefab.utilities.Scheduler;
 
 public class VirtualMissile {
 
@@ -89,7 +93,7 @@ public class VirtualMissile {
         this.payloadData = payloadData;
     }
 
-    public VirtualMissile(Vec3 startPos, Vec3 initialMovement, float initialSpeed, boolean isItem, float startX, float startZ, BlockPos target, int missileType, IBlast blast, int frequency, boolean usingAirburst) {
+    public VirtualMissile(Vec3 startPos, Vec3 initialMovement, float initialSpeed, FlightPath flightPath, float startX, float startZ, BlockPos target, int missileType, IBlast blast, int frequency, boolean usingAirburst) {
 
         this.position = startPos;
         this.deltaMovement = initialMovement;
@@ -98,7 +102,7 @@ public class VirtualMissile {
 
         this.targetData = new MissileTargetData(startX, startZ, target, false, usingAirburst);
         this.entityData = new MissileEntityData(false, -1);
-        this.payloadData = new MissilePayloadData(missileType, blast.id(), frequency, isItem);
+        this.payloadData = new MissilePayloadData(missileType, blast.id(), frequency, flightPath.ordinal(), false);
 
     }
 
@@ -113,7 +117,7 @@ public class VirtualMissile {
             return;
         }
 
-        if ((!payloadData.isItem && targetData.target.equals(BlockEntityUtils.OUT_OF_REACH)) || payloadData.blastId == null) {
+        if ((payloadData.getFlightPath() != FlightPath.ROCKET_LAUNCHER && targetData.target.equals(BlockEntityUtils.OUT_OF_REACH)) || payloadData.blastId == null) {
             hasExploded = true;
             return;
         }
@@ -131,12 +135,12 @@ public class VirtualMissile {
 
         BlockPos collisionPos = projectMovementForCollision(level);
 
-        if ((collisionPos != null || (targetData.usingAirburst && targetData.pastHalfwayPoint && position.y <= targetData.target.getY())) && (payloadData.isItem || !isInValidBlockstate(collisionPos, level)) || position.y <= level.getMinBuildHeight()) {
+        if ((collisionPos != null || (targetData.usingAirburst && targetData.pastHalfwayPoint && position.y <= targetData.target.getY())) && (payloadData.getFlightPath() == FlightPath.ROCKET_LAUNCHER || !isInValidBlockstate(collisionPos, level)) || position.y <= level.getMinBuildHeight()) {
 
         	IBlast explosive = Blast.BLAST_MAP.get(payloadData.blastId);
 
             if(collisionPos == null) {
-                collisionPos = targetData.target;
+            	collisionPos = new BlockPos((int) position.x, targetData.target.getY(), (int) position.z);
             }
 
             Blast b = explosive.createBlast(level, collisionPos);
@@ -160,7 +164,7 @@ public class VirtualMissile {
 
         }
 
-        if (!payloadData.isItem) {
+        if (payloadData.getFlightPath() == FlightPath.SILO || payloadData.getFlightPath() == FlightPath.SILO_CLUSTER) {
 
             float iDeltaX = targetData.target.getX() - targetData.startX;
             float iDeltaZ = targetData.target.getZ() - targetData.startZ;
@@ -185,6 +189,8 @@ public class VirtualMissile {
 
             float phi = 0;
             float signY = 1;
+            
+            int sep = 5;
 
             if (halfwayDistance <= maxRadii) {
 
@@ -193,6 +199,42 @@ public class VirtualMissile {
                     phi = (float) Math.asin(Mth.clamp(deltaY / turnRadius, 0, 1));
 
                 } else if (distanceTraveled >= halfwayDistance) {
+                	
+                	if(payloadData.getFlightPath() == FlightPath.SILO_CLUSTER) {
+
+                        VirtualMissile same = new VirtualMissile(position, deltaMovement, speed, health, false, UUID.randomUUID(), tickCount,
+                                targetData,
+                                new MissileEntityData(false, -1),
+                                new MissilePayloadData(SubtypeMissile.clustershard.ordinal(), payloadData.blastId, payloadData.frequency, FlightPath.SILO.ordinal(), false));
+                        VirtualMissile above = new VirtualMissile(position.add(-sep, sep, sep), deltaMovement, speed, health, false, UUID.randomUUID(), tickCount,
+                                new MissileTargetData(targetData.startX, targetData.startZ, targetData.target.offset(-sep, 0, sep), targetData.pastHalfwayPoint, targetData.usingAirburst),
+                                new MissileEntityData(false, -1),
+                                new MissilePayloadData(SubtypeMissile.clustershard.ordinal(), payloadData.blastId, payloadData.frequency, FlightPath.SILO.ordinal(), false));
+                        VirtualMissile below = new VirtualMissile(position.add(sep, -sep, -sep), deltaMovement, speed, health, false, UUID.randomUUID(), tickCount,
+                                new MissileTargetData(targetData.startX, targetData.startZ, targetData.target.offset(sep, 0, -sep), targetData.pastHalfwayPoint, targetData.usingAirburst),
+                                new MissileEntityData(false, -1),
+                                new MissilePayloadData(SubtypeMissile.clustershard.ordinal(), payloadData.blastId, payloadData.frequency, FlightPath.SILO.ordinal(), false));
+                        VirtualMissile left = new VirtualMissile(position.add(sep, sep, -sep), deltaMovement, speed, health, false, UUID.randomUUID(), tickCount,
+                                new MissileTargetData(targetData.startX, targetData.startZ, targetData.target.offset(-sep, 0, -sep), targetData.pastHalfwayPoint, targetData.usingAirburst),
+                                new MissileEntityData(false, -1),
+                                new MissilePayloadData(SubtypeMissile.clustershard.ordinal(), payloadData.blastId, payloadData.frequency, FlightPath.SILO.ordinal(), false));
+                        VirtualMissile right = new VirtualMissile(position.add(-sep, -sep, sep), deltaMovement, speed, health, false, UUID.randomUUID(), tickCount,
+                                new MissileTargetData(targetData.startX, targetData.startZ, targetData.target.offset(-sep, 0, -sep), targetData.pastHalfwayPoint, targetData.usingAirburst),
+                                new MissileEntityData(false, -1),
+                                new MissilePayloadData(SubtypeMissile.clustershard.ordinal(), payloadData.blastId, payloadData.frequency, FlightPath.SILO.ordinal(), false));
+
+                        Scheduler.schedule(1, () -> {
+                            MissileManager.addMissile(level.dimension(), same);
+                            MissileManager.addMissile(level.dimension(), above);
+                            MissileManager.addMissile(level.dimension(), below);
+                            MissileManager.addMissile(level.dimension(), left);
+                            MissileManager.addMissile(level.dimension(), right);
+                        });
+
+                        hasExploded = true;
+                        return;
+
+                    }
 
                     phi = (float) Math.asin(Mth.clamp((initialDistance - distanceTraveled) / turnRadius, 0, 1));
                     signY = -1;
@@ -226,6 +268,42 @@ public class VirtualMissile {
                 } else if (distanceTraveled >= halfwayDistance) {
 
                     if (distanceTraveled >= initialDistance - turnRadius) {
+                    	
+                    	if(payloadData.getFlightPath() == FlightPath.SILO_CLUSTER) {
+
+                            VirtualMissile same = new VirtualMissile(position, deltaMovement, speed, health, false, UUID.randomUUID(), tickCount,
+                                    targetData,
+                                    new MissileEntityData(false, -1),
+                                    new MissilePayloadData(SubtypeMissile.clustershard.ordinal(), payloadData.blastId, payloadData.frequency, FlightPath.SILO.ordinal(), false));
+                            VirtualMissile above = new VirtualMissile(position.add(-sep, sep, sep), deltaMovement, speed, health, false, UUID.randomUUID(), tickCount,
+                                    new MissileTargetData(targetData.startX, targetData.startZ, targetData.target.offset(-sep, 0, sep), targetData.pastHalfwayPoint, targetData.usingAirburst),
+                                    new MissileEntityData(false, -1),
+                                    new MissilePayloadData(SubtypeMissile.clustershard.ordinal(), payloadData.blastId, payloadData.frequency, FlightPath.SILO.ordinal(), false));
+                            VirtualMissile below = new VirtualMissile(position.add(sep, -sep, -sep), deltaMovement, speed, health, false, UUID.randomUUID(), tickCount,
+                                    new MissileTargetData(targetData.startX, targetData.startZ, targetData.target.offset(sep, 0, -sep), targetData.pastHalfwayPoint, targetData.usingAirburst),
+                                    new MissileEntityData(false, -1),
+                                    new MissilePayloadData(SubtypeMissile.clustershard.ordinal(), payloadData.blastId, payloadData.frequency, FlightPath.SILO.ordinal(), false));
+                            VirtualMissile left = new VirtualMissile(position.add(sep, sep, -sep), deltaMovement, speed, health, false, UUID.randomUUID(), tickCount,
+                                    new MissileTargetData(targetData.startX, targetData.startZ, targetData.target.offset(-sep, 0, -sep), targetData.pastHalfwayPoint, targetData.usingAirburst),
+                                    new MissileEntityData(false, -1),
+                                    new MissilePayloadData(SubtypeMissile.clustershard.ordinal(), payloadData.blastId, payloadData.frequency, FlightPath.SILO.ordinal(), false));
+                            VirtualMissile right = new VirtualMissile(position.add(-sep, -sep, sep), deltaMovement, speed, health, false, UUID.randomUUID(), tickCount,
+                                    new MissileTargetData(targetData.startX, targetData.startZ, targetData.target.offset(-sep, 0, -sep), targetData.pastHalfwayPoint, targetData.usingAirburst),
+                                    new MissileEntityData(false, -1),
+                                    new MissilePayloadData(SubtypeMissile.clustershard.ordinal(), payloadData.blastId, payloadData.frequency, FlightPath.SILO.ordinal(), false));
+
+                            Scheduler.schedule(1, () -> {
+                                MissileManager.addMissile(level.dimension(), same);
+                                MissileManager.addMissile(level.dimension(), above);
+                                MissileManager.addMissile(level.dimension(), below);
+                                MissileManager.addMissile(level.dimension(), left);
+                                MissileManager.addMissile(level.dimension(), right);
+                            });
+
+                            hasExploded = true;
+                            return;
+
+                        }
 
                         phi = (float) Math.asin(Mth.clamp((initialDistance - distanceTraveled) / turnRadius, 0, 1));
                         signY = -1;
@@ -249,13 +327,49 @@ public class VirtualMissile {
 
             }
 
+        } else if (payloadData.getFlightPath() == FlightPath.VLS) {
+
+            if(!payloadData.hasIgnighted && speed > - 0.15) {
+                speed -= 0.03F;
+            } else if (!payloadData.hasIgnighted) {
+                payloadData.hasIgnighted = true;
+                level.playSound(null, blockPosition(), BallistixSounds.SOUND_MISSILE_SILO.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+            } else if (speed > 0.5) {
+
+                Vec3 desiredVector = new Vec3(targetData.target.getX() - position.x, targetData.target.getY() - position.y, targetData.target.getZ() - position.z).normalize();
+                Vec3 currVector = deltaMovement.normalize();
+
+                double dotProduct = desiredVector.dot(currVector);
+                double maxTurnRadians = 0.05;
+
+                if(dotProduct != 0) {
+
+                    if(Math.acos(dotProduct) <= maxTurnRadians) {
+                        deltaMovement = desiredVector;
+                    } else {
+
+                        Vec3 perpVector = currVector.cross(desiredVector).cross(currVector).normalize();
+
+                        Vec3 result = currVector.scale(Math.cos(maxTurnRadians)).add(perpVector.scale(Math.sin(maxTurnRadians)));
+
+                        deltaMovement = result.normalize();
+
+
+
+                    }
+
+                }
+
+            }
+
+
         }
 
         if (blastEntity == null) {
             position = new Vec3(position.x + speed * deltaMovement.x, position.y + speed * deltaMovement.y, position.z + speed * deltaMovement.z);
         }
 
-        if (!payloadData.isItem && !targetData.target.equals(BlockEntityUtils.OUT_OF_REACH) && speed < 3.0F) {
+        if ((payloadData.getFlightPath() == FlightPath.SILO || payloadData.getFlightPath() == FlightPath.SILO_CLUSTER || (payloadData.getFlightPath() == FlightPath.VLS && payloadData.hasIgnighted)) && !targetData.target.equals(BlockEntityUtils.OUT_OF_REACH) && speed < 3.0F) {
             speed += 0.02F;
         }
 
@@ -267,7 +381,7 @@ public class VirtualMissile {
             missile.missileType = payloadData.missileType;
             missile.speed = speed;
             missile.id = id;
-            missile.isItem = payloadData.isItem;
+            missile.flightPath = payloadData.flightPath;
             missile.target = targetData.target;
             missile.startX = targetData.startX;
             missile.startZ = targetData.startZ;
@@ -419,21 +533,34 @@ public class VirtualMissile {
                 //
                 Codec.INT.fieldOf("frequency").forGetter(instance0 -> instance0.frequency),
                 //
-                Codec.BOOL.fieldOf("isitem").forGetter(instance0 -> instance0.isItem)
+                Codec.INT.fieldOf("fligthpath").forGetter(instance0 -> instance0.flightPath),
+                Codec.BOOL.fieldOf("hasignighted").forGetter(instance0 -> instance0.hasIgnighted)
                 //
         ).apply(instance, MissilePayloadData::new));
 
         public final int missileType;
         public final ResourceLocation blastId;
         public final int frequency;
-        private final boolean isItem;
+        private final int flightPath;
+        public boolean hasIgnighted;
 
-        public MissilePayloadData(int missileType, ResourceLocation blastId, int frequency, boolean isItem) {
+        public MissilePayloadData(int missileType, ResourceLocation blastId, int frequency, int flightPath, boolean hasIgnighted) {
             this.missileType = missileType;
             this.blastId = blastId;
             this.frequency = frequency;
-            this.isItem = isItem;
+            this.flightPath = flightPath;
+            this.hasIgnighted = hasIgnighted;
         }
+        
+        public FlightPath getFlightPath() {
+            return FlightPath.values()[flightPath];
+        }
+
+    }
+    
+    public static enum FlightPath {
+
+    	ROCKET_LAUNCHER, VLS, SILO, SILO_CLUSTER;
 
     }
 

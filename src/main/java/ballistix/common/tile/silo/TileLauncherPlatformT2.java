@@ -1,7 +1,7 @@
 package ballistix.common.tile.silo;
 
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.registers.BallistixTiles;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
@@ -19,7 +19,7 @@ public class TileLauncherPlatformT2 extends TileLauncherPlatformT1 {
 
 	@Override
 	public int getRange() {
-		return BallistixConstants.LAUNCHER_PLATFORM_RANGE_T2;
+		return BallistixConfig.INSTANCE.LAUNCHER_PLATFORM_RANGE_T2.get();
 	}
 
 	@Override

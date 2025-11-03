@@ -10,6 +10,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.network.PacketDistributor;
+import nuclearscience.common.block.BlockIrradiated;
+import nuclearscience.registers.NuclearScienceBlocks;
 
 public class RadiationHandler {
 

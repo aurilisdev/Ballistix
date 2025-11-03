@@ -6,7 +6,7 @@ import org.joml.Vector3f;
 
 import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -42,7 +42,7 @@ public class BlastDebilitation extends Blast {
 	@Override
 	public boolean doExplode(int callCount) {
 		hasStarted = true;
-		int radius = (int) BallistixConstants.EXPLOSIVE_DEBILITATION_SIZE;
+		int radius = (int) BallistixConfig.INSTANCE.EXPLOSIVE_DEBILITATION_SIZE.getAsDouble();
 		if (world.isClientSide && callCount % 3 == 0) {
 			for (int x = -radius; x <= radius; x++) {
 				for (int y = -radius; y <= radius; y++) {
@@ -96,7 +96,7 @@ public class BlastDebilitation extends Blast {
 				}
 			}
 		}
-		return callCount > BallistixConstants.EXPLOSIVE_DEBILITATION_DURATION;
+		return callCount > BallistixConfig.INSTANCE.EXPLOSIVE_DEBILITATION_DURATION.getAsDouble();
 	}
 
 	@Override

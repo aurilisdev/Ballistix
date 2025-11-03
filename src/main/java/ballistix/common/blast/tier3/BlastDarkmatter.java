@@ -9,7 +9,7 @@ import ballistix.api.blast.IMovingBlast;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.blast.util.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixSounds;
 import net.minecraft.core.BlockPos;
@@ -42,7 +42,7 @@ public class BlastDarkmatter extends Blast implements IMovingBlast {
     @Override
     public void doPreExplode() {
         if (!world.isClientSide) {
-            thread = new ThreadSimpleBlast(world, position, (int) BallistixConstants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null, getBlastType().id());
+            thread = new ThreadSimpleBlast(world, position, (int) BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_RADIUS.getAsDouble(), Integer.MAX_VALUE, null, getBlastType().id());
             thread.start();
             if(!isRepeating) {
                 world.playSound(null, position, BallistixSounds.SOUND_DARKMATTER.get(), SoundSource.BLOCKS, 1, 1);
@@ -67,13 +67,13 @@ public class BlastDarkmatter extends Blast implements IMovingBlast {
         if (thread == null || canceled) {
             return true;
         }
-        Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) BallistixConstants.EXPLOSIVE_DARKMATTER_RADIUS, false, Explosion.BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
+        Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_RADIUS.getAsDouble(), false, Explosion.BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
         if (thread.isComplete) {
             if (callAtStart == -1) {
                 callAtStart = callCount;
             }
             if (pertick == -1) {
-                pertick = (int) (thread.results.size() / (isRepeating ? BallistixConstants.EXPLOSIVE_DARKMATTER_REPEATDURATION : BallistixConstants.EXPLOSIVE_DARKMATTER_DURATION));
+                pertick = (int) (thread.results.size() / (isRepeating ? BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_REPEATDURATION.get() : BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_DURATION.get()));
                 cachedIterator = thread.results.iterator();
             }
             int finished = pertick;
@@ -110,7 +110,7 @@ public class BlastDarkmatter extends Blast implements IMovingBlast {
         float y = position.getY();
         float z = position.getZ();
 
-        float size = (float) BallistixConstants.EXPLOSIVE_DARKMATTER_RADIUS;
+        float size = (float) BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_RADIUS.getAsDouble();
 
         float doubleSize = size * 2.0F;
 
@@ -175,12 +175,12 @@ public class BlastDarkmatter extends Blast implements IMovingBlast {
 
     @Override
     public int movementTicks() {
-        return BallistixConstants.EXPLOSIVE_DARKMATTER_MOVEMENTTICKS;
+        return BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_MOVEMENTTICKS.get();
     }
 
     @Override
     public int persistenceTicks() {
-        return BallistixConstants.EXPLOSIVE_DARKMATTER_PERSISTANCE;
+        return BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_PERSISTANCE.get();
     }
 
 }

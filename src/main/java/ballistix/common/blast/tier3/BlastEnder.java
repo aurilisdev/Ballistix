@@ -8,7 +8,7 @@ import ballistix.api.blast.IHasCustomRender;
 import ballistix.client.particle.ParticleOptionsShockwave;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -81,21 +81,21 @@ public class BlastEnder extends Blast implements IHasCustomRender {
 
         }
 
-        for(int i = 0; i < BallistixConstants.EXPLOSIVE_ENDER_ENDERMANCOUNT; i++) {
+        for(int i = 0; i < BallistixConfig.INSTANCE.EXPLOSIVE_ENDER_ENDERMANCOUNT.get(); i++) {
             EnderMan entity = new EnderMan(EntityType.ENDERMAN, world);
             entity.setPos(
                     //
-                    position.getX() + world.random.nextIntBetweenInclusive((int) -BallistixConstants.EXPLOSIVE_ENDER_RADIUS, (int) BallistixConstants.EXPLOSIVE_ENDER_RADIUS),
+                    position.getX() + world.random.nextIntBetweenInclusive((int) -BallistixConfig.INSTANCE.EXPLOSIVE_ENDER_RADIUS.getAsDouble(), (int) BallistixConfig.INSTANCE.EXPLOSIVE_ENDER_RADIUS.getAsDouble()),
                     //
-                    position.getY() + world.random.nextIntBetweenInclusive((int) -BallistixConstants.EXPLOSIVE_ENDER_RADIUS, (int) BallistixConstants.EXPLOSIVE_ENDER_RADIUS),
+                    position.getY() + world.random.nextIntBetweenInclusive((int) -BallistixConfig.INSTANCE.EXPLOSIVE_ENDER_RADIUS.getAsDouble(), (int) BallistixConfig.INSTANCE.EXPLOSIVE_ENDER_RADIUS.getAsDouble()),
                     //
-                    position.getZ() + world.random.nextIntBetweenInclusive((int) -BallistixConstants.EXPLOSIVE_ENDER_RADIUS, (int) BallistixConstants.EXPLOSIVE_ENDER_RADIUS)
+                    position.getZ() + world.random.nextIntBetweenInclusive((int) -BallistixConfig.INSTANCE.EXPLOSIVE_ENDER_RADIUS.getAsDouble(), (int) BallistixConfig.INSTANCE.EXPLOSIVE_ENDER_RADIUS.getAsDouble())
             //
             );
             world.addFreshEntity(entity);
         }
 
-        world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) BallistixConstants.EXPLOSIVE_ENDER_RADIUS, Level.ExplosionInteraction.BLOCK);
+        world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) BallistixConfig.INSTANCE.EXPLOSIVE_ENDER_RADIUS.getAsDouble(), Level.ExplosionInteraction.BLOCK);
 
         return true;
     }

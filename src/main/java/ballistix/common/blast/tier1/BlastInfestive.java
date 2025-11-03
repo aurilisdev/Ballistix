@@ -6,7 +6,7 @@ import ballistix.api.blast.IBlast;
 import ballistix.common.blast.util.BlastLasting;
 import ballistix.common.blast.util.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
@@ -28,7 +28,7 @@ public class BlastInfestive extends BlastLasting {
     @Override
     public void doPreExplode() {
         if (!world.isClientSide) {
-            thread = new ThreadSimpleBlast(world, position, (int) BallistixConstants.EXPLOSIVE_INFESTIVE_RADIUS, Integer.MAX_VALUE, null, getBlastType().id());
+            thread = new ThreadSimpleBlast(world, position, (int) BallistixConfig.INSTANCE.EXPLOSIVE_INFESTIVE_RADIUS.getAsDouble(), Integer.MAX_VALUE, null, getBlastType().id());
             thread.start();
             world.playSound(null, position, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 25, 1);
             world.playSound(null, position, SoundEvents.GHAST_HURT, SoundSource.BLOCKS, 25, 1);
@@ -47,7 +47,7 @@ public class BlastInfestive extends BlastLasting {
         }
         if (pertick == -1) {
             hasStarted = true;
-            pertick = (int) (thread.results.size() * 1.5 / BallistixConstants.EXPLOSIVE_INFESTIVE_DURATION + 1);
+            pertick = (int) (thread.results.size() * 1.5 / BallistixConfig.INSTANCE.EXPLOSIVE_INFESTIVE_DURATION.getAsDouble() + 1);
             iterator = thread.results.iterator();
         }
         int finished = pertick;

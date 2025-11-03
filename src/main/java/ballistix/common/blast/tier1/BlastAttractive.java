@@ -7,7 +7,7 @@ import ballistix.api.blast.IHasCustomRender;
 import ballistix.client.particle.ParticleOptionsShockwave;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -41,7 +41,7 @@ public class BlastAttractive extends Blast implements IHasCustomRender {
 
 		if (!world.isClientSide) {
 
-			world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) BallistixConstants.EXPLOSIVE_ATTRACTIVE_SIZE, ExplosionInteraction.BLOCK);
+			world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) BallistixConfig.INSTANCE.EXPLOSIVE_ATTRACTIVE_SIZE.getAsDouble(), ExplosionInteraction.BLOCK);
 
 		} else {
 			produceParticles();
@@ -86,7 +86,7 @@ public class BlastAttractive extends Blast implements IHasCustomRender {
 			deltaX = deltaX / deltaDistance;
 			deltaY = deltaY / deltaDistance;
 			deltaZ = deltaZ / deltaDistance;
-			double d11 = -BallistixConstants.EXPLOSIVE_ATTRACTIVE_REPULSIVE_PUSH_STRENGTH;
+			double d11 = -BallistixConfig.INSTANCE.EXPLOSIVE_ATTRACTIVE_REPULSIVE_PUSH_STRENGTH.getAsDouble();
 			entity.setDeltaMovement(entity.getDeltaMovement().add(deltaX * d11, deltaY * d11, deltaZ * d11));
 			if (entity instanceof ServerPlayer serverplayerentity) {
 				serverplayerentity.connection.send(new ClientboundExplodePacket(x, y, z, size, new ArrayList<>(), new Vec3(deltaX * d11, deltaY * d11, deltaZ * d11), Explosion.BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE));

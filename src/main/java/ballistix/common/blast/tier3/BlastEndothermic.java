@@ -9,7 +9,7 @@ import ballistix.common.blast.util.BlastLasting;
 import ballistix.common.blast.util.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityBallistixFallingBlock;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixEffects;
 import ballistix.registers.BallistixSounds;
@@ -43,7 +43,7 @@ public class BlastEndothermic extends BlastLasting implements IHasCustomRender {
     @Override
     public void doPreExplode() {
         if (!world.isClientSide) {
-            thread = new ThreadSimpleBlast(world, position, (int) BallistixConstants.EXPLOSIVE_ENDOTHERMIC_RADIUS, Integer.MAX_VALUE, null, getBlastType().id());
+            thread = new ThreadSimpleBlast(world, position, (int) BallistixConfig.INSTANCE.EXPLOSIVE_ENDOTHERMIC_RADIUS.getAsDouble(), Integer.MAX_VALUE, null, getBlastType().id());
             thread.start();
             world.playSound(null, position, BallistixSounds.SOUND_ENDOTHERMICBEAM.get(), SoundSource.BLOCKS, 25, 1);
         }
@@ -61,7 +61,7 @@ public class BlastEndothermic extends BlastLasting implements IHasCustomRender {
         }
         if (pertick == -1) {
             hasStarted = true;
-            pertick = (int) (thread.results.size() * 1.5 / BallistixConstants.EXPLOSIVE_ENDOTHERMIC_DURATION + 1);
+            pertick = (int) (thread.results.size() * 1.5 / BallistixConfig.INSTANCE.EXPLOSIVE_ENDOTHERMIC_DURATION.getAsDouble() + 1);
             iterator = thread.results.iterator();
         }
         int finished = pertick;
@@ -72,7 +72,7 @@ public class BlastEndothermic extends BlastLasting implements IHasCustomRender {
             BlockPos p = new BlockPos(iterator.next()).offset(position);
             BlockState state = world.getBlockState(p);
 
-            if(state.isAir() || (!(state.getBlock() instanceof LiquidBlock) && (state.getDestroySpeed(world, p) < 0 || state.getDestroySpeed(world, p) > BallistixConstants.EXPLOSIVE_ENDOTHERMIC_MAXHARDNESS))) {
+            if(state.isAir() || (!(state.getBlock() instanceof LiquidBlock) && (state.getDestroySpeed(world, p) < 0 || state.getDestroySpeed(world, p) > BallistixConfig.INSTANCE.EXPLOSIVE_ENDOTHERMIC_MAXHARDNESS.getAsDouble()))) {
                 continue;
             }
 
@@ -104,9 +104,9 @@ public class BlastEndothermic extends BlastLasting implements IHasCustomRender {
 
             double inverseMag = Mth.fastInvSqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
-            double velX = deltaX * inverseMag * BallistixConstants.EXPLOSIVE_ENDOTHERMIC_VELOCITY;
-            double velY = deltaY * inverseMag * BallistixConstants.EXPLOSIVE_ENDOTHERMIC_VELOCITY;
-            double velZ = deltaZ * inverseMag * BallistixConstants.EXPLOSIVE_ENDOTHERMIC_VELOCITY;
+            double velX = deltaX * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_ENDOTHERMIC_VELOCITY.getAsDouble();
+            double velY = deltaY * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_ENDOTHERMIC_VELOCITY.getAsDouble();
+            double velZ = deltaZ * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_ENDOTHERMIC_VELOCITY.getAsDouble();
 
             EntityBallistixFallingBlock movingBlock = new EntityBallistixFallingBlock(world, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, state);
             movingBlock.setDeltaMovement(velX, velY, velZ);
@@ -119,7 +119,7 @@ public class BlastEndothermic extends BlastLasting implements IHasCustomRender {
             float y = position.getY();
             float z = position.getZ();
 
-            float size = (float) BallistixConstants.EXPLOSIVE_SONIC_RADIUS;
+            float size = (float) BallistixConfig.INSTANCE.EXPLOSIVE_SONIC_RADIUS.getAsDouble();
             float doubleSize = size * 2.0F;
 
             int x0 = Mth.floor(x - (double) doubleSize - 1.0D);
@@ -149,9 +149,9 @@ public class BlastEndothermic extends BlastLasting implements IHasCustomRender {
 
                 double inverseMag = Mth.fastInvSqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
-                double velX = deltaX * inverseMag * BallistixConstants.EXPLOSIVE_ENDOTHERMIC_VELOCITY;
-                double velY = deltaY * inverseMag * BallistixConstants.EXPLOSIVE_ENDOTHERMIC_VELOCITY;
-                double velZ = deltaZ * inverseMag * BallistixConstants.EXPLOSIVE_ENDOTHERMIC_VELOCITY;
+                double velX = deltaX * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_ENDOTHERMIC_VELOCITY.getAsDouble();
+                double velY = deltaY * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_ENDOTHERMIC_VELOCITY.getAsDouble();
+                double velZ = deltaZ * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_ENDOTHERMIC_VELOCITY.getAsDouble();
                 entity.setTicksFrozen(10000);
                 entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 10000));
                 entity.addEffect(new MobEffectInstance(BallistixEffects.FROSTBITE, 10000));

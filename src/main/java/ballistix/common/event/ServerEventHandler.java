@@ -14,7 +14,7 @@ import ballistix.common.command.CommandClearRailgunRounds;
 import ballistix.common.command.CommandClearSAMs;
 import ballistix.common.entity.EntityBallistixFallingBlock;
 import ballistix.common.packet.type.client.PacketPushPlayer;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.registers.BallistixAttachmentTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -71,28 +71,28 @@ public class ServerEventHandler {
             AABB box = AABB.encapsulatingFullBlocks(new BlockPos(chunk.getPos().getMinBlockX(), levelChunk.getMinBuildHeight(), chunk.getPos().getMinBlockZ()), new BlockPos(chunk.getPos().getMaxBlockX(), levelChunk.getMaxBuildHeight(), chunk.getPos().getMaxBlockZ()));
 
             MissileManager.getMissilesForLevel(level.dimension()).forEach(missile -> {
-                if(!missile.getBoundingBox().intersects(box) || missile.position.y > BallistixConstants.EXPLOSIVE_ANTIGRAVITY_MAXHEIGHT) {
+                if(!missile.getBoundingBox().intersects(box) || missile.position.y > BallistixConfig.INSTANCE.EXPLOSIVE_ANTIGRAVITY_MAXHEIGHT.get()) {
                     return;
                 }
                 missile.position = missile.position.add(0, 0.04, 0);
             });
 
             MissileManager.getBulletsForLevel(level.dimension()).forEach(bullet -> {
-                if(!bullet.getBoundingBox().intersects(box) || bullet.position.y > BallistixConstants.EXPLOSIVE_ANTIGRAVITY_MAXHEIGHT) {
+                if(!bullet.getBoundingBox().intersects(box) || bullet.position.y > BallistixConfig.INSTANCE.EXPLOSIVE_ANTIGRAVITY_MAXHEIGHT.get()) {
                     return;
                 }
                 bullet.position = bullet.position.add(0, 0.04, 0);
             });
 
             MissileManager.getRailgunRoundsForLevel(level.dimension()).forEach(round -> {
-                if(!round.getBoundingBox().intersects(box) || round.position.y > BallistixConstants.EXPLOSIVE_ANTIGRAVITY_MAXHEIGHT) {
+                if(!round.getBoundingBox().intersects(box) || round.position.y > BallistixConfig.INSTANCE.EXPLOSIVE_ANTIGRAVITY_MAXHEIGHT.get()) {
                     return;
                 }
                 round.position = round.position.add(0, 0.04, 0);
             });
 
             MissileManager.getSAMsForLevel(level.dimension()).forEach(missile -> {
-                if(!missile.getBoundingBox().intersects(box) || missile.position.y > BallistixConstants.EXPLOSIVE_ANTIGRAVITY_MAXHEIGHT) {
+                if(!missile.getBoundingBox().intersects(box) || missile.position.y > BallistixConfig.INSTANCE.EXPLOSIVE_ANTIGRAVITY_MAXHEIGHT.get()) {
                     return;
                 }
                 missile.position = missile.position.add(0, 0.04, 0);
@@ -102,7 +102,7 @@ public class ServerEventHandler {
 
             for(Entity entity : entities) {
 
-                if(!entity.isAlive() || entity.getY() > BallistixConstants.EXPLOSIVE_ANTIGRAVITY_MAXHEIGHT) {
+                if(!entity.isAlive() || entity.getY() > BallistixConfig.INSTANCE.EXPLOSIVE_ANTIGRAVITY_MAXHEIGHT.get()) {
                     continue;
                 }
 
@@ -113,13 +113,13 @@ public class ServerEventHandler {
 
                 } else {
 
-                    entity.push(entity.getDeltaMovement().x, entity.getGravity() * BallistixConstants.EXPLOSIVE_ANTIGRAVITY_GRAVITYFACTOR, entity.getDeltaMovement().z);
+                    entity.push(entity.getDeltaMovement().x, entity.getGravity() * BallistixConfig.INSTANCE.EXPLOSIVE_ANTIGRAVITY_GRAVITYFACTOR.get(), entity.getDeltaMovement().z);
 
                 }
 
             }
 
-            for(int i = 0; i < BallistixConstants.EXPLOSIVE_ANTIGRAVITY_MAXBLOCKCHECKS; i++) {
+            for(int i = 0; i < BallistixConfig.INSTANCE.EXPLOSIVE_ANTIGRAVITY_MAXBLOCKCHECKS.get(); i++) {
                 int x = level.random.nextIntBetweenInclusive(0, 16);
                 int y = level.random.nextIntBetweenInclusive(levelChunk.getMinBuildHeight(), levelChunk.getMaxBuildHeight());
                 int z = level.random.nextIntBetweenInclusive(0, 16);
@@ -136,7 +136,7 @@ public class ServerEventHandler {
                 if(above.isAir() || above.liquid()) {
 
                     EntityBallistixFallingBlock movingBlock = new EntityBallistixFallingBlock(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, state);
-                    movingBlock.setDeltaMovement(0, movingBlock.getGravity() * BallistixConstants.EXPLOSIVE_ANTIGRAVITY_GRAVITYFACTOR, 0);
+                    movingBlock.setDeltaMovement(0, movingBlock.getGravity() * BallistixConfig.INSTANCE.EXPLOSIVE_ANTIGRAVITY_GRAVITYFACTOR.get(), 0);
 
                     level.addFreshEntity(movingBlock);
 

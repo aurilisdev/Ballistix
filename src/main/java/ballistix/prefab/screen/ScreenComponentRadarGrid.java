@@ -1,7 +1,7 @@
 package ballistix.prefab.screen;
 
 import ballistix.client.screen.ScreenFireControlRadar;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import net.minecraft.client.gui.GuiGraphics;
 import voltaic.prefab.screen.component.ScreenComponentGeneric;
@@ -120,9 +120,9 @@ public class ScreenComponentRadarGrid extends ScreenComponentGeneric {
             return;
         }
 
-        float deltaX = (float) ((tile.trackingPos.getValue().x - tile.getBlockPos().getX()) / (2.0f * BallistixConstants.FIRE_CONTROL_RADAR_RANGE)) * width;
+        float deltaX = (float) ((tile.trackingPos.getValue().x - tile.getBlockPos().getX()) / (2.0f * BallistixConfig.INSTANCE.FIRE_CONTROL_RADAR_RANGE.get())) * width;
 
-        float deltaZ = (float) ((tile.trackingPos.getValue().z - tile.getBlockPos().getZ()) / (2.0f * BallistixConstants.FIRE_CONTROL_RADAR_RANGE)) * width;
+        float deltaZ = (float) ((tile.trackingPos.getValue().z - tile.getBlockPos().getZ()) / (2.0f * BallistixConfig.INSTANCE.FIRE_CONTROL_RADAR_RANGE.get())) * width;
 
         double angleRads = Math.atan2(deltaZ, deltaX);
 

@@ -6,7 +6,7 @@ import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualProjectile;
 import ballistix.api.turret.ITarget;
 import ballistix.common.inventory.container.ContainerRailgunTurret;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissileProjectile;
 import ballistix.registers.BallistixSounds;
 import ballistix.registers.BallistixTiles;
@@ -37,7 +37,7 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
     private LivingEntity livingTarget = null;
 
     public TileTurretRailgun(BlockPos worldPos, BlockState blockState) {
-        super(BallistixTiles.TILE_RAILGUNTURRET.get(), worldPos, blockState, BallistixConstants.RAILGUN_TURRET_BASE_RANGE, 0, BallistixConstants.RAILGUN_TURRET_USAGEPERTICK, BallistixConstants.RAILGUN_TURRET_ROTATIONSPEEDRADIANS, BallistixConstants.RAILGUN_INNACCURACY);
+        super(BallistixTiles.TILE_RAILGUNTURRET.get(), worldPos, blockState, BallistixConfig.INSTANCE.RAILGUN_TURRET_BASE_RANGE.get(), 0, BallistixConfig.INSTANCE.RAILGUN_TURRET_USAGEPERTICK.get(), BallistixConfig.INSTANCE.RAILGUN_TURRET_ROTATIONSPEEDRADIANS.get(), BallistixConfig.INSTANCE.RAILGUN_INNACCURACY.get());
     }
 
     @Override
@@ -95,7 +95,7 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
 
         level.playSound(null, getBlockPos(), BallistixSounds.SOUND_RAILGUNKINETIC.get(), SoundSource.BLOCKS, 2.0F, 1.0F);
 
-        cooldown.setValue(BallistixConstants.RAILGUN_TURRET_COOLDOWN);
+        cooldown.setValue(BallistixConfig.INSTANCE.RAILGUN_TURRET_COOLDOWN.get());
 
     }
 

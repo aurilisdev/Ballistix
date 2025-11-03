@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import ballistix.Ballistix;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.inventory.container.ContainerESMTower;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.radar.TileSearchRadar;
 import ballistix.registers.BallistixTiles;
@@ -53,13 +53,13 @@ public class TileESMTower extends GenericTile implements IMultiblockParentTile {
     public final SingleProperty<Boolean> searchRadarDetected = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "searchradar", false));
     public final ListProperty<BlockPos> fireControlRadars = property(new ListProperty<>(PropertyTypes.BLOCK_POS_LIST, "firecontrolradars", new ArrayList<>())).setNoUpdateServer();
 
-    private final AABB searchArea = new AABB(getBlockPos()).inflate(BallistixConstants.ESM_TOWER_SEARCH_RADIUS);
+    private final AABB searchArea = new AABB(getBlockPos()).inflate(BallistixConfig.INSTANCE.ESM_TOWER_SEARCH_RADIUS.get());
 
     public TileESMTower(BlockPos worldPos, BlockState blockState) {
         super(BallistixTiles.TILE_ESMTOWER.get(), worldPos, blockState);
         addComponent(new ComponentTickable(this).tickServer(this::tickServer));
         addComponent(new ComponentPacketHandler(this));
-        addComponent(new ComponentElectrodynamic(this, false, true).voltage(VoltaicCapabilities.DEFAULT_VOLTAGE * 4).setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM).maxJoules(BallistixConstants.ESM_TOWER_USAGE_PER_TICK * 20));
+        addComponent(new ComponentElectrodynamic(this, false, true).voltage(VoltaicCapabilities.DEFAULT_VOLTAGE * 4).setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM).maxJoules(BallistixConfig.INSTANCE.ESM_TOWER_USAGE_PER_TICK.get() * 20));
         addComponent(new ComponentContainerProvider("esmtower", this).createMenu((id, player) -> new ContainerESMTower(id, player, new SimpleContainer(0), getCoordsArray())));
         addComponent(new ComponentForgeEnergy(this));
     }
@@ -68,7 +68,7 @@ public class TileESMTower extends GenericTile implements IMultiblockParentTile {
 
         ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
 
-        active.setValue(electro.getJoulesStored() > BallistixConstants.ESM_TOWER_USAGE_PER_TICK && level.getBrightness(LightLayer.SKY, getBlockPos()) > 0);
+        active.setValue(electro.getJoulesStored() > BallistixConfig.INSTANCE.ESM_TOWER_USAGE_PER_TICK.get() && level.getBrightness(LightLayer.SKY, getBlockPos()) > 0);
 
         if (!active.getValue()) {
             removeESMTower(this);

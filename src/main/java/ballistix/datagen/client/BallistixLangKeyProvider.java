@@ -464,110 +464,168 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			addJei("info.item.missilecloserange", "Specs:\n    Range: 3000 Blocks");
 			addJei("info.item.missilemediumrange", "Specs:\n    Range: 10 000 Blocks");
 			addJei("info.item.missilelongrange", "Specs:\n    Range: Unlimited");
+			
 			// Sections
+			addConfiguration("common", "Common");
 			addConfiguration("explosives", "Explosives");
-			addConfiguration("missile_silo", "Missile Silo / Rocket");
+			addConfiguration("explosives.tier1", "Tier 1");
+			addConfiguration("explosives.tier2", "Tier 2");
+			addConfiguration("explosives.tier3", "Tier 3");
+			addConfiguration("missile_silo", "Missile Silo");
 			addConfiguration("esm_tower", "ESM Tower");
-			addConfiguration("radar", "Radars");
-			addConfiguration("sam", "SAM Turret");
-			addConfiguration("abm", "Anti-Ballistic Missile");
-			addConfiguration("ciws", "CIWS");
-			addConfiguration("laser", "Laser Turret");
-			addConfiguration("railgun", "Railgun Turret");
-			addConfiguration("misc", "Misc / Upgrades");
+			addConfiguration("search_radar", "Search Radar");
+			addConfiguration("fire_control_radar", "Fire Control Radar");
+			addConfiguration("sam_turret", "SAM Turret");
+			addConfiguration("sam_entity", "SAM Entity");
+			addConfiguration("anti_ballistic_entity", "Anti-Ballistic Entity");
+			addConfiguration("ciws_turret", "CIWS Turret");
+			addConfiguration("laser_turret", "Laser Turret");
+			addConfiguration("railgun_turret", "Railgun Turret");
+			addConfiguration("proximity_detector", "Proximity Detector");
+			addConfiguration("items", "Items");
 
-			// Explosives
-			addConfiguration("explosive_antimatter_radius", "Antimatter Explosive Radius");
-			addConfiguration("explosive_antimatter_duration", "Antimatter Explosive Duration (ticks)");
-			addConfiguration("explosive_emp_radius", "EMP Explosive Radius");
-			addConfiguration("explosive_largeantimatter_radius", "Large Antimatter Explosive Radius");
-			addConfiguration("explosive_largeantimatter_duration", "Large Antimatter Explosive Duration (ticks)");
-			addConfiguration("explosive_attractive_size", "Attractive Explosive Size");
-			addConfiguration("explosive_repulsive_size", "Repulsive Explosive Size");
+			// Explosives (global)
+			addConfiguration("should_cache_explosions", "Cache Explosions");
+
+			// Explosives → Tier 1
+			addConfiguration("explosive_obsidian_size", "Obsidian Size");
+			addConfiguration("explosive_condensive_size", "Condensive Size");
+			addConfiguration("explosive_attractive_size", "Attractive Size");
 			addConfiguration("explosive_attractive_repulsive_push_strength", "Attractive/Repulsive Push Strength");
-			addConfiguration("explosive_breaching_size", "Breaching Explosive Size");
-			addConfiguration("explosive_chemical_size", "Chemical Explosive Size");
-			addConfiguration("explosive_chemical_duration", "Chemical Explosive Duration (ticks)");
-			addConfiguration("explosive_condensive_size", "Condensive Explosive Size");
-			addConfiguration("explosive_contagious_size", "Contagious Explosive Size");
-			addConfiguration("explosive_contagious_duration", "Contagious Explosive Duration (ticks)");
-			addConfiguration("explosive_darkmatter_radius", "Dark Matter Explosive Radius");
-			addConfiguration("explosive_darkmatter_duration", "Dark Matter Explosive Duration (ticks)");
-			addConfiguration("explosive_debilitation_size", "Debilitation Explosive Size");
-			addConfiguration("explosive_debilitation_duration", "Debilitation Explosive Duration (ticks)");
-			addConfiguration("explosive_fragmentation_shrapnel_count", "Fragmentation Shrapnel Count");
-			addConfiguration("explosive_incendiary_radius", "Incendiary Explosive Radius");
-			addConfiguration("explosive_nuclear_size", "Nuclear Explosive Size");
-			addConfiguration("explosive_nuclear_duration", "Nuclear Explosive Duration (ticks)");
-			addConfiguration("explosive_nuclear_energy", "Nuclear Explosive Energy");
-			addConfiguration("explosive_obsidian_size", "Obsidian Explosive Size");
+			addConfiguration("explosive_repulsive_size", "Repulsive Size");
+			addConfiguration("explosive_incendiary_radius", "Incendiary Radius");
 			addConfiguration("explosive_shrapnel_shrapnel_count", "Shrapnel Count");
-			addConfiguration("explosive_thermobaric_size", "Thermobaric Explosive Size");
-			addConfiguration("explosive_thermobaric_duration", "Thermobaric Explosive Duration (ticks)");
-			addConfiguration("explosive_thermobaric_energy", "Thermobaric Explosive Energy");
+			addConfiguration("explosive_chemical_size", "Chemical Size");
+			addConfiguration("explosive_chemical_duration_ticks", "Chemical Duration (ticks)");
+			addConfiguration("explosive_anvil_anvilsperblast", "Anvils per Blast");
+			addConfiguration("explosive_infestive_radius", "Infestive Radius");
+			addConfiguration("explosive_infestive_duration_ticks", "Infestive Duration (ticks)");
+			addConfiguration("explosive_debilitation_size", "Debilitation Size");
+			addConfiguration("explosive_debilitation_duration_ticks", "Debilitation Duration (ticks)");
 
-			// Missile silo / rocket
-			addConfiguration("missilesilo_usage", "Missile Silo Usage per Launch (J)");
-			addConfiguration("rocket_launcher_cooldown_ticks", "Rocket Launcher Cooldown (ticks)");
+			// Explosives → Tier 2
+			addConfiguration("explosive_fragmentation_shrapnel_count", "Fragmentation Shrapnel Count");
+			addConfiguration("explosive_contagious_size", "Contagious Size");
+			addConfiguration("virus_effect_radius", "Virus Effect Radius");
+			addConfiguration("explosive_contagious_duration_ticks", "Contagious Duration (ticks)");
+			addConfiguration("explosive_breaching_size", "Breaching Size");
+			addConfiguration("explosive_breaching_duration_ticks", "Breaching Duration (ticks)");
+			addConfiguration("explosive_breaching_energy", "Breaching Energy");
+			addConfiguration("explosive_thermobaric_size", "Thermobaric Size");
+			addConfiguration("explosive_thermobaric_duration_ticks", "Thermobaric Duration (ticks)");
+			addConfiguration("explosive_thermobaric_energy", "Thermobaric Energy");
+			addConfiguration("explosive_sonic_maxhardness", "Sonic Max Hardness");
+			addConfiguration("explosive_sonic_radius", "Sonic Radius");
+			addConfiguration("explosive_sonic_velocity", "Sonic Velocity");
+			addConfiguration("explosive_sonic_duration_ticks", "Sonic Duration (ticks)");
 
-			// ESM tower
-			addConfiguration("esm_tower_usage_per_tick", "ESM Tower Usage per Tick");
-			addConfiguration("esm_tower_search_radius", "ESM Tower Search Radius");
+			// Explosives → Tier 3
+			addConfiguration("explosive_antigravity_chunkradius", "Antigravity Chunk Radius");
+			addConfiguration("explosive_antigravity_chunkduration_ticks", "Antigravity Chunk Duration (ticks)");
+			addConfiguration("explosive_antigravity_gravityfactor", "Antigravity Gravity Factor");
+			addConfiguration("explosive_antigravity_maxheight", "Antigravity Max Height");
+			addConfiguration("explosive_antigravity_maxblockchecks", "Antigravity Max Block Checks");
+			addConfiguration("explosive_emp_radius", "EMP Radius");
+			addConfiguration("explosive_nuclear_size", "Nuclear Size");
+			addConfiguration("explosive_nuclear_duration_ticks", "Nuclear Duration (ticks)");
+			addConfiguration("explosive_nuclear_energy", "Nuclear Energy");
+			addConfiguration("explosive_nuclear_radiation_radius", "Nuclear Radiation Radius");
+			addConfiguration("explosive_endothermic_maxhardness", "Endothermic Max Hardness");
+			addConfiguration("explosive_endothermic_radius", "Endothermic Radius");
+			addConfiguration("explosive_endothermic_velocity", "Endothermic Velocity");
+			addConfiguration("explosive_endothermic_duration_ticks", "Endothermic Duration (ticks)");
+			addConfiguration("explosive_exothermic_maxhardness", "Exothermic Max Hardness");
+			addConfiguration("explosive_exothermic_radius", "Exothermic Radius");
+			addConfiguration("explosive_exothermic_chance_for_lava", "Exothermic Chance for Lava");
+			addConfiguration("explosive_exothermic_chance_to_burn", "Exothermic Chance to Burn");
+			addConfiguration("explosive_exothermic_duration_ticks", "Exothermic Duration (ticks)");
+			addConfiguration("explosive_ender_radius", "Ender Radius");
+			addConfiguration("explosive_ender_endermancount", "Ender Enderman Count");
+			addConfiguration("explosive_hypersonic_maxhardness", "Hypersonic Max Hardness");
+			addConfiguration("explosive_hypersonic_radius", "Hypersonic Radius");
+			addConfiguration("explosive_hypersonic_velocity", "Hypersonic Velocity");
+			addConfiguration("explosive_hypersonic_duration_ticks", "Hypersonic Duration (ticks)");
+			addConfiguration("explosive_antimatter_radius", "Antimatter Radius");
+			addConfiguration("explosive_antimatter_duration_ticks", "Antimatter Duration (ticks)");
+			addConfiguration("explosive_largeantimatter_radius", "Large Antimatter Radius");
+			addConfiguration("explosive_largeantimatter_duration_ticks", "Large Antimatter Duration (ticks)");
+			addConfiguration("explosive_darkmatter_radius", "Dark Matter Radius");
+			addConfiguration("explosive_darkmatter_duration_ticks", "Dark Matter Duration (ticks)");
+			addConfiguration("explosive_darkmatter_persistance_iterations", "Dark Matter Persistence Iterations");
+			addConfiguration("explosive_darkmatter_movementticks", "Dark Matter Movement Ticks");
+			addConfiguration("explosive_darkmatter_repeatduration_ticks", "Dark Matter Repeat Duration (ticks)");
 
-			// Radars
-			addConfiguration("radar_usage", "Radar Power Usage (W)");
+			// Missile Silo
+			addConfiguration("missilesilo_usage_joules_per_launch", "Silo Usage per Launch (J)");
+			addConfiguration("missile_health", "Missile Health");
+			addConfiguration("launcher_platform_range_t1", "Launcher Platform Range T1");
+			addConfiguration("launcher_platform_range_t2", "Launcher Platform Range T2");
+			addConfiguration("launcher_platform_range_t3", "Launcher Platform Range T3");
+			addConfiguration("vls_range", "VLS Range");
+			addConfiguration("launch_platform_default_inaccuracy_deg", "Launch Platform Default Inaccuracy (deg)");
+
+			// ESM Tower
+			addConfiguration("esm_tower_usage_per_tick", "ESM Usage per Tick");
+			addConfiguration("esm_tower_search_radius", "ESM Search Radius");
+
+			// Search Radar
+			addConfiguration("radar_usage_watt", "Radar Usage (W)");
 			addConfiguration("radar_range", "Radar Range");
-			addConfiguration("fire_control_radar_usage", "Fire Control Radar Power Usage (W)");
+
+			// Fire Control Radar
+			addConfiguration("fire_control_radar_usage_watt", "Fire Control Radar Usage (W)");
 			addConfiguration("fire_control_radar_range", "Fire Control Radar Range");
-			addConfiguration("max_distance_from_radar", "Max Distance From Fire Control Radar");
+			addConfiguration("max_distance_from_radar", "Max Distance from Radar");
 
-			// SAM turret
-			addConfiguration("sam_turret_usagepertick", "SAM Turret Usage per Tick");
-			addConfiguration("sam_turret_base_range", "SAM Turret Base Range");
-			addConfiguration("sam_turret_rotationspeedradians", "SAM Turret Rotation Speed (rad/tick)");
-			addConfiguration("sam_turret_cooldown", "SAM Turret Cooldown (ticks)");
-			addConfiguration("sam_entity_turningspeedradians", "SAM Missile Turning Speed (rad/tick)");
-			addConfiguration("sam_top_speed", "SAM Missile Top Speed");
-			addConfiguration("sam_acceleration", "SAM Missile Acceleration");
-			addConfiguration("sam_minturnspeed_perc", "SAM Missile Min Turn Speed (%)");
-			addConfiguration("sam_chance_to_destroy", "SAM Missile Chance to Destroy");
+			// SAM Turret
+			addConfiguration("sam_turret_usage_per_tick", "SAM Usage per Tick");
+			addConfiguration("sam_turret_base_range", "SAM Base Range");
+			addConfiguration("sam_turret_rotation_speed_radians", "SAM Rotation Speed (rad)");
+			addConfiguration("sam_turret_cooldown_ticks", "SAM Cooldown (ticks)");
 
-			// Anti-ballistic missile (ABM)
-			addConfiguration("antiballisticmissile_entity_turningspeedradians", "ABM Turning Speed (rad/tick)");
+			// SAM Entity
+			addConfiguration("sam_entity_turning_speed_radians", "SAM Entity Turning Speed (rad)");
+			addConfiguration("sam_top_speed", "SAM Top Speed");
+			addConfiguration("sam_acceleration", "SAM Acceleration");
+			addConfiguration("sam_minturnspeed_perc", "SAM Min Turn Speed (%)");
+			addConfiguration("sam_chance_to_destroy", "SAM Chance to Destroy");
+
+			// Anti-Ballistic Entity
+			addConfiguration("antiballisticmissile_entity_turning_speed_radians", "ABM Turning Speed (rad)");
 			addConfiguration("antiballisticmissile_chance_to_destroy", "ABM Chance to Destroy");
 			addConfiguration("antiballisticmissile_top_speed", "ABM Top Speed");
 			addConfiguration("antiballisticmissile_acceleration", "ABM Acceleration");
 			addConfiguration("antiballisticmissile_minturnspeed_perc", "ABM Min Turn Speed (%)");
 
-			// CIWS
-			addConfiguration("ciws_turret_usagepertick", "CIWS Usage per Tick");
+			// Shared / Misc
+			addConfiguration("range_increase_inaccuracy_multiplier", "Range Increase Inaccuracy Multiplier");
+
+			// CIWS Turret
+			addConfiguration("ciws_turret_usage_per_tick", "CIWS Usage per Tick");
 			addConfiguration("ciws_turret_base_range", "CIWS Base Range");
-			addConfiguration("ciws_turret_rotationspeedradians", "CIWS Rotation Speed (rad/tick)");
+			addConfiguration("ciws_turret_rotation_speed_radians", "CIWS Rotation Speed (rad)");
 			addConfiguration("ciws_innaccuracy", "CIWS Inaccuracy");
 
-			// Laser turret
-			addConfiguration("laser_turret_usagepertick", "Laser Turret Usage per Tick");
-			addConfiguration("laser_turret_base_range", "Laser Turret Base Range");
-			addConfiguration("laser_turret_rotationspeedradians", "Laser Turret Rotation Speed (rad/tick)");
-			addConfiguration("laser_turret_maxheat", "Laser Turret Max Heat");
-			addConfiguration("laser_turret_coolthreshhold", "Laser Turret Cool Threshold");
-			addConfiguration("laser_turret_base_damage", "Laser Turret Base Damage");
+			// Laser Turret
+			addConfiguration("laser_turret_usage_per_tick", "Laser Usage per Tick");
+			addConfiguration("laser_turret_base_range", "Laser Base Range");
+			addConfiguration("laser_turret_rotation_speed_radians", "Laser Rotation Speed (rad)");
+			addConfiguration("laser_turret_max_heat", "Laser Max Heat");
+			addConfiguration("laser_turret_cool_threshold", "Laser Cool Threshold");
+			addConfiguration("laser_turret_base_damage", "Laser Base Damage");
 
-			// Railgun turret
-			addConfiguration("railgun_turret_usagepertick", "Railgun Usage per Tick");
+			// Railgun Turret
+			addConfiguration("railgun_turret_usage_per_tick", "Railgun Usage per Tick");
 			addConfiguration("railgun_turret_base_range", "Railgun Base Range");
-			addConfiguration("railgun_turret_rotationspeedradians", "Railgun Rotation Speed (rad/tick)");
-			addConfiguration("railgun_turret_cooldown", "Railgun Cooldown (ticks)");
+			addConfiguration("railgun_turret_rotation_speed_radians", "Railgun Rotation Speed (rad)");
+			addConfiguration("railgun_turret_cooldown_ticks", "Railgun Cooldown (ticks)");
 			addConfiguration("railgun_innaccuracy", "Railgun Inaccuracy");
 
-			// Misc / upgrades
-			addConfiguration("range_increase_inaccuracy_multiplier", "Range Upgrade Inaccuracy Multiplier");
-			addConfiguration("missile_health", "Missile Health");
-			addConfiguration("launcher_platform_range_t1", "Launcher Platform Range T1");
-			addConfiguration("launcher_platform_range_t2", "Launcher Platform Range T2");
-			addConfiguration("launcher_platform_range_t3", "Launcher Platform Range T3");
-			addConfiguration("launch_platform_default_inaccuracy", "Launch Platform Default Inaccuracy");
-			addConfiguration("should_cache_explosions", "Cache Explosions");
+			// Proximity Detector
+			addConfiguration("proximitydetector_usage_per_tick", "Proximity Detector Usage per Tick");
+
+			// Items
+			addConfiguration("rocket_launcher_cooldown_ticks", "Rocket Launcher Cooldown (ticks)");
 			addConfiguration("laser_designator_range", "Laser Designator Range");
 
 		}

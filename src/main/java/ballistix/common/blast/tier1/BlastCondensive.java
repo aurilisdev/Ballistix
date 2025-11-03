@@ -3,7 +3,7 @@ package ballistix.common.blast.tier1;
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.Level.ExplosionInteraction;
@@ -21,7 +21,7 @@ public class BlastCondensive extends Blast implements IHasCustomRender {
         super.doExplode(callCount);
         hasStarted = true;
         if (!world.isClientSide) {
-            world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) BallistixConstants.EXPLOSIVE_CONDENSIVE_SIZE, ExplosionInteraction.BLOCK);
+            world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) BallistixConfig.INSTANCE.EXPLOSIVE_CONDENSIVE_SIZE.getAsDouble(), ExplosionInteraction.BLOCK);
         }
         return true;
     }

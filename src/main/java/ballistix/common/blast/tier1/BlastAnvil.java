@@ -3,7 +3,7 @@ package ballistix.common.blast.tier1;
 import ballistix.api.blast.IBlast;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -25,7 +25,7 @@ public class BlastAnvil extends Blast {
 
         if (!world.isClientSide) {
             world.playSound(null, position, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 1.0F, 1.0F);
-            for (int i = 0; i < BallistixConstants.EXPLOSIVE_ANVIL_ANVILSPERBLAST; i++) {
+            for (int i = 0; i < BallistixConfig.INSTANCE.EXPLOSIVE_ANVIL_ANVILSPERBLAST.getAsInt(); i++) {
 
                 float xVel = (world.random.nextBoolean() ? 1.0F : -1.0F) * world.random.nextFloat();
                 float yVel = 1.0F;

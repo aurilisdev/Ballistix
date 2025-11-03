@@ -8,7 +8,7 @@ import ballistix.api.silo.SiloRegistry;
 import ballistix.common.inventory.container.ContainerLauncherControlPanelT1;
 import ballistix.common.inventory.container.ContainerLauncherControlPanelT2;
 import ballistix.common.inventory.container.ContainerLauncherControlPanelT3;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.registers.BallistixDataComponentTypes;
 import ballistix.registers.BallistixItems;
 import ballistix.registers.BallistixTiles;
@@ -75,7 +75,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 		super(type, pos, state);
 		int tier = getTier();
 		addComponent(new ComponentTickable(this).tickServer(this::tickServer));
-		addComponent(new ComponentElectrodynamic(this, false, true).voltage(VoltaicCapabilities.DEFAULT_VOLTAGE * Math.pow(2, tier - 1)).maxJoules(BallistixConstants.MISSILESILO_USAGE * 20 * tier).setInputDirections(BlockEntityUtils.MachineDirection.values()));
+		addComponent(new ComponentElectrodynamic(this, false, true).voltage(VoltaicCapabilities.DEFAULT_VOLTAGE * Math.pow(2, tier - 1)).maxJoules(BallistixConfig.INSTANCE.MISSILESILO_USAGE.get() * 20 * tier).setInputDirections(BlockEntityUtils.MachineDirection.values()));
 		if (tier == 3) {
 			addComponent(new ComponentInventory(this, ComponentInventory.InventoryBuilder.newInv().inputs(1)).setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).setDirectionsBySlot(1, BlockEntityUtils.MachineDirection.values()).valid(this::isItemValidForSlot));
 		} else {
@@ -111,7 +111,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 
 		ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
 
-		if (cooldown > 0 || electro.getJoulesStored() < BallistixConstants.MISSILESILO_USAGE * getTier()) {
+		if (cooldown > 0 || electro.getJoulesStored() < BallistixConfig.INSTANCE.MISSILESILO_USAGE.get() * getTier()) {
 			cooldown--;
 			return;
 		}
@@ -138,7 +138,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 			return;
 		}
 
-		int inaccuracy = BallistixConstants.LAUNCH_PLATFORM_DEFAULT_INACCURACY;
+		int inaccuracy = BallistixConfig.INSTANCE.LAUNCH_PLATFORM_DEFAULT_INACCURACY.get();
 
 		if(supportFrame.valid() && supportFrame.getSafe() instanceof ILauncherSupportFrame frame) {
 			inaccuracy = frame.getInaccuracy();
@@ -156,7 +156,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 		if (newCool != -1) {
 			cooldown = newCool;
 		}
-		electro.joules(electro.getJoulesStored() - BallistixConstants.MISSILESILO_USAGE * getTier());
+		electro.joules(electro.getJoulesStored() - BallistixConfig.INSTANCE.MISSILESILO_USAGE.get() * getTier());
 	}
 
 	protected boolean isItemValidForSlot(int index, ItemStack stack, ComponentInventory inv) {

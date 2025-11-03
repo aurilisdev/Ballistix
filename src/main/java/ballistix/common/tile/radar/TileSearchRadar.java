@@ -10,7 +10,7 @@ import ballistix.api.radar.IDetected;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.block.subtype.SubtypeMissile;
 import ballistix.common.inventory.container.ContainerSearchRadar;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.TileESMTower;
 import ballistix.registers.BallistixItems;
 import ballistix.registers.BallistixSounds;
@@ -51,7 +51,7 @@ public class TileSearchRadar extends GenericTile {
     public final SingleProperty<Boolean> redstone = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "redstone", false));
     public final SingleProperty<Boolean> isRunning = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "isrunning", false));
 
-    private final AABB searchArea = new AABB(getBlockPos()).inflate(BallistixConstants.RADAR_RANGE);
+    private final AABB searchArea = new AABB(getBlockPos()).inflate(BallistixConfig.INSTANCE.RADAR_RANGE.get());
     private final HashSet<VirtualMissile> trackedMissiles = new HashSet<>();
     public final HashSet<TileESMTower> trackedEsmTowers = new HashSet<>();
     public final HashSet<IDetected.Detected> detections = new HashSet<>();
@@ -63,7 +63,7 @@ public class TileSearchRadar extends GenericTile {
         super(BallistixTiles.TILE_RADAR.get(), pos, state);
         addComponent(new ComponentTickable(this).tickServer(this::tickServer).tickClient(this::tickClient));
         addComponent(new ComponentPacketHandler(this));
-        addComponent(new ComponentElectrodynamic(this, false, true).voltage(VoltaicCapabilities.DEFAULT_VOLTAGE).setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM).maxJoules(BallistixConstants.RADAR_USAGE * 20));
+        addComponent(new ComponentElectrodynamic(this, false, true).voltage(VoltaicCapabilities.DEFAULT_VOLTAGE).setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM).maxJoules(BallistixConfig.INSTANCE.RADAR_USAGE.get() * 20));
         addComponent(new ComponentContainerProvider("searchradar", this).createMenu((id, player) -> new ContainerSearchRadar(id, player, new SimpleContainer(0), getCoordsArray())));
         addComponent(new ComponentForgeEnergy(this));
     }
@@ -71,7 +71,7 @@ public class TileSearchRadar extends GenericTile {
     public void tickServer(ComponentTickable tickable) {
         ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
 
-        isRunning.setValue(electro.getJoulesStored() > (BallistixConstants.RADAR_USAGE / 20.0) && level.getBrightness(LightLayer.SKY, getBlockPos()) > 0);
+        isRunning.setValue(electro.getJoulesStored() > (BallistixConfig.INSTANCE.RADAR_USAGE.get() / 20.0) && level.getBrightness(LightLayer.SKY, getBlockPos()) > 0);
 
         trackedMissiles.clear();
         trackedEsmTowers.clear();
@@ -87,7 +87,7 @@ public class TileSearchRadar extends GenericTile {
 
         TileESMTower.addSearchRadar(this);
 
-        electro.joules(electro.getJoulesStored() - (BallistixConstants.RADAR_USAGE / 20.0));
+        electro.joules(electro.getJoulesStored() - (BallistixConfig.INSTANCE.RADAR_USAGE.get() / 20.0));
 
         for (VirtualMissile missile : MissileManager.getMissilesForLevel(level.dimension())) {
             if (missile.getBoundingBox().intersects(searchArea) && (!usingWhitelist.getValue() || (usingWhitelist.getValue() && !whitelistedFrequencies.getValue().contains(missile.payloadData.frequency))) && !missile.hasExploded()) {

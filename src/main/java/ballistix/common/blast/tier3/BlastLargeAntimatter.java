@@ -12,7 +12,7 @@ import ballistix.common.blast.util.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.packet.type.client.particle.BlastParticleSpawnType;
 import ballistix.common.packet.type.client.particle.PacketSpawnBlastParticle;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.prefab.utils.ParticleUtilities;
 import ballistix.registers.BallistixSounds;
@@ -45,7 +45,7 @@ public class BlastLargeAntimatter extends BlastLasting implements IHasCustomRend
 	@Override
 	public void doPreExplode() {
 		if (!world.isClientSide) {
-			thread = new ThreadSimpleBlast(world, position, (int) BallistixConstants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, Integer.MAX_VALUE, null, getBlastType().id());
+			thread = new ThreadSimpleBlast(world, position, (int) BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_RADIUS.getAsDouble(), Integer.MAX_VALUE, null, getBlastType().id());
 			thread.start();
 			world.playSound(null, position, BallistixSounds.SOUND_LARGE_ANTIMATTEREXPLOSION.get(), SoundSource.BLOCKS, 25, 1);
 		}
@@ -70,10 +70,10 @@ public class BlastLargeAntimatter extends BlastLasting implements IHasCustomRend
 		if (world.isClientSide || !thread.isComplete) {
 			return false;
 		}
-		Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) BallistixConstants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, false, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
+		Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_RADIUS.getAsDouble(), false, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
 		if (pertick == -1) {
 			hasStarted = true;
-			pertick = (int) (thread.results.size() * 1.5 / BallistixConstants.EXPLOSIVE_LARGEANTIMATTER_DURATION + 1);
+			pertick = (int) (thread.results.size() * 1.5 / BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_DURATION.get() + 1);
 			iterator = thread.results.iterator();
 		}
 		int finished = pertick;
@@ -107,7 +107,7 @@ public class BlastLargeAntimatter extends BlastLasting implements IHasCustomRend
 		}
 		if (!iterator.hasNext()) {
 			position = position.above().above();
-			attackEntities((float) BallistixConstants.EXPLOSIVE_LARGEANTIMATTER_RADIUS * 2, ex);
+			attackEntities((float) BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_RADIUS.getAsDouble() * 2, ex);
 			return true;
 		}
 		return false;
@@ -130,10 +130,10 @@ public class BlastLargeAntimatter extends BlastLasting implements IHasCustomRend
 		double z = position.getZ() + 0.5;
 		// Fireball
 		ParticleOptions particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 2f, -0.01f, 750, true, true, 120, 0.999);
-		ParticleUtilities.spawnParticleSphere(particle, x, y, z, 100, -90, 90, BallistixConstants.EXPLOSIVE_LARGEANTIMATTER_RADIUS / BallistixConstants.EXPLOSIVE_LARGEANTIMATTER_DURATION * 2, true);
+		ParticleUtilities.spawnParticleSphere(particle, x, y, z, 100, -90, 90, BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_RADIUS.get() / BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_DURATION.get() * 2, true);
 		// Shockwave
 		double spawnSize = 3;
-		double endSize = BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE * 5;
+		double endSize = BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.get() * 5;
 		int diff = (int) (endSize - spawnSize);
 		if (ticksSinceBlastStart > diff)
 			return;
@@ -145,7 +145,7 @@ public class BlastLargeAntimatter extends BlastLasting implements IHasCustomRend
 		double dist = Mth.abs((float) (realDistance - size));
 		if (dist < 3) {
 			hasShaken = true;
-			CameraShakeEffect effect = CameraShakeManager.createBlastSourcedEffect(BallistixConstants.EXPLOSIVE_LARGEANTIMATTER_DURATION, endSize, world.getGameTime(), pos);
+			CameraShakeEffect effect = CameraShakeManager.createBlastSourcedEffect(BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_DURATION.get(), endSize, world.getGameTime(), pos);
 			CameraShakeManager.addShake(effect);
 		}
 	}

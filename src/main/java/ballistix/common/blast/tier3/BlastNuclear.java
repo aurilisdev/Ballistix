@@ -15,7 +15,7 @@ import ballistix.common.blast.util.thread.raycast.ThreadDynamicRaycastBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.packet.type.client.particle.BlastParticleSpawnType;
 import ballistix.common.packet.type.client.particle.PacketSpawnBlastParticle;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.compatibility.nuclearscience.RadiationHandler;
 import ballistix.prefab.utils.ParticleUtilities;
@@ -53,8 +53,8 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
     @Override
     public void doPreExplode() {
         if (!world.isClientSide) {
-            threadRay = new ThreadDynamicRaycastBlast(world, position, (int) BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE, (float) BallistixConstants.EXPLOSIVE_NUCLEAR_ENERGY, null);
-            threadSimple = new ThreadSimpleBlast(world, position, (int) (BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE * 2.5), Integer.MAX_VALUE, null, getBlastType().id());
+            threadRay = new ThreadDynamicRaycastBlast(world, position, (int) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble(), (float) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_ENERGY.getAsDouble(), null);
+            threadSimple = new ThreadSimpleBlast(world, position, (int) (BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.get() * 2.5), Integer.MAX_VALUE, null, getBlastType().id());
             threadSimple.strictnessAtEdges = 1.7;
             threadRay.start();
             threadSimple.start();
@@ -81,14 +81,14 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
         if (threadRay == null) {
             return !world.isClientSide;
         }
-        Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE, false, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
+        Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble(), false, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
         if (callCount % 2 == 0) {
             synchronized (threadRay.finishedBlocks) {
                 if (pertick == -1) {
                     hasStarted = true;
-                    attackEntities((float) BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE * 2, ex);
+                    attackEntities((float) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble() * 2, ex);
                     world.playSound(null, position, BallistixSounds.SOUND_NUCLEAREXPLOSION.get(), SoundSource.BLOCKS, 25, 1);
-                    pertick = (int) (2400.0 * 360.0 / BallistixConstants.EXPLOSIVE_NUCLEAR_DURATION);
+                    pertick = (int) (2400.0 * 360.0 / BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_DURATION.getAsDouble());
                 }
                 int finished = pertick;
                 cachedIteratorRay = threadRay.finishedBlocks.iterator();
@@ -134,7 +134,7 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
             }
         }
         if (threadSimple.isComplete && callCount % 2 == 0) {
-            if (ticksSinceBlastStart == 1) attackEntities((float) BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE * 2, ex);
+            if (ticksSinceBlastStart == 1) attackEntities((float) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble() * 2, ex);
 
             boolean add = switch (griefPreventionMethod) {
                 case GRIEF_DEFENDER -> GriefDefenderHandler.shouldAddParticle(position);
@@ -142,11 +142,11 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
             };
 
             if (add) {
-                RadiationSystem.addRadiationSource(world, new SimpleRadiationSource(150000.0, 2, (int) (BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS), false, 86400 * 20, position, true, false));
+                RadiationSystem.addRadiationSource(world, new SimpleRadiationSource(150000.0, 2, (int) (BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS.getAsDouble()), false, 86400 * 20, position, true, false));
             }
             if (perticksimple == -1) {
                 cachedIterator = threadSimple.results.iterator();
-                perticksimple = (int) (threadSimple.results.size() / (BallistixConstants.EXPLOSIVE_NUCLEAR_DURATION * 2.0) + 1);
+                perticksimple = (int) (threadSimple.results.size() / (BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_DURATION.getAsDouble() * 2.0) + 1);
             }
             int finished = perticksimple;
             while (cachedIterator.hasNext()) {
@@ -165,12 +165,12 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
                     default:
                         break;
                 }
-                if (ModList.get().isLoaded(Ballistix.NUCLEAR_SCIENCE_ID) && pos.distSqr(position) / (BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE * BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE * 4) < 0.6 + 0.2 * world.random.nextDouble()) {
+                if (ModList.get().isLoaded(Ballistix.NUCLEAR_SCIENCE_ID) && pos.distSqr(position) / (BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble() * BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble() * 4) < 0.6 + 0.2 * world.random.nextDouble()) {
                     RadiationHandler.addNuclearExplosiveIrradidatedBlock(pos, world);
                 }
             }
             if (!cachedIterator.hasNext()) {
-                if (threadRay.isComplete) attackEntities((float) BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE * 2, ex);
+                if (threadRay.isComplete) attackEntities((float) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble() * 2, ex);
                 return ticksSinceBlastStart > 1500;
             }
         }
@@ -225,7 +225,7 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
         }
         // Shockwave
         double spawnSize = 3;
-        double endSize = BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE * 5;
+        double endSize = BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.get() * 5;
         int diff = (int) (endSize - spawnSize);
         if (ticksSinceBlastStart > diff) return;
         double size = ParticleUtilities.progressGroundShockwave(world, x, z, ticksSinceBlastStart * 5 / (double) diff, spawnSize, endSize, 0.4);

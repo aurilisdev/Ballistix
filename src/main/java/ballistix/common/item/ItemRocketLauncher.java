@@ -2,10 +2,11 @@ package ballistix.common.item;
 
 import ballistix.api.blast.IBlast;
 import ballistix.api.missile.MissileManager;
+import ballistix.api.missile.virtual.FlightPath;
 import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeMissile;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.registers.BallistixCreativeTabs;
 import ballistix.registers.BallistixItems;
 import ballistix.registers.BallistixSounds;
@@ -79,7 +80,7 @@ public class ItemRocketLauncher extends ItemVoltaic {
 
         Player player = (Player) entityLiving;
 
-        if (!player.isCreative()) stack.set(VoltaicDataComponentTypes.TIMER, BallistixConstants.ROCKET_LAUNCHER_COOLDOWN_TICKS);
+        if (!player.isCreative()) stack.set(VoltaicDataComponentTypes.TIMER, BallistixConfig.INSTANCE.ROCKET_LAUNCHER_COOLDOWN_TICKS.get());
 
         IBlast blast = null;
 
@@ -116,7 +117,7 @@ public class ItemRocketLauncher extends ItemVoltaic {
                     //
                     1.333F,
                     //
-                    VirtualMissile.FlightPath.ROCKET_LAUNCHER,
+                    FlightPath.ROCKET_LAUNCHER,
                     //
                     0,
                     //

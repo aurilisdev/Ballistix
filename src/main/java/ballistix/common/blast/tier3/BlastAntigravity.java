@@ -6,7 +6,7 @@ import ballistix.api.blast.AntigravedChunk;
 import ballistix.api.blast.IBlast;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.registers.BallistixAttachmentTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
@@ -39,8 +39,8 @@ public class BlastAntigravity extends Blast {
             return false;
         }
 
-        for(int i = -BallistixConstants.EXPLOSIVE_ANTIGRAVITY_CHUNKRADIUS; i < BallistixConstants.EXPLOSIVE_ANTIGRAVITY_CHUNKRADIUS; i++) {
-            for(int j = -BallistixConstants.EXPLOSIVE_ANTIGRAVITY_CHUNKRADIUS; j < BallistixConstants.EXPLOSIVE_ANTIGRAVITY_CHUNKRADIUS; j++) {
+        for(int i = -BallistixConfig.INSTANCE.EXPLOSIVE_ANTIGRAVITY_CHUNKRADIUS.get(); i < BallistixConfig.INSTANCE.EXPLOSIVE_ANTIGRAVITY_CHUNKRADIUS.get(); i++) {
+            for(int j = -BallistixConfig.INSTANCE.EXPLOSIVE_ANTIGRAVITY_CHUNKRADIUS.get(); j < BallistixConfig.INSTANCE.EXPLOSIVE_ANTIGRAVITY_CHUNKRADIUS.get(); j++) {
 
                 BlockPos pos = position.offset(i * 16, 0, j * 16);
 
@@ -48,7 +48,7 @@ public class BlastAntigravity extends Blast {
 
                 HashSet<AntigravedChunk> set = world.getData(BallistixAttachmentTypes.ANTIGRAVED_CHUNKS);
 
-                set.add(new AntigravedChunk(chunkPos, BallistixConstants.EXPLOSIVE_ANTIGRAVITY_CHUNKDURATION));
+                set.add(new AntigravedChunk(chunkPos, BallistixConfig.INSTANCE.EXPLOSIVE_ANTIGRAVITY_CHUNKDURATION.get()));
 
                 world.setData(BallistixAttachmentTypes.ANTIGRAVED_CHUNKS, set);
 

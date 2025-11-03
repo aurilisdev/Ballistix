@@ -2,7 +2,7 @@ package ballistix.common.effect;
 
 import java.util.List;
 
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.registers.BallistixDamageTypes;
 import ballistix.registers.BallistixEffects;
 import net.minecraft.world.effect.MobEffect;
@@ -33,7 +33,7 @@ public class EffectVirus extends MobEffect {
 
         if(level.random.nextFloat() < 0.5F) {
 
-            List<LivingEntity> list = level.getEntitiesOfClass(LivingEntity.class, new AABB(livingEntity.blockPosition()).inflate(BallistixConstants.VIRUS_EFFECT_RADIUS));
+            List<LivingEntity> list = level.getEntitiesOfClass(LivingEntity.class, new AABB(livingEntity.blockPosition()).inflate(BallistixConfig.INSTANCE.VIRUS_EFFECT_RADIUS.get()));
 
             for(LivingEntity entity : list) {
                 entity.addEffect(new MobEffectInstance(BallistixEffects.VIRUS, -1));

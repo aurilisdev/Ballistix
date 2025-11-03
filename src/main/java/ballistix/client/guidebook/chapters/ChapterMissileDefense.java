@@ -48,7 +48,7 @@ public class ChapterMissileDefense extends Chapter {
                 //
                 BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.firecontrolradar).getDescription().copy(),
                 //
-                BallistixConfig.INSTANCE.FIRE_CONTROL_RADAR_RANGE
+                BallistixConfig.INSTANCE.FIRE_CONTROL_RADAR_RANGE.get()
         //
         )).setSeparateStart().setIndentions(1));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.l3.1",
@@ -65,7 +65,7 @@ public class ChapterMissileDefense extends Chapter {
         pageData.add(new ImageWrapperObject(0, 0, 0, 0, 150, 150, 150, 150, Ballistix.rl("textures/screen/guidebook/turretbind2.png")));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.l3.3",
                 //
-                BallistixConfig.INSTANCE.MAX_DISTANCE_FROM_RADAR
+                BallistixConfig.INSTANCE.MAX_DISTANCE_FROM_RADAR.get()
                 //
         )).setSeparateStart());
 

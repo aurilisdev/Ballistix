@@ -3,7 +3,7 @@ package ballistix.common.blast.tierother;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityShrapnel;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -25,7 +25,7 @@ public class BlastLandmine extends Blast {
 	@Override
 	public boolean doExplode(int callCount) {
 		hasStarted = true;
-		for (int i = 0; i < BallistixConstants.EXPLOSIVE_FRAGMENTATION_SHRAPNEL_COUNT; i++) {
+		for (int i = 0; i < BallistixConfig.INSTANCE.EXPLOSIVE_FRAGMENTATION_SHRAPNEL_COUNT.get(); i++) {
 			EntityShrapnel shrapnel = new EntityShrapnel(world);
 			float yaw = world.random.nextFloat() * 360;
 			float pitch = world.random.nextFloat() * 90 - 75;

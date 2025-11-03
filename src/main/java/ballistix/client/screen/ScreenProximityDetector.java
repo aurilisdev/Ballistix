@@ -7,7 +7,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 
 import ballistix.client.event.HandlerDetectorLines;
 import ballistix.common.inventory.container.ContainerProximityDetector;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.TileProximityDetector;
 import ballistix.common.tile.turret.GenericTileTurret;
 import ballistix.prefab.BallistixIconTypes;
@@ -69,7 +69,7 @@ public class ScreenProximityDetector extends GenericScreen<ContainerProximityDet
 
         whitelistSlider.setVisible(false);
 
-        addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(BallistixConstants.SAM_TURRET_USAGEPERTICK * 20));
+        addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(BallistixConfig.INSTANCE.SAM_TURRET_USAGEPERTICK.getAsDouble() * 20));
 
         addComponent(new ScreenComponentButton<>(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE * 2 + 2).setOnPress(button -> {
             TileProximityDetector turret = menu.getSafeHost();
@@ -434,6 +434,7 @@ public class ScreenProximityDetector extends GenericScreen<ContainerProximityDet
         detector.maxCorner.setValue(new BlockPos(detector.maxCorner.getValue().getX(), detector.maxCorner.getValue().getY(), zCoord));
     }
 
+    @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         super.render(graphics, mouseX, mouseY, partialTicks);
         if (this.needsUpdate) {

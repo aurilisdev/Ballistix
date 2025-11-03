@@ -2,7 +2,7 @@ package ballistix.client.guidebook.chapters;
 
 import ballistix.Ballistix;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixItems;
 import net.minecraft.ChatFormatting;
@@ -76,15 +76,15 @@ public class ChapterMissileOffense extends Chapter {
                 //
                 BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launcherplatformtier1).getDescription().copy().withStyle(ChatFormatting.BOLD),
                 //
-                BallistixConstants.LAUNCHER_PLATFORM_RANGE_T1,
+                BallistixConfig.INSTANCE.LAUNCHER_PLATFORM_RANGE_T1.get(),
                 //
                 BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launcherplatformtier2).getDescription().copy().withStyle(ChatFormatting.BOLD),
                 //
-                BallistixConstants.LAUNCHER_PLATFORM_RANGE_T2,
+                BallistixConfig.INSTANCE.LAUNCHER_PLATFORM_RANGE_T2.get(),
                 //
                 BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launcherplatformtier3).getDescription().copy().withStyle(ChatFormatting.BOLD),
                 //
-                BallistixConstants.LAUNCHER_PLATFORM_RANGE_T3
+                BallistixConfig.INSTANCE.LAUNCHER_PLATFORM_RANGE_T3.get()
                 //
         )).setIndentions(1).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missileoffense.l5")).setIndentions(1).setSeparateStart());
@@ -98,9 +98,9 @@ public class ChapterMissileOffense extends Chapter {
                 //
                 BallistixTextUtils.guidebook("chapter.missileoffense.supportframe"),
                 //
-                Component.literal(BallistixConstants.LAUNCH_PLATFORM_DEFAULT_INACCURACY + "").withStyle(ChatFormatting.BOLD),
+                Component.literal(BallistixConfig.INSTANCE.LAUNCH_PLATFORM_DEFAULT_INACCURACY.get() + "").withStyle(ChatFormatting.BOLD),
                 //
-                Component.literal(BallistixConstants.LAUNCH_PLATFORM_DEFAULT_INACCURACY + ""),
+                Component.literal(BallistixConfig.INSTANCE.LAUNCH_PLATFORM_DEFAULT_INACCURACY.get() + ""),
                 //
                 BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchersupportframetier1).getDescription().copy().withStyle(ChatFormatting.BOLD),
                 //
@@ -139,7 +139,7 @@ public class ChapterMissileOffense extends Chapter {
                 //
                 BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.launchercontrolpaneltier3).getDescription().copy(),
                 //
-                BallistixConstants.LAUNCHER_PLATFORM_RANGE_T1
+                BallistixConfig.INSTANCE.LAUNCHER_PLATFORM_RANGE_T1.get()
                 //
         )).setIndentions(1).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missileoffense.l9")).setIndentions(1).setSeparateStart());

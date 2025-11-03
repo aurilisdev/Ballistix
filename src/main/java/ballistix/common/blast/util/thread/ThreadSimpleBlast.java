@@ -9,7 +9,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -42,7 +42,7 @@ public class ThreadSimpleBlast extends ThreadBlast {
     }
 
     public void runEuclidian(int explosionRadius, Random random) {
-        if (BallistixConstants.SHOULD_CACHE_EXPLOSIONS) {
+        if (BallistixConfig.INSTANCE.SHOULD_CACHE_EXPLOSIONS.get()) {
             synchronized (currentlyCalculating) {
                 while (currentlyCalculating.contains(explosionRadius)) {
                     try {

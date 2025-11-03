@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Nullable;
 
 import ballistix.api.blast.IBlast;
 import ballistix.api.missile.MissileManager;
+import ballistix.api.missile.virtual.FlightPath;
 import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.api.missile.virtual.VirtualProjectile;
 import ballistix.api.silo.ILauncherControlPanel;
@@ -15,7 +16,7 @@ import ballistix.common.inventory.container.ContainerLauncherPlatformT1;
 import ballistix.common.inventory.container.ContainerLauncherPlatformT2;
 import ballistix.common.inventory.container.ContainerLauncherPlatformT3;
 import ballistix.common.item.ItemMissile;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.TileESMTower;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.radar.TileSearchRadar;
@@ -83,7 +84,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 
     @Override
     public int getRange() {
-        return BallistixConstants.LAUNCHER_PLATFORM_RANGE_T1;
+        return BallistixConfig.INSTANCE.LAUNCHER_PLATFORM_RANGE_T1.get();
     }
 
     @Override
@@ -105,7 +106,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
                 //
                     level.getBlockEntity(target) instanceof TileFireControlRadar radar &&
                             //
-                            TileTurretAntimissile.getDistanceToPos(getBlockPos(), radar.getBlockPos()) < BallistixConstants.MAX_DISTANCE_FROM_RADAR &&
+                            TileTurretAntimissile.getDistanceToPos(getBlockPos(), radar.getBlockPos()) < BallistixConfig.INSTANCE.MAX_DISTANCE_FROM_RADAR.get() &&
                             //
                             radar.tracking != null &&
                             //
@@ -120,7 +121,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
                         //
                         new Vec3(0, 1, 0),
                         //
-                        BallistixConstants.FIRE_CONTROL_RADAR_RANGE * 3F,
+                        BallistixConfig.INSTANCE.FIRE_CONTROL_RADAR_RANGE.get() * 3F,
                         //
                         target,
                         //
@@ -140,7 +141,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 
             if (level.getBlockEntity(controlPanel.getTarget()) instanceof TileSearchRadar radar) {
 
-                if (TileTurretAntimissile.getDistanceToPos(getBlockPos(), radar.getBlockPos()) <= BallistixConstants.MAX_DISTANCE_FROM_RADAR && redstoneTriggered && !radar.trackedEsmTowers.isEmpty()) {
+                if (TileTurretAntimissile.getDistanceToPos(getBlockPos(), radar.getBlockPos()) <= BallistixConfig.INSTANCE.MAX_DISTANCE_FROM_RADAR.get() && redstoneTriggered && !radar.trackedEsmTowers.isEmpty()) {
 
                     for (TileESMTower tower : radar.trackedEsmTowers) {
 
@@ -205,7 +206,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
                     //
                     0.0F,
                     //
-                    isCluster ? VirtualMissile.FlightPath.SILO_CLUSTER : VirtualMissile.FlightPath.SILO,
+                    isCluster ? FlightPath.SILO_CLUSTER : FlightPath.SILO,
                     //
                     getBlockPos().getX() + 0.5F,
                     //

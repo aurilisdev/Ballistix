@@ -2,7 +2,7 @@ package ballistix.client.guidebook.chapters;
 
 import ballistix.Ballistix;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixItems;
 import net.minecraft.ChatFormatting;
@@ -48,7 +48,7 @@ public class ChapterMissileDefense extends Chapter {
                 //
                 BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.firecontrolradar).getDescription().copy(),
                 //
-                BallistixConstants.FIRE_CONTROL_RADAR_RANGE
+                BallistixConfig.INSTANCE.FIRE_CONTROL_RADAR_RANGE
         //
         )).setSeparateStart().setIndentions(1));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.l3.1",
@@ -65,7 +65,7 @@ public class ChapterMissileDefense extends Chapter {
         pageData.add(new ImageWrapperObject(0, 0, 0, 0, 150, 150, 150, 150, Ballistix.rl("textures/screen/guidebook/turretbind2.png")));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.l3.3",
                 //
-                BallistixConstants.MAX_DISTANCE_FROM_RADAR
+                BallistixConfig.INSTANCE.MAX_DISTANCE_FROM_RADAR
                 //
         )).setSeparateStart());
 
@@ -74,7 +74,7 @@ public class ChapterMissileDefense extends Chapter {
         pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.samturret)));
 
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.turretminrange", 100)).setSeparateStart());
-        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.turretmaxrange", BallistixConstants.SAM_TURRET_BASE_RANGE)).setSeparateStart());
+        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.turretmaxrange", BallistixConfig.INSTANCE.SAM_TURRET_BASE_RANGE.get())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.turretammo", BallistixItems.ITEM_AAMISSILE.get().getDescription())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.turretelevation", 90)).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.turretdepression", 45)).setSeparateStart());
@@ -83,9 +83,9 @@ public class ChapterMissileDefense extends Chapter {
                 //
                 BallistixItems.ITEM_AAMISSILE.get().getDescription(),
                 //
-                ChatFormatter.getChatDisplayShort(BallistixConstants.SAM_CHANCE_TO_DESTROY * 100, DisplayUnits.PERCENTAGE),
+                ChatFormatter.getChatDisplayShort(BallistixConfig.INSTANCE.SAM_CHANCE_TO_DESTROY.get() * 100, DisplayUnits.PERCENTAGE),
                 //
-                BallistixConstants.SAM_TURRET_COOLDOWN
+                BallistixConfig.INSTANCE.SAM_TURRET_COOLDOWN.get()
         //
         )).setSeparateStart());
 
@@ -95,7 +95,7 @@ public class ChapterMissileDefense extends Chapter {
         pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.ciwsturret)));
 
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.turretminrange", 0)).setSeparateStart());
-        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.turretmaxrange", BallistixConstants.CIWS_TURRET_BASE_RANGE)).setSeparateStart());
+        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.turretmaxrange", BallistixConfig.INSTANCE.CIWS_TURRET_BASE_RANGE.get())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.turretammo", BallistixItems.ITEM_BULLET.get().getDescription())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.turretelevation", 90)).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.turretdepression", 45)).setSeparateStart());
@@ -104,7 +104,7 @@ public class ChapterMissileDefense extends Chapter {
                 //
                 BallistixItems.ITEM_BULLET.get().getDescription(),
                 //
-                BallistixConstants.MISSILE_HEALTH
+                BallistixConfig.INSTANCE.MISSILE_HEALTH.get()
                 //
         )).setSeparateStart());
 
@@ -113,7 +113,7 @@ public class ChapterMissileDefense extends Chapter {
         pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.laserturret)));
 
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.turretminrange", 0)).setSeparateStart());
-        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.turretmaxrange", BallistixConstants.LASER_TURRET_BASE_RANGE)).setSeparateStart());
+        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.turretmaxrange", BallistixConfig.INSTANCE.LASER_TURRET_BASE_RANGE.get())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.turretammo", BallistixTextUtils.guidebook("chapter.missiledefense.laserturret.energy"))).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.turretelevation", 90)).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.turretdepression", 45)).setSeparateStart());
@@ -125,12 +125,12 @@ public class ChapterMissileDefense extends Chapter {
         pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.railgunturret)));
 
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.turretminrange", 0)).setSeparateStart());
-        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.turretmaxrange", BallistixConstants.RAILGUN_TURRET_BASE_RANGE)).setSeparateStart());
+        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.turretmaxrange", BallistixConfig.INSTANCE.RAILGUN_TURRET_BASE_RANGE.get())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.turretammo", BallistixTextUtils.guidebook("chapter.missiledefense.railgunturret.rod"))).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.turretelevation", 45)).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.turretdepression", 45)).setSeparateStart());
         blankLine();
-        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.railgunturret1", BallistixConstants.RAILGUN_TURRET_COOLDOWN)).setSeparateStart());
+        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.railgunturret1", BallistixConfig.INSTANCE.RAILGUN_TURRET_COOLDOWN.get())).setSeparateStart());
 
         // Turret Targeting Features
 
@@ -149,7 +149,7 @@ public class ChapterMissileDefense extends Chapter {
                 //
                 BallistixItems.ITEM_AAMISSILEMK2.get().getDescription(),
                 //
-                ChatFormatter.getChatDisplayShort(BallistixConstants.ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY * 100, DisplayUnits.PERCENTAGE)
+                ChatFormatter.getChatDisplayShort(BallistixConfig.INSTANCE.ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY.get() * 100, DisplayUnits.PERCENTAGE)
         //
         )).setSeparateStart().setIndentions(1));
         pageData.add(new ImageWrapperObject(0, 0, 0, 0, 150, 75, 150, 79, Ballistix.rl("textures/screen/guidebook/antiballistic1.png")));
@@ -163,7 +163,7 @@ public class ChapterMissileDefense extends Chapter {
         // ESM Tower
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.esmtower).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
         pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.esmtower)));
-        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.esmtower1", BallistixConstants.ESM_TOWER_SEARCH_RADIUS)).setSeparateStart().setIndentions(1));
+        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.esmtower1", BallistixConfig.INSTANCE.ESM_TOWER_SEARCH_RADIUS.get())).setSeparateStart().setIndentions(1));
 
 
         //
@@ -174,7 +174,7 @@ public class ChapterMissileDefense extends Chapter {
         // Search Radar
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.radar).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
         pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.radar)));
-        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.searchradar1", BallistixConstants.RADAR_RANGE)).setSeparateStart().setIndentions(1));
+        pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.searchradar1", BallistixConfig.INSTANCE.RADAR_RANGE.get())).setSeparateStart().setIndentions(1));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.missiledefense.searchradar2")).setSeparateStart().setIndentions(1));
         pageData.add(new ImageWrapperObject(0, 0, 0, 0, 150, 75, 150, 79, Ballistix.rl("textures/screen/guidebook/searchradar1.png")));
         pageData.add(new ImageWrapperObject(0, 0, 0, 0, 150, 150, 150, 150, Ballistix.rl("textures/screen/guidebook/searchradar2.png")));

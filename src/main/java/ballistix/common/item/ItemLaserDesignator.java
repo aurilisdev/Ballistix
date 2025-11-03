@@ -5,7 +5,7 @@ import java.util.List;
 import ballistix.api.silo.ILauncherControlPanel;
 import ballistix.api.silo.ILauncherPlatform;
 import ballistix.api.silo.SiloRegistry;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.silo.TileLauncherControlPanelT1;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixCreativeTabs;
@@ -104,7 +104,7 @@ public class ItemLaserDesignator extends ItemElectric {
 			range = platform.getRange();
 			distance = TileLauncherControlPanelT1.calculateDistance(silo.getPos(), target);
 
-			if (range == 0 || (range > 0 && range < distance) || distance > BallistixConstants.LASER_DESIGNATOR_RANGE) {
+			if (range == 0 || (range > 0 && range < distance) || distance > BallistixConfig.INSTANCE.LASER_DESIGNATOR_RANGE.get()) {
 				continue;
 			}
 
@@ -149,7 +149,7 @@ public class ItemLaserDesignator extends ItemElectric {
 		} else {
 			tooltip.add(BallistixTextUtils.tooltip("laserdesignator.nofrequency").withStyle(ChatFormatting.GRAY));
 		}
-		tooltip.add(BallistixTextUtils.tooltip("laserdesignator.signalrange", Component.literal("" + BallistixConstants.LASER_DESIGNATOR_RANGE).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY));
+		tooltip.add(BallistixTextUtils.tooltip("laserdesignator.signalrange", Component.literal("" + BallistixConfig.INSTANCE.LASER_DESIGNATOR_RANGE.get()).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY));
 	}
 
 	@Override

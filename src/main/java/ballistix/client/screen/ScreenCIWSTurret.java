@@ -5,7 +5,7 @@ import java.util.List;
 
 import ballistix.client.screen.util.ScreenPlayerWhitelistTurret;
 import ballistix.common.inventory.container.ContainerCIWSTurret;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.turret.GenericTileTurret;
 import ballistix.common.tile.turret.antimissile.TileTurretCIWS;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
@@ -46,7 +46,7 @@ public class ScreenCIWSTurret extends ScreenPlayerWhitelistTurret<ContainerCIWST
 
         whitelistSlider.setVisible(false);
 
-        addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(BallistixConstants.SAM_TURRET_USAGEPERTICK * 20));
+        addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(BallistixConfig.INSTANCE.SAM_TURRET_USAGEPERTICK.getAsDouble() * 20));
 
         addComponent(new ScreenComponentGuiTab(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR_RIGHT, BallistixIconTypes.TARGET_MISSILE, () -> {
             List<FormattedCharSequence> text = new ArrayList<>();

@@ -5,6 +5,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import ballistix.api.missile.MissileManager;
+import ballistix.api.missile.virtual.FlightPath;
 import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.client.particle.ParticleOptionsMissileSmoke;
 import ballistix.registers.BallistixEntities;
@@ -141,9 +142,9 @@ public class EntityMissile extends Entity {
 
 		}
 
-		VirtualMissile.FlightPath path = VirtualMissile.FlightPath.values()[flightPath];
+		FlightPath path = FlightPath.values()[flightPath];
 
-		if ((path == VirtualMissile.FlightPath.SILO || path == VirtualMissile.FlightPath.SILO_CLUSTER) && missileType != -1) {
+		if ((path == FlightPath.SILO || path == FlightPath.SILO_CLUSTER) && missileType != -1) {
 
 			float iDeltaX = target.getX() - startX;
 			float iDeltaZ = target.getZ() - startZ;
@@ -176,7 +177,7 @@ public class EntityMissile extends Entity {
 					phi = (float) Math.asin(Mth.clamp((initialDistance - distanceTraveled) / turnRadius, 0, 1));
 					signY = -1;
 
-					if(path == VirtualMissile.FlightPath.SILO_CLUSTER) {
+					if(path == FlightPath.SILO_CLUSTER) {
 						removeAfterChangingDimensions();
 					}
 
@@ -212,7 +213,7 @@ public class EntityMissile extends Entity {
 						phi = (float) Math.asin(Mth.clamp((initialDistance - distanceTraveled) / turnRadius, 0, 1));
 						signY = -1;
 
-						if(path == VirtualMissile.FlightPath.SILO_CLUSTER) {
+						if(path == FlightPath.SILO_CLUSTER) {
 							removeAfterChangingDimensions();
 						}
 
@@ -235,7 +236,7 @@ public class EntityMissile extends Entity {
 
 			}
 
-		} else if (path == VirtualMissile.FlightPath.VLS && missileType != -1) {
+		} else if (path == FlightPath.VLS && missileType != -1) {
 			if(!hasIgnighted && speed > -0.15) {
 				speed -= 0.03F;
 			} else if (!hasIgnighted) {
@@ -271,11 +272,11 @@ public class EntityMissile extends Entity {
 			setPos(vec);
 		}
 
-		if ((path == VirtualMissile.FlightPath.SILO || path == VirtualMissile.FlightPath.SILO_CLUSTER || (path == VirtualMissile.FlightPath.VLS && hasIgnighted)) && !target.equals(BlockEntityUtils.OUT_OF_REACH) && speed < 3.0F) {
+		if ((path == FlightPath.SILO || path == FlightPath.SILO_CLUSTER || (path == FlightPath.VLS && hasIgnighted)) && !target.equals(BlockEntityUtils.OUT_OF_REACH) && speed < 3.0F) {
 			speed += 0.02F;
 		}
 
-		if (missileType == -1 || isServerSide || speed >= 3.0F || (path == VirtualMissile.FlightPath.VLS && !hasIgnighted)) {
+		if (missileType == -1 || isServerSide || speed >= 3.0F || (path == FlightPath.VLS && !hasIgnighted)) {
 			return;
 		}
 

@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualProjectile;
 import ballistix.client.particle.ParticleOptionsMissileSmoke;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.registers.BallistixEntities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.UUIDUtil;
@@ -103,10 +103,10 @@ public class EntitySAM extends Entity {
         setXRot((float) (Math.atan(getDeltaMovement().y() / Math.sqrt(getDeltaMovement().x() * getDeltaMovement().x() + getDeltaMovement().z() * getDeltaMovement().z())) * RAD2DEG));
         setYRot((float) (Math.atan2(getDeltaMovement().x(), getDeltaMovement().z()) * RAD2DEG));
 
-        float topSpeed = variant == 0 ? BallistixConstants.SAM_TOP_SPEED : BallistixConstants.ANTIBALLISTICMISSILE_TOP_SPEED;
+        float topSpeed = (float) (variant == 0 ? BallistixConfig.INSTANCE.SAM_TOP_SPEED.getAsDouble() : BallistixConfig.INSTANCE.ANTIBALLISTICMISSILE_TOP_SPEED.getAsDouble());
 
         if(speed < topSpeed) {
-            speed += variant == 0 ? BallistixConstants.SAM_ACCELERATION : BallistixConstants.ANTIBALLISTICMISSILE_ACCELERATION;
+            speed += variant == 0 ? BallistixConfig.INSTANCE.SAM_ACCELERATION.get() : BallistixConfig.INSTANCE.ANTIBALLISTICMISSILE_ACCELERATION.get();
         }
 
         if (isServer || speed >= 3.0F) {

@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 
 import ballistix.Ballistix;
 import ballistix.api.turret.ITarget;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tags.BallistixTags;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import net.minecraft.core.BlockPos;
@@ -264,11 +264,11 @@ public abstract class GenericTileTurret extends GenericTile {
             double range = baseRange;
 
             for(int i = 0; i < rangeUpgrades; i++) {
-                inaccuracyMulitplier *= BallistixConstants.RANGE_INCREASE_INACCURACY_MULTIPLIER;
+                inaccuracyMulitplier *= BallistixConfig.INSTANCE.RANGE_INCREASE_INACCURACY_MULTIPLIER.get();
                 range += 5.55;
             }
 
-            range = Math.min(range, BallistixConstants.FIRE_CONTROL_RADAR_RANGE);
+            range = Math.min(range, BallistixConfig.INSTANCE.FIRE_CONTROL_RADAR_RANGE.get());
 
             currentRange.setValue(range);
             inaccuracyMultiplier.setValue(inaccuracyMulitplier);

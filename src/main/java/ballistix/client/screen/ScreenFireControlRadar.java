@@ -6,7 +6,7 @@ import java.util.List;
 import com.mojang.blaze3d.platform.InputConstants;
 
 import ballistix.common.inventory.container.ContainerFireControlRadar;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.prefab.BallistixIconTypes;
 import ballistix.prefab.screen.ScreenComponentRadarGrid;
@@ -38,7 +38,7 @@ public class ScreenFireControlRadar extends GenericScreen<ContainerFireControlRa
     public ScreenFireControlRadar(ContainerFireControlRadar container, Inventory inv, Component title) {
         super(container, inv, title);
 
-        addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(BallistixConstants.FIRE_CONTROL_RADAR_USAGE));
+        addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(BallistixConfig.INSTANCE.FIRE_CONTROL_RADAR_USAGE.getAsDouble()));
         addComponent(new ScreenComponentGuiTab(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR, ScreenComponentSlot.IconType.SONAR_PROFILE, () -> {
             List<FormattedCharSequence> info = new ArrayList<>();
 
@@ -49,7 +49,7 @@ public class ScreenFireControlRadar extends GenericScreen<ContainerFireControlRa
             }
 
             info.add(BallistixTextUtils.tooltip("turret.blockrange").withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
-            info.add(BallistixTextUtils.tooltip("turret.maxrange", ChatFormatter.formatDecimals(BallistixConstants.FIRE_CONTROL_RADAR_RANGE, 1).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+            info.add(BallistixTextUtils.tooltip("turret.maxrange", ChatFormatter.formatDecimals(BallistixConfig.INSTANCE.FIRE_CONTROL_RADAR_RANGE.getDefault(), 1).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
 
 
             return info;

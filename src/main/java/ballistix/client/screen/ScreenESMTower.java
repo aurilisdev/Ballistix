@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ballistix.common.inventory.container.ContainerESMTower;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.TileESMTower;
 import ballistix.prefab.screen.WrapperESMTowerDetections;
 import ballistix.prefab.utils.BallistixTextUtils;
@@ -30,7 +30,7 @@ public class ScreenESMTower extends GenericScreen<ContainerESMTower> {
     public ScreenESMTower(ContainerESMTower container, Inventory inv, Component title) {
         super(container, inv, title);
 
-        addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(BallistixConstants.ESM_TOWER_USAGE_PER_TICK * 20));
+        addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(BallistixConfig.INSTANCE.ESM_TOWER_USAGE_PER_TICK.getAsDouble() * 20));
 
         addComponent(new ScreenComponentGuiTab(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR, ScreenComponentSlot.IconType.SONAR_PROFILE, () -> {
             List<FormattedCharSequence> info = new ArrayList<>();
@@ -42,7 +42,7 @@ public class ScreenESMTower extends GenericScreen<ContainerESMTower> {
             }
 
             info.add(BallistixTextUtils.tooltip("turret.blockrange").withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
-            info.add(BallistixTextUtils.tooltip("turret.maxrange", ChatFormatter.formatDecimals(BallistixConstants.ESM_TOWER_SEARCH_RADIUS, 1).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+            info.add(BallistixTextUtils.tooltip("turret.maxrange", ChatFormatter.formatDecimals(BallistixConfig.INSTANCE.ESM_TOWER_SEARCH_RADIUS.getAsDouble(), 1).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
 
 
             return info;

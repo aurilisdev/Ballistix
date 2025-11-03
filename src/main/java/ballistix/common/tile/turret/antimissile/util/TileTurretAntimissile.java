@@ -3,7 +3,7 @@ package ballistix.common.tile.turret.antimissile.util;
 import javax.annotation.Nullable;
 
 import ballistix.api.turret.ITarget;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.turret.GenericTileTurret;
 import net.minecraft.core.BlockPos;
@@ -29,7 +29,7 @@ public abstract class TileTurretAntimissile extends GenericTileTurret {
 
     public boolean bindFireControlRadar(BlockPos pos) {
         double distance = getDistanceToPos(getBlockPos(), pos);
-        if(distance > BallistixConstants.MAX_DISTANCE_FROM_RADAR) {
+        if(distance > BallistixConfig.INSTANCE.MAX_DISTANCE_FROM_RADAR.get()) {
             return false;
         }
         boundFireControl.setValue(pos);

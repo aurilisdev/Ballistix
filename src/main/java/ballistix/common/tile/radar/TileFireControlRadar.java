@@ -8,7 +8,7 @@ import ballistix.Ballistix;
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.common.inventory.container.ContainerFireControlRadar;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.TileESMTower;
 import ballistix.registers.BallistixSounds;
 import ballistix.registers.BallistixTiles;
@@ -55,7 +55,7 @@ public class TileFireControlRadar extends GenericTile {
     public final SingleProperty<Boolean> running = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "running", false));
 
     public final Vec3 searchPos;
-    private final AABB searchArea = new AABB(getBlockPos()).inflate(BallistixConstants.FIRE_CONTROL_RADAR_RANGE);
+    private final AABB searchArea = new AABB(getBlockPos()).inflate(BallistixConfig.INSTANCE.FIRE_CONTROL_RADAR_RANGE.get());
     @Nullable
     public VirtualMissile tracking;
 
@@ -66,7 +66,7 @@ public class TileFireControlRadar extends GenericTile {
         super(BallistixTiles.TILE_FIRECONTROLRADAR.get(), pos, state);
         addComponent(new ComponentTickable(this).tickServer(this::tickServer).tickClient(this::tickClient));
         addComponent(new ComponentPacketHandler(this));
-        addComponent(new ComponentElectrodynamic(this, false, true).voltage(VoltaicCapabilities.DEFAULT_VOLTAGE).setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM).maxJoules(BallistixConstants.FIRE_CONTROL_RADAR_USAGE * 20));
+        addComponent(new ComponentElectrodynamic(this, false, true).voltage(VoltaicCapabilities.DEFAULT_VOLTAGE).setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM).maxJoules(BallistixConfig.INSTANCE.FIRE_CONTROL_RADAR_USAGE.get() * 20));
         addComponent(new ComponentContainerProvider("firecontrolradar", this).createMenu((id, player) -> new ContainerFireControlRadar(id, player, new SimpleContainer(0), getCoordsArray())));
         addComponent(new ComponentForgeEnergy(this));
         searchPos = new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
@@ -75,7 +75,7 @@ public class TileFireControlRadar extends GenericTile {
     public void tickServer(ComponentTickable tickable) {
         ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
 
-        running.setValue(electro.getJoulesStored() > BallistixConstants.RADAR_USAGE / 20.0 && level.getBrightness(LightLayer.SKY, getBlockPos()) > 0 && (!usingRedstone.getValue() || (usingRedstone.getValue() && redstone.getValue())));
+        running.setValue(electro.getJoulesStored() > BallistixConfig.INSTANCE.RADAR_USAGE.get() / 20.0 && level.getBrightness(LightLayer.SKY, getBlockPos()) > 0 && (!usingRedstone.getValue() || (usingRedstone.getValue() && redstone.getValue())));
 
         if (!running.getValue()) {
             tracking = null;
@@ -85,7 +85,7 @@ public class TileFireControlRadar extends GenericTile {
 
         TileESMTower.addFireControlRadar(this);
 
-        electro.joules(electro.getJoulesStored() - (BallistixConstants.RADAR_USAGE / 20.0));
+        electro.joules(electro.getJoulesStored() - (BallistixConfig.INSTANCE.RADAR_USAGE.get() / 20.0));
 
         if (tracking != null && (tracking.hasExploded() || tracking.getId() == null || MissileManager.getMissile(level.dimension(), tracking.getId()) == null)) {
             tracking = null;
@@ -111,7 +111,7 @@ public class TileFireControlRadar extends GenericTile {
         if (tracking != null && !tracking.hasExploded()) {
             trackingPos.setValue(tracking.position);
             missileType.setValue(tracking.payloadData.missileType);
-            if (trackingPos.getValue().distanceTo(new Vec3(worldPosition.getX(), trackingPos.getValue().y, worldPosition.getZ())) > BallistixConstants.FIRE_CONTROL_RADAR_RANGE) {
+            if (trackingPos.getValue().distanceTo(new Vec3(worldPosition.getX(), trackingPos.getValue().y, worldPosition.getZ())) > BallistixConfig.INSTANCE.FIRE_CONTROL_RADAR_RANGE.get()) {
                 tracking = null;
                 trackingPos.setValue(OUT_OF_REACH);
             }

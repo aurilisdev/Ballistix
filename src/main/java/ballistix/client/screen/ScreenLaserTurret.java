@@ -9,7 +9,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import ballistix.client.screen.util.ScreenPlayerWhitelistTurret;
 import ballistix.common.inventory.container.ContainerLaserTurret;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.turret.GenericTileTurret;
 import ballistix.common.tile.turret.antimissile.TileTurretLaser;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
@@ -52,7 +52,7 @@ public class ScreenLaserTurret extends ScreenPlayerWhitelistTurret<ContainerLase
 
         whitelistSlider.setVisible(false);
 
-        addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(BallistixConstants.LASER_TURRET_USAGEPERTICK * 20));
+        addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(BallistixConfig.INSTANCE.LASER_TURRET_USAGEPERTICK.get() * 20));
 
         addComponent(new ScreenComponentGuiTab(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR, BallistixIconTypes.TARGET_MISSILE, () -> {
             List<FormattedCharSequence> text = new ArrayList<>();
@@ -187,12 +187,12 @@ public class ScreenLaserTurret extends ScreenPlayerWhitelistTurret<ContainerLase
 
             Color end = start;
 
-            int maxX = (int) (155.0F * turret.heat.getValue() / BallistixConstants.LASER_TURRET_MAXHEAT);
+            int maxX = (int) (155.0F * turret.heat.getValue() / BallistixConfig.INSTANCE.LASER_TURRET_MAXHEAT.get());
 
-            if (turret.heat.getValue() > BallistixConstants.LASER_TURRET_MAXHEAT * 0.8) {
+            if (turret.heat.getValue() > BallistixConfig.INSTANCE.LASER_TURRET_MAXHEAT.get() * 0.8) {
                 start = new Color(255, 255, 0, 255);
                 end = new Color(255, 0, 0, 255);
-            } else if (turret.heat.getValue() > BallistixConstants.LASER_TURRET_MAXHEAT * 0.4) {
+            } else if (turret.heat.getValue() > BallistixConfig.INSTANCE.LASER_TURRET_MAXHEAT.get() * 0.4) {
                 end = new Color(255, 255, 0, 255);
             }
 

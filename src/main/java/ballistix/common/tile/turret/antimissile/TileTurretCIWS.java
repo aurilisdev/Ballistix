@@ -6,7 +6,7 @@ import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualProjectile;
 import ballistix.api.turret.ITarget;
 import ballistix.common.inventory.container.ContainerCIWSTurret;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissileProjectile;
 import ballistix.registers.BallistixItems;
 import ballistix.registers.BallistixSounds;
@@ -40,7 +40,7 @@ public class TileTurretCIWS extends TileTurretAntimissileProjectile implements I
     private LivingEntity livingTarget = null;
 
     public TileTurretCIWS(BlockPos worldPos, BlockState blockState) {
-        super(BallistixTiles.TILE_CIWSTURRET.get(), worldPos, blockState, BallistixConstants.CIWS_TURRET_BASE_RANGE, 0, BallistixConstants.CIWS_TURRET_USAGEPERTICK, BallistixConstants.CIWS_TURRET_ROTATIONSPEEDRADIANS, BallistixConstants.CIWS_INNACCURACY);
+        super(BallistixTiles.TILE_CIWSTURRET.get(), worldPos, blockState, BallistixConfig.INSTANCE.CIWS_TURRET_BASE_RANGE.get(), 0, BallistixConfig.INSTANCE.CIWS_TURRET_USAGEPERTICK.get(), BallistixConfig.INSTANCE.CIWS_TURRET_ROTATIONSPEEDRADIANS.get(), BallistixConfig.INSTANCE.CIWS_INNACCURACY.get());
     }
 
     @Override

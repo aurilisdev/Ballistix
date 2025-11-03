@@ -14,7 +14,7 @@ import ballistix.client.particle.ParticleOptionsMissileSmoke;
 import ballistix.common.entity.EntityBullet;
 import ballistix.common.entity.EntityRailgunRound;
 import ballistix.common.entity.EntitySAM;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.turret.GenericTileTurret;
 import ballistix.registers.BallistixDamageTypes;
@@ -399,7 +399,7 @@ public abstract class VirtualProjectile {
 
         @Override
         public void onHitMissile(Level world, VirtualMissile missile) {
-            if(Voltaic.RANDOM.nextDouble() < (variant == 0 ? BallistixConstants.SAM_CHANCE_TO_DESTROY : BallistixConstants.ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY)) {
+            if(Voltaic.RANDOM.nextDouble() < (variant == 0 ? BallistixConfig.INSTANCE.SAM_CHANCE_TO_DESTROY.getAsDouble() : BallistixConfig.INSTANCE.ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY.getAsDouble())) {
                 MissileManager.removeMissile(world.dimension(), missile.getId());
             }
             world.playSound(null, blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0F, 1.0F);
@@ -443,9 +443,9 @@ public abstract class VirtualProjectile {
         @Override
         public void updatePosition(ServerLevel level) {
 
-            float topSpeed = variant == 0 ? BallistixConstants.SAM_TOP_SPEED : BallistixConstants.ANTIBALLISTICMISSILE_TOP_SPEED;
+            float topSpeed = (float) (variant == 0 ? BallistixConfig.INSTANCE.SAM_TOP_SPEED.getAsDouble() : BallistixConfig.INSTANCE.ANTIBALLISTICMISSILE_TOP_SPEED.getAsDouble());
 
-            float minSpeed = variant == 0 ? topSpeed * BallistixConstants.SAM_MINTURNSPEED_PERC : topSpeed * BallistixConstants.ANTIBALLISTICMISSILE_MINTURNSPEED_PERC;
+            float minSpeed = (float) (variant == 0 ? topSpeed * BallistixConfig.INSTANCE.SAM_MINTURNSPEED_PERC.getAsDouble() : topSpeed * BallistixConfig.INSTANCE.ANTIBALLISTICMISSILE_MINTURNSPEED_PERC.getAsDouble());
 
             if(radarPos == null || radarPos.equals(BlockEntityUtils.OUT_OF_REACH) || speed < minSpeed) {
                 super.updatePosition(level);
@@ -487,7 +487,7 @@ public abstract class VirtualProjectile {
             Vec3 currVector = deltaMovement.normalize();
 
             double dotProduct = desiredVector.dot(currVector);
-            double maxTurnRadians = variant == 0 ? BallistixConstants.SAM_ENTITY_TURNINGSPEEDRADIANS : BallistixConstants.ANTIBALLISTICMISSILE_ENTITY_TURNINGSPEEDRADIANS;
+            double maxTurnRadians = variant == 0 ? BallistixConfig.INSTANCE.SAM_ENTITY_TURNINGSPEEDRADIANS.getAsDouble() : BallistixConfig.INSTANCE.ANTIBALLISTICMISSILE_ENTITY_TURNINGSPEEDRADIANS.getAsDouble();
 
             if(dotProduct != 0) {
 
@@ -513,10 +513,10 @@ public abstract class VirtualProjectile {
         public void tick(ServerLevel level) {
             super.tick(level);
 
-            float topSpeed = variant == 0 ? BallistixConstants.SAM_TOP_SPEED : BallistixConstants.ANTIBALLISTICMISSILE_TOP_SPEED;
+            float topSpeed = (float) (variant == 0 ? BallistixConfig.INSTANCE.SAM_TOP_SPEED.getAsDouble() : BallistixConfig.INSTANCE.ANTIBALLISTICMISSILE_TOP_SPEED.getAsDouble());
 
             if(speed < topSpeed) {
-                speed += variant == 0 ? BallistixConstants.SAM_ACCELERATION : BallistixConstants.ANTIBALLISTICMISSILE_ACCELERATION;
+                speed += variant == 0 ? BallistixConfig.INSTANCE.SAM_ACCELERATION.get() : BallistixConfig.INSTANCE.ANTIBALLISTICMISSILE_ACCELERATION.get();
             }
 
             if(speed >= topSpeed) {

@@ -3,7 +3,7 @@ package ballistix.common.tile.turret.antimissile;
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualProjectile;
 import ballistix.common.inventory.container.ContainerSAMTurret;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissileProjectile;
 import ballistix.registers.BallistixItems;
 import ballistix.registers.BallistixSounds;
@@ -28,7 +28,10 @@ public class TileTurretSAM extends TileTurretAntimissileProjectile {
     public final SingleProperty<Boolean> outOfAmmo = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "noammo", false));
 
     public TileTurretSAM(BlockPos worldPos, BlockState blockState) {
-        super(BallistixTiles.TILE_SAMTURRET.get(), worldPos, blockState, BallistixConstants.SAM_TURRET_BASE_RANGE, 100, BallistixConstants.SAM_TURRET_USAGEPERTICK, BallistixConstants.SAM_TURRET_ROTATIONSPEEDRADIANS, 1);
+	super(BallistixTiles.TILE_SAMTURRET.get(), worldPos, blockState,
+		BallistixConfig.INSTANCE.SAM_TURRET_BASE_RANGE.get(), 100,
+		BallistixConfig.INSTANCE.SAM_TURRET_USAGEPERTICK.get(),
+		BallistixConfig.INSTANCE.SAM_TURRET_ROTATIONSPEEDRADIANS.get(), 1);
     }
 
     @Override
@@ -82,7 +85,7 @@ public class TileTurretSAM extends TileTurretAntimissileProjectile {
 
         level.playSound(null, getBlockPos().above(), BallistixSounds.SOUND_MISSILE_ROCKETLAUNCHER.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
 
-        cooldown.setValue(BallistixConstants.SAM_TURRET_COOLDOWN);
+        cooldown.setValue(BallistixConfig.INSTANCE.SAM_TURRET_COOLDOWN.get());
 
         inv.removeItem(0, 1);
 
@@ -96,7 +99,7 @@ public class TileTurretSAM extends TileTurretAntimissileProjectile {
 
     @Override
     public float getProjectileSpeed() {
-        return BallistixConstants.SAM_TOP_SPEED;
+        return (float) BallistixConfig.INSTANCE.SAM_TOP_SPEED.getAsDouble();
     }
 
     @Override

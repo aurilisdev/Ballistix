@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import ballistix.api.radar.IDetected;
 import ballistix.common.packet.type.client.particle.BlastParticleSpawnType;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.radar.TileSearchRadar;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -56,7 +56,7 @@ public class ClientBarrierMethods {
 			return;
 		}
 
-		player.push(0, player.getGravity() * BallistixConstants.EXPLOSIVE_ANTIGRAVITY_GRAVITYFACTOR, 0);
+		player.push(0, player.getGravity() * BallistixConfig.INSTANCE.EXPLOSIVE_ANTIGRAVITY_GRAVITYFACTOR.get(), 0);
 
     }
 }

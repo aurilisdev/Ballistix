@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ballistix.common.inventory.container.ContainerSAMTurret;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.turret.antimissile.TileTurretSAM;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
 import ballistix.prefab.BallistixIconTypes;
@@ -31,7 +31,7 @@ public class ScreenSAMTurret extends GenericScreen<ContainerSAMTurret> {
         inventoryLabelY += 10;
         imageHeight += 10;
 
-        addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(BallistixConstants.SAM_TURRET_USAGEPERTICK * 20));
+        addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(BallistixConfig.INSTANCE.SAM_TURRET_USAGEPERTICK.getAsDouble() * 20));
 
         addComponent(new ScreenComponentGuiTab(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR, BallistixIconTypes.TARGET_MISSILE, () -> {
             List<FormattedCharSequence> text = new ArrayList<>();

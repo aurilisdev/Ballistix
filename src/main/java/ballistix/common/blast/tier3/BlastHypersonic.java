@@ -8,7 +8,7 @@ import ballistix.common.blast.util.BlastLasting;
 import ballistix.common.blast.util.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityBallistixFallingBlock;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixSounds;
 import net.minecraft.core.BlockPos;
@@ -36,7 +36,7 @@ public class BlastHypersonic extends BlastLasting {
     @Override
     public void doPreExplode() {
         if (!world.isClientSide) {
-            thread = new ThreadSimpleBlast(world, position, (int) BallistixConstants.EXPLOSIVE_HYPERSONIC_RADIUS, Integer.MAX_VALUE, null, getBlastType().id());
+            thread = new ThreadSimpleBlast(world, position, (int) BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_RADIUS.getAsDouble(), Integer.MAX_VALUE, null, getBlastType().id());
             thread.start();
             world.playSound(null, position, BallistixSounds.SOUND_HYPERSONICSONICEXPLOSION.get(), SoundSource.BLOCKS, 25, 1);
         }
@@ -54,7 +54,7 @@ public class BlastHypersonic extends BlastLasting {
         }
         if (pertick == -1) {
             hasStarted = true;
-            pertick = (int) (thread.results.size() * 1.5 / BallistixConstants.EXPLOSIVE_HYPERSONIC_DURATION + 1);
+            pertick = (int) (thread.results.size() * 1.5 / BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_DURATION.get() + 1);
             iterator = thread.results.iterator();
         }
         int finished = pertick;
@@ -65,7 +65,7 @@ public class BlastHypersonic extends BlastLasting {
             BlockPos p = new BlockPos(iterator.next()).offset(position);
             BlockState state = world.getBlockState(p);
 
-            if(state.isAir() || state.getDestroySpeed(world, p) < 0 || state.getDestroySpeed(world, p) > BallistixConstants.EXPLOSIVE_HYPERSONIC_MAXHARDNESS || state.liquid()) {
+            if(state.isAir() || state.getDestroySpeed(world, p) < 0 || state.getDestroySpeed(world, p) > BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_MAXHARDNESS.get() || state.liquid()) {
                 continue;
             }
 
@@ -91,9 +91,9 @@ public class BlastHypersonic extends BlastLasting {
 
             double inverseMag = Mth.fastInvSqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
-            double velX = deltaX * inverseMag * BallistixConstants.EXPLOSIVE_HYPERSONIC_VELOCITY;
-            double velY = deltaY * inverseMag * BallistixConstants.EXPLOSIVE_HYPERSONIC_VELOCITY;
-            double velZ = deltaZ * inverseMag * BallistixConstants.EXPLOSIVE_HYPERSONIC_VELOCITY;
+            double velX = deltaX * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_VELOCITY.get();
+            double velY = deltaY * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_VELOCITY.get();
+            double velZ = deltaZ * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_VELOCITY.get();
 
             EntityBallistixFallingBlock movingBlock = new EntityBallistixFallingBlock(world, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, state);
             movingBlock.setDeltaMovement(velX, velY, velZ);
@@ -106,7 +106,7 @@ public class BlastHypersonic extends BlastLasting {
             float y = position.getY();
             float z = position.getZ();
 
-            float size = (float) BallistixConstants.EXPLOSIVE_HYPERSONIC_RADIUS;
+            float size = (float) BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_RADIUS.getAsDouble();
             float doubleSize = size * 2.0F;
 
             int x0 = Mth.floor(x - (double) doubleSize - 1.0D);
@@ -136,9 +136,9 @@ public class BlastHypersonic extends BlastLasting {
 
                 double inverseMag = Mth.fastInvSqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
-                double velX = deltaX * inverseMag * BallistixConstants.EXPLOSIVE_HYPERSONIC_VELOCITY;
-                double velY = deltaY * inverseMag * BallistixConstants.EXPLOSIVE_HYPERSONIC_VELOCITY;
-                double velZ = deltaZ * inverseMag * BallistixConstants.EXPLOSIVE_HYPERSONIC_VELOCITY;
+                double velX = deltaX * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_VELOCITY.get();
+                double velY = deltaY * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_VELOCITY.get();
+                double velZ = deltaZ * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_VELOCITY.get();
                 entity.setDeltaMovement(entity.getDeltaMovement().add(velX, velY, velZ));
             }
 

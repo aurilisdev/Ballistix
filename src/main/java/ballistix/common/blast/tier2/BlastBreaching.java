@@ -9,7 +9,7 @@ import ballistix.client.shake.CameraShakeManager;
 import ballistix.common.blast.util.BlastLasting;
 import ballistix.common.blast.util.thread.raycast.ThreadRaycastBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.prefab.utils.ParticleUtilities;
 import net.minecraft.client.Minecraft;
@@ -39,9 +39,9 @@ public class BlastBreaching extends BlastLasting implements IHasCustomRender {
     @Override
     public void doPreExplode() {
         if (!world.isClientSide) {
-            thread = new ThreadRaycastBlast(world, position, (int) BallistixConstants.EXPLOSIVE_BREACHING_SIZE, (float) BallistixConstants.EXPLOSIVE_BREACHING_ENERGY, null);
+            thread = new ThreadRaycastBlast(world, position, (int) BallistixConfig.INSTANCE.EXPLOSIVE_BREACHING_SIZE.getAsDouble(), (float) BallistixConfig.INSTANCE.EXPLOSIVE_BREACHING_ENERGY.getAsDouble(), null);
             thread.start();
-            world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) BallistixConstants.EXPLOSIVE_BREACHING_SIZE, ExplosionInteraction.BLOCK);
+            world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) BallistixConfig.INSTANCE.EXPLOSIVE_BREACHING_SIZE.getAsDouble(), ExplosionInteraction.BLOCK);
             world.playSound(null, position, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 25, 1);
         }
     }
@@ -51,15 +51,15 @@ public class BlastBreaching extends BlastLasting implements IHasCustomRender {
         hasStarted = true;
         super.doExplode(callCount);
         if (thread == null) {
-            return ticksSinceBlastStart > BallistixConstants.EXPLOSIVE_BREACHING_SIZE * 3;
+            return ticksSinceBlastStart > BallistixConfig.INSTANCE.EXPLOSIVE_BREACHING_SIZE.getAsDouble() * 3;
         }
         if (world.isClientSide || !thread.isComplete) {
-            return ticksSinceBlastStart > BallistixConstants.EXPLOSIVE_BREACHING_SIZE * 3;
+            return ticksSinceBlastStart > BallistixConfig.INSTANCE.EXPLOSIVE_BREACHING_SIZE.getAsDouble() * 3;
         }
 
         if (pertick == -1) {
             hasStarted = true;
-            pertick = (int) (thread.results.size() * 1.5 / BallistixConstants.EXPLOSIVE_BREACHING_DURATION + 1);
+            pertick = (int) (thread.results.size() * 1.5 / BallistixConfig.INSTANCE.EXPLOSIVE_BREACHING_DURATION.getAsDouble() + 1);
             iterator = thread.results.iterator();
         }
         int finished = pertick;
@@ -93,7 +93,7 @@ public class BlastBreaching extends BlastLasting implements IHasCustomRender {
             world.setBlockAndUpdate(p, Blocks.AIR.defaultBlockState());
         }
 
-        return ticksSinceBlastStart > BallistixConstants.EXPLOSIVE_BREACHING_SIZE * 3;
+        return ticksSinceBlastStart > BallistixConfig.INSTANCE.EXPLOSIVE_BREACHING_SIZE.getAsDouble() * 3;
     }
 
     @Override
@@ -132,7 +132,7 @@ public class BlastBreaching extends BlastLasting implements IHasCustomRender {
         }
         // Shockwave
         double spawnSize = 3;
-        double endSize = BallistixConstants.EXPLOSIVE_BREACHING_SIZE * 5;
+        double endSize = BallistixConfig.INSTANCE.EXPLOSIVE_BREACHING_SIZE.getAsDouble() * 5;
         int diff = (int) (endSize - spawnSize);
         if (ticksSinceBlastStart > diff) return;
         double size = ParticleUtilities.progressGroundShockwave(world, x, z, ticksSinceBlastStart * 2 / (double) diff, spawnSize, endSize, 0.2);

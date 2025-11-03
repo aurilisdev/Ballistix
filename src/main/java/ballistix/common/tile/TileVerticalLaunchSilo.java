@@ -3,6 +3,7 @@ package ballistix.common.tile;
 import ballistix.Ballistix;
 import ballistix.api.blast.IBlast;
 import ballistix.api.missile.MissileManager;
+import ballistix.api.missile.virtual.FlightPath;
 import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.api.silo.ILauncherControlPanel;
 import ballistix.api.silo.ILauncherPlatform;
@@ -12,7 +13,7 @@ import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.inventory.container.ContainerVLS;
 import ballistix.common.item.ItemMissile;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.silo.TileLauncherControlPanelT1;
 import ballistix.registers.BallistixDataComponentTypes;
 import ballistix.registers.BallistixItems;
@@ -86,7 +87,7 @@ public class TileVerticalLaunchSilo extends GenericTile implements ILauncherCont
         super(BallistixTiles.TILE_VLS.get(), worldPos, blockState);
 
         addComponent(new ComponentTickable(this).tickServer(this::tickServer));
-        addComponent(new ComponentElectrodynamic(this, false, true).voltage(VoltaicCapabilities.DEFAULT_VOLTAGE).maxJoules(BallistixConstants.MISSILESILO_USAGE).setInputDirections(BlockEntityUtils.MachineDirection.values()));
+        addComponent(new ComponentElectrodynamic(this, false, true).voltage(VoltaicCapabilities.DEFAULT_VOLTAGE).maxJoules(BallistixConfig.INSTANCE.MISSILESILO_USAGE.get()).setInputDirections(BlockEntityUtils.MachineDirection.values()));
         addComponent(new ComponentInventory(this, ComponentInventory.InventoryBuilder.newInv().inputs(3)).setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).setDirectionsBySlot(1, BlockEntityUtils.MachineDirection.values()).valid(this::isItemValidForSlot));
         addComponent(new ComponentContainerProvider("vls", this).createMenu((id, player) -> new ContainerVLS(id, player, getComponent(IComponentType.Inventory), getCoordsArray())));
         addComponent(new ComponentForgeEnergy(this));
@@ -94,7 +95,6 @@ public class TileVerticalLaunchSilo extends GenericTile implements ILauncherCont
     }
 
     protected void tickServer(ComponentTickable tickable) {
-        Direction facing = getFacing();
 
         if (target.getValue() == null) {
             target.setValue(getBlockPos());
@@ -102,7 +102,7 @@ public class TileVerticalLaunchSilo extends GenericTile implements ILauncherCont
 
         ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
 
-        if (cooldown > 0 || electro.getJoulesStored() < BallistixConstants.MISSILESILO_USAGE * getTier()) {
+        if (cooldown > 0 || electro.getJoulesStored() < BallistixConfig.INSTANCE.MISSILESILO_USAGE.get() * getTier()) {
             cooldown--;
             return;
         }
@@ -130,7 +130,7 @@ public class TileVerticalLaunchSilo extends GenericTile implements ILauncherCont
         if (newCool != -1) {
             cooldown = newCool;
         }
-        electro.joules(electro.getJoulesStored() - BallistixConstants.MISSILESILO_USAGE * getTier());
+        electro.joules(electro.getJoulesStored() - BallistixConfig.INSTANCE.MISSILESILO_USAGE.get() * getTier());
     }
 
     protected boolean isItemValidForSlot(int index, ItemStack stack, ComponentInventory inv) {
@@ -264,7 +264,7 @@ public class TileVerticalLaunchSilo extends GenericTile implements ILauncherCont
 
     @Override
     public int getRange() {
-        return BallistixConstants.VLS_RANGE;
+        return BallistixConfig.INSTANCE.VLS_RANGE.get();
     }
 
     @Override
@@ -327,7 +327,7 @@ public class TileVerticalLaunchSilo extends GenericTile implements ILauncherCont
                     //
                     0.45F,
                     //
-                    VirtualMissile.FlightPath.VLS,
+                    FlightPath.VLS,
                     //
                     getBlockPos().getX() + 0.5F,
                     //
@@ -412,6 +412,7 @@ public class TileVerticalLaunchSilo extends GenericTile implements ILauncherCont
         return useWithoutItem(player, hit);
     }
 
+    @Override
     public void onSubnodeDestroyed(TileMultiSubnode subnode) {
         this.level.destroyBlock(this.worldPosition, true);
     }

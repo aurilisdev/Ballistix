@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ballistix.common.inventory.container.ContainerProximityDetector;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.turret.GenericTileTurret;
 import ballistix.registers.BallistixItems;
 import ballistix.registers.BallistixTiles;
@@ -31,154 +31,163 @@ import voltaic.registers.VoltaicCapabilities;
 
 public class TileProximityDetector extends GenericTile {
 
-    public final ListProperty<String> whitelistedPlayers = property(new ListProperty<>(PropertyTypes.STRING_LIST, "whitelistedplayers", new ArrayList<>()));
-    public final SingleProperty<Integer> entityTargetingMode = property(new SingleProperty<>(PropertyTypes.INTEGER, "entitytargetingmode", 0));
-    public final SingleProperty<Boolean> usingWhitelist = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "usingwhitelist", false));
-    public final SingleProperty<BlockPos> minCorner = property(new SingleProperty<>(PropertyTypes.BLOCK_POS, "mincorner", BlockPos.ZERO));
-    public final SingleProperty<BlockPos> maxCorner = property(new SingleProperty<>(PropertyTypes.BLOCK_POS, "maxcorner", BlockPos.ZERO));
-    public final SingleProperty<Integer> redstoneSignal = property(new SingleProperty<>(PropertyTypes.INTEGER, "redstonesignal", 0)).onChange((prop, old) -> {
-        if(level != null && !level.isClientSide) {
-            level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
-        }
-    }).onTileLoaded(prop -> {
-        if(level != null && !level.isClientSide) {
-            level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
-        }
-    });
+    public final ListProperty<String> whitelistedPlayers = property(
+	    new ListProperty<>(PropertyTypes.STRING_LIST, "whitelistedplayers", new ArrayList<>()));
+    public final SingleProperty<Integer> entityTargetingMode = property(
+	    new SingleProperty<>(PropertyTypes.INTEGER, "entitytargetingmode", 0));
+    public final SingleProperty<Boolean> usingWhitelist = property(
+	    new SingleProperty<>(PropertyTypes.BOOLEAN, "usingwhitelist", false));
+    public final SingleProperty<BlockPos> minCorner = property(
+	    new SingleProperty<>(PropertyTypes.BLOCK_POS, "mincorner", BlockPos.ZERO));
+    public final SingleProperty<BlockPos> maxCorner = property(
+	    new SingleProperty<>(PropertyTypes.BLOCK_POS, "maxcorner", BlockPos.ZERO));
+    public final SingleProperty<Integer> redstoneSignal = property(
+	    new SingleProperty<>(PropertyTypes.INTEGER, "redstonesignal", 0)).onChange((prop, old) -> {
+		if (level != null && !level.isClientSide) {
+		    level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
+		}
+	    }).onTileLoaded(prop -> {
+		if (level != null && !level.isClientSide) {
+		    level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
+		}
+	    });
 
     public TileProximityDetector(BlockPos worldPos, BlockState blockState) {
-        super(BallistixTiles.TILE_PROXIMITYDETECTOR.get(), worldPos, blockState);
-        addComponent(new ComponentTickable(this).tickServer(this::tickServer));
-        addComponent(new ComponentElectrodynamic(this, false, true).setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM).voltage(VoltaicCapabilities.DEFAULT_VOLTAGE).maxJoules(BallistixConstants.PROXIMITYDETECTOR_USAGEPERTICK * 20));
-        addComponent(new ComponentForgeEnergy(this));
-        addComponent(new ComponentContainerProvider("proximitydetector", this).createMenu((id, inv) -> new ContainerProximityDetector(id, inv, new SimpleContainer(0), getCoordsArray())));
+	super(BallistixTiles.TILE_PROXIMITYDETECTOR.get(), worldPos, blockState);
+	addComponent(new ComponentTickable(this).tickServer(this::tickServer));
+	addComponent(new ComponentElectrodynamic(this, false, true)
+		.setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM)
+		.voltage(VoltaicCapabilities.DEFAULT_VOLTAGE)
+		.maxJoules(BallistixConfig.INSTANCE.PROXIMITYDETECTOR_USAGEPERTICK.get() * 20));
+	addComponent(new ComponentForgeEnergy(this));
+	addComponent(new ComponentContainerProvider("proximitydetector", this).createMenu(
+		(id, inv) -> new ContainerProximityDetector(id, inv, new SimpleContainer(0), getCoordsArray())));
     }
 
     public void tickServer(ComponentTickable componentTickable) {
 
-        ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
+	ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
 
-        if (electro.getJoulesStored() < BallistixConstants.PROXIMITYDETECTOR_USAGEPERTICK) {
-            redstoneSignal.setValue(0);
-            return;
-        }
+	if (electro.getJoulesStored() < BallistixConfig.INSTANCE.PROXIMITYDETECTOR_USAGEPERTICK.get()) {
+	    redstoneSignal.setValue(0);
+	    return;
+	}
 
-        GenericTileTurret.TargetingMode mode = GenericTileTurret.TargetingMode.values()[entityTargetingMode.getValue()];
+	GenericTileTurret.TargetingMode mode = GenericTileTurret.TargetingMode.values()[entityTargetingMode.getValue()];
 
-        if (mode == GenericTileTurret.TargetingMode.NONE) {
-            redstoneSignal.setValue(0);
-            return;
-        }
+	if (mode == GenericTileTurret.TargetingMode.NONE) {
+	    redstoneSignal.setValue(0);
+	    return;
+	}
 
-        electro.joules(electro.getJoulesStored() - BallistixConstants.PROXIMITYDETECTOR_USAGEPERTICK);
+	electro.joules(electro.getJoulesStored() - BallistixConfig.INSTANCE.PROXIMITYDETECTOR_USAGEPERTICK.get());
 
-        AABB box = AABB.encapsulatingFullBlocks(getBlockPos().offset(minCorner.getValue().multiply(-1)), getBlockPos().offset(maxCorner.getValue()));
+	AABB box = AABB.encapsulatingFullBlocks(getBlockPos().offset(minCorner.getValue().multiply(-1)),
+		getBlockPos().offset(maxCorner.getValue()));
 
-        if (usingWhitelist.getValue()) {
+	if (usingWhitelist.getValue()) {
 
-            if (whitelistedPlayers.getValue().isEmpty()) {
-                redstoneSignal.setValue(0);
-                return;
-            }
+	    if (whitelistedPlayers.getValue().isEmpty()) {
+		redstoneSignal.setValue(0);
+		return;
+	    }
 
-            List<Player> players = level.getEntitiesOfClass(Player.class, box);
+	    List<Player> players = level.getEntitiesOfClass(Player.class, box);
 
-            if (players.isEmpty()) {
-                redstoneSignal.setValue(0);
-                return;
-            }
+	    if (players.isEmpty()) {
+		redstoneSignal.setValue(0);
+		return;
+	    }
 
-            for (Player player : players) {
-                if (!player.isAlive()) {
-                    continue;
-                }
+	    for (Player player : players) {
+		if (!player.isAlive()) {
+		    continue;
+		}
 
-                ItemStack inHand = player.getItemInHand(InteractionHand.MAIN_HAND);
-                if (inHand.isEmpty()) {
-                    inHand = player.getItemInHand(InteractionHand.OFF_HAND);
-                    if (!inHand.isEmpty() && inHand.is(BallistixItems.ITEM_SCANNER)) {
-                        continue;
-                    }
-                } else if (inHand.is(BallistixItems.ITEM_SCANNER)) {
-                    continue;
-                }
+		ItemStack inHand = player.getItemInHand(InteractionHand.MAIN_HAND);
+		if (inHand.isEmpty()) {
+		    inHand = player.getItemInHand(InteractionHand.OFF_HAND);
+		    if (!inHand.isEmpty() && inHand.is(BallistixItems.ITEM_SCANNER)) {
+			continue;
+		    }
+		} else if (inHand.is(BallistixItems.ITEM_SCANNER)) {
+		    continue;
+		}
 
+		for (String name : whitelistedPlayers.getValue()) {
+		    if (player.getName().getString().equals(name)) {
+			redstoneSignal.setValue(15);
+			return;
+		    }
+		}
+	    }
 
-                for (String name : whitelistedPlayers.getValue()) {
-                    if (player.getName().getString().equals(name)) {
-                        redstoneSignal.setValue(15);
-                        return;
-                    }
-                }
-            }
+	    redstoneSignal.setValue(0);
 
-            redstoneSignal.setValue(0);
+	} else {
 
-        } else {
+	    Class<? extends LivingEntity> type = mode == GenericTileTurret.TargetingMode.ONLY_PLAYERS ? Player.class
+		    : LivingEntity.class;
 
-            Class<? extends LivingEntity> type = mode == GenericTileTurret.TargetingMode.ONLY_PLAYERS ? Player.class : LivingEntity.class;
+	    List<? extends LivingEntity> entities = level.getEntitiesOfClass(type, box);
 
-            List<? extends LivingEntity> entities = level.getEntitiesOfClass(type, box);
+	    if (entities.isEmpty()) {
+		redstoneSignal.setValue(0);
+		return;
+	    }
 
-            if (entities.isEmpty()) {
-                redstoneSignal.setValue(0);
-                return;
-            }
+	    for (LivingEntity entity : entities) {
 
-            for (LivingEntity entity : entities) {
+		if (!entity.isAlive()) {
+		    continue;
+		}
 
-                if (!entity.isAlive()) {
-                    continue;
-                }
+		ItemStack inHand = entity.getItemInHand(InteractionHand.MAIN_HAND);
+		if (inHand.isEmpty()) {
+		    inHand = entity.getItemInHand(InteractionHand.OFF_HAND);
+		    if (!inHand.isEmpty() && inHand.is(BallistixItems.ITEM_SCANNER)) {
+			continue;
+		    }
+		} else if (inHand.is(BallistixItems.ITEM_SCANNER)) {
+		    continue;
+		}
 
-                ItemStack inHand = entity.getItemInHand(InteractionHand.MAIN_HAND);
-                if (inHand.isEmpty()) {
-                    inHand = entity.getItemInHand(InteractionHand.OFF_HAND);
-                    if (!inHand.isEmpty() && inHand.is(BallistixItems.ITEM_SCANNER)) {
-                        continue;
-                    }
-                } else if (inHand.is(BallistixItems.ITEM_SCANNER)) {
-                    continue;
-                }
+		if (entity instanceof Player player) {
+		    boolean whitelisted = false;
+		    for (String name : whitelistedPlayers.getValue()) {
+			if (player.getName().getString().equals(name)) {
+			    whitelisted = true;
+			    break;
+			}
+		    }
+		    if (!whitelisted) {
+			redstoneSignal.setValue(15);
+			return;
+		    }
 
+		} else {
+		    redstoneSignal.setValue(15);
+		    return;
+		}
 
-                if (entity instanceof Player player) {
-                    boolean whitelisted = false;
-                    for (String name : whitelistedPlayers.getValue()) {
-                        if (player.getName().getString().equals(name)) {
-                            whitelisted = true;
-                            break;
-                        }
-                    }
-                    if(!whitelisted) {
-                        redstoneSignal.setValue(15);
-                        return;
-                    }
+	    }
 
-                } else {
-                    redstoneSignal.setValue(15);
-                    return;
-                }
+	    redstoneSignal.setValue(0);
 
-            }
-
-            redstoneSignal.setValue(0);
-
-
-        }
+	}
 
     }
 
     @Override
     public void setPlacedBy(LivingEntity player, ItemStack stack) {
-        super.setPlacedBy(player, stack);
-        if (player instanceof Player pl) {
-            whitelistedPlayers.addValue(pl.getName().getString());
-        }
+	super.setPlacedBy(player, stack);
+	if (player instanceof Player pl) {
+	    whitelistedPlayers.addValue(pl.getName().getString());
+	}
     }
 
     @Override
     public int getSignal(Direction dir) {
-        return redstoneSignal.getValue();
+	return redstoneSignal.getValue();
     }
 }

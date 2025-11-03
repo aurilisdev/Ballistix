@@ -5,7 +5,7 @@ import ballistix.common.item.ItemLaserDesignator;
 import ballistix.common.item.ItemRadarGun;
 import ballistix.common.item.ItemScanner;
 import ballistix.common.item.ItemTracker;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixItems;
 import net.minecraft.ChatFormatting;
@@ -52,7 +52,7 @@ public class ChapterItems extends Chapter {
 		// Laser Designator
 		pageData.add(new TextWrapperObject(BallistixItems.ITEM_LASERDESIGNATOR.get().getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
 		pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEM_LASERDESIGNATOR.get()));
-		pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.items.laserdesignator1", BallistixConstants.LASER_DESIGNATOR_RANGE)).setSeparateStart().setIndentions(1));
+		pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.items.laserdesignator1", BallistixConfig.INSTANCE.LASER_DESIGNATOR_RANGE.get())).setSeparateStart().setIndentions(1));
 		pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.items.laserdesignator2", ChatFormatter.getChatDisplayShort(ItemLaserDesignator.USAGE, DisplayUnits.JOULES))).setSeparateStart().setIndentions(1));
 
 		// Defuser

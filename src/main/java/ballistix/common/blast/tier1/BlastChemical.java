@@ -6,7 +6,7 @@ import org.joml.Vector3f;
 
 import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixDamageTypes;
 import ballistix.registers.BallistixEffects;
@@ -44,7 +44,7 @@ public class BlastChemical extends Blast {
 	@Override
 	public boolean doExplode(int callCount) {
 		hasStarted = true;
-		int radius = (int) BallistixConstants.EXPLOSIVE_CHEMICAL_SIZE;
+		int radius = (int) BallistixConfig.INSTANCE.EXPLOSIVE_CHEMICAL_SIZE.getAsDouble();
 		if (world.isClientSide && callCount % 3 == 0) {
 			for (int x = -radius; x <= radius; x++) {
 				for (int y = -radius; y <= radius; y++) {
@@ -111,7 +111,7 @@ public class BlastChemical extends Blast {
 				}
 			}
 		}
-		return callCount > BallistixConstants.EXPLOSIVE_CHEMICAL_DURATION;
+		return callCount > BallistixConfig.INSTANCE.EXPLOSIVE_CHEMICAL_DURATION.getAsDouble();
 	}
 
 	@Override

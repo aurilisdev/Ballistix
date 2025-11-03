@@ -42,7 +42,7 @@ import ballistix.client.screen.ScreenSearchRadar;
 import ballistix.client.screen.ScreenVLS;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.item.ItemTracker;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.registers.BallistixDataComponentTypes;
 import ballistix.registers.BallistixEntities;
 import ballistix.registers.BallistixItems;
@@ -242,7 +242,7 @@ public class BallistixClientRegister {
 
 		event.register(SubtypeBlast.darkmatter, (entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
 			double x = entityIn.hasMatured ? entityIn.ticksAtMaturity : entityIn.tickCount;
-			double time = 4.0 / 3.0 * Math.PI * Math.pow(BallistixConstants.EXPLOSIVE_DARKMATTER_RADIUS, 3) / BallistixConstants.EXPLOSIVE_DARKMATTER_DURATION;
+			double time = 4.0 / 3.0 * Math.PI * Math.pow(BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_RADIUS.getAsDouble(), 3) / BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_DURATION.getAsDouble();
 			float scale = (float) (0.1 * Math.log(x * x) + x / (time * 2));
 			BakedModel modelDisk = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_DARKMATTERDISK);
 			BakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_BLACKHOLECUBE);
@@ -301,7 +301,7 @@ public class BallistixClientRegister {
 				return;
 			}
 
-			float scale = (float) ((entityIn.tickCount + partialTicks - entityIn.ticksWhenCustomRender) / BallistixConstants.EXPLOSIVE_ANTIMATTER_DURATION * BallistixConstants.EXPLOSIVE_EMP_RADIUS * 1.2) / 8.0f;
+			float scale = (float) ((entityIn.tickCount + partialTicks - entityIn.ticksWhenCustomRender) / BallistixConfig.INSTANCE.EXPLOSIVE_ANTIMATTER_DURATION.getAsDouble() * BallistixConfig.INSTANCE.EXPLOSIVE_EMP_RADIUS.getAsDouble()* 1.2) / 8.0f;
 			matrixStack.scale(scale, scale, scale);
 			BakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_EMP);
 			Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(matrixStack.last(), bufferIn.getBuffer(Sheets.translucentCullBlockSheet()), Blocks.BLACK_STAINED_GLASS.defaultBlockState(), modelSphere, 1, 1, 1, 0, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, RenderType.translucent());

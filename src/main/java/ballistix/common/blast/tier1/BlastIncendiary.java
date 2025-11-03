@@ -3,7 +3,7 @@ package ballistix.common.blast.tier1;
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -35,7 +35,7 @@ public class BlastIncendiary extends Blast implements IHasCustomRender {
 	    produceParticles();
 	    return true;
 	}
-	int radius = (int) BallistixConstants.EXPLOSIVE_INCENDIARY_RADIUS;
+	int radius = (int) BallistixConfig.INSTANCE.EXPLOSIVE_INCENDIARY_RADIUS.getAsDouble();
 	for (int x = -radius; x <= radius; x++) {
 	    for (int y = -radius; y <= radius; y++) {
 		for (int z = -radius; z <= radius; z++) {

@@ -6,7 +6,7 @@ import java.util.List;
 import com.mojang.blaze3d.platform.InputConstants;
 
 import ballistix.common.inventory.container.ContainerSearchRadar;
-import ballistix.common.settings.BallistixConstants;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.radar.TileSearchRadar;
 import ballistix.prefab.screen.WrapperSearchFrequencyManager;
 import ballistix.prefab.screen.WrapperSearchRadarDetections;
@@ -33,7 +33,7 @@ public class ScreenSearchRadar extends GenericScreen<ContainerSearchRadar> {
     public ScreenSearchRadar(ContainerSearchRadar container, Inventory inv, Component title) {
         super(container, inv, title);
 
-        addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(BallistixConstants.RADAR_USAGE));
+        addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(BallistixConfig.INSTANCE.RADAR_USAGE.getAsDouble()));
 
         addComponent(new ScreenComponentGuiTab(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR, ScreenComponentSlot.IconType.SONAR_PROFILE, () -> {
             List<FormattedCharSequence> info = new ArrayList<>();
@@ -45,7 +45,7 @@ public class ScreenSearchRadar extends GenericScreen<ContainerSearchRadar> {
             }
 
             info.add(BallistixTextUtils.tooltip("turret.blockrange").withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
-            info.add(BallistixTextUtils.tooltip("turret.maxrange", ChatFormatter.formatDecimals(BallistixConstants.RADAR_RANGE, 1).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+            info.add(BallistixTextUtils.tooltip("turret.maxrange", ChatFormatter.formatDecimals(BallistixConfig.INSTANCE.RADAR_RANGE.getDefault(), 1).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
 
 
             return info;

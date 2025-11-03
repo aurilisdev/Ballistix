@@ -226,6 +226,16 @@ public class MissileManager {
         return virtual.get(id);
     }
 
+    public static Collection<VirtualProjectile.VirtualBullet> getBulletsForLevel(ResourceKey<Level> level) {
+        ServerLevel overworld = getOverworld();
+
+        HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>> data = overworld.getData(BallistixAttachmentTypes.ACTIVE_BULLETS);
+
+        HashMap<UUID, VirtualProjectile.VirtualBullet> virtual = data.getOrDefault(level, new HashMap<>());
+
+        return virtual.values();
+    }
+
     public static void wipeAllBullets() {
         getOverworld().removeData(BallistixAttachmentTypes.ACTIVE_BULLETS);
     }
@@ -255,6 +265,16 @@ public class MissileManager {
         return virtual.get(id);
     }
 
+    public static Collection<VirtualProjectile.VirtualRailgunRound> getRailgunRoundsForLevel(ResourceKey<Level> level) {
+        ServerLevel overworld = getOverworld();
+
+        HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> data = overworld.getData(BallistixAttachmentTypes.ACTIVE_RAILGUNROUNDS);
+
+        HashMap<UUID, VirtualProjectile.VirtualRailgunRound> virtual = data.getOrDefault(level, new HashMap<>());
+
+        return virtual.values();
+    }
+
     public static void wipeAllRailgunRounds() {
         getOverworld().removeData(BallistixAttachmentTypes.ACTIVE_RAILGUNROUNDS);
     }
@@ -282,6 +302,16 @@ public class MissileManager {
         HashMap<UUID, VirtualProjectile.VirtualSAM> virtual = data.getOrDefault(level, new HashMap<>());
 
         return virtual.get(id);
+    }
+
+    public static Collection<VirtualProjectile.VirtualSAM> getSAMsForLevel(ResourceKey<Level> level) {
+        ServerLevel overworld = getOverworld();
+
+        HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>> data = overworld.getData(BallistixAttachmentTypes.ACTIVE_SAMS);
+
+        HashMap<UUID, VirtualProjectile.VirtualSAM> virtual = data.getOrDefault(level, new HashMap<>());
+
+        return virtual.values();
     }
 
     public static void wipeAllSAMs() {

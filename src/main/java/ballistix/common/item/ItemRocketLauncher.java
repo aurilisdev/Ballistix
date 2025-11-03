@@ -3,7 +3,7 @@ package ballistix.common.item;
 import ballistix.api.blast.IBlast;
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualMissile;
-import ballistix.common.blast.Blast;
+import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeMissile;
 import ballistix.common.settings.BallistixConstants;
 import ballistix.registers.BallistixCreativeTabs;
@@ -108,8 +108,6 @@ public class ItemRocketLauncher extends ItemVoltaic {
             }
         }
         if (hasExplosive && hasRange) {
-            ex.shrink(1);
-            missile.shrink(1);
             VirtualMissile virtualMissile = new VirtualMissile(
                     //
                     new Vec3(entityLiving.getX(), entityLiving.getY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getZ()),
@@ -118,7 +116,7 @@ public class ItemRocketLauncher extends ItemVoltaic {
                     //
                     1.333F,
                     //
-                    true,
+                    VirtualMissile.FlightPath.ROCKET_LAUNCHER,
                     //
                     0,
                     //
@@ -126,7 +124,7 @@ public class ItemRocketLauncher extends ItemVoltaic {
                     //
                     BlockPos.ZERO,
                     //
-                    missile.getItem() == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier2) ? 1 : missile.getItem() == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier3) ? 2 : 0,
+                    ((ItemMissile) missile.getItem()).missile.ordinal() + 1,
                     //
                     blast,
                     //
@@ -135,6 +133,9 @@ public class ItemRocketLauncher extends ItemVoltaic {
                     false
                     //
             );
+
+            ex.shrink(1);
+            missile.shrink(1);
 
             MissileManager.addMissile(world.dimension(), virtualMissile);
 

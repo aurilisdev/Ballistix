@@ -2,7 +2,7 @@ package ballistix.common.item;
 
 import java.util.List;
 
-import ballistix.common.tile.silo.TileLauncherControlPanelT1;
+import ballistix.api.silo.ILauncherControlPanel;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixCreativeTabs;
@@ -42,13 +42,13 @@ public class ItemRadarGun extends ItemElectric {
         }
         BlockEntity tile = context.getLevel().getBlockEntity(context.getClickedPos());
 
-        if (tile instanceof TileLauncherControlPanelT1 silo) {
+        if (tile instanceof ILauncherControlPanel silo) {
 
-            silo.target.setValue(stack.get(VoltaicDataComponentTypes.BLOCK_POS));
+            silo.setTargetFromDesignator(stack.get(VoltaicDataComponentTypes.BLOCK_POS));
 
-        } else if (tile instanceof TileMultiSubnode subnode && subnode.getLevel().getBlockEntity(subnode.parentPos.getValue()) instanceof TileLauncherControlPanelT1 silo) {
+        } else if (tile instanceof TileMultiSubnode subnode && subnode.getLevel().getBlockEntity(subnode.parentPos.getValue()) instanceof ILauncherControlPanel silo) {
 
-            silo.target.setValue(stack.get(VoltaicDataComponentTypes.BLOCK_POS));
+            silo.setTargetFromDesignator(stack.get(VoltaicDataComponentTypes.BLOCK_POS));
 
         } else if (tile instanceof TileTurretAntimissile turret) {
             if (turret.bindFireControlRadar(stack.get(VoltaicDataComponentTypes.BLOCK_POS))) {
@@ -87,7 +87,7 @@ public class ItemRadarGun extends ItemElectric {
 
         //prevents using the radar gun on missile silo from overriding the stored coords
 
-        if (trace.getTile(playerIn.level()) instanceof TileLauncherControlPanelT1 || trace.getTile(playerIn.level()) instanceof TileMultiSubnode subnode && subnode.getLevel().getBlockEntity(subnode.parentPos.getValue()) instanceof TileLauncherControlPanelT1 || trace.getTile(worldIn) instanceof TileTurretAntimissile) {
+        if (trace.getTile(playerIn.level()) instanceof ILauncherControlPanel || trace.getTile(playerIn.level()) instanceof TileMultiSubnode subnode && subnode.getLevel().getBlockEntity(subnode.parentPos.getValue()) instanceof ILauncherControlPanel || trace.getTile(worldIn) instanceof TileTurretAntimissile) {
             return super.use(worldIn, playerIn, handIn);
         }
 

@@ -1,0 +1,39 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:mod_loaded",
+        "modid": "electrodynamics"
+      }
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "c:dusts/redstone"
+    },
+    "C": {
+      "item": "ballistix:launchercontrolpaneltier1"
+    },
+    "F": {
+      "item": "ballistix:launchersupportframetier1"
+    },
+    "L": {
+      "item": "ballistix:launcherplatformtier1"
+    },
+    "S": {
+      "tag": "c:ingots/iron"
+    }
+  },
+  "pattern": [
+    "SFS",
+    "SLS",
+    "ACA"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ballistix:vls"
+  }
+}

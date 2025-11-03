@@ -14,4 +14,9 @@ public class TileLauncherControlPanelT3 extends TileLauncherControlPanelT1 {
 	public int getTier() {
 		return 3;
 	}
+
+	@Override
+	public void setTargetFromDesignator(BlockPos target) {
+		setTarget(target);
+	}
 }

@@ -1,6 +1,7 @@
 package ballistix.registers;
 
 import ballistix.Ballistix;
+import ballistix.common.entity.EntityBallistixFallingBlock;
 import ballistix.common.entity.EntityBlast;
 import ballistix.common.entity.EntityBullet;
 import ballistix.common.entity.EntityExplosive;
@@ -29,5 +30,6 @@ public class BallistixEntities {
 	public static final DeferredHolder<EntityType<?>, EntityType<EntitySAM>> ENTITY_SAM = ENTITIES.register("sam", () -> EntityType.Builder.<EntitySAM>of(EntitySAM::new, MobCategory.MISC).clientTrackingRange(512).fireImmune().sized(0.5F, 2.0F).attach(EntityAttachment.PASSENGER, 0F, 0F, 0).build(Ballistix.ID + ".sam"));
 	public static final DeferredHolder<EntityType<?>, EntityType<EntityBullet>> ENTITY_BULLET = ENTITIES.register("bullet", () -> EntityType.Builder.<EntityBullet>of(EntityBullet::new, MobCategory.MISC).clientTrackingRange(512).fireImmune().sized(0.1F, 0.1F).build(Ballistix.ID + ".bullet"));
 	public static final DeferredHolder<EntityType<?>, EntityType<EntityRailgunRound>> ENTITY_RAILGUNROUND = ENTITIES.register("railgunround", () -> EntityType.Builder.<EntityRailgunRound>of(EntityRailgunRound::new, MobCategory.MISC).fireImmune().sized(0.1F, 0.1F).clientTrackingRange(512).build(Ballistix.ID + ".railgunround"));
+	public static final DeferredHolder<EntityType<?>, EntityType<EntityBallistixFallingBlock>> ENTITY_BALLISTIXFALLINGBLOCK = ENTITIES.register("ballistixfallingblock", () -> EntityType.Builder.<EntityBallistixFallingBlock>of(EntityBallistixFallingBlock::new, MobCategory.MISC).fireImmune().sized(0.1F, 0.1F).clientTrackingRange(512).build(Ballistix.ID + ".ballistixfallignblock"));
 
 }

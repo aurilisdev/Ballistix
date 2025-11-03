@@ -2,7 +2,7 @@ package ballistix;
 
 import ballistix.api.blast.RegisterBlastEvent;
 import ballistix.client.BallistixClientRegister;
-import ballistix.common.blast.thread.ThreadSimpleBlast;
+import ballistix.common.blast.util.thread.ThreadSimpleBlast;
 import ballistix.common.block.BallistixVoxelShapes;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.item.ItemGrenade;
@@ -53,11 +53,6 @@ public class Ballistix {
 		BallistixTags.init();
 		// Moved here due to config file not being loaded until now
 		event.enqueueWork(() -> {
-			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.antimatter.ordinal()).start();
-			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.darkmatter.ordinal()).start();
-			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.largeantimatter.ordinal()).start();
-			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) ((int) BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE * 2.5), Integer.MAX_VALUE, null, SubtypeBlast.nuclear.ordinal()).start();
-			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_EMP_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.emp.ordinal());
 			RegisterBlastEvent registerBlastEvent = new RegisterBlastEvent();
 			ModLoader.postEvent(registerBlastEvent);
 			registerBlastEvent.stashBlasts();
@@ -75,6 +70,18 @@ public class Ballistix {
 		for(ItemMinecart.SubtypeMinecart minecart : ItemMinecart.SubtypeMinecart.values()) {
 			event.registerMinecart(minecart.explosiveType, BallistixItems.ITEMS_MINECART.getValue(minecart));
 		}
+		event.submitCachedThreads(() -> {
+			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_ANTIMATTER_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.antimatter.id()).start();
+			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_DARKMATTER_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.darkmatter.id()).start();
+			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.largeantimatter.id()).start();
+			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) ((int) BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE * 2.5), Integer.MAX_VALUE, null, SubtypeBlast.nuclear.id()).start();
+			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_EMP_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.emp.id());
+			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_SONIC_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.sonic.id());
+			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_HYPERSONIC_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.hypersonic.id());
+			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_ENDOTHERMIC_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.endothermic.id());
+			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_INFESTIVE_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.infestive.id());
+			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_EXOTHERMIC_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.exothermic.id());
+		});
 	}
 
 	public static final ResourceLocation rl(String path) {

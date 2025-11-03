@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import com.mojang.serialization.Codec;
 
 import ballistix.Ballistix;
+import ballistix.api.blast.AntigravedChunk;
 import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.api.missile.virtual.VirtualProjectile;
 import net.minecraft.core.BlockPos;
@@ -419,6 +420,51 @@ public class BallistixAttachmentTypes {
                 }
 
                 data.put("" + i, stored);
+
+                i++;
+
+            }
+
+            return data;
+        }
+
+    }).build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<HashSet<AntigravedChunk>>> ANTIGRAVED_CHUNKS = ATTACHMENT_TYPES.register("antigravedchunks", () -> AttachmentType.builder(() -> new HashSet<AntigravedChunk>()).serialize(new IAttachmentSerializer<CompoundTag, HashSet<AntigravedChunk>>() {
+
+        @Override
+        public HashSet<AntigravedChunk> read(IAttachmentHolder holder, CompoundTag tag, HolderLookup.Provider provider) {
+            HashSet<AntigravedChunk> data = new HashSet<>();
+
+            int size = tag.getInt("size");
+
+            for (int i = 0; i < size; i++) {
+
+                if(!tag.contains("" + i)) {
+                    continue;
+                }
+
+                AntigravedChunk.CODEC.decode(NbtOps.INSTANCE, tag.get("" + i)).ifSuccess(pair -> data.add(pair.getFirst()));
+
+            }
+
+            return data;
+        }
+
+        @Override
+        public @Nullable CompoundTag write(HashSet<AntigravedChunk> attachment, HolderLookup.Provider provider) {
+
+            CompoundTag data = new CompoundTag();
+
+            data.putInt("size", attachment.size());
+
+            int i = 0;
+
+            for (AntigravedChunk chunk : attachment) {
+
+                final int index = i;
+
+                AntigravedChunk.CODEC.encodeStart(NbtOps.INSTANCE, chunk).ifSuccess(tag -> data.put("" + index, tag));
 
                 i++;
 

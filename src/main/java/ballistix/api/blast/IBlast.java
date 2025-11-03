@@ -2,7 +2,7 @@ package ballistix.api.blast;
 
 import java.util.function.Supplier;
 
-import ballistix.common.blast.Blast;
+import ballistix.common.blast.util.Blast;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;

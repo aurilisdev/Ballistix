@@ -22,6 +22,7 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -41,7 +42,6 @@ import voltaic.prefab.tile.components.type.ComponentPacketHandler;
 import voltaic.prefab.tile.components.type.ComponentTickable;
 import voltaic.prefab.utilities.BlockEntityUtils;
 import voltaic.prefab.utilities.object.CachedTileOutput;
-import voltaic.prefab.utilities.object.TransferPack;
 import voltaic.registers.VoltaicCapabilities;
 import voltaic.registers.VoltaicDataComponentTypes;
 
@@ -63,7 +63,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 	public SingleProperty<BlockPos> target = property(new SingleProperty<>(PropertyTypes.BLOCK_POS, "target", BlockPos.ZERO));
 
 	private int cooldown = 100;
-	public boolean shouldLaunch = false;
+	public final SingleProperty<Boolean> shouldLaunch = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "shouldlaunch", false));
 	public CachedTileOutput launcherPlatform;
 	public CachedTileOutput supportFrame;
 
@@ -122,6 +122,10 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 			return;
 		}
 
+		if(!(launcherPlatform.getSafe() instanceof ILauncherPlatform)) {
+			return;
+		}
+
 		ILauncherPlatform platform = launcherPlatform.getSafe();
 
 		if (platform == null) { // Should really update the cachedtileoutput so this cant occur. As of before
@@ -130,7 +134,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 			return;
 		}
 
-		if (!platform.hasMissile() || (platform.hasExplosive() && platform.hasSAM()) || (!platform.hasExplosive() && !platform.hasSAM()) || (!hasRedstone && !shouldLaunch)) {
+		if (!platform.hasMissile() || (platform.hasExplosive() && platform.hasSAM()) || (!platform.hasExplosive() && !platform.hasSAM()) || (!hasRedstone && !shouldLaunch.getValue())) {
 			return;
 		}
 
@@ -140,7 +144,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 			inaccuracy = frame.getInaccuracy();
 		}
 
-		shouldLaunch = false;
+		shouldLaunch.setValue(false);
 
 		double dist = calculateDistance(worldPosition, target.getValue());
 
@@ -152,7 +156,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 		if (newCool != -1) {
 			cooldown = newCool;
 		}
-		electro.extractPower(TransferPack.joulesVoltage(BallistixConstants.MISSILESILO_USAGE * getTier(), electro.getVoltage()), false);
+		electro.joules(electro.getJoulesStored() - BallistixConstants.MISSILESILO_USAGE * getTier());
 	}
 
 	protected boolean isItemValidForSlot(int index, ItemStack stack, ComponentInventory inv) {
@@ -220,14 +224,12 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 	protected void saveAdditional(CompoundTag compound, HolderLookup.Provider registries) {
 		super.saveAdditional(compound, registries);
 		compound.putInt("silocooldown", cooldown);
-		compound.putBoolean("shouldlaunch", shouldLaunch);
 	}
 
 	@Override
 	protected void loadAdditional(CompoundTag compound, HolderLookup.Provider registries) {
 		super.loadAdditional(compound, registries);
 		cooldown = compound.getInt("silocooldown");
-		shouldLaunch = compound.getBoolean("shouldlaunch");
 	}
 
 	@Override
@@ -251,12 +253,17 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 
 	@Override
 	public void launch() {
-		shouldLaunch = true;
+		shouldLaunch.setValue(true);
 	}
 
 	@Override
 	public void setTarget(BlockPos blockPos) {
 		target.setValue(blockPos);
+	}
+
+	@Override
+	public void setTargetFromDesignator(BlockPos target) {
+		setTarget(new BlockPos(target.getX(), this.target.getValue().getY(), target.getZ()));
 	}
 
 	@Override
@@ -270,13 +277,27 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 	}
 
 	@Override
-	public CachedTileOutput getPlatform() {
-		return launcherPlatform;
+	public ILauncherPlatform getPlatform() {
+
+		BlockEntity tile = launcherPlatform.getSafe();
+
+		if(tile instanceof ILauncherPlatform) {
+			return (ILauncherPlatform) tile;
+		}
+
+		return null;
 	}
 
 	@Override
-	public CachedTileOutput getSupportFrame() {
-		return supportFrame;
+	public ILauncherSupportFrame getSupportFrame() {
+
+		BlockEntity tile = supportFrame.getSafe();
+
+		if(tile instanceof ILauncherSupportFrame) {
+			return (ILauncherSupportFrame) tile;
+		}
+
+		return null;
 	}
 
 	public static double calculateDistance(BlockPos fromPos, BlockPos toPos) {

@@ -112,7 +112,7 @@ public class TileSearchRadar extends GenericTile {
         detections.clear();
 
         for (VirtualMissile missile : trackedMissiles) {
-            detections.add(new IDetected.Detected(missile.position, BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.values()[missile.payloadData.missileType]), true));
+            detections.add(new IDetected.Detected(missile.position, BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.values()[missile.payloadData.missileType < 1 ? 0 : missile.payloadData.missileType - 1]), true));
         }
 
         for (TileESMTower tile : trackedEsmTowers) {

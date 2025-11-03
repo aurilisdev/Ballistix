@@ -1,6 +1,10 @@
 package ballistix.common.settings;
 
-import voltaic.api.configuration.*;
+import voltaic.api.configuration.BooleanValue;
+import voltaic.api.configuration.Configuration;
+import voltaic.api.configuration.DoubleValue;
+import voltaic.api.configuration.FloatValue;
+import voltaic.api.configuration.IntValue;
 
 @Configuration(name = "Ballistix")
 public class BallistixConstants {

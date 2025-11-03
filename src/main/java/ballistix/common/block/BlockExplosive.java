@@ -1,6 +1,7 @@
 package ballistix.common.block;
 
-import ballistix.Ballistix;
+import java.util.List;
+
 import ballistix.api.blast.IBlast;
 import ballistix.common.entity.EntityExplosive;
 import ballistix.prefab.utils.BallistixTextUtils;
@@ -32,8 +33,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import voltaic.common.block.states.VoltaicBlockStates;
-
-import java.util.List;
 
 public class BlockExplosive extends Block {
 

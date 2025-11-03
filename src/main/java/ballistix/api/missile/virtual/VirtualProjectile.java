@@ -2,32 +2,33 @@ package ballistix.api.missile.virtual;
 
 import java.util.UUID;
 
-import ballistix.api.silo.ILauncherPlatform;
-import ballistix.api.silo.ILauncherSupportFrame;
-import ballistix.client.particle.ParticleOptionsMissileSmoke;
-import ballistix.common.settings.BallistixConstants;
-import ballistix.common.tile.radar.TileFireControlRadar;
-import ballistix.common.tile.turret.GenericTileTurret;
-import ballistix.registers.BallistixSounds;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.level.block.Blocks;
+import javax.annotation.Nullable;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import ballistix.api.missile.MissileManager;
+import ballistix.api.silo.ILauncherPlatform;
+import ballistix.api.silo.ILauncherSupportFrame;
+import ballistix.client.particle.ParticleOptionsMissileSmoke;
 import ballistix.common.entity.EntityBullet;
 import ballistix.common.entity.EntityRailgunRound;
 import ballistix.common.entity.EntitySAM;
+import ballistix.common.settings.BallistixConstants;
+import ballistix.common.tile.radar.TileFireControlRadar;
+import ballistix.common.tile.turret.GenericTileTurret;
 import ballistix.registers.BallistixDamageTypes;
+import ballistix.registers.BallistixSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -35,8 +36,6 @@ import net.minecraft.world.phys.Vec3;
 import voltaic.Voltaic;
 import voltaic.api.multiblock.subnodebased.TileMultiSubnode;
 import voltaic.prefab.utilities.BlockEntityUtils;
-
-import javax.annotation.Nullable;
 
 public abstract class VirtualProjectile {
 

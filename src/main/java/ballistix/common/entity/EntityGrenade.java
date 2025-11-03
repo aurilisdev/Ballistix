@@ -1,5 +1,7 @@
 package ballistix.common.entity;
 
+import javax.annotation.Nullable;
+
 import ballistix.api.blast.IBlast;
 import ballistix.api.entity.IDefusable;
 import ballistix.common.blast.Blast;
@@ -17,8 +19,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-
-import javax.annotation.Nullable;
 
 public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 

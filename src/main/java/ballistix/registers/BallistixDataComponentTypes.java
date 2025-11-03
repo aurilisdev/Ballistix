@@ -2,9 +2,9 @@ package ballistix.registers;
 
 import java.util.UUID;
 
-import ballistix.Ballistix;
 import com.mojang.serialization.Codec;
 
+import ballistix.Ballistix;
 import ballistix.common.item.ItemTracker;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentType;

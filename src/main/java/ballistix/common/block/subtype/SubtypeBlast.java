@@ -1,5 +1,8 @@
 package ballistix.common.block.subtype;
 
+import java.util.Locale;
+import java.util.function.Supplier;
+
 import ballistix.Ballistix;
 import ballistix.api.blast.IBlast;
 import ballistix.common.blast.Blast;
@@ -34,9 +37,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.Shapes;
 import voltaic.api.ISubtype;
 import voltaic.common.block.voxelshapes.VoxelShapeProvider;
-
-import java.util.Locale;
-import java.util.function.Supplier;
 
 public enum SubtypeBlast implements ISubtype, IBlast {
 

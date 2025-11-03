@@ -1,15 +1,16 @@
 package ballistix.client.event;
 
+import java.util.HashMap;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+
 import ballistix.api.blast.IBlast;
 import ballistix.client.render.entity.RenderBlast;
 import ballistix.common.entity.EntityBlast;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.Event;
 import net.neoforged.fml.event.IModBusEvent;
-
-import java.util.HashMap;
 
 public class RegisterBlastRenderersEvent extends Event implements IModBusEvent {
 

@@ -1,8 +1,8 @@
 package ballistix.client.render.entity;
 
-import ballistix.api.blast.IBlast;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import ballistix.api.blast.IBlast;
 import ballistix.common.entity.EntityExplosive;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;

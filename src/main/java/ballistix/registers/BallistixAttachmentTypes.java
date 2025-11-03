@@ -5,11 +5,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
-import ballistix.Ballistix;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
 
+import ballistix.Ballistix;
 import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.api.missile.virtual.VirtualProjectile;
 import net.minecraft.core.BlockPos;

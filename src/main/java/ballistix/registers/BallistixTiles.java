@@ -1,8 +1,8 @@
 package ballistix.registers;
 
-import ballistix.Ballistix;
 import com.google.common.collect.Sets;
 
+import ballistix.Ballistix;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.tile.TileESMTower;
 import ballistix.common.tile.radar.TileFireControlRadar;

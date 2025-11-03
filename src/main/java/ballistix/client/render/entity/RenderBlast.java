@@ -1,9 +1,11 @@
 package ballistix.client.render.entity;
 
-import ballistix.api.blast.IBlast;
-import ballistix.client.event.RegisterBlastRenderersEvent;
+import java.util.HashMap;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import ballistix.api.blast.IBlast;
+import ballistix.client.event.RegisterBlastRenderersEvent;
 import ballistix.common.entity.EntityBlast;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.culling.Frustum;
@@ -11,8 +13,6 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
-
-import java.util.HashMap;
 
 public class RenderBlast extends EntityRenderer<EntityBlast> {
 

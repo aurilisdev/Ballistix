@@ -1,5 +1,7 @@
 package ballistix.common.entity;
 
+import javax.annotation.Nullable;
+
 import ballistix.api.blast.IBlast;
 import ballistix.api.entity.IDefusable;
 import ballistix.common.blast.Blast;
@@ -33,8 +35,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
-
-import javax.annotation.Nullable;
 
 public class EntityMinecart extends AbstractMinecart implements IDefusable {
 

@@ -4,11 +4,10 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import ballistix.client.particle.ParticleOptionsMissileSmoke;
-import ballistix.common.settings.BallistixConstants;
-
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualProjectile;
+import ballistix.client.particle.ParticleOptionsMissileSmoke;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.registers.BallistixEntities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.UUIDUtil;

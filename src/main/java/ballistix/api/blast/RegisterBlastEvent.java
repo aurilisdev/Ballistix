@@ -1,13 +1,13 @@
 package ballistix.api.blast;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import ballistix.common.blast.Blast;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.Event;
 import net.neoforged.fml.event.IModBusEvent;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class RegisterBlastEvent extends Event implements IModBusEvent {
 

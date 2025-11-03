@@ -9,7 +9,6 @@ import ballistix.common.item.ItemMinecart.SubtypeMinecart;
 import ballistix.common.recipe.recipeutils.ChargedItemIngredient;
 import ballistix.common.tags.BallistixTags;
 import ballistix.registers.BallistixItems;
-import electrodynamics.Electrodynamics;
 import electrodynamics.common.block.subtype.SubtypeMachine;
 import electrodynamics.common.block.subtype.SubtypeWire;
 import electrodynamics.registers.ElectrodynamicsItems;

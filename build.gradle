@@ -2,7 +2,7 @@ plugins {
     id 'java-library'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.gradle.userdev' version '7.0.165'
+    alias(libs.plugins.userdev)
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -13,6 +13,11 @@ tasks.named('wrapper', Wrapper).configure {
     // (Verify by checking gradle/wrapper/gradle-wrapper.properties to see if distributionUrl now points to `-all`)
     distributionType = Wrapper.DistributionType.BIN
 }
+var minecraft_version = libs.versions.minecraft.get()
+var minecraft_version_range = libs.versions.minecraftRange.get()
+var neo_version = libs.versions.neoforge.get()
+var neo_version_range = libs.versions.neoforgeRange.get()
+var loader_version_range = libs.versions.loaderRange.get()
 
 group = mod_group_id
 version = "${minecraft_version}-" + mod_version
@@ -29,9 +34,6 @@ base {
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
-
-println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
-
 
 
 minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -68,7 +70,7 @@ runs {
 
     data {
 
-        programArguments.addAll(
+        arguments.addAll(
                 '--mod', project.mod_id,
                 '--all',
                 '--output', file('src/generated/resources/').getAbsolutePath(),
@@ -86,22 +88,15 @@ configurations {
 }
 
 dependencies {
-    def Folder = new File("C:/AmpzLibz/1.21")
-    if(Folder.exists()) {
-        implementation fileTree(Folder)
-    }
-    def Folder2 = new File("libs")
-    if(Folder2.exists()) {
-        implementation fileTree(Folder2)
-    }
-    implementation "net.neoforged:neoforge:${neo_version}"
-    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
-    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
-    localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
-    //below here is the dependency support mods
+    implementation "voltaic:Voltaic:1.21.1-1.0.0-9"
+    implementation "electrodynamics:Electrodynamics:1.21.1-0.10.1-7"
+    implementation "nuclearscience:Nuclear-Science:1.21.1-0.7.1-7"
+
     compileOnly group: 'com.griefdefender', name: 'api', version: '2.1.1-SNAPSHOT'
-    //compileOnly group: 'com.github.SaberLLC', name: 'Saber-Factions', version: '4.1.4-STABLE'
-    //compileOnly group: 'de.tr7zw', name: 'item-nbt-api', version: '2.14.1'
+
+    implementation libs.neo.neoforge
+    compileOnly libs.bundles.jeiApi
+    localRuntime libs.jei
 }
 
 tasks.register('sourcesJar', Jar).configure {

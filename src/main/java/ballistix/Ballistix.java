@@ -7,6 +7,7 @@ import ballistix.common.block.BallistixVoxelShapes;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.item.ItemGrenade;
 import ballistix.common.item.ItemMinecart;
+import ballistix.common.settings.BallistixConfig;
 import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tags.BallistixTags;
 import ballistix.registers.BallistixItems;
@@ -17,16 +18,19 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModLoader;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import voltaic.prefab.configuration.ConfigurationHandler;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
 @Mod(Ballistix.ID)
 @EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)
-public class Ballistix {
+public final class Ballistix {
 
 	public static final String ID = "ballistix";
 	public static final String NAME = "Ballistix";
@@ -34,8 +38,10 @@ public class Ballistix {
 	public static final String NUCLEAR_SCIENCE_ID = "nuclearscience";
 	public static final String GRIEF_DEFENDER_ID = "griefdefender";
 
-	public Ballistix(IEventBus bus) {
-		ConfigurationHandler.registerConfig(BallistixConstants.class);
+	public Ballistix(IEventBus bus, ModContainer container){
+	    BallistixConfig.INSTANCE = new BallistixConfig();
+		container.registerConfig(ModConfig.Type.COMMON, BallistixConfig.INSTANCE.SPEC);
+		container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
 		BallistixVoxelShapes.init();
 		UnifiedBallistixRegister.register(bus);
 	}

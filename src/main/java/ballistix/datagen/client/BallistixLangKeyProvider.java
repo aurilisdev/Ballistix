@@ -468,9 +468,9 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			// Sections
 			addConfiguration("common", "Common");
 			addConfiguration("explosives", "Explosives");
-			addConfiguration("explosives.tier1", "Tier 1");
-			addConfiguration("explosives.tier2", "Tier 2");
-			addConfiguration("explosives.tier3", "Tier 3");
+			addConfiguration("tier1", "Tier 1");
+			addConfiguration("tier2", "Tier 2");
+			addConfiguration("tier3", "Tier 3");
 			addConfiguration("missile_silo", "Missile Silo");
 			addConfiguration("esm_tower", "ESM Tower");
 			addConfiguration("search_radar", "Search Radar");

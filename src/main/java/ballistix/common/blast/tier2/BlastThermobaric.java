@@ -44,6 +44,8 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
         if (!world.isClientSide) {
             thread = new ThreadDynamicRaycastBlast(world, position, (int) BallistixConfig.INSTANCE.EXPLOSIVE_THERMOBARIC_SIZE.getAsDouble(), (float) BallistixConfig.INSTANCE.EXPLOSIVE_THERMOBARIC_ENERGY.getAsDouble(), null);
             thread.start();
+            Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) BallistixConfig.INSTANCE.EXPLOSIVE_THERMOBARIC_SIZE.getAsDouble() * 3, false, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
+            attackEntities((float) BallistixConfig.INSTANCE.EXPLOSIVE_THERMOBARIC_SIZE.getAsDouble() * 2, ex);
         }
 
     }
@@ -59,7 +61,7 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
             return !world.isClientSide;
         }
         if (callCount % 2 == 0) {
-            Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) BallistixConfig.INSTANCE.EXPLOSIVE_THERMOBARIC_SIZE.getAsDouble(), false, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
+            Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) BallistixConfig.INSTANCE.EXPLOSIVE_THERMOBARIC_SIZE.getAsDouble() * 3, false, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
             synchronized (thread.finishedBlocks) {
                 if (pertick == -1) {
                     hasStarted = true;

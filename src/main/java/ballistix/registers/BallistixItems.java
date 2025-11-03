@@ -54,8 +54,8 @@ public class BallistixItems {
 	public static final BulkDeferredHolder<Item, ItemMinecart, SubtypeMinecart> ITEMS_MINECART = new BulkDeferredHolder<>(SubtypeMinecart.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemMinecart(subtype.explosiveType)));
 	public static final BulkDeferredHolder<Item, ItemMissile, SubtypeMissile> ITEMS_MISSILE = new BulkDeferredHolder<>(SubtypeMissile.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemMissile(subtype)));
 
-	public static final DeferredHolder<Item, ItemVoltaic> ITEM_AAMISSILE = ITEMS.register("aamissile", () -> new ItemAAMissile(new Item.Properties().stacksTo(10), BallistixCreativeTabs.MAIN, BallistixConfig.INSTANCE.SAM_CHANCE_TO_DESTROY.get()));
-	public static final DeferredHolder<Item, ItemVoltaic> ITEM_AAMISSILEMK2 = ITEMS.register("aamissilemk2", () -> new ItemAAMissile(new Item.Properties().stacksTo(5), BallistixCreativeTabs.MAIN, BallistixConfig.INSTANCE.ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY.get()));
+	public static final DeferredHolder<Item, ItemVoltaic> ITEM_AAMISSILE = ITEMS.register("aamissile", () -> new ItemAAMissile(new Item.Properties().stacksTo(10), BallistixCreativeTabs.MAIN, () -> BallistixConfig.INSTANCE.SAM_CHANCE_TO_DESTROY.get()));
+	public static final DeferredHolder<Item, ItemVoltaic> ITEM_AAMISSILEMK2 = ITEMS.register("aamissilemk2", () -> new ItemAAMissile(new Item.Properties().stacksTo(5), BallistixCreativeTabs.MAIN, () -> BallistixConfig.INSTANCE.ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY.get()));
 	public static final DeferredHolder<Item, ItemVoltaic> ITEM_BULLET = ITEMS.register("bullet", () -> new ItemVoltaic(new Item.Properties().stacksTo(64), BallistixCreativeTabs.MAIN));
 	public static final DeferredHolder<Item, ItemVoltaic> ITEM_DUSTPOISON = ITEMS.register("dustpoison", () -> new ItemVoltaic(new Item.Properties(), BallistixCreativeTabs.MAIN));
 	public static final DeferredHolder<Item, ItemRocketLauncher> ITEM_ROCKETLAUNCHER = ITEMS.register("rocketlauncher", ItemRocketLauncher::new);

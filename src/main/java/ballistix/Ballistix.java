@@ -82,7 +82,7 @@ public final class Ballistix {
 		    Integer.MAX_VALUE, null, SubtypeBlast.darkmatter.id()).start();
 	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_RADIUS.getAsDouble(),
 		    Integer.MAX_VALUE, null, SubtypeBlast.largeantimatter.id()).start();
-	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) ((int) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble() * 2.5),
+	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble() * 2,
 		    Integer.MAX_VALUE, null, SubtypeBlast.nuclear.id()).start();
 	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConfig.INSTANCE.EXPLOSIVE_EMP_RADIUS.getAsDouble(), Integer.MAX_VALUE,
 		    null, SubtypeBlast.emp.id());

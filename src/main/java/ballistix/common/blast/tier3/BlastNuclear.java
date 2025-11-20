@@ -57,7 +57,7 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble(),
 		    (float) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_ENERGY.getAsDouble(), null);
 	    threadSimple = new ThreadSimpleBlast(world, position,
-		    (int) (BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.get() * 2), Integer.MAX_VALUE, null,
+		    (int) (BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble() * 2), Integer.MAX_VALUE, null,
 		    getBlastType().id());
 	    threadSimple.strictnessAtEdges = 1.7;
 	    threadRay.start();

@@ -6,6 +6,7 @@ import ballistix.Ballistix;
 import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.common.blast.util.Blast;
+import ballistix.common.blast.util.BlastLasting;
 import ballistix.registers.BallistixEntities;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -24,18 +25,31 @@ import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
 import net.neoforged.neoforge.common.world.chunk.TicketController;
 
 public class EntityBlast extends Entity {
-    private static final EntityDataAccessor<Integer> CALLCOUNT = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<String> TYPE = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.STRING);
-    private static final EntityDataAccessor<Boolean> SHOULDSTARTCUSTOMRENDER = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Integer> TICKCOUNT = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> SHOULD_PERSIST = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Integer> PERSISTANCE_TICKS = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> TICKS_PERSISTED = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> HAS_MATURED = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Integer> TICKS_AT_MATURITY = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> MOVEMENT_TICKS = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> TICKS_MOVING = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> MOVING = SynchedEntityData.defineId(EntityBlast.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> CALLCOUNT = SynchedEntityData.defineId(EntityBlast.class,
+	    EntityDataSerializers.INT);
+    private static final EntityDataAccessor<String> TYPE = SynchedEntityData.defineId(EntityBlast.class,
+	    EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<Boolean> SHOULDSTARTCUSTOMRENDER = SynchedEntityData
+	    .defineId(EntityBlast.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> TICKCOUNT = SynchedEntityData.defineId(EntityBlast.class,
+	    EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> SHOULD_PERSIST = SynchedEntityData.defineId(EntityBlast.class,
+	    EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> PERSISTANCE_TICKS = SynchedEntityData.defineId(EntityBlast.class,
+	    EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> TICKS_PERSISTED = SynchedEntityData.defineId(EntityBlast.class,
+	    EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> HAS_MATURED = SynchedEntityData.defineId(EntityBlast.class,
+	    EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> TICKS_AT_MATURITY = SynchedEntityData.defineId(EntityBlast.class,
+	    EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> MOVEMENT_TICKS = SynchedEntityData.defineId(EntityBlast.class,
+	    EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> TICKS_MOVING = SynchedEntityData.defineId(EntityBlast.class,
+	    EntityDataSerializers.INT);
+
+    private static final EntityDataAccessor<Boolean> MOVING = SynchedEntityData.defineId(EntityBlast.class,
+	    EntityDataSerializers.BOOLEAN);
 
     private Blast blast;
     public ResourceLocation blastId;
@@ -53,299 +67,301 @@ public class EntityBlast extends Entity {
     private boolean moving = false;
 
     public EntityBlast(EntityType<? extends EntityBlast> type, Level worldIn) {
-        super(type, worldIn);
-        blocksBuilding = true;
+	super(type, worldIn);
+	blocksBuilding = true;
     }
 
     public EntityBlast(Level worldIn) {
-        this(BallistixEntities.ENTITY_BLAST.get(), worldIn);
+	this(BallistixEntities.ENTITY_BLAST.get(), worldIn);
     }
 
     @Override
     public boolean shouldRender(double x, double y, double z) {
-        return true;
+	return true;
     }
 
     public void setPersistant(int tickCount, int movementTicks) { // set to -1 for infinite
-        //shouldPersist = true;
-        persistanceTicks = tickCount;
-        this.movementTicks = movementTicks;
+	// shouldPersist = true;
+	persistanceTicks = tickCount;
+	this.movementTicks = movementTicks;
     }
 
     public void setBlastType(IBlast explosive) {
-        blastId = explosive.id();
-        blast = getBlastType().createBlast(level(), blockPosition());
+	blastId = explosive.id();
+	blast = getBlastType().createBlast(level(), blockPosition());
     }
 
     @Nullable
     public IBlast getBlastType() {
-        return blastId == null ? null : Blast.BLAST_MAP.get(blastId);
+	return blastId == null ? null : Blast.BLAST_MAP.get(blastId);
     }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        builder.define(CALLCOUNT, 0);
-        builder.define(TYPE, "");
-        builder.define(SHOULDSTARTCUSTOMRENDER, false);
-        builder.define(TICKCOUNT, 0);
-        builder.define(SHOULD_PERSIST, false);
-        builder.define(PERSISTANCE_TICKS, 0);
-        builder.define(HAS_MATURED, false);
-        builder.define(TICKS_AT_MATURITY, 0);
-        builder.define(TICKS_PERSISTED, 0);
-        builder.define(MOVEMENT_TICKS, 0);
-        builder.define(MOVING, false);
-        builder.define(TICKS_MOVING, 0);
+	builder.define(CALLCOUNT, 0);
+	builder.define(TYPE, "");
+	builder.define(SHOULDSTARTCUSTOMRENDER, false);
+	builder.define(TICKCOUNT, 0);
+	builder.define(SHOULD_PERSIST, false);
+	builder.define(PERSISTANCE_TICKS, 0);
+	builder.define(HAS_MATURED, false);
+	builder.define(TICKS_AT_MATURITY, 0);
+	builder.define(TICKS_PERSISTED, 0);
+	builder.define(MOVEMENT_TICKS, 0);
+	builder.define(MOVING, false);
+	builder.define(TICKS_MOVING, 0);
     }
 
     @Override
     public void tick() {
-        tickCount++;
-        if (detonated /* || tickCount > 1000 */) {
-            if (!level().isClientSide && tickCount > 20) {
-                remove(RemovalReason.DISCARDED);
-            }
-            return;
-        }
+	tickCount++;
+	if (detonated /* || tickCount > 1000 */) {
+	    if (!level().isClientSide && tickCount > 20) {
+		remove(RemovalReason.DISCARDED);
+	    }
+	    return;
+	}
 
-        if (!level().isClientSide) {
-            if(blastId != null) {
-                entityData.set(TYPE, blastId.toString());
-            }
-            entityData.set(CALLCOUNT, callcount);
-            entityData.set(SHOULDSTARTCUSTOMRENDER, blast instanceof IHasCustomRender has && has.shouldRender());
-            entityData.set(TICKCOUNT, tickCount);
-            entityData.set(SHOULD_PERSIST, shouldPersist);
-            entityData.set(PERSISTANCE_TICKS, persistanceTicks);
-            entityData.set(TICKS_PERSISTED, ticksPersisted);
-            entityData.set(HAS_MATURED, hasMatured);
-            entityData.set(TICKS_AT_MATURITY, ticksAtMaturity);
-            entityData.set(MOVEMENT_TICKS, movementTicks);
-            entityData.set(MOVING, moving);
-            entityData.set(TICKS_MOVING, ticksMoving);
-        } else {
-            String str = entityData.get(TYPE);
-            if(!str.isEmpty()) {
-                blastId = ResourceLocation.parse(str);
-            }
-            callcount = entityData.get(CALLCOUNT);
-            if (!shouldRenderCustom && entityData.get(SHOULDSTARTCUSTOMRENDER)) {
-                ticksWhenCustomRender = tickCount;
-            }
-            shouldRenderCustom = entityData.get(SHOULDSTARTCUSTOMRENDER);
-            if (blast != null) {
-                blast.shouldRenderCustomClient = shouldRenderCustom;
-            }
-            tickCount = entityData.get(TICKCOUNT);
-            shouldPersist = entityData.get(SHOULD_PERSIST);
-            persistanceTicks = entityData.get(PERSISTANCE_TICKS);
-            ticksPersisted = entityData.get(TICKS_PERSISTED);
-            hasMatured = entityData.get(HAS_MATURED);
-            ticksAtMaturity = entityData.get(TICKS_AT_MATURITY);
-            movementTicks = entityData.get(MOVEMENT_TICKS);
-            moving = entityData.get(MOVING);
-            ticksMoving = entityData.get(TICKS_MOVING);
-        }
+	if (!level().isClientSide) {
+	    if (blastId != null) {
+		entityData.set(TYPE, blastId.toString());
+	    }
+	    entityData.set(CALLCOUNT, callcount);
+	    entityData.set(SHOULDSTARTCUSTOMRENDER, blast instanceof IHasCustomRender has && has.shouldRender());
+	    entityData.set(TICKCOUNT, tickCount);
+	    entityData.set(SHOULD_PERSIST, shouldPersist);
+	    entityData.set(PERSISTANCE_TICKS, persistanceTicks);
+	    entityData.set(TICKS_PERSISTED, ticksPersisted);
+	    entityData.set(HAS_MATURED, hasMatured);
+	    entityData.set(TICKS_AT_MATURITY, ticksAtMaturity);
+	    entityData.set(MOVEMENT_TICKS, movementTicks);
+	    entityData.set(MOVING, moving);
+	    entityData.set(TICKS_MOVING, ticksMoving);
+	} else {
+	    String str = entityData.get(TYPE);
+	    if (!str.isEmpty()) {
+		blastId = ResourceLocation.parse(str);
+	    }
+	    callcount = entityData.get(CALLCOUNT);
+	    if (!shouldRenderCustom && entityData.get(SHOULDSTARTCUSTOMRENDER)) {
+		ticksWhenCustomRender = tickCount;
+	    }	
+	    shouldRenderCustom = entityData.get(SHOULDSTARTCUSTOMRENDER);
+	    if (blast != null) {
+		blast.shouldRenderCustomClient = shouldRenderCustom;
+	    }
+	    tickCount = entityData.get(TICKCOUNT);
+	    shouldPersist = entityData.get(SHOULD_PERSIST);
+	    persistanceTicks = entityData.get(PERSISTANCE_TICKS);
+	    ticksPersisted = entityData.get(TICKS_PERSISTED);
+	    hasMatured = entityData.get(HAS_MATURED);
+	    ticksAtMaturity = entityData.get(TICKS_AT_MATURITY);
+	    movementTicks = entityData.get(MOVEMENT_TICKS);
+	    moving = entityData.get(MOVING);
+	    ticksMoving = entityData.get(TICKS_MOVING);
+	    if(blast instanceof BlastLasting lasting)
+	    {
+		lasting.ticksSinceBlastStart = tickCount - ticksWhenCustomRender;
+	    }
+	}
 
-        if (blastId == null) {
-            return;
-        }
+	if (blastId == null) {
+	    return;
+	}
 
-        if (blast == null) {
-            blast = getBlastType().createBlast(level(), blockPosition());
-            if(shouldPersist && hasMatured) {
-                blast.isRepeating = true;
-            }
-        }
+	if (blast == null) {
+	    blast = getBlastType().createBlast(level(), blockPosition());
+	    if (shouldPersist && hasMatured) {
+		blast.isRepeating = true;
+	    }
+	}
 
-        if (blast != null) {
+	if (blast != null) {
 
-            if(shouldPersist) {
+	    if (shouldPersist) {
 
-                if(persistanceTicks == -1 || ticksPersisted > persistanceTicks) {
-                    detonated = true;
-                    return;
-                }
+		if (persistanceTicks == -1 || ticksPersisted > persistanceTicks) {
+		    detonated = true;
+		    return;
+		}
 
-                if(hasMatured) {
+		if (hasMatured) {
 
-                    if(moving) {
+		    if (moving) {
 
-                        setPos(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z);
+			setPos(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y,
+				getZ() + getDeltaMovement().z);
 
-                        ticksMoving++;
+			ticksMoving++;
 
-                        if(ticksMoving >= movementTicks) {
-                            moving = false;
-                            ticksMoving = 0;
-                            callcount = 0;
-                            blast = getBlastType().createBlast(level(), blockPosition());
-                            blast.isRepeating = true;
-                        }
+			if (ticksMoving >= movementTicks) {
+			    moving = false;
+			    ticksMoving = 0;
+			    callcount = 0;
+			    blast = getBlastType().createBlast(level(), blockPosition());
+			    blast.isRepeating = true;
+			}
 
-                    } else {
+		    } else {
 
-                        if (callcount == 0) {
-                            blast.preExplode();
-                        } else {
-                            if (blast.explode(callcount)) {
-                                blast.postExplode();
-                                if(!level().isClientSide) {
-                                    double dX = level().random.nextDouble() * (level().random.nextBoolean() ? 1 : -1);
-                                    double dY = level().random.nextDouble() * (level().random.nextBoolean() ? 1 : -1);
-                                    double dZ = level().random.nextDouble() * (level().random.nextBoolean() ? 1 : -1);
+			if (callcount == 0) {
+			    blast.preExplode();
+			} else {
+			    if (blast.explode(callcount)) {
+				blast.postExplode();
+				if (!level().isClientSide) {
+				    double dX = level().random.nextDouble() * (level().random.nextBoolean() ? 1 : -1);
+				    double dY = level().random.nextDouble() * (level().random.nextBoolean() ? 1 : -1);
+				    double dZ = level().random.nextDouble() * (level().random.nextBoolean() ? 1 : -1);
 
-                                    //Weights to keep it between min and max build heights
+				    // Weights to keep it between min and max build heights
 
-                                    int deltaHeight = level().getMaxBuildHeight() - level().getMinBuildHeight();
+				    int deltaHeight = level().getMaxBuildHeight() - level().getMinBuildHeight();
 
-                                    float fifths = deltaHeight / 5.0F;
+				    float fifths = deltaHeight / 5.0F;
 
-                                    // min weight
+				    // min weight
 
-                                    if(dY < 0 && getY() <= (level().getMinBuildHeight() + fifths)) {
+				    if (dY < 0 && getY() <= (level().getMinBuildHeight() + fifths)) {
 
-                                        float relativeHeight = (float) (getY() - level().getMinBuildHeight());
-                                        float perc = 1.0F - relativeHeight / fifths;
+					float relativeHeight = (float) (getY() - level().getMinBuildHeight());
+					float perc = 1.0F - relativeHeight / fifths;
 
-                                        if(level().random.nextFloat() <= perc) {
-                                            dY = Math.abs(dY);
-                                        }
+					if (level().random.nextFloat() <= perc) {
+					    dY = Math.abs(dY);
+					}
 
+				    }
 
-                                    }
+				    // max weight
 
-                                    // max weight
+				    if (dY > 0 && getY() >= (level().getMinBuildHeight() + fifths * 3)) {
 
-                                    if(dY > 0 && getY() >= (level().getMinBuildHeight() + fifths * 3)) {
+					float relativeHeight = (float) (getY() - level().getMinBuildHeight());
+					float perc = relativeHeight / (fifths * 5);
 
-                                        float relativeHeight = (float) (getY() - level().getMinBuildHeight());
-                                        float perc = relativeHeight / (fifths * 5);
+					if (level().random.nextFloat() <= perc) {
+					    dY = -dY;
+					}
 
-                                        if(level().random.nextFloat() <= perc) {
-                                            dY = -dY;
-                                        }
+				    }
 
+				    setDeltaMovement(dX, dY, dZ);
 
-                                    }
+				}
+				moving = true;
+				persistanceTicks++;
+			    }
+			}
+			callcount++;
 
+		    }
 
+		} else {
 
-                                    setDeltaMovement(dX, dY, dZ);
+		    if (callcount == 0) {
+			blast.preExplode();
+		    } else {
+			if (blast.explode(callcount)) {
+			    blast.postExplode();
+			    hasMatured = true;
+			    ticksAtMaturity = tickCount;
+			    ticksPersisted = 0;
+			    ticksMoving = 0;
+			    callcount = 0;
+			    // unload the chunk at this point
+			    ChunkPos pos = level().getChunk(blockPosition()).getPos();
+			    ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level(), blockPosition(),
+				    pos.x, pos.z, false, true);
+			}
+		    }
 
-                                }
-                                moving = true;
-                                persistanceTicks++;
-                            }
-                        }
-                        callcount++;
+		    callcount++;
+		}
 
-                    }
+	    } else {
+		if (callcount == 0) {
+		    blast.preExplode();
+		} else {
+		    if (blast.explode(callcount)) {
+			detonated = true;
+			blast.postExplode();
+		    }
+		}
 
+		callcount++;
 
-                } else {
+	    }
 
-                    if (callcount == 0) {
-                        blast.preExplode();
-                    } else {
-                        if (blast.explode(callcount)) {
-                            blast.postExplode();
-                            hasMatured = true;
-                            ticksAtMaturity = tickCount;
-                            ticksPersisted = 0;
-                            ticksMoving = 0;
-                            callcount = 0;
-                            //unload the chunk at this point
-                            ChunkPos pos = level().getChunk(blockPosition()).getPos();
-                            ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level(), blockPosition(), pos.x, pos.z, false, true);
-                        }
-                    }
-
-                    callcount++;
-                }
-
-            } else {
-                if (callcount == 0) {
-                    blast.preExplode();
-                } else {
-                    if (blast.explode(callcount)) {
-                        detonated = true;
-                        blast.postExplode();
-                    }
-                }
-
-                callcount++;
-
-            }
-
-
-
-
-        }
+	}
     }
 
     @Override
     public void onAddedToLevel() {
-        super.onAddedToLevel();
-        if (!level().isClientSide() && !hasMatured) {
-            ChunkPos pos = level().getChunk(blockPosition()).getPos();
-            ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level(), blockPosition(), pos.x, pos.z, true, true);
-        }
+	super.onAddedToLevel();
+	if (!level().isClientSide() && !hasMatured) {
+	    ChunkPos pos = level().getChunk(blockPosition()).getPos();
+	    ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level(), blockPosition(), pos.x, pos.z, true,
+		    true);
+	}
     }
 
     @Override
     public void remove(RemovalReason reason) {
-        if (!level().isClientSide && reason == RemovalReason.DISCARDED && !hasMatured) {
-            ChunkPos pos = level().getChunk(blockPosition()).getPos();
-            ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level(), blockPosition(), pos.x, pos.z, false, true);
-        }
-        super.remove(reason);
+	if (!level().isClientSide && reason == RemovalReason.DISCARDED && !hasMatured) {
+	    ChunkPos pos = level().getChunk(blockPosition()).getPos();
+	    ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level(), blockPosition(), pos.x, pos.z, false,
+		    true);
+	}
+	super.remove(reason);
     }
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compound) {
-        ResourceLocation.CODEC.encodeStart(NbtOps.INSTANCE, blastId).ifSuccess(tag -> compound.put("type", tag));
-        compound.putInt("callcount", callcount);
-        compound.putInt("persistanceticks", persistanceTicks);
-        compound.putInt("tickspersisted", ticksPersisted);
-        compound.putInt("ticksatmaturity", ticksAtMaturity);
-        compound.putInt("movementticks", movementTicks);
-        compound.putInt("ticksmoving", ticksMoving);
-        compound.putBoolean("moivng", moving);
-        compound.putBoolean("shouldpersist", shouldPersist);
-        compound.putBoolean("hasmatured", hasMatured);
+	ResourceLocation.CODEC.encodeStart(NbtOps.INSTANCE, blastId).ifSuccess(tag -> compound.put("type", tag));
+	compound.putInt("callcount", callcount);
+	compound.putInt("persistanceticks", persistanceTicks);
+	compound.putInt("tickspersisted", ticksPersisted);
+	compound.putInt("ticksatmaturity", ticksAtMaturity);
+	compound.putInt("movementticks", movementTicks);
+	compound.putInt("ticksmoving", ticksMoving);
+	compound.putBoolean("moivng", moving);
+	compound.putBoolean("shouldpersist", shouldPersist);
+	compound.putBoolean("hasmatured", hasMatured);
+
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
-        ResourceLocation.CODEC.decode(NbtOps.INSTANCE, compound.get("type")).ifSuccess(pair -> blastId = pair.getFirst());
-        callcount = compound.getInt("callcount");
-        if (blastId != null) {
-            setBlastType(getBlastType());
-        }
-        persistanceTicks = compound.getInt("persistanceticks");
-        ticksPersisted = compound.getInt("tickspersisted");
-        ticksAtMaturity = compound.getInt("ticksatmaturity");
-        shouldPersist = compound.getBoolean("shouldpersist");
-        hasMatured = compound.getBoolean("hasmatured");
-        movementTicks = compound.getInt("movementticks");
-        moving = compound.getBoolean("moving");
-        ticksMoving = compound.getInt("ticksmoving");
+	ResourceLocation.CODEC.decode(NbtOps.INSTANCE, compound.get("type"))
+		.ifSuccess(pair -> blastId = pair.getFirst());
+	callcount = compound.getInt("callcount");
+	if (blastId != null) {
+	    setBlastType(getBlastType());
+	}
+	persistanceTicks = compound.getInt("persistanceticks");
+	ticksPersisted = compound.getInt("tickspersisted");
+	ticksAtMaturity = compound.getInt("ticksatmaturity");
+	shouldPersist = compound.getBoolean("shouldpersist");
+	hasMatured = compound.getBoolean("hasmatured");
+	movementTicks = compound.getInt("movementticks");
+	moving = compound.getBoolean("moving");
+	ticksMoving = compound.getInt("ticksmoving");
     }
 
     public Blast getBlast() {
-        return blast;
+	return blast;
     }
 
     @EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)
     private static final class ChunkloaderManager {
 
-        private static final TicketController TICKET_CONTROLLER = new TicketController(Ballistix.rl("blastcontroller"));
+	private static final TicketController TICKET_CONTROLLER = new TicketController(Ballistix.rl("blastcontroller"));
 
-        @SubscribeEvent
-        public static void register(RegisterTicketControllersEvent event) {
-            event.register(TICKET_CONTROLLER);
-        }
+	@SubscribeEvent
+	public static void register(RegisterTicketControllersEvent event) {
+	    event.register(TICKET_CONTROLLER);
+	}
 
     }
 

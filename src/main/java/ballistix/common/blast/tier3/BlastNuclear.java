@@ -222,8 +222,8 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	if (ticksSinceBlastStart < 5) {
 	    // Fireball
 	    ParticleOptions particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 3f, -0.045f,
-		    1500, true, true, 200, 0.97);
-	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 250, 10, 90, initialSpeed, true);
+		    1500, true, true, 200, 0.98);
+	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 500, 10, 90, initialSpeed, true);
 
 	    // Centersmokes fast falling
 	    initialSpeed = 2;
@@ -231,11 +231,15 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 75, 0, 20, initialSpeed, true);
 	    // Centersmokes veryslowfalling
 	    initialSpeed = 2;
-	    particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 2.5f, 0.01f, 1500, true, 0.995);
+	    particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 2.5f, 0.045f, 1500, true, 0.995);
+	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 125, 0, 20, initialSpeed, true);
+	    // Centersmokes living longer center
+	    initialSpeed = 2;
+	    particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 2.5f, 0.015f, 1500, true, 0.97);
 	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 125, 0, 20, initialSpeed, true);
 	    // Centersmokes rising
 	    initialSpeed = 2;
-	    particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 2.5f, -0.015f, 1500, true, 0.97);
+	    particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 2.5f, -0.015f, 300, true, 0.97);
 	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 100, 0, 20, initialSpeed, true);
 
 	    // Shockwave
@@ -251,11 +255,15 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 		    0.40625f / 0.8f, 3f, -0.045f, Mth.clamp(1500 - ticksSinceBlastStart, 1, 1500), true, 0.975);
 	    ParticleUtilities.spawnParticleSphere(particle, x, y + 0.024f * ticksSinceBlastStart, z, 1, -20, 20,
 		    initialSpeed, true);
-	    if (ticksSinceBlastStart < 1250) {
+	    particle = new ParticleOptionsBlastSmoke().setParameters(0.40625f / 0.8f, 0.40625f / 0.8f,
+		    0.40625f / 0.8f, 3f, 0, Mth.clamp(1500 - ticksSinceBlastStart, 1, 1500), true, 0.975);
+	    ParticleUtilities.spawnParticleSphere(particle, x, y + 0.024f * ticksSinceBlastStart, z, 1, -20, 20,
+		    initialSpeed, true);
+	    if (ticksSinceBlastStart < 1400) {
 		// Centerfire rising
 		initialSpeed = 0.5;
 		particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 3f, -0.045f,
-			Mth.clamp(1250 - ticksSinceBlastStart, 1, 1250), true, true, 500, 0.97);
+			Mth.clamp(1400 - ticksSinceBlastStart, 1, 1400), true, true, 500, 0.98);
 		ParticleUtilities.spawnParticleSphere(particle, x, y + 0.033f * ticksSinceBlastStart, z, 1, -20, 20,
 			initialSpeed, true);
 	    }

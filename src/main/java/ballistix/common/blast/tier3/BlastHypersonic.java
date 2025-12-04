@@ -35,8 +35,8 @@ public class BlastHypersonic extends BlastLasting {
 
     @Override
     public void doPreExplode() {
-        if (!world.isClientSide) {
-            thread = new ThreadSimpleBlast(world, position, (int) BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_RADIUS.getAsDouble(), Integer.MAX_VALUE, null, getBlastType().id());
+        if (!world.isClientSide) { 
+            thread = new ThreadSimpleBlast(world, position, (int) BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_RADIUS.getAsDouble(), Integer.MAX_VALUE, null, getBlastType().id(), true);
             thread.start();
             world.playSound(null, position, BallistixSounds.SOUND_HYPERSONICSONICEXPLOSION.get(), SoundSource.BLOCKS, 25, 1);
         }
@@ -54,7 +54,7 @@ public class BlastHypersonic extends BlastLasting {
         }
         if (pertick == -1) {
             hasStarted = true;
-            pertick = (int) (thread.results.size() * 1.5 / BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_DURATION.get() + 1);
+            pertick = (int) (thread.results.size()  / BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_DURATION.get() + 1);
             iterator = thread.results.iterator();
         }
         int finished = pertick;
@@ -84,68 +84,73 @@ public class BlastHypersonic extends BlastLasting {
             if(!shouldRepulse) {
                 continue;
             }
+	    double deltaX = p.getX() - position.getX();
+	    double deltaY = p.getY() - position.getY();
+	    double deltaZ = p.getZ() - position.getZ();
 
-            double deltaX = p.getX() - position.getX();
-            double deltaY = p.getY() - position.getY();
-            double deltaZ = p.getZ() - position.getZ();
+	    double inverseMag = Mth.fastInvSqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
-            double inverseMag = Mth.fastInvSqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+	    double velX = deltaX * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_VELOCITY.getAsDouble();
+	    double velY = Math.abs(deltaY) * inverseMag
+		    * BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_VELOCITY.getAsDouble();
+	    double velZ = deltaZ * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_VELOCITY.getAsDouble();
 
-            double velX = deltaX * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_VELOCITY.get();
-            double velY = deltaY * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_VELOCITY.get();
-            double velZ = deltaZ * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_VELOCITY.get();
-
-            EntityBallistixFallingBlock movingBlock = new EntityBallistixFallingBlock(world, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, state);
-            movingBlock.setDeltaMovement(velX, velY, velZ);
-            world.setBlock(p, state.getFluidState().createLegacyBlock(), 3);
-            world.addFreshEntity(movingBlock);
+	    EntityBallistixFallingBlock movingBlock = new EntityBallistixFallingBlock(world, p.getX() + 0.5,
+		    p.getY() + 0.5, p.getZ() + 0.5, state, thread.results);
+	    movingBlock.setDeltaMovement(velX * 0.33, velY * 3, velZ * 0.33);
+	    world.setBlock(p, state.getFluidState().createLegacyBlock(), 3);
+	    if (world.random.nextFloat() < 1.0/6.0) {
+		world.addFreshEntity(movingBlock);
+	    }
         }
+	if (iterator.hasNext()) {
+	    float x = position.getX();
+	    float y = position.getY();
+	    float z = position.getZ();
 
-        if(!iterator.hasNext()) {
-            float x = position.getX();
-            float y = position.getY();
-            float z = position.getZ();
+	    float size = (float) BallistixConfig.INSTANCE.EXPLOSIVE_SONIC_RADIUS.getAsDouble();
+	    float doubleSize = size * 2.0F;
 
-            float size = (float) BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_RADIUS.getAsDouble();
-            float doubleSize = size * 2.0F;
+	    int x0 = Mth.floor(x - (double) doubleSize - 1.0D);
+	    int x1 = Mth.floor(x + (double) doubleSize + 1.0D);
+	    int y0 = Mth.floor(y - (double) doubleSize - 1.0D);
+	    int y1 = Mth.floor(y + (double) doubleSize + 1.0D);
+	    int z0 = Mth.floor(z - (double) doubleSize - 1.0D);
+	    int z1 = Mth.floor(z + (double) doubleSize + 1.0D);
 
-            int x0 = Mth.floor(x - (double) doubleSize - 1.0D);
-            int x1 = Mth.floor(x + (double) doubleSize + 1.0D);
-            int y0 = Mth.floor(y - (double) doubleSize - 1.0D);
-            int y1 = Mth.floor(y + (double) doubleSize + 1.0D);
-            int z0 = Mth.floor(z - (double) doubleSize - 1.0D);
-            int z1 = Mth.floor(z + (double) doubleSize + 1.0D);
+	    List<LivingEntity> entities = world.getEntitiesOfClass(LivingEntity.class,
+		    new AABB(x0, y0, z0, x1, y1, z1));
 
-            List<LivingEntity> entities = world.getEntitiesOfClass(LivingEntity.class, new AABB(x0, y0, z0, x1, y1, z1));
+	    for (LivingEntity entity : entities) {
 
-            for (LivingEntity entity : entities) {
+		switch (griefPreventionMethod) {
+		case GRIEF_DEFENDER:
+		    if (!GriefDefenderHandler.shouldEntityBeHarmed(entity)) {
+			continue;
+		    }
+		    break;
+		default:
+		    break;
+		}
 
-                switch (griefPreventionMethod) {
-                    case GRIEF_DEFENDER:
-                        if (!GriefDefenderHandler.shouldEntityBeHarmed(entity)) {
-                            continue;
-                        }
-                        break;
-                    default:
-                        break;
-                }
+		double deltaX = entity.getX() - position.getX();
+		double deltaY = entity.getY() - position.getY();
+		double deltaZ = entity.getZ() - position.getZ();
 
-                double deltaX = entity.getX() - position.getX();
-                double deltaY = entity.getY() - position.getY();
-                double deltaZ = entity.getZ() - position.getZ();
+		double inverseMag = Mth.fastInvSqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
-                double inverseMag = Mth.fastInvSqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+		double velX = deltaX * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_SONIC_VELOCITY.getAsDouble();
+		double velY = Math.abs(deltaY) * inverseMag
+			* BallistixConfig.INSTANCE.EXPLOSIVE_SONIC_VELOCITY.getAsDouble();
+		double velZ = deltaZ * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_SONIC_VELOCITY.getAsDouble();
+		entity.setDeltaMovement(entity.getDeltaMovement().add(velX, velY, velZ));
+	    }
+	} else {
+	    return true;
+	}
 
-                double velX = deltaX * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_VELOCITY.get();
-                double velY = deltaY * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_VELOCITY.get();
-                double velZ = deltaZ * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_VELOCITY.get();
-                entity.setDeltaMovement(entity.getDeltaMovement().add(velX, velY, velZ));
-            }
+	return false;
 
-            return true;
-        }
-
-        return false;
 
 
     }

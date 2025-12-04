@@ -191,8 +191,8 @@ public class BallistixConfig {
         EXPLOSIVE_THERMOBARIC_DURATION = builder.comment("Value is in ticks.").defineInRange("explosive_thermobaric_duration_ticks", 45.0, 0, Double.MAX_VALUE);
         EXPLOSIVE_THERMOBARIC_ENERGY = builder.defineInRange("explosive_thermobaric_energy", 60.0, 0, Double.MAX_VALUE);
         EXPLOSIVE_SONIC_MAXHARDNESS = builder.defineInRange("explosive_sonic_maxhardness", 2.0, 0, Double.MAX_VALUE);
-        EXPLOSIVE_SONIC_RADIUS = builder.defineInRange("explosive_sonic_radius", 20.0, 0, Double.MAX_VALUE);
-        EXPLOSIVE_SONIC_VELOCITY = builder.defineInRange("explosive_sonic_velocity", 5.0, 0, Double.MAX_VALUE);
+        EXPLOSIVE_SONIC_RADIUS = builder.defineInRange("explosive_sonic_radius", 10.0, 0, Double.MAX_VALUE);
+        EXPLOSIVE_SONIC_VELOCITY = builder.defineInRange("explosive_sonic_velocity", 1.0, 0, Double.MAX_VALUE);
         EXPLOSIVE_SONIC_DURATION = builder.comment("Value is in ticks.").defineInRange("explosive_sonic_duration_ticks", 20.0, 0, Double.MAX_VALUE);
         builder.pop(); // end tier2
 
@@ -210,7 +210,7 @@ public class BallistixConfig {
         EXPLOSIVE_NUCLEAR_RADIATION_RADIUS = builder.defineInRange("explosive_nuclear_radiation_radius", 90.0, 0, Double.MAX_VALUE);
         EXPLOSIVE_ENDOTHERMIC_MAXHARDNESS = builder.defineInRange("explosive_endothermic_maxhardness", 1.0, 0, Double.MAX_VALUE);
         EXPLOSIVE_ENDOTHERMIC_RADIUS = builder.defineInRange("explosive_endothermic_radius", 30.0, 0, Double.MAX_VALUE);
-        EXPLOSIVE_ENDOTHERMIC_VELOCITY = builder.defineInRange("explosive_endothermic_velocity", 5.0, 0, Double.MAX_VALUE);
+        EXPLOSIVE_ENDOTHERMIC_VELOCITY = builder.defineInRange("explosive_endothermic_velocity", 1.5, 0, Double.MAX_VALUE);
         EXPLOSIVE_ENDOTHERMIC_DURATION = builder.comment("Value is in ticks.").defineInRange("explosive_endothermic_duration_ticks", 20.0, 0, Double.MAX_VALUE);
         EXPLOSIVE_EXOTHERMIC_MAXHARDNESS = builder.defineInRange("explosive_exothermic_maxhardness", 2.0, 0, Double.MAX_VALUE);
         EXPLOSIVE_EXOTHERMIC_RADIUS = builder.defineInRange("explosive_exothermic_radius", 40.0, 0, Double.MAX_VALUE);
@@ -220,9 +220,9 @@ public class BallistixConfig {
         EXPLOSIVE_ENDER_RADIUS = builder.defineInRange("explosive_ender_radius", 9.0, 0, Double.MAX_VALUE);
         EXPLOSIVE_ENDER_ENDERMANCOUNT = builder.defineInRange("explosive_ender_endermancount", 10, 0, Integer.MAX_VALUE);
         EXPLOSIVE_HYPERSONIC_MAXHARDNESS = builder.defineInRange("explosive_hypersonic_maxhardness", 3.0, 0, Double.MAX_VALUE);
-        EXPLOSIVE_HYPERSONIC_RADIUS = builder.defineInRange("explosive_hypersonic_radius", 30.0, 0, Double.MAX_VALUE);
-        EXPLOSIVE_HYPERSONIC_VELOCITY = builder.defineInRange("explosive_hypersonic_velocity", 5.0, 0, Double.MAX_VALUE);
-        EXPLOSIVE_HYPERSONIC_DURATION = builder.comment("Value is in ticks.").defineInRange("explosive_hypersonic_duration_ticks", 160.0, 0, Double.MAX_VALUE);
+        EXPLOSIVE_HYPERSONIC_RADIUS = builder.defineInRange("explosive_hypersonic_radius", 18, 0, Double.MAX_VALUE);
+        EXPLOSIVE_HYPERSONIC_VELOCITY = builder.defineInRange("explosive_hypersonic_velocity", 1.5, 0, Double.MAX_VALUE);
+        EXPLOSIVE_HYPERSONIC_DURATION = builder.comment("Value is in ticks.").defineInRange("explosive_hypersonic_duration_ticks", 50.0, 0, Double.MAX_VALUE);
         EXPLOSIVE_ANTIMATTER_RADIUS = builder.defineInRange("explosive_antimatter_radius", 45.0, 0, Double.MAX_VALUE);
         EXPLOSIVE_ANTIMATTER_DURATION = builder.comment("Value is in ticks.").defineInRange("explosive_antimatter_duration_ticks", 80.0, 0, Double.MAX_VALUE);
         EXPLOSIVE_LARGEANTIMATTER_RADIUS = builder.defineInRange("explosive_largeantimatter_radius", 100.0, 0, Double.MAX_VALUE);

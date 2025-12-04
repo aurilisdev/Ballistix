@@ -87,11 +87,11 @@ public final class Ballistix {
 	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConfig.INSTANCE.EXPLOSIVE_EMP_RADIUS.getAsDouble(), Integer.MAX_VALUE,
 		    null, SubtypeBlast.emp.id());
 	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConfig.INSTANCE.EXPLOSIVE_SONIC_RADIUS.getAsDouble(),
-		    Integer.MAX_VALUE, null, SubtypeBlast.sonic.id());
+		    Integer.MAX_VALUE, null, SubtypeBlast.sonic.id(), true);
 	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_RADIUS.getAsDouble(),
-		    Integer.MAX_VALUE, null, SubtypeBlast.hypersonic.id());
+		    Integer.MAX_VALUE, null, SubtypeBlast.hypersonic.id(), true);
 	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConfig.INSTANCE.EXPLOSIVE_ENDOTHERMIC_RADIUS.getAsDouble(),
-		    Integer.MAX_VALUE, null, SubtypeBlast.endothermic.id());
+		    Integer.MAX_VALUE, null, SubtypeBlast.endothermic.id(), true);
 	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConfig.INSTANCE.EXPLOSIVE_INFESTIVE_RADIUS.getAsDouble(),
 		    Integer.MAX_VALUE, null, SubtypeBlast.infestive.id());
 	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConfig.INSTANCE.EXPLOSIVE_EXOTHERMIC_RADIUS.getAsDouble(),

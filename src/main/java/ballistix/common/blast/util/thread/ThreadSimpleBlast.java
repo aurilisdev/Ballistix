@@ -8,6 +8,7 @@ import java.util.Random;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
+import com.mojang.datafixers.util.Pair;
 
 import ballistix.common.settings.BallistixConfig;
 import net.minecraft.core.BlockPos;
@@ -19,15 +20,15 @@ import voltaic.prefab.block.HashDistanceBlockPos;
 
 public class ThreadSimpleBlast extends ThreadBlast {
 
-    private static final HashMap<ResourceLocation, HashSet<BlockPos>> CACHED_EUCLIDEAN_RESULTS = new HashMap<>();
+    private static final HashMap<Pair<Integer, ResourceLocation> , HashSet<BlockPos>> CACHED_EUCLIDEAN_RESULTS = new HashMap<>();
     private static final Set<Integer> currentlyCalculating = Collections.synchronizedSet(new HashSet<>());
 
-    private final ResourceLocation id;
+    private final Pair<Integer, ResourceLocation> idPair;
 
     public ThreadSimpleBlast(Level world, BlockPos position, int range, float energy, Entity source, ResourceLocation id) {
         super(world, position, range, energy, source);
         setName("Simple blast thread");
-        this.id = id;
+        this.idPair = new Pair<Integer, ResourceLocation>(range, id);
         setPriority(MAX_PRIORITY);
     }
 
@@ -52,11 +53,11 @@ public class ThreadSimpleBlast extends ThreadBlast {
                         break;
                     }
                 }
-                if (CACHED_EUCLIDEAN_RESULTS.get(id) == null) {
+                if (CACHED_EUCLIDEAN_RESULTS.get(idPair) == null) {
                     currentlyCalculating.add(explosionRadius);
                 }
             }
-            if (CACHED_EUCLIDEAN_RESULTS.get(id) == null) {
+            if (CACHED_EUCLIDEAN_RESULTS.get(idPair) == null) {
                 int rSqrd = explosionRadius * explosionRadius;
                 ArrayList<BlockPos> positions = new ArrayList<>((int) (Math.PI * 4.0 / 3.0 * rSqrd * (explosionRadius + 1)));
                 for (int i = -explosionRadius; i <= explosionRadius; i++) {
@@ -90,10 +91,10 @@ public class ThreadSimpleBlast extends ThreadBlast {
                     positions.set(newIndex, positions.get(i));
                     positions.set(i, atNew);
                 }
-                CACHED_EUCLIDEAN_RESULTS.put(id, Sets.newHashSet(positions));
+                CACHED_EUCLIDEAN_RESULTS.put(idPair, Sets.newHashSet(positions));
             }
 
-            results = CACHED_EUCLIDEAN_RESULTS.get(id);
+            results = CACHED_EUCLIDEAN_RESULTS.get(idPair);
             synchronized (currentlyCalculating) {
                 currentlyCalculating.remove(explosionRadius);
             }

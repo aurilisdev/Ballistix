@@ -57,7 +57,7 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble(),
 		    (float) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_ENERGY.getAsDouble(), null);
 	    threadSimple = new ThreadSimpleBlast(world, position,
-		    (int) (BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble() * 2), Integer.MAX_VALUE, null,
+		    (int) (BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS.getAsDouble()), Integer.MAX_VALUE, null,
 		    getBlastType().id());
 	    threadSimple.strictnessAtEdges = 1.7;
 	    threadRay.start();
@@ -136,13 +136,13 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 		    world.getBlockState(p).getBlock().wasExploded(world, p, ex);
 		    world.setBlock(p, state, 3);
 		    if (world instanceof ServerLevel serverlevel) {
-			if (ticksSinceBlastStart == 1) {
+			if(ticksSinceBlastStart == 0) {
 			    serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(player -> {
 				serverlevel.playSound(null, player.getX(), player.getY(), player.getZ(),
 					BallistixSounds.SOUND_NUCLEAREXPLOSION.get(), // Change to your sound event
 					SoundSource.PLAYERS, 25, 1.0F);
 			    });
-			}
+			    }
 			if (world.random.nextFloat() < 1 / 20.0) {
 			    serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false)
 				    .forEach(pl -> PacketDistributor.sendToPlayer(pl, new PacketSpawnBlastParticle(p,
@@ -158,7 +158,7 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	    secondDamage = true;
 	}
 	if (threadSimple.isComplete && callCount % 2 == 0) {
-	    if (ticksSinceBlastStart == 1 && !thirdDamage) {
+	    if ( !thirdDamage) {
 		attackEntities((float) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble() * 2, ex);
 		thirdDamage = true;
 	    }
@@ -175,9 +175,8 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	    }
 	    if (perticksimple == -1) {
 		cachedIterator = threadSimple.results.iterator();
-		perticksimple = (int) (threadSimple.results.size()
-			/ (BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_DURATION.getAsDouble() * 2.0) + 1);
 	    }
+	    perticksimple = (int) (4 * Math.PI * 0.5 * (int)(BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_DURATION.getAsDouble() / BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_DURATION.getDefault()) * (Math.clamp(callCount*callCount, 0, (int)(BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS.getAsDouble()*BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS.getAsDouble()))));
 	    int finished = perticksimple;
 	    while (cachedIterator.hasNext()) {
 		if (finished-- < 0) {
@@ -196,8 +195,8 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 		    break;
 		}
 		if (ModList.get().isLoaded(Ballistix.NUCLEAR_SCIENCE_ID)
-			&& pos.distSqr(position) / (BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble()
-				* BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble() * 4) < 0.6
+			&& pos.distSqr(position) / (BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS.getAsDouble()
+				* BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS.getAsDouble()) < 0.6
 					+ 0.2 * world.random.nextDouble()) {
 		    RadiationHandler.addNuclearExplosiveIrradidatedBlock(pos, world);
 		}

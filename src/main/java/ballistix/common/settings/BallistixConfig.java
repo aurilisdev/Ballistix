@@ -207,7 +207,7 @@ public class BallistixConfig {
         EXPLOSIVE_NUCLEAR_SIZE = builder.defineInRange("explosive_nuclear_size", 45.0, 0, Double.MAX_VALUE);
         EXPLOSIVE_NUCLEAR_DURATION = builder.comment("Value is in ticks.").defineInRange("explosive_nuclear_duration_ticks", 360.0, 0, Double.MAX_VALUE);
         EXPLOSIVE_NUCLEAR_ENERGY = builder.defineInRange("explosive_nuclear_energy", 120.0, 0, Double.MAX_VALUE);
-        EXPLOSIVE_NUCLEAR_RADIATION_RADIUS = builder.defineInRange("explosive_nuclear_radiation_radius", 45.0, 0, Double.MAX_VALUE);
+        EXPLOSIVE_NUCLEAR_RADIATION_RADIUS = builder.defineInRange("explosive_nuclear_radiation_radius", 90.0, 0, Double.MAX_VALUE);
         EXPLOSIVE_ENDOTHERMIC_MAXHARDNESS = builder.defineInRange("explosive_endothermic_maxhardness", 1.0, 0, Double.MAX_VALUE);
         EXPLOSIVE_ENDOTHERMIC_RADIUS = builder.defineInRange("explosive_endothermic_radius", 30.0, 0, Double.MAX_VALUE);
         EXPLOSIVE_ENDOTHERMIC_VELOCITY = builder.defineInRange("explosive_endothermic_velocity", 5.0, 0, Double.MAX_VALUE);

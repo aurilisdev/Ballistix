@@ -136,7 +136,7 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 		    world.getBlockState(p).getBlock().wasExploded(world, p, ex);
 		    world.setBlock(p, state, 3);
 		    if (world instanceof ServerLevel serverlevel) {
-			if(ticksSinceBlastStart == 0) {
+			if(ticksSinceBlastStart == 1) {
 			    serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(player -> {
 				serverlevel.playSound(null, player.getX(), player.getY(), player.getZ(),
 					BallistixSounds.SOUND_NUCLEAREXPLOSION.get(), // Change to your sound event

@@ -295,6 +295,7 @@ public abstract class GenericTileTurret extends GenericTile {
     }
 
     public static List<Block> raycastToBlockPos(Level world, Vec3 start, Vec3 end) {
+	BlockPos endCheck = new BlockPos((int)end.x, (int)end.y, (int)end.z);
 
         List<Block> blocks = new ArrayList<>();
 
@@ -310,10 +311,11 @@ public abstract class GenericTileTurret extends GenericTile {
         while(i < maxChecks) {
 
             start = start.add(delta);
+    	    BlockPos startCheck = new BlockPos((int)start.x, (int)start.y, (int)start.z);
 
             //Cieled Y
             toCheck = new BlockPos((int) Math.ceil(start.x), (int) Math.ceil(start.y), (int) Math.ceil(start.z));
-            if (!toCheck.equals(start) && !toCheck.equals(end)) {
+            if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
                 state = world.getBlockState(toCheck);
                 if (willStopTurrret(state)) {
                     blocks.add(state.getBlock());
@@ -321,7 +323,7 @@ public abstract class GenericTileTurret extends GenericTile {
             }
 
             toCheck = new BlockPos((int) Math.ceil(start.x), (int) Math.ceil(start.y), (int) Math.floor(start.z));
-            if (!toCheck.equals(start) && !toCheck.equals(end)) {
+            if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
                 state = world.getBlockState(toCheck);
                 if (willStopTurrret(state)) {
                     blocks.add(state.getBlock());
@@ -329,7 +331,7 @@ public abstract class GenericTileTurret extends GenericTile {
             }
 
             toCheck = new BlockPos((int) Math.floor(start.x), (int) Math.ceil(start.y), (int) Math.ceil(start.z));
-            if (!toCheck.equals(start) && !toCheck.equals(end)) {
+            if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
                 state = world.getBlockState(toCheck);
                 if (willStopTurrret(state)) {
                     blocks.add(state.getBlock());
@@ -337,7 +339,7 @@ public abstract class GenericTileTurret extends GenericTile {
             }
 
             toCheck = new BlockPos((int) Math.floor(start.x), (int) Math.ceil(start.y), (int) Math.floor(start.z));
-            if (!toCheck.equals(start) && !toCheck.equals(end)) {
+            if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
                 state = world.getBlockState(toCheck);
                 if (willStopTurrret(state)) {
                     blocks.add(state.getBlock());
@@ -347,7 +349,7 @@ public abstract class GenericTileTurret extends GenericTile {
             // Floored Y
 
             toCheck = new BlockPos((int) Math.ceil(start.x), (int) Math.floor(start.y), (int) Math.ceil(start.z));
-            if (!toCheck.equals(start) && !toCheck.equals(end)) {
+            if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
                 state = world.getBlockState(toCheck);
                 if (willStopTurrret(state)) {
                     blocks.add(state.getBlock());
@@ -355,7 +357,7 @@ public abstract class GenericTileTurret extends GenericTile {
             }
 
             toCheck = new BlockPos((int) Math.ceil(start.x), (int) Math.floor(start.y), (int) Math.floor(start.z));
-            if (!toCheck.equals(start) && !toCheck.equals(end)) {
+            if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
                 state = world.getBlockState(toCheck);
                 if (willStopTurrret(state)) {
                     blocks.add(state.getBlock());
@@ -363,7 +365,7 @@ public abstract class GenericTileTurret extends GenericTile {
             }
 
             toCheck = new BlockPos((int) Math.floor(start.x), (int) Math.floor(start.y), (int) Math.ceil(start.z));
-            if (!toCheck.equals(start) && !toCheck.equals(end)) {
+            if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
                 state = world.getBlockState(toCheck);
                 if (willStopTurrret(state)) {
                     blocks.add(state.getBlock());
@@ -371,7 +373,7 @@ public abstract class GenericTileTurret extends GenericTile {
             }
 
             toCheck = new BlockPos((int) Math.floor(start.x), (int) Math.floor(start.y), (int) Math.floor(start.z));
-            if (!toCheck.equals(start) && !toCheck.equals(end)) {
+            if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
                 state = world.getBlockState(toCheck);
                 if (willStopTurrret(state)) {
                     blocks.add(state.getBlock());

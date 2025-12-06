@@ -24,6 +24,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
@@ -40,8 +41,9 @@ public final class Ballistix {
     public Ballistix(IEventBus bus, ModContainer container) {
 	BallistixConfig.INSTANCE = new BallistixConfig();
 	container.registerConfig(ModConfig.Type.COMMON, BallistixConfig.INSTANCE.SPEC);
-	container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
-	BallistixVoxelShapes.init();
+	if (FMLEnvironment.dist == Dist.CLIENT) {
+	    container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+	}	BallistixVoxelShapes.init();
 	UnifiedBallistixRegister.register(bus);
     }
 

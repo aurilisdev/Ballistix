@@ -113,7 +113,7 @@ public class BlastEndothermic extends BlastLasting implements IHasCustomRender {
 		    p.getY() + 0.5, p.getZ() + 0.5, state, thread.results);
 	    movingBlock.setDeltaMovement(velX * 0.5, velY * 3, velZ * 0.5);
 	    world.setBlock(p, state.getFluidState().createLegacyBlock(), 3);
-	    if (world.random.nextFloat() < 1.0/3.0) {
+	    if (world.random.nextFloat() < 1.0/6.0) {
 		world.addFreshEntity(movingBlock);
 	    }
         }

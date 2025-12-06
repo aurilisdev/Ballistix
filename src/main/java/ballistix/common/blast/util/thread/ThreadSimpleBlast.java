@@ -68,7 +68,7 @@ public class ThreadSimpleBlast extends ThreadBlast {
 		    currentlyCalculating.add(explosionRadius);
 		}
 	    }
-	    if (true) {
+            if (CACHED_EUCLIDEAN_RESULTS.get(idPair) == null) {
 		int rSqrd = explosionRadius * explosionRadius;
 		ArrayList<BlockPos> positions = new ArrayList<>(
 			(int) (Math.PI * 4.0 / 3.0 * rSqrd * (explosionRadius + 1)));

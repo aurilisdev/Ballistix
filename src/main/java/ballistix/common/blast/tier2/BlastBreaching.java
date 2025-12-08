@@ -135,7 +135,7 @@ public class BlastBreaching extends BlastLasting implements IHasCustomRender {
         double endSize = BallistixConfig.INSTANCE.EXPLOSIVE_BREACHING_SIZE.getAsDouble() * 5;
         int diff = (int) (endSize - spawnSize);
         if (ticksSinceBlastStart > diff) return;
-        double size = ParticleUtilities.progressGroundShockwave(world, x, z, ticksSinceBlastStart * 2 / (double) diff, spawnSize, endSize, 0.2);
+        double size = ParticleUtilities.progressGroundShockwave(world, x, z, ticksSinceBlastStart / (double) diff, spawnSize, endSize, 0.1);
         if (hasShaken) return;
         Vec3 pos = new Vec3(x, y, z);
         double realDistance = Minecraft.getInstance().player.position().distanceTo(pos);

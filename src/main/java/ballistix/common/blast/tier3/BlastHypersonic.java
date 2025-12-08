@@ -16,6 +16,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
@@ -98,7 +99,9 @@ public class BlastHypersonic extends BlastLasting {
 	    EntityBallistixFallingBlock movingBlock = new EntityBallistixFallingBlock(world, p.getX() + 0.5,
 		    p.getY() + 0.5, p.getZ() + 0.5, state, thread.results);
 	    movingBlock.setDeltaMovement(velX * 0.33, velY * 3, velZ * 0.33);
-	    world.setBlock(p, state.getFluidState().createLegacyBlock(), 3);
+	    world.setBlock(p, state.getFluidState().createLegacyBlock(), Block.UPDATE_NEIGHBORS
+	              | Block.UPDATE_CLIENTS
+	              | Block.UPDATE_SUPPRESS_DROPS);
 	    if (world.random.nextFloat() < 1.0/6.0) {
 		world.addFreshEntity(movingBlock);
 	    }

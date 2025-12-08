@@ -16,6 +16,7 @@ import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.prefab.utils.ParticleUtilities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -28,10 +29,12 @@ import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
+import voltaic.prefab.utilities.object.Location;
 
 public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
 
@@ -79,8 +82,18 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
                     Block block = world.getBlockState(p).getBlock();
                     switch (griefPreventionMethod) {
                         case NONE:
+
+                            BlockState state = Blocks.AIR.defaultBlockState();
+        		    double dis = new Location(p.getX(), 0, p.getZ())
+        			    .distance(new Location(position.getX(), 0, position.getZ()));
+        		    if (world.random.nextFloat() < 1 / (3*Math.sqrt(dis))) {
+        			BlockPos offset = p.relative(Direction.DOWN);
+        			if (!thread.results.contains(offset)) {
+        			    state = Blocks.FIRE.defaultBlockState();
+        			}
+        		    }
                             block.wasExploded(world, p, ex);
-                            world.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
+                            world.setBlock(p,state, 3);
                             break;
                         case GRIEF_DEFENDER:
                             GriefDefenderHandler.destroyBlock(block, ex, p, world);
@@ -115,24 +128,24 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
 
         if (ticksSinceBlastStart <= 5) {
             // Fireball
-            ParticleOptions particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 2f, -0.045f, 750, true, true, 40, 0.95);
-            ParticleUtilities.spawnParticleSphere(particle, x, y, z, 100, 50, 90, initialSpeed, true);
+            ParticleOptions particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 4f, -0.045f, 750, true, true, 40, 0.95);
+            ParticleUtilities.spawnParticleSphere(particle, x, y, z, 25, 50, 90, initialSpeed, true);
 
             // Centersmokes
             initialSpeed = 1; // Increase/decrease to taste
-            particle = new ParticleOptionsBlastSmoke().setParameters(0.8f, 0.8f, 0.8f, 2.5f, 0.033f, 750, true, 0.95);
-            ParticleUtilities.spawnParticleSphere(particle, x, y, z, 100, 0, 20, initialSpeed, true);
+            particle = new ParticleOptionsBlastSmoke().setParameters(0.8f, 0.8f, 0.8f, 4f, 0.033f, 750, true, 0.95);
+            ParticleUtilities.spawnParticleSphere(particle, x, y, z, 25, 0, 20, initialSpeed, true);
 
             // Centersmokes
             initialSpeed = 1; // Increase/decrease to taste
-            particle = new ParticleOptionsBlastSmoke().setParameters(0.8f, 0.8f, 0.8f, 2.5f, -0.033f, 750, true, 0.95);
-            ParticleUtilities.spawnParticleSphere(particle, x, y, z, 100, 0, 20, initialSpeed, true);
+            particle = new ParticleOptionsBlastSmoke().setParameters(0.8f, 0.8f, 0.8f, 4f, -0.033f, 750, true, 0.95);
+            ParticleUtilities.spawnParticleSphere(particle, x, y, z, 25, 0, 20, initialSpeed, true);
         }
         double spawnSize = 3;
         double endSize = BallistixConfig.INSTANCE.EXPLOSIVE_THERMOBARIC_SIZE.getAsDouble() * 7.5;
         int diff = (int) (endSize - spawnSize);
         if (ticksSinceBlastStart > diff) return;
-        double size = ParticleUtilities.progressGroundShockwave(world, x, z, ticksSinceBlastStart * 2 / (double) diff, spawnSize, endSize, 0.3);
+        double size = ParticleUtilities.progressGroundShockwave(world, x, z, ticksSinceBlastStart * 2 / (double) diff, spawnSize, endSize, 0.15);
         if (hasShaken) return;
         Vec3 pos = new Vec3(x, y, z);
         double realDistance = Minecraft.getInstance().player.position().distanceTo(pos);

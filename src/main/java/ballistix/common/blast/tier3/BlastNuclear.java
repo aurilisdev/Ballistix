@@ -33,6 +33,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -128,14 +129,16 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 		    BlockState state = Blocks.AIR.defaultBlockState();
 		    double dis = new Location(p.getX(), 0, p.getZ())
 			    .distance(new Location(position.getX(), 0, position.getZ()));
-		    if (world.random.nextFloat() < 1 / 5.0 && dis < 15) {
+		    if (world.random.nextFloat() < 1 / (2*Math.log(dis))) {
 			BlockPos offset = p.relative(Direction.DOWN);
-			if (!threadRay.results.contains(offset) && world.random.nextFloat() < (15.0f - dis) / 15.0f) {
+			if (!threadRay.results.contains(offset)) {
 			    state = Blocks.FIRE.defaultBlockState();
 			}
 		    }
 		    world.getBlockState(p).getBlock().wasExploded(world, p, ex);
-		    world.setBlock(p, state, 3);
+		    world.setBlock(p, state, Block.UPDATE_NEIGHBORS
+		              | Block.UPDATE_CLIENTS
+		              | Block.UPDATE_SUPPRESS_DROPS);
 		    if (world instanceof ServerLevel serverlevel) {
 			if (!sounded) {
 			    serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(player -> {
@@ -223,54 +226,54 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	double y = position.getY() + 0.5;
 	double z = position.getZ() + 0.5;
 
-	double initialSpeed = 1.5;
+	double initialSpeed = 1.25;
 
 	if (ticksSinceBlastStart < 5) {
 	    // Fireball
-	    ParticleOptions particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 3f, -0.045f,
-		    1500, true, true, 200, 0.98);
-	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 500, 10, 90, initialSpeed, true);
+	    ParticleOptions particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 12.5f, -0.045f,
+		    1500, true, true, 200, 0.985);
+	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 90, 10, 90, initialSpeed, true);
 
 	    // Centersmokes fast falling
 	    initialSpeed = 2;
-	    particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 2.5f, 0.045f, 1500, true, 0.99);
-	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 75, 0, 20, initialSpeed, true);
+	    particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 5f, 0.045f, 1500, true, 0.99);
+	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 25, 0, 35, initialSpeed, true);
 	    // Centersmokes veryslowfalling
 	    initialSpeed = 2;
-	    particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 2.5f, 0.045f, 1500, true, 0.995);
-	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 125, 0, 20, initialSpeed, true);
+	    particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 5f, 0.045f, 1500, true, 0.995);
+	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 50, 0, 30, initialSpeed, true);
 	    // Centersmokes living longer center
 	    initialSpeed = 2;
-	    particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 2.5f, 0.015f, 1500, true, 0.97);
-	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 125, 0, 20, initialSpeed, true);
+	    particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 5f, 0.015f, 1500, true, 0.97);
+	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 50, 0, 20, initialSpeed, true);
 	    // Centersmokes rising
 	    initialSpeed = 2;
-	    particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 2.5f, -0.015f, 300, true, 0.97);
-	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 100, 0, 20, initialSpeed, true);
+	    particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 5f, -0.015f, 300, true, 0.97);
+	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 33, 0, 20, initialSpeed, true);
 
 	    // Shockwave
-	    if (ticksSinceBlastStart == 2) {
+	    if (ticksSinceBlastStart == 3) {
 		initialSpeed = 1.5;
-		particle = new ParticleOptionsShockwave().setParameters(1, 1, 1, 1, 3, 150, false, 1);
-		ParticleUtilities.spawnParticleRing(particle, x, y + 25, z, 200, initialSpeed, false);
+		particle = new ParticleOptionsShockwave().setParameters(1, 1, 1, 1, 4, 150, false, 0.999);
+		ParticleUtilities.spawnParticleRing(particle, x, y + 25, z, 100, initialSpeed, false);
 	    }
-	} else if (ticksSinceBlastStart < 1500) {
+	} else if (ticksSinceBlastStart < 1500 && ticksSinceBlastStart % 3 == 0) {
 	    // Centersmokes rising
 	    initialSpeed = 0.7;
 	    ParticleOptions particle = new ParticleOptionsBlastSmoke().setParameters(0.40625f / 0.8f, 0.40625f / 0.8f,
-		    0.40625f / 0.8f, 3f, -0.045f, Mth.clamp(1500 - ticksSinceBlastStart, 1, 1500), true, 0.975);
+		    0.40625f / 0.8f, 5f, -0.045f, Mth.clamp(1600 - ticksSinceBlastStart, 1, 1500), true, 0.975);
 	    ParticleUtilities.spawnParticleSphere(particle, x, y + 0.024f * ticksSinceBlastStart, z, 1, -20, 20,
 		    initialSpeed, true);
 	    particle = new ParticleOptionsBlastSmoke().setParameters(0.40625f / 0.8f, 0.40625f / 0.8f, 0.40625f / 0.8f,
-		    3f, 0, Mth.clamp(1500 - ticksSinceBlastStart, 1, 1500), true, 0.975);
-	    ParticleUtilities.spawnParticleSphere(particle, x, y + 0.024f * ticksSinceBlastStart, z, 1, -20, 20,
+		    5f, -0.045f, Mth.clamp(1600 - ticksSinceBlastStart, 1, 1500), true, 0.975);
+	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 1, -20, 20,
 		    initialSpeed, true);
 	    if (ticksSinceBlastStart < 1400) {
 		// Centerfire rising
 		initialSpeed = 0.5;
-		particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 3f, -0.045f,
-			Mth.clamp(1400 - ticksSinceBlastStart, 1, 1400), true, true, 500, 0.98);
-		ParticleUtilities.spawnParticleSphere(particle, x, y + 0.033f * ticksSinceBlastStart, z, 1, -20, 20,
+		particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 6f, -0.045f,
+			Mth.clamp(1640 - ticksSinceBlastStart, 1, 1400), true, true, 500, 0.98);
+		ParticleUtilities.spawnParticleSphere(particle, x, y + 0.027f * ticksSinceBlastStart, z, 1, -20, 20,
 			initialSpeed, true);
 	    }
 	}
@@ -281,7 +284,7 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	if (ticksSinceBlastStart > diff)
 	    return;
 	double size = ParticleUtilities.progressGroundShockwave(world, x, z, ticksSinceBlastStart * 5 / (double) diff,
-		spawnSize, endSize, 0.4);
+		spawnSize, endSize, 0.2);
 	if (hasShaken)
 	    return;
 	Vec3 pos = new Vec3(x, y, z);

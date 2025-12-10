@@ -10,6 +10,7 @@ public class BallistixConfig {
     /* === Fields === */
 
     public ModConfigSpec.BooleanValue SHOULD_CACHE_EXPLOSIONS;
+    public ModConfigSpec.BooleanValue SHOULD_MULTITHREAD_RAYTRACING;
 
     // Tier 1
     public ModConfigSpec.DoubleValue EXPLOSIVE_OBSIDIAN_SIZE;
@@ -159,6 +160,7 @@ public class BallistixConfig {
         // Explosives (global + subsections)
         builder.push("explosives");
         SHOULD_CACHE_EXPLOSIONS = builder.comment("Whether explosions will be cached; may use a lot of memory!").define("should_cache_explosions", true);
+        SHOULD_MULTITHREAD_RAYTRACING = builder.comment("NB! This is ONLY useful for very slow pc's. Like very slow. It is very BAD for slow - mediocre - good pc's and will make raytracing SLOWER for these!!!").define("should_multithread_raytracing", false);
 
         // Tier 1
         builder.push("tier1");

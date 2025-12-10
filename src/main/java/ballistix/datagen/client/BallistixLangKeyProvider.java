@@ -468,6 +468,7 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			// Sections
 			addConfiguration("common", "Common");
 			addConfiguration("explosives", "Explosives");
+			addConfiguration("should_multithread_raytracing", "Should Multithread Raytracing (READ COMMENT!!!)");
 			addConfiguration("tier1", "Tier 1");
 			addConfiguration("tier2", "Tier 2");
 			addConfiguration("tier3", "Tier 3");

@@ -4,8 +4,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Lists;
 
+import ballistix.common.blast.util.Blast;
 import ballistix.registers.BallistixEntities;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.core.BlockPos;
@@ -49,7 +52,7 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
     }
 
     public EntityBallistixFallingBlock(Level world, double x, double y, double z, BlockState blockState,
-	    Set<BlockPos> whitelist) {
+	    Set<BlockPos> whitelist, @Nullable Entity owner) {
 	this(BallistixEntities.ENTITY_BALLISTIXFALLINGBLOCK.get(), world);
 	this.blockState = blockState;
 	this.blocksBuilding = true;
@@ -61,6 +64,7 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
 	this.zo = z;
 	this.setStartPos(this.blockPosition());
 	this.whitelist = whitelist;
+	setOwner(owner);
     }
 
     @Override
@@ -108,10 +112,12 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
 
 	    if (!state.isAir() && !state.liquid()) {
 		if (!level().isClientSide && !state.is(Blocks.ANVIL)) {
-		    level().setBlockAndUpdate(blockPosition(), blockState);
+		    if (Blast.canPlaceBlockState(level(), blockState, blockPosition(), state, getOwner())) {
+			level().setBlockAndUpdate(blockPosition(), blockState);
+		    }
 		}
-		removeAfterChangingDimensions();
 	    }
+	    removeAfterChangingDimensions();
 	}
     }
 
@@ -125,7 +131,8 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
 
 		for (Entity entity : list) {
 		    entity.hurt(
-			    flag ? entity.damageSources().anvil(entity) : entity.damageSources().fallingBlock(entity),
+			    flag ? entity.damageSources().anvil(getOwner())
+				    : entity.damageSources().fallingBlock(getOwner()),
 			    (float) Math.min(Mth.floor((float) i * this.fallDamageAmount), this.fallDamageMax));
 		}
 	    }

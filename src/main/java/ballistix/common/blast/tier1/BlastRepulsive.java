@@ -8,7 +8,6 @@ import ballistix.client.particle.ParticleOptionsShockwave;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.BallistixConfig;
-import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
@@ -29,105 +28,106 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 public class BlastRepulsive extends Blast implements IHasCustomRender {
 
-	public BlastRepulsive(Level world, BlockPos position) {
-		super(world, position);
-	}
+    public BlastRepulsive(Level world, BlockPos position, Entity owner) {
+	super(world, position, owner);
+    }
 
-	@Override
-	public boolean doExplode(int callCount) {
-		super.doExplode(callCount);
-		hasStarted = true;
-		if (!world.isClientSide) {
-			world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) BallistixConfig.INSTANCE.EXPLOSIVE_REPULSIVE_SIZE.getAsDouble(), ExplosionInteraction.BLOCK);
-		} else {
-			produceParticles();
+    @Override
+    public boolean doExplode(int callCount) {
+	super.doExplode(callCount);
+	hasStarted = true;
+	if (!world.isClientSide) {
+	    world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5,
+		    (float) BallistixConfig.INSTANCE.EXPLOSIVE_REPULSIVE_SIZE.getAsDouble(),
+		    ExplosionInteraction.BLOCK);
+	} else {
+	    produceParticles();
+	}
+	float x = position.getX();
+	float y = position.getY();
+	float z = position.getZ();
+
+	float size = 7f;
+	float doubleSize = size * 2.0F;
+
+	int x0 = Mth.floor(x - (double) doubleSize - 1.0D);
+	int x1 = Mth.floor(x + (double) doubleSize + 1.0D);
+	int y0 = Mth.floor(y - (double) doubleSize - 1.0D);
+	int y1 = Mth.floor(y + (double) doubleSize + 1.0D);
+	int z0 = Mth.floor(z - (double) doubleSize - 1.0D);
+	int z1 = Mth.floor(z + (double) doubleSize + 1.0D);
+
+	List<Entity> entities = world.getEntities(null, new AABB(x0, y0, z0, x1, y1, z1));
+
+	for (Entity entity : entities) {
+
+	    if (!canHarmEntity(entity)) {
+		continue;
+	    }
+
+	    double deltaX = entity.getX() - x;
+	    double deltaY = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - y;
+	    double deltaZ = entity.getZ() - z;
+	    double deltaDistance = Mth.sqrt((float) (deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ));
+	    if (deltaDistance == 0.0D) {
+		continue;
+	    }
+	    deltaX = deltaX / deltaDistance;
+	    deltaY = deltaY / deltaDistance;
+	    deltaZ = deltaZ / deltaDistance;
+	    double d11 = BallistixConfig.INSTANCE.EXPLOSIVE_ATTRACTIVE_REPULSIVE_PUSH_STRENGTH.getAsDouble();
+	    entity.setDeltaMovement(entity.getDeltaMovement().add(deltaX * d11, deltaY * d11, deltaZ * d11));
+	    if (entity instanceof ServerPlayer serverplayerentity) {
+		serverplayerentity.connection.send(new ClientboundExplodePacket(x, y, z, size, new ArrayList<>(),
+			new Vec3(deltaX * d11, deltaY * d11, deltaZ * d11), Explosion.BlockInteraction.DESTROY,
+			ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE));
+	    }
+	}
+	return true;
+    }
+
+    @Override
+    public SubtypeBlast getBlastType() {
+	return SubtypeBlast.repulsive;
+    }
+
+    @Override
+    public boolean shouldRender() {
+	return true;
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void produceParticles() {
+	float x = position.getX() + 0.5f;
+	float y = position.getY() + 0.5f;
+	float z = position.getZ() + 0.5f;
+
+	float size = 7f;
+
+	float f2 = size * 2.0F;
+
+	int x0 = Mth.floor(x - f2 - 1.0D);
+	int x1 = Mth.floor(x + f2 + 1.0D);
+	int y0 = Mth.floor(y - f2 - 1.0D);
+	int y1 = Mth.floor(y + f2 + 1.0D);
+	int z0 = Mth.floor(z - f2 - 1.0D);
+	int z1 = Mth.floor(z + f2 + 1.0D);
+	for (int dx = x0; dx < x1; dx++) {
+	    for (int dy = y0; dy < y1; dy++) {
+		for (int dz = z0; dz < z1; dz++) {
+		    if ((x - dx) * (x - dx) + (y - dy) * (y - dy) + (z - dz) * (z - dz) <= (2 * size + 1)
+			    * (2 * size + 1)) {
+			if (world.random.nextFloat() < 1 / 40.0) {
+			    ParticleOptions particle = new ParticleOptionsShockwave().setParameters(1, 1, 1, 1,
+				    (float) 0.3, 15, false, 1);
+			    Minecraft.getInstance().particleEngine.createParticle(particle, x, y, z, -(x - dx) / 15.0,
+				    -(y - dy) / 15.0, -(z - dz) / 15.0);
+			}
+		    }
 		}
-		float x = position.getX();
-		float y = position.getY();
-		float z = position.getZ();
-
-		float size = 7f;
-		float doubleSize = size * 2.0F;
-
-		int x0 = Mth.floor(x - (double) doubleSize - 1.0D);
-		int x1 = Mth.floor(x + (double) doubleSize + 1.0D);
-		int y0 = Mth.floor(y - (double) doubleSize - 1.0D);
-		int y1 = Mth.floor(y + (double) doubleSize + 1.0D);
-		int z0 = Mth.floor(z - (double) doubleSize - 1.0D);
-		int z1 = Mth.floor(z + (double) doubleSize + 1.0D);
-
-		List<Entity> entities = world.getEntities(null, new AABB(x0, y0, z0, x1, y1, z1));
-
-		for (Entity entity : entities) {
-
-			switch (griefPreventionMethod) {
-			case GRIEF_DEFENDER:
-				if (!GriefDefenderHandler.shouldEntityBeHarmed(entity)) {
-					continue;
-				}
-				break;
-			default:
-				break;
-			}
-
-			double deltaX = entity.getX() - x;
-			double deltaY = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - y;
-			double deltaZ = entity.getZ() - z;
-			double deltaDistance = Mth.sqrt((float) (deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ));
-			if (deltaDistance == 0.0D) {
-				continue;
-			}
-			deltaX = deltaX / deltaDistance;
-			deltaY = deltaY / deltaDistance;
-			deltaZ = deltaZ / deltaDistance;
-			double d11 = BallistixConfig.INSTANCE.EXPLOSIVE_ATTRACTIVE_REPULSIVE_PUSH_STRENGTH.getAsDouble();
-			entity.setDeltaMovement(entity.getDeltaMovement().add(deltaX * d11, deltaY * d11, deltaZ * d11));
-			if (entity instanceof ServerPlayer serverplayerentity) {
-				serverplayerentity.connection.send(new ClientboundExplodePacket(x, y, z, size, new ArrayList<>(), new Vec3(deltaX * d11, deltaY * d11, deltaZ * d11), Explosion.BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE));
-			}
-		}
-		return true;
+	    }
 	}
-
-	@Override
-	public SubtypeBlast getBlastType() {
-		return SubtypeBlast.repulsive;
-	}
-
-	@Override
-	public boolean shouldRender() {
-		return true;
-	}
-
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void produceParticles() {
-		float x = position.getX() + 0.5f;
-		float y = position.getY() + 0.5f;
-		float z = position.getZ() + 0.5f;
-
-		float size = 7f;
-
-		float f2 = size * 2.0F;
-
-		int x0 = Mth.floor(x - f2 - 1.0D);
-		int x1 = Mth.floor(x + f2 + 1.0D);
-		int y0 = Mth.floor(y - f2 - 1.0D);
-		int y1 = Mth.floor(y + f2 + 1.0D);
-		int z0 = Mth.floor(z - f2 - 1.0D);
-		int z1 = Mth.floor(z + f2 + 1.0D);
-		for (int dx = x0; dx < x1; dx++) {
-			for (int dy = y0; dy < y1; dy++) {
-				for (int dz = z0; dz < z1; dz++) {
-					if ((x - dx) * (x - dx) + (y - dy) * (y - dy) + (z - dz) * (z - dz) <= (2 * size + 1) * (2 * size + 1)) {
-						if (world.random.nextFloat() < 1 / 40.0) {
-							ParticleOptions particle = new ParticleOptionsShockwave().setParameters(1, 1, 1, 1, (float) 0.3, 15, false, 1);
-							Minecraft.getInstance().particleEngine.createParticle(particle, x, y, z, -(x - dx) / 15.0, -(y - dy) / 15.0, -(z - dz) / 15.0);
-						}
-					}
-				}
-			}
-		}
-	}
+    }
 
 }

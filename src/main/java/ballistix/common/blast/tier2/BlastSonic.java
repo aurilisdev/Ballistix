@@ -9,11 +9,11 @@ import ballistix.common.blast.util.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityBallistixFallingBlock;
 import ballistix.common.settings.BallistixConfig;
-import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -25,8 +25,8 @@ public class BlastSonic extends BlastLasting {
     private Iterator<BlockPos> iterator;
     private int pertick = -1;
 
-    public BlastSonic(Level world, BlockPos position) {
-	super(world, position);
+    public BlastSonic(Level world, BlockPos position, Entity owner) {
+	super(world, position, owner);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class BlastSonic extends BlastLasting {
 	}
 	if (pertick == -1) {
 	    hasStarted = true;
-	    pertick = (int) (thread.results.size()/ BallistixConfig.INSTANCE.EXPLOSIVE_SONIC_DURATION.getAsDouble()
+	    pertick = (int) (thread.results.size() / BallistixConfig.INSTANCE.EXPLOSIVE_SONIC_DURATION.getAsDouble()
 		    + 1);
 	    iterator = thread.results.iterator();
 	}
@@ -74,19 +74,7 @@ public class BlastSonic extends BlastLasting {
 		continue;
 	    }
 
-	    boolean shouldRepulse = true;
-
-	    switch (griefPreventionMethod) {
-	    case NONE:
-		break;
-	    case GRIEF_DEFENDER:
-		shouldRepulse = GriefDefenderHandler.shouldHarmBlock(p);
-		break;
-	    case SABER_FACTIONS:
-		break;
-	    }
-
-	    if (!shouldRepulse) {
+	    if (!canBreakBlockState(world, state, p, owner)) {
 		continue;
 	    }
 
@@ -102,10 +90,10 @@ public class BlastSonic extends BlastLasting {
 	    double velZ = deltaZ * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_SONIC_VELOCITY.getAsDouble();
 
 	    EntityBallistixFallingBlock movingBlock = new EntityBallistixFallingBlock(world, p.getX() + 0.5,
-		    p.getY() + 0.5, p.getZ() + 0.5, state, thread.results);
+		    p.getY() + 0.5, p.getZ() + 0.5, state, thread.results, owner);
 	    movingBlock.setDeltaMovement(velX * 0.33, velY * 3, velZ * 0.33);
 	    world.setBlock(p, state.getFluidState().createLegacyBlock(), 3);
-	    if (world.random.nextFloat() < 1.0/3.0) {
+	    if (world.random.nextFloat() < 1.0 / 3.0) {
 		world.addFreshEntity(movingBlock);
 	    }
 	}
@@ -130,16 +118,9 @@ public class BlastSonic extends BlastLasting {
 
 	    for (LivingEntity entity : entities) {
 
-		switch (griefPreventionMethod) {
-		case GRIEF_DEFENDER:
-		    if (!GriefDefenderHandler.shouldEntityBeHarmed(entity)) {
-			continue;
-		    }
-		    break;
-		default:
-		    break;
+		if (!canHarmEntity(entity)) {
+		    continue;
 		}
-
 		double deltaX = entity.getX() - position.getX();
 		double deltaY = entity.getY() - position.getY();
 		double deltaZ = entity.getZ() - position.getZ();

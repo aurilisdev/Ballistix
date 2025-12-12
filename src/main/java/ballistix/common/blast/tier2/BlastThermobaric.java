@@ -12,7 +12,6 @@ import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.packet.type.client.particle.BlastParticleSpawnType;
 import ballistix.common.packet.type.client.particle.PacketSpawnBlastParticle;
 import ballistix.common.settings.BallistixConfig;
-import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.prefab.utils.ParticleUtilities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -23,6 +22,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
@@ -38,8 +38,8 @@ import voltaic.prefab.utilities.object.Location;
 
 public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
 
-    public BlastThermobaric(Level world, BlockPos position) {
-	super(world, position);
+    public BlastThermobaric(Level world, BlockPos position, Entity owner) {
+	super(world, position, owner);
     }
 
     @Override
@@ -92,28 +92,23 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
 			break;
 		    }
 		    BlockPos p = cachedIterator.next();
-		    Block block = world.getBlockState(p).getBlock();
-		    switch (griefPreventionMethod) {
-		    case NONE:
-
-			BlockState state = Blocks.AIR.defaultBlockState();
-			double dis = new Location(p.getX(), 0, p.getZ())
-				.distance(new Location(position.getX(), 0, position.getZ()));
-			if (world.random.nextFloat() < 1 / (3 * Math.sqrt(dis))) {
-			    BlockPos offset = p.relative(Direction.DOWN);
-			    if (!thread.results.contains(offset)) {
-				state = Blocks.FIRE.defaultBlockState();
-			    }
-			}
-			block.wasExploded(world, p, ex);
-			world.setBlock(p, state, 3);
-			break;
-		    case GRIEF_DEFENDER:
-			GriefDefenderHandler.destroyBlock(block, ex, p, world);
-			break;
-		    case SABER_FACTIONS:
-			break;
+		    BlockState state = world.getBlockState(p);
+		    if (!canBreakBlockState(world, state, p, owner)) {
+			continue;
 		    }
+		    Block block = state.getBlock();
+		    BlockState toPlace = Blocks.AIR.defaultBlockState();
+		    double dis = new Location(p.getX(), 0, p.getZ())
+			    .distance(new Location(position.getX(), 0, position.getZ()));
+		    if (world.random.nextFloat() < 1 / (3 * Math.sqrt(dis))) {
+			BlockPos offset = p.relative(Direction.DOWN);
+			if (!thread.results.contains(offset)) {
+			    toPlace = Blocks.FIRE.defaultBlockState();
+			}
+		    }
+		    block.wasExploded(world, p, ex);
+		    world.setBlock(p, toPlace,
+			    Block.UPDATE_NEIGHBORS | Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
 		    if (world.random.nextFloat() < 1 / 20.0 && world instanceof ServerLevel serverlevel) {
 			serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false)
 				.forEach(pl -> PacketDistributor.sendToPlayer(pl,

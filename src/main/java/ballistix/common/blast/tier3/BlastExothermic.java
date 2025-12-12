@@ -9,7 +9,6 @@ import ballistix.common.blast.util.BlastLasting;
 import ballistix.common.blast.util.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.BallistixConfig;
-import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
@@ -17,6 +16,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -30,8 +30,8 @@ public class BlastExothermic extends BlastLasting implements IHasCustomRender {
     private Iterator<BlockPos> iterator;
     private int pertick = -1;
 
-    public BlastExothermic(Level world, BlockPos position) {
-	super(world, position);
+    public BlastExothermic(Level world, BlockPos position, Entity owner) {
+	super(world, position, owner);
     }
 
     @Override
@@ -79,19 +79,7 @@ public class BlastExothermic extends BlastLasting implements IHasCustomRender {
 		continue;
 	    }
 
-	    boolean shouldRepulse = true;
-
-	    switch (griefPreventionMethod) {
-	    case NONE:
-		break;
-	    case GRIEF_DEFENDER:
-		shouldRepulse = GriefDefenderHandler.shouldHarmBlock(p);
-		break;
-	    case SABER_FACTIONS:
-		break;
-	    }
-
-	    if (!shouldRepulse) {
+	    if (!canBreakBlockState(world, state, p, owner)) {
 		continue;
 	    }
 
@@ -161,16 +149,9 @@ public class BlastExothermic extends BlastLasting implements IHasCustomRender {
 
 	    for (LivingEntity entity : entities) {
 
-		switch (griefPreventionMethod) {
-		case GRIEF_DEFENDER:
-		    if (!GriefDefenderHandler.shouldEntityBeHarmed(entity)) {
-			continue;
-		    }
-		    break;
-		default:
-		    break;
+		if (!canHarmEntity(entity)) {
+		    continue;
 		}
-
 		double deltaX = entity.getX() - position.getX();
 		double deltaY = entity.getY() - position.getY();
 		double deltaZ = entity.getZ() - position.getZ();
@@ -180,7 +161,7 @@ public class BlastExothermic extends BlastLasting implements IHasCustomRender {
 		double velX = deltaX * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_ENDOTHERMIC_VELOCITY.get();
 		double velY = deltaY * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_ENDOTHERMIC_VELOCITY.get();
 		double velZ = deltaZ * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_ENDOTHERMIC_VELOCITY.get();
-		entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 10000));
+		entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 10000), owner);
 		entity.igniteForTicks(10000);
 		// entity.addEffect(new MobEffectInstance(BallistixEffects.FROSTBITE, 10000));
 		entity.setDeltaMovement(entity.getDeltaMovement().add(velX, velY, velZ));

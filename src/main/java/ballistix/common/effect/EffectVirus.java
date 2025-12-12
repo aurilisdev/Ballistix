@@ -19,43 +19,42 @@ public class EffectVirus extends MobEffect {
     public static final Color COLOR = new Color(78, 200, 49, 255);
 
     public EffectVirus(MobEffectCategory category, int color) {
-        super(category, color);
+	super(category, color);
     }
 
     public EffectVirus() {
-        this(MobEffectCategory.HARMFUL, COLOR.color());
+	this(MobEffectCategory.HARMFUL, COLOR.color());
     }
 
     @Override
     public boolean applyEffectTick(LivingEntity livingEntity, int amplifier) {
 
-        Level level = livingEntity.level();
+	Level level = livingEntity.level();
 
-        if(level.random.nextFloat() < 0.5F) {
+	if (level.random.nextFloat() < 0.5F) {
 
-            List<LivingEntity> list = level.getEntitiesOfClass(LivingEntity.class, new AABB(livingEntity.blockPosition()).inflate(BallistixConfig.INSTANCE.VIRUS_EFFECT_RADIUS.get()));
+	    List<LivingEntity> list = level.getEntitiesOfClass(LivingEntity.class,
+		    new AABB(livingEntity.blockPosition()).inflate(BallistixConfig.INSTANCE.VIRUS_EFFECT_RADIUS.get()));
 
-            for(LivingEntity entity : list) {
-                entity.addEffect(new MobEffectInstance(BallistixEffects.VIRUS, -1));
-            }
+	    for (LivingEntity entity : list) {
+		entity.addEffect(new MobEffectInstance(BallistixEffects.VIRUS, -1));
+	    }
 
-        }
+	}
 
-        if(level.random.nextFloat() < 0.05F) {
-            livingEntity.hurt(livingEntity.damageSources().source(BallistixDamageTypes.VIRUS, livingEntity), (float) (Math.pow(amplifier, 1.3) + 1));
-            if (livingEntity instanceof Player pl) {
-                pl.causeFoodExhaustion(0.05F * (amplifier + 1));
-            }
-        }
+	if (level.random.nextFloat() < 0.05F) {
+	    livingEntity.hurt(livingEntity.damageSources().source(BallistixDamageTypes.VIRUS),
+		    (float) (Math.pow(amplifier, 1.3) + 1));
+	    if (livingEntity instanceof Player pl) {
+		pl.causeFoodExhaustion(0.05F * (amplifier + 1));
+	    }
+	}
 
-
-
-
-        return true;
+	return true;
     }
 
     @Override
     public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
-        return true;
+	return true;
     }
 }

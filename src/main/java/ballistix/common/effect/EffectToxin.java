@@ -11,23 +11,24 @@ public class EffectToxin extends MobEffect {
     public static final Color COLOR = new Color(100, 200, 49, 255);
 
     public EffectToxin(MobEffectCategory category, int color) {
-        super(category, color);
+	super(category, color);
     }
 
     public EffectToxin() {
-        super(MobEffectCategory.HARMFUL, COLOR.color());
+	super(MobEffectCategory.HARMFUL, COLOR.color());
     }
 
     @Override
     public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
-        int i = 25 >> amplifier;
-        return i > 0 ? amplifier % i == 0 : true;
+	int i = 25 >> amplifier;
+	return i > 0 ? amplifier % i == 0 : true;
     }
 
     @Override
     public boolean applyEffectTick(LivingEntity livingEntity, int amplifier) {
-        livingEntity.hurt(livingEntity.damageSources().source(BallistixDamageTypes.TOXIN, livingEntity), (float) (Math.pow(amplifier, 1.3) + 1));
-        return true;
+	livingEntity.hurt(livingEntity.damageSources().source(BallistixDamageTypes.TOXIN),
+		(float) (Math.pow(amplifier, 1.3) + 1));
+	return true;
     }
 
 }

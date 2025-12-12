@@ -4,11 +4,11 @@ import ballistix.api.blast.IHasCustomRender;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.BallistixConfig;
-import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.api.distmarker.Dist;
@@ -16,8 +16,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 public class BlastIncendiary extends Blast implements IHasCustomRender {
 
-    public BlastIncendiary(Level world, BlockPos position) {
-	super(world, position);
+    public BlastIncendiary(Level world, BlockPos position, Entity owner) {
+	super(world, position, owner);
     }
 
     @Override
@@ -45,11 +45,7 @@ public class BlastIncendiary extends Blast implements IHasCustomRender {
 			int zActual = position.getZ() + z;
 			BlockPos pos = new BlockPos(xActual, yActual, zActual);
 
-			boolean add = switch (griefPreventionMethod) {
-			case GRIEF_DEFENDER -> GriefDefenderHandler.shouldHarmBlock(pos);
-			default -> true;
-			};
-
+			boolean add = canHarmBlock(pos);
 			if (add && world.isEmptyBlock(pos) && !world.isEmptyBlock(pos.relative(Direction.DOWN))) {
 			    world.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
 			}

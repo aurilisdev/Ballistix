@@ -7,40 +7,41 @@ import ballistix.common.settings.BallistixConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 
 public class BlastLandmine extends Blast {
 
-	public BlastLandmine(Level world, BlockPos position) {
-		super(world, position);
-	}
+    public BlastLandmine(Level world, BlockPos position, Entity owner) {
+	super(world, position, owner);
+    }
 
-	@Override
-	public void doPreExplode() {
-		if(!world.isClientSide) {
-			world.playSound(null, position, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 25, 1);
-		}
+    @Override
+    public void doPreExplode() {
+	if (!world.isClientSide) {
+	    world.playSound(null, position, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 25, 1);
 	}
+    }
 
-	@Override
-	public boolean doExplode(int callCount) {
-		hasStarted = true;
-		for (int i = 0; i < BallistixConfig.INSTANCE.EXPLOSIVE_FRAGMENTATION_SHRAPNEL_COUNT.get(); i++) {
-			EntityShrapnel shrapnel = new EntityShrapnel(world);
-			float yaw = world.random.nextFloat() * 360;
-			float pitch = world.random.nextFloat() * 90 - 75;
-			shrapnel.moveTo(position.getX(), position.getY() + 1.0, position.getZ(), yaw, pitch);
-			shrapnel.shootFromRotation(null, pitch, yaw, 0.0F, 0.5f, 0.0F);
-			shrapnel.isExplosive = true;
-			shrapnel.push(0, 0.7f, 0);
-			world.addFreshEntity(shrapnel);
-		}
-		return true;
+    @Override
+    public boolean doExplode(int callCount) {
+	hasStarted = true;
+	for (int i = 0; i < BallistixConfig.INSTANCE.EXPLOSIVE_FRAGMENTATION_SHRAPNEL_COUNT.get(); i++) {
+	    EntityShrapnel shrapnel = new EntityShrapnel(world, owner);
+	    float yaw = world.random.nextFloat() * 360;
+	    float pitch = world.random.nextFloat() * 90 - 75;
+	    shrapnel.moveTo(position.getX(), position.getY() + 1.0, position.getZ(), yaw, pitch);
+	    shrapnel.shootFromRotation(null, pitch, yaw, 0.0F, 0.5f, 0.0F);
+	    shrapnel.isExplosive = true;
+	    shrapnel.push(0, 0.7f, 0);
+	    world.addFreshEntity(shrapnel);
 	}
+	return true;
+    }
 
-	@Override
-	public SubtypeBlast getBlastType() {
-		return SubtypeBlast.landmine;
-	}
+    @Override
+    public SubtypeBlast getBlastType() {
+	return SubtypeBlast.landmine;
+    }
 
 }

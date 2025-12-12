@@ -10,7 +10,6 @@ import ballistix.common.blast.util.Blast;
 import ballistix.common.blast.util.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.BallistixConfig;
-import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -35,19 +34,21 @@ import voltaic.prefab.utilities.WorldUtils;
 
 public class BlastDarkmatter extends Blast implements IMovingBlast {
 
-    public BlastDarkmatter(Level world, BlockPos position) {
-        super(world, position);
+    public BlastDarkmatter(Level world, BlockPos position, Entity owner) {
+	super(world, position, owner);
     }
 
     @Override
     public void doPreExplode() {
-        if (!world.isClientSide) {
-            thread = new ThreadSimpleBlast(world, position, (int) BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_RADIUS.getAsDouble(), Integer.MAX_VALUE, null, getBlastType().id());
-            thread.start();
-            if(!isRepeating) {
-                world.playSound(null, position, BallistixSounds.SOUND_DARKMATTER.get(), SoundSource.BLOCKS, 1, 1);
-            }
-        }
+	if (!world.isClientSide) {
+	    thread = new ThreadSimpleBlast(world, position,
+		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_RADIUS.getAsDouble(), Integer.MAX_VALUE, null,
+		    getBlastType().id());
+	    thread.start();
+	    if (!isRepeating) {
+		world.playSound(null, position, BallistixSounds.SOUND_DARKMATTER.get(), SoundSource.BLOCKS, 1, 1);
+	    }
+	}
     }
 
     public ThreadSimpleBlast thread;
@@ -59,128 +60,119 @@ public class BlastDarkmatter extends Blast implements IMovingBlast {
 
     @Override
     public boolean doExplode(int callCount) {
-        if(world.isClientSide) {
-            return false;
-        }
+	if (world.isClientSide) {
+	    return false;
+	}
 
-        hasStarted = true;
-        if (thread == null || canceled) {
-            return true;
-        }
-        Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(), (float) BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_RADIUS.getAsDouble(), false, Explosion.BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
-        if (thread.isComplete) {
-            if (callAtStart == -1) {
-                callAtStart = callCount;
-            }
-            if (pertick == -1) {
-                pertick = (int) (thread.results.size() / (isRepeating ? BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_REPEATDURATION.get() : BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_DURATION.get()));
-                cachedIterator = thread.results.iterator();
-            }
-            int finished = pertick;
-            while (cachedIterator.hasNext()) {
-                if (finished-- < 0) {
-                    break;
-                }
-                BlockPos p = new BlockPos(cachedIterator.next()).offset(position);
-                BlockState state = world.getBlockState(p);
-                Block block = state.getBlock();
-                if (!state.isAir() && state.getDestroySpeed(world, p) >= 0) {
-                    switch (griefPreventionMethod) {
-                        case NONE :
-                            block.wasExploded(world, p, ex);
-                            world.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
-                            break;
-                        case GRIEF_DEFENDER:
-                            GriefDefenderHandler.destroyBlock(block, ex, p, world);
-                            break;
-                        case SABER_FACTIONS:
+	hasStarted = true;
+	if (thread == null || canceled) {
+	    return true;
+	}
+	Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
+		(float) BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_RADIUS.getAsDouble(), false,
+		Explosion.BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER,
+		SoundEvents.GENERIC_EXPLODE);
+	if (thread.isComplete) {
+	    if (callAtStart == -1) {
+		callAtStart = callCount;
+	    }
+	    if (pertick == -1) {
+		pertick = (int) (thread.results.size()
+			/ (isRepeating ? BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_REPEATDURATION.get()
+				: BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_DURATION.get()));
+		cachedIterator = thread.results.iterator();
+	    }
+	    int finished = pertick;
+	    while (cachedIterator.hasNext()) {
+		if (finished-- < 0) {
+		    break;
+		}
+		BlockPos p = new BlockPos(cachedIterator.next()).offset(position);
+		BlockState state = world.getBlockState(p);
+		Block block = state.getBlock();
+		if (state.getDestroySpeed(world, p) >= 0) {
+		    if (canBreakBlockState(world, state, p, owner)) {
+			block.wasExploded(world, p, ex);
+			world.setBlock(p, Blocks.AIR.defaultBlockState(),
+				Block.UPDATE_NEIGHBORS | Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
+		    }
+		}
+	    }
+	    if (!cachedIterator.hasNext()) {
+		WorldUtils.clearChunkCache();
+		return true;
+	    }
+	}
 
+	float x = position.getX();
+	float y = position.getY();
+	float z = position.getZ();
 
-                            break;
-                    }
-                }
-            }
-            if (!cachedIterator.hasNext()) {
-                WorldUtils.clearChunkCache();
-                return true;
-            }
-        }
+	float size = (float) BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_RADIUS.getAsDouble();
 
-        float x = position.getX();
-        float y = position.getY();
-        float z = position.getZ();
+	float doubleSize = size * 2.0F;
 
-        float size = (float) BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_RADIUS.getAsDouble();
+	int x0 = Mth.floor(x - (double) doubleSize - 1.0D);
+	int x1 = Mth.floor(x + (double) doubleSize + 1.0D);
+	int y0 = Mth.floor(y - (double) doubleSize - 1.0D);
+	int y1 = Mth.floor(y + (double) doubleSize + 1.0D);
+	int z0 = Mth.floor(z - (double) doubleSize - 1.0D);
+	int z1 = Mth.floor(z + (double) doubleSize + 1.0D);
 
-        float doubleSize = size * 2.0F;
+	List<Entity> entities = world.getEntities(null, new AABB(x0, y0, z0, x1, y1, z1));
 
-        int x0 = Mth.floor(x - (double) doubleSize - 1.0D);
-        int x1 = Mth.floor(x + (double) doubleSize + 1.0D);
-        int y0 = Mth.floor(y - (double) doubleSize - 1.0D);
-        int y1 = Mth.floor(y + (double) doubleSize + 1.0D);
-        int z0 = Mth.floor(z - (double) doubleSize - 1.0D);
-        int z1 = Mth.floor(z + (double) doubleSize + 1.0D);
+	for (Entity entity : entities) {
 
-        List<Entity> entities = world.getEntities(null, new AABB(x0, y0, z0, x1, y1, z1));
-
-        for (Entity entity : entities) {
-
-            switch (griefPreventionMethod) {
-                case GRIEF_DEFENDER :
-                    if(!GriefDefenderHandler.shouldEntityBeHarmed(entity)) {
-                        continue;
-                    }
-                    break;
-                default:
-                    break;
-            }
-
-
-            double deltaX = entity.getX() - x;
-            double deltaY = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - y;
-            double deltaZ = entity.getZ() - z;
-            double deltaDistance = Mth.sqrt((float) (deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ));
-            if (deltaDistance == 0.0D) {
-                continue;
-            }
-            deltaX = deltaX / deltaDistance;
-            deltaY = deltaY / deltaDistance;
-            deltaZ = deltaZ / deltaDistance;
-            double d11 = (-0.2 - (callCount - callAtStart) / 150.0) / deltaDistance;
-            entity.setDeltaMovement(entity.getDeltaMovement().add(deltaX * d11, deltaY * d11, deltaZ * d11));
-            if (entity instanceof ServerPlayer serverplayerentity) {
-                if (!serverplayerentity.isCreative()) {
-                    serverplayerentity.connection.send(new ClientboundExplodePacket(x, y, z, size, new ArrayList<>(), new Vec3(deltaX * d11, deltaY * d11, deltaZ * d11), Explosion.BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE));
-                }
-            } else if (entity instanceof FallingBlockEntity) {
-                entity.remove(RemovalReason.DISCARDED);
-            }
-        }
-        attackEntities((float) ((callCount - callAtStart) / 75.0), ex);
-        if (world.random.nextFloat() < 0.5) {
-            world.explode(null, position.getX(), position.getY(), position.getZ(), 2, ExplosionInteraction.NONE);
-        }
-        return false;
+	    if (!canHarmEntity(entity)) {
+		continue;
+	    }
+	    double deltaX = entity.getX() - x;
+	    double deltaY = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - y;
+	    double deltaZ = entity.getZ() - z;
+	    double deltaDistance = Mth.sqrt((float) (deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ));
+	    if (deltaDistance == 0.0D) {
+		continue;
+	    }
+	    deltaX = deltaX / deltaDistance;
+	    deltaY = deltaY / deltaDistance;
+	    deltaZ = deltaZ / deltaDistance;
+	    double d11 = (-0.2 - (callCount - callAtStart) / 150.0) / deltaDistance;
+	    entity.setDeltaMovement(entity.getDeltaMovement().add(deltaX * d11, deltaY * d11, deltaZ * d11));
+	    if (entity instanceof ServerPlayer serverplayerentity) {
+		if (!serverplayerentity.isCreative()) {
+		    serverplayerentity.connection.send(new ClientboundExplodePacket(x, y, z, size, new ArrayList<>(),
+			    new Vec3(deltaX * d11, deltaY * d11, deltaZ * d11), Explosion.BlockInteraction.DESTROY,
+			    ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE));
+		}
+	    } else if (entity instanceof FallingBlockEntity) {
+		entity.remove(RemovalReason.DISCARDED);
+	    }
+	}
+	attackEntities((float) ((callCount - callAtStart) / 75.0), ex);
+	if (world.random.nextFloat() < 0.5) {
+	    world.explode(null, position.getX(), position.getY(), position.getZ(), 2, ExplosionInteraction.NONE);
+	}
+	return false;
     }
 
     @Override
     public boolean isInstantaneous() {
-        return false;
+	return false;
     }
 
     @Override
     public IBlast getBlastType() {
-        return SubtypeBlast.darkmatter;
+	return SubtypeBlast.darkmatter;
     }
 
     @Override
     public int movementTicks() {
-        return BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_MOVEMENTTICKS.get();
+	return BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_MOVEMENTTICKS.get();
     }
 
     @Override
     public int persistenceTicks() {
-        return BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_PERSISTANCE.get();
+	return BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_PERSISTANCE.get();
     }
 
 }

@@ -1,5 +1,7 @@
 package ballistix.common.entity;
 
+import java.util.UUID;
+
 import javax.annotation.Nullable;
 
 import ballistix.Ballistix;
@@ -17,6 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.TraceableEntity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -24,7 +27,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
 import net.neoforged.neoforge.common.world.chunk.TicketController;
 
-public class EntityBlast extends Entity {
+public class EntityBlast extends Entity implements TraceableEntity {
     private static final EntityDataAccessor<Integer> CALLCOUNT = SynchedEntityData.defineId(EntityBlast.class,
 	    EntityDataSerializers.INT);
     private static final EntityDataAccessor<String> TYPE = SynchedEntityData.defineId(EntityBlast.class,
@@ -65,14 +68,51 @@ public class EntityBlast extends Entity {
     public boolean hasMatured = false; // has the blast completed its initial explosion
     public int ticksAtMaturity = 0; // keeps track of ticks at maturity for rendering purposes if needed
     private boolean moving = false;
+    @Nullable
+    private UUID ownerUUID;
+    @Nullable
+    private Entity cachedOwner;
+
+    public void setOwner(@Nullable Entity cachedOwner) {
+	if (cachedOwner != null) {
+	    this.ownerUUID = cachedOwner.getUUID();
+	    this.cachedOwner = cachedOwner;
+	}
+    }
+
+    @Nullable
+    @Override
+    public Entity getOwner() {
+	if (this.cachedOwner != null && !this.cachedOwner.isRemoved()) {
+	    return this.cachedOwner;
+	} else if (this.ownerUUID != null && this.level() instanceof ServerLevel serverlevel) {
+	    this.cachedOwner = serverlevel.getEntity(this.ownerUUID);
+	    return this.cachedOwner;
+	} else {
+	    return null;
+	}
+    }
+
+    protected boolean ownedBy(Entity entity) {
+	return entity.getUUID().equals(this.ownerUUID);
+    }
+
+    @Override
+    public void restoreFrom(Entity entity) {
+	super.restoreFrom(entity);
+	if (entity instanceof EntityBlast blastEntity) {
+	    this.cachedOwner = blastEntity.cachedOwner;
+	}
+    }
 
     public EntityBlast(EntityType<? extends EntityBlast> type, Level worldIn) {
 	super(type, worldIn);
 	blocksBuilding = true;
     }
 
-    public EntityBlast(Level worldIn) {
+    public EntityBlast(Level worldIn, @Nullable Entity owner) {
 	this(BallistixEntities.ENTITY_BLAST.get(), worldIn);
+	setOwner(owner);
     }
 
     @Override
@@ -88,7 +128,7 @@ public class EntityBlast extends Entity {
 
     public void setBlastType(IBlast explosive) {
 	blastId = explosive.id();
-	blast = getBlastType().createBlast(level(), blockPosition());
+	blast = getBlastType().createBlast(level(), blockPosition(), getOwner());
     }
 
     @Nullable
@@ -145,7 +185,7 @@ public class EntityBlast extends Entity {
 	    callcount = entityData.get(CALLCOUNT);
 	    if (!shouldRenderCustom && entityData.get(SHOULDSTARTCUSTOMRENDER)) {
 		ticksWhenCustomRender = tickCount;
-	    }	
+	    }
 	    shouldRenderCustom = entityData.get(SHOULDSTARTCUSTOMRENDER);
 	    if (blast != null) {
 		blast.shouldRenderCustomClient = shouldRenderCustom;
@@ -159,8 +199,7 @@ public class EntityBlast extends Entity {
 	    movementTicks = entityData.get(MOVEMENT_TICKS);
 	    moving = entityData.get(MOVING);
 	    ticksMoving = entityData.get(TICKS_MOVING);
-	    if(blast instanceof BlastLasting lasting)
-	    {
+	    if (blast instanceof BlastLasting lasting) {
 		lasting.ticksSinceBlastStart = tickCount - ticksWhenCustomRender;
 	    }
 	}
@@ -170,7 +209,7 @@ public class EntityBlast extends Entity {
 	}
 
 	if (blast == null) {
-	    blast = getBlastType().createBlast(level(), blockPosition());
+	    blast = getBlastType().createBlast(level(), blockPosition(), getOwner());
 	    if (shouldPersist && hasMatured) {
 		blast.isRepeating = true;
 	    }
@@ -198,7 +237,7 @@ public class EntityBlast extends Entity {
 			    moving = false;
 			    ticksMoving = 0;
 			    callcount = 0;
-			    blast = getBlastType().createBlast(level(), blockPosition());
+			    blast = getBlastType().createBlast(level(), blockPosition(), getOwner());
 			    blast.isRepeating = true;
 			}
 
@@ -328,6 +367,9 @@ public class EntityBlast extends Entity {
 	compound.putBoolean("moivng", moving);
 	compound.putBoolean("shouldpersist", shouldPersist);
 	compound.putBoolean("hasmatured", hasMatured);
+	if (this.ownerUUID != null) {
+	    compound.putUUID("Owner", this.ownerUUID);
+	}
 
     }
 
@@ -347,6 +389,10 @@ public class EntityBlast extends Entity {
 	movementTicks = compound.getInt("movementticks");
 	moving = compound.getBoolean("moving");
 	ticksMoving = compound.getInt("ticksmoving");
+	if (compound.hasUUID("Owner")) {
+	    this.ownerUUID = compound.getUUID("Owner");
+	    this.cachedOwner = null;
+	}
     }
 
     public Blast getBlast() {

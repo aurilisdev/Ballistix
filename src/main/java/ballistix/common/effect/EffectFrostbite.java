@@ -11,24 +11,24 @@ public class EffectFrostbite extends MobEffect {
     public static final Color COLOR = new Color(0, 100, 256, 255);
 
     public EffectFrostbite(MobEffectCategory category, int color) {
-        super(category, color);
+	super(category, color);
     }
 
     public EffectFrostbite() {
-        this(MobEffectCategory.HARMFUL, COLOR.color());
+	this(MobEffectCategory.HARMFUL, COLOR.color());
     }
 
     @Override
     public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
-        int i = 25 >> amplifier;
-        return i > 0 ? amplifier % i == 0 : true;
+	int i = 25 >> amplifier;
+	return i > 0 ? amplifier % i == 0 : true;
     }
 
     @Override
     public boolean applyEffectTick(LivingEntity livingEntity, int amplifier) {
-        livingEntity.hurt(livingEntity.damageSources().source(BallistixDamageTypes.FROSTBITE, livingEntity), (float) (Math.pow(amplifier, 1.3) + 1));
-        return true;
+	livingEntity.hurt(livingEntity.damageSources().source(BallistixDamageTypes.FROSTBITE),
+		(float) (Math.pow(amplifier, 1.3) + 1));
+	return true;
     }
-
 
 }

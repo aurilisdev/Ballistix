@@ -120,15 +120,13 @@ public class VirtualMissile {
 	    return;
 	}
 
-	if(payloadData.getFlightPath() == FlightPath.ROCKET_LAUNCHER)
-	{
-	    if(tickCount > 1800)
-	    {
+	if (payloadData.getFlightPath() == FlightPath.ROCKET_LAUNCHER) {
+	    if (tickCount > 1800) {
 		hasExploded = true;
 		return;
 	    }
 	}
-	
+
 	if ((payloadData.getFlightPath() != FlightPath.ROCKET_LAUNCHER
 		&& targetData.target.equals(BlockEntityUtils.OUT_OF_REACH)) || payloadData.blastId == null) {
 	    hasExploded = true;
@@ -151,7 +149,8 @@ public class VirtualMissile {
 	if ((collisionPos != null
 		|| (targetData.usingAirburst && targetData.pastHalfwayPoint && position.y <= targetData.target.getY()))
 		&& (payloadData.getFlightPath() == FlightPath.ROCKET_LAUNCHER
-			|| !isInValidBlockstate(new BlockPos((int) position.x, (int)position.y, (int) position.z), level))
+			|| !isInValidBlockstate(new BlockPos((int) position.x, (int) position.y, (int) position.z),
+				level))
 		|| position.y <= level.getMinBuildHeight()) {
 
 	    IBlast explosive = Blast.BLAST_MAP.get(payloadData.blastId);
@@ -160,7 +159,7 @@ public class VirtualMissile {
 		collisionPos = new BlockPos((int) position.x, targetData.target.getY(), (int) position.z);
 	    }
 
-	    Blast b = explosive.createBlast(level, collisionPos);
+	    Blast b = explosive.createBlast(level, collisionPos, null);
 
 	    if (b != null) {
 

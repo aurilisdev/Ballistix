@@ -40,6 +40,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.network.PacketDistributor;
 import voltaic.api.radiation.RadiationSystem;
 import voltaic.api.radiation.SimpleRadiationSource;
@@ -212,6 +213,19 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 				* BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS.getAsDouble()) < 0.6
 					+ 0.2 * world.random.nextDouble()) {
 		    RadiationHandler.addNuclearExplosiveIrradidatedBlock(pos, world);
+		    BlockState at = world.getBlockState(pos);
+		    if (at.is(Tags.Blocks.GLASS_BLOCKS)) {
+			world.setBlock(pos, Blocks.AIR.defaultBlockState(),
+				Block.UPDATE_NEIGHBORS | Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
+		    } else {
+			if (world.random.nextFloat() < 0.2) {
+			    Direction dir = Direction.getRandom(world.random);
+			    if (at.isFlammable(world, pos, dir)) {
+				world.setBlock(pos.relative(dir), Blocks.FIRE.defaultBlockState(),
+					Block.UPDATE_NEIGHBORS | Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
+			    }
+			}
+		    }
 		}
 	    }
 	    if (!cachedIterator.hasNext()) {

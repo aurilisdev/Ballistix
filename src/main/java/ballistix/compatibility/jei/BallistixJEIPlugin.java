@@ -4,12 +4,8 @@ import ballistix.Ballistix;
 import ballistix.compatibility.jei.util.psuedorecipes.BallistixPsuedoRecipes;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
-import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.registration.IRecipeRegistration;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 
 @JeiPlugin
 public class BallistixJEIPlugin implements IModPlugin {
@@ -31,9 +27,9 @@ public class BallistixJEIPlugin implements IModPlugin {
 
 	private static void ballistixInfoTabs(IRecipeRegistration registration) {
 
-		for (ItemStack itemStack : BallistixPsuedoRecipes.BALLISTIX_ITEMS) {
+//		for (ItemStack itemStack : BallistixPsuedoRecipes.BALLISTIX_ITEMS) {
 			//registration.addIngredientInfo(itemStack, VanillaTypes.ITEM_STACK, Component.translatable("jei.info.item." + BuiltInRegistries.ITEM.getKey(itemStack.getItem()).getPath()));
-		}
+//		}
 
 	}
 

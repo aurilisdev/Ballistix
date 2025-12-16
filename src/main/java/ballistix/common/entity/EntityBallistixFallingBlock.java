@@ -59,6 +59,7 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
         this.setStartPos(this.blockPosition());
     }
 
+    @Override
     public boolean isAttackable() {
         return false;
     }
@@ -77,6 +78,7 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
         entityData.define(DATA_START_POS, BlockPos.ZERO);
     }
 
+    @Override
     public boolean isPickable() {
         return !this.isRemoved();
     }
@@ -159,11 +161,13 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
         this.hurtEntities = shouldHurt;
     }
 
+    @Override
     @OnlyIn(Dist.CLIENT)
     public boolean displayFireAnimation() {
         return false;
     }
 
+    @Override
     public void fillCrashReportCategory(CrashReportCategory report) {
         super.fillCrashReportCategory(report);
         report.setDetail("Immitating BlockState", this.blockState.toString());
@@ -173,6 +177,7 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
         return this.blockState;
     }
 
+    @Override
     public boolean onlyOpCanSetNbt() {
         return true;
     }

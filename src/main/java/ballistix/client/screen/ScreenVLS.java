@@ -3,7 +3,6 @@ package ballistix.client.screen;
 import ballistix.common.inventory.container.ContainerVLS;
 import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tile.TileVerticalLaunchSilo;
-import ballistix.common.tile.silo.TileLauncherControlPanelT1;
 import ballistix.prefab.utils.BallistixTextUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;

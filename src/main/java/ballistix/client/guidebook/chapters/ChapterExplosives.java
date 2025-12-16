@@ -1,6 +1,5 @@
 package ballistix.client.guidebook.chapters;
 
-import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.BallistixConstants;
 import ballistix.prefab.utils.BallistixTextUtils;

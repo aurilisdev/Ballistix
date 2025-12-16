@@ -433,6 +433,7 @@ public class ScreenProximityDetector extends GenericScreen<ContainerProximityDet
         detector.maxCorner.setValue(new BlockPos(detector.maxCorner.getValue().getX(), detector.maxCorner.getValue().getY(), zCoord));
     }
 
+    @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         super.render(graphics, mouseX, mouseY, partialTicks);
         if (this.needsUpdate) {

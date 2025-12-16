@@ -399,6 +399,7 @@ public class TileVerticalLaunchSilo extends GenericTile implements ILauncherCont
     	return use(player, hand, hit);
     }
 
+    @Override
     public void onSubnodeDestroyed(TileMultiSubnode subnode) {
         this.level.destroyBlock(this.worldPosition, true);
     }

@@ -2,9 +2,6 @@ package ballistix.common.blast.tier3;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-
-import com.google.common.collect.Maps;
 
 import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IHasCustomRender;
@@ -25,7 +22,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -115,7 +111,6 @@ public class BlastEMP extends Blast implements IHasCustomRender {
             }
         }
         if (!cachedIterator.hasNext()) {
-            Map<Player, Vec3> playerKnockbackMap = Maps.newHashMap();
             float doubleSize = (float) (BallistixConstants.EXPLOSIVE_EMP_RADIUS * 2.0F);
             int x0 = Mth.floor(position.getX() - (double) doubleSize - 1.0D);
             int x1 = Mth.floor(position.getX() + (double) doubleSize + 1.0D);
@@ -126,7 +121,6 @@ public class BlastEMP extends Blast implements IHasCustomRender {
 
             List<Entity> entities = world.getEntities(null, new AABB(x0, y0, z0, x1, y1, z1));
 
-            Vec3 posVector = new Vec3(position.getX(), position.getY(), position.getZ());
 
             for (Entity entity : entities) {
 
@@ -134,7 +128,6 @@ public class BlastEMP extends Blast implements IHasCustomRender {
                     continue;
                 }
 
-                boolean shouldDrain = true;
 
                 switch (griefPreventionMethod) {
                     case NONE:

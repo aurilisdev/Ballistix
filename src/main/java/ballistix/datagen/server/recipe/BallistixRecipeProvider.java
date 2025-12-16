@@ -11,6 +11,7 @@ public class BallistixRecipeProvider extends BaseRecipeProvider {
 		super(output);
 	}
 
+	@Override
 	public void addRecipes() {
 		generators.add(new BallistixCraftingTableRecipes());
 		generators.add(new BallistixMineralGrinderRecipes());

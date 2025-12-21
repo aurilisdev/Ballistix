@@ -6,6 +6,7 @@ import ballistix.Ballistix;
 import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.common.blast.util.Blast;
+import ballistix.common.blast.util.BlastLasting;
 import ballistix.registers.BallistixEntities;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -145,6 +146,10 @@ public class EntityBlast extends Entity {
             movementTicks = entityData.get(MOVEMENT_TICKS);
             moving = entityData.get(MOVING);
             ticksMoving = entityData.get(TICKS_MOVING);
+	    if(blast instanceof BlastLasting lasting)
+	    {
+		lasting.ticksSinceBlastStart = tickCount - ticksWhenCustomRender;
+	    }
         }
 
         if (blastId == null) {

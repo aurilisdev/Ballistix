@@ -172,7 +172,7 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	    if (perticksimple == -1) {
 		cachedIterator = threadSimple.results.iterator();
 	    }	    
-	    perticksimple = (int) (4 * Math.PI * 0.5 * (int)(BallistixConstants.EXPLOSIVE_NUCLEAR_DURATION/ BallistixConstants.EXPLOSIVE_NUCLEAR_DURATION) * (Mth.clamp(callCount*callCount, 0, (int)(BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS*BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS))));
+	    perticksimple = (int) (4 * Math.PI * 0.5 * (Mth.clamp(callCount*callCount, 0, (int)(BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS*BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS))));
 
 	    int finished = perticksimple;
 	    while (cachedIterator.hasNext()) {

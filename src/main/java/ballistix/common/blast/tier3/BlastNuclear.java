@@ -76,6 +76,7 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
     private boolean hasShaken;
     private boolean secondDamage = false;
     private boolean thirdDamage = false;
+    private boolean sounded = false;
 
     @Override
     public boolean shouldRender() {
@@ -129,12 +130,13 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 		    world.getBlockState(p).getBlock().wasExploded(world, p, ex);
 		    world.setBlock(p, state, 3);
 		    if (world instanceof ServerLevel serverlevel) {
-			if (ticksSinceBlastStart == 0) {
+			if (!sounded) {
 			    serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(player -> {
 				serverlevel.playSound(null, player.getX(), player.getY(), player.getZ(),
 					BallistixSounds.SOUND_NUCLEAREXPLOSION.get(), // Change to your sound event
 					SoundSource.PLAYERS, 25, 1.0F);
 			    });
+			    sounded = true;
 			}
 			if (world.random.nextFloat() < 1 / 20.0) {
 			    serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false)

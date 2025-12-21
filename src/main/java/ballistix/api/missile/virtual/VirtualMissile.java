@@ -135,8 +135,11 @@ public class VirtualMissile {
 
         BlockPos collisionPos = projectMovementForCollision(level);
 
-        if ((collisionPos != null || (targetData.usingAirburst && targetData.pastHalfwayPoint && position.y <= targetData.target.getY())) && (payloadData.getFlightPath() == FlightPath.ROCKET_LAUNCHER || !isInValidBlockstate(collisionPos, level)) || position.y <= level.getMinBuildHeight()) {
-
+	if ((collisionPos != null
+		|| (targetData.usingAirburst && targetData.pastHalfwayPoint && position.y <= targetData.target.getY()))
+		&& (payloadData.getFlightPath() == FlightPath.ROCKET_LAUNCHER
+			|| !isInValidBlockstate(new BlockPos((int) position.x, (int)position.y, (int) position.z), level))
+		|| position.y <= level.getMinBuildHeight()) {
         	IBlast explosive = Blast.BLAST_MAP.get(payloadData.blastId);
 
             if(collisionPos == null) {

@@ -69,7 +69,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 		addComponent(new ComponentTickable(this).tickServer(this::tickServer));
 		addComponent(new ComponentElectrodynamic(this, false, true).voltage(VoltaicCapabilities.DEFAULT_VOLTAGE * Math.pow(2, tier - 1)).maxJoules(BallistixConstants.MISSILESILO_USAGE * 20 * tier).setInputDirections(BlockEntityUtils.MachineDirection.values()));
 		if (tier == 3) {
-			addComponent(new ComponentInventory(this, ComponentInventory.InventoryBuilder.newInv().inputs(1)).setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).setDirectionsBySlot(1, BlockEntityUtils.MachineDirection.values()).valid(this::isItemValidForSlot));
+			addComponent(new ComponentInventory(this, ComponentInventory.InventoryBuilder.newInv().inputs(2)).setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).setDirectionsBySlot(1, BlockEntityUtils.MachineDirection.values()).valid(this::isItemValidForSlot));
 		} else {
 			addComponent(new ComponentInventory(this));
 		}

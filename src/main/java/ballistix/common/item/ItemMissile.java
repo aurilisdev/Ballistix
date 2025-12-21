@@ -28,6 +28,7 @@ public class ItemMissile extends ItemVoltaic {
 		super.appendHoverText(pStack, pLevel, tooltipComponents, pIsAdvanced);
 		if(missile != SubtypeMissile.clustershard) {
 			tooltipComponents.add(BallistixTextUtils.tooltip("missile.maxbombtier", Component.literal("" + missile.tier()).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY));
+			tooltipComponents.add(BallistixTextUtils.tooltip("missile.range", Component.literal("" + missile.range()).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY));
 		}
 	}
 

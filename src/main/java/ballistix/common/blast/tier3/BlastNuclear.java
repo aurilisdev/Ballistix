@@ -39,6 +39,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.network.NetworkDirection;
 import voltaic.api.radiation.RadiationSystem;
@@ -55,8 +56,9 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	if (!world.isClientSide) {
 	    threadRay = new ThreadDynamicRaycastBlast(world, position, (int) BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE,
 		    (float) BallistixConstants.EXPLOSIVE_NUCLEAR_ENERGY, null);
-	    threadSimple = new ThreadSimpleBlast(world, position, (int) (BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS),
-		    Integer.MAX_VALUE, null, getBlastType().id());
+	    threadSimple = new ThreadSimpleBlast(world, position,
+		    (int) (BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS), Integer.MAX_VALUE, null,
+		    getBlastType().id());
 	    threadSimple.strictnessAtEdges = 1.7;
 	    if (BallistixConstants.SHOULD_MULTITHREAD_RAYTRACING) {
 		threadRay.start();
@@ -95,7 +97,7 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	    return !world.isClientSide;
 	}
 	Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
-		(float) BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE*3, false, BlockInteraction.DESTROY);
+		(float) BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE * 3, false, BlockInteraction.DESTROY);
 	if (callCount % 2 == 0) {
 	    synchronized (threadRay.finishedBlocks) {
 		if (pertick == -1) {
@@ -164,7 +166,7 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	if (threadSimple.isComplete && callCount % 2 == 0) {
 	    if (!thirdDamage) {
 		attackEntities((float) BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE * 2, ex);
-		thirdDamage=true;
+		thirdDamage = true;
 	    }
 	    boolean add = switch (griefPreventionMethod) {
 	    case GRIEF_DEFENDER -> GriefDefenderHandler.shouldAddParticle(position);
@@ -179,8 +181,10 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	    }
 	    if (perticksimple == -1) {
 		cachedIterator = threadSimple.results.iterator();
-	    }	    
-	    perticksimple = (int) (4 * Math.PI * 0.5 * (Mth.clamp(callCount*callCount, 0, (int)(BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS*BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS))));
+	    }
+	    perticksimple = (int) (4 * Math.PI * 0.5
+		    * (Mth.clamp(callCount * callCount, 0, (int) (BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS
+			    * BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS))));
 
 	    int finished = perticksimple;
 	    while (cachedIterator.hasNext()) {
@@ -199,10 +203,24 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 		default:
 		    break;
 		}
-		if (ModList.get().isLoaded(Ballistix.NUCLEAR_SCIENCE_ID) && pos.distSqr(position)
-			/ (BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS * BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS
-				* 4) < 0.6 + 0.2 * world.random.nextDouble()) {
+		if (ModList.get().isLoaded(Ballistix.NUCLEAR_SCIENCE_ID)
+			&& pos.distSqr(position) / (BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS
+				* BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS * 4) < 0.6
+					+ 0.2 * world.random.nextDouble()) {
 		    RadiationHandler.addNuclearExplosiveIrradidatedBlock(pos, world);
+		    BlockState at = world.getBlockState(pos);
+		    if (at.is(Tags.Blocks.GLASS)) {
+			world.setBlock(pos, Blocks.AIR.defaultBlockState(),
+				Block.UPDATE_NEIGHBORS | Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
+		    } else {
+			if (world.random.nextFloat() < 0.2) {
+			    Direction dir = Direction.getRandom(world.random);
+			    if (at.isFlammable(world, pos, dir)) {
+				world.setBlock(pos.relative(dir), Blocks.FIRE.defaultBlockState(),
+					Block.UPDATE_NEIGHBORS | Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
+			    }
+			}
+		    }
 		}
 	    }
 	    if (!cachedIterator.hasNext()) {

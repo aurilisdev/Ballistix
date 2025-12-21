@@ -1,7 +1,12 @@
 package ballistix.common.entity;
 
-import ballistix.registers.BallistixEntities;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import com.google.common.collect.Lists;
+
+import ballistix.registers.BallistixEntities;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -29,8 +34,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.network.NetworkHooks;
 
-import java.util.List;
-
 public class EntityBallistixFallingBlock extends ThrowableProjectile implements IEntityAdditionalSpawnData {
 
     private BlockState blockState = Blocks.SAND.defaultBlockState();
@@ -41,12 +44,13 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
     private float fallDamageAmount = 2.0F;
     public CompoundTag blockData;
     protected static final EntityDataAccessor<BlockPos> DATA_START_POS = SynchedEntityData.defineId(EntityBallistixFallingBlock.class, EntityDataSerializers.BLOCK_POS);
+    private Set<BlockPos> whitelist = new HashSet<BlockPos>();
 
     public EntityBallistixFallingBlock(EntityType<? extends EntityBallistixFallingBlock> entityType, Level level) {
         super(entityType, level);
     }
 
-    public EntityBallistixFallingBlock(Level world, double x, double y, double z, BlockState blockState) {
+    public EntityBallistixFallingBlock(Level world, double x, double y, double z, BlockState blockState, Set<BlockPos> whitelist) {
         this(BallistixEntities.ENTITY_BALLISTIXFALLINGBLOCK.get(), world);
         this.blockState = blockState;
         this.blocksBuilding = true;
@@ -57,6 +61,8 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
         this.yo = y;
         this.zo = z;
         this.setStartPos(this.blockPosition());
+	this.whitelist = whitelist;
+
     }
 
     @Override
@@ -99,14 +105,16 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
 
     @Override
     protected void onHitBlock(BlockHitResult result) {
-        BlockState state = level().getBlockState(result.getBlockPos());
+	if (whitelist.contains(result.getBlockPos()) ? tickCount > 5 : tickCount > 3) {
+	    BlockState state = level().getBlockState(result.getBlockPos());
 
-        if (!state.isAir() && !state.liquid()) {
-            if (!level().isClientSide && !state.is(Blocks.ANVIL)) {
-                level().setBlockAndUpdate(blockPosition(), blockState);
-            }
-            removeAfterChangingDimensions();
-        }
+	    if (!state.isAir() && !state.liquid()) {
+		if (!level().isClientSide && !state.is(Blocks.ANVIL)) {
+		    level().setBlockAndUpdate(blockPosition(), blockState);
+		}
+		removeAfterChangingDimensions();
+	    }
+	}
     }
 
     @Override

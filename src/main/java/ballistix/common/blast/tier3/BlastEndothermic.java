@@ -38,7 +38,7 @@ public class BlastEndothermic extends BlastLasting implements IHasCustomRender {
     @Override
     public void doPreExplode() {
         if (!world.isClientSide) {
-            thread = new ThreadSimpleBlast(world, position, (int) BallistixConstants.EXPLOSIVE_ENDOTHERMIC_RADIUS, Integer.MAX_VALUE, null, getBlastType().id());
+            thread = new ThreadSimpleBlast(world, position, (int) BallistixConstants.EXPLOSIVE_ENDOTHERMIC_RADIUS, Integer.MAX_VALUE, null, getBlastType().id(), true);
             thread.start();
             world.playSound(null, position, BallistixSounds.SOUND_ENDOTHERMICBEAM.get(), SoundSource.BLOCKS, 25, 1);
         }
@@ -92,21 +92,24 @@ public class BlastEndothermic extends BlastLasting implements IHasCustomRender {
             } else {
                 state = Blocks.SNOW_BLOCK.defaultBlockState();
             }
+	    double deltaX = p.getX() - position.getX();
+	    double deltaY = p.getY() - position.getY();
+	    double deltaZ = p.getZ() - position.getZ();
 
-            double deltaX = p.getX() - position.getX();
-            double deltaY = p.getY() - position.getY();
-            double deltaZ = p.getZ() - position.getZ();
+	    double inverseMag = Mth.fastInvSqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
-            double inverseMag = Mth.fastInvSqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+	    double velX = deltaX * inverseMag * BallistixConstants.EXPLOSIVE_ENDOTHERMIC_VELOCITY;
+	    double velY = Math.abs(deltaY) * inverseMag
+		    * BallistixConstants.EXPLOSIVE_ENDOTHERMIC_VELOCITY;
+	    double velZ = deltaZ * inverseMag * BallistixConstants.EXPLOSIVE_ENDOTHERMIC_VELOCITY;
 
-            double velX = deltaX * inverseMag * BallistixConstants.EXPLOSIVE_ENDOTHERMIC_VELOCITY;
-            double velY = deltaY * inverseMag * BallistixConstants.EXPLOSIVE_ENDOTHERMIC_VELOCITY;
-            double velZ = deltaZ * inverseMag * BallistixConstants.EXPLOSIVE_ENDOTHERMIC_VELOCITY;
-
-            EntityBallistixFallingBlock movingBlock = new EntityBallistixFallingBlock(world, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, state);
-            movingBlock.setDeltaMovement(velX, velY, velZ);
-            world.setBlock(p, state.getFluidState().createLegacyBlock(), 3);
-            world.addFreshEntity(movingBlock);
+	    EntityBallistixFallingBlock movingBlock = new EntityBallistixFallingBlock(world, p.getX() + 0.5,
+		    p.getY() + 0.5, p.getZ() + 0.5, state, thread.results);
+	    movingBlock.setDeltaMovement(velX * 0.5, velY * 3, velZ * 0.5);
+	    world.setBlock(p, state.getFluidState().createLegacyBlock(), 3);
+	    if (world.random.nextFloat() < 1.0/3.0) {
+		world.addFreshEntity(movingBlock);
+	    }
         }
 
         if(!iterator.hasNext()) {

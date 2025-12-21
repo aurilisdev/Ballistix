@@ -2,10 +2,12 @@ package ballistix.common.blast.util.thread;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeSet;
 
 import com.google.common.collect.Sets;
 import com.mojang.datafixers.util.Pair;
@@ -21,7 +23,7 @@ import voltaic.prefab.block.HashDistanceBlockPos;
 public class ThreadSimpleBlast extends ThreadBlast {
 
 
-    private static final HashMap<Pair<Integer, ResourceLocation> , HashSet<BlockPos>> CACHED_EUCLIDEAN_RESULTS = new HashMap<>();
+    private static final HashMap<Pair<Integer, ResourceLocation>, Set<BlockPos>> CACHED_EUCLIDEAN_RESULTS = new HashMap<>();
     private static final Set<Integer> currentlyCalculating = Collections.synchronizedSet(new HashSet<>());
 
     private final Pair<Integer, ResourceLocation> idPair;
@@ -32,6 +34,13 @@ public class ThreadSimpleBlast extends ThreadBlast {
         this.idPair = new Pair<Integer, ResourceLocation>(range, id);
         setPriority(MAX_PRIORITY);
     }
+    public ThreadSimpleBlast(Level world, BlockPos position, int range, float energy, Entity source,
+	    ResourceLocation id, boolean sortBasedOnDistance) {
+	this(world, position, range, energy, source, id);
+	this.sortBasedOnDistance = sortBasedOnDistance;
+    }
+
+    private boolean sortBasedOnDistance = false;
 
     public double strictnessAtEdges = 1.85;
 
@@ -92,7 +101,26 @@ public class ThreadSimpleBlast extends ThreadBlast {
                     positions.set(newIndex, positions.get(i));
                     positions.set(i, atNew);
                 }
-                CACHED_EUCLIDEAN_RESULTS.put(idPair, Sets.newHashSet(positions));
+		if (sortBasedOnDistance) {
+
+		    Comparator<BlockPos> byCenterDistance = Comparator.comparingLong(pos -> {
+			long x = pos.getX();
+			long y = pos.getY();
+			long z = pos.getZ();
+			// distance from (0.5, 0.5, 0.5) equals x² + y² + z² for integer block coords
+			return x * x + y * y + z * z;
+		    });
+		    byCenterDistance = byCenterDistance.thenComparingInt(BlockPos::getX)
+			    .thenComparingInt(BlockPos::getY).thenComparingInt(BlockPos::getZ);
+
+		    // turn results into a sorted set, closest to farthest
+		    Set<BlockPos> sorted = new TreeSet<>(byCenterDistance);
+		    sorted.addAll(positions);
+		    CACHED_EUCLIDEAN_RESULTS.put(idPair, sorted);
+
+		} else {
+		    CACHED_EUCLIDEAN_RESULTS.put(idPair, Sets.newHashSet(positions));
+		}
             }
 
             results = CACHED_EUCLIDEAN_RESULTS.get(idPair);
@@ -125,15 +153,31 @@ public class ThreadSimpleBlast extends ThreadBlast {
                     }
                 }
             }
-            // Sort
-            Random rand = Voltaic.RANDOM;
-            for (int i = 0; i < positions.size(); i++) {
-                int newIndex = rand.nextInt(Math.max(0, i - 10), Math.min(positions.size() - 1, i + 10));
-                BlockPos atNew = positions.get(newIndex);
-                positions.set(newIndex, positions.get(i));
-                positions.set(i, atNew);
-            }
-            results = Sets.newHashSet(positions);
+	    // Sort
+	    Random rand = Voltaic.RANDOM;
+	    for (int i = 0; i < positions.size(); i++) {
+		int newIndex = rand.nextInt(Math.max(0, i - 10), Math.min(positions.size() - 1, i + 10));
+		BlockPos atNew = positions.get(newIndex);
+		positions.set(newIndex, positions.get(i));
+		positions.set(i, atNew);
+	    }
+	    results = Sets.newHashSet(positions);
+	    if (sortBasedOnDistance) {
+		Comparator<BlockPos> byCenterDistance = Comparator.comparingLong(pos -> {
+		    long x = pos.getX();
+		    long y = pos.getY();
+		    long z = pos.getZ();
+		    // distance from (0.5, 0.5, 0.5) equals x² + y² + z² for integer block coords
+		    return x * x + y * y + z * z;
+		});
+		byCenterDistance = byCenterDistance.thenComparingInt(BlockPos::getX).thenComparingInt(BlockPos::getY)
+			.thenComparingInt(BlockPos::getZ);
+
+		// turn results into a sorted set, closest to farthest
+		Set<BlockPos> sorted = new TreeSet<>(byCenterDistance);
+		sorted.addAll(positions);
+		results = sorted;
+	    }
         }
 
     }

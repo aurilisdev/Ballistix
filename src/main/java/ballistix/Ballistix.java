@@ -84,9 +84,9 @@ public class Ballistix {
 			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.largeantimatter.id()).start();
 			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE * 2, Integer.MAX_VALUE, null, SubtypeBlast.nuclear.id()).start();
 			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_EMP_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.emp.id());
-			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_SONIC_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.sonic.id());
-			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_HYPERSONIC_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.hypersonic.id());
-			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_ENDOTHERMIC_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.endothermic.id());
+			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_SONIC_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.sonic.id(), true);
+			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_HYPERSONIC_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.hypersonic.id(), true);
+			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_ENDOTHERMIC_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.endothermic.id(), true);
 			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_INFESTIVE_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.infestive.id());
 			new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_EXOTHERMIC_RADIUS, Integer.MAX_VALUE, null, SubtypeBlast.exothermic.id());
 		});

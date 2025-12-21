@@ -80,10 +80,10 @@ public class BallistixConstants {
 	//sonic
 	@DoubleValue(def = 2.0)
 	public static double EXPLOSIVE_SONIC_MAXHARDNESS = 2.0;
-	@DoubleValue(def = 15.0)
-	public static double EXPLOSIVE_SONIC_RADIUS = 20;
-	@DoubleValue(def = 5.0)
-	public static double EXPLOSIVE_SONIC_VELOCITY = 5.0;
+	@DoubleValue(def = 10.0)
+	public static double EXPLOSIVE_SONIC_RADIUS = 10;
+	@DoubleValue(def = 1.0)
+	public static double EXPLOSIVE_SONIC_VELOCITY = 1.0;
 	@DoubleValue(def = 20.0, comment = "Value is in ticks.")
 	public static double EXPLOSIVE_SONIC_DURATION = 20.0;
 
@@ -117,8 +117,8 @@ public class BallistixConstants {
 	public static double EXPLOSIVE_ENDOTHERMIC_MAXHARDNESS = 1;
 	@DoubleValue(def = 30.0)
 	public static double EXPLOSIVE_ENDOTHERMIC_RADIUS = 30;
-	@DoubleValue(def = 5.0)
-	public static double EXPLOSIVE_ENDOTHERMIC_VELOCITY = 5.0;
+	@DoubleValue(def = 1.5)
+	public static double EXPLOSIVE_ENDOTHERMIC_VELOCITY = 1.5;
 	@DoubleValue(def = 20.0, comment = "Value is in ticks.")
 	public static double EXPLOSIVE_ENDOTHERMIC_DURATION = 20.0;
 	//exothermic
@@ -140,12 +140,12 @@ public class BallistixConstants {
 	//hypersonic
 	@DoubleValue(def = 3.0)
 	public static double EXPLOSIVE_HYPERSONIC_MAXHARDNESS = 3.0;
-	@DoubleValue(def = 30.0)
-	public static double EXPLOSIVE_HYPERSONIC_RADIUS = 30;
-	@DoubleValue(def = 5.0)
-	public static double EXPLOSIVE_HYPERSONIC_VELOCITY = 5.0;
-	@DoubleValue(def = 160.0, comment = "Value is in ticks.")
-	public static double EXPLOSIVE_HYPERSONIC_DURATION = 160.0;
+	@DoubleValue(def = 18.0)
+	public static double EXPLOSIVE_HYPERSONIC_RADIUS = 18;
+	@DoubleValue(def = 1.5)
+	public static double EXPLOSIVE_HYPERSONIC_VELOCITY = 1.5;
+	@DoubleValue(def = 50.0, comment = "Value is in ticks.")
+	public static double EXPLOSIVE_HYPERSONIC_DURATION = 50.0;
 	//rejuvination
 	//antimatter
 	@DoubleValue(def = 45.0)

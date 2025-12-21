@@ -1,5 +1,8 @@
 package ballistix.common.blast.tier2;
 
+import java.util.Iterator;
+import java.util.List;
+
 import ballistix.api.blast.IBlast;
 import ballistix.common.blast.util.BlastLasting;
 import ballistix.common.blast.util.thread.ThreadSimpleBlast;
@@ -15,9 +18,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-
-import java.util.Iterator;
-import java.util.List;
 
 public class BlastSonic extends BlastLasting {
 
@@ -37,7 +37,7 @@ public class BlastSonic extends BlastLasting {
     @Override
     public void doPreExplode() {
         if (!world.isClientSide) {
-            thread = new ThreadSimpleBlast(world, position, (int) BallistixConstants.EXPLOSIVE_SONIC_RADIUS, Integer.MAX_VALUE, null, getBlastType().id());
+            thread = new ThreadSimpleBlast(world, position, (int) BallistixConstants.EXPLOSIVE_SONIC_RADIUS, Integer.MAX_VALUE, null, getBlastType().id(), true);
             thread.start();
             world.playSound(null, position, BallistixSounds.SOUND_SONICEXPLOSION.get(), SoundSource.BLOCKS, 25, 1);
         }
@@ -55,7 +55,7 @@ public class BlastSonic extends BlastLasting {
         }
         if (pertick == -1) {
             hasStarted = true;
-            pertick = (int) (thread.results.size() * 1.5 / BallistixConstants.EXPLOSIVE_SONIC_DURATION + 1);
+            pertick = (int) (thread.results.size() / BallistixConstants.EXPLOSIVE_SONIC_DURATION + 1);
             iterator = thread.results.iterator();
         }
         int finished = pertick;
@@ -70,81 +70,88 @@ public class BlastSonic extends BlastLasting {
                 continue;
             }
 
-            boolean shouldRepulse = true;
 
-            switch (griefPreventionMethod) {
-                case NONE:
-                    break;
-                case GRIEF_DEFENDER:
-                    shouldRepulse = GriefDefenderHandler.shouldHarmBlock(p);
-                    break;
-                case SABER_FACTIONS:
-                    break;
-            }
+	    boolean shouldRepulse = true;
 
-            if(!shouldRepulse) {
-                continue;
-            }
+	    switch (griefPreventionMethod) {
+	    case NONE:
+		break;
+	    case GRIEF_DEFENDER:
+		shouldRepulse = GriefDefenderHandler.shouldHarmBlock(p);
+		break;
+	    case SABER_FACTIONS:
+		break;
+	    }
 
-            double deltaX = p.getX() - position.getX();
-            double deltaY = p.getY() - position.getY();
-            double deltaZ = p.getZ() - position.getZ();
+	    if (!shouldRepulse) {
+		continue;
+	    }
 
-            double inverseMag = Mth.fastInvSqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+	    double deltaX = p.getX() - position.getX();
+	    double deltaY = Math.max(p.getY() - position.getY(), 1);
+	    double deltaZ = p.getZ() - position.getZ();
 
-            double velX = deltaX * inverseMag * BallistixConstants.EXPLOSIVE_SONIC_VELOCITY;
-            double velY = deltaY * inverseMag * BallistixConstants.EXPLOSIVE_SONIC_VELOCITY;
-            double velZ = deltaZ * inverseMag * BallistixConstants.EXPLOSIVE_SONIC_VELOCITY;
+	    double inverseMag = Mth.fastInvSqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
-            EntityBallistixFallingBlock movingBlock = new EntityBallistixFallingBlock(world, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, state);
-            movingBlock.setDeltaMovement(velX, velY, velZ);
-            world.setBlock(p, state.getFluidState().createLegacyBlock(), 3);
-            world.addFreshEntity(movingBlock);
+	    double velX = deltaX * inverseMag * BallistixConstants.EXPLOSIVE_SONIC_VELOCITY;
+	    double velY = Math.abs(deltaY) * inverseMag
+		    * BallistixConstants.EXPLOSIVE_SONIC_VELOCITY;
+	    double velZ = deltaZ * inverseMag * BallistixConstants.EXPLOSIVE_SONIC_VELOCITY;
+
+	    EntityBallistixFallingBlock movingBlock = new EntityBallistixFallingBlock(world, p.getX() + 0.5,
+		    p.getY() + 0.5, p.getZ() + 0.5, state, thread.results);
+	    movingBlock.setDeltaMovement(velX * 0.33, velY * 3, velZ * 0.33);
+	    world.setBlock(p, state.getFluidState().createLegacyBlock(), 3);
+	    if (world.random.nextFloat() < 1.0/3.0) {
+		world.addFreshEntity(movingBlock);
+	    }
         }
 
-        if(!iterator.hasNext()) {
-            float x = position.getX();
-            float y = position.getY();
-            float z = position.getZ();
+	if (iterator.hasNext()) {
+	    float x = position.getX();
+	    float y = position.getY();
+	    float z = position.getZ();
 
             float size = (float) BallistixConstants.EXPLOSIVE_SONIC_RADIUS;
-            float doubleSize = size * 2.0F;
+	    float doubleSize = size * 2.0F;
 
-            int x0 = Mth.floor(x - (double) doubleSize - 1.0D);
-            int x1 = Mth.floor(x + (double) doubleSize + 1.0D);
-            int y0 = Mth.floor(y - (double) doubleSize - 1.0D);
-            int y1 = Mth.floor(y + (double) doubleSize + 1.0D);
-            int z0 = Mth.floor(z - (double) doubleSize - 1.0D);
-            int z1 = Mth.floor(z + (double) doubleSize + 1.0D);
+	    int x0 = Mth.floor(x - (double) doubleSize - 1.0D);
+	    int x1 = Mth.floor(x + (double) doubleSize + 1.0D);
+	    int y0 = Mth.floor(y - (double) doubleSize - 1.0D);
+	    int y1 = Mth.floor(y + (double) doubleSize + 1.0D);
+	    int z0 = Mth.floor(z - (double) doubleSize - 1.0D);
+	    int z1 = Mth.floor(z + (double) doubleSize + 1.0D);
 
-            List<LivingEntity> entities = world.getEntitiesOfClass(LivingEntity.class, new AABB(x0, y0, z0, x1, y1, z1));
+	    List<LivingEntity> entities = world.getEntitiesOfClass(LivingEntity.class,
+		    new AABB(x0, y0, z0, x1, y1, z1));
 
-            for (LivingEntity entity : entities) {
+	    for (LivingEntity entity : entities) {
 
-                switch (griefPreventionMethod) {
-                    case GRIEF_DEFENDER:
-                        if (!GriefDefenderHandler.shouldEntityBeHarmed(entity)) {
-                            continue;
-                        }
-                        break;
-                    default:
-                        break;
-                }
+		switch (griefPreventionMethod) {
+		case GRIEF_DEFENDER:
+		    if (!GriefDefenderHandler.shouldEntityBeHarmed(entity)) {
+			continue;
+		    }
+		    break;
+		default:
+		    break;
+		}
 
-                double deltaX = entity.getX() - position.getX();
-                double deltaY = entity.getY() - position.getY();
-                double deltaZ = entity.getZ() - position.getZ();
+		double deltaX = entity.getX() - position.getX();
+		double deltaY = entity.getY() - position.getY();
+		double deltaZ = entity.getZ() - position.getZ();
 
-                double inverseMag = Mth.fastInvSqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+		double inverseMag = Mth.fastInvSqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
-                double velX = deltaX * inverseMag * BallistixConstants.EXPLOSIVE_SONIC_VELOCITY;
-                double velY = deltaY * inverseMag * BallistixConstants.EXPLOSIVE_SONIC_VELOCITY;
-                double velZ = deltaZ * inverseMag * BallistixConstants.EXPLOSIVE_SONIC_VELOCITY;
-                entity.setDeltaMovement(entity.getDeltaMovement().add(velX, velY, velZ));
-            }
-
-            return true;
-        }
+		double velX = deltaX * inverseMag * BallistixConstants.EXPLOSIVE_SONIC_VELOCITY;
+		double velY = Math.abs(deltaY) * inverseMag
+			* BallistixConstants.EXPLOSIVE_SONIC_VELOCITY;
+		double velZ = deltaZ * inverseMag * BallistixConstants.EXPLOSIVE_SONIC_VELOCITY;
+		entity.setDeltaMovement(entity.getDeltaMovement().add(velX, velY, velZ));
+	    }
+	} else {
+	    return true;
+	}
 
         return false;
 

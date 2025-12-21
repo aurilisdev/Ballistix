@@ -184,7 +184,7 @@ public class ServerEventHandler {
 
 				if (above.isAir() || above.liquid()) {
 
-					EntityBallistixFallingBlock movingBlock = new EntityBallistixFallingBlock(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, state);
+		                    EntityBallistixFallingBlock movingBlock = new EntityBallistixFallingBlock(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, state, new HashSet<>());
 					movingBlock.setDeltaMovement(0, 0.04 * BallistixConstants.EXPLOSIVE_ANTIGRAVITY_GRAVITYFACTOR, 0);
 
 					level.addFreshEntity(movingBlock);

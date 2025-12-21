@@ -1,6 +1,10 @@
 package ballistix.common.settings;
 
-import voltaic.api.configuration.*;
+import voltaic.api.configuration.BooleanValue;
+import voltaic.api.configuration.Configuration;
+import voltaic.api.configuration.DoubleValue;
+import voltaic.api.configuration.FloatValue;
+import voltaic.api.configuration.IntValue;
 
 @Configuration(name = "Ballistix")
 public class BallistixConstants {
@@ -302,5 +306,8 @@ public class BallistixConstants {
 	public static int ROCKET_LAUNCHER_COOLDOWN_TICKS = 60;
 	@IntValue(def = 1000)
 	public static int LASER_DESIGNATOR_RANGE = 1000;
+	
+	@BooleanValue(def = false, comment = "NB! This is ONLY useful for very slow pc's. Like very slow. It is very BAD for slow - mediocre - good pc's and will make raytracing SLOWER for these!!!")
+	public static boolean SHOULD_MULTITHREAD_RAYTRACING = false;
 
 }

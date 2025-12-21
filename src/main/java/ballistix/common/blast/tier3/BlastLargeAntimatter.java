@@ -134,7 +134,7 @@ public class BlastLargeAntimatter extends BlastLasting implements IHasCustomRend
 		if (ticksSinceBlastStart < 10) {
 
 		    ParticleOptions particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 20f, 0.015f, 750, true, true, 120, 0.999);
-			ParticleUtilities.spawnParticleSphere(particle, x, y, z, 60, -90, 90, BallistixConstants.EXPLOSIVE_LARGEANTIMATTER_RADIUS / BallistixConstants.EXPLOSIVE_LARGEANTIMATTER_DURATION * 2.5, true);
+			ParticleUtilities.spawnParticleSphere(particle, x, y, z, 60, -90, 90, BallistixConstants.EXPLOSIVE_LARGEANTIMATTER_RADIUS / BallistixConstants.EXPLOSIVE_LARGEANTIMATTER_DURATION * 3, true);
 		}	// Shockwave
 		double spawnSize = 3;
 		double endSize = BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE * 5;

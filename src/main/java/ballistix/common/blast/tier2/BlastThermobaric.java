@@ -48,9 +48,13 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
 	if (!world.isClientSide) {
 	    thread = new ThreadDynamicRaycastBlast(world, position, (int) BallistixConstants.EXPLOSIVE_THERMOBARIC_SIZE,
 		    (float) BallistixConstants.EXPLOSIVE_THERMOBARIC_ENERGY, null);
-	    thread.start();
+	    if (BallistixConstants.SHOULD_MULTITHREAD_RAYTRACING) {
+		thread.start();
+	    } else {
+		thread.run();
+	    }
 	    Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
-		    (float) BallistixConstants.EXPLOSIVE_THERMOBARIC_SIZE * 2, false, BlockInteraction.DESTROY);
+		    (float) BallistixConstants.EXPLOSIVE_THERMOBARIC_SIZE, false, BlockInteraction.DESTROY);
 	    attackEntities((float) BallistixConstants.EXPLOSIVE_THERMOBARIC_SIZE * 2, ex);
 	}
 

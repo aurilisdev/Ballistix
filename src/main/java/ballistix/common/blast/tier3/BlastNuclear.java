@@ -58,7 +58,11 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	    threadSimple = new ThreadSimpleBlast(world, position, (int) (BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS),
 		    Integer.MAX_VALUE, null, getBlastType().id());
 	    threadSimple.strictnessAtEdges = 1.7;
-	    threadRay.start();
+	    if (BallistixConstants.SHOULD_MULTITHREAD_RAYTRACING) {
+		threadRay.start();
+	    } else {
+		threadRay.run();
+	    }
 	    threadSimple.start();
 	    Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
 		    (float) BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE, false, BlockInteraction.DESTROY);
@@ -122,16 +126,15 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 		    BlockState state = Blocks.AIR.defaultBlockState();
 		    double dis = new Location(p.getX(), 0, p.getZ())
 			    .distance(new Location(position.getX(), 0, position.getZ()));
-		    if (world.random.nextFloat() < 1 / (2*Math.log(dis))) {
+		    if (world.random.nextFloat() < 1 / (2 * Math.log(dis))) {
 			BlockPos offset = p.relative(Direction.DOWN);
 			if (!threadRay.results.contains(offset)) {
 			    state = Blocks.FIRE.defaultBlockState();
 			}
 		    }
 		    world.getBlockState(p).getBlock().wasExploded(world, p, ex);
-		    world.setBlock(p, state, Block.UPDATE_NEIGHBORS
-		              | Block.UPDATE_CLIENTS
-		              | Block.UPDATE_SUPPRESS_DROPS);
+		    world.setBlock(p, state,
+			    Block.UPDATE_NEIGHBORS | Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
 		    if (world instanceof ServerLevel serverlevel) {
 			if (!sounded) {
 			    serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(player -> {
@@ -203,8 +206,6 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 		}
 	    }
 	    if (!cachedIterator.hasNext()) {
-		if (threadRay.isComplete)
-		    attackEntities((float) BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE * 2, ex);
 		return ticksSinceBlastStart > 1500;
 	    }
 	}
@@ -259,8 +260,7 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 		    initialSpeed, true);
 	    particle = new ParticleOptionsBlastSmoke().setParameters(0.40625f / 0.8f, 0.40625f / 0.8f, 0.40625f / 0.8f,
 		    5f, -0.045f, Mth.clamp(1600 - ticksSinceBlastStart, 1, 1500), true, 0.975);
-	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 1, -20, 20,
-		    initialSpeed, true);
+	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 1, -20, 20, initialSpeed, true);
 	    if (ticksSinceBlastStart < 1400) {
 		// Centerfire rising
 		initialSpeed = 0.5;

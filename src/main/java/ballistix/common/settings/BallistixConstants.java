@@ -110,8 +110,8 @@ public class BallistixConstants {
 	public static double EXPLOSIVE_NUCLEAR_DURATION = 360.0;
 	@DoubleValue(def = 120.0)
 	public static double EXPLOSIVE_NUCLEAR_ENERGY = 120.0;
-	@DoubleValue(def = 45.0)
-	public static double EXPLOSIVE_NUCLEAR_RADIATION_RADIUS = 45.0;
+	@DoubleValue(def = 90.0)
+	public static double EXPLOSIVE_NUCLEAR_RADIATION_RADIUS = 90.0;
 	//endothermic
 	@DoubleValue(def = 1)
 	public static double EXPLOSIVE_ENDOTHERMIC_MAXHARDNESS = 1;

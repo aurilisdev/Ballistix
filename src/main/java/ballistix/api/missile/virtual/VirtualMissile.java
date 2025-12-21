@@ -116,6 +116,15 @@ public class VirtualMissile {
             hasExploded = true;
             return;
         }
+        
+	if(payloadData.getFlightPath() == FlightPath.ROCKET_LAUNCHER)
+	{
+	    if(tickCount > 1800)
+	    {
+		hasExploded = true;
+		return;
+	    }
+	}
 
         if ((payloadData.getFlightPath() != FlightPath.ROCKET_LAUNCHER && targetData.target.equals(BlockEntityUtils.OUT_OF_REACH)) || payloadData.blastId == null) {
             hasExploded = true;

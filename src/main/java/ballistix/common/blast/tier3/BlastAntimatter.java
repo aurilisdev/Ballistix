@@ -90,7 +90,9 @@ public class BlastAntimatter extends BlastLasting implements IHasCustomRender {
 				switch (griefPreventionMethod) {
 				case NONE:
 					block.wasExploded(world, p, ex);
-					world.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
+					world.setBlock(p, Blocks.AIR.defaultBlockState(), Block.UPDATE_NEIGHBORS
+					              | Block.UPDATE_CLIENTS
+					              | Block.UPDATE_SUPPRESS_DROPS);
 					break;
 				case GRIEF_DEFENDER:
 					GriefDefenderHandler.destroyBlock(block, ex, p, world);
@@ -99,7 +101,7 @@ public class BlastAntimatter extends BlastLasting implements IHasCustomRender {
 
 					break;
 				}
-				if (world.random.nextFloat() < 1 / 30.0 && world instanceof ServerLevel serverlevel) {
+				if (world.random.nextFloat() < 1 / 75.0 && world instanceof ServerLevel serverlevel) {
 					serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnBlastParticle(p, BlastParticleSpawnType.EXPLOSIVE_BLOCK_BREAK), ((ServerPlayer) pl).connection.connection, NetworkDirection.PLAY_TO_CLIENT));
 				}
 
@@ -129,15 +131,17 @@ public class BlastAntimatter extends BlastLasting implements IHasCustomRender {
 		double y = position.getY() + 0.5;
 		double z = position.getZ() + 0.5;
 		// Fireball
-		ParticleOptions particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 2f, -0.01f, 750, true, true, 120, 0.999);
-		ParticleUtilities.spawnParticleSphere(particle, x, y, z, 100, -90, 90, BallistixConstants.EXPLOSIVE_ANTIMATTER_RADIUS / BallistixConstants.EXPLOSIVE_ANTIMATTER_DURATION * 2, true);
-		// Shockwave
+		if (ticksSinceBlastStart < 10) {
+
+		ParticleOptions particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 15f, 0.015f, 750, true, true, 120, 0.999);
+		ParticleUtilities.spawnParticleSphere(particle, x, y, z, 50, -90, 90, BallistixConstants.EXPLOSIVE_ANTIMATTER_RADIUS / BallistixConstants.EXPLOSIVE_ANTIMATTER_DURATION * 2.5, true);
+		}	// Shockwave
 		double spawnSize = 3;
 		double endSize = BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE * 5;
 		int diff = (int) (endSize - spawnSize);
 		if (ticksSinceBlastStart > diff)
 			return;
-		double size = ParticleUtilities.progressGroundShockwave(world, x, z, ticksSinceBlastStart * 5 / (double) diff, spawnSize, endSize, 0.4);
+		double size = ParticleUtilities.progressGroundShockwave(world, x, z, ticksSinceBlastStart * 5 / (double) diff, spawnSize, endSize, 0.25);
 		if (hasShaken)
 			return;
 		Vec3 pos = new Vec3(x, y, z);

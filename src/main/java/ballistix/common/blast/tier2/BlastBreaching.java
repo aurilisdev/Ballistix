@@ -125,29 +125,27 @@ public class BlastBreaching extends BlastLasting implements IHasCustomRender {
 			particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 1f, 0.033f, 200, true, 0.95);
 			ParticleUtilities.spawnParticleSphere(particle, x, y, z, 100, 0, 20, initialSpeed, true);
 
-			// Centersmokes
-			initialSpeed = 0.4;
-			particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 1f, -0.033f, 200, true, 0.95);
-			ParticleUtilities.spawnParticleSphere(particle, x, y, z, 100, 0, 20, initialSpeed, true);
-		}
-		// Shockwave
-		double spawnSize = 3;
-		double endSize = BallistixConstants.EXPLOSIVE_BREACHING_SIZE * 5;
-		int diff = (int) (endSize - spawnSize);
-		if (ticksSinceBlastStart > diff)
-			return;
-		double size = ParticleUtilities.progressGroundShockwave(world, x, z, ticksSinceBlastStart * 2 / (double) diff, spawnSize, endSize, 0.2);
-		if (hasShaken)
-			return;
-		Vec3 pos = new Vec3(x, y, z);
-		double realDistance = Minecraft.getInstance().player.position().distanceTo(pos);
-		double dist = Mth.abs((float) (realDistance - size));
-		if (dist < 3) {
-			hasShaken = true;
-			CameraShakeEffect effect = CameraShakeManager.createBlastSourcedEffect(20.0, endSize, world.getGameTime(), pos);
-			CameraShakeManager.addShake(effect);
-		}
-	}
+            // Centersmokes
+            initialSpeed = 0.4;
+            particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 1f, -0.033f, 200, true, 0.95);
+            ParticleUtilities.spawnParticleSphere(particle, x, y, z, 100, 0, 20, initialSpeed, true);
+        }
+        // Shockwave
+        double spawnSize = 3;
+        double endSize = BallistixConstants.EXPLOSIVE_BREACHING_SIZE * 5;
+        int diff = (int) (endSize - spawnSize);
+        if (ticksSinceBlastStart > diff) return;
+        double size = ParticleUtilities.progressGroundShockwave(world, x, z, ticksSinceBlastStart / (double) diff, spawnSize, endSize, 0.1);
+        if (hasShaken) return;
+        Vec3 pos = new Vec3(x, y, z);
+        double realDistance = Minecraft.getInstance().player.position().distanceTo(pos);
+        double dist = Mth.abs((float) (realDistance - size));
+        if (dist < 3) {
+            hasShaken = true;
+            CameraShakeEffect effect = CameraShakeManager.createBlastSourcedEffect(20.0, endSize, world.getGameTime(), pos);
+            CameraShakeManager.addShake(effect);
+        }
+    }
 
 	@Override
 	public boolean isDoneCalculating() {

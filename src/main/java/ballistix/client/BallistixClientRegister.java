@@ -287,7 +287,7 @@ public class BallistixClientRegister {
 
 			if (entityIn.tickCount - entityIn.ticksWhenCustomRender < 10) {
 				matrixStack.scale(5, 5, 5);
-				RenderingUtils.renderStar(matrixStack, bufferIn, entityIn.tickCount + partialTicks, 500, 1, 1, 1, 0.7f, false);
+				RenderingUtils.renderStar(matrixStack, bufferIn, entityIn.tickCount + partialTicks, 100, 1, 1, 1, 0.7f, false);
 			}
 
 		});

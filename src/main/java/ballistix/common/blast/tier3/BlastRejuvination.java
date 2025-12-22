@@ -6,6 +6,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
 
+import javax.annotation.Nullable;
+
 import org.apache.commons.io.FileUtils;
 
 import com.google.common.collect.ImmutableList;
@@ -34,8 +36,8 @@ import net.minecraft.world.level.storage.ServerLevelData;
 import voltaic.Voltaic;
 
 public class BlastRejuvination extends Blast {
-    public BlastRejuvination(Level world, BlockPos position, Entity owner) {
-	super(world, position, owner);
+    public BlastRejuvination(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+	super(world, position, owner, blastEntity);
     }
 
     @Override

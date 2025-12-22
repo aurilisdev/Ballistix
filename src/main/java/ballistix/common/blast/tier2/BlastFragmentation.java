@@ -1,5 +1,7 @@
 package ballistix.common.blast.tier2;
 
+import javax.annotation.Nullable;
+
 import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityShrapnel;
@@ -12,8 +14,8 @@ import net.minecraft.world.level.Level;
 
 public class BlastFragmentation extends Blast {
 
-    public BlastFragmentation(Level world, BlockPos position, Entity owner) {
-	super(world, position, owner);
+    public BlastFragmentation(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+	super(world, position, owner, blastEntity);
     }
 
     @Override

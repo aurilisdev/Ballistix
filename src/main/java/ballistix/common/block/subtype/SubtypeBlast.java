@@ -3,6 +3,8 @@ package ballistix.common.block.subtype;
 import java.util.Locale;
 import java.util.function.Supplier;
 
+import javax.annotation.Nullable;
+
 import ballistix.Ballistix;
 import ballistix.api.blast.IBlast;
 import ballistix.common.blast.tier1.BlastAnvil;
@@ -106,8 +108,8 @@ public enum SubtypeBlast implements ISubtype, IBlast {
     }
 
     @Override
-    public Blast createBlast(Level world, BlockPos pos, Entity owner) {
-	return factory.create(world, pos, owner);
+    public Blast createBlast(Level world, BlockPos pos, @Nullable Entity owner, @Nullable Entity blastEntity) {
+	return factory.create(world, pos, owner, blastEntity);
     }
 
     @Override

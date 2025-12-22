@@ -142,7 +142,7 @@ public class EntityExplosive extends Entity implements IDefusable, TraceableEnti
 		    blast.canceled = true;
 		    entity.remove(RemovalReason.DISCARDED);
 		    IBlast explosive = Blast.BLAST_MAP.get(blastId);
-		    Blast b = explosive.createBlast(level(), blockPosition(), getOwner());
+		    Blast b = explosive.createBlast(level(), blockPosition(), getOwner(), this);
 		    if (b != null) {
 			b.performExplosion();
 		    }
@@ -160,7 +160,7 @@ public class EntityExplosive extends Entity implements IDefusable, TraceableEnti
 	    }
 	    if (blastId != null) {
 		IBlast explosive = Blast.BLAST_MAP.get(blastId);
-		Blast b = explosive.createBlast(level(), blockPosition(), getOwner());
+		Blast b = explosive.createBlast(level(), blockPosition(), getOwner(), this);
 		if (b != null) {
 		    b.performExplosion();
 		}

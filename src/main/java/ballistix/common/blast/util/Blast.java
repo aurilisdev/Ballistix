@@ -79,11 +79,13 @@ public abstract class Blast {
     public boolean shouldRenderCustomClient;
     public boolean isRepeating = false;
     public @Nullable Entity owner;
+    public @Nullable Entity blastEntity;
 
-    protected Blast(Level world, BlockPos position, @Nullable Entity owner) {
+    protected Blast(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
 	this.world = world;
 	this.position = position;
 	this.owner = owner;
+	this.blastEntity = blastEntity;
     }
 
     public static boolean canBreakBlockState(Level world, BlockState state, BlockPos pos, @Nullable Entity owner) {
@@ -195,7 +197,7 @@ public abstract class Blast {
     public EntityBlast performExplosion() {
 	ConstructBlastEvent evt = new ConstructBlastEvent(world, this);
 	NeoForge.EVENT_BUS.post(evt);
-	Explosion explosion = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
+	Explosion explosion = new Explosion(world, blastEntity, world.damageSources().explosion(blastEntity, owner), null, position.getX(), position.getY(), position.getZ(),
 		3, true, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER,
 		SoundEvents.GENERIC_EXPLODE);
 	if (!EventHooks.onExplosionStart(world, explosion) && !evt.isCanceled()) {
@@ -231,7 +233,7 @@ public abstract class Blast {
 	int z0 = Mth.floor(position.getZ() - (double) doubleSize - 1.0D);
 	int z1 = Mth.floor(position.getZ() + (double) doubleSize + 1.0D);
 
-	List<Entity> entities = world.getEntities(null, new AABB(x0, y0, z0, x1, y1, z1));
+	List<Entity> entities = world.getEntities(blastEntity, new AABB(x0, y0, z0, x1, y1, z1));
 
 	Vec3 posVector = new Vec3(position.getX(), position.getY(), position.getZ());
 
@@ -304,7 +306,7 @@ public abstract class Blast {
     // }
 
     public static interface BlastFactory<T extends Blast> {
-	T create(Level world, BlockPos pos, Entity owner);
+	T create(Level world, BlockPos pos, @Nullable Entity owner, @Nullable Entity blastEntity);
     }
 
     public static enum GriefPreventionMethod {

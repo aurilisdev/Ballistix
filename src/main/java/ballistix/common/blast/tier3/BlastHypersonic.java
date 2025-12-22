@@ -3,6 +3,8 @@ package ballistix.common.blast.tier3;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import ballistix.api.blast.IBlast;
 import ballistix.common.blast.util.BlastLasting;
 import ballistix.common.blast.util.thread.ThreadSimpleBlast;
@@ -26,8 +28,8 @@ public class BlastHypersonic extends BlastLasting {
     private Iterator<BlockPos> iterator;
     private int pertick = -1;
 
-    public BlastHypersonic(Level world, BlockPos position, Entity owner) {
-	super(world, position, owner);
+    public BlastHypersonic(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+	super(world, position, owner, blastEntity);
     }
 
     @Override
@@ -76,14 +78,11 @@ public class BlastHypersonic extends BlastLasting {
 		continue;
 	    }
 
-	    boolean shouldRepulse = true;
 
 	    if (!canBreakBlockState(world, state, p, owner)) {
 		continue;
 	    }
-	    if (!shouldRepulse) {
-		continue;
-	    }
+
 	    double deltaX = p.getX() - position.getX();
 	    double deltaY = p.getY() - position.getY();
 	    double deltaZ = p.getZ() - position.getZ();

@@ -1,13 +1,15 @@
 package ballistix.common.blast.util;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 
 public abstract class BlastLasting extends Blast {
 
-    protected BlastLasting(Level world, BlockPos position, Entity owner) {
-	super(world, position, owner);
+    protected BlastLasting(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+	super(world, position, owner, blastEntity);
     }
 
     public int ticksSinceBlastStart;

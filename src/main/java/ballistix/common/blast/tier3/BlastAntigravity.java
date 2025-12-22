@@ -2,6 +2,8 @@ package ballistix.common.blast.tier3;
 
 import java.util.HashSet;
 
+import javax.annotation.Nullable;
+
 import ballistix.api.blast.AntigravedChunk;
 import ballistix.api.blast.IBlast;
 import ballistix.common.blast.util.Blast;
@@ -16,8 +18,8 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 
 public class BlastAntigravity extends Blast {
-    public BlastAntigravity(Level world, BlockPos position, Entity owner) {
-	super(world, position, owner);
+    public BlastAntigravity(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+	super(world, position, owner, blastEntity);
     }
 
     @Override

@@ -99,8 +99,7 @@ public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 	    remove(RemovalReason.DISCARDED);
 	    if (blastId != null) {
 		IBlast explosive = Blast.BLAST_MAP.get(blastId);
-		Blast b = explosive.createBlast(level(), blockPosition(),
-			getOwner() instanceof LivingEntity le ? le : null);
+		Blast b = explosive.createBlast(level(), blockPosition(), getOwner(), this);
 		if (b != null) {
 		    b.performExplosion();
 		}

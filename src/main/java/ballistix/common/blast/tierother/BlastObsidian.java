@@ -1,10 +1,14 @@
 package ballistix.common.blast.tierother;
 
+import javax.annotation.Nullable;
+
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.BallistixConfig;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.Level.ExplosionInteraction;
@@ -13,8 +17,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 public class BlastObsidian extends Blast implements IHasCustomRender {
 
-    public BlastObsidian(Level world, BlockPos position, Entity owner) {
-	super(world, position, owner);
+    public BlastObsidian(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
+	super(world, position, owner, blastEntity);
     }
 
     @Override
@@ -22,8 +26,12 @@ public class BlastObsidian extends Blast implements IHasCustomRender {
 	super.doExplode(callCount);
 	hasStarted = true;
 	if (!world.isClientSide) {
-	    world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5,
-		    (float) BallistixConfig.INSTANCE.EXPLOSIVE_OBSIDIAN_SIZE.getAsDouble(), ExplosionInteraction.BLOCK);
+
+	    world.explode(blastEntity, world.damageSources().explosion(blastEntity, owner), null, position.getX() + 0.5,
+		    position.getY() + 0.5, position.getZ() + 0.5,
+		    (float) BallistixConfig.INSTANCE.EXPLOSIVE_OBSIDIAN_SIZE.getAsDouble(), false,
+		    ExplosionInteraction.BLOCK, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER,
+		    SoundEvents.GENERIC_EXPLODE);
 	} else {
 	    produceParticles();
 	}

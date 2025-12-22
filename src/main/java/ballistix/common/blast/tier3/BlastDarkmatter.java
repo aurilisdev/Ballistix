@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IMovingBlast;
 import ballistix.common.blast.util.Blast;
@@ -34,8 +36,8 @@ import voltaic.prefab.utilities.WorldUtils;
 
 public class BlastDarkmatter extends Blast implements IMovingBlast {
 
-    public BlastDarkmatter(Level world, BlockPos position, Entity owner) {
-	super(world, position, owner);
+    public BlastDarkmatter(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
+	super(world, position, owner, blastEntity);
     }
 
     @Override
@@ -68,7 +70,8 @@ public class BlastDarkmatter extends Blast implements IMovingBlast {
 	if (thread == null || canceled) {
 	    return true;
 	}
-	Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
+	Explosion ex = new Explosion(world, blastEntity, world.damageSources().explosion(blastEntity, owner), null,
+		position.getX(), position.getY(), position.getZ(),
 		(float) BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_RADIUS.getAsDouble(), false,
 		Explosion.BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER,
 		SoundEvents.GENERIC_EXPLODE);

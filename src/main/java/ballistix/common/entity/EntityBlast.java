@@ -128,7 +128,7 @@ public class EntityBlast extends Entity implements TraceableEntity {
 
     public void setBlastType(IBlast explosive) {
 	blastId = explosive.id();
-	blast = getBlastType().createBlast(level(), blockPosition(), getOwner());
+	blast = getBlastType().createBlast(level(), blockPosition(), getOwner(), this);
     }
 
     @Nullable
@@ -209,7 +209,7 @@ public class EntityBlast extends Entity implements TraceableEntity {
 	}
 
 	if (blast == null) {
-	    blast = getBlastType().createBlast(level(), blockPosition(), getOwner());
+	    blast = getBlastType().createBlast(level(), blockPosition(), getOwner(), this);
 	    if (shouldPersist && hasMatured) {
 		blast.isRepeating = true;
 	    }
@@ -237,7 +237,7 @@ public class EntityBlast extends Entity implements TraceableEntity {
 			    moving = false;
 			    ticksMoving = 0;
 			    callcount = 0;
-			    blast = getBlastType().createBlast(level(), blockPosition(), getOwner());
+			    blast = getBlastType().createBlast(level(), blockPosition(), getOwner(), this);
 			    blast.isRepeating = true;
 			}
 

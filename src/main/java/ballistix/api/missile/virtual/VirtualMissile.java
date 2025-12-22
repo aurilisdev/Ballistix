@@ -159,7 +159,7 @@ public class VirtualMissile {
 		collisionPos = new BlockPos((int) position.x, targetData.target.getY(), (int) position.z);
 	    }
 
-	    Blast b = explosive.createBlast(level, collisionPos, null);
+	    Blast b = explosive.createBlast(level, collisionPos, null, blastEntity);
 
 	    if (b != null) {
 

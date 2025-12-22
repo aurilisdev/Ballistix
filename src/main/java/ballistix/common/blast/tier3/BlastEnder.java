@@ -3,6 +3,8 @@ package ballistix.common.blast.tier3;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.client.particle.ParticleOptionsShockwave;
@@ -24,8 +26,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 public class BlastEnder extends Blast implements IHasCustomRender {
-    public BlastEnder(Level world, BlockPos position, Entity owner) {
-	super(world, position, owner);
+    public BlastEnder(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+	super(world, position, owner, blastEntity);
     }
 
     @Override

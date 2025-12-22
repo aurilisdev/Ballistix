@@ -2,6 +2,8 @@ package ballistix.common.blast.tier3;
 
 import java.util.Iterator;
 
+import javax.annotation.Nullable;
+
 import ballistix.Ballistix;
 import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IHasCustomRender;
@@ -48,8 +50,8 @@ import voltaic.prefab.utilities.object.Location;
 
 public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 
-    public BlastNuclear(Level world, BlockPos position, Entity owner) {
-	super(world, position, owner);
+    public BlastNuclear(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
+	super(world, position, owner, blastEntity);
     }
 
     @Override
@@ -99,7 +101,8 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	if (threadRay == null) {
 	    return !world.isClientSide;
 	}
-	Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
+	Explosion ex = new Explosion(world, blastEntity, world.damageSources().explosion(blastEntity, owner), null,
+		position.getX(), position.getY(), position.getZ(),
 		(float) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble() * 3, false,
 		BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER,
 		SoundEvents.GENERIC_EXPLODE);
@@ -175,7 +178,8 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	    if (perticksimple == -1) {
 		cachedIterator = threadSimple.results.iterator();
 	    }
-	    perticksimple = (int) (4 * Math.PI * 0.5 * (Math.clamp(callCount * callCount, 0,
+	    perticksimple = (int) (4 * Math.PI * 0.5
+		    * (Math.clamp(callCount * callCount, 0,
 			    (int) (BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS.getAsDouble()
 				    * BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS.getAsDouble()))));
 	    int finished = perticksimple;

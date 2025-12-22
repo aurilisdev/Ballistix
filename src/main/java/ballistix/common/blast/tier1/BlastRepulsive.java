@@ -3,6 +3,8 @@ package ballistix.common.blast.tier1;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.client.particle.ParticleOptionsShockwave;
 import ballistix.common.blast.util.Blast;
@@ -28,8 +30,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 public class BlastRepulsive extends Blast implements IHasCustomRender {
 
-    public BlastRepulsive(Level world, BlockPos position, Entity owner) {
-	super(world, position, owner);
+    public BlastRepulsive(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
+	super(world, position, owner, blastEntity);
     }
 
     @Override
@@ -37,9 +39,12 @@ public class BlastRepulsive extends Blast implements IHasCustomRender {
 	super.doExplode(callCount);
 	hasStarted = true;
 	if (!world.isClientSide) {
-	    world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5,
-		    (float) BallistixConfig.INSTANCE.EXPLOSIVE_REPULSIVE_SIZE.getAsDouble(),
-		    ExplosionInteraction.BLOCK);
+
+	    world.explode(blastEntity, world.damageSources().explosion(blastEntity, owner), null, position.getX() + 0.5,
+		    position.getY() + 0.5, position.getZ() + 0.5,
+		    (float) BallistixConfig.INSTANCE.EXPLOSIVE_REPULSIVE_SIZE.getAsDouble(), false,
+		    ExplosionInteraction.BLOCK, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER,
+		    SoundEvents.GENERIC_EXPLODE);
 	} else {
 	    produceParticles();
 	}

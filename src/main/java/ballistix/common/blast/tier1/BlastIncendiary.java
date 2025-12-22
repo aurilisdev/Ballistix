@@ -1,5 +1,7 @@
 package ballistix.common.blast.tier1;
 
+import javax.annotation.Nullable;
+
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
@@ -16,8 +18,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 public class BlastIncendiary extends Blast implements IHasCustomRender {
 
-    public BlastIncendiary(Level world, BlockPos position, Entity owner) {
-	super(world, position, owner);
+    public BlastIncendiary(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+	super(world, position, owner, blastEntity);
     }
 
     @Override

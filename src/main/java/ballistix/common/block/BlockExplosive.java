@@ -18,6 +18,7 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.TraceableEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
@@ -86,7 +87,14 @@ public class BlockExplosive extends Block {
     @Override
     public void wasExploded(Level worldIn, BlockPos pos, Explosion explosionIn) {
 	if (!worldIn.isClientSide) {
-	    explode(worldIn, pos, explosive, explosionIn.getDirectSourceEntity());
+	    Entity owner = explosionIn.getIndirectSourceEntity();
+	    if (owner == null) {
+		owner = explosionIn.getDirectSourceEntity();
+	    }
+	    if (owner instanceof TraceableEntity trace) {
+		owner = trace.getOwner();
+	    }
+	    explode(worldIn, pos, explosive, owner);
 	}
     }
 

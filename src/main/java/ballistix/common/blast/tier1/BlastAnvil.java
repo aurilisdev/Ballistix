@@ -1,5 +1,7 @@
 package ballistix.common.blast.tier1;
 
+import javax.annotation.Nullable;
+
 import ballistix.api.blast.IBlast;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
@@ -15,8 +17,8 @@ import net.minecraft.world.level.block.Blocks;
 
 public class BlastAnvil extends Blast {
 
-    public BlastAnvil(Level world, BlockPos position, Entity owner) {
-	super(world, position, owner);
+    public BlastAnvil(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+	super(world, position, owner, blastEntity);
     }
 
     @Override

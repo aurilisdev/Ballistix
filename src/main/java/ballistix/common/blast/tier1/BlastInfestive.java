@@ -2,6 +2,8 @@ package ballistix.common.blast.tier1;
 
 import java.util.Iterator;
 
+import javax.annotation.Nullable;
+
 import ballistix.api.blast.IBlast;
 import ballistix.common.blast.util.BlastLasting;
 import ballistix.common.blast.util.thread.ThreadSimpleBlast;
@@ -21,8 +23,8 @@ public class BlastInfestive extends BlastLasting {
     private Iterator<BlockPos> iterator;
     private int pertick = -1;
 
-    public BlastInfestive(Level world, BlockPos position, Entity owner) {
-	super(world, position, owner);
+    public BlastInfestive(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+	super(world, position, owner, blastEntity);
     }
 
     @Override

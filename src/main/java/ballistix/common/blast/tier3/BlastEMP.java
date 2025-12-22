@@ -3,6 +3,8 @@ package ballistix.common.blast.tier3;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.common.blast.util.Blast;
@@ -31,8 +33,8 @@ import voltaic.registers.VoltaicCapabilities;
 
 public class BlastEMP extends Blast implements IHasCustomRender {
 
-    public BlastEMP(Level world, BlockPos position, Entity owner) {
-	super(world, position, owner);
+    public BlastEMP(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+	super(world, position, owner, blastEntity);
     }
 
     @Override

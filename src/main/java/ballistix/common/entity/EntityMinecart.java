@@ -170,7 +170,7 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable, Trac
 	    remove(RemovalReason.DISCARDED);
 	    if (blastId != null) {
 		IBlast explosive = Blast.BLAST_MAP.get(blastId);
-		Blast b = explosive.createBlast(level(), blockPosition(), getOwner());
+		Blast b = explosive.createBlast(level(), blockPosition(), getOwner(), this);
 		if (b != null) {
 		    b.performExplosion();
 		}

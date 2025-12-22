@@ -14,9 +14,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import voltaic.common.block.voxelshapes.VoxelShapeProvider;
 
-/**
- * @author Skip999
- */
 public interface IBlast {
 
     /**
@@ -31,9 +28,11 @@ public interface IBlast {
      * 
      * @param world the level this Blast is created in
      * @param pos   The center of this Blast
+     * @param owner   The causing entity of this blast. Can be null
+     * @param blastEntity   The entity exploding in this blast. Can be null
      * @return a new Blast instance
      */
-    Blast createBlast(Level world, BlockPos pos, @Nullable Entity owner);
+    Blast createBlast(Level world, BlockPos pos, @Nullable Entity owner, @Nullable Entity blastEntity);
 
     /**
      * returns the tier of this Blast (higher = more advanced and requires higher

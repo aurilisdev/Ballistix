@@ -116,7 +116,7 @@ public class VirtualMissile {
             hasExploded = true;
             return;
         }
-        
+        	
 	if(payloadData.getFlightPath() == FlightPath.ROCKET_LAUNCHER)
 	{
 	    if(tickCount > 1800)
@@ -155,7 +155,7 @@ public class VirtualMissile {
             	collisionPos = new BlockPos((int) position.x, targetData.target.getY(), (int) position.z);
             }
 
-            Blast b = explosive.createBlast(level, collisionPos);
+            Blast b = explosive.createBlast(level, collisionPos, null, blastEntity);
 
             if (b != null) {
 

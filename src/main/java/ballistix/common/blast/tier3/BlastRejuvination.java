@@ -6,6 +6,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
 
+import javax.annotation.Nullable;
+
 import org.apache.commons.io.FileUtils;
 
 import com.google.common.collect.ImmutableList;
@@ -21,6 +23,7 @@ import net.minecraft.server.level.progress.LoggerChunkProgressListener;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.thread.BlockableEventLoop;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,9 +36,10 @@ import net.minecraft.world.level.storage.ServerLevelData;
 import voltaic.Voltaic;
 
 public class BlastRejuvination extends Blast {
-    public BlastRejuvination(Level world, BlockPos position) {
-        super(world, position);
+    public BlastRejuvination(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+	super(world, position, owner, blastEntity);
     }
+
 
     @Override
     public void doPreExplode() {

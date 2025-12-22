@@ -3,6 +3,8 @@ package ballistix.common.block.subtype;
 import java.util.Locale;
 import java.util.function.Supplier;
 
+import javax.annotation.Nullable;
+
 import ballistix.Ballistix;
 import ballistix.api.blast.IBlast;
 import ballistix.common.blast.tier1.BlastAnvil;
@@ -49,38 +51,25 @@ import voltaic.common.block.voxelshapes.VoxelShapeProvider;
 
 public enum SubtypeBlast implements ISubtype, IBlast {
 
-    //Tier 0
+    // Tier 0
     obsidian(BlastObsidian::new, 120, 1),
-    //Tier 1
-    condensive(BlastCondensive::new, 30, 1),
-    attractive(BlastAttractive::new, 30, 1),
-    repulsive(BlastRepulsive::new, 30, 1),
-    incendiary(BlastIncendiary::new, 80, 1),
-    shrapnel(BlastShrapnel::new, 40, 1),
-    chemical(BlastChemical::new, 100, 1),
-    anvil(BlastAnvil::new, 100, 1),
-    infestive(BlastInfestive::new, 40, 1),
+    // Tier 1
+    condensive(BlastCondensive::new, 30, 1), attractive(BlastAttractive::new, 30, 1),
+    repulsive(BlastRepulsive::new, 30, 1), incendiary(BlastIncendiary::new, 80, 1), shrapnel(BlastShrapnel::new, 40, 1),
+    chemical(BlastChemical::new, 100, 1), anvil(BlastAnvil::new, 100, 1), infestive(BlastInfestive::new, 40, 1),
     debilitation(BlastDebilitation::new, 80, 1),
-    //Tier 2
-    fragmentation(BlastFragmentation::new, 100, 2),
-    contagious(BlastContagious::new, 100, 2),
-    breaching(BlastBreaching::new, 5, 2),
-    thermobaric(BlastThermobaric::new, 100, 2),
-    sonic(BlastSonic::new, 80, 2),
-    //Tier 3
-    antigravity(BlastAntigravity::new, 100, 3),
-    emp(BlastEMP::new, 80, 3),
-    nuclear(BlastNuclear::new, 200, 3),
-    endothermic(BlastEndothermic::new, 80, 3),
-    exothermic(BlastExothermic::new, 80, 3),
-    ender(BlastEnder::new, 100, 3),
-    hypersonic(BlastHypersonic::new, 150, 3),
-    rejuvination(BlastRejuvination::new, 400, 3),
-    antimatter(BlastAntimatter::new, 400, 3),
-    largeantimatter(BlastLargeAntimatter::new, 600, 3),
+    // Tier 2
+    fragmentation(BlastFragmentation::new, 100, 2), contagious(BlastContagious::new, 100, 2),
+    breaching(BlastBreaching::new, 5, 2), thermobaric(BlastThermobaric::new, 100, 2), sonic(BlastSonic::new, 80, 2),
+    // Tier 3
+    antigravity(BlastAntigravity::new, 100, 3), emp(BlastEMP::new, 80, 3), nuclear(BlastNuclear::new, 200, 3),
+    endothermic(BlastEndothermic::new, 80, 3), exothermic(BlastExothermic::new, 80, 3), ender(BlastEnder::new, 100, 3),
+    hypersonic(BlastHypersonic::new, 150, 3), rejuvination(BlastRejuvination::new, 400, 3),
+    antimatter(BlastAntimatter::new, 400, 3), largeantimatter(BlastLargeAntimatter::new, 600, 3),
     darkmatter(BlastDarkmatter::new, 400, 3),
-    //Other
-    landmine(BlastLandmine::new, 5, VoxelShapeProvider.createOmni(Shapes.create(0, 0, 0, 16.0 / 16.0, 3.0 / 16.0, 16.0 / 16.0)), -1);
+    // Other
+    landmine(BlastLandmine::new, 5,
+	    VoxelShapeProvider.createOmni(Shapes.create(0, 0, 0, 16.0 / 16.0, 3.0 / 16.0, 16.0 / 16.0)), -1);
 
     private final Blast.BlastFactory<?> factory;
     private final int fuse;
@@ -88,71 +77,71 @@ public enum SubtypeBlast implements ISubtype, IBlast {
     private final int tier;
 
     SubtypeBlast(Blast.BlastFactory<?> factory, int fuse, VoxelShapeProvider shape, int tier) {
-        this.factory = factory;
-        this.fuse = fuse;
-        this.shape = shape;
-        this.tier = tier;
+	this.factory = factory;
+	this.fuse = fuse;
+	this.shape = shape;
+	this.tier = tier;
     }
 
     SubtypeBlast(Blast.BlastFactory<?> factory, int fuse, int tier) {
-        this(factory, fuse, VoxelShapeProvider.DEFAULT, tier);
+	this(factory, fuse, VoxelShapeProvider.DEFAULT, tier);
     }
 
     @Override
     public String forgeTag() {
-        return tag();
+	return tag();
     }
 
     @Override
     public boolean isItem() {
-        return true;
+	return true;
     }
 
     @Override
     public String tag() {
-        return name();
+	return name();
     }
 
     @Override
     public int fuse() {
-        return fuse;
+	return fuse;
     }
 
     @Override
-    public Blast createBlast(Level world, BlockPos pos) {
-        return factory.create(world, pos);
+    public Blast createBlast(Level world, BlockPos pos, @Nullable Entity owner, @Nullable Entity blastEntity) {
+	return factory.create(world, pos, owner, blastEntity);
     }
 
     @Override
     public int tier() {
-        return tier;
+	return tier;
     }
 
     @Override
     public VoxelShapeProvider getShape() {
-        return shape;
+	return shape;
     }
 
     @Override
     public ResourceLocation id() {
-        return Ballistix.rl(name().toLowerCase(Locale.ROOT));
+	return Ballistix.rl(name().toLowerCase(Locale.ROOT));
     }
 
-	@Override
-	public Supplier<Item> getExplosiveItem() {
-		return () -> BallistixItems.ITEMS_EXPLOSIVE.getValue(this);
-	}
+    @Override
+    public Supplier<Item> getExplosiveItem() {
+	return () -> BallistixItems.ITEMS_EXPLOSIVE.getValue(this);
+    }
 
     @Override
     public Supplier<Block> getExplosiveBlock() {
-        return () -> BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(this);
+	return () -> BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(this);
     }
 
     @Override
     public void onEntityInside(BlockState state, Level level, BlockPos pos, Entity ent) {
-        if (this == SubtypeBlast.landmine) {
-            BlockExplosive.explode(level, pos, this);
-            level.removeBlock(pos, false);
-        }
+	if (this == SubtypeBlast.landmine) {
+	    BlockExplosive.explode(level, pos, this, ent);
+	    level.removeBlock(pos, false);
+	}
     }
 }

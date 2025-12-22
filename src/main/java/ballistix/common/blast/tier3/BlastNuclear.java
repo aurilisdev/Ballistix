@@ -2,6 +2,8 @@ package ballistix.common.blast.tier3;
 
 import java.util.Iterator;
 
+import javax.annotation.Nullable;
+
 import ballistix.Ballistix;
 import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IHasCustomRender;
@@ -17,7 +19,6 @@ import ballistix.common.packet.NetworkHandler;
 import ballistix.common.packet.type.client.particle.BlastParticleSpawnType;
 import ballistix.common.packet.type.client.particle.PacketSpawnBlastParticle;
 import ballistix.common.settings.BallistixConstants;
-import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.compatibility.nuclearscience.RadiationHandler;
 import ballistix.prefab.utils.ParticleUtilities;
 import ballistix.registers.BallistixSounds;
@@ -29,6 +30,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
@@ -47,8 +49,9 @@ import voltaic.api.radiation.SimpleRadiationSource;
 import voltaic.prefab.utilities.object.Location;
 
 public class BlastNuclear extends BlastLasting implements IHasCustomRender {
-    public BlastNuclear(Level world, BlockPos position) {
-	super(world, position);
+
+    public BlastNuclear(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
+	super(world, position, owner, blastEntity);
     }
 
     @Override
@@ -96,7 +99,8 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	if (threadRay == null) {
 	    return !world.isClientSide;
 	}
-	Explosion ex = new Explosion(world, null, null, null, position.getX(), position.getY(), position.getZ(),
+	Explosion ex = new Explosion(world, blastEntity, world.damageSources().explosion(blastEntity, owner), null,
+		position.getX(), position.getY(), position.getZ(),
 		(float) BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE * 3, false, BlockInteraction.DESTROY);
 	if (callCount % 2 == 0) {
 	    synchronized (threadRay.finishedBlocks) {
@@ -114,28 +118,22 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 			break;
 		    }
 		    BlockPos p = cachedIteratorRay.next();
-
-		    switch (griefPreventionMethod) {
-		    case GRIEF_DEFENDER:
-			if (!GriefDefenderHandler.shouldHarmBlock(p)) {
-			    continue;
-			}
-			break;
-		    default:
-			break;
+		    BlockState state = world.getBlockState(p);
+		    if (!canBreakBlockState(world, state, p, owner)) {
+			continue;
 		    }
-
-		    BlockState state = Blocks.AIR.defaultBlockState();
+		    Block block = state.getBlock();
+		    BlockState toPlace = Blocks.AIR.defaultBlockState();
 		    double dis = new Location(p.getX(), 0, p.getZ())
 			    .distance(new Location(position.getX(), 0, position.getZ()));
-		    if (world.random.nextFloat() < 1 / (2 * Math.log(dis))) {
+		    if (world.random.nextFloat() < 1 / (3 * Math.sqrt(dis))) {
 			BlockPos offset = p.relative(Direction.DOWN);
 			if (!threadRay.results.contains(offset)) {
-			    state = Blocks.FIRE.defaultBlockState();
+			    toPlace = Blocks.FIRE.defaultBlockState();
 			}
 		    }
-		    world.getBlockState(p).getBlock().wasExploded(world, p, ex);
-		    world.setBlock(p, state,
+		    block.wasExploded(world, p, ex);
+		    world.setBlock(p, toPlace,
 			    Block.UPDATE_NEIGHBORS | Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
 		    if (world instanceof ServerLevel serverlevel) {
 			if (!sounded) {
@@ -168,12 +166,7 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 		attackEntities((float) BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE * 2, ex);
 		thirdDamage = true;
 	    }
-	    boolean add = switch (griefPreventionMethod) {
-	    case GRIEF_DEFENDER -> GriefDefenderHandler.shouldAddParticle(position);
-	    default -> true;
-	    };
-
-	    if (add) {
+	    if (canSpawnParticle(position)) {
 		RadiationSystem.addRadiationSource(world,
 			new SimpleRadiationSource(150000.0, 2,
 				(int) (BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS), false, 86400 * 20,
@@ -194,14 +187,8 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 
 		BlockPos pos = cachedIterator.next().offset(position);
 
-		switch (griefPreventionMethod) {
-		case GRIEF_DEFENDER:
-		    if (!GriefDefenderHandler.shouldHarmBlock(pos)) {
-			continue;
-		    }
-		    break;
-		default:
-		    break;
+		if (!canHarmBlock(pos)) {
+		    continue;
 		}
 		if (ModList.get().isLoaded(Ballistix.NUCLEAR_SCIENCE_ID)
 			&& pos.distSqr(position) / (BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS

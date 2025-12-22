@@ -4,8 +4,6 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import ballistix.common.blast.util.Blast;
-import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixDamageTypes;
 import ballistix.registers.BallistixEntities;
 import net.minecraft.nbt.CompoundTag;
@@ -27,93 +25,85 @@ import net.minecraft.world.phys.AABB;
 import net.minecraftforge.network.NetworkHooks;
 
 public class EntityShrapnel extends ThrowableProjectile {
-    private static final EntityDataAccessor<Boolean> ISEXPLOSIVE = SynchedEntityData.defineId(EntityShrapnel.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> ISEXPLOSIVE = SynchedEntityData.defineId(EntityShrapnel.class,
+	    EntityDataSerializers.BOOLEAN);
     public boolean isExplosive = false;
 
-    private final Blast.GriefPreventionMethod griefPreventionMethod = Blast.getGriefPreventionMethod();
-
     public EntityShrapnel(EntityType<? extends EntityShrapnel> type, Level worldIn) {
-        super(type, worldIn);
+	super(type, worldIn);
     }
 
-    public EntityShrapnel(Level worldIn) {
-        this(BallistixEntities.ENTITY_SHRAPNEL.get(), worldIn);
+    public EntityShrapnel(Level worldIn, @Nullable Entity owner) {
+	this(BallistixEntities.ENTITY_SHRAPNEL.get(), worldIn);
+	this.setOwner(owner);
     }
 
     @Override
     public void tick() {
-        if (!level().isClientSide) {
-            entityData.set(ISEXPLOSIVE, isExplosive);
-        } else {
-            isExplosive = entityData.get(ISEXPLOSIVE);
-        }
-        if (!isNoGravity()) {
-            this.setDeltaMovement(getDeltaMovement().add(0.0D, -0.04D, 0.0D));
-        }
-        setPos(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z);
-        EntityDimensions size = getDimensions(Pose.STANDING);
-        setBoundingBox(new AABB(getX() - size.width * 2, getY() - size.height * 2, getZ() - size.width * 2, getX() + size.width * 2, getY() + size.height * 2, getZ() + size.width * 2));
-        if (onGround() || tickCount > (isExplosive ? 400 : 100) || level().getBlockState(blockPosition()).blocksMotion()) {
-            remove(RemovalReason.DISCARDED);
-        }
+	if (!level().isClientSide) {
+	    entityData.set(ISEXPLOSIVE, isExplosive);
+	} else {
+	    isExplosive = entityData.get(ISEXPLOSIVE);
+	}
+	if (!isNoGravity()) {
+	    this.setDeltaMovement(getDeltaMovement().add(0.0D, -0.04D, 0.0D));
+	}
+	setPos(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y, getZ() + getDeltaMovement().z);
+	EntityDimensions size = getDimensions(Pose.STANDING);
+	setBoundingBox(new AABB(getX() - size.width * 2, getY() - size.height * 2, getZ() - size.width * 2,
+		getX() + size.width * 2, getY() + size.height * 2, getZ() + size.width * 2));
+	if (onGround() || tickCount > (isExplosive ? 400 : 100)
+		|| level().getBlockState(blockPosition()).blocksMotion()) {
+	    remove(RemovalReason.DISCARDED);
+	}
 
-        switch(griefPreventionMethod) {
-            case GRIEF_DEFENDER:
-                if(!GriefDefenderHandler.shouldHarmBlock(blockPosition())) {
-                    if(!level().isClientSide) {
-                        remove(RemovalReason.DISCARDED);
-                    }
-                    return;
-
-                }
-                break;
-            default:
-                break;
-        }
-
-        if (!level().isClientSide) {
-            List<LivingEntity> livings = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox());
-            for (LivingEntity living : livings) {
-                living.hurt(living.damageSources().source(BallistixDamageTypes.SHRAPNEL), 10);
-                remove(RemovalReason.DISCARDED);
-            }
-        }
+	if (!level().isClientSide) {
+	    List<LivingEntity> livings = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox());
+	    for (LivingEntity living : livings) {
+		living.hurt(living.damageSources().source(BallistixDamageTypes.SHRAPNEL, getOwner()), 10);
+		remove(RemovalReason.DISCARDED);
+	    }
+	}
     }
 
     @Override
-    public void shootFromRotation(@Nullable Entity entity, float pitch, float yaw, float par4, float force, float par6) {
-        float f = -Mth.sin(yaw * ((float) Math.PI / 180F)) * Mth.cos(pitch * ((float) Math.PI / 180F));
-        float f1 = -Mth.sin((pitch + par4) * ((float) Math.PI / 180F));
-        float f2 = Mth.cos(yaw * ((float) Math.PI / 180F)) * Mth.cos(pitch * ((float) Math.PI / 180F));
-        shoot(f, f1, f2, force, par6);
+    public void shootFromRotation(@Nullable Entity entity, float pitch, float yaw, float par4, float force,
+	    float par6) {
+	float f = -Mth.sin(yaw * ((float) Math.PI / 180F)) * Mth.cos(pitch * ((float) Math.PI / 180F));
+	float f1 = -Mth.sin((pitch + par4) * ((float) Math.PI / 180F));
+	float f2 = Mth.cos(yaw * ((float) Math.PI / 180F)) * Mth.cos(pitch * ((float) Math.PI / 180F));
+	shoot(f, f1, f2, force, par6);
     }
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compound) {
-        compound.putBoolean("type", isExplosive);
+	super.addAdditionalSaveData(compound);
+	compound.putBoolean("type", isExplosive);
     }
 
     @Override
     protected void defineSynchedData() {
-        entityData.define(ISEXPLOSIVE, false);
+	entityData.define(ISEXPLOSIVE, false);
     }
 
     @Override
     public void remove(RemovalReason reason) {
-        if (isExplosive) {
-            level().explode(this, level().damageSources().source(BallistixDamageTypes.SHRAPNEL), null, getX(), getY(), getZ(), 3, true, ExplosionInteraction.BLOCK);
-        }
-        super.remove(reason);
+	if (isExplosive) {
+	    level().explode(this, level().damageSources().source(BallistixDamageTypes.SHRAPNEL), null, getX(), getY(),
+		    getZ(), 3, true, ExplosionInteraction.BLOCK);
+	}
+	super.remove(reason);
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
-        isExplosive = compound.getBoolean("type");
+	super.readAdditionalSaveData(compound);
+	isExplosive = compound.getBoolean("type");
     }
-    
+
     @Override
-	public Packet<ClientGamePacketListener> getAddEntityPacket() {
-		return NetworkHooks.getEntitySpawningPacket(this);
-	}
+    public Packet<ClientGamePacketListener> getAddEntityPacket() {
+	return NetworkHooks.getEntitySpawningPacket(this);
+    }
 
 }

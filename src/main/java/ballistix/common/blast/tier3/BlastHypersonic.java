@@ -1,90 +1,85 @@
 package ballistix.common.blast.tier3;
 
+import java.util.Iterator;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import ballistix.api.blast.IBlast;
 import ballistix.common.blast.util.BlastLasting;
 import ballistix.common.blast.util.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityBallistixFallingBlock;
 import ballistix.common.settings.BallistixConstants;
-import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
-import java.util.Iterator;
-import java.util.List;
-
 public class BlastHypersonic extends BlastLasting {
 
     private ThreadSimpleBlast thread;
     private Iterator<BlockPos> iterator;
     private int pertick = -1;
-    public BlastHypersonic(Level world, BlockPos position) {
-        super(world, position);
+
+    public BlastHypersonic(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
+	super(world, position, owner, blastEntity);
     }
 
     @Override
     public IBlast getBlastType() {
-        return SubtypeBlast.hypersonic;
+	return SubtypeBlast.hypersonic;
     }
 
     @Override
     public void doPreExplode() {
-        if (!world.isClientSide) {
-            thread = new ThreadSimpleBlast(world, position, (int) BallistixConstants.EXPLOSIVE_HYPERSONIC_RADIUS, Integer.MAX_VALUE, null, getBlastType().id(), true);
-            thread.start();
-            world.playSound(null, position, BallistixSounds.SOUND_HYPERSONICSONICEXPLOSION.get(), SoundSource.BLOCKS, 25, 1);
-        }
+	if (!world.isClientSide) {
+	    thread = new ThreadSimpleBlast(world, position, (int) BallistixConstants.EXPLOSIVE_HYPERSONIC_RADIUS,
+		    Integer.MAX_VALUE, null, getBlastType().id(), true);
+	    thread.start();
+	    world.playSound(null, position, BallistixSounds.SOUND_HYPERSONICSONICEXPLOSION.get(), SoundSource.BLOCKS,
+		    25, 1);
+	}
     }
 
     @Override
     public boolean doExplode(int callCount) {
-        hasStarted = true;
-        super.doExplode(callCount);
-        if (thread == null) {
-            return !world.isClientSide;
-        }
-        if (world.isClientSide || !thread.isComplete) {
-            return false;
-        }
-        if (pertick == -1) {
-            hasStarted = true;
-            pertick = (int) (thread.results.size() / BallistixConstants.EXPLOSIVE_HYPERSONIC_DURATION + 1);
-            iterator = thread.results.iterator();
-        }
-        int finished = pertick;
-        while (iterator.hasNext()) {
-            if (finished-- < 0) {
-                break;
-            }
-            BlockPos p = new BlockPos(iterator.next()).offset(position);
-            BlockState state = world.getBlockState(p);
+	hasStarted = true;
+	super.doExplode(callCount);
+	if (thread == null) {
+	    return !world.isClientSide;
+	}
+	if (world.isClientSide || !thread.isComplete) {
+	    return false;
+	}
+	if (pertick == -1) {
+	    hasStarted = true;
+	    pertick = (int) (thread.results.size() / BallistixConstants.EXPLOSIVE_HYPERSONIC_DURATION + 1);
+	    iterator = thread.results.iterator();
+	}
+	int finished = pertick;
+	while (iterator.hasNext()) {
+	    if (finished-- < 0) {
+		break;
+	    }
+	    BlockPos p = new BlockPos(iterator.next()).offset(position);
+	    BlockState state = world.getBlockState(p);
 
-            if(state.isAir() || state.getDestroySpeed(world, p) < 0 || state.getDestroySpeed(world, p) > BallistixConstants.EXPLOSIVE_HYPERSONIC_MAXHARDNESS || state.liquid()) {
-                continue;
-            }
+	    if (state.isAir() || state.getDestroySpeed(world, p) < 0
+		    || state.getDestroySpeed(world, p) > BallistixConstants.EXPLOSIVE_HYPERSONIC_MAXHARDNESS
+		    || state.liquid()) {
+		continue;
+	    }
 
-            boolean shouldRepulse = true;
-
-            switch (griefPreventionMethod) {
-                case NONE:
-                    break;
-                case GRIEF_DEFENDER:
-                    shouldRepulse = GriefDefenderHandler.shouldHarmBlock(p);
-                    break;
-                case SABER_FACTIONS:
-                    break;
-            }
-
-            if(!shouldRepulse) {
-                continue;
-            }
+	    if (!canBreakBlockState(world, state, p, owner)) {
+		continue;
+	    }
 	    double deltaX = p.getX() - position.getX();
 	    double deltaY = p.getY() - position.getY();
 	    double deltaZ = p.getZ() - position.getZ();
@@ -92,20 +87,18 @@ public class BlastHypersonic extends BlastLasting {
 	    double inverseMag = Mth.fastInvSqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
 	    double velX = deltaX * inverseMag * BallistixConstants.EXPLOSIVE_HYPERSONIC_VELOCITY;
-	    double velY = Math.abs(deltaY) * inverseMag
-		    *BallistixConstants.EXPLOSIVE_HYPERSONIC_VELOCITY;
+	    double velY = Math.abs(deltaY) * inverseMag * BallistixConstants.EXPLOSIVE_HYPERSONIC_VELOCITY;
 	    double velZ = deltaZ * inverseMag * BallistixConstants.EXPLOSIVE_HYPERSONIC_VELOCITY;
 
 	    EntityBallistixFallingBlock movingBlock = new EntityBallistixFallingBlock(world, p.getX() + 0.5,
-		    p.getY() + 0.5, p.getZ() + 0.5, state, thread.results);
+		    p.getY() + 0.5, p.getZ() + 0.5, state, thread.results, owner);
 	    movingBlock.setDeltaMovement(velX * 0.33, velY * 3, velZ * 0.33);
-	    world.setBlock(p, state.getFluidState().createLegacyBlock(), Block.UPDATE_NEIGHBORS
-	              | Block.UPDATE_CLIENTS
-	              | Block.UPDATE_SUPPRESS_DROPS);
-	    if (world.random.nextFloat() < 1.0/6.0) {
+	    world.setBlock(p, state.getFluidState().createLegacyBlock(),
+		    Block.UPDATE_NEIGHBORS | Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
+	    if (world.random.nextFloat() < 1.0 / 6.0) {
 		world.addFreshEntity(movingBlock);
 	    }
-        }
+	}
 
 	if (iterator.hasNext()) {
 	    float x = position.getX();
@@ -126,15 +119,8 @@ public class BlastHypersonic extends BlastLasting {
 		    new AABB(x0, y0, z0, x1, y1, z1));
 
 	    for (LivingEntity entity : entities) {
-
-		switch (griefPreventionMethod) {
-		case GRIEF_DEFENDER:
-		    if (!GriefDefenderHandler.shouldEntityBeHarmed(entity)) {
-			continue;
-		    }
-		    break;
-		default:
-		    break;
+		if (!canHarmEntity(entity)) {
+		    continue;
 		}
 
 		double deltaX = entity.getX() - position.getX();
@@ -144,8 +130,7 @@ public class BlastHypersonic extends BlastLasting {
 		double inverseMag = Mth.fastInvSqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
 		double velX = deltaX * inverseMag * BallistixConstants.EXPLOSIVE_HYPERSONIC_VELOCITY;
-		double velY = Math.abs(deltaY) * inverseMag
-			*  BallistixConstants.EXPLOSIVE_HYPERSONIC_VELOCITY;
+		double velY = Math.abs(deltaY) * inverseMag * BallistixConstants.EXPLOSIVE_HYPERSONIC_VELOCITY;
 		double velZ = deltaZ * inverseMag * BallistixConstants.EXPLOSIVE_HYPERSONIC_VELOCITY;
 		entity.setDeltaMovement(entity.getDeltaMovement().add(velX, velY, velZ));
 	    }
@@ -153,22 +138,20 @@ public class BlastHypersonic extends BlastLasting {
 	    return true;
 	}
 
-
-        return false;
-
+	return false;
 
     }
 
     @Override
     public boolean isInstantaneous() {
-        return false;
+	return false;
     }
 
     @Override
     public boolean isDoneCalculating() {
-        if (world.isClientSide) {
-            return shouldRenderCustomClient;
-        }
-        return thread == null || thread.isComplete;
+	if (world.isClientSide) {
+	    return shouldRenderCustomClient;
+	}
+	return thread == null || thread.isComplete;
     }
 }

@@ -90,9 +90,9 @@ configurations {
 dependencies {
 	minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 	
-    implementation "voltaic:Voltaic:1.20.1-1.0.1-0:deobf"
-    implementation "electrodynamics:Electrodynamics:1.20.1-1.0.0-0:deobf"
-    implementation "nuclearscience:Nuclear-Science:1.20.1-0.8.0-0:deobf"
+    implementation "voltaic:Voltaic:1.20.1-1.0.2:deobf"
+    implementation "electrodynamics:Electrodynamics:1.20.1-1.0.2:deobf"
+    implementation "nuclearscience:Nuclear-Science:1.20.1-0.8.1:deobf"
         compileOnly group: 'com.griefdefender', name: 'api', version: '2.1.1-SNAPSHOT'
     
     compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")

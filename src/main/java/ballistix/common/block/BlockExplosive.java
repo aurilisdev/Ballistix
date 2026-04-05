@@ -36,13 +36,14 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import voltaic.common.block.states.VoltaicBlockStates;
+import voltaic.common.block.states.VoltaicMaterials;
 
 public class BlockExplosive extends Block {
 
     public final IBlast explosive;
 
     public BlockExplosive(IBlast explosive) {
-	super(Blocks.TNT.properties().instabreak().sound(SoundType.GRASS).noOcclusion()
+	super(VoltaicMaterials.explosive().instabreak().sound(SoundType.GRASS).noOcclusion()
 		.isRedstoneConductor((a, b, c) -> false));
 	this.explosive = explosive;
     }

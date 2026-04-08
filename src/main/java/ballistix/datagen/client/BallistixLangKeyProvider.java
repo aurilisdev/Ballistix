@@ -179,6 +179,7 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			add("effect.ballistix.frostbite", "Frostbite");
 
 			addChatMessage("radargun.text", "Coordinates: %s");
+			addChatMessage("radargun.inserted", "Inserted Coordinates Successfully: %s");
 			addChatMessage("radargun.turretsucess", "Bound");
 			addChatMessage("radargun.turrettoofar", "Turret too far away!");
 			addChatMessage("laserdesignator.launch", "Launching all missiles with frequency %s to targets: ");

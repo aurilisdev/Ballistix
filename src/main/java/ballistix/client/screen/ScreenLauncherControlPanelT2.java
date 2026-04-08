@@ -163,13 +163,19 @@ public class ScreenLauncherControlPanelT2 extends GenericScreen<ContainerLaunche
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		super.render(graphics, mouseX, mouseY, partialTicks);
-		if (needsUpdate) {
-			needsUpdate = false;
-			TileLauncherControlPanelT2 silo = menu.getSafeHost();
-			if (silo != null) {
+		TileLauncherControlPanelT2 silo = menu.getSafeHost();
+		if (silo != null) {
+			if (needsUpdate) {
+				needsUpdate = false;
 				xCoordField.setValue("" + silo.target.getValue().getX());
 				yCoordField.setValue("" + silo.target.getValue().getY());
 				zCoordField.setValue("" + silo.target.getValue().getZ());
+			}
+
+			if (Integer.parseInt(xCoordField.getValue()) != silo.target.getValue().getX()
+					|| Integer.parseInt(yCoordField.getValue()) != silo.target.getValue().getY()
+					|| Integer.parseInt(zCoordField.getValue()) != silo.target.getValue().getZ()) {
+				needsUpdate = true;
 			}
 		}
 	}

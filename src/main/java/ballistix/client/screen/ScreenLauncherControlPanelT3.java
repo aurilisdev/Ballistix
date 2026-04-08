@@ -35,34 +35,51 @@ public class ScreenLauncherControlPanelT3 extends GenericScreen<ContainerLaunche
 	private final ScreenComponentEditBox zCoordField;
 	private final ScreenComponentEditBox frequencyField;
 
-	public ScreenLauncherControlPanelT3(ContainerLauncherControlPanelT3 container, Inventory playerInventory, Component title) {
+	public ScreenLauncherControlPanelT3(ContainerLauncherControlPanelT3 container, Inventory playerInventory,
+			Component title) {
 		super(container, playerInventory, title);
 
-		//imageHeight += 20;
-		//inventoryLabelY += 20;
+		// imageHeight += 20;
+		// inventoryLabelY += 20;
 
-		addComponent(new ScreenComponentElectricInfo(this::getElectricInformation, -AbstractScreenComponentInfo.SIZE + 1, 2).wattage(BallistixConstants.MISSILESILO_USAGE * 20));
+		addComponent(
+				new ScreenComponentElectricInfo(this::getElectricInformation, -AbstractScreenComponentInfo.SIZE + 1, 2)
+						.wattage(BallistixConstants.MISSILESILO_USAGE * 20));
 
-		addEditBox(xCoordField = new ScreenComponentEditBox(10, 17, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setX).setFilter(ScreenComponentEditBox.INTEGER));
-		addEditBox(yCoordField = new ScreenComponentEditBox(10, 35, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setY).setFilter(ScreenComponentEditBox.INTEGER));
-		addEditBox(zCoordField = new ScreenComponentEditBox(10, 53, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setZ).setFilter(ScreenComponentEditBox.INTEGER));
-		addEditBox(frequencyField = new ScreenComponentEditBox(80, 17, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setFrequency).setFilter(ScreenComponentEditBox.INTEGER));
+		addEditBox(xCoordField = new ScreenComponentEditBox(10, 17, 48, 15, getFontRenderer()).setTextColor(Color.WHITE)
+				.setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setX)
+				.setFilter(ScreenComponentEditBox.INTEGER));
+		addEditBox(yCoordField = new ScreenComponentEditBox(10, 35, 48, 15, getFontRenderer()).setTextColor(Color.WHITE)
+				.setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setY)
+				.setFilter(ScreenComponentEditBox.INTEGER));
+		addEditBox(zCoordField = new ScreenComponentEditBox(10, 53, 48, 15, getFontRenderer()).setTextColor(Color.WHITE)
+				.setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setZ)
+				.setFilter(ScreenComponentEditBox.INTEGER));
+		addEditBox(frequencyField = new ScreenComponentEditBox(80, 17, 48, 15, getFontRenderer())
+				.setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10)
+				.setResponder(this::setFrequency).setFilter(ScreenComponentEditBox.INTEGER));
 
-		addComponent(new ScreenComponentSimpleLabel(60, 19, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.x")));
-		addComponent(new ScreenComponentSimpleLabel(60, 37, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.y")));
-		addComponent(new ScreenComponentSimpleLabel(60, 55, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.z")));
-		addComponent(new ScreenComponentSimpleLabel(130, 19, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.freq")));
-		addComponent(new ScreenComponentSimpleLabel(101, 56, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.sync")));
-		
+		addComponent(
+				new ScreenComponentSimpleLabel(60, 19, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.x")));
+		addComponent(
+				new ScreenComponentSimpleLabel(60, 37, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.y")));
+		addComponent(
+				new ScreenComponentSimpleLabel(60, 55, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.z")));
+		addComponent(new ScreenComponentSimpleLabel(130, 19, 10, Color.TEXT_GRAY,
+				BallistixTextUtils.gui("missilesilo.freq")));
+		addComponent(new ScreenComponentSimpleLabel(101, 56, 10, Color.TEXT_GRAY,
+				BallistixTextUtils.gui("missilesilo.sync")));
+
 		addComponent(new ScreenComponentButton<>(130, 49, 20, 20).setOnPress(button -> {
 			//
 			TileLauncherControlPanelT3 silo = getMenu().getSafeHost();
-			if(silo == null) {
+			if (silo == null) {
 				return;
 			}
 			silo.shouldLaunch.setValue(true);
 
-		}).setColor(new Color(255, 0, 0, 255)).onTooltip((graphics, component, mouseX, mouseY) -> graphics.renderTooltip(getFontRenderer(), BallistixTextUtils.tooltip("silo.launch"), mouseX, mouseY)));
+		}).setColor(new Color(255, 0, 0, 255)).onTooltip((graphics, component, mouseX, mouseY) -> graphics
+				.renderTooltip(getFontRenderer(), BallistixTextUtils.tooltip("silo.launch"), mouseX, mouseY)));
 	}
 
 	@Override
@@ -205,14 +222,21 @@ public class ScreenLauncherControlPanelT3 extends GenericScreen<ContainerLaunche
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		super.render(graphics, mouseX, mouseY, partialTicks);
-		if (needsUpdate) {
-			needsUpdate = false;
-			TileLauncherControlPanelT3 silo = menu.getSafeHost();
-			if (silo != null) {
+		TileLauncherControlPanelT3 silo = menu.getSafeHost();
+		if (silo != null) {
+			if (needsUpdate) {
+				needsUpdate = false;
 				xCoordField.setValue("" + silo.target.getValue().getX());
 				yCoordField.setValue("" + silo.target.getValue().getY());
 				zCoordField.setValue("" + silo.target.getValue().getZ());
 				frequencyField.setValue("" + silo.frequency.getValue());
+			}
+
+			if (Integer.parseInt(xCoordField.getValue()) != silo.target.getValue().getX()
+					|| Integer.parseInt(yCoordField.getValue()) != silo.target.getValue().getY()
+					|| Integer.parseInt(zCoordField.getValue()) != silo.target.getValue().getZ()
+					|| Integer.parseInt(frequencyField.getValue()) != silo.getFrequency()) {
+				needsUpdate = true;
 			}
 		}
 	}
@@ -226,8 +250,19 @@ public class ScreenLauncherControlPanelT3 extends GenericScreen<ContainerLaunche
 		}
 
 		ComponentElectrodynamic el = silo.getComponent(IComponentType.Electrodynamic);
-		list.add(BallistixTextUtils.tooltip("missilesilo.charge", ChatFormatter.getChatDisplayShort(el.getJoulesStored(), DisplayUnits.JOULES).withStyle(ChatFormatting.GRAY), ChatFormatter.getChatDisplayShort(BallistixConstants.MISSILESILO_USAGE * 20 * 3, DisplayUnits.JOULES).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
-		list.add(VoltaicTextUtils.gui("machine.voltage", ChatFormatter.getChatDisplayShort(el.getVoltage(), DisplayUnits.VOLTAGE).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+		list.add(
+				BallistixTextUtils
+						.tooltip("missilesilo.charge",
+								ChatFormatter.getChatDisplayShort(el.getJoulesStored(), DisplayUnits.JOULES)
+										.withStyle(ChatFormatting.GRAY),
+								ChatFormatter.getChatDisplayShort(BallistixConstants.MISSILESILO_USAGE * 20 * 3,
+										DisplayUnits.JOULES).withStyle(ChatFormatting.GRAY))
+						.withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+		list.add(VoltaicTextUtils
+				.gui("machine.voltage",
+						ChatFormatter.getChatDisplayShort(el.getVoltage(), DisplayUnits.VOLTAGE)
+								.withStyle(ChatFormatting.GRAY))
+				.withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
 
 		return list;
 	}

@@ -48,6 +48,7 @@
   "chat.ballistix.laserdesignator.launch": "Launching all missiles with frequency %s to targets: ",
   "chat.ballistix.laserdesignator.launchsend": "-> %s",
   "chat.ballistix.laserdesignator.setfrequency": "Set frequency to: %s",
+  "chat.ballistix.radargun.inserted": "Inserted Coordinates Successfully: %s",
   "chat.ballistix.radargun.text": "Coordinates: %s",
   "chat.ballistix.radargun.turretsucess": "Bound",
   "chat.ballistix.radargun.turrettoofar": "Turret too far away!",

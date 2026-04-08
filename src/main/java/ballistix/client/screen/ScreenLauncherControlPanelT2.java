@@ -34,28 +34,41 @@ public class ScreenLauncherControlPanelT2 extends GenericScreen<ContainerLaunche
 	private final ScreenComponentEditBox yCoordField;
 	private final ScreenComponentEditBox zCoordField;
 
-	public ScreenLauncherControlPanelT2(ContainerLauncherControlPanelT2 container, Inventory playerInventory, Component title) {
+	public ScreenLauncherControlPanelT2(ContainerLauncherControlPanelT2 container, Inventory playerInventory,
+			Component title) {
 		super(container, playerInventory, title);
 
-		addComponent(new ScreenComponentElectricInfo(this::getElectricInformation, -AbstractScreenComponentInfo.SIZE + 1, 2).wattage(BallistixConstants.MISSILESILO_USAGE * 20));
+		addComponent(
+				new ScreenComponentElectricInfo(this::getElectricInformation, -AbstractScreenComponentInfo.SIZE + 1, 2)
+						.wattage(BallistixConstants.MISSILESILO_USAGE * 20));
 
-		addEditBox(xCoordField = new ScreenComponentEditBox(10, 17, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setX).setFilter(ScreenComponentEditBox.INTEGER));
-		addEditBox(yCoordField = new ScreenComponentEditBox(10, 35, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setY).setFilter(ScreenComponentEditBox.INTEGER));
-		addEditBox(zCoordField = new ScreenComponentEditBox(10, 53, 48, 15, getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setZ).setFilter(ScreenComponentEditBox.INTEGER));
+		addEditBox(xCoordField = new ScreenComponentEditBox(10, 17, 48, 15, getFontRenderer()).setTextColor(Color.WHITE)
+				.setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setX)
+				.setFilter(ScreenComponentEditBox.INTEGER));
+		addEditBox(yCoordField = new ScreenComponentEditBox(10, 35, 48, 15, getFontRenderer()).setTextColor(Color.WHITE)
+				.setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setY)
+				.setFilter(ScreenComponentEditBox.INTEGER));
+		addEditBox(zCoordField = new ScreenComponentEditBox(10, 53, 48, 15, getFontRenderer()).setTextColor(Color.WHITE)
+				.setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setZ)
+				.setFilter(ScreenComponentEditBox.INTEGER));
 
-		addComponent(new ScreenComponentSimpleLabel(60, 22, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.x")));
-		addComponent(new ScreenComponentSimpleLabel(60, 40, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.y")));
-		addComponent(new ScreenComponentSimpleLabel(60, 58, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.z")));
-		
+		addComponent(
+				new ScreenComponentSimpleLabel(60, 22, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.x")));
+		addComponent(
+				new ScreenComponentSimpleLabel(60, 40, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.y")));
+		addComponent(
+				new ScreenComponentSimpleLabel(60, 58, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.z")));
+
 		addComponent(new ScreenComponentButton<>(100, 25, 40, 40).setOnPress(button -> {
 			//
 			TileLauncherControlPanelT2 silo = getMenu().getSafeHost();
-			if(silo == null) {
+			if (silo == null) {
 				return;
 			}
 			silo.shouldLaunch.setValue(true);
 
-		}).setColor(new Color(255, 0, 0, 255)).onTooltip((graphics, component, mouseX, mouseY) -> graphics.renderTooltip(getFontRenderer(), BallistixTextUtils.tooltip("silo.launch"), mouseX, mouseY)));
+		}).setColor(new Color(255, 0, 0, 255)).onTooltip((graphics, component, mouseX, mouseY) -> graphics
+				.renderTooltip(getFontRenderer(), BallistixTextUtils.tooltip("silo.launch"), mouseX, mouseY)));
 	}
 
 	@Override
@@ -163,13 +176,19 @@ public class ScreenLauncherControlPanelT2 extends GenericScreen<ContainerLaunche
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		super.render(graphics, mouseX, mouseY, partialTicks);
-		if (needsUpdate) {
-			needsUpdate = false;
-			TileLauncherControlPanelT2 silo = menu.getSafeHost();
-			if (silo != null) {
+		TileLauncherControlPanelT2 silo = menu.getSafeHost();
+		if (silo != null) {
+			if (needsUpdate) {
+				needsUpdate = false;
 				xCoordField.setValue("" + silo.target.getValue().getX());
 				yCoordField.setValue("" + silo.target.getValue().getY());
 				zCoordField.setValue("" + silo.target.getValue().getZ());
+			}
+
+			if (Integer.parseInt(xCoordField.getValue()) != silo.target.getValue().getX()
+					|| Integer.parseInt(yCoordField.getValue()) != silo.target.getValue().getY()
+					|| Integer.parseInt(zCoordField.getValue()) != silo.target.getValue().getZ()) {
+				needsUpdate = true;
 			}
 		}
 	}
@@ -183,8 +202,19 @@ public class ScreenLauncherControlPanelT2 extends GenericScreen<ContainerLaunche
 		}
 
 		ComponentElectrodynamic el = silo.getComponent(IComponentType.Electrodynamic);
-		list.add(BallistixTextUtils.tooltip("missilesilo.charge", ChatFormatter.getChatDisplayShort(el.getJoulesStored(), DisplayUnits.JOULES).withStyle(ChatFormatting.GRAY), ChatFormatter.getChatDisplayShort(BallistixConstants.MISSILESILO_USAGE * 20 * 3, DisplayUnits.JOULES).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
-		list.add(VoltaicTextUtils.gui("machine.voltage", ChatFormatter.getChatDisplayShort(el.getVoltage(), DisplayUnits.VOLTAGE).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+		list.add(
+				BallistixTextUtils
+						.tooltip("missilesilo.charge",
+								ChatFormatter.getChatDisplayShort(el.getJoulesStored(), DisplayUnits.JOULES)
+										.withStyle(ChatFormatting.GRAY),
+								ChatFormatter.getChatDisplayShort(BallistixConstants.MISSILESILO_USAGE * 20 * 3,
+										DisplayUnits.JOULES).withStyle(ChatFormatting.GRAY))
+						.withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+		list.add(VoltaicTextUtils
+				.gui("machine.voltage",
+						ChatFormatter.getChatDisplayShort(el.getVoltage(), DisplayUnits.VOLTAGE)
+								.withStyle(ChatFormatting.GRAY))
+				.withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
 
 		return list;
 	}

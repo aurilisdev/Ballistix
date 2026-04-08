@@ -200,6 +200,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 
 			if (sync.getOrCreateTag().contains(NBTUtils.LOCATION)) {
 				target.setValue(ItemRadarGun.getCoordiantes(sync));
+				target.forceDirtyForManager();
 			}
 
 		}

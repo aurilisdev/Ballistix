@@ -48,7 +48,7 @@ public class BlockItemExplosive extends BlockItemDescriptable {
 			SoundEvents.TNT_PRIMED, SoundSource.BLOCKS, 1.0F, 1.0F);
 
 	    }
-
+		item.shrink(1);
 	    return item;
 	}
 

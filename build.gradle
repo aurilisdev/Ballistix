@@ -88,8 +88,8 @@ configurations {
 }
 
 dependencies {
-    implementation "voltaic:Voltaic:1.21.1-1.0.2"
-    implementation "electrodynamics:Electrodynamics:1.21.1-1.0.2"
+    implementation "voltaic:Voltaic:1.21.1-1.0.3"
+    implementation "electrodynamics:Electrodynamics:1.21.1-1.0.3"
     implementation "nuclearscience:Nuclear-Science:1.21.1-0.8.1"
 
     compileOnly group: 'com.griefdefender', name: 'api', version: '2.1.1-SNAPSHOT'

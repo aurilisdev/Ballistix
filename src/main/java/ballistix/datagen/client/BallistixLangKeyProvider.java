@@ -407,7 +407,7 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 					"Entities damaged by the turret will also be set on fire! The turret is powered from the bottom. If Electrodynamics is installed, it will require Joules at the appropriate Voltage. Otherwise it will use FE.");
 			addGuidebook("chapter.missiledefense.laserturret.energy", "Energy");
 
-			addGuidebook("chapter.missiledefense.railgunturret1", "The Railgun Turret is a hybrid between the CIWS and SAM turrets. It fires Steel Rods that destroy a missile on contact. Its maximum range can also be increased with Range Upgrades. The turret must wait %1$s ticks between shots, and like with the Laser Turret, it is incredibly power-hungry. The Railgun Turret can " +
+			addGuidebook("chapter.missiledefense.railgunturret1", "The Railgun Turret is a hybrid between the CIWS and SAM turrets. It fires Steel Rods that destroy a missile on contact. Without Electrodynamics installed, one can use iron ingots. Its maximum range can also be increased with Range Upgrades. The turret must wait %1$s ticks between shots, and like with the Laser Turret, it is incredibly power-hungry. The Railgun Turret can " +
 					"engage both missiles and entities. The steel rod will deal 20 damage on hitting and entity, but the turret must have a clear line of sight to engage! The turret is powered from the bottom. If Electrodynamics is installed, it will require Joules at the appropriate Voltage. Otherwise it will use FE.");
 			addGuidebook("chapter.missiledefense.railgunturret.rod", "Steel Rod");
 

@@ -42,7 +42,7 @@ public class BlockExplosive extends Block {
     public final IBlast explosive;
 
     public BlockExplosive(IBlast explosive) {
-	super(Blocks.TNT.properties().instabreak().sound(SoundType.GRASS).noOcclusion()
+	super(Properties.ofFullCopy(Blocks.TNT).instabreak().sound(SoundType.GRASS).noOcclusion()
 		.isRedstoneConductor((a, b, c) -> false));
 	this.explosive = explosive;
     }

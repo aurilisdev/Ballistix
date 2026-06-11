@@ -47,404 +47,422 @@ import voltaic.registers.VoltaicCapabilities;
 
 public abstract class GenericTileTurret extends GenericTile {
 
-    public final SingleProperty<Vec3> turretRotation = property(new SingleProperty<>(PropertyTypes.VEC3, "turrot", getDefaultOrientation()));
-    public final SingleProperty<Vec3> desiredRotation = property(new SingleProperty<>(PropertyTypes.VEC3, "currot", getDefaultOrientation()));
-    public final SingleProperty<Vec3> targetMovement = property(new SingleProperty<>(PropertyTypes.VEC3, "movevec", Vec3.ZERO));
-    public final SingleProperty<Boolean> hasTarget = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "hastarget", false)).onChange((prop, val) -> {
+	public final SingleProperty<Vec3> turretRotation = property(
+			new SingleProperty<>(PropertyTypes.VEC3, "turrot", getDefaultOrientation()));
+	public final SingleProperty<Vec3> desiredRotation = property(
+			new SingleProperty<>(PropertyTypes.VEC3, "currot", getDefaultOrientation()));
+	public final SingleProperty<Vec3> targetMovement = property(
+			new SingleProperty<>(PropertyTypes.VEC3, "movevec", Vec3.ZERO));
+	public final SingleProperty<Boolean> hasTarget = property(
+			new SingleProperty<>(PropertyTypes.BOOLEAN, "hastarget", false)).onChange((prop, val) -> {
+
+				if (level == null || level.isClientSide) {
+					return;
+				}
+
+				if (prop.getValue() && val != prop.getValue()) {
+					movementCooldown = 0;
+				} else if (prop.getValue() != val) {
+					movementCooldown = 20;
+				}
 
-        if(level == null || level.isClientSide) {
-            return;
-        }
+			});
+	public final SingleProperty<Boolean> hasNoPower = property(
+			new SingleProperty<>(PropertyTypes.BOOLEAN, "haspower", false));
+	public final SingleProperty<Boolean> inRange = property(
+			new SingleProperty<>(PropertyTypes.BOOLEAN, "isrange", false));
+	public final SingleProperty<Double> currentRange;
+	public final SingleProperty<Double> inaccuracyMultiplier = property(
+			new SingleProperty<>(PropertyTypes.DOUBLE, "inaccuracymultiplier", 1.0));
+	public final SingleProperty<Boolean> canFire = property(
+			new SingleProperty<>(PropertyTypes.BOOLEAN, "canfire", false));
+	public final ListProperty<String> whitelistedPlayers = property(
+			new ListProperty<>(PropertyTypes.STRING_LIST, "whitelistedplayers", new ArrayList<>()));
+	public final SingleProperty<Integer> entityTargetingMode = property(
+			new SingleProperty<>(PropertyTypes.INTEGER, "entitytargetingmode", 0));
 
-        if(prop.getValue() && val != prop.getValue()) {
-            movementCooldown = 0;
-        } else if (prop.getValue() != val) {
-            movementCooldown = 20;
-        }
+	public final double baseRange;
+	public final double rotationSpeedRadians;
+	public final double usage;
+	public final double minimumRange;
+	public final double inaccuracy;
+	@Nullable
+	public ITarget target;
 
-    });
-    public final SingleProperty<Boolean> hasNoPower = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "haspower", false));
-    public final SingleProperty<Boolean> inRange = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "isrange", false));
-    public final SingleProperty<Double> currentRange;
-    public final SingleProperty<Double> inaccuracyMultiplier = property(new SingleProperty<>(PropertyTypes.DOUBLE, "inaccuracymultiplier", 1.0));
-    public final SingleProperty<Boolean> canFire = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "canfire", false));
-    public final ListProperty<String> whitelistedPlayers = property(new ListProperty<>(PropertyTypes.STRING_LIST, "whitelistedplayers", new ArrayList<>()));
-    public final SingleProperty<Integer> entityTargetingMode = property(new SingleProperty<>(PropertyTypes.INTEGER, "entitytargetingmode", 0));
+	private int movementCooldown = 0;
 
-    public final double baseRange;
-    public final double rotationSpeedRadians;
-    public final double usage;
-    public final double minimumRange;
-    public final double inaccuracy;
-    @Nullable
-    public ITarget target;
+	public GenericTileTurret(BlockEntityType<?> tileEntityTypeIn, BlockPos worldPos, BlockState blockState,
+			double baseRange, double minimumRange, double usage, double rotationSpeedRadians, double inaccuracy) {
+		super(tileEntityTypeIn, worldPos, blockState);
+		addComponent(new ComponentTickable(this).tickServer(this::tickServer).tickClient(this::tickClient));
+		addComponent(new ComponentElectrodynamic(this, false, true)
+				.setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM)
+				.voltage(VoltaicCapabilities.DEFAULT_VOLTAGE).maxJoules(usage * 20));
+		addComponent(getInventory().validUpgrades(SubtypeItemUpgrade.range));
+		addComponent(getContainer());
+		addComponent(new ComponentForgeEnergy(this));
+		this.usage = usage;
+		this.baseRange = baseRange;
+		this.minimumRange = minimumRange;
+		this.rotationSpeedRadians = rotationSpeedRadians;
+		this.inaccuracy = inaccuracy;
+		currentRange = property(new SingleProperty<>(PropertyTypes.DOUBLE, "currentrange", baseRange));
+	}
 
-    private int movementCooldown = 0;
+	public void tickServer(ComponentTickable tickable) {
 
-    public GenericTileTurret(BlockEntityType<?> tileEntityTypeIn, BlockPos worldPos, BlockState blockState, double baseRange, double minimumRange, double usage, double rotationSpeedRadians, double inaccuracy) {
-        super(tileEntityTypeIn, worldPos, blockState);
-        addComponent(new ComponentTickable(this).tickServer(this::tickServer).tickClient(this::tickClient));
-        addComponent(new ComponentElectrodynamic(this, false, true).setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM).voltage(VoltaicCapabilities.DEFAULT_VOLTAGE).maxJoules(usage * 20));
-        addComponent(getInventory().validUpgrades(SubtypeItemUpgrade.range));
-        addComponent(getContainer());
-        addComponent(new ComponentForgeEnergy(this));
-        this.usage = usage;
-        this.baseRange = baseRange;
-        this.minimumRange = minimumRange;
-        this.rotationSpeedRadians = rotationSpeedRadians;
-        this.inaccuracy = inaccuracy;
-        currentRange = property(new SingleProperty<>(PropertyTypes.DOUBLE, "currentrange", baseRange));
-    }
+		ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
 
+		hasNoPower.setValue(electro.getJoulesStored() < usage);
 
-    public void tickServer(ComponentTickable tickable) {
+		if (hasNoPower.getValue()) {
+			return;
+		}
+
+		electro.setJoulesStored(electro.getJoulesStored() - usage);
+
+		tickServerActive(tickable);
 
-        ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
+		target = getTarget(tickable.getTicks());
 
-        hasNoPower.setValue(electro.getJoulesStored() < usage);
+		if (!isValidPlacement()) {
+			return;
+		}
 
-        if (hasNoPower.getValue()) {
-            return;
-        }
+		hasTarget.setValue(target != null);
 
-        electro.setJoulesStored(electro.getJoulesStored() - usage);
+		double distanceToTarget = 0;
 
-        tickServerActive(tickable);
+		if (hasTarget.getValue()) {
 
-        target = getTarget(tickable.getTicks());
+			Vec3 interceptionPos = getTargetPosition(target);
 
-        if(!isValidPlacement()) {
-            return;
-        }
+			if (interceptionPos != null) {
 
-        hasTarget.setValue(target != null);
+				Vec3 launchPos = getProjectileLaunchPosition();
 
-        double distanceToTarget = 0;
+				distanceToTarget = TileFireControlRadar.getDistanceToMissile(launchPos, interceptionPos);
 
-        if (hasTarget.getValue()) {
+				double deltaX = interceptionPos.x - launchPos.x;
+				double deltaY = interceptionPos.y - launchPos.y;
+				double deltaZ = interceptionPos.z - launchPos.z;
 
-            Vec3 interceptionPos = getTargetPosition(target);
+				double sumXZ = deltaX * deltaX + deltaZ * deltaZ;
 
-            if(interceptionPos != null) {
+				double magXZ = Math.sqrt(sumXZ);
 
-                Vec3 launchPos = getProjectileLaunchPosition();
+				if (magXZ <= 0) {
+					magXZ = 1;
+				}
 
-                distanceToTarget = TileFireControlRadar.getDistanceToMissile(launchPos, interceptionPos);
+				double thetaY = Math.atan(deltaY / magXZ);
 
-                double deltaX = interceptionPos.x - launchPos.x;
-                double deltaY = interceptionPos.y - launchPos.y;
-                double deltaZ = interceptionPos.z - launchPos.z;
+				targetMovement.setValue(new Vec3(deltaX, deltaY, deltaZ).normalize());
+				Vec3 rot = new Vec3(deltaX / magXZ, 0, deltaZ / magXZ).normalize();
 
-                double sumXZ = deltaX * deltaX + deltaZ * deltaZ;
+				desiredRotation.setValue(new Vec3(rot.x, Math.sin(thetaY), rot.z));
 
-                double magXZ = Math.sqrt(sumXZ);
+			}
 
-                if(magXZ <= 0) {
-                    magXZ = 1;
-                }
+		} else if (movementCooldown <= 0) {
+			desiredRotation.setValue(getDefaultOrientation());
+		} else {
+			movementCooldown--;
+		}
 
-                double thetaY = Math.atan(deltaY / magXZ);
+		inRange.setValue(distanceToTarget >= minimumRange && distanceToTarget <= currentRange.getValue());
 
-                targetMovement.setValue(new Vec3(deltaX, deltaY, deltaZ).normalize());
-                Vec3 rot = new Vec3(deltaX / magXZ, 0, deltaZ / magXZ).normalize();
+		if (turretRotation.getValue().equals(desiredRotation.getValue())) {
 
-                desiredRotation.setValue(new Vec3(rot.x, Math.sin(thetaY), rot.z));
+			canFire.setValue(hasTarget.getValue() && inRange.getValue());
 
-            }
+		} else if (movementCooldown <= 0) {
 
-        } else if(movementCooldown <= 0) {
-            desiredRotation.setValue(getDefaultOrientation());
-        } else {
-            movementCooldown--;
-        }
+			Vec3 desiredRot = new Vec3(desiredRotation.getValue().x, 0, desiredRotation.getValue().z);
+			desiredRot = desiredRot.normalize();
 
-        inRange.setValue(distanceToTarget >= minimumRange && distanceToTarget <= currentRange.getValue());
+			Vec3 currRot = new Vec3(turretRotation.getValue().x, 0, turretRotation.getValue().z);
+			currRot = currRot.normalize();
 
-        if (turretRotation.getValue().equals(desiredRotation.getValue())) {
+			double cosAngle = desiredRot.dot(currRot);
 
-            canFire.setValue(hasTarget.getValue() && inRange.getValue());
+			Vec3 newXZ;
 
-        } else if(movementCooldown <= 0) {
+			if (Math.acos(cosAngle) <= rotationSpeedRadians) {
+				newXZ = desiredRot;
+			} else {
+				Vec3 perpVector = currRot.cross(desiredRot).cross(currRot).normalize();
+				newXZ = currRot.scale(Math.cos(rotationSpeedRadians))
+						.add(perpVector.scale(Math.sin(rotationSpeedRadians)));
+			}
 
-            Vec3 desiredRot = new Vec3(desiredRotation.getValue().x, 0, desiredRotation.getValue().z);
-            desiredRot = desiredRot.normalize();
+			double deltaY = desiredRotation.getValue().y - turretRotation.getValue().y;
 
-            Vec3 currRot = new Vec3(turretRotation.getValue().x, 0, turretRotation.getValue().z);
-            currRot = currRot.normalize();
+			if (deltaY < 0) {
+				turretRotation.setValue(turretRotation.getValue().add(0, -Math.cos(rotationSpeedRadians) * 0.125, 0));
+				if (turretRotation.getValue().y < getMinElevation()) {
+					turretRotation.setValue(new Vec3(turretRotation.getValue().x,
+							Math.max(getMinElevation(), desiredRotation.getValue().y), turretRotation.getValue().z));
+				} else if (turretRotation.getValue().y < desiredRotation.getValue().y) {
+					turretRotation.setValue(new Vec3(turretRotation.getValue().x, desiredRotation.getValue().y,
+							turretRotation.getValue().z));
+				}
+			} else if (deltaY > 0) {
+				turretRotation.setValue(turretRotation.getValue().add(0, Math.cos(rotationSpeedRadians) * 0.125, 0));
 
-            double cosAngle = desiredRot.dot(currRot);
+				if (turretRotation.getValue().y > getMaxElevation()) {
+					turretRotation.setValue(new Vec3(turretRotation.getValue().x,
+							Math.min(getMaxElevation(), desiredRotation.getValue().y), turretRotation.getValue().z));
+				} else if (turretRotation.getValue().y > desiredRotation.getValue().y) {
+					turretRotation.setValue(new Vec3(turretRotation.getValue().x, desiredRotation.getValue().y,
+							turretRotation.getValue().z));
+				}
+			}
 
-            Vec3 newXZ;
+			turretRotation.setValue(new Vec3(newXZ.x, turretRotation.getValue().y, newXZ.z));
 
-            if(Math.acos(cosAngle) <= rotationSpeedRadians) {
-                newXZ = desiredRot;
-            } else {
-                Vec3 perpVector = currRot.cross(desiredRot).cross(currRot).normalize();
-                newXZ = currRot.scale(Math.cos(rotationSpeedRadians)).add(perpVector.scale(Math.sin(rotationSpeedRadians)));
-            }
+			canFire.setValue(hasTarget.getValue() && turretRotation.getValue().equals(desiredRotation.getValue())
+					&& inRange.getValue());
 
+		} else {
+			canFire.setValue(false);
+		}
 
-            double deltaY = desiredRotation.getValue().y - turretRotation.getValue().y;
+		if (canFire.getValue()) {
+			fireTickServer(tickable.getTicks());
+		}
 
-            if (deltaY < 0) {
-                turretRotation.setValue(turretRotation.getValue().add(0, -Math.cos(rotationSpeedRadians) * 0.125, 0));
-                if (turretRotation.getValue().y < getMinElevation()) {
-                    turretRotation.setValue(new Vec3(turretRotation.getValue().x, Math.max(getMinElevation(), desiredRotation.getValue().y), turretRotation.getValue().z));
-                } else if (turretRotation.getValue().y < desiredRotation.getValue().y) {
-                    turretRotation.setValue(new Vec3(turretRotation.getValue().x, desiredRotation.getValue().y, turretRotation.getValue().z));
-                }
-            } else if (deltaY > 0) {
-                turretRotation.setValue(turretRotation.getValue().add(0, Math.cos(rotationSpeedRadians) * 0.125, 0));
+	}
 
-                if (turretRotation.getValue().y > getMaxElevation()) {
-                    turretRotation.setValue(new Vec3(turretRotation.getValue().x, Math.min(getMaxElevation(), desiredRotation.getValue().y), turretRotation.getValue().z));
-                } else if (turretRotation.getValue().y > desiredRotation.getValue().y) {
-                    turretRotation.setValue(new Vec3(turretRotation.getValue().x, desiredRotation.getValue().y, turretRotation.getValue().z));
-                }
-            }
+	public void tickClient(ComponentTickable tickable) {
 
-            turretRotation.setValue(new Vec3(newXZ.x, turretRotation.getValue().y, newXZ.z));
+	}
 
-            canFire.setValue(hasTarget.getValue() && turretRotation.getValue().equals(desiredRotation.getValue()) && inRange.getValue());
+	public abstract ComponentInventory getInventory();
 
-        } else {
-            canFire.setValue(false);
-        }
+	public abstract ComponentContainerProvider getContainer();
 
-        if (canFire.getValue()) {
-            fireTickServer(tickable.getTicks());
-        }
+	public abstract void tickServerActive(ComponentTickable tickable);
 
-    }
+	public abstract void fireTickServer(long ticks);
 
-    public void tickClient(ComponentTickable tickable) {
+	public abstract Vec3 getDefaultOrientation();
 
-    }
+	public abstract Vec3 getProjectileLaunchPosition();
 
-    public abstract ComponentInventory getInventory();
-    public abstract ComponentContainerProvider getContainer();
+	@Nullable
+	public abstract Vec3 getTargetPosition(@Nonnull ITarget target);
 
-    public abstract void tickServerActive(ComponentTickable tickable);
-    public abstract void fireTickServer(long ticks);
+	public abstract double getMinElevation();
 
-    public abstract Vec3 getDefaultOrientation();
+	public abstract double getMaxElevation();
 
-    public abstract Vec3 getProjectileLaunchPosition();
+	@Nullable
+	public abstract ITarget getTarget(long ticks);
 
-    @Nullable
-    public abstract Vec3 getTargetPosition(@Nonnull ITarget target);
+	public abstract boolean isValidPlacement();
 
-    public abstract double getMinElevation();
+	@Override
+	public void onInventoryChange(ComponentInventory inv, int slot) {
 
-    public abstract double getMaxElevation();
+		super.onInventoryChange(inv, slot);
 
-    @Nullable
-    public abstract ITarget getTarget(long ticks);
+		if (slot >= inv.getUpgradeSlotStartIndex() || slot == -1) {
 
-    public abstract boolean isValidPlacement();
+			int rangeUpgrades = 0;
 
-    @Override
-    public void onInventoryChange(ComponentInventory inv, int slot) {
+			for (ItemStack stack : inv.getUpgradeContents()) {
 
-        super.onInventoryChange(inv, slot);
+				if (stack.getItem() instanceof ItemUpgrade upgrade && upgrade.subtype == SubtypeItemUpgrade.range) {
+					rangeUpgrades += stack.getCount();
+				}
 
-        if(slot >= inv.getUpgradeSlotStartIndex() || slot == -1) {
+			}
 
-            int rangeUpgrades = 0;
+			double inaccuracyMulitplier = 1;
+			double range = baseRange;
 
-            for(ItemStack stack : inv.getUpgradeContents()) {
+			for (int i = 0; i < rangeUpgrades; i++) {
+				inaccuracyMulitplier *= BallistixConfig.INSTANCE.RANGE_INCREASE_INACCURACY_MULTIPLIER.get();
+				range += 5.55;
+			}
 
-                if(stack.getItem() instanceof ItemUpgrade upgrade && upgrade.subtype == SubtypeItemUpgrade.range) {
-                    rangeUpgrades += stack.getCount();
-                }
+			range = Math.min(range, BallistixConfig.INSTANCE.FIRE_CONTROL_RADAR_RANGE.get());
 
-            }
+			currentRange.setValue(range);
+			inaccuracyMultiplier.setValue(inaccuracyMulitplier);
 
-            double inaccuracyMulitplier = 1;
-            double range = baseRange;
+		}
 
-            for(int i = 0; i < rangeUpgrades; i++) {
-                inaccuracyMulitplier *= BallistixConfig.INSTANCE.RANGE_INCREASE_INACCURACY_MULTIPLIER.get();
-                range += 5.55;
-            }
+	}
 
-            range = Math.min(range, BallistixConfig.INSTANCE.FIRE_CONTROL_RADAR_RANGE.get());
+	@Override
+	protected void saveAdditional(CompoundTag compound, HolderLookup.Provider registries) {
+		super.saveAdditional(compound, registries);
+		compound.putInt("turncooldown", movementCooldown);
+	}
 
-            currentRange.setValue(range);
-            inaccuracyMultiplier.setValue(inaccuracyMulitplier);
+	@Override
+	protected void loadAdditional(CompoundTag compound, HolderLookup.Provider registries) {
+		super.loadAdditional(compound, registries);
+		movementCooldown = compound.getInt("turncooldown");
+	}
 
+	public static double getXZAngleRadians(Vec3 vector) {
+		return Math.atan2(vector.z, vector.x);
+	}
 
-        }
+	public static List<Block> raycastToBlockPos(Level world, Vec3 start, Vec3 end) {
+		BlockPos endCheck = new BlockPos((int) end.x, (int) end.y, (int) end.z);
 
-    }
+		List<Block> blocks = new ArrayList<>();
 
-    @Override
-    protected void saveAdditional(CompoundTag compound, HolderLookup.Provider registries) {
-        super.saveAdditional(compound, registries);
-        compound.putInt("turncooldown", movementCooldown);
-    }
+		Vec3 delta = end.subtract(start);
+		int maxChecks = (int) Math.ceil(delta.length());
 
-    @Override
-    protected void loadAdditional(CompoundTag compound, HolderLookup.Provider registries) {
-        super.loadAdditional(compound, registries);
-        movementCooldown = compound.getInt("turncooldown");
-    }
+		delta = delta.normalize();
 
-    public static double getXZAngleRadians(Vec3 vector) {
-        return Math.atan2(vector.z, vector.x);
-    }
+		int i = 0;
+		BlockPos toCheck;
+		BlockState state;
 
-    public static List<Block> raycastToBlockPos(Level world, Vec3 start, Vec3 end) {
-	BlockPos endCheck = new BlockPos((int)end.x, (int)end.y, (int)end.z);
+		while (i < maxChecks) {
 
-        List<Block> blocks = new ArrayList<>();
+			start = start.add(delta);
+			BlockPos startCheck = new BlockPos((int) start.x, (int) start.y, (int) start.z);
 
-        Vec3 delta = end.subtract(start);
-        int maxChecks = (int) Math.ceil(delta.length());
+			// Cieled Y
+			toCheck = new BlockPos((int) Math.ceil(start.x), (int) Math.ceil(start.y), (int) Math.ceil(start.z));
+			if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
+				state = world.getBlockState(toCheck);
+				if (willStopTurrret(state)) {
+					blocks.add(state.getBlock());
+				}
+			}
 
-        delta = delta.normalize();
+			toCheck = new BlockPos((int) Math.ceil(start.x), (int) Math.ceil(start.y), (int) Math.floor(start.z));
+			if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
+				state = world.getBlockState(toCheck);
+				if (willStopTurrret(state)) {
+					blocks.add(state.getBlock());
+				}
+			}
 
-        int i = 0;
-        BlockPos toCheck;
-        BlockState state;
+			toCheck = new BlockPos((int) Math.floor(start.x), (int) Math.ceil(start.y), (int) Math.ceil(start.z));
+			if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
+				state = world.getBlockState(toCheck);
+				if (willStopTurrret(state)) {
+					blocks.add(state.getBlock());
+				}
+			}
 
-        while(i < maxChecks) {
+			toCheck = new BlockPos((int) Math.floor(start.x), (int) Math.ceil(start.y), (int) Math.floor(start.z));
+			if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
+				state = world.getBlockState(toCheck);
+				if (willStopTurrret(state)) {
+					blocks.add(state.getBlock());
+				}
+			}
 
-            start = start.add(delta);
-    	    BlockPos startCheck = new BlockPos((int)start.x, (int)start.y, (int)start.z);
+			// Floored Y
 
-            //Cieled Y
-            toCheck = new BlockPos((int) Math.ceil(start.x), (int) Math.ceil(start.y), (int) Math.ceil(start.z));
-            if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
-                state = world.getBlockState(toCheck);
-                if (willStopTurrret(state)) {
-                    blocks.add(state.getBlock());
-                }
-            }
+			toCheck = new BlockPos((int) Math.ceil(start.x), (int) Math.floor(start.y), (int) Math.ceil(start.z));
+			if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
+				state = world.getBlockState(toCheck);
+				if (willStopTurrret(state)) {
+					blocks.add(state.getBlock());
+				}
+			}
 
-            toCheck = new BlockPos((int) Math.ceil(start.x), (int) Math.ceil(start.y), (int) Math.floor(start.z));
-            if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
-                state = world.getBlockState(toCheck);
-                if (willStopTurrret(state)) {
-                    blocks.add(state.getBlock());
-                }
-            }
+			toCheck = new BlockPos((int) Math.ceil(start.x), (int) Math.floor(start.y), (int) Math.floor(start.z));
+			if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
+				state = world.getBlockState(toCheck);
+				if (willStopTurrret(state)) {
+					blocks.add(state.getBlock());
+				}
+			}
 
-            toCheck = new BlockPos((int) Math.floor(start.x), (int) Math.ceil(start.y), (int) Math.ceil(start.z));
-            if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
-                state = world.getBlockState(toCheck);
-                if (willStopTurrret(state)) {
-                    blocks.add(state.getBlock());
-                }
-            }
+			toCheck = new BlockPos((int) Math.floor(start.x), (int) Math.floor(start.y), (int) Math.ceil(start.z));
+			if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
+				state = world.getBlockState(toCheck);
+				if (willStopTurrret(state)) {
+					blocks.add(state.getBlock());
+				}
+			}
 
-            toCheck = new BlockPos((int) Math.floor(start.x), (int) Math.ceil(start.y), (int) Math.floor(start.z));
-            if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
-                state = world.getBlockState(toCheck);
-                if (willStopTurrret(state)) {
-                    blocks.add(state.getBlock());
-                }
-            }
+			toCheck = new BlockPos((int) Math.floor(start.x), (int) Math.floor(start.y), (int) Math.floor(start.z));
+			if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
+				state = world.getBlockState(toCheck);
+				if (willStopTurrret(state)) {
+					blocks.add(state.getBlock());
+				}
+			}
 
-            // Floored Y
+			i++;
 
-            toCheck = new BlockPos((int) Math.ceil(start.x), (int) Math.floor(start.y), (int) Math.ceil(start.z));
-            if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
-                state = world.getBlockState(toCheck);
-                if (willStopTurrret(state)) {
-                    blocks.add(state.getBlock());
-                }
-            }
+		}
 
-            toCheck = new BlockPos((int) Math.ceil(start.x), (int) Math.floor(start.y), (int) Math.floor(start.z));
-            if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
-                state = world.getBlockState(toCheck);
-                if (willStopTurrret(state)) {
-                    blocks.add(state.getBlock());
-                }
-            }
+		return blocks;
+	}
 
-            toCheck = new BlockPos((int) Math.floor(start.x), (int) Math.floor(start.y), (int) Math.ceil(start.z));
-            if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
-                state = world.getBlockState(toCheck);
-                if (willStopTurrret(state)) {
-                    blocks.add(state.getBlock());
-                }
-            }
+	@Override
+	public void setPlacedBy(LivingEntity player, ItemStack stack) {
+		super.setPlacedBy(player, stack);
+		if (player instanceof Player pl) {
+			whitelistedPlayers.addValue(pl.getName().getString());
+		}
+	}
 
-            toCheck = new BlockPos((int) Math.floor(start.x), (int) Math.floor(start.y), (int) Math.floor(start.z));
-            if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
-                state = world.getBlockState(toCheck);
-                if (willStopTurrret(state)) {
-                    blocks.add(state.getBlock());
-                }
-            }
+	@Override
+	public void onBlockDestroyed() {
+		super.onBlockDestroyed();
 
-            i++;
+		if (!level.isClientSide) {
+			ChunkPos pos = level.getChunk(getBlockPos()).getPos();
+			ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, getBlockPos(), pos.x, pos.z, false,
+					true);
+		}
 
+	}
 
-        }
+	@Override
+	public void onPlace(BlockState oldState, boolean isMoving) {
+		super.onPlace(oldState, isMoving);
+		if (!level.isClientSide) {
+			ChunkPos pos = level.getChunk(getBlockPos()).getPos();
+			ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, getBlockPos(), pos.x, pos.z, true,
+					true);
+		}
+	}
 
-        return blocks;
-    }
+	public static boolean willStopTurrret(BlockState state) {
+		if (state.isAir() || state.is(Blocks.LIGHT)) {
+			return false;
+		}
+		if (state.is(Blocks.SNOW) && state.getValue(SnowLayerBlock.LAYERS) < 4) {
+			return false;
+		}
+		if (state.is(BallistixTags.Blocks.WHITELISTED_TURRET_BLOCKS)) {
+			return false;
+		}
+		return true;
+	}
 
-    @Override
-    public void setPlacedBy(LivingEntity player, ItemStack stack) {
-        super.setPlacedBy(player, stack);
-        if(player instanceof Player pl) {
-            whitelistedPlayers.addValue(pl.getName().getString());
-        }
-    }
+	@EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)
+	private static final class ChunkloaderManager {
 
-    @Override
-    public void onBlockDestroyed() {
-        super.onBlockDestroyed();
+		private static final TicketController TICKET_CONTROLLER = new TicketController(
+				Ballistix.rl("turretcontroller"));
 
-        if(!level.isClientSide) {
-            ChunkPos pos = level.getChunk(getBlockPos()).getPos();
-            ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, getBlockPos(), pos.x, pos.z, false, true);
-        }
+		@SubscribeEvent
+		public static void register(RegisterTicketControllersEvent event) {
+			event.register(TICKET_CONTROLLER);
+		}
 
+	}
 
-    }
-
-    @Override
-    public void onPlace(BlockState oldState, boolean isMoving) {
-        super.onPlace(oldState, isMoving);
-        if(!level.isClientSide) {
-            ChunkPos pos = level.getChunk(getBlockPos()).getPos();
-            ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, getBlockPos(), pos.x, pos.z, true, true);
-        }
-    }
-
-    public static boolean willStopTurrret(BlockState state) {
-        if(state.isAir()) {
-            return false;
-        }
-        if(state.is(Blocks.SNOW) && state.getValue(SnowLayerBlock.LAYERS) < 4) {
-            return false;
-        }
-        if(state.is(BallistixTags.Blocks.WHITELISTED_TURRET_BLOCKS)) {
-            return false;
-        }
-        return true;
-    }
-
-    @EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)
-    private static final class ChunkloaderManager {
-
-        private static final TicketController TICKET_CONTROLLER = new TicketController(Ballistix.rl("turretcontroller"));
-
-        @SubscribeEvent
-        public static void register(RegisterTicketControllersEvent event) {
-            event.register(TICKET_CONTROLLER);
-        }
-
-
-    }
-
-    public static enum TargetingMode {
-        ALL, ONLY_PLAYERS, NONE;
-    }
+	public static enum TargetingMode {
+		ALL, ONLY_PLAYERS, NONE;
+	}
 
 }

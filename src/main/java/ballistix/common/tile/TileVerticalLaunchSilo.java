@@ -279,7 +279,7 @@ public class TileVerticalLaunchSilo extends GenericTile implements ILauncherCont
 
     @Override
     public boolean hasExplosive() {
-        return hasMissile.getValue();
+        return hasExplosive.getValue();
     }
 
     @Override

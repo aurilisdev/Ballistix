@@ -233,10 +233,15 @@ public class ScreenLauncherControlPanelT3 extends GenericScreen<ContainerLaunche
 				frequencyField.setValue("" + silo.frequency.getValue());
 			}
 
-			if (Integer.parseInt(xCoordField.getValue()) != silo.target.getValue().getX()
-					|| Integer.parseInt(yCoordField.getValue()) != silo.target.getValue().getY()
-					|| Integer.parseInt(zCoordField.getValue()) != silo.target.getValue().getZ()
-					|| Integer.parseInt(frequencyField.getValue()) != silo.frequency.getValue()) {
+			Integer x = ScreenLauncherControlPanelT1.parseIntOrNull(xCoordField.getValue());
+			Integer y = ScreenLauncherControlPanelT1.parseIntOrNull(yCoordField.getValue());
+			Integer z = ScreenLauncherControlPanelT1.parseIntOrNull(zCoordField.getValue());
+			Integer frequency = ScreenLauncherControlPanelT1.parseIntOrNull(frequencyField.getValue());
+
+			BlockPos target = silo.target.getValue();
+
+			if (target != null && x != null && y != null && z != null && frequency != null && (x != target.getX()
+					|| y != target.getY() || z != target.getZ() || frequency != silo.frequency.getValue())) {
 				needsUpdate = true;
 			}
 		}

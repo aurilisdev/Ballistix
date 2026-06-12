@@ -153,10 +153,12 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 		}
 
 		int newCool = platform.launch(this, hasRedstone, inaccuracy);
-		if (newCool != -1) {
-			cooldown = newCool;
+
+		if (newCool > 0) {
+		    cooldown = newCool;
+		    electro.joules(electro.getJoulesStored()
+		            - BallistixConfig.INSTANCE.MISSILESILO_USAGE.get() * getTier());
 		}
-		electro.joules(electro.getJoulesStored() - BallistixConfig.INSTANCE.MISSILESILO_USAGE.get() * getTier());
 	}
 
 	protected boolean isItemValidForSlot(int index, ItemStack stack, ComponentInventory inv) {

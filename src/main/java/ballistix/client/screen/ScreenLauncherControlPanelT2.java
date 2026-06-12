@@ -171,11 +171,20 @@ public class ScreenLauncherControlPanelT2 extends GenericScreen<ContainerLaunche
 				yCoordField.setValue("" + silo.target.getValue().getY());
 				zCoordField.setValue("" + silo.target.getValue().getZ());
 			}
+			Integer x = ScreenLauncherControlPanelT1.parseIntOrNull(xCoordField.getValue());
+			Integer y = ScreenLauncherControlPanelT1.parseIntOrNull(yCoordField.getValue());
+			Integer z = ScreenLauncherControlPanelT1.parseIntOrNull(zCoordField.getValue());
 
-			if (Integer.parseInt(xCoordField.getValue()) != silo.target.getValue().getX()
-					|| Integer.parseInt(yCoordField.getValue()) != silo.target.getValue().getY()
-					|| Integer.parseInt(zCoordField.getValue()) != silo.target.getValue().getZ()) {
-				needsUpdate = true;
+			BlockPos target = silo.target.getValue();
+
+			if (target != null
+			        && x != null
+			        && y != null
+			        && z != null
+			        && (x != target.getX()
+			                || y != target.getY()
+			                || z != target.getZ())) {
+			    needsUpdate = true;
 			}
 		}
 	}

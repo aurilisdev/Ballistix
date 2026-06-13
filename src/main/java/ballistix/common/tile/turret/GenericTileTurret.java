@@ -416,7 +416,7 @@ public abstract class GenericTileTurret extends GenericTile {
     }
     
     public static boolean willStopTurrret(BlockState state) {
-        if(state.isAir()) {
+		if (state.isAir() || state.is(Blocks.LIGHT)) {
             return false;
         }
         if(state.is(Blocks.SNOW) && state.getValue(SnowLayerBlock.LAYERS) < 4) {

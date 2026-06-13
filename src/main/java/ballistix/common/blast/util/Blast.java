@@ -262,7 +262,7 @@ public abstract class Blast {
 
 	    double damageAmount = (1.0D - normalizedDiameter) * seenAmount;
 
-	    entity.hurt(entity.damageSources().explosion(null, null),
+	    entity.hurt(explosion.getDamageSource(),
 		    (int) ((damageAmount * damageAmount + damageAmount) / 2.0D * 7.0D * doubleSize + 1.0D));
 
 	    double actualDamange = damageAmount;

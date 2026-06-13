@@ -134,6 +134,13 @@ public class ScreenLauncherControlPanelT1 extends GenericScreen<ContainerLaunche
 		setSiloTargetZ(val);
 	}
 
+	public static Integer parseIntOrNull(String value) {
+	    try {
+	        return Integer.parseInt(value.trim());
+	    } catch (NumberFormatException e) {
+	        return null;
+	    }
+	}
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		super.render(graphics, mouseX, mouseY, partialTicks);
@@ -145,9 +152,17 @@ public class ScreenLauncherControlPanelT1 extends GenericScreen<ContainerLaunche
 				zCoordField.setValue("" + silo.target.getValue().getZ());
 			}
 
-			if (Integer.parseInt(xCoordField.getValue()) != silo.target.getValue().getX()
-					|| Integer.parseInt(zCoordField.getValue()) != silo.target.getValue().getZ()) {
-				needsUpdate = true;
+			Integer x = parseIntOrNull(xCoordField.getValue());
+			Integer z = parseIntOrNull(zCoordField.getValue());
+
+			BlockPos target = silo.target.getValue();
+
+			if (target != null
+			        && x != null
+			        && z != null
+			        && (x != target.getX()
+			                || z != target.getZ())) {
+			    needsUpdate = true;
 			}
 		}
 	}

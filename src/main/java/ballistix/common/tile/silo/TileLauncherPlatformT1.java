@@ -302,17 +302,14 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 	}
     }
 
-    private void handleExplosive(ComponentInventory inv, int index) {
-        if (index == 1 || index == -1) {
-            ItemStack explosive = inv.getItem(1);
-            if ((!explosive.isEmpty() && Blast.ITEM_TO_BLAST_MAP.get(explosive.getItem()) != null) || (explosive.isEmpty() && inv.getItem(MISSILE_SLOT).is(BallistixItems.ITEM_AAMISSILEMK2.get()))) {
-                hasExplosive.setValue(true);
-            } else {
-                hasExplosive.setValue(false);
-            }
+	private void handleExplosive(ComponentInventory inv, int index) {
+		if (index == EXPLOSIVE_SLOT || index == MISSILE_SLOT || index == -1) {
 
+			ItemStack explosive = inv.getItem(EXPLOSIVE_SLOT);
+
+			hasExplosive.setValue(!explosive.isEmpty() && Blast.ITEM_TO_BLAST_MAP.get(explosive.getItem()) != null);
+		}
 	}
-    }
 
     @Override
     public boolean hasExplosive() {

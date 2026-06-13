@@ -31,7 +31,12 @@ import voltaic.prefab.properties.types.PropertyTypes;
 import voltaic.prefab.properties.variant.SingleProperty;
 import voltaic.prefab.tile.GenericTile;
 import voltaic.prefab.tile.components.IComponentType;
-import voltaic.prefab.tile.components.type.*;
+import voltaic.prefab.tile.components.type.ComponentContainerProvider;
+import voltaic.prefab.tile.components.type.ComponentElectrodynamic;
+import voltaic.prefab.tile.components.type.ComponentForgeEnergy;
+import voltaic.prefab.tile.components.type.ComponentInventory;
+import voltaic.prefab.tile.components.type.ComponentPacketHandler;
+import voltaic.prefab.tile.components.type.ComponentTickable;
 import voltaic.prefab.utilities.BlockEntityUtils;
 import voltaic.prefab.utilities.NBTUtils;
 import voltaic.prefab.utilities.object.CachedTileOutput;
@@ -39,23 +44,26 @@ import voltaic.registers.VoltaicCapabilities;
 
 public class TileLauncherControlPanelT1 extends GenericTile implements ILauncherControlPanel {
 
-	public SingleProperty<Integer> frequency = property(new SingleProperty<>(PropertyTypes.INTEGER, "frequency", 0).onChange((prop, prevFreq) -> {
+	public SingleProperty<Integer> frequency = property(
+			new SingleProperty<>(PropertyTypes.INTEGER, "frequency", 0).onChange((prop, prevFreq) -> {
 
-		if (level == null || level.isClientSide) {
-			return;
-		}
+				if (level == null || level.isClientSide) {
+					return;
+				}
 
-		int newFreq = prop.getValue();
+				int newFreq = prop.getValue();
 
-		SiloRegistry.unregisterSilo(prevFreq, this);
-		SiloRegistry.registerSilo(newFreq, this);
+				SiloRegistry.unregisterSilo(prevFreq, this);
+				SiloRegistry.registerSilo(newFreq, this);
 
-	}));
+			}));
 
-	public SingleProperty<BlockPos> target = property(new SingleProperty<>(PropertyTypes.BLOCK_POS, "target", BlockPos.ZERO));
+	public SingleProperty<BlockPos> target = property(
+			new SingleProperty<>(PropertyTypes.BLOCK_POS, "target", BlockPos.ZERO));
 
 	private int cooldown = 100;
-	public final SingleProperty<Boolean> shouldLaunch = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "shouldlaunch", false));
+	public final SingleProperty<Boolean> shouldLaunch = property(
+			new SingleProperty<>(PropertyTypes.BOOLEAN, "shouldlaunch", false));
 	public CachedTileOutput launcherPlatform;
 	public CachedTileOutput supportFrame;
 
@@ -67,19 +75,31 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 		super(type, pos, state);
 		int tier = getTier();
 		addComponent(new ComponentTickable(this).tickServer(this::tickServer));
-		addComponent(new ComponentElectrodynamic(this, false, true).voltage(VoltaicCapabilities.DEFAULT_VOLTAGE * Math.pow(2, tier - 1)).maxJoules(BallistixConstants.MISSILESILO_USAGE * 20 * tier).setInputDirections(BlockEntityUtils.MachineDirection.values()));
+		addComponent(new ComponentElectrodynamic(this, false, true)
+				.voltage(VoltaicCapabilities.DEFAULT_VOLTAGE * Math.pow(2, tier - 1))
+				.maxJoules(BallistixConstants.MISSILESILO_USAGE * 20 * tier)
+				.setInputDirections(BlockEntityUtils.MachineDirection.values()));
 		if (tier == 3) {
-			addComponent(new ComponentInventory(this, ComponentInventory.InventoryBuilder.newInv().inputs(2)).setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).setDirectionsBySlot(1, BlockEntityUtils.MachineDirection.values()).valid(this::isItemValidForSlot));
+			addComponent(new ComponentInventory(this, ComponentInventory.InventoryBuilder.newInv().inputs(2))
+					.setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values())
+					.setDirectionsBySlot(1, BlockEntityUtils.MachineDirection.values())
+					.valid(this::isItemValidForSlot));
 		} else {
 			addComponent(new ComponentInventory(this));
 		}
 		addComponent(new ComponentPacketHandler(this));
 		if (tier == 1) {
-			addComponent(new ComponentContainerProvider("launchercontrolpaneltier" + tier, this).createMenu((id, player) -> new ContainerLauncherControlPanelT1(id, player, getComponent(IComponentType.Inventory), getCoordsArray())));
+			addComponent(new ComponentContainerProvider("launchercontrolpaneltier" + tier, this)
+					.createMenu((id, player) -> new ContainerLauncherControlPanelT1(id, player,
+							getComponent(IComponentType.Inventory), getCoordsArray())));
 		} else if (tier == 2) {
-			addComponent(new ComponentContainerProvider("launchercontrolpaneltier" + tier, this).createMenu((id, player) -> new ContainerLauncherControlPanelT2(id, player, getComponent(IComponentType.Inventory), getCoordsArray())));
+			addComponent(new ComponentContainerProvider("launchercontrolpaneltier" + tier, this)
+					.createMenu((id, player) -> new ContainerLauncherControlPanelT2(id, player,
+							getComponent(IComponentType.Inventory), getCoordsArray())));
 		} else if (tier == 3) {
-			addComponent(new ComponentContainerProvider("launchercontrolpaneltier" + tier, this).createMenu((id, player) -> new ContainerLauncherControlPanelT3(id, player, getComponent(IComponentType.Inventory), getCoordsArray())));
+			addComponent(new ComponentContainerProvider("launchercontrolpaneltier" + tier, this)
+					.createMenu((id, player) -> new ContainerLauncherControlPanelT3(id, player,
+							getComponent(IComponentType.Inventory), getCoordsArray())));
 		}
 		addComponent(new ComponentForgeEnergy(this));
 
@@ -113,8 +133,8 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 		if (!launcherPlatform.valid()) {
 			return;
 		}
-		
-		if(!(launcherPlatform.getSafe() instanceof ILauncherPlatform)) {
+
+		if (!(launcherPlatform.getSafe() instanceof ILauncherPlatform)) {
 			return;
 		}
 
@@ -126,13 +146,14 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 			return;
 		}
 
-		if (!platform.hasMissile() || (platform.hasExplosive() && platform.hasSAM()) || (!platform.hasExplosive() && !platform.hasSAM()) || (!hasRedstone && !shouldLaunch.getValue())) {
+		if (!platform.hasMissile() || (platform.hasExplosive() && platform.hasSAM())
+				|| (!platform.hasExplosive() && !platform.hasSAM()) || (!hasRedstone && !shouldLaunch.getValue())) {
 			return;
 		}
 
 		int inaccuracy = BallistixConstants.LAUNCH_PLATFORM_DEFAULT_INACCURACY;
 
-		if(supportFrame.valid() && supportFrame.getSafe() instanceof ILauncherSupportFrame frame) {
+		if (supportFrame.valid() && supportFrame.getSafe() instanceof ILauncherSupportFrame frame) {
 			inaccuracy = frame.getInaccuracy();
 		}
 
@@ -145,14 +166,16 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 		}
 
 		int newCool = platform.launch(this, hasRedstone, inaccuracy);
-		if (newCool != -1) {
+
+		if (newCool > 0) {
 			cooldown = newCool;
+			electro.joules(electro.getJoulesStored() - BallistixConstants.MISSILESILO_USAGE * getTier());
 		}
-		electro.joules(electro.getJoulesStored() - BallistixConstants.MISSILESILO_USAGE * getTier());
 	}
 
 	protected boolean isItemValidForSlot(int index, ItemStack stack, ComponentInventory inv) {
-		return stack.getItem() == BallistixItems.ITEM_RADARGUN.get() || stack.getItem() == BallistixItems.ITEM_LASERDESIGNATOR.get();
+		return stack.getItem() == BallistixItems.ITEM_RADARGUN.get()
+				|| stack.getItem() == BallistixItems.ITEM_LASERDESIGNATOR.get();
 	}
 
 	@Override
@@ -225,11 +248,12 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 		super.load(compound);
 		cooldown = compound.getInt("silocooldown");
 	}
-	
+
 	@Override
 	public InteractionResult use(Player player, InteractionHand hand, BlockHitResult hit) {
 		ItemStack handStack = player.getItemInHand(hand);
-		if (handStack.getItem() == BallistixItems.ITEM_RADARGUN.get() || handStack.getItem() == BallistixItems.ITEM_LASERDESIGNATOR.get()) {
+		if (handStack.getItem() == BallistixItems.ITEM_RADARGUN.get()
+				|| handStack.getItem() == BallistixItems.ITEM_LASERDESIGNATOR.get()) {
 			return InteractionResult.FAIL;
 		}
 		return super.use(player, hand, hit);
@@ -254,7 +278,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 	public void setTarget(BlockPos blockPos) {
 		target.setValue(blockPos);
 	}
-	
+
 	@Override
 	public void setTargetFromDesignator(BlockPos target) {
 		setTarget(new BlockPos(target.getX(), this.target.getValue().getY(), target.getZ()));
@@ -275,7 +299,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 
 		BlockEntity tile = launcherPlatform.getSafe();
 
-		if(tile instanceof ILauncherPlatform) {
+		if (tile instanceof ILauncherPlatform) {
 			return (ILauncherPlatform) tile;
 		}
 
@@ -287,7 +311,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 
 		BlockEntity tile = supportFrame.getSafe();
 
-		if(tile instanceof ILauncherSupportFrame) {
+		if (tile instanceof ILauncherSupportFrame) {
 			return (ILauncherSupportFrame) tile;
 		}
 

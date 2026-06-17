@@ -79,37 +79,54 @@ public final class Ballistix {
 	    event.registerMinecart(minecart.explosiveType, BallistixItems.ITEMS_MINECART.getValue(minecart));
 	}
 	event.submitCachedThreads(() -> {
-	    new ThreadSimpleBlast(null, BlockPos.ZERO,
+	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO,
 		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_ANTIMATTER_RADIUS.getAsDouble(), Integer.MAX_VALUE, null,
-		    SubtypeBlast.antimatter.id()).start();
-	    new ThreadSimpleBlast(null, BlockPos.ZERO,
+		    SubtypeBlast.antimatter.id()));
+
+	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO,
 		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_RADIUS.getAsDouble(), Integer.MAX_VALUE, null,
-		    SubtypeBlast.darkmatter.id()).start();
-	    new ThreadSimpleBlast(null, BlockPos.ZERO,
+		    SubtypeBlast.darkmatter.id()));
+
+	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO,
 		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_RADIUS.getAsDouble(), Integer.MAX_VALUE,
-		    null, SubtypeBlast.largeantimatter.id()).start();
-	    new ThreadSimpleBlast(null, BlockPos.ZERO,
+		    null, SubtypeBlast.largeantimatter.id()));
+
+	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO,
 		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble() * 2, Integer.MAX_VALUE, null,
-		    SubtypeBlast.nuclear.id()).start();
-	    new ThreadSimpleBlast(null, BlockPos.ZERO,
+		    SubtypeBlast.nuclear.id()));
+
+	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO,
 		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_EMP_RADIUS.getAsDouble(), Integer.MAX_VALUE, null,
-		    SubtypeBlast.emp.id());
-	    new ThreadSimpleBlast(null, BlockPos.ZERO,
+		    SubtypeBlast.emp.id()));
+
+	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO,
 		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_SONIC_RADIUS.getAsDouble(), Integer.MAX_VALUE, null,
-		    SubtypeBlast.sonic.id(), true);
-	    new ThreadSimpleBlast(null, BlockPos.ZERO,
+		    SubtypeBlast.sonic.id(), true));
+
+	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO,
 		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_RADIUS.getAsDouble(), Integer.MAX_VALUE, null,
-		    SubtypeBlast.hypersonic.id(), true);
-	    new ThreadSimpleBlast(null, BlockPos.ZERO,
+		    SubtypeBlast.hypersonic.id(), true));
+
+	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO,
 		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_ENDOTHERMIC_RADIUS.getAsDouble(), Integer.MAX_VALUE, null,
-		    SubtypeBlast.endothermic.id(), true);
-	    new ThreadSimpleBlast(null, BlockPos.ZERO,
+		    SubtypeBlast.endothermic.id(), true));
+
+	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO,
 		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_INFESTIVE_RADIUS.getAsDouble(), Integer.MAX_VALUE, null,
-		    SubtypeBlast.infestive.id());
-	    new ThreadSimpleBlast(null, BlockPos.ZERO,
+		    SubtypeBlast.infestive.id()));
+
+	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO,
 		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_EXOTHERMIC_RADIUS.getAsDouble(), Integer.MAX_VALUE, null,
-		    SubtypeBlast.exothermic.id());
+		    SubtypeBlast.exothermic.id()));
 	});
+    }
+
+    private static void cacheBlast(ThreadSimpleBlast blast) {
+	if (FMLEnvironment.production) {
+	    blast.start();
+	} else {
+	    blast.run();
+	}
     }
 
     public static final ResourceLocation rl(String path) {

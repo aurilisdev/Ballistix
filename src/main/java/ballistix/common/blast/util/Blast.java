@@ -277,8 +277,7 @@ public abstract class Blast {
 		actualDamage = damage;
 	    }
 
-	    entity.setDeltaMovement(
-		    entity.getDeltaMovement().add(deltaX * actualDamage, deltaY * actualDamage, deltaZ * actualDamage));
+	    entity.push(deltaX * actualDamage, deltaY * actualDamage, deltaZ * actualDamage);
 	    if (entity instanceof Player playerentity) {
 		if (!playerentity.isSpectator()
 			&& (!playerentity.isCreative() || !playerentity.getAbilities().flying)) {

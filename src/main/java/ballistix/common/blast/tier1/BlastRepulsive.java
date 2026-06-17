@@ -81,7 +81,7 @@ public class BlastRepulsive extends Blast implements IHasCustomRender {
 	    deltaY = deltaY / deltaDistance;
 	    deltaZ = deltaZ / deltaDistance;
 	    double d11 = BallistixConfig.INSTANCE.EXPLOSIVE_ATTRACTIVE_REPULSIVE_PUSH_STRENGTH.getAsDouble();
-	    entity.setDeltaMovement(entity.getDeltaMovement().add(deltaX * d11, deltaY * d11, deltaZ * d11));
+	    entity.push(deltaX * d11, deltaY * d11, deltaZ * d11);
 	    if (entity instanceof ServerPlayer serverplayerentity) {
 		serverplayerentity.connection.send(new ClientboundExplodePacket(x, y, z, size, new ArrayList<>(),
 			new Vec3(deltaX * d11, deltaY * d11, deltaZ * d11), Explosion.BlockInteraction.DESTROY,

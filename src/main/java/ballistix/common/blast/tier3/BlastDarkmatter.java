@@ -140,7 +140,7 @@ public class BlastDarkmatter extends Blast implements IMovingBlast {
 	    deltaY = deltaY / deltaDistance;
 	    deltaZ = deltaZ / deltaDistance;
 	    double d11 = (-0.2 - (callCount - callAtStart) / 150.0) / deltaDistance;
-	    entity.setDeltaMovement(entity.getDeltaMovement().add(deltaX * d11, deltaY * d11, deltaZ * d11));
+	    entity.push(deltaX * d11, deltaY * d11, deltaZ * d11);
 	    if (entity instanceof ServerPlayer serverplayerentity) {
 		if (!serverplayerentity.isCreative()) {
 		    serverplayerentity.connection.send(new ClientboundExplodePacket(x, y, z, size, new ArrayList<>(),

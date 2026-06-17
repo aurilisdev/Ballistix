@@ -474,6 +474,24 @@ public class VirtualMissile {
 
     }
 
+    public Vec3 getVelocity() {
+	return deltaMovement.scale(speed);
+    }
+
+    public void applyImpulse(Vec3 impulse) {
+	Vec3 velocity = getVelocity().add(impulse);
+	double length = velocity.length();
+
+	if (length <= 1.0E-6) {
+	    speed = 0.0F;
+	    deltaMovement = Vec3.ZERO;
+	    return;
+	}
+
+	speed = (float) length;
+	deltaMovement = velocity.normalize();
+    }
+
     public BlockPos blockPosition() {
 	return new BlockPos((int) Math.floor(position.x), (int) Math.floor(position.y), (int) Math.floor(position.z));
     }

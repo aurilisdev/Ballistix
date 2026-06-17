@@ -82,9 +82,11 @@ public class BallistixAttachmentTypes {
 				int j = 0;
 
 				for (BlockPos pos : tiles) {
+				    final int index = j;
 
 				    BlockPos.CODEC.encodeStart(NbtOps.INSTANCE, pos)
-					    .ifSuccess(tag -> store.put("pos" + j, tag));
+					    .ifSuccess(tag -> store.put("pos" + index, tag));
+				    j++;
 
 				}
 
@@ -119,9 +121,8 @@ public class BallistixAttachmentTypes {
 					    continue;
 					}
 
-					ResourceKey<Level> key = CODEC
-						.decode(NbtOps.INSTANCE, stored.getCompound("key")).getOrThrow()
-						.getFirst();
+					ResourceKey<Level> key = CODEC.decode(NbtOps.INSTANCE, stored.get("key"))
+						.getOrThrow().getFirst();
 
 					HashMap<UUID, VirtualMissile> active = new HashMap<>();
 
@@ -163,7 +164,7 @@ public class BallistixAttachmentTypes {
 
 					CompoundTag stored = new CompoundTag();
 
-					CODEC.encode(entry.getKey(), NbtOps.INSTANCE, new CompoundTag())
+					CODEC.encodeStart(NbtOps.INSTANCE, entry.getKey())
 						.ifSuccess(tag -> stored.put("key", tag));
 
 					int activeSize = entry.getValue().size();
@@ -176,7 +177,7 @@ public class BallistixAttachmentTypes {
 
 					    final int index = j;
 
-					    VirtualMissile.CODEC.encode(missile, NbtOps.INSTANCE, new CompoundTag())
+					    VirtualMissile.CODEC.encodeStart(NbtOps.INSTANCE, missile)
 						    .ifSuccess(tag -> stored.put("" + index, tag));
 
 					    j++;
@@ -219,9 +220,8 @@ public class BallistixAttachmentTypes {
 					    continue;
 					}
 
-					ResourceKey<Level> key = CODEC
-						.decode(NbtOps.INSTANCE, stored.getCompound("key")).getOrThrow()
-						.getFirst();
+					ResourceKey<Level> key = CODEC.decode(NbtOps.INSTANCE, stored.get("key"))
+						.getOrThrow().getFirst();
 
 					HashMap<UUID, VirtualProjectile.VirtualBullet> active = new HashMap<>();
 
@@ -263,11 +263,7 @@ public class BallistixAttachmentTypes {
 
 					CompoundTag stored = new CompoundTag();
 
-					if (!stored.contains("key")) {
-					    continue;
-					}
-
-					CODEC.encode(entry.getKey(), NbtOps.INSTANCE, new CompoundTag())
+					CODEC.encodeStart(NbtOps.INSTANCE, entry.getKey())
 						.ifSuccess(tag -> stored.put("key", tag));
 
 					int activeSize = entry.getValue().size();
@@ -280,8 +276,7 @@ public class BallistixAttachmentTypes {
 
 					    final int index = j;
 
-					    VirtualProjectile.VirtualBullet.CODEC
-						    .encode(missile, NbtOps.INSTANCE, new CompoundTag())
+					    VirtualProjectile.VirtualBullet.CODEC.encodeStart(NbtOps.INSTANCE, missile)
 						    .ifSuccess(tag -> stored.put("" + index, tag));
 
 					    j++;
@@ -324,9 +319,8 @@ public class BallistixAttachmentTypes {
 					    continue;
 					}
 
-					ResourceKey<Level> key = CODEC
-						.decode(NbtOps.INSTANCE, stored.getCompound("key")).getOrThrow()
-						.getFirst();
+					ResourceKey<Level> key = CODEC.decode(NbtOps.INSTANCE, stored.get("key"))
+						.getOrThrow().getFirst();
 
 					HashMap<UUID, VirtualProjectile.VirtualRailgunRound> active = new HashMap<>();
 
@@ -368,7 +362,7 @@ public class BallistixAttachmentTypes {
 
 					CompoundTag stored = new CompoundTag();
 
-					CODEC.encode(entry.getKey(), NbtOps.INSTANCE, new CompoundTag())
+					CODEC.encodeStart(NbtOps.INSTANCE, entry.getKey())
 						.ifSuccess(tag -> stored.put("key", tag));
 
 					int activeSize = entry.getValue().size();
@@ -383,7 +377,7 @@ public class BallistixAttachmentTypes {
 					    final int index = j;
 
 					    VirtualProjectile.VirtualRailgunRound.CODEC
-						    .encode(missile, NbtOps.INSTANCE, new CompoundTag())
+						    .encodeStart(NbtOps.INSTANCE, missile)
 						    .ifSuccess(tag -> stored.put("" + index, tag));
 
 					    j++;
@@ -426,9 +420,8 @@ public class BallistixAttachmentTypes {
 					    continue;
 					}
 
-					ResourceKey<Level> key = CODEC
-						.decode(NbtOps.INSTANCE, stored.getCompound("key")).getOrThrow()
-						.getFirst();
+					ResourceKey<Level> key = CODEC.decode(NbtOps.INSTANCE, stored.get("key"))
+						.getOrThrow().getFirst();
 
 					HashMap<UUID, VirtualProjectile.VirtualSAM> active = new HashMap<>();
 
@@ -470,7 +463,7 @@ public class BallistixAttachmentTypes {
 
 					CompoundTag stored = new CompoundTag();
 
-					CODEC.encode(entry.getKey(), NbtOps.INSTANCE, new CompoundTag())
+					CODEC.encodeStart(NbtOps.INSTANCE, entry.getKey())
 						.ifSuccess(tag -> stored.put("key", tag));
 
 					int activeSize = entry.getValue().size();
@@ -483,8 +476,7 @@ public class BallistixAttachmentTypes {
 
 					    final int index = j;
 
-					    VirtualProjectile.VirtualSAM.CODEC
-						    .encode(missile, NbtOps.INSTANCE, new CompoundTag())
+					    VirtualProjectile.VirtualSAM.CODEC.encodeStart(NbtOps.INSTANCE, missile)
 						    .ifSuccess(tag -> stored.put("" + index, tag));
 
 					    j++;

@@ -43,11 +43,11 @@ import ballistix.client.screen.ScreenVLS;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.item.ItemTracker;
 import ballistix.common.settings.BallistixConstants;
-import ballistix.registers.BallistixTiles;
 import ballistix.registers.BallistixEntities;
 import ballistix.registers.BallistixItems;
 import ballistix.registers.BallistixMenuTypes;
 import ballistix.registers.BallistixParticles;
+import ballistix.registers.BallistixTiles;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.RenderType;
@@ -84,327 +84,342 @@ import voltaic.prefab.utilities.math.MathUtils;
 @EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD, value = { Dist.CLIENT })
 public class BallistixClientRegister {
 
-	public static final ResourceLocation ANGLE_PREDICATE = Voltaic.vanillarl("angle");
+    public static final ResourceLocation ANGLE_PREDICATE = Voltaic.vanillarl("angle");
 
-	public static final ResourceLocation TEXTURE_SHRAPNEL = Ballistix.rl("textures/model/shrapnel.png");
-	public static final ResourceLocation TEXTURE_MISSILECLOSERANGE = Ballistix.rl("textures/model/missilecloserange.png");
-	public static final ResourceLocation TEXTURE_MISSILEMEDIUMRANGE = Ballistix.rl("textures/model/missilemediumrange.png");
-	public static final ResourceLocation TEXTURE_MISSILELONGRANGE = Ballistix.rl("textures/model/missilelongrange.png");
+    public static final ResourceLocation TEXTURE_SHRAPNEL = Ballistix.rl("textures/model/shrapnel.png");
+    public static final ResourceLocation TEXTURE_MISSILECLOSERANGE = Ballistix
+	    .rl("textures/model/missilecloserange.png");
+    public static final ResourceLocation TEXTURE_MISSILEMEDIUMRANGE = Ballistix
+	    .rl("textures/model/missilemediumrange.png");
+    public static final ResourceLocation TEXTURE_MISSILELONGRANGE = Ballistix.rl("textures/model/missilelongrange.png");
 
-	public static final ResourceLocation MODEL_RADARDISH = Ballistix.rl("block/radardish");
-	public static final ResourceLocation MODEL_FIRECONTROLRADARDISH = Ballistix.rl("block/firecontrolradardish");
-	public static final ResourceLocation MODEL_MISSILETIER1 = Ballistix.rl("entity/missiles/missiletier1");
-	public static final ResourceLocation MODEL_MISSILETIER2 = Ballistix.rl("entity/missiles/missiletier2");
-	public static final ResourceLocation MODEL_MISSILETIER3 = Ballistix.rl("entity/missiles/missiletier3");
-	public static final ResourceLocation MODEL_MISSILECLUSTER = Ballistix.rl("entity/missiles/missilecluster");
-	public static final ResourceLocation MODEL_MISSILECLUSTERSHARD = Ballistix.rl("entity/missiles/missileclustershard");
-	public static final ResourceLocation MODEL_DARKMATTERSPHERE = Ballistix.rl("entity/darkmattersphere");
-	public static final ResourceLocation MODEL_DARKMATTERDISK = Ballistix.rl("entity/darkmatterdisk");
-	public static final ResourceLocation MODEL_FIREBALL = Ballistix.rl("entity/explosionsphere");
-	public static final ResourceLocation MODEL_EMP = Ballistix.rl("entity/emp");
-	public static final ResourceLocation MODEL_BLACKHOLECUBE = Ballistix.rl("entity/blackhole");
+    public static final ResourceLocation MODEL_RADARDISH = Ballistix.rl("block/radardish");
+    public static final ResourceLocation MODEL_FIRECONTROLRADARDISH = Ballistix.rl("block/firecontrolradardish");
+    public static final ResourceLocation MODEL_MISSILETIER1 = Ballistix.rl("entity/missiles/missiletier1");
+    public static final ResourceLocation MODEL_MISSILETIER2 = Ballistix.rl("entity/missiles/missiletier2");
+    public static final ResourceLocation MODEL_MISSILETIER3 = Ballistix.rl("entity/missiles/missiletier3");
+    public static final ResourceLocation MODEL_MISSILECLUSTER = Ballistix.rl("entity/missiles/missilecluster");
+    public static final ResourceLocation MODEL_MISSILECLUSTERSHARD = Ballistix
+	    .rl("entity/missiles/missileclustershard");
+    public static final ResourceLocation MODEL_DARKMATTERSPHERE = Ballistix.rl("entity/darkmattersphere");
+    public static final ResourceLocation MODEL_DARKMATTERDISK = Ballistix.rl("entity/darkmatterdisk");
+    public static final ResourceLocation MODEL_FIREBALL = Ballistix.rl("entity/explosionsphere");
+    public static final ResourceLocation MODEL_EMP = Ballistix.rl("entity/emp");
+    public static final ResourceLocation MODEL_BLACKHOLECUBE = Ballistix.rl("entity/blackhole");
 
-	public static final ResourceLocation MODEL_AAMISSILE = Ballistix.rl("entity/aamissile");
-	public static final ResourceLocation MODEL_AAMISSILE_MK2 = Ballistix.rl("entity/missileantiballistic");
-	public static final ResourceLocation MODEL_SAMTURRET_BALLJOINT = Ballistix.rl("block/samturretballjoint");
-	public static final ResourceLocation MODEL_SAMTURRET_RAIL = Ballistix.rl("block/samturretrail");
-	public static final ResourceLocation MODEL_ESMTOWER = Ballistix.rl("block/esmtower");
-	public static final ResourceLocation MODEL_CIWSTURRET_BALLJOINT = Ballistix.rl("block/ciwsturretballjoint");
-	public static final ResourceLocation MODEL_CIWSTURRET_HEAD = Ballistix.rl("block/ciwsturrethead");
-	public static final ResourceLocation MODEL_CIWSTURRET_BARREL = Ballistix.rl("block/ciwsturretbarrel");
-	public static final ResourceLocation MODEL_LASERTURRET_BALLJOINT = Ballistix.rl("block/laserturretballjoint");
-	public static final ResourceLocation MODEL_LASERTURRET_HEAD = Ballistix.rl("block/laserturrethead");
-	public static final ResourceLocation MODEL_RAILGUNTURRET_BALLJOINT = Ballistix.rl("block/railgunturretballjoint");
-	public static final ResourceLocation MODEL_RAILGUNTURRET_HEAD = Ballistix.rl("block/railgunturretgun");
+    public static final ResourceLocation MODEL_AAMISSILE = Ballistix.rl("entity/aamissile");
+    public static final ResourceLocation MODEL_AAMISSILE_MK2 = Ballistix.rl("entity/missileantiballistic");
+    public static final ResourceLocation MODEL_SAMTURRET_BALLJOINT = Ballistix.rl("block/samturretballjoint");
+    public static final ResourceLocation MODEL_SAMTURRET_RAIL = Ballistix.rl("block/samturretrail");
+    public static final ResourceLocation MODEL_ESMTOWER = Ballistix.rl("block/esmtower");
+    public static final ResourceLocation MODEL_CIWSTURRET_BALLJOINT = Ballistix.rl("block/ciwsturretballjoint");
+    public static final ResourceLocation MODEL_CIWSTURRET_HEAD = Ballistix.rl("block/ciwsturrethead");
+    public static final ResourceLocation MODEL_CIWSTURRET_BARREL = Ballistix.rl("block/ciwsturretbarrel");
+    public static final ResourceLocation MODEL_LASERTURRET_BALLJOINT = Ballistix.rl("block/laserturretballjoint");
+    public static final ResourceLocation MODEL_LASERTURRET_HEAD = Ballistix.rl("block/laserturrethead");
+    public static final ResourceLocation MODEL_RAILGUNTURRET_BALLJOINT = Ballistix.rl("block/railgunturretballjoint");
+    public static final ResourceLocation MODEL_RAILGUNTURRET_HEAD = Ballistix.rl("block/railgunturretgun");
 
-	public static void setup() {
-		MenuScreens.register(BallistixMenuTypes.CONTAINER_LAUNCHER_CONTROL_PANEL_T1.get(), ScreenLauncherControlPanelT1::new);
-		MenuScreens.register(BallistixMenuTypes.CONTAINER_LAUNCHER_CONTROL_PANEL_T2.get(), ScreenLauncherControlPanelT2::new);
-		MenuScreens.register(BallistixMenuTypes.CONTAINER_LAUNCHER_CONTROL_PANEL_T3.get(), ScreenLauncherControlPanelT3::new);
-		MenuScreens.register(BallistixMenuTypes.CONTAINER_LAUNCHER_PLATFORM_T1.get(), ScreenLauncherPlatformT1::new);
-		MenuScreens.register(BallistixMenuTypes.CONTAINER_LAUNCHER_PLATFORM_T2.get(), ScreenLauncherPlatformT2::new);
-		MenuScreens.register(BallistixMenuTypes.CONTAINER_LAUNCHER_PLATFORM_T3.get(), ScreenLauncherPlatformT3::new);
-		MenuScreens.register(BallistixMenuTypes.CONTAINER_SAMTURRET.get(), ScreenSAMTurret::new);
-		MenuScreens.register(BallistixMenuTypes.CONTAINER_FIRECONTROLRADAR.get(), ScreenFireControlRadar::new);
-		MenuScreens.register(BallistixMenuTypes.CONTAINER_SEARCHRADAR.get(), ScreenSearchRadar::new);
-		MenuScreens.register(BallistixMenuTypes.CONTAINER_ESMTOWER.get(), ScreenESMTower::new);
-		MenuScreens.register(BallistixMenuTypes.CONTAINER_CIWSTURRET.get(), ScreenCIWSTurret::new);
-		MenuScreens.register(BallistixMenuTypes.CONTAINER_LASERTURRET.get(), ScreenLaserTurret::new);
-		MenuScreens.register(BallistixMenuTypes.CONTAINER_RAILGUNTURRET.get(), ScreenRailgunTurret::new);
-		MenuScreens.register(BallistixMenuTypes.CONTAINER_VLS.get(), ScreenVLS::new);
-		MenuScreens.register(BallistixMenuTypes.CONTAINER_PROXIMITYDETECTOR.get(), ScreenProximityDetector::new);
-		MenuScreens.register(BallistixMenuTypes.CONTAINER_AIRRAIDSIREN.get(), ScreenAirRaidSiren::new);
-		
-		BallistixClientEvents.init();
+    public static void setup() {
+	MenuScreens.register(BallistixMenuTypes.CONTAINER_LAUNCHER_CONTROL_PANEL_T1.get(),
+		ScreenLauncherControlPanelT1::new);
+	MenuScreens.register(BallistixMenuTypes.CONTAINER_LAUNCHER_CONTROL_PANEL_T2.get(),
+		ScreenLauncherControlPanelT2::new);
+	MenuScreens.register(BallistixMenuTypes.CONTAINER_LAUNCHER_CONTROL_PANEL_T3.get(),
+		ScreenLauncherControlPanelT3::new);
+	MenuScreens.register(BallistixMenuTypes.CONTAINER_LAUNCHER_PLATFORM_T1.get(), ScreenLauncherPlatformT1::new);
+	MenuScreens.register(BallistixMenuTypes.CONTAINER_LAUNCHER_PLATFORM_T2.get(), ScreenLauncherPlatformT2::new);
+	MenuScreens.register(BallistixMenuTypes.CONTAINER_LAUNCHER_PLATFORM_T3.get(), ScreenLauncherPlatformT3::new);
+	MenuScreens.register(BallistixMenuTypes.CONTAINER_SAMTURRET.get(), ScreenSAMTurret::new);
+	MenuScreens.register(BallistixMenuTypes.CONTAINER_FIRECONTROLRADAR.get(), ScreenFireControlRadar::new);
+	MenuScreens.register(BallistixMenuTypes.CONTAINER_SEARCHRADAR.get(), ScreenSearchRadar::new);
+	MenuScreens.register(BallistixMenuTypes.CONTAINER_ESMTOWER.get(), ScreenESMTower::new);
+	MenuScreens.register(BallistixMenuTypes.CONTAINER_CIWSTURRET.get(), ScreenCIWSTurret::new);
+	MenuScreens.register(BallistixMenuTypes.CONTAINER_LASERTURRET.get(), ScreenLaserTurret::new);
+	MenuScreens.register(BallistixMenuTypes.CONTAINER_RAILGUNTURRET.get(), ScreenRailgunTurret::new);
+	MenuScreens.register(BallistixMenuTypes.CONTAINER_VLS.get(), ScreenVLS::new);
+	MenuScreens.register(BallistixMenuTypes.CONTAINER_PROXIMITYDETECTOR.get(), ScreenProximityDetector::new);
+	MenuScreens.register(BallistixMenuTypes.CONTAINER_AIRRAIDSIREN.get(), ScreenAirRaidSiren::new);
 
-		ScreenGuidebook.addGuidebookModule(new ModuleBallistix());
-		
-		ItemProperties.register(BallistixItems.ITEM_TRACKER.get(), ANGLE_PREDICATE, (stack, level, entity, seed) -> {
-			//
-			Entity sourceEntity = entity != null ? entity : stack.getEntityRepresentation();
-			if (sourceEntity == null || !ItemTracker.hasTarget(stack)) {
-				return 0F;
-			}
+	BallistixClientEvents.init();
 
-			double targetX = ItemTracker.getX(stack);
-			double targetZ = ItemTracker.getZ(stack);
+	ScreenGuidebook.addGuidebookModule(new ModuleBallistix());
 
-			double angleOfSource = 0.0D;
-			if (entity instanceof Player player && player.isLocalPlayer()) {
-				angleOfSource = entity.getYRot();
-			} else if (sourceEntity instanceof ItemFrame itemFrameEntity) {
-				Direction direction = itemFrameEntity.getDirection();
-				int j = direction.getAxis().isVertical() ? 90 * direction.getAxisDirection().getStep() : 0;
-				angleOfSource = Mth.wrapDegrees(180 + direction.get2DDataValue() * 90L + itemFrameEntity.getRotation() * 45L + j);
-			} else if (sourceEntity instanceof ItemEntity item) {
-				angleOfSource = 180.0F - item.getSpin(0.5F) / ((float) Math.PI * 2F) * 360.0F;
-			} else if (entity != null) {
-				angleOfSource = entity.yBodyRot;
-			}
+	ItemProperties.register(BallistixItems.ITEM_TRACKER.get(), ANGLE_PREDICATE, (stack, level, entity, seed) -> {
+	    //
+	    Entity sourceEntity = entity != null ? entity : stack.getEntityRepresentation();
+	    if (sourceEntity == null || !ItemTracker.hasTarget(stack)) {
+		return 0F;
+	    }
 
-			double rawAngleToTarget = Math.atan2(targetZ - sourceEntity.getZ(), targetX - sourceEntity.getX()) / ((float) Math.PI * 2F);
-			double adjustedAngleToTarget = 0.5D - (Mth.positiveModulo(angleOfSource / 360.0D, 1.0D) - 0.25D - rawAngleToTarget);
+	    double targetX = ItemTracker.getX(stack);
+	    double targetZ = ItemTracker.getZ(stack);
 
-			return Mth.positiveModulo((float) adjustedAngleToTarget, 1.0F);
-			//
-		});
-		
-		RegisterBlastRenderersEvent registerBlastRenderers = new RegisterBlastRenderersEvent();
-		ModLoader.get().postEvent(registerBlastRenderers);
-		registerBlastRenderers.process();
-	}
-	
-	@SubscribeEvent
-	public static void onModelEvent(ModelEvent.RegisterAdditional event) {
-		event.register(MODEL_RADARDISH);
-		event.register(MODEL_FIRECONTROLRADARDISH);
-		event.register(MODEL_MISSILETIER1);
-		event.register(MODEL_MISSILETIER2);
-		event.register(MODEL_MISSILETIER3);
-		event.register(MODEL_MISSILECLUSTER);
-		event.register(MODEL_MISSILECLUSTERSHARD);
-		event.register(MODEL_DARKMATTERSPHERE);
-		event.register(MODEL_DARKMATTERDISK);
-		event.register(MODEL_FIREBALL);
-		event.register(MODEL_EMP);
-		event.register(MODEL_BLACKHOLECUBE);
-		event.register(MODEL_AAMISSILE);
-		event.register(MODEL_AAMISSILE_MK2);
-		event.register(MODEL_SAMTURRET_BALLJOINT);
-		event.register(MODEL_SAMTURRET_RAIL);
-		event.register(MODEL_ESMTOWER);
-		event.register(MODEL_CIWSTURRET_BALLJOINT);
-		event.register(MODEL_CIWSTURRET_HEAD);
-		event.register(MODEL_CIWSTURRET_BARREL);
-		event.register(MODEL_LASERTURRET_BALLJOINT);
-		event.register(MODEL_LASERTURRET_HEAD);
-		event.register(MODEL_RAILGUNTURRET_BALLJOINT);
-		event.register(MODEL_RAILGUNTURRET_HEAD);
-	}
+	    double angleOfSource = 0.0D;
+	    if (entity instanceof Player player && player.isLocalPlayer()) {
+		angleOfSource = entity.getYRot();
+	    } else if (sourceEntity instanceof ItemFrame itemFrameEntity) {
+		Direction direction = itemFrameEntity.getDirection();
+		int j = direction.getAxis().isVertical() ? 90 * direction.getAxisDirection().getStep() : 0;
+		angleOfSource = Mth
+			.wrapDegrees(180 + direction.get2DDataValue() * 90L + itemFrameEntity.getRotation() * 45L + j);
+	    } else if (sourceEntity instanceof ItemEntity item) {
+		angleOfSource = 180.0F - item.getSpin(0.5F) / ((float) Math.PI * 2F) * 360.0F;
+	    } else if (entity != null) {
+		angleOfSource = entity.yBodyRot;
+	    }
 
-	@SubscribeEvent
-	public static void registerEntities(EntityRenderersEvent.RegisterRenderers event) {
-		event.registerEntityRenderer(BallistixEntities.ENTITY_EXPLOSIVE.get(), RenderExplosive::new);
-		event.registerEntityRenderer(BallistixEntities.ENTITY_GRENADE.get(), RenderGrenade::new);
-		event.registerEntityRenderer(BallistixEntities.ENTITY_BLAST.get(), RenderBlast::new);
-		event.registerEntityRenderer(BallistixEntities.ENTITY_SHRAPNEL.get(), RenderShrapnel::new);
-		event.registerEntityRenderer(BallistixEntities.ENTITY_MISSILE.get(), RenderMissile::new);
-		event.registerEntityRenderer(BallistixEntities.ENTITY_MINECART.get(), RenderMinecart::new);
-		event.registerEntityRenderer(BallistixEntities.ENTITY_SAM.get(), RenderSAM::new);
-		event.registerEntityRenderer(BallistixEntities.ENTITY_BULLET.get(), RenderBullet::new);
-		event.registerEntityRenderer(BallistixEntities.ENTITY_RAILGUNROUND.get(), RenderRailgunRound::new);
-		event.registerEntityRenderer(BallistixEntities.ENTITY_BALLISTIXFALLINGBLOCK.get(), RenderBallistixFallingBlock::new);
-		event.registerBlockEntityRenderer(BallistixTiles.TILE_LAUNCHER_PLATFORM_TIER1.get(), RenderLauncherPlatform::new);
-		event.registerBlockEntityRenderer(BallistixTiles.TILE_LAUNCHER_PLATFORM_TIER2.get(), RenderLauncherPlatform::new);
-		event.registerBlockEntityRenderer(BallistixTiles.TILE_LAUNCHER_PLATFORM_TIER3.get(), RenderLauncherPlatform::new);
-		event.registerBlockEntityRenderer(BallistixTiles.TILE_RADAR.get(), RenderRadar::new);
-		event.registerBlockEntityRenderer(BallistixTiles.TILE_FIRECONTROLRADAR.get(), RenderFireControlRadar::new);
-		event.registerBlockEntityRenderer(BallistixTiles.TILE_SAMTURRET.get(), RenderSAMTurret::new);
-		event.registerBlockEntityRenderer(BallistixTiles.TILE_ESMTOWER.get(), RenderESMTower::new);
-		event.registerBlockEntityRenderer(BallistixTiles.TILE_CIWSTURRET.get(), RenderCIWSTurret::new);
-		event.registerBlockEntityRenderer(BallistixTiles.TILE_LASERTURRET.get(), RenderLaserTurret::new);
-		event.registerBlockEntityRenderer(BallistixTiles.TILE_RAILGUNTURRET.get(), RenderRailgunTurret::new);
+	    double rawAngleToTarget = Math.atan2(targetZ - sourceEntity.getZ(), targetX - sourceEntity.getX())
+		    / ((float) Math.PI * 2F);
+	    double adjustedAngleToTarget = 0.5D
+		    - (Mth.positiveModulo(angleOfSource / 360.0D, 1.0D) - 0.25D - rawAngleToTarget);
 
-	}
-	
-	@SubscribeEvent
-	public static void registerParticles(RegisterParticleProvidersEvent event) {
-		event.registerSpriteSet(BallistixParticles.PARTICLE_BLAST_SMOKE.get(),  ParticleBlastSmoke.Factory::new);
-		event.registerSpriteSet(BallistixParticles.PARTICLE_MISSILE_SMOKE.get(),  ParticleMissileSmoke.Factory::new);
-		event.registerSpriteSet(BallistixParticles.PARTICLE_SHOCKWAVE.get(),  ParticleShockwave.Factory::new);
-	}
-	
-	@SubscribeEvent
-	public static void registerBlastRenderers(RegisterBlastRenderersEvent event) {
+	    return Mth.positiveModulo((float) adjustedAngleToTarget, 1.0F);
+	    //
+	});
 
-		event.register(SubtypeBlast.darkmatter, (entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
-			double x = entityIn.hasMatured ? entityIn.ticksAtMaturity : entityIn.tickCount;
-			double time = 4.0 / 3.0 * Math.PI * Math.pow(BallistixConstants.EXPLOSIVE_DARKMATTER_RADIUS, 3) / BallistixConstants.EXPLOSIVE_DARKMATTER_DURATION;
-			float scale = (float) (0.1 * Math.log(x * x) + x / (time * 2));
-			BakedModel modelDisk = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_DARKMATTERDISK);
-			BakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_BLACKHOLECUBE);
+	RegisterBlastRenderersEvent registerBlastRenderers = new RegisterBlastRenderersEvent();
+	ModLoader.get().postEvent(registerBlastRenderers);
+	registerBlastRenderers.process();
+    }
 
-			float animationRadians = Math.abs(entityIn.tickCount * 0.05F + partialTicks * 0.05F); // tweaked to prevent weird behavior with Integer.MAX_VALUE
+    @SubscribeEvent
+    public static void onModelEvent(ModelEvent.RegisterAdditional event) {
+	event.register(MODEL_RADARDISH);
+	event.register(MODEL_FIRECONTROLRADARDISH);
+	event.register(MODEL_MISSILETIER1);
+	event.register(MODEL_MISSILETIER2);
+	event.register(MODEL_MISSILETIER3);
+	event.register(MODEL_MISSILECLUSTER);
+	event.register(MODEL_MISSILECLUSTERSHARD);
+	event.register(MODEL_DARKMATTERSPHERE);
+	event.register(MODEL_DARKMATTERDISK);
+	event.register(MODEL_FIREBALL);
+	event.register(MODEL_EMP);
+	event.register(MODEL_BLACKHOLECUBE);
+	event.register(MODEL_AAMISSILE);
+	event.register(MODEL_AAMISSILE_MK2);
+	event.register(MODEL_SAMTURRET_BALLJOINT);
+	event.register(MODEL_SAMTURRET_RAIL);
+	event.register(MODEL_ESMTOWER);
+	event.register(MODEL_CIWSTURRET_BALLJOINT);
+	event.register(MODEL_CIWSTURRET_HEAD);
+	event.register(MODEL_CIWSTURRET_BARREL);
+	event.register(MODEL_LASERTURRET_BALLJOINT);
+	event.register(MODEL_LASERTURRET_HEAD);
+	event.register(MODEL_RAILGUNTURRET_BALLJOINT);
+	event.register(MODEL_RAILGUNTURRET_HEAD);
+    }
 
-			matrixStack.pushPose();
-			matrixStack.scale(scale * 6, scale * 6, scale * 6);
-			matrixStack.mulPose(MathUtils.rotVectorQuaternionRad(-animationRadians, MathUtils.YP));
-			matrixStack.mulPose(MathUtils.rotVectorQuaternionRad(-animationRadians, MathUtils.XP));
-			matrixStack.mulPose(MathUtils.rotVectorQuaternionRad(-animationRadians, MathUtils.ZP));
-			// matrixStack.mulPose(new Quaternion(new Vector3f(0, 1, 0), -animationRadians,
-			// false));
-			// matrixStack.mulPose(new Quaternion(new Vector3f(1, 0, 0), -animationRadians,
-			// false));
-			// matrixStack.mulPose(new Quaternion(new Vector3f(0, 0, 1), -animationRadians,
-			// false));
-			RenderingUtils.renderModel(modelSphere, null, RenderType.solid(), matrixStack, bufferIn, packedLightIn, packedLightIn);
-			matrixStack.popPose();
+    @SubscribeEvent
+    public static void registerEntities(EntityRenderersEvent.RegisterRenderers event) {
+	event.registerEntityRenderer(BallistixEntities.ENTITY_EXPLOSIVE.get(), RenderExplosive::new);
+	event.registerEntityRenderer(BallistixEntities.ENTITY_GRENADE.get(), RenderGrenade::new);
+	event.registerEntityRenderer(BallistixEntities.ENTITY_BLAST.get(), RenderBlast::new);
+	event.registerEntityRenderer(BallistixEntities.ENTITY_SHRAPNEL.get(), RenderShrapnel::new);
+	event.registerEntityRenderer(BallistixEntities.ENTITY_MISSILE.get(), RenderMissile::new);
+	event.registerEntityRenderer(BallistixEntities.ENTITY_MINECART.get(), RenderMinecart::new);
+	event.registerEntityRenderer(BallistixEntities.ENTITY_SAM.get(), RenderSAM::new);
+	event.registerEntityRenderer(BallistixEntities.ENTITY_BULLET.get(), RenderBullet::new);
+	event.registerEntityRenderer(BallistixEntities.ENTITY_RAILGUNROUND.get(), RenderRailgunRound::new);
+	event.registerEntityRenderer(BallistixEntities.ENTITY_BALLISTIXFALLINGBLOCK.get(),
+		RenderBallistixFallingBlock::new);
+	event.registerBlockEntityRenderer(BallistixTiles.TILE_LAUNCHER_PLATFORM_TIER1.get(),
+		RenderLauncherPlatform::new);
+	event.registerBlockEntityRenderer(BallistixTiles.TILE_LAUNCHER_PLATFORM_TIER2.get(),
+		RenderLauncherPlatform::new);
+	event.registerBlockEntityRenderer(BallistixTiles.TILE_LAUNCHER_PLATFORM_TIER3.get(),
+		RenderLauncherPlatform::new);
+	event.registerBlockEntityRenderer(BallistixTiles.TILE_RADAR.get(), RenderRadar::new);
+	event.registerBlockEntityRenderer(BallistixTiles.TILE_FIRECONTROLRADAR.get(), RenderFireControlRadar::new);
+	event.registerBlockEntityRenderer(BallistixTiles.TILE_SAMTURRET.get(), RenderSAMTurret::new);
+	event.registerBlockEntityRenderer(BallistixTiles.TILE_ESMTOWER.get(), RenderESMTower::new);
+	event.registerBlockEntityRenderer(BallistixTiles.TILE_CIWSTURRET.get(), RenderCIWSTurret::new);
+	event.registerBlockEntityRenderer(BallistixTiles.TILE_LASERTURRET.get(), RenderLaserTurret::new);
+	event.registerBlockEntityRenderer(BallistixTiles.TILE_RAILGUNTURRET.get(), RenderRailgunTurret::new);
 
-			matrixStack.pushPose();
-			matrixStack.translate(0, 0.5, 0);
-			matrixStack.scale(scale, scale, scale);
-			matrixStack.mulPose(MathUtils.rotVectorQuaternionRad(-animationRadians, MathUtils.YP));
-			// matrixStack.mulPose(new Quaternion(new Vector3f(0, 1, 0), -animationRadians,
-			// false));
-			matrixStack.scale(1.25f, 1.25f, 1.25f);
-			RenderingUtils.renderModel(modelDisk, null, RenderType.translucent(), matrixStack, bufferIn, packedLightIn, packedLightIn);
-			matrixStack.popPose();
+    }
 
-			matrixStack.pushPose();
-			matrixStack.scale(scale, scale, scale);
-			RenderingUtils.renderStar(matrixStack, bufferIn, entityIn.tickCount + partialTicks, 60, 1, 1, 1, 0.3f, true);
-			matrixStack.popPose();
-		});
+    @SubscribeEvent
+    public static void registerParticles(RegisterParticleProvidersEvent event) {
+	event.registerSpriteSet(BallistixParticles.PARTICLE_BLAST_SMOKE.get(), ParticleBlastSmoke.Factory::new);
+	event.registerSpriteSet(BallistixParticles.PARTICLE_MISSILE_SMOKE.get(), ParticleMissileSmoke.Factory::new);
+	event.registerSpriteSet(BallistixParticles.PARTICLE_SHOCKWAVE.get(), ParticleShockwave.Factory::new);
+    }
 
-		event.register(SubtypeBlast.nuclear, (entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
+    @SubscribeEvent
+    public static void registerBlastRenderers(RegisterBlastRenderersEvent event) {
 
-			if(!entityIn.shouldRenderCustom) {
-				return;
-			}
+	event.register(SubtypeBlast.darkmatter,
+		(entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
+		    double x = entityIn.hasMatured ? entityIn.ticksAtMaturity : entityIn.tickCount;
+		    double time = 4.0 / 3.0 * Math.PI * Math.pow(BallistixConstants.EXPLOSIVE_DARKMATTER_RADIUS, 3)
+			    / BallistixConstants.EXPLOSIVE_DARKMATTER_DURATION;
+		    float scale = (float) (0.1 * Math.log(x * x) + x / (time * 2));
+		    BakedModel modelDisk = Minecraft.getInstance().getModelManager()
+			    .getModel(BallistixClientRegister.MODEL_DARKMATTERDISK);
+		    BakedModel modelSphere = Minecraft.getInstance().getModelManager()
+			    .getModel(BallistixClientRegister.MODEL_BLACKHOLECUBE);
 
-			float scale = (entityIn.tickCount - entityIn.ticksWhenCustomRender) / 20.0f;
-			matrixStack.scale(scale, scale, scale);
+		    float animationRadians = Math.abs(entityIn.tickCount * 0.05F + partialTicks * 0.05F); // tweaked to
+													  // prevent
+													  // weird
+													  // behavior
+													  // with
+													  // Integer.MAX_VALUE
 
-			if (entityIn.tickCount - entityIn.ticksWhenCustomRender < 10) {
-				matrixStack.scale(5, 5, 5);
-				RenderingUtils.renderStar(matrixStack, bufferIn, entityIn.tickCount + partialTicks, 100, 1, 1, 1, 0.7f, false);
-			}
+		    matrixStack.pushPose();
+		    matrixStack.scale(scale * 6, scale * 6, scale * 6);
+		    matrixStack.mulPose(MathUtils.rotVectorQuaternionRad(-animationRadians, MathUtils.YP));
+		    matrixStack.mulPose(MathUtils.rotVectorQuaternionRad(-animationRadians, MathUtils.XP));
+		    matrixStack.mulPose(MathUtils.rotVectorQuaternionRad(-animationRadians, MathUtils.ZP));
+		    // matrixStack.mulPose(new Quaternion(new Vector3f(0, 1, 0), -animationRadians,
+		    // false));
+		    // matrixStack.mulPose(new Quaternion(new Vector3f(1, 0, 0), -animationRadians,
+		    // false));
+		    // matrixStack.mulPose(new Quaternion(new Vector3f(0, 0, 1), -animationRadians,
+		    // false));
+		    RenderingUtils.renderModel(modelSphere, null, RenderType.solid(), matrixStack, bufferIn,
+			    packedLightIn, packedLightIn);
+		    matrixStack.popPose();
 
-		});
+		    matrixStack.pushPose();
+		    matrixStack.translate(0, 0.5, 0);
+		    matrixStack.scale(scale, scale, scale);
+		    matrixStack.mulPose(MathUtils.rotVectorQuaternionRad(-animationRadians, MathUtils.YP));
+		    // matrixStack.mulPose(new Quaternion(new Vector3f(0, 1, 0), -animationRadians,
+		    // false));
+		    matrixStack.scale(1.25f, 1.25f, 1.25f);
+		    RenderingUtils.renderModel(modelDisk, null, RenderType.translucent(), matrixStack, bufferIn,
+			    packedLightIn, packedLightIn);
+		    matrixStack.popPose();
 
-		event.register(SubtypeBlast.emp, (entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
-
-			if(!entityIn.shouldRenderCustom) {
-				return;
-			}
-
-			float scale = (float) ((entityIn.tickCount + partialTicks - entityIn.ticksWhenCustomRender) / BallistixConstants.EXPLOSIVE_ANTIMATTER_DURATION * BallistixConstants.EXPLOSIVE_EMP_RADIUS * 1.2) / 8.0f;
-			matrixStack.scale(scale, scale, scale);
-			BakedModel modelSphere = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_EMP);
-			Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(matrixStack.last(), bufferIn.getBuffer(Sheets.translucentCullBlockSheet()), Blocks.BLACK_STAINED_GLASS.defaultBlockState(), modelSphere, 1, 1, 1, 0, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, RenderType.translucent());
-
+		    matrixStack.pushPose();
+		    matrixStack.scale(scale, scale, scale);
+		    RenderingUtils.renderStar(matrixStack, bufferIn, entityIn.tickCount + partialTicks, 60, 1, 1, 1,
+			    0.3f, true);
+		    matrixStack.popPose();
 		});
 
-		event.register(SubtypeBlast.antimatter, (entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
+	event.register(SubtypeBlast.nuclear,
+		(entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
 
-			if(!entityIn.shouldRenderCustom) {
-				return;
-			}
+		    if (!entityIn.shouldRenderCustom) {
+			return;
+		    }
 
-			//TODO implement?
+		    float scale = (entityIn.tickCount - entityIn.ticksWhenCustomRender) / 20.0f;
+		    matrixStack.scale(scale, scale, scale);
 
-		});
-
-		event.register(SubtypeBlast.largeantimatter, (entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
-
-			if(!entityIn.shouldRenderCustom) {
-				return;
-			}
-
-			//TODO implement?
-
-		});
-		
-		event.register(SubtypeBlast.endothermic, (entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
-
-			if(!entityIn.shouldRenderCustom) {
-				return;
-			}
-
-			int height = (int) Math.ceil(entityIn.level().getMaxBuildHeight() - entityIn.getY());
-
-			long i = entityIn.level().getGameTime();
-			int j = 0;
-
-			matrixStack.pushPose();
-			matrixStack.translate(-0.5, -0.5, -0.5);
-
-
-			int g = entityIn.level().random.nextIntBetweenInclusive(0, 70) + 102;
-
-			for (int k = 0; k <= height; k++) {
-				BeaconBlockEntity.BeaconBeamSection section = new BeaconBlockEntity.BeaconBeamSection(new Color(0, g, 255, 255).colorFloatArr());
-				BeaconRenderer.renderBeaconBeam(
-						matrixStack,
-						bufferIn,
-						BeaconRenderer.BEAM_LOCATION,
-						partialTicks,
-						1.0F,
-						i,
-						j,
-						k == height - 1 ? 1024 : section.getHeight(),
-						section.getColor(),
-						0.4F,
-						0.45F
-				);
-				j += section.getHeight();
-			}
-
-
-
-			matrixStack.popPose();
+		    if (entityIn.tickCount - entityIn.ticksWhenCustomRender < 10) {
+			matrixStack.scale(5, 5, 5);
+			RenderingUtils.renderStar(matrixStack, bufferIn, entityIn.tickCount + partialTicks, 100, 1, 1,
+				1, 0.7f, false);
+		    }
 
 		});
 
-		event.register(SubtypeBlast.exothermic, (entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
+	event.register(SubtypeBlast.emp, (entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
 
-			if (!entityIn.shouldRenderCustom) {
-				return;
-			}
+	    if (!entityIn.shouldRenderCustom) {
+		return;
+	    }
 
-			int height = (int) Math.ceil(entityIn.level().getMaxBuildHeight() - entityIn.getY());
+	    float scale = (float) ((entityIn.tickCount + partialTicks - entityIn.ticksWhenCustomRender)
+		    / BallistixConstants.EXPLOSIVE_ANTIMATTER_DURATION * BallistixConstants.EXPLOSIVE_EMP_RADIUS * 1.2)
+		    / 8.0f;
+	    matrixStack.scale(scale, scale, scale);
+	    BakedModel modelSphere = Minecraft.getInstance().getModelManager()
+		    .getModel(BallistixClientRegister.MODEL_EMP);
+	    Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(matrixStack.last(),
+		    bufferIn.getBuffer(Sheets.translucentCullBlockSheet()),
+		    Blocks.BLACK_STAINED_GLASS.defaultBlockState(), modelSphere, 1, 1, 1, 0, OverlayTexture.NO_OVERLAY,
+		    ModelData.EMPTY, RenderType.translucent());
 
-			long i = entityIn.level().getGameTime();
-			int j = 0;
+	});
 
-			matrixStack.pushPose();
-			matrixStack.translate(-0.5, -0.5, -0.5);
+	event.register(SubtypeBlast.antimatter,
+		(entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
 
+		    if (!entityIn.shouldRenderCustom) {
+			return;
+		    }
 
-			int g = entityIn.level().random.nextIntBetweenInclusive(0, 70) + 60;
-
-			for (int k = 0; k <= height; k++) {
-				BeaconBlockEntity.BeaconBeamSection section = new BeaconBlockEntity.BeaconBeamSection(new Color(255, g, 0, 255).colorFloatArr());
-				BeaconRenderer.renderBeaconBeam(
-						matrixStack,
-						bufferIn,
-						BeaconRenderer.BEAM_LOCATION,
-						partialTicks,
-						1.0F,
-						i,
-						j,
-						k == height - 1 ? 1024 : section.getHeight(),
-						section.getColor(),
-						0.4F,
-						0.45F
-				);
-				j += section.getHeight();
-			}
-
-			matrixStack.popPose();
+		    // TODO implement?
 
 		});
 
-	}
+	event.register(SubtypeBlast.largeantimatter,
+		(entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
+
+		    if (!entityIn.shouldRenderCustom) {
+			return;
+		    }
+
+		    // TODO implement?
+
+		});
+
+	event.register(SubtypeBlast.endothermic,
+		(entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
+
+		    if (!entityIn.shouldRenderCustom) {
+			return;
+		    }
+
+		    int height = (int) Math.ceil(entityIn.level().getMaxBuildHeight() - entityIn.getY());
+
+		    long i = entityIn.level().getGameTime();
+		    int j = 0;
+
+		    matrixStack.pushPose();
+		    matrixStack.translate(-0.5, -0.5, -0.5);
+
+		    int g = entityIn.level().random.nextIntBetweenInclusive(0, 70) + 102;
+
+		    for (int k = 0; k <= height; k++) {
+			BeaconBlockEntity.BeaconBeamSection section = new BeaconBlockEntity.BeaconBeamSection(
+				new Color(0, g, 255, 255).colorFloatArr());
+			BeaconRenderer.renderBeaconBeam(matrixStack, bufferIn, BeaconRenderer.BEAM_LOCATION,
+				partialTicks, 1.0F, i, j, k == height - 1 ? 1024 : section.getHeight(),
+				section.getColor(), 0.4F, 0.45F);
+			j += section.getHeight();
+		    }
+
+		    matrixStack.popPose();
+
+		});
+
+	event.register(SubtypeBlast.exothermic,
+		(entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
+
+		    if (!entityIn.shouldRenderCustom) {
+			return;
+		    }
+
+		    int height = (int) Math.ceil(entityIn.level().getMaxBuildHeight() - entityIn.getY());
+
+		    long i = entityIn.level().getGameTime();
+		    int j = 0;
+
+		    matrixStack.pushPose();
+		    matrixStack.translate(-0.5, -0.5, -0.5);
+
+		    int g = entityIn.level().random.nextIntBetweenInclusive(0, 70) + 60;
+
+		    for (int k = 0; k <= height; k++) {
+			BeaconBlockEntity.BeaconBeamSection section = new BeaconBlockEntity.BeaconBeamSection(
+				new Color(255, g, 0, 255).colorFloatArr());
+			BeaconRenderer.renderBeaconBeam(matrixStack, bufferIn, BeaconRenderer.BEAM_LOCATION,
+				partialTicks, 1.0F, i, j, k == height - 1 ? 1024 : section.getHeight(),
+				section.getColor(), 0.4F, 0.45F);
+			j += section.getHeight();
+		    }
+
+		    matrixStack.popPose();
+
+		});
+
+    }
 
 }

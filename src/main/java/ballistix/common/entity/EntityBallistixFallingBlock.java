@@ -48,7 +48,7 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
     public CompoundTag blockData;
     protected static final EntityDataAccessor<BlockPos> DATA_START_POS = SynchedEntityData
 	    .defineId(EntityBallistixFallingBlock.class, EntityDataSerializers.BLOCK_POS);
-    private Set<BlockPos> whitelist = new HashSet<BlockPos>();
+    private Set<BlockPos> whitelist = new HashSet<>();
 
     public EntityBallistixFallingBlock(EntityType<? extends EntityBallistixFallingBlock> entityType, Level level) {
 	super(entityType, level);

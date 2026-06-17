@@ -123,32 +123,36 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 	    ComponentInventory inv = getComponent(IComponentType.Inventory);
 	    BlockPos target = controlPanel.getTarget();
 
-            if (
-                //
-                    level.getBlockEntity(target) instanceof TileFireControlRadar radar &&
-                            //
-                            TileTurretAntimissile.getDistanceToPos(getBlockPos(), radar.getBlockPos()) < BallistixConstants.MAX_DISTANCE_FROM_RADAR &&
-                            //
-                            radar.tracking != null &&
-                            //
-                            TileFireControlRadar.getDistanceToMissile(new Vec3(getBlockPos().getX(), getBlockPos().getY(), getBlockPos().getZ()), radar.tracking.position) > 100
-                //
-            ) {
-                VirtualProjectile.VirtualSAM sam = new VirtualProjectile.VirtualSAM(
-                        //
-                        0.0F,
-                        //
-                        new Vec3(getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5),
-                        //
-                        new Vec3(0, 1, 0),
-                        //
-                        BallistixConstants.FIRE_CONTROL_RADAR_RANGE * 3F,
-                        //
-                        target,
-                        //
-                        1
-                        //
-                );
+	    if (
+	    //
+	    level.getBlockEntity(target) instanceof TileFireControlRadar radar &&
+	    //
+		    TileTurretAntimissile.getDistanceToPos(getBlockPos(),
+			    radar.getBlockPos()) < BallistixConstants.MAX_DISTANCE_FROM_RADAR
+		    &&
+		    //
+		    radar.tracking != null &&
+		    //
+		    TileFireControlRadar.getDistanceToMissile(
+			    new Vec3(getBlockPos().getX(), getBlockPos().getY(), getBlockPos().getZ()),
+			    radar.tracking.position) > 100
+	    //
+	    ) {
+		VirtualProjectile.VirtualSAM sam = new VirtualProjectile.VirtualSAM(
+			//
+			0.0F,
+			//
+			new Vec3(getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5),
+			//
+			new Vec3(0, 1, 0),
+			//
+			BallistixConstants.FIRE_CONTROL_RADAR_RANGE * 3F,
+			//
+			target,
+			//
+			1
+		//
+		);
 
 		MissileManager.addSAM(level.dimension(), sam);
 
@@ -163,7 +167,9 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 
 	    if (level.getBlockEntity(controlPanel.getTarget()) instanceof TileSearchRadar radar) {
 
-                if (TileTurretAntimissile.getDistanceToPos(getBlockPos(), radar.getBlockPos()) <= BallistixConstants.MAX_DISTANCE_FROM_RADAR && redstoneTriggered && !radar.trackedEsmTowers.isEmpty()) {
+		if (TileTurretAntimissile.getDistanceToPos(getBlockPos(),
+			radar.getBlockPos()) <= BallistixConstants.MAX_DISTANCE_FROM_RADAR && redstoneTriggered
+			&& !radar.trackedEsmTowers.isEmpty()) {
 
 		    for (TileESMTower tower : radar.trackedEsmTowers) {
 
@@ -259,14 +265,15 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
     }
 
     protected boolean isItemValidForSlot(int index, ItemStack stack, ComponentInventory inv) {
-        Item item = stack.getItem();
-        if (index == 0) {
-            return (item instanceof ItemMissile missile && missile.missile.tier() <= getTier()) || stack.getItem() == BallistixItems.ITEM_AAMISSILEMK2.get();
-        } else if (index == 1) {
-        	IBlast blast = Blast.ITEM_TO_BLAST_MAP.get(item);
-            return blast != null && blast.tier() <= getTier() && blast.tier() > -1;
-        }
-        return false;
+	Item item = stack.getItem();
+	if (index == 0) {
+	    return item instanceof ItemMissile missile && missile.missile.tier() <= getTier()
+		    || stack.getItem() == BallistixItems.ITEM_AAMISSILEMK2.get();
+	} else if (index == 1) {
+	    IBlast blast = Blast.ITEM_TO_BLAST_MAP.get(item);
+	    return blast != null && blast.tier() <= getTier() && blast.tier() > -1;
+	}
+	return false;
     }
 
     @Override
@@ -286,7 +293,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 		return;
 	    }
 
-            boolean sam = missile.getItem() == BallistixItems.ITEM_AAMISSILEMK2.get();
+	    boolean sam = missile.getItem() == BallistixItems.ITEM_AAMISSILEMK2.get();
 
 	    if (missile.getItem() instanceof ItemMissile || sam) {
 
@@ -302,14 +309,14 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 	}
     }
 
-	private void handleExplosive(ComponentInventory inv, int index) {
-		if (index == EXPLOSIVE_SLOT || index == MISSILE_SLOT || index == -1) {
+    private void handleExplosive(ComponentInventory inv, int index) {
+	if (index == EXPLOSIVE_SLOT || index == MISSILE_SLOT || index == -1) {
 
-			ItemStack explosive = inv.getItem(EXPLOSIVE_SLOT);
+	    ItemStack explosive = inv.getItem(EXPLOSIVE_SLOT);
 
-			hasExplosive.setValue(!explosive.isEmpty() && Blast.ITEM_TO_BLAST_MAP.get(explosive.getItem()) != null);
-		}
+	    hasExplosive.setValue(!explosive.isEmpty() && Blast.ITEM_TO_BLAST_MAP.get(explosive.getItem()) != null);
 	}
+    }
 
     @Override
     public boolean hasExplosive() {
@@ -335,25 +342,26 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
     public void onSubnodeDestroyed(TileMultiSubnode tileMultiSubnode) {
 	level.destroyBlock(worldPosition, true);
     }
-    
+
     @Override
-    public InteractionResult onSubnodeUse(Player player, InteractionHand hand, BlockHitResult hit, TileMultiSubnode subnode) {
-    	return use(player, hand, hit);
+    public InteractionResult onSubnodeUse(Player player, InteractionHand hand, BlockHitResult hit,
+	    TileMultiSubnode subnode) {
+	return use(player, hand, hit);
     }
-    
+
     @Override
     public <T> @NotNull LazyOptional<T> getSubnodeCapability(@NotNull Capability<T> cap, Direction side) {
-    	return super.getCapability(cap, side);
+	return super.getCapability(cap, side);
     }
 
     @Override
     public Direction getFacingDirection() {
 	return getFacing();
     }
-    
+
     @Override
     public AABB getRenderBoundingBox() {
-    	return super.getRenderBoundingBox().inflate(10);
+	return super.getRenderBoundingBox().inflate(10);
     }
 
 }

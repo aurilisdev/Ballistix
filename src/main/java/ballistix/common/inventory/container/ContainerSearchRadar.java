@@ -18,11 +18,11 @@ import voltaic.prefab.inventory.container.types.GenericContainerBlockEntity;
 public class ContainerSearchRadar extends GenericContainerBlockEntity<TileSearchRadar> {
 
     public ContainerSearchRadar(int id, Inventory playerinv) {
-        this(id, playerinv, new SimpleContainer(0), new SimpleContainerData(5));
+	this(id, playerinv, new SimpleContainer(0), new SimpleContainerData(5));
     }
 
     public ContainerSearchRadar(int id, Inventory playerinv, Container inventory, ContainerData inventorydata) {
-        super(BallistixMenuTypes.CONTAINER_SEARCHRADAR.get(), id, playerinv, inventory, inventorydata);
+	super(BallistixMenuTypes.CONTAINER_SEARCHRADAR.get(), id, playerinv, inventory, inventorydata);
     }
 
     @Override
@@ -37,10 +37,12 @@ public class ContainerSearchRadar extends GenericContainerBlockEntity<TileSearch
 
     @Override
     public void broadcastChanges() {
-        super.broadcastChanges();
-        if(!getLevel().isClientSide() && getPlayer() != null && getSafeHost() != null) {
-            PacketSetSearchRadarTrackedClient packet = new PacketSetSearchRadarTrackedClient(new HashSet<>(getSafeHost().detections), getSafeHost().getBlockPos());
-            NetworkHandler.CHANNEL.sendTo(packet, ((ServerPlayer) getPlayer()).connection.connection, NetworkDirection.PLAY_TO_CLIENT);
-        }
+	super.broadcastChanges();
+	if (!getLevel().isClientSide() && getPlayer() != null && getSafeHost() != null) {
+	    PacketSetSearchRadarTrackedClient packet = new PacketSetSearchRadarTrackedClient(
+		    new HashSet<>(getSafeHost().detections), getSafeHost().getBlockPos());
+	    NetworkHandler.CHANNEL.sendTo(packet, ((ServerPlayer) getPlayer()).connection.connection,
+		    NetworkDirection.PLAY_TO_CLIENT);
+	}
     }
 }

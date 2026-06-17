@@ -28,200 +28,200 @@ import voltaic.prefab.utilities.math.Color;
 
 public class ScreenLauncherControlPanelT2 extends GenericScreen<ContainerLauncherControlPanelT2> {
 
-	private boolean needsUpdate = true;
+    private boolean needsUpdate = true;
 
-	private final ScreenComponentEditBox xCoordField;
-	private final ScreenComponentEditBox yCoordField;
-	private final ScreenComponentEditBox zCoordField;
+    private final ScreenComponentEditBox xCoordField;
+    private final ScreenComponentEditBox yCoordField;
+    private final ScreenComponentEditBox zCoordField;
 
-	public ScreenLauncherControlPanelT2(ContainerLauncherControlPanelT2 container, Inventory playerInventory,
-			Component title) {
-		super(container, playerInventory, title);
+    public ScreenLauncherControlPanelT2(ContainerLauncherControlPanelT2 container, Inventory playerInventory,
+	    Component title) {
+	super(container, playerInventory, title);
 
-		addComponent(
-				new ScreenComponentElectricInfo(this::getElectricInformation, -AbstractScreenComponentInfo.SIZE + 1, 2)
-						.wattage(BallistixConstants.MISSILESILO_USAGE * 20));
+	addComponent(
+		new ScreenComponentElectricInfo(this::getElectricInformation, -AbstractScreenComponentInfo.SIZE + 1, 2)
+			.wattage(BallistixConstants.MISSILESILO_USAGE * 20));
 
-		addEditBox(xCoordField = new ScreenComponentEditBox(10, 17, 48, 15, getFontRenderer()).setTextColor(Color.WHITE)
-				.setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setX)
-				.setFilter(ScreenComponentEditBox.INTEGER));
-		addEditBox(yCoordField = new ScreenComponentEditBox(10, 35, 48, 15, getFontRenderer()).setTextColor(Color.WHITE)
-				.setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setY)
-				.setFilter(ScreenComponentEditBox.INTEGER));
-		addEditBox(zCoordField = new ScreenComponentEditBox(10, 53, 48, 15, getFontRenderer()).setTextColor(Color.WHITE)
-				.setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setZ)
-				.setFilter(ScreenComponentEditBox.INTEGER));
+	addEditBox(xCoordField = new ScreenComponentEditBox(10, 17, 48, 15, getFontRenderer()).setTextColor(Color.WHITE)
+		.setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setX)
+		.setFilter(ScreenComponentEditBox.INTEGER));
+	addEditBox(yCoordField = new ScreenComponentEditBox(10, 35, 48, 15, getFontRenderer()).setTextColor(Color.WHITE)
+		.setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setY)
+		.setFilter(ScreenComponentEditBox.INTEGER));
+	addEditBox(zCoordField = new ScreenComponentEditBox(10, 53, 48, 15, getFontRenderer()).setTextColor(Color.WHITE)
+		.setTextColorUneditable(Color.WHITE).setMaxLength(10).setResponder(this::setZ)
+		.setFilter(ScreenComponentEditBox.INTEGER));
 
-		addComponent(
-				new ScreenComponentSimpleLabel(60, 22, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.x")));
-		addComponent(
-				new ScreenComponentSimpleLabel(60, 40, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.y")));
-		addComponent(
-				new ScreenComponentSimpleLabel(60, 58, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.z")));
+	addComponent(
+		new ScreenComponentSimpleLabel(60, 22, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.x")));
+	addComponent(
+		new ScreenComponentSimpleLabel(60, 40, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.y")));
+	addComponent(
+		new ScreenComponentSimpleLabel(60, 58, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("missilesilo.z")));
 
-		addComponent(new ScreenComponentButton<>(100, 25, 40, 40).setOnPress(button -> {
-			//
-			TileLauncherControlPanelT2 silo = getMenu().getSafeHost();
-			if (silo == null) {
-				return;
-			}
-			silo.shouldLaunch.setValue(true);
+	addComponent(new ScreenComponentButton<>(100, 25, 40, 40).setOnPress(button -> {
+	    //
+	    TileLauncherControlPanelT2 silo = getMenu().getSafeHost();
+	    if (silo == null) {
+		return;
+	    }
+	    silo.shouldLaunch.setValue(true);
 
-		}).setColor(new Color(255, 0, 0, 255)).onTooltip((graphics, component, mouseX, mouseY) -> graphics
-				.renderTooltip(getFontRenderer(), BallistixTextUtils.tooltip("silo.launch"), mouseX, mouseY)));
+	}).setColor(new Color(255, 0, 0, 255)).onTooltip((graphics, component, mouseX, mouseY) -> graphics
+		.renderTooltip(getFontRenderer(), BallistixTextUtils.tooltip("silo.launch"), mouseX, mouseY)));
+    }
+
+    @Override
+    protected void initializeComponents() {
+	super.initializeComponents();
+    }
+
+    private void setSiloTargetX(String coord) {
+
+	if (coord.isEmpty()) {
+	    return;
 	}
 
-	@Override
-	protected void initializeComponents() {
-		super.initializeComponents();
+	TileLauncherControlPanelT2 silo = menu.getSafeHost();
+
+	if (silo == null) {
+	    return;
 	}
 
-	private void setSiloTargetX(String coord) {
+	int x = silo.target.getValue().getX();
 
-		if (coord.isEmpty()) {
-			return;
-		}
-
-		TileLauncherControlPanelT2 silo = menu.getSafeHost();
-
-		if (silo == null) {
-			return;
-		}
-
-		int x = silo.target.getValue().getX();
-
-		try {
-			x = Integer.parseInt(coord);
-		} catch (Exception e) {
-			// Filler
-		}
-
-		updateSiloCoords(x, silo.target.getValue().getY(), silo.target.getValue().getZ(), silo);
-
+	try {
+	    x = Integer.parseInt(coord);
+	} catch (Exception e) {
+	    // Filler
 	}
 
-	private void setSiloTargetY(String coord) {
+	updateSiloCoords(x, silo.target.getValue().getY(), silo.target.getValue().getZ(), silo);
 
-		if (coord.isEmpty()) {
-			return;
-		}
+    }
 
-		TileLauncherControlPanelT2 silo = menu.getSafeHost();
+    private void setSiloTargetY(String coord) {
 
-		if (silo == null) {
-			return;
-		}
-
-		int y = silo.target.getValue().getY();
-
-		try {
-			y = Integer.parseInt(coord);
-		} catch (Exception e) {
-			// Filler
-		}
-
-		updateSiloCoords(silo.target.getValue().getX(), y, silo.target.getValue().getZ(), silo);
-
+	if (coord.isEmpty()) {
+	    return;
 	}
 
-	private void setSiloTargetZ(String coord) {
+	TileLauncherControlPanelT2 silo = menu.getSafeHost();
 
-		if (coord.isEmpty()) {
-			return;
-		}
-
-		TileLauncherControlPanelT2 silo = menu.getSafeHost();
-
-		if (silo == null) {
-			return;
-		}
-
-		int z = silo.target.getValue().getZ();
-
-		try {
-			z = Integer.parseInt(coord);
-		} catch (Exception e) {
-			// Filler
-		}
-
-		updateSiloCoords(silo.target.getValue().getX(), silo.target.getValue().getY(), z, silo);
-
+	if (silo == null) {
+	    return;
 	}
 
-	private static void updateSiloCoords(int x, int y, int z, TileLauncherControlPanelT2 silo) {
-		silo.target.setValue(new BlockPos(x, y, z));
+	int y = silo.target.getValue().getY();
+
+	try {
+	    y = Integer.parseInt(coord);
+	} catch (Exception e) {
+	    // Filler
 	}
 
-	private void setX(String val) {
-		xCoordField.setFocus(true);
-		yCoordField.setFocus(false);
-		zCoordField.setFocus(false);
-		setSiloTargetX(val);
+	updateSiloCoords(silo.target.getValue().getX(), y, silo.target.getValue().getZ(), silo);
+
+    }
+
+    private void setSiloTargetZ(String coord) {
+
+	if (coord.isEmpty()) {
+	    return;
 	}
 
-	private void setY(String val) {
-		yCoordField.setFocus(true);
-		xCoordField.setFocus(false);
-		zCoordField.setFocus(false);
-		setSiloTargetY(val);
+	TileLauncherControlPanelT2 silo = menu.getSafeHost();
+
+	if (silo == null) {
+	    return;
 	}
 
-	private void setZ(String val) {
-		zCoordField.setFocus(true);
-		yCoordField.setFocus(false);
-		xCoordField.setFocus(false);
-		setSiloTargetZ(val);
+	int z = silo.target.getValue().getZ();
+
+	try {
+	    z = Integer.parseInt(coord);
+	} catch (Exception e) {
+	    // Filler
 	}
 
-	@Override
-	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-		super.render(graphics, mouseX, mouseY, partialTicks);
-		TileLauncherControlPanelT2 silo = menu.getSafeHost();
-		if (silo != null) {
-			if (needsUpdate) {
-				needsUpdate = false;
-				xCoordField.setValue("" + silo.target.getValue().getX());
-				yCoordField.setValue("" + silo.target.getValue().getY());
-				zCoordField.setValue("" + silo.target.getValue().getZ());
-			}
+	updateSiloCoords(silo.target.getValue().getX(), silo.target.getValue().getY(), z, silo);
 
-			Integer x = ScreenLauncherControlPanelT1.parseIntOrNull(xCoordField.getValue());
-			Integer y = ScreenLauncherControlPanelT1.parseIntOrNull(yCoordField.getValue());
-			Integer z = ScreenLauncherControlPanelT1.parseIntOrNull(zCoordField.getValue());
+    }
 
-			BlockPos target = silo.target.getValue();
+    private static void updateSiloCoords(int x, int y, int z, TileLauncherControlPanelT2 silo) {
+	silo.target.setValue(new BlockPos(x, y, z));
+    }
 
-			if (target != null && x != null && y != null && z != null
-					&& (x != target.getX() || y != target.getY() || z != target.getZ())) {
-				needsUpdate = true;
-			}
-		}
+    private void setX(String val) {
+	xCoordField.setFocus(true);
+	yCoordField.setFocus(false);
+	zCoordField.setFocus(false);
+	setSiloTargetX(val);
+    }
+
+    private void setY(String val) {
+	yCoordField.setFocus(true);
+	xCoordField.setFocus(false);
+	zCoordField.setFocus(false);
+	setSiloTargetY(val);
+    }
+
+    private void setZ(String val) {
+	zCoordField.setFocus(true);
+	yCoordField.setFocus(false);
+	xCoordField.setFocus(false);
+	setSiloTargetZ(val);
+    }
+
+    @Override
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+	super.render(graphics, mouseX, mouseY, partialTicks);
+	TileLauncherControlPanelT2 silo = menu.getSafeHost();
+	if (silo != null) {
+	    if (needsUpdate) {
+		needsUpdate = false;
+		xCoordField.setValue("" + silo.target.getValue().getX());
+		yCoordField.setValue("" + silo.target.getValue().getY());
+		zCoordField.setValue("" + silo.target.getValue().getZ());
+	    }
+
+	    Integer x = ScreenLauncherControlPanelT1.parseIntOrNull(xCoordField.getValue());
+	    Integer y = ScreenLauncherControlPanelT1.parseIntOrNull(yCoordField.getValue());
+	    Integer z = ScreenLauncherControlPanelT1.parseIntOrNull(zCoordField.getValue());
+
+	    BlockPos target = silo.target.getValue();
+
+	    if (target != null && x != null && y != null && z != null
+		    && (x != target.getX() || y != target.getY() || z != target.getZ())) {
+		needsUpdate = true;
+	    }
+	}
+    }
+
+    private List<? extends FormattedCharSequence> getElectricInformation() {
+	ArrayList<FormattedCharSequence> list = new ArrayList<>();
+
+	TileLauncherControlPanelT2 silo = menu.getSafeHost();
+	if (silo == null) {
+	    return list;
 	}
 
-	private List<? extends FormattedCharSequence> getElectricInformation() {
-		ArrayList<FormattedCharSequence> list = new ArrayList<>();
+	ComponentElectrodynamic el = silo.getComponent(IComponentType.Electrodynamic);
+	list.add(
+		BallistixTextUtils
+			.tooltip("missilesilo.charge",
+				ChatFormatter.getChatDisplayShort(el.getJoulesStored(), DisplayUnits.JOULES)
+					.withStyle(ChatFormatting.GRAY),
+				ChatFormatter.getChatDisplayShort(BallistixConstants.MISSILESILO_USAGE * 20 * 3,
+					DisplayUnits.JOULES).withStyle(ChatFormatting.GRAY))
+			.withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+	list.add(VoltaicTextUtils
+		.gui("machine.voltage",
+			ChatFormatter.getChatDisplayShort(el.getVoltage(), DisplayUnits.VOLTAGE)
+				.withStyle(ChatFormatting.GRAY))
+		.withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
 
-		TileLauncherControlPanelT2 silo = menu.getSafeHost();
-		if (silo == null) {
-			return list;
-		}
-
-		ComponentElectrodynamic el = silo.getComponent(IComponentType.Electrodynamic);
-		list.add(
-				BallistixTextUtils
-						.tooltip("missilesilo.charge",
-								ChatFormatter.getChatDisplayShort(el.getJoulesStored(), DisplayUnits.JOULES)
-										.withStyle(ChatFormatting.GRAY),
-								ChatFormatter.getChatDisplayShort(BallistixConstants.MISSILESILO_USAGE * 20 * 3,
-										DisplayUnits.JOULES).withStyle(ChatFormatting.GRAY))
-						.withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
-		list.add(VoltaicTextUtils
-				.gui("machine.voltage",
-						ChatFormatter.getChatDisplayShort(el.getVoltage(), DisplayUnits.VOLTAGE)
-								.withStyle(ChatFormatting.GRAY))
-				.withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
-
-		return list;
-	}
+	return list;
+    }
 
 }

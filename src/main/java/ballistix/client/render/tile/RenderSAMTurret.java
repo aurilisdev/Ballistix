@@ -21,65 +21,79 @@ import voltaic.prefab.utilities.math.MathUtils;
 
 public class RenderSAMTurret extends AbstractTileRenderer<TileTurretSAM> {
     public RenderSAMTurret(BlockEntityRendererProvider.Context context) {
-        super(context);
+	super(context);
     }
 
     @Override
-    public void render(@NotNull TileTurretSAM tileEntityIn, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+    public void render(@NotNull TileTurretSAM tileEntityIn, float partialTicks, PoseStack matrixStackIn,
+	    MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 
-        BakedModel model = getModel(BallistixClientRegister.MODEL_SAMTURRET_BALLJOINT);
+	BakedModel model = getModel(BallistixClientRegister.MODEL_SAMTURRET_BALLJOINT);
 
-        Vec3 rotVec = tileEntityIn.turretRotation.getValue();
+	Vec3 rotVec = tileEntityIn.turretRotation.getValue();
 
-        double yRot = TileTurretSAM.getXZAngleRadians(rotVec) / Math.PI * 180.0;
+	double yRot = TileTurretSAM.getXZAngleRadians(rotVec) / Math.PI * 180.0;
 
-        double yAng = Math.asin(rotVec.y);
+	double yAng = Math.asin(rotVec.y);
 
-        float elevRot = (float) (yAng / Math.PI * 180.0F);
+	float elevRot = (float) (yAng / Math.PI * 180.0F);
 
-        matrixStackIn.pushPose();
-        //matrixStackIn.translate(7.75 / 16.0, 11.0 / 16.0, 7.75 / 16.0);
-        matrixStackIn.translate(0.5, 0.5, 0.5);
-        matrixStackIn.mulPose(MathUtils.rotQuaternionDeg(0, (float) -yRot, 0));
-        matrixStackIn.translate(-0.5, -0.5, -0.5);
+	matrixStackIn.pushPose();
+	// matrixStackIn.translate(7.75 / 16.0, 11.0 / 16.0, 7.75 / 16.0);
+	matrixStackIn.translate(0.5, 0.5, 0.5);
+	matrixStackIn.mulPose(MathUtils.rotQuaternionDeg(0, (float) -yRot, 0));
+	matrixStackIn.translate(-0.5, -0.5, -0.5);
 
-        // matrixStackIn.mulPose(new Quaternion(0,(float) ((tileEntityIn.savedTickRotation + partial)), 0, true));
-        Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model, tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(), 0);
+	// matrixStackIn.mulPose(new Quaternion(0,(float)
+	// ((tileEntityIn.savedTickRotation + partial)), 0, true));
+	Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model,
+		tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn,
+		bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(),
+		0);
 
-        matrixStackIn.popPose();
+	matrixStackIn.popPose();
 
-        matrixStackIn.pushPose();
+	matrixStackIn.pushPose();
 
-        matrixStackIn.translate(0.5, 0.8125, 0.5);
-        matrixStackIn.mulPose(MathUtils.rotQuaternionDeg(0, (float) -yRot, elevRot));
-        matrixStackIn.translate(-0.5, -0.8125, -0.5);
+	matrixStackIn.translate(0.5, 0.8125, 0.5);
+	matrixStackIn.mulPose(MathUtils.rotQuaternionDeg(0, (float) -yRot, elevRot));
+	matrixStackIn.translate(-0.5, -0.8125, -0.5);
 
-        model = getModel(BallistixClientRegister.MODEL_SAMTURRET_RAIL);
+	model = getModel(BallistixClientRegister.MODEL_SAMTURRET_RAIL);
 
-        Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model, tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(), 0);
+	Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model,
+		tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn,
+		bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(),
+		0);
 
-        matrixStackIn.popPose();
+	matrixStackIn.popPose();
 
-        ComponentInventory inv = tileEntityIn.getComponent(IComponentType.Inventory);
+	ComponentInventory inv = tileEntityIn.getComponent(IComponentType.Inventory);
 
-        if(inv.getItem(0).isEmpty()) {
-            return;
-        }
+	if (inv.getItem(0).isEmpty()) {
+	    return;
+	}
 
-        matrixStackIn.pushPose();
+	matrixStackIn.pushPose();
 
-        matrixStackIn.translate(0.5, 0.90625, 0.5);
+	matrixStackIn.translate(0.5, 0.90625, 0.5);
 
-        matrixStackIn.mulPose(MathUtils.rotQuaternionDeg(0, (float) -yRot - 180, 90 - elevRot));
+	matrixStackIn.mulPose(MathUtils.rotQuaternionDeg(0, (float) -yRot - 180, 90 - elevRot));
 
-        matrixStackIn.translate(-0.5, -0.90625, -0.5);
+	matrixStackIn.translate(-0.5, -0.90625, -0.5);
 
-        matrixStackIn.translate(Math.sin(yAng * 0.27 - (Math.PI / 2.0)) + 1.6, 1 - Math.sin(yAng * 0.2 + ((9.4 * Math.PI) / 4)) + 0.39, 0.5); //0 = 0.6, 0.5, 0.5, pi/4 = 0.625, 0.43, 0.5, pi/2 = 0.69, 0.41, 0.5 I fucking hate rotating models in this game
+	matrixStackIn.translate(Math.sin(yAng * 0.27 - Math.PI / 2.0) + 1.6,
+		1 - Math.sin(yAng * 0.2 + 9.4 * Math.PI / 4) + 0.39, 0.5); // 0 = 0.6, 0.5, 0.5, pi/4 = 0.625, 0.43,
+									       // 0.5, pi/2 = 0.69, 0.41, 0.5 I fucking
+									       // hate rotating models in this game
 
-        model = getModel(BallistixClientRegister.MODEL_AAMISSILE);
-        Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model, tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(), 0);
+	model = getModel(BallistixClientRegister.MODEL_AAMISSILE);
+	Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model,
+		tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn,
+		bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(),
+		0);
 
-        matrixStackIn.popPose();
+	matrixStackIn.popPose();
 
     }
 

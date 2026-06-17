@@ -23,36 +23,38 @@ public class RenderBullet extends EntityRenderer<EntityBullet> {
     private static final AABB BOX = new AABB(0, 0, 0, 0.0625, 0.0625, 0.0625);
 
     public RenderBullet(EntityRendererProvider.Context context) {
-        super(context);
+	super(context);
     }
 
     @Override
-    public void render(EntityBullet entity, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
+    public void render(EntityBullet entity, float entityYaw, float partialTicks, PoseStack matrixStackIn,
+	    MultiBufferSource bufferIn, int packedLightIn) {
 
+	if (entity.getDeltaMovement().length() <= 0) {
+	    return;
+	}
 
-        if (entity.getDeltaMovement().length() <= 0) {
-            return;
-        }
+	TextureAtlasSprite sprite = VoltaicClientRegister.whiteSprite();
 
-        TextureAtlasSprite sprite = VoltaicClientRegister.whiteSprite();
+	matrixStackIn.pushPose();
 
-        matrixStackIn.pushPose();
+	matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(entity.getYRot() + 90.0F, MathUtils.YP));
+	matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(90 - entity.getXRot(), MathUtils.ZP));
 
-        matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(entity.getYRot() + 90.0F, MathUtils.YP));
-        matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(90 - entity.getXRot(), MathUtils.ZP));
+	RenderingUtils.renderFilledBoxNoOverlay(matrixStackIn, bufferIn.getBuffer(RenderType.solid()), BOX,
+		COLOR.rFloat(), COLOR.gFloat(), COLOR.bFloat(), COLOR.aFloat(), sprite.getU0(), sprite.getV0(),
+		sprite.getU1(), sprite.getV1(), packedLightIn, RenderingUtils.ALL_FACES);
 
-        RenderingUtils.renderFilledBoxNoOverlay(matrixStackIn, bufferIn.getBuffer(RenderType.solid()), BOX, COLOR.rFloat(), COLOR.gFloat(), COLOR.bFloat(), COLOR.aFloat(), sprite.getU0(), sprite.getV0(), sprite.getU1(), sprite.getV1(), packedLightIn, RenderingUtils.ALL_FACES);
-
-        matrixStackIn.popPose();
+	matrixStackIn.popPose();
     }
 
     @Override
     public boolean shouldRender(EntityBullet livingEntity, Frustum camera, double camX, double camY, double camZ) {
-        return true;
+	return true;
     }
 
     @Override
     public ResourceLocation getTextureLocation(EntityBullet entity) {
-        return InventoryMenu.BLOCK_ATLAS;
+	return InventoryMenu.BLOCK_ATLAS;
     }
 }

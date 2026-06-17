@@ -21,43 +21,51 @@ import voltaic.prefab.utilities.math.MathUtils;
 public class RenderRailgunTurret extends AbstractTileRenderer<TileTurretRailgun> {
 
     public RenderRailgunTurret(BlockEntityRendererProvider.Context context) {
-        super(context);
+	super(context);
     }
 
     @Override
-    public void render(@NotNull TileTurretRailgun tileEntityIn, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+    public void render(@NotNull TileTurretRailgun tileEntityIn, float partialTicks, PoseStack matrixStackIn,
+	    MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 
-        BakedModel model = getModel(BallistixClientRegister.MODEL_RAILGUNTURRET_BALLJOINT);
+	BakedModel model = getModel(BallistixClientRegister.MODEL_RAILGUNTURRET_BALLJOINT);
 
-        Vec3 rotVec = tileEntityIn.turretRotation.getValue();
+	Vec3 rotVec = tileEntityIn.turretRotation.getValue();
 
-        double yRot = TileTurretSAM.getXZAngleRadians(rotVec) / Math.PI * 180.0;
+	double yRot = TileTurretSAM.getXZAngleRadians(rotVec) / Math.PI * 180.0;
 
-        double yAng = Math.asin(rotVec.y);
+	double yAng = Math.asin(rotVec.y);
 
-        float elevRot = (float) (yAng / Math.PI * 180.0F);
+	float elevRot = (float) (yAng / Math.PI * 180.0F);
 
-        matrixStackIn.pushPose();
-        //matrixStackIn.translate(7.75 / 16.0, 11.0 / 16.0, 7.75 / 16.0);
-        matrixStackIn.translate(0.5, 0.5, 0.5);
-        matrixStackIn.mulPose(MathUtils.rotQuaternionDeg(0, (float) -yRot, 0));
-        matrixStackIn.translate(-0.5, -0.5, -0.5);
+	matrixStackIn.pushPose();
+	// matrixStackIn.translate(7.75 / 16.0, 11.0 / 16.0, 7.75 / 16.0);
+	matrixStackIn.translate(0.5, 0.5, 0.5);
+	matrixStackIn.mulPose(MathUtils.rotQuaternionDeg(0, (float) -yRot, 0));
+	matrixStackIn.translate(-0.5, -0.5, -0.5);
 
-        // matrixStackIn.mulPose(new Quaternion(0,(float) ((tileEntityIn.savedTickRotation + partial)), 0, true));
-        Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model, tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(), 0);
+	// matrixStackIn.mulPose(new Quaternion(0,(float)
+	// ((tileEntityIn.savedTickRotation + partial)), 0, true));
+	Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model,
+		tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn,
+		bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(),
+		0);
 
-        matrixStackIn.popPose();
+	matrixStackIn.popPose();
 
-        matrixStackIn.pushPose();
+	matrixStackIn.pushPose();
 
-        matrixStackIn.translate(0.5, 0.8125, 0.5);
-        matrixStackIn.mulPose(MathUtils.rotQuaternionDeg(0, (float) -yRot, elevRot));
-        matrixStackIn.translate(-0.5, -0.8125, -0.5);
+	matrixStackIn.translate(0.5, 0.8125, 0.5);
+	matrixStackIn.mulPose(MathUtils.rotQuaternionDeg(0, (float) -yRot, elevRot));
+	matrixStackIn.translate(-0.5, -0.8125, -0.5);
 
-        model = getModel(BallistixClientRegister.MODEL_RAILGUNTURRET_HEAD);
+	model = getModel(BallistixClientRegister.MODEL_RAILGUNTURRET_HEAD);
 
-        Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model, tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(), 0);
+	Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model,
+		tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn,
+		bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(),
+		0);
 
-        matrixStackIn.popPose();
+	matrixStackIn.popPose();
     }
 }

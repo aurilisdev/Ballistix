@@ -21,96 +21,100 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
 public class CapabilityActiveMissiles implements ICapabilitySerializable<CompoundTag> {
-	
-	public final HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> activeMissiles = new HashMap<>();
-	
-	private final LazyOptional<CapabilityActiveMissiles> lazyOptional = LazyOptional.of(() -> this);
-	
-	@Override
-	public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-		if(cap == BallistixCapabilities.ACTIVE_MISSILES) {
-			return lazyOptional.cast();
-		}
-		return LazyOptional.empty();
+
+    public final HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> activeMissiles = new HashMap<>();
+
+    private final LazyOptional<CapabilityActiveMissiles> lazyOptional = LazyOptional.of(() -> this);
+
+    @Override
+    public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+	if (cap == BallistixCapabilities.ACTIVE_MISSILES) {
+	    return lazyOptional.cast();
 	}
-	
-	@Override
-	public CompoundTag serializeNBT() {
-		CompoundTag data = new CompoundTag();
+	return LazyOptional.empty();
+    }
 
-        data.putInt("size", activeMissiles.size());
+    @Override
+    public CompoundTag serializeNBT() {
+	CompoundTag data = new CompoundTag();
 
-        int i = 0;
+	data.putInt("size", activeMissiles.size());
 
-        for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> entry : activeMissiles.entrySet()) {
+	int i = 0;
 
-            if(entry.getValue().size() <= 0) {
-                continue;
-            }
+	for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> entry : activeMissiles.entrySet()) {
 
-            CompoundTag stored = new CompoundTag();
+	    if (entry.getValue().size() <= 0) {
+		continue;
+	    }
 
-            stored.putString("key", entry.getKey().location().toString());
-            
-            //ResourceLocation.CODEC.encode(entry.getKey().location(), NbtOps.INSTANCE, new CompoundTag()).result().ifPresent(tag -> stored.put("key", tag));
+	    CompoundTag stored = new CompoundTag();
 
-            int activeSize = entry.getValue().size();
+	    stored.putString("key", entry.getKey().location().toString());
 
-            stored.putInt("size", activeSize);
+	    // ResourceLocation.CODEC.encode(entry.getKey().location(), NbtOps.INSTANCE, new
+	    // CompoundTag()).result().ifPresent(tag -> stored.put("key", tag));
 
-            int j = 0;
+	    int activeSize = entry.getValue().size();
 
-            for (VirtualMissile missile : entry.getValue().values()) {
+	    stored.putInt("size", activeSize);
 
-                final int index = j;
+	    int j = 0;
 
-                VirtualMissile.CODEC.encode(missile, NbtOps.INSTANCE, new CompoundTag()).result().ifPresent(tag -> stored.put("" + index, tag));
+	    for (VirtualMissile missile : entry.getValue().values()) {
 
-                j++;
+		final int index = j;
 
-            }
+		VirtualMissile.CODEC.encode(missile, NbtOps.INSTANCE, new CompoundTag()).result()
+			.ifPresent(tag -> stored.put("" + index, tag));
 
-            data.put("" + i, stored);
+		j++;
 
-            i++;
+	    }
 
-        }
+	    data.put("" + i, stored);
 
-        return data;
+	    i++;
+
 	}
-	
-	@Override
-	public void deserializeNBT(CompoundTag nbt) {
-		if (nbt == null) {
-			return;
-		}
-		
-		int size = nbt.getInt("size");
 
-        for (int i = 0; i < size; i++) {
+	return data;
+    }
 
-            CompoundTag stored = nbt.getCompound("" + i);
-
-            if(!stored.contains("key")) {
-                continue;
-            }
-
-            ResourceKey<Level> key = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(stored.getString("key")));
-
-            HashMap<UUID, VirtualMissile> active = new HashMap<>();
-
-            int activeSize = stored.getInt("size");
-
-            for (int j = 0; j < activeSize; j++) {
-
-                VirtualMissile virtual = VirtualMissile.CODEC.decode(NbtOps.INSTANCE, stored.getCompound("" + j)).result().get().getFirst();
-
-                active.put(virtual.getId(), virtual);
-            }
-
-           activeMissiles.put(key, active);
-
-        }
+    @Override
+    public void deserializeNBT(CompoundTag nbt) {
+	if (nbt == null) {
+	    return;
 	}
-	
+
+	int size = nbt.getInt("size");
+
+	for (int i = 0; i < size; i++) {
+
+	    CompoundTag stored = nbt.getCompound("" + i);
+
+	    if (!stored.contains("key")) {
+		continue;
+	    }
+
+	    ResourceKey<Level> key = ResourceKey.create(Registries.DIMENSION,
+		    new ResourceLocation(stored.getString("key")));
+
+	    HashMap<UUID, VirtualMissile> active = new HashMap<>();
+
+	    int activeSize = stored.getInt("size");
+
+	    for (int j = 0; j < activeSize; j++) {
+
+		VirtualMissile virtual = VirtualMissile.CODEC.decode(NbtOps.INSTANCE, stored.getCompound("" + j))
+			.result().get().getFirst();
+
+		active.put(virtual.getId(), virtual);
+	    }
+
+	    activeMissiles.put(key, active);
+
+	}
+    }
+
 }

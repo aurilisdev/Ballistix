@@ -19,95 +19,95 @@ import net.minecraftforge.common.util.LazyOptional;
 
 public class CapabilitySiloRegistry implements ICapabilitySerializable<CompoundTag> {
 
-	private final LazyOptional<CapabilitySiloRegistry> lazyOptional = LazyOptional.of(() -> this);
+    private final LazyOptional<CapabilitySiloRegistry> lazyOptional = LazyOptional.of(() -> this);
 
-	private HashMap<Integer, HashSet<BlockPos>> siloMap = new HashMap<>();
+    private HashMap<Integer, HashSet<BlockPos>> siloMap = new HashMap<>();
 
-	@Override
-	public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-		if (cap == BallistixCapabilities.SILO_REGISTRY) {
-			return lazyOptional.cast();
-		}
-		return LazyOptional.empty();
+    @Override
+    public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+	if (cap == BallistixCapabilities.SILO_REGISTRY) {
+	    return lazyOptional.cast();
+	}
+	return LazyOptional.empty();
+    }
+
+    @Override
+    public CompoundTag serializeNBT() {
+
+	CompoundTag tag = new CompoundTag();
+
+	tag.putIntArray("frequencies", new ArrayList<>(siloMap.keySet()));
+
+	siloMap.forEach((key, value) -> {
+
+	    CompoundTag posTag = new CompoundTag();
+
+	    List<BlockPos> silos = new ArrayList<>(value);
+
+	    posTag.putInt("size", silos.size());
+
+	    for (int i = 0; i < silos.size(); i++) {
+
+		posTag.put("blockpos" + i, NbtUtils.writeBlockPos(silos.get(i)));
+
+	    }
+
+	    tag.put("frequencytag" + key, posTag);
+
+	});
+
+	return tag;
+    }
+
+    @Override
+    public void deserializeNBT(CompoundTag nbt) {
+	if (nbt == null) {
+	    return;
 	}
 
-	@Override
-	public CompoundTag serializeNBT() {
+	int[] frequencies = nbt.getIntArray("frequencies");
 
-		CompoundTag tag = new CompoundTag();
+	for (int freq : frequencies) {
 
-		tag.putIntArray("frequencies", new ArrayList<>(siloMap.keySet()));
+	    HashSet<BlockPos> poses = siloMap.getOrDefault(freq, new HashSet<>());
 
-		siloMap.forEach((key, value) -> {
+	    CompoundTag posTag = nbt.getCompound("frequencytag" + freq);
 
-			CompoundTag posTag = new CompoundTag();
+	    int size = posTag.getInt("size");
 
-			List<BlockPos> silos = new ArrayList<>(value);
+	    for (int i = 0; i < size; i++) {
 
-			posTag.putInt("size", silos.size());
+		poses.add(NbtUtils.readBlockPos(posTag.getCompound("blockpos" + i)));
 
-			for (int i = 0; i < silos.size(); i++) {
+	    }
 
-				posTag.put("blockpos" + i, NbtUtils.writeBlockPos(silos.get(i)));
-
-			}
-
-			tag.put("frequencytag" + key, posTag);
-
-		});
-
-		return tag;
-	}
-
-	@Override
-	public void deserializeNBT(CompoundTag nbt) {
-		if (nbt == null) {
-			return;
-		}
-
-		int[] frequencies = nbt.getIntArray("frequencies");
-
-		for (int freq : frequencies) {
-
-			HashSet<BlockPos> poses = siloMap.getOrDefault(freq, new HashSet<>());
-
-			CompoundTag posTag = nbt.getCompound("frequencytag" + freq);
-
-			int size = posTag.getInt("size");
-
-			for (int i = 0; i < size; i++) {
-
-				poses.add(NbtUtils.readBlockPos(posTag.getCompound("blockpos" + i)));
-
-			}
-
-			siloMap.put(freq, poses);
-
-		}
-
-	}
-
-	public void addSilo(int freq, BlockPos silo) {
-		HashSet<BlockPos> set = siloMap.getOrDefault(freq, new HashSet<>());
-
-		set.add(silo);
-
-		siloMap.put(freq, set);
+	    siloMap.put(freq, poses);
 
 	}
 
-	public void removeSilo(int freq, BlockPos silo) {
+    }
 
-		HashSet<BlockPos> set = siloMap.getOrDefault(freq, new HashSet<>());
+    public void addSilo(int freq, BlockPos silo) {
+	HashSet<BlockPos> set = siloMap.getOrDefault(freq, new HashSet<>());
 
-		set.remove(silo);
+	set.add(silo);
 
-		siloMap.put(freq, set);
+	siloMap.put(freq, set);
 
-	}
+    }
 
-	public HashSet<BlockPos> getSilosForFrequency(int freq) {
-		return siloMap.getOrDefault(freq, new HashSet<>());
-	}
+    public void removeSilo(int freq, BlockPos silo) {
+
+	HashSet<BlockPos> set = siloMap.getOrDefault(freq, new HashSet<>());
+
+	set.remove(silo);
+
+	siloMap.put(freq, set);
+
+    }
+
+    public HashSet<BlockPos> getSilosForFrequency(int freq) {
+	return siloMap.getOrDefault(freq, new HashSet<>());
+    }
 
 }

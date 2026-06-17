@@ -10,45 +10,48 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 
 public class SiloRegistry {
 
-	public static void registerSilo(int frequency, ILauncherControlPanel silo) {
+    public static void registerSilo(int frequency, ILauncherControlPanel silo) {
 
-		ServerLifecycleHooks.getCurrentServer().overworld().getCapability(BallistixCapabilities.SILO_REGISTRY).ifPresent(cap -> {
+	ServerLifecycleHooks.getCurrentServer().overworld().getCapability(BallistixCapabilities.SILO_REGISTRY)
+		.ifPresent(cap -> {
 
-			cap.addSilo(frequency, silo.getPos());
-
-		});
-
-	}
-
-	public static void unregisterSilo(int frequency, ILauncherControlPanel silo) {
-		ServerLifecycleHooks.getCurrentServer().overworld().getCapability(BallistixCapabilities.SILO_REGISTRY).ifPresent(cap -> {
-
-			cap.removeSilo(frequency, silo.getPos());
+		    cap.addSilo(frequency, silo.getPos());
 
 		});
-	}
 
-	public static HashSet<ILauncherControlPanel> getSilos(int freq, Level world) {
+    }
 
-		return ServerLifecycleHooks.getCurrentServer().overworld().getCapability(BallistixCapabilities.SILO_REGISTRY).map(cap -> {
+    public static void unregisterSilo(int frequency, ILauncherControlPanel silo) {
+	ServerLifecycleHooks.getCurrentServer().overworld().getCapability(BallistixCapabilities.SILO_REGISTRY)
+		.ifPresent(cap -> {
 
-			HashSet<ILauncherControlPanel> silos = new HashSet<>();
+		    cap.removeSilo(frequency, silo.getPos());
 
-			BlockEntity tile;
+		});
+    }
 
-			for (BlockPos pos : cap.getSilosForFrequency(freq)) {
+    public static HashSet<ILauncherControlPanel> getSilos(int freq, Level world) {
 
-				tile = world.getBlockEntity(pos);
+	return ServerLifecycleHooks.getCurrentServer().overworld().getCapability(BallistixCapabilities.SILO_REGISTRY)
+		.map(cap -> {
 
-				if (tile != null && tile instanceof ILauncherControlPanel silo) {
-					silos.add(silo);
-				}
+		    HashSet<ILauncherControlPanel> silos = new HashSet<>();
 
+		    BlockEntity tile;
+
+		    for (BlockPos pos : cap.getSilosForFrequency(freq)) {
+
+			tile = world.getBlockEntity(pos);
+
+			if (tile != null && tile instanceof ILauncherControlPanel silo) {
+			    silos.add(silo);
 			}
 
-			return silos;
+		    }
+
+		    return silos;
 
 		}).orElse(new HashSet<>());
 
-	}
+    }
 }

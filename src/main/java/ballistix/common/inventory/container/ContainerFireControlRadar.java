@@ -12,11 +12,11 @@ import voltaic.prefab.inventory.container.types.GenericContainerBlockEntity;
 public class ContainerFireControlRadar extends GenericContainerBlockEntity<TileFireControlRadar> {
 
     public ContainerFireControlRadar(int id, Inventory playerinv) {
-        this(id, playerinv, new SimpleContainer(0), new SimpleContainerData(5));
+	this(id, playerinv, new SimpleContainer(0), new SimpleContainerData(5));
     }
 
     public ContainerFireControlRadar(int id, Inventory playerinv, Container inventory, ContainerData inventorydata) {
-        super(BallistixMenuTypes.CONTAINER_FIRECONTROLRADAR.get(), id, playerinv, inventory, inventorydata);
+	super(BallistixMenuTypes.CONTAINER_FIRECONTROLRADAR.get(), id, playerinv, inventory, inventorydata);
     }
 
     @Override

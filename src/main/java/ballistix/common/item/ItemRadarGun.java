@@ -31,123 +31,122 @@ import voltaic.prefab.utilities.object.TransferPack;
 
 public class ItemRadarGun extends ItemElectric {
 
-	public static final double USAGE = 150.0;
+    public static final double USAGE = 150.0;
 
-	public ItemRadarGun() {
-		super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667)
-				.receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120))
-				.extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1),
-				BallistixCreativeTabs.MAIN, item -> Items.AIR);
+    public ItemRadarGun() {
+	super((ElectricItemProperties) new ElectricItemProperties().capacity(1666666.66667)
+		.receive(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120))
+		.extract(TransferPack.joulesVoltage(1666666.66667 / (120.0 * 20.0), 120)).stacksTo(1),
+		BallistixCreativeTabs.MAIN, item -> Items.AIR);
+    }
+
+    @Override
+    public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
+	if (!stack.getOrCreateTag().contains(NBTUtils.LOCATION)) {
+	    return super.onItemUseFirst(stack, context);
+	}
+	BlockEntity tile = context.getLevel().getBlockEntity(context.getClickedPos());
+
+	if (tile instanceof ILauncherControlPanel silo) {
+	    silo.setTargetFromDesignator(getCoordiantes(stack));
+	    context.getPlayer().displayClientMessage(
+		    BallistixTextUtils.chatMessage("radargun.inserted", getCoordiantes(stack).toShortString()), true);
+	    return InteractionResult.FAIL;
+	} else if (tile instanceof TileTurretAntimissile turret) {
+	    if (turret.bindFireControlRadar(getCoordiantes(stack))) {
+		context.getPlayer().displayClientMessage(BallistixTextUtils.chatMessage("radargun.turretsucess"), true);
+	    } else {
+		context.getPlayer().displayClientMessage(BallistixTextUtils.chatMessage("radargun.turrettoofar"), true);
+	    }
 	}
 
-	@Override
-	public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
-		if (!stack.getOrCreateTag().contains(NBTUtils.LOCATION)) {
-			return super.onItemUseFirst(stack, context);
-		}
-		BlockEntity tile = context.getLevel().getBlockEntity(context.getClickedPos());
+	return super.onItemUseFirst(stack, context);
+    }
 
-		if (tile instanceof ILauncherControlPanel silo) {
-			silo.setTargetFromDesignator(getCoordiantes(stack));
-			context.getPlayer().displayClientMessage(
-					BallistixTextUtils.chatMessage("radargun.inserted", getCoordiantes(stack).toShortString()),
-					true);
-			return InteractionResult.FAIL;
-		} else if (tile instanceof TileTurretAntimissile turret) {
-			if (turret.bindFireControlRadar(getCoordiantes(stack))) {
-				context.getPlayer().displayClientMessage(BallistixTextUtils.chatMessage("radargun.turretsucess"), true);
-			} else {
-				context.getPlayer().displayClientMessage(BallistixTextUtils.chatMessage("radargun.turrettoofar"), true);
-			}
-		}
+    @Override
+    public InteractionResult useOn(UseOnContext context) {
+	return super.useOn(context);
+    }
 
-		return super.onItemUseFirst(stack, context);
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+
+	if (worldIn.isClientSide) {
+	    return super.use(worldIn, playerIn, handIn);
 	}
 
-	@Override
-	public InteractionResult useOn(UseOnContext context) {
-		return super.useOn(context);
+	Location trace = MathUtils.getRaytracedBlock(playerIn);
+
+	if (trace == null) {
+	    return super.use(worldIn, playerIn, handIn);
 	}
 
-	@Override
-	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+	ItemStack radarGun = playerIn.getItemInHand(handIn);
 
-		if (worldIn.isClientSide) {
-			return super.use(worldIn, playerIn, handIn);
-		}
-
-		Location trace = MathUtils.getRaytracedBlock(playerIn);
-
-		if (trace == null) {
-			return super.use(worldIn, playerIn, handIn);
-		}
-
-		ItemStack radarGun = playerIn.getItemInHand(handIn);
-
-		if (getJoulesStored(radarGun) < USAGE) {
-			return super.use(worldIn, playerIn, handIn);
-		}
-
-		// prevents using the radar gun on missile silo from overriding the stored
-		// coords
-
-		if (trace.getTile(playerIn.level()) instanceof ILauncherControlPanel
-				|| trace.getTile(playerIn.level()) instanceof TileMultiSubnode subnode && subnode.getLevel()
-						.getBlockEntity(subnode.parentPos.getValue()) instanceof ILauncherControlPanel
-				|| trace.getTile(worldIn) instanceof TileTurretAntimissile) {
-			return super.use(worldIn, playerIn, handIn);
-		}
-
-		storeCoordiantes(radarGun, trace.toBlockPos());
-
-		extractPower(radarGun, USAGE, false);
-
-		return super.use(worldIn, playerIn, handIn);
+	if (getJoulesStored(radarGun) < USAGE) {
+	    return super.use(worldIn, playerIn, handIn);
 	}
 
-	@Override
-	public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-		super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
+	// prevents using the radar gun on missile silo from overriding the stored
+	// coords
 
-		if (!worldIn.isClientSide || !isSelected) {
-			return;
-		}
-
-		Location trace = MathUtils.getRaytracedBlock(entityIn);
-
-		if (trace == null) {
-			return;
-		}
-
-		if (entityIn instanceof Player player
-				&& !(worldIn.getBlockEntity(trace.toBlockPos()) instanceof ILauncherControlPanel)) {
-			player.displayClientMessage(
-					BallistixTextUtils.chatMessage("radargun.text", trace.toBlockPos().toShortString()), true);
-		}
+	if (trace.getTile(playerIn.level()) instanceof ILauncherControlPanel
+		|| trace.getTile(playerIn.level()) instanceof TileMultiSubnode subnode && subnode.getLevel()
+			.getBlockEntity(subnode.parentPos.getValue()) instanceof ILauncherControlPanel
+		|| trace.getTile(worldIn) instanceof TileTurretAntimissile) {
+	    return super.use(worldIn, playerIn, handIn);
 	}
 
-	@Override
-	public void appendHoverText(ItemStack stack, Level context, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, context, tooltip, flagIn);
-		if (stack.hasTag() && stack.getTag().contains(NBTUtils.LOCATION)) {
-			tooltip.add(BallistixTextUtils.tooltip("radargun.pos", getCoordiantes(stack).toShortString())
-					.withStyle(ChatFormatting.GRAY));
-		} else {
-			tooltip.add(BallistixTextUtils.tooltip("radargun.notag").withStyle(ChatFormatting.GRAY));
-		}
+	storeCoordiantes(radarGun, trace.toBlockPos());
+
+	extractPower(radarGun, USAGE, false);
+
+	return super.use(worldIn, playerIn, handIn);
+    }
+
+    @Override
+    public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+	super.inventoryTick(stack, worldIn, entityIn, itemSlot, isSelected);
+
+	if (!worldIn.isClientSide || !isSelected) {
+	    return;
 	}
 
-	public static void storeCoordiantes(ItemStack stack, BlockPos pos) {
-		stack.getOrCreateTag().put(NBTUtils.LOCATION, NbtUtils.writeBlockPos(pos));
+	Location trace = MathUtils.getRaytracedBlock(entityIn);
+
+	if (trace == null) {
+	    return;
 	}
 
-	public static BlockPos getCoordiantes(ItemStack stack) {
-		return NbtUtils.readBlockPos(stack.getOrCreateTag().getCompound(NBTUtils.LOCATION));
+	if (entityIn instanceof Player player
+		&& !(worldIn.getBlockEntity(trace.toBlockPos()) instanceof ILauncherControlPanel)) {
+	    player.displayClientMessage(
+		    BallistixTextUtils.chatMessage("radargun.text", trace.toBlockPos().toShortString()), true);
 	}
+    }
 
-	@Override
-	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-		return !oldStack.is(newStack.getItem());
+    @Override
+    public void appendHoverText(ItemStack stack, Level context, List<Component> tooltip, TooltipFlag flagIn) {
+	super.appendHoverText(stack, context, tooltip, flagIn);
+	if (stack.hasTag() && stack.getTag().contains(NBTUtils.LOCATION)) {
+	    tooltip.add(BallistixTextUtils.tooltip("radargun.pos", getCoordiantes(stack).toShortString())
+		    .withStyle(ChatFormatting.GRAY));
+	} else {
+	    tooltip.add(BallistixTextUtils.tooltip("radargun.notag").withStyle(ChatFormatting.GRAY));
 	}
+    }
+
+    public static void storeCoordiantes(ItemStack stack, BlockPos pos) {
+	stack.getOrCreateTag().put(NBTUtils.LOCATION, NbtUtils.writeBlockPos(pos));
+    }
+
+    public static BlockPos getCoordiantes(ItemStack stack) {
+	return NbtUtils.readBlockPos(stack.getOrCreateTag().getCompound(NBTUtils.LOCATION));
+    }
+
+    @Override
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+	return !oldStack.is(newStack.getItem());
+    }
 
 }

@@ -12,33 +12,35 @@ public class ScreenComponentFrequency extends ScreenComponentGeneric {
     private Integer frequency;
 
     public ScreenComponentFrequency(int x, int y, int width, int height) {
-        super(x, y, width, height);
+	super(x, y, width, height);
     }
 
     @Override
     public void renderBackground(GuiGraphics graphics, int xAxis, int yAxis, int guiWidth, int guiHeight) {
-        if (!isVisible()) {
-            return;
-        }
+	if (!isVisible()) {
+	    return;
+	}
 
-        ITexture texture = RadarTextures.FREQUENCY;
+	ITexture texture = RadarTextures.FREQUENCY;
 
-        ScreenComponentEditBox.drawExpandedBox(graphics, texture.getLocation(), xLocation + guiWidth, yLocation + guiHeight, width, height);
+	ScreenComponentEditBox.drawExpandedBox(graphics, texture.getLocation(), xLocation + guiWidth,
+		yLocation + guiHeight, width, height);
 
-        if (frequency == null) {
-            return;
-        }
+	if (frequency == null) {
+	    return;
+	}
 
-        graphics.drawString(gui.getFontRenderer(), Component.literal(frequency + ""), guiWidth + xLocation + 5, guiHeight + yLocation + 5, Color.WHITE.color(), false);
+	graphics.drawString(gui.getFontRenderer(), Component.literal(frequency + ""), guiWidth + xLocation + 5,
+		guiHeight + yLocation + 5, Color.WHITE.color(), false);
 
     }
 
     public void setFrequency(Integer frequency) {
-        this.frequency = frequency;
+	this.frequency = frequency;
     }
 
     public Integer getFrequency() {
-        return frequency;
+	return frequency;
     }
 
 }

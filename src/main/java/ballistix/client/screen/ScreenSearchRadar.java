@@ -31,112 +31,120 @@ public class ScreenSearchRadar extends GenericScreen<ContainerSearchRadar> {
     public final WrapperSearchRadarDetections detectionsWrapper;
 
     public ScreenSearchRadar(ContainerSearchRadar container, Inventory inv, Component title) {
-        super(container, inv, title);
+	super(container, inv, title);
 
-        addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(BallistixConstants.RADAR_USAGE));
+	addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2)
+		.wattage(BallistixConstants.RADAR_USAGE));
 
-        addComponent(new ScreenComponentGuiTab(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR, ScreenComponentSlot.IconType.SONAR_PROFILE, () -> {
-            List<FormattedCharSequence> info = new ArrayList<>();
+	addComponent(new ScreenComponentGuiTab(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR,
+		ScreenComponentSlot.IconType.SONAR_PROFILE, () -> {
+		    List<FormattedCharSequence> info = new ArrayList<>();
 
-            TileSearchRadar radar = menu.getSafeHost();
+		    TileSearchRadar radar = menu.getSafeHost();
 
-            if (radar == null) {
-                return info;
-            }
+		    if (radar == null) {
+			return info;
+		    }
 
-            info.add(BallistixTextUtils.tooltip("turret.blockrange").withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
-            info.add(BallistixTextUtils.tooltip("turret.maxrange", ChatFormatter.formatDecimals(BallistixConstants.RADAR_RANGE, 1).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+		    info.add(BallistixTextUtils.tooltip("turret.blockrange").withStyle(ChatFormatting.DARK_GRAY)
+			    .getVisualOrderText());
+		    info.add(BallistixTextUtils
+			    .tooltip("turret.maxrange",
+				    ChatFormatter.formatDecimals(BallistixConstants.RADAR_RANGE, 1)
+					    .withStyle(ChatFormatting.GRAY))
+			    .withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
 
+		    return info;
 
-            return info;
+		}, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE + 2));
 
-        }, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE + 2));
+	frequencyWrapper = new WrapperSearchFrequencyManager(this, -AbstractScreenComponentInfo.SIZE + 1,
+		AbstractScreenComponentInfo.SIZE * 2 + 2, 0, 0);
 
-        frequencyWrapper = new WrapperSearchFrequencyManager(this, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE * 2 + 2, 0, 0);
+	addComponent(slider = new ScreenComponentVerticalSlider(11, 80, 75)
+		.setClickConsumer(frequencyWrapper.getSliderClickedConsumer())
+		.setDragConsumer(frequencyWrapper.getSliderDraggedConsumer()));
 
-        addComponent(slider = new ScreenComponentVerticalSlider(11, 80, 75).setClickConsumer(frequencyWrapper.getSliderClickedConsumer()).setDragConsumer(frequencyWrapper.getSliderDraggedConsumer()));
+	slider.setVisible(false);
 
-        slider.setVisible(false);
+	detectionsWrapper = new WrapperSearchRadarDetections(this, 0, 0);
 
-        detectionsWrapper = new WrapperSearchRadarDetections(this, 0, 0);
-
-        addComponent(detectionsSlider = new ScreenComponentVerticalSlider(10, 20, 130).setClickConsumer(detectionsWrapper.getSliderClickedConsumer()).setDragConsumer(detectionsWrapper.getSliderDraggedConsumer()));
+	addComponent(detectionsSlider = new ScreenComponentVerticalSlider(10, 20, 130)
+		.setClickConsumer(detectionsWrapper.getSliderClickedConsumer())
+		.setDragConsumer(detectionsWrapper.getSliderDraggedConsumer()));
 
     }
 
     @Override
     protected void containerTick() {
-        super.containerTick();
-        frequencyWrapper.tick();
-        detectionsWrapper.tick();
+	super.containerTick();
+	frequencyWrapper.tick();
+	detectionsWrapper.tick();
     }
 
     @Override
     protected void initializeComponents() {
-        super.initializeComponents();
-        playerInvLabel.setVisible(false);
+	super.initializeComponents();
+	playerInvLabel.setVisible(false);
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
-        if (frequencyWrapper != null) {
-            if (scrollY > 0) {
-                // scroll up
-                frequencyWrapper.handleMouseScroll(-1);
-            } else if (scrollY < 0) {
-                // scroll down
-                frequencyWrapper.handleMouseScroll(1);
-            }
-        }
-        if (detectionsWrapper != null) {
-            if (scrollY > 0) {
-                // scroll up
-                detectionsWrapper.handleMouseScroll(-1);
-            } else if (scrollY < 0) {
-                // scroll down
-                detectionsWrapper.handleMouseScroll(1);
-            }
-        }
-        return super.mouseScrolled(mouseX, mouseY, scrollY);
+	if (frequencyWrapper != null) {
+	    if (scrollY > 0) {
+		// scroll up
+		frequencyWrapper.handleMouseScroll(-1);
+	    } else if (scrollY < 0) {
+		// scroll down
+		frequencyWrapper.handleMouseScroll(1);
+	    }
+	}
+	if (detectionsWrapper != null) {
+	    if (scrollY > 0) {
+		// scroll up
+		detectionsWrapper.handleMouseScroll(-1);
+	    } else if (scrollY < 0) {
+		// scroll down
+		detectionsWrapper.handleMouseScroll(1);
+	    }
+	}
+	return super.mouseScrolled(mouseX, mouseY, scrollY);
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (slider != null && slider.isVisible()) {
-            slider.mouseClicked(mouseX, mouseY, button);
-        } else if (detectionsSlider != null && detectionsSlider.isVisible()) {
-            slider.mouseClicked(mouseX, mouseY, button);
-        }
-        return super.mouseClicked(mouseX, mouseY, button);
+	if ((slider != null && slider.isVisible()) || (detectionsSlider != null && detectionsSlider.isVisible())) {
+	    slider.mouseClicked(mouseX, mouseY, button);
+	}
+	return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if (slider != null && slider.isVisible()) {
-            slider.mouseReleased(mouseX, mouseY, button);
-        } else if (detectionsSlider != null && detectionsSlider.isVisible()) {
-            slider.mouseReleased(mouseX, mouseY, button);
-        }
-        return super.mouseReleased(mouseX, mouseY, button);
+	if ((slider != null && slider.isVisible()) || (detectionsSlider != null && detectionsSlider.isVisible())) {
+	    slider.mouseReleased(mouseX, mouseY, button);
+	}
+	return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
     public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
-        InputConstants.Key mouseKey = InputConstants.getKey(pKeyCode, pScanCode);
-        if (this.minecraft.options.keyInventory.isActiveAndMatches(mouseKey) && frequencyWrapper.addEditBox.isVisible() && frequencyWrapper.addEditBox.isFocused()) {
-            return false;
-        }
-        return super.keyPressed(pKeyCode, pScanCode, pModifiers);
+	InputConstants.Key mouseKey = InputConstants.getKey(pKeyCode, pScanCode);
+	if (this.minecraft.options.keyInventory.isActiveAndMatches(mouseKey) && frequencyWrapper.addEditBox.isVisible()
+		&& frequencyWrapper.addEditBox.isFocused()) {
+	    return false;
+	}
+	return super.keyPressed(pKeyCode, pScanCode, pModifiers);
     }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if (slider.isVisible()) {
-            return slider.mouseDragged(mouseX, mouseY, button, dragX, dragY);
-        } else if (detectionsSlider.isVisible()) {
-            return detectionsSlider.mouseDragged(mouseX, mouseY, button, dragX, dragY);
-        }
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+	if (slider.isVisible()) {
+	    return slider.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+	} else if (detectionsSlider.isVisible()) {
+	    return detectionsSlider.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+	}
+	return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
 
 }

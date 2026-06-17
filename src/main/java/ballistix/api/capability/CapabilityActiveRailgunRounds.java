@@ -22,93 +22,97 @@ import net.minecraftforge.common.util.LazyOptional;
 
 public class CapabilityActiveRailgunRounds implements ICapabilitySerializable<CompoundTag> {
 
-	public final HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> activeRailgunRounds = new HashMap<>();
+    public final HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> activeRailgunRounds = new HashMap<>();
 
-	private final LazyOptional<CapabilityActiveRailgunRounds> lazyOptional = LazyOptional.of(() -> this);
+    private final LazyOptional<CapabilityActiveRailgunRounds> lazyOptional = LazyOptional.of(() -> this);
 
-	@Override
-	public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-		if (cap == BallistixCapabilities.ACTIVE_RAILGUN_ROUNDS) {
-			return lazyOptional.cast();
-		}
-		return LazyOptional.empty();
+    @Override
+    public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+	if (cap == BallistixCapabilities.ACTIVE_RAILGUN_ROUNDS) {
+	    return lazyOptional.cast();
+	}
+	return LazyOptional.empty();
+    }
+
+    @Override
+    public CompoundTag serializeNBT() {
+	CompoundTag data = new CompoundTag();
+
+	data.putInt("size", activeRailgunRounds.size());
+
+	int i = 0;
+
+	for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> entry : activeRailgunRounds
+		.entrySet()) {
+
+	    if (entry.getValue().size() <= 0) {
+		continue;
+	    }
+
+	    CompoundTag stored = new CompoundTag();
+
+	    stored.putString("key", entry.getKey().location().toString());
+
+	    int activeSize = entry.getValue().size();
+
+	    stored.putInt("size", activeSize);
+
+	    int j = 0;
+
+	    for (VirtualProjectile.VirtualRailgunRound missile : entry.getValue().values()) {
+
+		final int index = j;
+
+		VirtualProjectile.VirtualRailgunRound.CODEC.encode(missile, NbtOps.INSTANCE, new CompoundTag()).result()
+			.ifPresent(tag -> stored.put("" + index, tag));
+
+		j++;
+
+	    }
+
+	    data.put("" + i, stored);
+
+	    i++;
+
 	}
 
-	@Override
-	public CompoundTag serializeNBT() {
-		CompoundTag data = new CompoundTag();
+	return data;
+    }
 
-		data.putInt("size", activeRailgunRounds.size());
-
-		int i = 0;
-
-		for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> entry : activeRailgunRounds.entrySet()) {
-
-			if (entry.getValue().size() <= 0) {
-				continue;
-			}
-
-			CompoundTag stored = new CompoundTag();
-
-			stored.putString("key", entry.getKey().location().toString());
-
-			int activeSize = entry.getValue().size();
-
-			stored.putInt("size", activeSize);
-
-			int j = 0;
-
-			for (VirtualProjectile.VirtualRailgunRound missile : entry.getValue().values()) {
-
-				final int index = j;
-
-				VirtualProjectile.VirtualRailgunRound.CODEC.encode(missile, NbtOps.INSTANCE, new CompoundTag()).result().ifPresent(tag -> stored.put("" + index, tag));
-
-				j++;
-
-			}
-
-			data.put("" + i, stored);
-
-			i++;
-
-		}
-
-		return data;
+    @Override
+    public void deserializeNBT(CompoundTag nbt) {
+	if (nbt == null) {
+	    return;
 	}
 
-	@Override
-	public void deserializeNBT(CompoundTag nbt) {
-		if (nbt == null) {
-			return;
-		}
+	int size = nbt.getInt("size");
 
-		int size = nbt.getInt("size");
+	for (int i = 0; i < size; i++) {
 
-		for (int i = 0; i < size; i++) {
+	    CompoundTag stored = nbt.getCompound("" + i);
 
-			CompoundTag stored = nbt.getCompound("" + i);
+	    if (!stored.contains("key")) {
+		continue;
+	    }
 
-			if (!stored.contains("key")) {
-				continue;
-			}
+	    ResourceKey<Level> key = ResourceKey.create(Registries.DIMENSION,
+		    new ResourceLocation(stored.getString("key")));
 
-			ResourceKey<Level> key = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(stored.getString("key")));
+	    HashMap<UUID, VirtualProjectile.VirtualRailgunRound> active = new HashMap<>();
 
-			HashMap<UUID, VirtualProjectile.VirtualRailgunRound> active = new HashMap<>();
+	    int activeSize = stored.getInt("size");
 
-			int activeSize = stored.getInt("size");
+	    for (int j = 0; j < activeSize; j++) {
 
-			for (int j = 0; j < activeSize; j++) {
+		VirtualProjectile.VirtualRailgunRound virtual = VirtualProjectile.VirtualRailgunRound.CODEC
+			.decode(NbtOps.INSTANCE, stored.getCompound("" + j)).result().get().getFirst();
 
-				VirtualProjectile.VirtualRailgunRound virtual = VirtualProjectile.VirtualRailgunRound.CODEC.decode(NbtOps.INSTANCE, stored.getCompound("" + j)).result().get().getFirst();
+		active.put(virtual.id, virtual);
+	    }
 
-				active.put(virtual.id, virtual);
-			}
+	    activeRailgunRounds.put(key, active);
 
-			activeRailgunRounds.put(key, active);
-
-		}
 	}
+    }
 
 }

@@ -11,19 +11,20 @@ import net.minecraft.world.item.Items;
 
 public class BallistixMineralGrinderRecipes extends ElectrodynamicsMineralGrinderRecipes {
 
-	public BallistixMineralGrinderRecipes() {
-		super(Ballistix.ID);
-	}
+    public BallistixMineralGrinderRecipes() {
+	super(Ballistix.ID);
+    }
 
-	@Override
-	public void addRecipes(Consumer<FinishedRecipe> consumer) {
+    @Override
+    public void addRecipes(Consumer<FinishedRecipe> consumer) {
 
-		newRecipe(new ItemStack(BallistixItems.ITEM_DUSTPOISON.get(), 2), 0.1F, MINERALGRINDER_REQUIRED_TICKS, MINERALGRINDER_USAGE_PER_TICK, "poison_dust_from_rotten_flesh")
-				//
-				.addItemStackInput(new ItemStack(Items.ROTTEN_FLESH))
-				//
-				.complete(consumer);
+	newRecipe(new ItemStack(BallistixItems.ITEM_DUSTPOISON.get(), 2), 0.1F, MINERALGRINDER_REQUIRED_TICKS,
+		MINERALGRINDER_USAGE_PER_TICK, "poison_dust_from_rotten_flesh")
+		//
+		.addItemStackInput(new ItemStack(Items.ROTTEN_FLESH))
+		//
+		.complete(consumer);
 
-	}
+    }
 
 }

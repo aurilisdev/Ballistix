@@ -15,19 +15,21 @@ import voltaic.prefab.utilities.math.Color;
 
 public class ContainerLauncherPlatformT3 extends GenericContainerBlockEntity<TileLauncherPlatformT3> {
 
-	public ContainerLauncherPlatformT3(int id, Inventory playerinv) {
-		this(id, playerinv, new SimpleContainer(2), new SimpleContainerData(5));
-	}
+    public ContainerLauncherPlatformT3(int id, Inventory playerinv) {
+	this(id, playerinv, new SimpleContainer(2), new SimpleContainerData(5));
+    }
 
-	public ContainerLauncherPlatformT3(int id, Inventory playerinv, Container inventory, ContainerData inventorydata) {
-		super(BallistixMenuTypes.CONTAINER_LAUNCHER_PLATFORM_T3.get(), id, playerinv, inventory, inventorydata);
-	}
+    public ContainerLauncherPlatformT3(int id, Inventory playerinv, Container inventory, ContainerData inventorydata) {
+	super(BallistixMenuTypes.CONTAINER_LAUNCHER_PLATFORM_T3.get(), id, playerinv, inventory, inventorydata);
+    }
 
-	@Override
-	public void addInventorySlots(Container inv, Inventory playerinv) {
-		//setPlayerInvOffset(20);
-		addSlot(new SlotGeneric(ScreenComponentSlot.SlotType.NORMAL, BallistixIconTypes.MISSILE_DARK, inv, nextIndex(), 80, 25).setIOColor(new Color(0, 240, 255, 255)));
-		addSlot(new SlotGeneric(ScreenComponentSlot.SlotType.NORMAL, BallistixIconTypes.EXPLOSIVE_DARK, inv, nextIndex(), 80, 45).setIOColor(new Color(0, 240, 255, 255)));
-	}
+    @Override
+    public void addInventorySlots(Container inv, Inventory playerinv) {
+	// setPlayerInvOffset(20);
+	addSlot(new SlotGeneric(ScreenComponentSlot.SlotType.NORMAL, BallistixIconTypes.MISSILE_DARK, inv, nextIndex(),
+		80, 25).setIOColor(new Color(0, 240, 255, 255)));
+	addSlot(new SlotGeneric(ScreenComponentSlot.SlotType.NORMAL, BallistixIconTypes.EXPLOSIVE_DARK, inv,
+		nextIndex(), 80, 45).setIOColor(new Color(0, 240, 255, 255)));
+    }
 
 }

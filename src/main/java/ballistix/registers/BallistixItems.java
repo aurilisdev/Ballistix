@@ -24,6 +24,7 @@ import ballistix.common.settings.BallistixConstants;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -34,57 +35,78 @@ import voltaic.api.creativetab.CreativeTabSupplier;
 import voltaic.api.registration.BulkRegistryObject;
 import voltaic.common.blockitem.BlockItemDescriptable;
 import voltaic.common.item.ItemVoltaic;
-import net.minecraft.world.item.Rarity;
 
 public class BallistixItems {
 
-	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, Ballistix.ID);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, Ballistix.ID);
 
-	public static final BulkRegistryObject<BlockItemDescriptable, SubtypeBallistixMachine> ITEMS_BALLISTIXMACHINE = new BulkRegistryObject<>(SubtypeBallistixMachine.values(), subtype -> ITEMS.register(subtype.tag(), () -> new BlockItemDescriptable(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(subtype), new Item.Properties(), BallistixCreativeTabs.MAIN)));
-	public static final BulkRegistryObject<BlockItemDescriptable, SubtypeBlast> ITEMS_EXPLOSIVE = new BulkRegistryObject<>(SubtypeBlast.values(), subtype -> ITEMS.register(subtype.tag(), () -> {
-		if(subtype == SubtypeBlast.antimatter || subtype == SubtypeBlast.darkmatter || subtype == SubtypeBlast.largeantimatter) {
-			return new BlockItemExplosive(subtype, BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype), new Item.Properties().rarity(Rarity.EPIC), BallistixCreativeTabs.MAIN);
+    public static final BulkRegistryObject<BlockItemDescriptable, SubtypeBallistixMachine> ITEMS_BALLISTIXMACHINE = new BulkRegistryObject<>(
+	    SubtypeBallistixMachine.values(),
+	    subtype -> ITEMS.register(subtype.tag(),
+		    () -> new BlockItemDescriptable(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(subtype),
+			    new Item.Properties(), BallistixCreativeTabs.MAIN)));
+    public static final BulkRegistryObject<BlockItemDescriptable, SubtypeBlast> ITEMS_EXPLOSIVE = new BulkRegistryObject<>(
+	    SubtypeBlast.values(), subtype -> ITEMS.register(subtype.tag(), () -> {
+		if (subtype == SubtypeBlast.antimatter || subtype == SubtypeBlast.darkmatter
+			|| subtype == SubtypeBlast.largeantimatter) {
+		    return new BlockItemExplosive(subtype, BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype),
+			    new Item.Properties().rarity(Rarity.EPIC), BallistixCreativeTabs.MAIN);
 		} else if (subtype == SubtypeBlast.nuclear || subtype == SubtypeBlast.rejuvination) {
-			return new BlockItemExplosive(subtype, BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype), new Item.Properties().rarity(Rarity.UNCOMMON), BallistixCreativeTabs.MAIN);
+		    return new BlockItemExplosive(subtype, BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype),
+			    new Item.Properties().rarity(Rarity.UNCOMMON), BallistixCreativeTabs.MAIN);
 		} else {
-			return new BlockItemExplosive(subtype, BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype), new Item.Properties(), BallistixCreativeTabs.MAIN);
+		    return new BlockItemExplosive(subtype, BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype),
+			    new Item.Properties(), BallistixCreativeTabs.MAIN);
 		}
-	}));
-	public static final BulkRegistryObject<ItemGrenade, SubtypeGrenade> ITEMS_GRENADE = new BulkRegistryObject<>(SubtypeGrenade.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemGrenade(subtype.explosiveType)));
-	public static final BulkRegistryObject<ItemMinecart, SubtypeMinecart> ITEMS_MINECART = new BulkRegistryObject<>(SubtypeMinecart.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemMinecart(subtype.explosiveType)));
-	public static final BulkRegistryObject<ItemMissile, SubtypeMissile> ITEMS_MISSILE = new BulkRegistryObject<>(SubtypeMissile.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemMissile(subtype)));
+	    }));
+    public static final BulkRegistryObject<ItemGrenade, SubtypeGrenade> ITEMS_GRENADE = new BulkRegistryObject<>(
+	    SubtypeGrenade.values(),
+	    subtype -> ITEMS.register(subtype.tag(), () -> new ItemGrenade(subtype.explosiveType)));
+    public static final BulkRegistryObject<ItemMinecart, SubtypeMinecart> ITEMS_MINECART = new BulkRegistryObject<>(
+	    SubtypeMinecart.values(),
+	    subtype -> ITEMS.register(subtype.tag(), () -> new ItemMinecart(subtype.explosiveType)));
+    public static final BulkRegistryObject<ItemMissile, SubtypeMissile> ITEMS_MISSILE = new BulkRegistryObject<>(
+	    SubtypeMissile.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemMissile(subtype)));
 
-	public static final RegistryObject<ItemVoltaic> ITEM_AAMISSILE = ITEMS.register("aamissile", () -> new ItemAAMissile(new Item.Properties().stacksTo(10), () -> BallistixCreativeTabs.MAIN.get(), BallistixConstants.SAM_CHANCE_TO_DESTROY));
-	public static final RegistryObject<ItemVoltaic> ITEM_AAMISSILEMK2 = ITEMS.register("aamissilemk2", () -> new ItemAAMissile(new Item.Properties().stacksTo(5), () -> BallistixCreativeTabs.MAIN.get(), BallistixConstants.ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY));
-	public static final RegistryObject<ItemVoltaic> ITEM_BULLET = ITEMS.register("bullet", () -> new ItemVoltaic(new Item.Properties().stacksTo(64), BallistixCreativeTabs.MAIN));
-	public static final RegistryObject<ItemVoltaic> ITEM_DUSTPOISON = ITEMS.register("dustpoison", () -> new ItemVoltaic(new Item.Properties(), BallistixCreativeTabs.MAIN));
-	public static final RegistryObject<ItemRocketLauncher> ITEM_ROCKETLAUNCHER = ITEMS.register("rocketlauncher", ItemRocketLauncher::new);
-	public static final RegistryObject<ItemRadarGun> ITEM_RADARGUN = ITEMS.register("radargun", ItemRadarGun::new);
-	public static final RegistryObject<ItemTracker> ITEM_TRACKER = ITEMS.register("tracker", ItemTracker::new);
-	public static final RegistryObject<ItemScanner> ITEM_SCANNER = ITEMS.register("scanner", ItemScanner::new);
-	public static final RegistryObject<ItemLaserDesignator> ITEM_LASERDESIGNATOR = ITEMS.register("laserdesignator", ItemLaserDesignator::new);
-	public static final RegistryObject<ItemDefuser> ITEM_DEFUSER = ITEMS.register("defuser", ItemDefuser::new);
+    public static final RegistryObject<ItemVoltaic> ITEM_AAMISSILE = ITEMS.register("aamissile",
+	    () -> new ItemAAMissile(new Item.Properties().stacksTo(10), () -> BallistixCreativeTabs.MAIN.get(),
+		    BallistixConstants.SAM_CHANCE_TO_DESTROY));
+    public static final RegistryObject<ItemVoltaic> ITEM_AAMISSILEMK2 = ITEMS.register("aamissilemk2",
+	    () -> new ItemAAMissile(new Item.Properties().stacksTo(5), () -> BallistixCreativeTabs.MAIN.get(),
+		    BallistixConstants.ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY));
+    public static final RegistryObject<ItemVoltaic> ITEM_BULLET = ITEMS.register("bullet",
+	    () -> new ItemVoltaic(new Item.Properties().stacksTo(64), BallistixCreativeTabs.MAIN));
+    public static final RegistryObject<ItemVoltaic> ITEM_DUSTPOISON = ITEMS.register("dustpoison",
+	    () -> new ItemVoltaic(new Item.Properties(), BallistixCreativeTabs.MAIN));
+    public static final RegistryObject<ItemRocketLauncher> ITEM_ROCKETLAUNCHER = ITEMS.register("rocketlauncher",
+	    ItemRocketLauncher::new);
+    public static final RegistryObject<ItemRadarGun> ITEM_RADARGUN = ITEMS.register("radargun", ItemRadarGun::new);
+    public static final RegistryObject<ItemTracker> ITEM_TRACKER = ITEMS.register("tracker", ItemTracker::new);
+    public static final RegistryObject<ItemScanner> ITEM_SCANNER = ITEMS.register("scanner", ItemScanner::new);
+    public static final RegistryObject<ItemLaserDesignator> ITEM_LASERDESIGNATOR = ITEMS.register("laserdesignator",
+	    ItemLaserDesignator::new);
+    public static final RegistryObject<ItemDefuser> ITEM_DEFUSER = ITEMS.register("defuser", ItemDefuser::new);
 
-	@EventBusSubscriber(value = Dist.CLIENT, modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)
-	private static class BallistixCreativeRegistry {
+    @EventBusSubscriber(value = Dist.CLIENT, modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)
+    private static class BallistixCreativeRegistry {
 
-		@SubscribeEvent
-		public static void registerItems(BuildCreativeModeTabContentsEvent event) {
+	@SubscribeEvent
+	public static void registerItems(BuildCreativeModeTabContentsEvent event) {
 
-			ITEMS.getEntries().forEach(reg -> {
+	    ITEMS.getEntries().forEach(reg -> {
 
-				CreativeTabSupplier supplier = (CreativeTabSupplier) reg.get();
+		CreativeTabSupplier supplier = (CreativeTabSupplier) reg.get();
 
-				if (supplier.hasCreativeTab() && supplier.isAllowedInCreativeTab(event.getTab())) {
-					List<ItemStack> toAdd = new ArrayList<>();
-					supplier.addCreativeModeItems(event.getTab(), toAdd);
-					event.acceptAll(toAdd);
-				}
-
-			});
-
+		if (supplier.hasCreativeTab() && supplier.isAllowedInCreativeTab(event.getTab())) {
+		    List<ItemStack> toAdd = new ArrayList<>();
+		    supplier.addCreativeModeItems(event.getTab(), toAdd);
+		    event.acceptAll(toAdd);
 		}
+
+	    });
 
 	}
+
+    }
 
 }

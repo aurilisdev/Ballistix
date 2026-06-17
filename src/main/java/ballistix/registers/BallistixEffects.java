@@ -11,7 +11,8 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class BallistixEffects {
 
-    public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, Ballistix.ID);
+    public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT,
+	    Ballistix.ID);
 
     public static final RegistryObject<EffectVirus> VIRUS = EFFECTS.register("virus", EffectVirus::new);
     public static final RegistryObject<EffectToxin> TOXIN = EFFECTS.register("toxin", EffectToxin::new);

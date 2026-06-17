@@ -17,49 +17,53 @@ import voltaic.prefab.utilities.math.MathUtils;
 
 public class RenderExplosive extends EntityRenderer<EntityExplosive> {
     public RenderExplosive(Context renderManagerIn) {
-        super(renderManagerIn);
-        shadowRadius = 0.5F;
+	super(renderManagerIn);
+	shadowRadius = 0.5F;
     }
 
     @Override
-    public void render(EntityExplosive entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
-    	IBlast blast = entityIn.getBlastType();
-        if (blast != null) {
-            matrixStackIn.pushPose();
-            matrixStackIn.translate(0.0D, 0.5D, 0.0D);
-            if (entityIn.fuse - partialTicks + 1.0F < 10.0F) {
-                float f = 1.0F - (entityIn.fuse - partialTicks + 1.0F) / 10.0F;
-                f = Mth.clamp(f, 0.0F, 1.0F);
-                f = f * f;
-                f = f * f;
-                float f1 = 1.0F + f * 0.3F;
-                matrixStackIn.scale(f1, f1, f1);
-            }
+    public void render(EntityExplosive entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
+	    MultiBufferSource bufferIn, int packedLightIn) {
+	IBlast blast = entityIn.getBlastType();
+	if (blast != null) {
+	    matrixStackIn.pushPose();
+	    matrixStackIn.translate(0.0D, 0.5D, 0.0D);
+	    if (entityIn.fuse - partialTicks + 1.0F < 10.0F) {
+		float f = 1.0F - (entityIn.fuse - partialTicks + 1.0F) / 10.0F;
+		f = Mth.clamp(f, 0.0F, 1.0F);
+		f = f * f;
+		f = f * f;
+		float f1 = 1.0F + f * 0.3F;
+		matrixStackIn.scale(f1, f1, f1);
+	    }
 
-            matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(-90.0F, MathUtils.YP));
-            // matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(-90.0F));
-            matrixStackIn.translate(-0.5D, -0.5D, 0.5D);
-            matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(90.0F, MathUtils.YP));
-            // matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(90.0F));
-            renderTntFlash(blast.getExplosiveBlock().get().defaultBlockState(), matrixStackIn, bufferIn, packedLightIn, entityIn.fuse / 5 % 2 == 0);
-            matrixStackIn.popPose();
-        }
-        super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+	    matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(-90.0F, MathUtils.YP));
+	    // matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(-90.0F));
+	    matrixStackIn.translate(-0.5D, -0.5D, 0.5D);
+	    matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(90.0F, MathUtils.YP));
+	    // matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(90.0F));
+	    renderTntFlash(blast.getExplosiveBlock().get().defaultBlockState(), matrixStackIn, bufferIn, packedLightIn,
+		    entityIn.fuse / 5 % 2 == 0);
+	    matrixStackIn.popPose();
+	}
+	super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
     }
 
-    public static void renderTntFlash(BlockState blockStateIn, PoseStack matrixStackIn, MultiBufferSource renderTypeBuffer, int combinedLight, boolean doFullBright) {
-        int i;
-        if (doFullBright) {
-            i = OverlayTexture.pack(OverlayTexture.u(1.0F), 10);
-        } else {
-            i = OverlayTexture.NO_OVERLAY;
-        }
+    public static void renderTntFlash(BlockState blockStateIn, PoseStack matrixStackIn,
+	    MultiBufferSource renderTypeBuffer, int combinedLight, boolean doFullBright) {
+	int i;
+	if (doFullBright) {
+	    i = OverlayTexture.pack(OverlayTexture.u(1.0F), 10);
+	} else {
+	    i = OverlayTexture.NO_OVERLAY;
+	}
 
-        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(blockStateIn, matrixStackIn, renderTypeBuffer, combinedLight, i);
+	Minecraft.getInstance().getBlockRenderer().renderSingleBlock(blockStateIn, matrixStackIn, renderTypeBuffer,
+		combinedLight, i);
     }
 
     @Override
     public ResourceLocation getTextureLocation(EntityExplosive entity) {
-        return InventoryMenu.BLOCK_ATLAS;
+	return InventoryMenu.BLOCK_ATLAS;
     }
 }

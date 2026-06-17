@@ -22,18 +22,19 @@ import voltaic.prefab.block.HashDistanceBlockPos;
 
 public class ThreadSimpleBlast extends ThreadBlast {
 
-
     private static final HashMap<Pair<Integer, ResourceLocation>, Set<BlockPos>> CACHED_EUCLIDEAN_RESULTS = new HashMap<>();
     private static final Set<Integer> currentlyCalculating = Collections.synchronizedSet(new HashSet<>());
 
     private final Pair<Integer, ResourceLocation> idPair;
 
-    public ThreadSimpleBlast(Level world, BlockPos position, int range, float energy, Entity source, ResourceLocation id) {
-        super(world, position, range, energy, source);
-        setName("Simple blast thread");
-        this.idPair = new Pair<Integer, ResourceLocation>(range, id);
-        setPriority(MAX_PRIORITY);
+    public ThreadSimpleBlast(Level world, BlockPos position, int range, float energy, Entity source,
+	    ResourceLocation id) {
+	super(world, position, range, energy, source);
+	setName("Simple blast thread");
+	this.idPair = new Pair<>(range, id);
+	setPriority(MAX_PRIORITY);
     }
+
     public ThreadSimpleBlast(Level world, BlockPos position, int range, float energy, Entity source,
 	    ResourceLocation id, boolean sortBasedOnDistance) {
 	this(world, position, range, energy, source, id);
@@ -46,61 +47,66 @@ public class ThreadSimpleBlast extends ThreadBlast {
 
     @Override
     public void run() {
-        int explosionRadius = this.explosionRadius;
-        Random random = Voltaic.RANDOM;
-        runEuclidian(explosionRadius, random);
-        super.run();
+	int explosionRadius = this.explosionRadius;
+	Random random = Voltaic.RANDOM;
+	runEuclidian(explosionRadius, random);
+	super.run();
     }
 
     public void runEuclidian(int explosionRadius, Random random) {
-        if (BallistixConstants.SHOULD_CACHE_EXPLOSIONS) {
-            synchronized (currentlyCalculating) {
-                while (currentlyCalculating.contains(explosionRadius)) {
-                    try {
-                        sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        break;
-                    }
-                }
-                if (CACHED_EUCLIDEAN_RESULTS.get(idPair) == null) {
-                    currentlyCalculating.add(explosionRadius);
-                }
-            }
-            if (CACHED_EUCLIDEAN_RESULTS.get(idPair) == null) {
-                int rSqrd = explosionRadius * explosionRadius;
-                ArrayList<BlockPos> positions = new ArrayList<>((int) (Math.PI * 4.0 / 3.0 * rSqrd * (explosionRadius + 1)));
-                for (int i = -explosionRadius; i <= explosionRadius; i++) {
-                    for (int j = 0; j <= explosionRadius; j++) {
-                        int dist2D = i * i + j * j;
-                        if (dist2D <= rSqrd) {
-                            int kMax = (int) Math.floor(Math.sqrt(rSqrd - dist2D));
-                            for (int k = 0; k <= kMax; k++) {
-                                int dist3D = dist2D + k * k;
-                                if (random.nextFloat() * rSqrd < rSqrd * strictnessAtEdges - dist3D) {
-                                    positions.add(new HashDistanceBlockPos(i, k, j, (int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
-                                    if (k != 0) {
-                                        positions.add(new HashDistanceBlockPos(i, -k, j, (int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
-                                        if (j != 0) {
-                                            positions.add(new HashDistanceBlockPos(i, -k, -j, (int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
-                                        }
-                                    }
-                                    if (j != 0) {
-                                        positions.add(new HashDistanceBlockPos(i, k, -j, (int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                // Sort
-                Random rand = Voltaic.RANDOM;
-                for (int i = 0; i < positions.size(); i++) {
-                    int newIndex = rand.nextInt(Math.max(0, i - 10), Math.min(positions.size() - 1, i + 10));
-                    BlockPos atNew = positions.get(newIndex);
-                    positions.set(newIndex, positions.get(i));
-                    positions.set(i, atNew);
-                }
+	if (BallistixConstants.SHOULD_CACHE_EXPLOSIONS) {
+	    synchronized (currentlyCalculating) {
+		while (currentlyCalculating.contains(explosionRadius)) {
+		    try {
+			sleep(100);
+		    } catch (InterruptedException e) {
+			e.printStackTrace();
+			break;
+		    }
+		}
+		if (CACHED_EUCLIDEAN_RESULTS.get(idPair) == null) {
+		    currentlyCalculating.add(explosionRadius);
+		}
+	    }
+	    if (CACHED_EUCLIDEAN_RESULTS.get(idPair) == null) {
+		int rSqrd = explosionRadius * explosionRadius;
+		ArrayList<BlockPos> positions = new ArrayList<>(
+			(int) (Math.PI * 4.0 / 3.0 * rSqrd * (explosionRadius + 1)));
+		for (int i = -explosionRadius; i <= explosionRadius; i++) {
+		    for (int j = 0; j <= explosionRadius; j++) {
+			int dist2D = i * i + j * j;
+			if (dist2D <= rSqrd) {
+			    int kMax = (int) Math.floor(Math.sqrt(rSqrd - dist2D));
+			    for (int k = 0; k <= kMax; k++) {
+				int dist3D = dist2D + k * k;
+				if (random.nextFloat() * rSqrd < rSqrd * strictnessAtEdges - dist3D) {
+				    positions.add(new HashDistanceBlockPos(i, k, j,
+					    (int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+				    if (k != 0) {
+					positions.add(new HashDistanceBlockPos(i, -k, j,
+						(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+					if (j != 0) {
+					    positions.add(new HashDistanceBlockPos(i, -k, -j,
+						    (int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+					}
+				    }
+				    if (j != 0) {
+					positions.add(new HashDistanceBlockPos(i, k, -j,
+						(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+				    }
+				}
+			    }
+			}
+		    }
+		}
+		// Sort
+		Random rand = Voltaic.RANDOM;
+		for (int i = 0; i < positions.size(); i++) {
+		    int newIndex = rand.nextInt(Math.max(0, i - 10), Math.min(positions.size() - 1, i + 10));
+		    BlockPos atNew = positions.get(newIndex);
+		    positions.set(newIndex, positions.get(i));
+		    positions.set(i, atNew);
+		}
 		if (sortBasedOnDistance) {
 
 		    Comparator<BlockPos> byCenterDistance = Comparator.comparingLong(pos -> {
@@ -121,38 +127,43 @@ public class ThreadSimpleBlast extends ThreadBlast {
 		} else {
 		    CACHED_EUCLIDEAN_RESULTS.put(idPair, Sets.newHashSet(positions));
 		}
-            }
+	    }
 
-            results = CACHED_EUCLIDEAN_RESULTS.get(idPair);
-            synchronized (currentlyCalculating) {
-                currentlyCalculating.remove(explosionRadius);
-            }
-        } else {
-            int rSqrd = explosionRadius * explosionRadius;
-            ArrayList<BlockPos> positions = new ArrayList<>((int) (Math.PI * 4.0 / 3.0 * rSqrd * (explosionRadius + 1)));
-            for (int i = -explosionRadius; i <= explosionRadius; i++) {
-                for (int j = 0; j <= explosionRadius; j++) {
-                    int dist2D = i * i + j * j;
-                    if (dist2D <= rSqrd) {
-                        int kMax = (int) Math.floor(Math.sqrt(rSqrd - dist2D));
-                        for (int k = 0; k <= kMax; k++) {
-                            int dist3D = dist2D + k * k;
-                            if (random.nextFloat() * rSqrd < rSqrd * strictnessAtEdges - dist3D) {
-                                positions.add(new HashDistanceBlockPos(i, k, j, (int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
-                                if (k != 0) {
-                                    positions.add(new HashDistanceBlockPos(i, -k, j, (int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
-                                    if (j != 0) {
-                                        positions.add(new HashDistanceBlockPos(i, -k, -j, (int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
-                                    }
-                                }
-                                if (j != 0) {
-                                    positions.add(new HashDistanceBlockPos(i, k, -j, (int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+	    results = CACHED_EUCLIDEAN_RESULTS.get(idPair);
+	    synchronized (currentlyCalculating) {
+		currentlyCalculating.remove(explosionRadius);
+	    }
+	} else {
+	    int rSqrd = explosionRadius * explosionRadius;
+	    ArrayList<BlockPos> positions = new ArrayList<>(
+		    (int) (Math.PI * 4.0 / 3.0 * rSqrd * (explosionRadius + 1)));
+	    for (int i = -explosionRadius; i <= explosionRadius; i++) {
+		for (int j = 0; j <= explosionRadius; j++) {
+		    int dist2D = i * i + j * j;
+		    if (dist2D <= rSqrd) {
+			int kMax = (int) Math.floor(Math.sqrt(rSqrd - dist2D));
+			for (int k = 0; k <= kMax; k++) {
+			    int dist3D = dist2D + k * k;
+			    if (random.nextFloat() * rSqrd < rSqrd * strictnessAtEdges - dist3D) {
+				positions.add(new HashDistanceBlockPos(i, k, j,
+					(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+				if (k != 0) {
+				    positions.add(new HashDistanceBlockPos(i, -k, j,
+					    (int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+				    if (j != 0) {
+					positions.add(new HashDistanceBlockPos(i, -k, -j,
+						(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+				    }
+				}
+				if (j != 0) {
+				    positions.add(new HashDistanceBlockPos(i, k, -j,
+					    (int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+				}
+			    }
+			}
+		    }
+		}
+	    }
 	    // Sort
 	    Random rand = Voltaic.RANDOM;
 	    for (int i = 0; i < positions.size(); i++) {
@@ -178,7 +189,7 @@ public class ThreadSimpleBlast extends ThreadBlast {
 		sorted.addAll(positions);
 		results = sorted;
 	    }
-        }
+	}
 
     }
 

@@ -41,262 +41,275 @@ public class WrapperSearchFrequencyManager {
     private static final int BUTTON_COUNT = 5;
 
     public WrapperSearchFrequencyManager(ScreenSearchRadar screen, int tabX, int tabY, int x, int y) {
-        this.screen = screen;
+	this.screen = screen;
 
-        screen.addComponent(button = (ScreenComponentButton<?>) new ScreenComponentButton<>(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR, tabX, tabY).setOnPress(button -> {
-            //
-            button.isPressed = !button.isPressed;
+	screen.addComponent(button = (ScreenComponentButton<?>) new ScreenComponentButton<>(
+		ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR, tabX, tabY).setOnPress(button -> {
+		    //
+		    button.isPressed = !button.isPressed;
 
-            if (button.isPressed) {
+		    if (button.isPressed) {
 
-                updateVisibility(true);
-                screen.slider.setVisible(true);
+			updateVisibility(true);
+			screen.slider.setVisible(true);
 
-                screen.detectionsWrapper.updateVisibility(false);
-                screen.detectionsSlider.setVisible(false);
+			screen.detectionsWrapper.updateVisibility(false);
+			screen.detectionsSlider.setVisible(false);
 
-            } else {
+		    } else {
 
-                updateVisibility(false);
-                screen.slider.setVisible(false);
+			updateVisibility(false);
+			screen.slider.setVisible(false);
 
-                screen.detectionsWrapper.updateVisibility(true);
-                screen.detectionsSlider.setVisible(true);
+			screen.detectionsWrapper.updateVisibility(true);
+			screen.detectionsSlider.setVisible(true);
 
-            }
+		    }
 
-        }).onTooltip((graphics, but, xAxis, yAxis) -> {
-            //
-            ScreenComponentButton<?> button = (ScreenComponentButton<?>) but;
-            List<Component> tooltips = new ArrayList<>();
-            tooltips.add(BallistixTextUtils.tooltip("radar.frequencymanager").withStyle(ChatFormatting.DARK_GRAY));
-            if (!button.isPressed) {
-                tooltips.add(VoltaicTextUtils.tooltip("inventoryio.presstoshow").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
-            } else {
-                tooltips.add(VoltaicTextUtils.tooltip("inventoryio.presstohide").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
-            }
+		}).onTooltip((graphics, but, xAxis, yAxis) -> {
+		    //
+		    ScreenComponentButton<?> button = (ScreenComponentButton<?>) but;
+		    List<Component> tooltips = new ArrayList<>();
+		    tooltips.add(
+			    BallistixTextUtils.tooltip("radar.frequencymanager").withStyle(ChatFormatting.DARK_GRAY));
+		    if (!button.isPressed) {
+			tooltips.add(VoltaicTextUtils.tooltip("inventoryio.presstoshow")
+				.withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+		    } else {
+			tooltips.add(VoltaicTextUtils.tooltip("inventoryio.presstohide")
+				.withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+		    }
 
-            graphics.renderComponentTooltip(screen.getFontRenderer(), tooltips, xAxis, yAxis);
+		    graphics.renderComponentTooltip(screen.getFontRenderer(), tooltips, xAxis, yAxis);
 
-        }).setIcon(BallistixIconTypes.FREQUENCY));
+		}).setIcon(BallistixIconTypes.FREQUENCY));
 
-        //screen.addComponent(titleLabel = new ScreenComponentSimpleLabel(x + 15, y + 20, 10, Color.TEXT_GRAY, BallistixTextUtils.tooltip("radar.frequencymanager")));
+	// screen.addComponent(titleLabel = new ScreenComponentSimpleLabel(x + 15, y +
+	// 20, 10, Color.TEXT_GRAY,
+	// BallistixTextUtils.tooltip("radar.frequencymanager")));
 
-        screen.addComponent(whitelistLabel = new ScreenComponentSimpleLabel(x + 15, y + 30, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("radar.frequencywhitelist.mode")));
-        screen.addComponent(toggleButton = new ScreenComponentButton<>(x + 90, y + 25, 70, 20).setOnPress(button -> {
+	screen.addComponent(whitelistLabel = new ScreenComponentSimpleLabel(x + 15, y + 30, 10, Color.TEXT_GRAY,
+		BallistixTextUtils.gui("radar.frequencywhitelist.mode")));
+	screen.addComponent(toggleButton = new ScreenComponentButton<>(x + 90, y + 25, 70, 20).setOnPress(button -> {
 
-            TileSearchRadar radar = screen.getMenu().getSafeHost();
+	    TileSearchRadar radar = screen.getMenu().getSafeHost();
 
-            if(radar == null) {
-                return;
-            }
+	    if (radar == null) {
+		return;
+	    }
 
-            radar.usingWhitelist.setValue(!radar.usingWhitelist.getValue());
+	    radar.usingWhitelist.setValue(!radar.usingWhitelist.getValue());
 
-        }).setLabel(() -> {
+	}).setLabel(() -> {
 
-            TileSearchRadar radar = screen.getMenu().getSafeHost();
+	    TileSearchRadar radar = screen.getMenu().getSafeHost();
 
-            if(radar == null) {
-                return Component.empty();
-            }
+	    if (radar == null) {
+		return Component.empty();
+	    }
 
-            return radar.usingWhitelist.getValue() ? BallistixTextUtils.gui("radar.frequencywhitelist.enabled") : BallistixTextUtils.gui("radar.frequencywhitelist.disabled");
+	    return radar.usingWhitelist.getValue() ? BallistixTextUtils.gui("radar.frequencywhitelist.enabled")
+		    : BallistixTextUtils.gui("radar.frequencywhitelist.disabled");
 
-        }));
+	}));
 
-        screen.addComponent(add = new ScreenComponentButton<>(x + 90, y + 50, 70, 20).setOnPress(button -> {
+	screen.addComponent(add = new ScreenComponentButton<>(x + 90, y + 50, 70, 20).setOnPress(button -> {
 
-            TileSearchRadar radar = screen.getMenu().getSafeHost();
+	    TileSearchRadar radar = screen.getMenu().getSafeHost();
 
-            if(radar == null) {
-                return;
-            }
+	    if (radar == null) {
+		return;
+	    }
 
-            try {
+	    try {
 
-                int freq = Integer.parseInt(addEditBox.getValue());
+		int freq = Integer.parseInt(addEditBox.getValue());
 
-                radar.whitelistedFrequencies.addValue(freq);
+		radar.whitelistedFrequencies.addValue(freq);
 
-            } catch (Exception e) {
+	    } catch (Exception e) {
 
-            }
+	    }
 
-        }).setLabel(BallistixTextUtils.gui("radar.frequencywhitelist.add")));
+	}).setLabel(BallistixTextUtils.gui("radar.frequencywhitelist.add")));
 
-        screen.addEditBox(addEditBox = new ScreenComponentEditBox(x + 15, y + 52, 70, 15, screen.getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(9).setFilter(ScreenComponentEditBox.INTEGER));
+	screen.addEditBox(addEditBox = new ScreenComponentEditBox(x + 15, y + 52, 70, 15, screen.getFontRenderer())
+		.setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(9)
+		.setFilter(ScreenComponentEditBox.INTEGER));
 
-        int butOffX = 25;
-        int butOffY = 80;
+	int butOffX = 25;
+	int butOffY = 80;
 
-        for (int i = 0; i < BUTTON_COUNT; i++) {
-            frequencies[i] = new ScreenComponentFrequency(x + butOffX, y + butOffY + 15 * i, 125, 15);
-        }
+	for (int i = 0; i < BUTTON_COUNT; i++) {
+	    frequencies[i] = new ScreenComponentFrequency(x + butOffX, y + butOffY + 15 * i, 125, 15);
+	}
 
-        for (int i = 0; i < BUTTON_COUNT; i++) {
+	for (int i = 0; i < BUTTON_COUNT; i++) {
 
-            final int index = i;
+	    final int index = i;
 
-            deleteButtons[i] = (ScreenComponentButton) new ScreenComponentButton<>(x + butOffX + 125, y + butOffY + 15 * i,15, 15).setOnPress(but -> {
+	    deleteButtons[i] = (ScreenComponentButton) new ScreenComponentButton<>(x + butOffX + 125,
+		    y + butOffY + 15 * i, 15, 15).setOnPress(but -> {
 
-                ScreenComponentFrequency frequency = frequencies[index];
+			ScreenComponentFrequency frequency = frequencies[index];
 
-                TileSearchRadar tile = screen.getMenu().getSafeHost();
+			TileSearchRadar tile = screen.getMenu().getSafeHost();
 
-                if(frequency.getFrequency() == null) {
-                    return;
-                }
+			if (frequency.getFrequency() == null) {
+			    return;
+			}
 
-                tile.whitelistedFrequencies.removeValue(frequency.getFrequency());
+			tile.whitelistedFrequencies.removeValue(frequency.getFrequency());
 
-            }).onTooltip((graphics, button, xAxis, yAxis) -> graphics.renderTooltip(screen.getFontRenderer(), BallistixTextUtils.tooltip("radar.frequencymanager.delete"), xAxis, yAxis)).setIcon(BallistixIconTypes.DELETE);
-        }
+		    })
+		    .onTooltip((graphics, button, xAxis, yAxis) -> graphics.renderTooltip(screen.getFontRenderer(),
+			    BallistixTextUtils.tooltip("radar.frequencymanager.delete"), xAxis, yAxis))
+		    .setIcon(BallistixIconTypes.DELETE);
+	}
 
-        screen.addComponent(button);
-        screen.addComponent(toggleButton);
-        screen.addComponent(add);
+	screen.addComponent(button);
+	screen.addComponent(toggleButton);
+	screen.addComponent(add);
 
-        //screen.addComponent(titleLabel);
-        screen.addComponent(whitelistLabel);
+	// screen.addComponent(titleLabel);
+	screen.addComponent(whitelistLabel);
 
-        screen.addComponent(addEditBox);
+	screen.addComponent(addEditBox);
 
-        for (int i = 0; i < 5; i++) {
-            screen.addComponent(frequencies[i]);
-        }
-        for (int i = 0; i < 5; i++) {
-            screen.addComponent(deleteButtons[i]);
-        }
+	for (int i = 0; i < 5; i++) {
+	    screen.addComponent(frequencies[i]);
+	}
+	for (int i = 0; i < 5; i++) {
+	    screen.addComponent(deleteButtons[i]);
+	}
 
-        updateVisibility(false);
+	updateVisibility(false);
 
     }
 
     public void tick() {
-        TileSearchRadar tile = screen.getMenu().getSafeHost();
-        if(tile == null) {
-            return;
-        }
+	TileSearchRadar tile = screen.getMenu().getSafeHost();
+	if (tile == null) {
+	    return;
+	}
 
-        List<Integer> frequencyList = tile.whitelistedFrequencies.getValue();
+	List<Integer> frequencyList = tile.whitelistedFrequencies.getValue();
 
-        lastRowCount = frequencyList.size();
+	lastRowCount = frequencyList.size();
 
-        for(int i = 0; i < BUTTON_COUNT; i++) {
+	for (int i = 0; i < BUTTON_COUNT; i++) {
 
-            ScreenComponentFrequency button = frequencies[i];
+	    ScreenComponentFrequency button = frequencies[i];
 
-            int index = topRowIndex + i;
+	    int index = topRowIndex + i;
 
-            if (index < frequencyList.size()) {
-                button.setFrequency(frequencyList.get(index));
-            } else {
-                button.setFrequency(null);
-            }
+	    if (index < frequencyList.size()) {
+		button.setFrequency(frequencyList.get(index));
+	    } else {
+		button.setFrequency(null);
+	    }
 
-        }
+	}
 
-        ScreenComponentVerticalSlider slider = screen.slider;
-        if (lastRowCount > BUTTON_COUNT) {
-            slider.updateActive(true);
-            if (!slider.isSliderHeld()) {
-                int moveRoom = screen.slider.height - 15 -2;
+	ScreenComponentVerticalSlider slider = screen.slider;
+	if (lastRowCount > BUTTON_COUNT) {
+	    slider.updateActive(true);
+	    if (!slider.isSliderHeld()) {
+		int moveRoom = screen.slider.height - 15 - 2;
 
-                // int moveRoom = 102 - 2;
-                double moved = topRowIndex / (lastRowCount - (double) BUTTON_COUNT);
-                slider.setSliderYOffset((int) (moveRoom * moved));
-            }
-        } else {
-            slider.updateActive(false);
-            slider.setSliderYOffset(0);
-            topRowIndex = 0;
-        }
+		// int moveRoom = 102 - 2;
+		double moved = topRowIndex / (lastRowCount - (double) BUTTON_COUNT);
+		slider.setSliderYOffset((int) (moveRoom * moved));
+	    }
+	} else {
+	    slider.updateActive(false);
+	    slider.setSliderYOffset(0);
+	    topRowIndex = 0;
+	}
 
     }
 
     // pos for down, neg for up
     public void handleMouseScroll(int dir) {
-        if (Screen.hasControlDown()) {
-            dir *= 4;
-        }
-        int lastRowIndex = lastRowCount - 1;
-        if (lastRowCount > BUTTON_COUNT) {
-            // check in case something borked
-            if (topRowIndex >= lastRowCount) {
-                topRowIndex = lastRowIndex - (BUTTON_COUNT - 1);
-            }
-            topRowIndex = Mth.clamp(topRowIndex += dir, 0, lastRowIndex - (BUTTON_COUNT - 1));
-        } else {
-            topRowIndex = 0;
-        }
+	if (Screen.hasControlDown()) {
+	    dir *= 4;
+	}
+	int lastRowIndex = lastRowCount - 1;
+	if (lastRowCount > BUTTON_COUNT) {
+	    // check in case something borked
+	    if (topRowIndex >= lastRowCount) {
+		topRowIndex = lastRowIndex - (BUTTON_COUNT - 1);
+	    }
+	    topRowIndex = Mth.clamp(topRowIndex += dir, 0, lastRowIndex - (BUTTON_COUNT - 1));
+	} else {
+	    topRowIndex = 0;
+	}
     }
 
     public Consumer<Integer> getSliderClickedConsumer() {
-        return (mouseY) -> {
-            ScreenComponentVerticalSlider slider = screen.slider;
-            if (slider.isSliderActive()) {
-                int sliderY = slider.yLocation;
-                int sliderHeight = slider.height;
-                int mouseHeight = mouseY - sliderY;
-                if (mouseHeight >= sliderHeight - 2 - 15) {
-                    topRowIndex = lastRowCount - BUTTON_COUNT;
-                    slider.setSliderYOffset(sliderHeight - 2 - 15);
-                } else if (mouseHeight <= 2) {
-                    topRowIndex = 0;
-                    slider.setSliderYOffset(0);
-                } else {
-                    double heightRatio = (double) mouseHeight / (double) sliderHeight;
-                    topRowIndex = (int) Math.round((lastRowCount - BUTTON_COUNT) * heightRatio);
-                    int moveRoom = slider.height - 15 - 2;
-                    double moved = topRowIndex / (lastRowCount - (double)BUTTON_COUNT);
-                    slider.setSliderYOffset((int) (moveRoom * moved));
-                }
-            }
-        };
+	return mouseY -> {
+	    ScreenComponentVerticalSlider slider = screen.slider;
+	    if (slider.isSliderActive()) {
+		int sliderY = slider.yLocation;
+		int sliderHeight = slider.height;
+		int mouseHeight = mouseY - sliderY;
+		if (mouseHeight >= sliderHeight - 2 - 15) {
+		    topRowIndex = lastRowCount - BUTTON_COUNT;
+		    slider.setSliderYOffset(sliderHeight - 2 - 15);
+		} else if (mouseHeight <= 2) {
+		    topRowIndex = 0;
+		    slider.setSliderYOffset(0);
+		} else {
+		    double heightRatio = (double) mouseHeight / (double) sliderHeight;
+		    topRowIndex = (int) Math.round((lastRowCount - BUTTON_COUNT) * heightRatio);
+		    int moveRoom = slider.height - 15 - 2;
+		    double moved = topRowIndex / (lastRowCount - (double) BUTTON_COUNT);
+		    slider.setSliderYOffset((int) (moveRoom * moved));
+		}
+	    }
+	};
     }
 
     public Consumer<Integer> getSliderDraggedConsumer() {
-        return (mouseY) -> {
-            ScreenComponentVerticalSlider slider = screen.slider;
-            if (slider.isSliderActive()) {
-                int sliderY = slider.yLocation;
-                int sliderHeight = slider.height;
-                if (mouseY <= sliderY + 2) {
-                    topRowIndex = 0;
-                    slider.setSliderYOffset(0);
-                } else if (mouseY >= sliderY + sliderHeight - 2 - 15) {
-                    topRowIndex = lastRowCount - BUTTON_COUNT;
-                    slider.setSliderYOffset(sliderHeight - 2 - 15);
-                } else {
-                    int mouseHeight = mouseY - sliderY;
-                    slider.setSliderYOffset(mouseHeight);
-                    double heightRatio = (double) mouseHeight / (double) sliderHeight;
-                    topRowIndex = (int) Math.round((lastRowCount - BUTTON_COUNT) * heightRatio);
-                }
-            }
-        };
+	return mouseY -> {
+	    ScreenComponentVerticalSlider slider = screen.slider;
+	    if (slider.isSliderActive()) {
+		int sliderY = slider.yLocation;
+		int sliderHeight = slider.height;
+		if (mouseY <= sliderY + 2) {
+		    topRowIndex = 0;
+		    slider.setSliderYOffset(0);
+		} else if (mouseY >= sliderY + sliderHeight - 2 - 15) {
+		    topRowIndex = lastRowCount - BUTTON_COUNT;
+		    slider.setSliderYOffset(sliderHeight - 2 - 15);
+		} else {
+		    int mouseHeight = mouseY - sliderY;
+		    slider.setSliderYOffset(mouseHeight);
+		    double heightRatio = (double) mouseHeight / (double) sliderHeight;
+		    topRowIndex = (int) Math.round((lastRowCount - BUTTON_COUNT) * heightRatio);
+		}
+	    }
+	};
     }
 
     public void updateVisibility(boolean show) {
 
-        toggleButton.setVisible(show);
-        add.setVisible(show);
+	toggleButton.setVisible(show);
+	add.setVisible(show);
 
-        //titleLabel.setVisible(show);
-        whitelistLabel.setVisible(show);
+	// titleLabel.setVisible(show);
+	whitelistLabel.setVisible(show);
 
+	for (ScreenComponentFrequency component : frequencies) {
+	    component.setVisible(show);
+	}
 
-        for(ScreenComponentFrequency component : frequencies) {
-            component.setVisible(show);
-        }
+	for (ScreenComponentButton<?> button : deleteButtons) {
+	    button.setVisible(show);
+	}
 
-        for(ScreenComponentButton<?> button : deleteButtons) {
-            button.setVisible(show);
-        }
-
-        addEditBox.setVisible(show);
-        addEditBox.setValue("");
+	addEditBox.setVisible(show);
+	addEditBox.setValue("");
 
     }
 

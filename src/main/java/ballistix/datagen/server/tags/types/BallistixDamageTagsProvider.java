@@ -12,14 +12,18 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 
 public class BallistixDamageTagsProvider extends DamageTypeTagsProvider {
 
-	public BallistixDamageTagsProvider(PackOutput output, CompletableFuture<Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
-		super(output, lookupProvider, Ballistix.ID, existingFileHelper);
-	}
+    public BallistixDamageTagsProvider(PackOutput output, CompletableFuture<Provider> lookupProvider,
+	    ExistingFileHelper existingFileHelper) {
+	super(output, lookupProvider, Ballistix.ID, existingFileHelper);
+    }
 
-	@Override
-	protected void addTags(Provider provider) {
-		tag(DamageTypeTags.BYPASSES_ARMOR).add(BallistixDamageTypes.CHEMICAL_GAS, BallistixDamageTypes.TOXIN, BallistixDamageTypes.FROSTBITE);
-		tag(DamageTypeTags.BYPASSES_EFFECTS).add(BallistixDamageTypes.CHEMICAL_GAS, BallistixDamageTypes.SHRAPNEL, BallistixDamageTypes.CIWS_BULLET, BallistixDamageTypes.LASER_TURRET, BallistixDamageTypes.RAILGUN_ROUND); // bypasses magic
-	}
+    @Override
+    protected void addTags(Provider provider) {
+	tag(DamageTypeTags.BYPASSES_ARMOR).add(BallistixDamageTypes.CHEMICAL_GAS, BallistixDamageTypes.TOXIN,
+		BallistixDamageTypes.FROSTBITE);
+	tag(DamageTypeTags.BYPASSES_EFFECTS).add(BallistixDamageTypes.CHEMICAL_GAS, BallistixDamageTypes.SHRAPNEL,
+		BallistixDamageTypes.CIWS_BULLET, BallistixDamageTypes.LASER_TURRET,
+		BallistixDamageTypes.RAILGUN_ROUND); // bypasses magic
+    }
 
 }

@@ -90,10 +90,7 @@ public abstract class Blast {
     }
 
     public static boolean canBreakBlockState(Level world, BlockState state, BlockPos pos, @Nullable Entity owner) {
-	if (!(world instanceof ServerLevel)) {
-	    return false;
-	}
-	if (state.isAir())
+	if (!(world instanceof ServerLevel) || state.isAir())
 	    return false;
 	if (ModList.get().isLoaded(Ballistix.GRIEF_DEFENDER_ID)) {
 	    if (!GriefDefenderHandler.shouldHarmBlock(pos)) {
@@ -109,7 +106,7 @@ public abstract class Blast {
 	    @Nullable BlockState placedAgainst, @Nullable Entity owner) {
 	if (!(level instanceof ServerLevel))
 	    return false;
-	BlockState against = (placedAgainst != null) ? placedAgainst : level.getBlockState(pos);
+	BlockState against = placedAgainst != null ? placedAgainst : level.getBlockState(pos);
 
 	BlockSnapshot snapshot = BlockSnapshot.create(level.dimension(), level, pos);
 

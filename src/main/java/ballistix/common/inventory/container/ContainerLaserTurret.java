@@ -12,15 +12,15 @@ import voltaic.prefab.inventory.container.types.GenericContainerBlockEntity;
 public class ContainerLaserTurret extends GenericContainerBlockEntity<TileTurretLaser> {
 
     public ContainerLaserTurret(int id, Inventory playerinv) {
-        this(id, playerinv, new SimpleContainer(0), new SimpleContainerData(5));
+	this(id, playerinv, new SimpleContainer(0), new SimpleContainerData(5));
     }
 
     public ContainerLaserTurret(int id, Inventory playerinv, Container inventory, ContainerData inventorydata) {
-        super(BallistixMenuTypes.CONTAINER_LASERTURRET.get(), id, playerinv, inventory, inventorydata);
+	super(BallistixMenuTypes.CONTAINER_LASERTURRET.get(), id, playerinv, inventory, inventorydata);
     }
 
     @Override
     public void addInventorySlots(Container container, Inventory inventory) {
-        setPlayerInvOffset(10);
+	setPlayerInvOffset(10);
     }
 }

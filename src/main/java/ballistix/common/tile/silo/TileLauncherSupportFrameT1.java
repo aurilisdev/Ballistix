@@ -13,32 +13,32 @@ import voltaic.api.multiblock.subnodebased.parent.IMultiblockParentTile;
 import voltaic.prefab.tile.GenericTile;
 
 public class TileLauncherSupportFrameT1 extends GenericTile implements IMultiblockParentTile, ILauncherSupportFrame {
-	public TileLauncherSupportFrameT1(BlockPos pos, BlockState state) {
-		this(BallistixTiles.TILE_LAUNCHER_SUPPORT_FRAME_TIER1.get(), pos, state, 1);
-	}
+    public TileLauncherSupportFrameT1(BlockPos pos, BlockState state) {
+	this(BallistixTiles.TILE_LAUNCHER_SUPPORT_FRAME_TIER1.get(), pos, state, 1);
+    }
 
-	public TileLauncherSupportFrameT1(BlockEntityType<?> type, BlockPos pos, BlockState state, int tier) {
-		super(type, pos, state);
-	}
+    public TileLauncherSupportFrameT1(BlockEntityType<?> type, BlockPos pos, BlockState state, int tier) {
+	super(type, pos, state);
+    }
 
-	@Override
-	public IMultiblockParentBlock.SubnodeWrapper getSubNodes() {
-		return SubtypeBallistixMachine.Subnodes.LAUNCHER_SUPPORT_FRAME_TIER1;
-	}
+    @Override
+    public IMultiblockParentBlock.SubnodeWrapper getSubNodes() {
+	return SubtypeBallistixMachine.Subnodes.LAUNCHER_SUPPORT_FRAME_TIER1;
+    }
 
-	@Override
-	public void onSubnodeDestroyed(TileMultiSubnode tileMultiSubnode) {
-		level.destroyBlock(worldPosition, true);
-	}
+    @Override
+    public void onSubnodeDestroyed(TileMultiSubnode tileMultiSubnode) {
+	level.destroyBlock(worldPosition, true);
+    }
 
-	@Override
-	public Direction getFacingDirection() {
-		return getFacing();
-	}
+    @Override
+    public Direction getFacingDirection() {
+	return getFacing();
+    }
 
-	@Override
-	public int getInaccuracy() {
-		return 30;
-	}
+    @Override
+    public int getInaccuracy() {
+	return 30;
+    }
 
 }

@@ -62,7 +62,7 @@ public class ThreadDynamicRaycastBlast extends ThreadBlast {
 	}
 	if (BallistixConstants.SHOULD_MULTITHREAD_RAYTRACING) {
 	    while (!underBlasts.isEmpty()) {
-		HashSet<BlockPos> current = new HashSet<BlockPos>();
+		HashSet<BlockPos> current = new HashSet<>();
 		synchronized (intermediateResults) {
 		    current.addAll(intermediateResults);
 		    intermediateResults.clear();

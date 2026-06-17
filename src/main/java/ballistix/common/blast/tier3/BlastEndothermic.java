@@ -70,8 +70,8 @@ public class BlastEndothermic extends BlastLasting implements IHasCustomRender {
 	    BlockPos p = new BlockPos(iterator.next()).offset(position);
 	    BlockState state = world.getBlockState(p);
 
-	    if (state.isAir() || (!(state.getBlock() instanceof LiquidBlock) && (state.getDestroySpeed(world, p) < 0
-		    || state.getDestroySpeed(world, p) > BallistixConstants.EXPLOSIVE_ENDOTHERMIC_MAXHARDNESS))) {
+	    if (state.isAir() || !(state.getBlock() instanceof LiquidBlock) && (state.getDestroySpeed(world, p) < 0
+		    || state.getDestroySpeed(world, p) > BallistixConstants.EXPLOSIVE_ENDOTHERMIC_MAXHARDNESS)) {
 		continue;
 	    }
 

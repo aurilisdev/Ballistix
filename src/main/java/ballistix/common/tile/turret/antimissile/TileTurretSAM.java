@@ -25,94 +25,101 @@ import voltaic.prefab.utilities.BlockEntityUtils;
 
 public class TileTurretSAM extends TileTurretAntimissileProjectile {
 
-    public final SingleProperty<Integer> cooldown = property(new SingleProperty<>(PropertyTypes.INTEGER, "cooldown", 0));
-    public final SingleProperty<Boolean> outOfAmmo = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "noammo", false));
+    public final SingleProperty<Integer> cooldown = property(
+	    new SingleProperty<>(PropertyTypes.INTEGER, "cooldown", 0));
+    public final SingleProperty<Boolean> outOfAmmo = property(
+	    new SingleProperty<>(PropertyTypes.BOOLEAN, "noammo", false));
 
     public TileTurretSAM(BlockPos worldPos, BlockState blockState) {
-        super(BallistixTiles.TILE_SAMTURRET.get(), worldPos, blockState, BallistixConstants.SAM_TURRET_BASE_RANGE, 100, BallistixConstants.SAM_TURRET_USAGEPERTICK, BallistixConstants.SAM_TURRET_ROTATIONSPEEDRADIANS, 1);
+	super(BallistixTiles.TILE_SAMTURRET.get(), worldPos, blockState, BallistixConstants.SAM_TURRET_BASE_RANGE, 100,
+		BallistixConstants.SAM_TURRET_USAGEPERTICK, BallistixConstants.SAM_TURRET_ROTATIONSPEEDRADIANS, 1);
     }
 
     @Override
     public ComponentInventory getInventory() {
-        return new ComponentInventory(this, ComponentInventory.InventoryBuilder.newInv().inputs(1).upgrades(3)).setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).valid((index, stack, inv) -> {
+	return new ComponentInventory(this, ComponentInventory.InventoryBuilder.newInv().inputs(1).upgrades(3))
+		.setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).valid((index, stack, inv) -> {
 
-            if (index == 0) {
-                return stack.getItem() == BallistixItems.ITEM_AAMISSILE.get();
-            } else if (index >= inv.getUpgradeSlotStartIndex()) {
-                return stack.getItem() instanceof ItemUpgrade upgrade && inv.isUpgradeValid(upgrade.subtype);
-            } else {
-                return false;
-            }
+		    if (index == 0) {
+			return stack.getItem() == BallistixItems.ITEM_AAMISSILE.get();
+		    } else if (index >= inv.getUpgradeSlotStartIndex()) {
+			return stack.getItem() instanceof ItemUpgrade upgrade && inv.isUpgradeValid(upgrade.subtype);
+		    } else {
+			return false;
+		    }
 
-        });
+		});
     }
 
     @Override
     public ComponentContainerProvider getContainer() {
-        return new ComponentContainerProvider("samturret", this).createMenu((id, player) -> new ContainerSAMTurret(id, player, getComponent(IComponentType.Inventory), getCoordsArray()));
+	return new ComponentContainerProvider("samturret", this).createMenu((id, player) -> new ContainerSAMTurret(id,
+		player, getComponent(IComponentType.Inventory), getCoordsArray()));
     }
 
     @Override
     public void tickServerActive(ComponentTickable tickable) {
-        if (cooldown.getValue() > 0) {
-            cooldown.setValue(cooldown.getValue() - 1);
-        }
+	if (cooldown.getValue() > 0) {
+	    cooldown.setValue(cooldown.getValue() - 1);
+	}
     }
 
     @Override
     public void fireTickServer(long ticks) {
 
-        if (cooldown.getValue() > 0) {
-            return;
-        }
+	if (cooldown.getValue() > 0) {
+	    return;
+	}
 
-        ComponentInventory inv = getComponent(IComponentType.Inventory);
+	ComponentInventory inv = getComponent(IComponentType.Inventory);
 
-        ItemStack missile = inv.getItem(0);
+	ItemStack missile = inv.getItem(0);
 
-        if (missile.isEmpty()) {
-            outOfAmmo.setValue(true);
-            return;
-        }
+	if (missile.isEmpty()) {
+	    outOfAmmo.setValue(true);
+	    return;
+	}
 
-        outOfAmmo.setValue(false);
+	outOfAmmo.setValue(false);
 
-        VirtualProjectile.VirtualSAM sam = new VirtualProjectile.VirtualSAM(0.0F, getProjectileLaunchPosition(), targetMovement.getValue(), currentRange.getValue().floatValue(), boundFireControl.getValue(), 0);
+	VirtualProjectile.VirtualSAM sam = new VirtualProjectile.VirtualSAM(0.0F, getProjectileLaunchPosition(),
+		targetMovement.getValue(), currentRange.getValue().floatValue(), boundFireControl.getValue(), 0);
 
-        MissileManager.addSAM(level.dimension(), sam);
+	MissileManager.addSAM(level.dimension(), sam);
 
-        level.playSound(null, getBlockPos().above(), BallistixSounds.SOUND_MISSILE_ROCKETLAUNCHER.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+	level.playSound(null, getBlockPos().above(), BallistixSounds.SOUND_MISSILE_ROCKETLAUNCHER.get(),
+		SoundSource.BLOCKS, 1.0F, 1.0F);
 
-        cooldown.setValue(BallistixConstants.SAM_TURRET_COOLDOWN);
+	cooldown.setValue(BallistixConstants.SAM_TURRET_COOLDOWN);
 
-        inv.removeItem(0, 1);
+	inv.removeItem(0, 1);
 
     }
 
     @Override
     public Vec3 getProjectileLaunchPosition() {
-        BlockPos above = getBlockPos().above();
-        return new Vec3(above.getX() + 0.5, above.getY() + 0.5, above.getZ() + 0.5);
+	BlockPos above = getBlockPos().above();
+	return new Vec3(above.getX() + 0.5, above.getY() + 0.5, above.getZ() + 0.5);
     }
 
     @Override
     public float getProjectileSpeed() {
-        return BallistixConstants.SAM_TOP_SPEED;
+	return BallistixConstants.SAM_TOP_SPEED;
     }
 
     @Override
     public double getMinElevation() {
-        return -0.5;
+	return -0.5;
     }
 
     @Override
     public double getMaxElevation() {
-        return 1;
+	return 1;
     }
-    
+
     @Override
     public AABB getRenderBoundingBox() {
-    	return super.getRenderBoundingBox().inflate(3);
+	return super.getRenderBoundingBox().inflate(3);
     }
 
 }

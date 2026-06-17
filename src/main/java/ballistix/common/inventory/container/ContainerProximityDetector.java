@@ -11,13 +11,12 @@ import voltaic.prefab.inventory.container.types.GenericContainerBlockEntity;
 
 public class ContainerProximityDetector extends GenericContainerBlockEntity<TileProximityDetector> {
 
-
     public ContainerProximityDetector(int id, Inventory playerinv) {
-        this(id, playerinv, new SimpleContainer(0), new SimpleContainerData(5));
+	this(id, playerinv, new SimpleContainer(0), new SimpleContainerData(5));
     }
 
     public ContainerProximityDetector(int id, Inventory playerinv, Container inventory, ContainerData inventorydata) {
-        super(BallistixMenuTypes.CONTAINER_PROXIMITYDETECTOR.get(), id, playerinv, inventory, inventorydata);
+	super(BallistixMenuTypes.CONTAINER_PROXIMITYDETECTOR.get(), id, playerinv, inventory, inventorydata);
     }
 
     @Override
@@ -32,6 +31,6 @@ public class ContainerProximityDetector extends GenericContainerBlockEntity<Tile
 
     @Override
     public int getPlayerInvOffset() {
-        return 10;
+	return 10;
     }
 }

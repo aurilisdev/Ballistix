@@ -29,7 +29,11 @@ import voltaic.prefab.properties.variant.ListProperty;
 import voltaic.prefab.properties.variant.SingleProperty;
 import voltaic.prefab.tile.GenericTile;
 import voltaic.prefab.tile.components.IComponentType;
-import voltaic.prefab.tile.components.type.*;
+import voltaic.prefab.tile.components.type.ComponentContainerProvider;
+import voltaic.prefab.tile.components.type.ComponentElectrodynamic;
+import voltaic.prefab.tile.components.type.ComponentForgeEnergy;
+import voltaic.prefab.tile.components.type.ComponentPacketHandler;
+import voltaic.prefab.tile.components.type.ComponentTickable;
 import voltaic.prefab.utilities.BlockEntityUtils;
 import voltaic.registers.VoltaicCapabilities;
 
@@ -39,13 +43,20 @@ public class TileFireControlRadar extends GenericTile {
 
     public static final Vec3 OUT_OF_REACH = new Vec3(0, -1000, 0);
 
-    public final SingleProperty<Vec3> trackingPos = property(new SingleProperty<>(PropertyTypes.VEC3, "trackingpos", OUT_OF_REACH));
-    public final SingleProperty<Boolean> usingWhitelist = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "usingwhitelist", false));
-    public final ListProperty<Integer> whitelistedFrequencies = property(new ListProperty<>(PropertyTypes.INTEGER_LIST, "whitelistedfreqs", new ArrayList<>()));
-    public final SingleProperty<Integer> missileType = property(new SingleProperty<>(PropertyTypes.INTEGER, "trackingtype", -1));
-    public final SingleProperty<Boolean> usingRedstone = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "usingredstone", false));
-    public final SingleProperty<Boolean> redstone = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "redstone", false));
-    public final SingleProperty<Boolean> running = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "running", false));
+    public final SingleProperty<Vec3> trackingPos = property(
+	    new SingleProperty<>(PropertyTypes.VEC3, "trackingpos", OUT_OF_REACH));
+    public final SingleProperty<Boolean> usingWhitelist = property(
+	    new SingleProperty<>(PropertyTypes.BOOLEAN, "usingwhitelist", false));
+    public final ListProperty<Integer> whitelistedFrequencies = property(
+	    new ListProperty<>(PropertyTypes.INTEGER_LIST, "whitelistedfreqs", new ArrayList<>()));
+    public final SingleProperty<Integer> missileType = property(
+	    new SingleProperty<>(PropertyTypes.INTEGER, "trackingtype", -1));
+    public final SingleProperty<Boolean> usingRedstone = property(
+	    new SingleProperty<>(PropertyTypes.BOOLEAN, "usingredstone", false));
+    public final SingleProperty<Boolean> redstone = property(
+	    new SingleProperty<>(PropertyTypes.BOOLEAN, "redstone", false));
+    public final SingleProperty<Boolean> running = property(
+	    new SingleProperty<>(PropertyTypes.BOOLEAN, "running", false));
 
     public final Vec3 searchPos;
     private final AABB searchArea = new AABB(getBlockPos()).inflate(BallistixConstants.FIRE_CONTROL_RADAR_RANGE);
@@ -56,159 +67,176 @@ public class TileFireControlRadar extends GenericTile {
     public double clientRotationSpeed;
 
     public TileFireControlRadar(BlockPos pos, BlockState state) {
-        super(BallistixTiles.TILE_FIRECONTROLRADAR.get(), pos, state);
-        addComponent(new ComponentTickable(this).tickServer(this::tickServer).tickClient(this::tickClient));
-        addComponent(new ComponentPacketHandler(this));
-        addComponent(new ComponentElectrodynamic(this, false, true).voltage(VoltaicCapabilities.DEFAULT_VOLTAGE).setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM).maxJoules(BallistixConstants.FIRE_CONTROL_RADAR_USAGE * 20));
-        addComponent(new ComponentContainerProvider("firecontrolradar", this).createMenu((id, player) -> new ContainerFireControlRadar(id, player, new SimpleContainer(0), getCoordsArray())));
-        addComponent(new ComponentForgeEnergy(this));
-        searchPos = new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+	super(BallistixTiles.TILE_FIRECONTROLRADAR.get(), pos, state);
+	addComponent(new ComponentTickable(this).tickServer(this::tickServer).tickClient(this::tickClient));
+	addComponent(new ComponentPacketHandler(this));
+	addComponent(new ComponentElectrodynamic(this, false, true).voltage(VoltaicCapabilities.DEFAULT_VOLTAGE)
+		.setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM)
+		.maxJoules(BallistixConstants.FIRE_CONTROL_RADAR_USAGE * 20));
+	addComponent(new ComponentContainerProvider("firecontrolradar", this).createMenu(
+		(id, player) -> new ContainerFireControlRadar(id, player, new SimpleContainer(0), getCoordsArray())));
+	addComponent(new ComponentForgeEnergy(this));
+	searchPos = new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
     }
 
     public void tickServer(ComponentTickable tickable) {
-        ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
+	ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
 
-        running.setValue(electro.getJoulesStored() > BallistixConstants.RADAR_USAGE / 20.0 && level.getBrightness(LightLayer.SKY, getBlockPos()) > 0 && (!usingRedstone.getValue() || (usingRedstone.getValue() && redstone.getValue())));
+	running.setValue(electro.getJoulesStored() > BallistixConstants.RADAR_USAGE / 20.0
+		&& level.getBrightness(LightLayer.SKY, getBlockPos()) > 0
+		&& (!usingRedstone.getValue() || usingRedstone.getValue() && redstone.getValue()));
 
-        if (!running.getValue()) {
-            tracking = null;
-            TileESMTower.removeFireControlRadar(this);
-            return;
-        }
+	if (!running.getValue()) {
+	    tracking = null;
+	    TileESMTower.removeFireControlRadar(this);
+	    return;
+	}
 
-        TileESMTower.addFireControlRadar(this);
+	TileESMTower.addFireControlRadar(this);
 
-        electro.joules(electro.getJoulesStored() - (BallistixConstants.RADAR_USAGE / 20.0));
+	electro.joules(electro.getJoulesStored() - BallistixConstants.RADAR_USAGE / 20.0);
 
-        if (tracking != null && (tracking.hasExploded() || tracking.getId() == null || MissileManager.getMissile(level.dimension(), tracking.getId()) == null)) {
-            tracking = null;
-            trackingPos.setValue(OUT_OF_REACH);
-        }
+	if (tracking != null && (tracking.hasExploded() || tracking.getId() == null
+		|| MissileManager.getMissile(level.dimension(), tracking.getId()) == null)) {
+	    tracking = null;
+	    trackingPos.setValue(OUT_OF_REACH);
+	}
 
-        VirtualMissile temp = null;
+	VirtualMissile temp = null;
 
-        for (VirtualMissile missile : MissileManager.getMissilesForLevel(level.dimension())) {
-            if (missile.getBoundingBox().intersects(searchArea)) {
-                if (temp == null && (!usingWhitelist.getValue() || usingWhitelist.getValue() && !whitelistedFrequencies.getValue().contains(missile.payloadData.frequency)) && !missile.hasExploded()) {
-                    temp = missile;
-                } else if (temp != null && getDistanceToMissile(searchPos, missile.position) < getDistanceToMissile(searchPos, temp.position) && (!usingWhitelist.getValue() || usingWhitelist.getValue() && !whitelistedFrequencies.getValue().contains(missile.payloadData.frequency)) && !missile.hasExploded()) {
-                    temp = missile;
-                }
-            }
-        }
+	for (VirtualMissile missile : MissileManager.getMissilesForLevel(level.dimension())) {
+	    if (missile.getBoundingBox().intersects(searchArea)) {
+		if (temp == null
+			&& (!usingWhitelist.getValue() || usingWhitelist.getValue()
+				&& !whitelistedFrequencies.getValue().contains(missile.payloadData.frequency))
+			&& !missile.hasExploded()) {
+		    temp = missile;
+		} else if (temp != null
+			&& getDistanceToMissile(searchPos, missile.position) < getDistanceToMissile(searchPos,
+				temp.position)
+			&& (!usingWhitelist.getValue() || usingWhitelist.getValue()
+				&& !whitelistedFrequencies.getValue().contains(missile.payloadData.frequency))
+			&& !missile.hasExploded()) {
+		    temp = missile;
+		}
+	    }
+	}
 
-        if (tracking == null) {
-            tracking = temp;
-        }
+	if (tracking == null) {
+	    tracking = temp;
+	}
 
-        if (tracking != null && !tracking.hasExploded()) {
-            trackingPos.setValue(tracking.position);
-            missileType.setValue(tracking.payloadData.missileType);
-            if (trackingPos.getValue().distanceTo(new Vec3(worldPosition.getX(), trackingPos.getValue().y, worldPosition.getZ())) > BallistixConstants.FIRE_CONTROL_RADAR_RANGE) {
-                tracking = null;
-                trackingPos.setValue(OUT_OF_REACH);
-            }
-        } else {
-            trackingPos.setValue(OUT_OF_REACH);
-            missileType.setValue(-1);
-        }
+	if (tracking != null && !tracking.hasExploded()) {
+	    trackingPos.setValue(tracking.position);
+	    missileType.setValue(tracking.payloadData.missileType);
+	    if (trackingPos.getValue().distanceTo(new Vec3(worldPosition.getX(), trackingPos.getValue().y,
+		    worldPosition.getZ())) > BallistixConstants.FIRE_CONTROL_RADAR_RANGE) {
+		tracking = null;
+		trackingPos.setValue(OUT_OF_REACH);
+	    }
+	} else {
+	    trackingPos.setValue(OUT_OF_REACH);
+	    missileType.setValue(-1);
+	}
     }
 
     public void tickClient(ComponentTickable tickable) {
-        clientRotation += clientRotationSpeed;
+	clientRotation += clientRotationSpeed;
 
-        clientRotationSpeed = Mth.clamp(clientRotationSpeed + 0.25 * (running.getValue() ? 1 : -1), 0.0, 20.0);
-        if (tickable.getTicks() % PULSE_TIME_TICKS == 0 && running.getValue()) {
-            SoundAPI.playSound(BallistixSounds.SOUND_FIRECONTROLRADAR.get(), SoundSource.BLOCKS, 1.0F, 1.0F, worldPosition);
-        }
+	clientRotationSpeed = Mth.clamp(clientRotationSpeed + 0.25 * (running.getValue() ? 1 : -1), 0.0, 20.0);
+	if (tickable.getTicks() % PULSE_TIME_TICKS == 0 && running.getValue()) {
+	    SoundAPI.playSound(BallistixSounds.SOUND_FIRECONTROLRADAR.get(), SoundSource.BLOCKS, 1.0F, 1.0F,
+		    worldPosition);
+	}
     }
 
     @Override
     public void onNeightborChanged(BlockPos neighbor, boolean blockStateTrigger) {
-        super.onNeightborChanged(neighbor, blockStateTrigger);
-        redstone.setValue(level.getBestNeighborSignal(getBlockPos()) > 0);
+	super.onNeightborChanged(neighbor, blockStateTrigger);
+	redstone.setValue(level.getBestNeighborSignal(getBlockPos()) > 0);
     }
 
     public static double getDistanceToMissile(Vec3 pos, Vec3 missilePos) {
-        double deltaX = missilePos.x - pos.x;
-        double deltaY = missilePos.y - pos.y;
-        double deltaZ = missilePos.z - pos.z;
-        return Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+	double deltaX = missilePos.x - pos.x;
+	double deltaY = missilePos.y - pos.y;
+	double deltaZ = missilePos.z - pos.z;
+	return Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
     }
 
     // will return negative one if can't hit;
     // otherwise returns the time in seconds
-    public static double getTimeToIntercept(Vec3 missPos, Vec3 missVect, float missSpeed, float bulletSpeed, Vec3 interceptorPos) {
-        Vec3 missVector = missVect.scale(missSpeed);
+    public static double getTimeToIntercept(Vec3 missPos, Vec3 missVect, float missSpeed, float bulletSpeed,
+	    Vec3 interceptorPos) {
+	Vec3 missVector = missVect.scale(missSpeed);
 
-        double a = missVector.dot(missVector) - bulletSpeed * bulletSpeed; // if this is zero it means the proj can
-        // never catch the target
+	double a = missVector.dot(missVector) - bulletSpeed * bulletSpeed; // if this is zero it means the proj can
+	// never catch the target
 
-        if (a == 0) {
-            return -1;
-        }
+	if (a == 0) {
+	    return -1;
+	}
 
-        double b = missPos.dot(missVector) * 2;
-        double c = missPos.dot(missPos);
-        double root = (b * b) - 4 * a * c;
-        if (root < 0) {
+	double b = missPos.dot(missVector) * 2;
+	double c = missPos.dot(missPos);
+	double root = b * b - 4 * a * c;
+	if (root < 0) {
 
-            return -1;
+	    return -1;
 
-        } else if (root == 0) {
+	} else if (root == 0) {
 
-            return -b / (2 * a);
+	    return -b / (2 * a);
 
-        } else {
+	} else {
 
-            root = Math.sqrt(root);
+	    root = Math.sqrt(root);
 
-            double sol1 = (-b - root) / (2 * a);
-            double sol2 = (-b + root) / (2 * a);
+	    double sol1 = (-b - root) / (2 * a);
+	    double sol2 = (-b + root) / (2 * a);
 
-            if (sol1 > 0 && sol2 > 0) {
-                return -1;
-            } else if (sol1 > 0) {
+	    if (sol1 > 0 && sol2 > 0) {
+		return -1;
+	    } else if (sol1 > 0) {
 
-                return -sol2;
+		return -sol2;
 
-            } else if (sol2 > 0) {
+	    } else if (sol2 > 0) {
 
-                return -sol1;
+		return -sol1;
 
-            } else {
+	    } else {
 
-                return -Math.max(sol1, sol2);
+		return -Math.max(sol1, sol2);
 
-            }
+	    }
 
-        }
+	}
     }
 
     @Override
     public void onBlockDestroyed() {
-        super.onBlockDestroyed();
+	super.onBlockDestroyed();
 
-        if (!level.isClientSide) {
-            TileESMTower.removeFireControlRadar(this);
-            ChunkPos pos = level.getChunk(getBlockPos()).getPos();
-            ForgeChunkManager.forceChunk((ServerLevel) level, Ballistix.ID, getBlockPos(), pos.x, pos.z, false, true);
-        }
+	if (!level.isClientSide) {
+	    TileESMTower.removeFireControlRadar(this);
+	    ChunkPos pos = level.getChunk(getBlockPos()).getPos();
+	    ForgeChunkManager.forceChunk((ServerLevel) level, Ballistix.ID, getBlockPos(), pos.x, pos.z, false, true);
+	}
 
     }
 
     @Override
     public void onPlace(BlockState oldState, boolean isMoving) {
-        super.onPlace(oldState, isMoving);
-        if (!level.isClientSide) {
-            ChunkPos pos = level.getChunk(getBlockPos()).getPos();
-            ForgeChunkManager.forceChunk((ServerLevel) level, Ballistix.ID, getBlockPos(), pos.x, pos.z, true, true);
-        }
+	super.onPlace(oldState, isMoving);
+	if (!level.isClientSide) {
+	    ChunkPos pos = level.getChunk(getBlockPos()).getPos();
+	    ForgeChunkManager.forceChunk((ServerLevel) level, Ballistix.ID, getBlockPos(), pos.x, pos.z, true, true);
+	}
     }
 
     @Override
     public int getComparatorSignal() {
-        return trackingPos.getValue().equals(OUT_OF_REACH) ? 0 : 15;
+	return trackingPos.getValue().equals(OUT_OF_REACH) ? 0 : 15;
     }
 
 }

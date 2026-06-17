@@ -23,36 +23,36 @@ public class BlastAnvil extends Blast {
 
     @Override
     public boolean doExplode(int callCount) {
-        super.doExplode(callCount);
-        hasStarted = true;
+	super.doExplode(callCount);
+	hasStarted = true;
 
-        if (!world.isClientSide) {
-            world.playSound(null, position, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 1.0F, 1.0F);
-            for (int i = 0; i < BallistixConstants.EXPLOSIVE_ANVIL_ANVILSPERBLAST; i++) {
+	if (!world.isClientSide) {
+	    world.playSound(null, position, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 1.0F, 1.0F);
+	    for (int i = 0; i < BallistixConstants.EXPLOSIVE_ANVIL_ANVILSPERBLAST; i++) {
 
-                float xVel = (world.random.nextBoolean() ? 1.0F : -1.0F) * world.random.nextFloat();
-                float yVel = 1.0F;
-                float zVel = (world.random.nextBoolean() ? 1.0F : -1.0F) * world.random.nextFloat();
-                FallingBlockEntity anvil = new FallingBlockEntity(EntityType.FALLING_BLOCK, world);
-                anvil.blockState = Blocks.ANVIL.defaultBlockState();
-                anvil.blocksBuilding = true;
-                anvil.setPos(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5);
-                anvil.xo = anvil.getX();
-                anvil.yo = anvil.getY();
-                anvil.zo = anvil.getZ();
-                anvil.setStartPos(anvil.blockPosition());
-                anvil.setDeltaMovement(xVel, yVel, zVel);
-                anvil.dropItem = false;
-                world.addFreshEntity(anvil);
+		float xVel = (world.random.nextBoolean() ? 1.0F : -1.0F) * world.random.nextFloat();
+		float yVel = 1.0F;
+		float zVel = (world.random.nextBoolean() ? 1.0F : -1.0F) * world.random.nextFloat();
+		FallingBlockEntity anvil = new FallingBlockEntity(EntityType.FALLING_BLOCK, world);
+		anvil.blockState = Blocks.ANVIL.defaultBlockState();
+		anvil.blocksBuilding = true;
+		anvil.setPos(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5);
+		anvil.xo = anvil.getX();
+		anvil.yo = anvil.getY();
+		anvil.zo = anvil.getZ();
+		anvil.setStartPos(anvil.blockPosition());
+		anvil.setDeltaMovement(xVel, yVel, zVel);
+		anvil.dropItem = false;
+		world.addFreshEntity(anvil);
 
-            }
-        }
+	    }
+	}
 
-        return true;
+	return true;
     }
 
     @Override
     public IBlast getBlastType() {
-        return SubtypeBlast.anvil;
+	return SubtypeBlast.anvil;
     }
 }

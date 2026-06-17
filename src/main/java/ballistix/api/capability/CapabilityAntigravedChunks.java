@@ -15,55 +15,57 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
 public class CapabilityAntigravedChunks implements ICapabilitySerializable<CompoundTag> {
-	
-	public final HashSet<AntigravedChunk> activeChunks = new HashSet<>();
-	
-	private final LazyOptional<CapabilityAntigravedChunks> lazyOptional = LazyOptional.of(() -> this);
 
-	@Override
-	public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-		if(cap == BallistixCapabilities.ANTIGRAVED_CHUNKS) {
-			return lazyOptional.cast();
-		}
-		return LazyOptional.empty();
+    public final HashSet<AntigravedChunk> activeChunks = new HashSet<>();
+
+    private final LazyOptional<CapabilityAntigravedChunks> lazyOptional = LazyOptional.of(() -> this);
+
+    @Override
+    public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+	if (cap == BallistixCapabilities.ANTIGRAVED_CHUNKS) {
+	    return lazyOptional.cast();
+	}
+	return LazyOptional.empty();
+    }
+
+    @Override
+    public CompoundTag serializeNBT() {
+	CompoundTag data = new CompoundTag();
+
+	data.putInt("size", activeChunks.size());
+
+	int i = 0;
+
+	for (AntigravedChunk chunk : activeChunks) {
+
+	    final int index = i;
+
+	    AntigravedChunk.CODEC.encodeStart(NbtOps.INSTANCE, chunk).result()
+		    .ifPresent(tag -> data.put("" + index, tag));
+
+	    i++;
+
 	}
 
-	@Override
-	public CompoundTag serializeNBT() {
-		CompoundTag data = new CompoundTag();
+	return data;
+    }
 
-        data.putInt("size", activeChunks.size());
+    @Override
+    public void deserializeNBT(CompoundTag tag) {
+	activeChunks.clear();
 
-        int i = 0;
+	int size = tag.getInt("size");
 
-        for (AntigravedChunk chunk : activeChunks) {
+	for (int i = 0; i < size; i++) {
 
-            final int index = i;
+	    if (!tag.contains("" + i)) {
+		continue;
+	    }
 
-            AntigravedChunk.CODEC.encodeStart(NbtOps.INSTANCE, chunk).result().ifPresent(tag -> data.put("" + index, tag));
+	    AntigravedChunk.CODEC.decode(NbtOps.INSTANCE, tag.get("" + i)).result()
+		    .ifPresent(pair -> activeChunks.add(pair.getFirst()));
 
-            i++;
-
-        }
-
-        return data;
 	}
-
-	@Override
-	public void deserializeNBT(CompoundTag tag) {
-		activeChunks.clear();
-
-        int size = tag.getInt("size");
-
-        for (int i = 0; i < size; i++) {
-
-            if(!tag.contains("" + i)) {
-                continue;
-            }
-
-            AntigravedChunk.CODEC.decode(NbtOps.INSTANCE, tag.get("" + i)).result().ifPresent(pair -> activeChunks.add(pair.getFirst()));
-
-        }
-	}
+    }
 
 }

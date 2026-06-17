@@ -10,27 +10,29 @@ import net.minecraft.resources.ResourceLocation;
 @JeiPlugin
 public class BallistixJEIPlugin implements IModPlugin {
 
-	public static final ResourceLocation ID = Ballistix.rl("jei");
+    public static final ResourceLocation ID = Ballistix.rl("jei");
 
-	@Override
-	public ResourceLocation getPluginUid() {
-		return ID;
-	}
+    @Override
+    public ResourceLocation getPluginUid() {
+	return ID;
+    }
 
-	@Override
-	public void registerRecipes(IRecipeRegistration registration) {
-		BallistixPsuedoRecipes.addBallistixRecipes();
+    @Override
+    public void registerRecipes(IRecipeRegistration registration) {
+	BallistixPsuedoRecipes.addBallistixRecipes();
 
-		ballistixInfoTabs(registration);
+	ballistixInfoTabs(registration);
 
-	}
+    }
 
-	private static void ballistixInfoTabs(IRecipeRegistration registration) {
+    private static void ballistixInfoTabs(IRecipeRegistration registration) {
 
 //		for (ItemStack itemStack : BallistixPsuedoRecipes.BALLISTIX_ITEMS) {
-			//registration.addIngredientInfo(itemStack, VanillaTypes.ITEM_STACK, Component.translatable("jei.info.item." + BuiltInRegistries.ITEM.getKey(itemStack.getItem()).getPath()));
+	// registration.addIngredientInfo(itemStack, VanillaTypes.ITEM_STACK,
+	// Component.translatable("jei.info.item." +
+	// BuiltInRegistries.ITEM.getKey(itemStack.getItem()).getPath()));
 //		}
 
-	}
+    }
 
 }

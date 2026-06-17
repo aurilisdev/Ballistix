@@ -62,7 +62,7 @@ public class BlastRepulsive extends Blast implements IHasCustomRender {
 
 	    if (!canHarmEntity(entity)) {
 		continue;
-	    }	
+	    }
 
 	    double deltaX = entity.getX() - x;
 	    double deltaY = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - y;

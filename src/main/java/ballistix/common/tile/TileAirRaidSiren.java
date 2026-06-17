@@ -26,7 +26,8 @@ public class TileAirRaidSiren extends GenericTile implements ITickableSound {
     public static final int MIN_RANGE = 1;
     public static final int MAX_RANGE = 256;
 
-    public final SingleProperty<Boolean> hasRedstoneSignal = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "hasredstone", false));
+    public final SingleProperty<Boolean> hasRedstoneSignal = property(
+	    new SingleProperty<>(PropertyTypes.BOOLEAN, "hasredstone", false));
     public final SingleProperty<Double> volume = property(new SingleProperty<>(PropertyTypes.DOUBLE, "volume", 0.5D));
     public final SingleProperty<Double> pitch = property(new SingleProperty<>(PropertyTypes.DOUBLE, "pitch", 1.0D));
     public final SingleProperty<Integer> range = property(new SingleProperty<>(PropertyTypes.INTEGER, "range", 32));
@@ -34,37 +35,38 @@ public class TileAirRaidSiren extends GenericTile implements ITickableSound {
     private boolean isPlaying = false;
 
     public TileAirRaidSiren(BlockPos worldPos, BlockState blockState) {
-        super(BallistixTiles.TILE_AIRRAIDSIREN.get(), worldPos, blockState);
-        addComponent(new ComponentTickable(this).tickClient(this::tickClient));
-        addComponent(new ComponentContainerProvider("airraidsiren", this).createMenu((id, player) -> new ContainerAirRaidSiren(id, player, new SimpleContainer(0), getCoordsArray())));
+	super(BallistixTiles.TILE_AIRRAIDSIREN.get(), worldPos, blockState);
+	addComponent(new ComponentTickable(this).tickClient(this::tickClient));
+	addComponent(new ComponentContainerProvider("airraidsiren", this).createMenu(
+		(id, player) -> new ContainerAirRaidSiren(id, player, new SimpleContainer(0), getCoordsArray())));
     }
 
     public void tickClient(ComponentTickable componentTickable) {
-        if(!isPlaying && shouldPlaySound()) {
-            isPlaying = true;
-            SoundBarrierMethods.playAirRaidSirenSound(BallistixSounds.SOUND_AIRRAIDSIREN.get(), this, 32);
-        }
+	if (!isPlaying && shouldPlaySound()) {
+	    isPlaying = true;
+	    SoundBarrierMethods.playAirRaidSirenSound(BallistixSounds.SOUND_AIRRAIDSIREN.get(), this, 32);
+	}
     }
 
     @Override
     public void setNotPlaying() {
-        isPlaying = false;
+	isPlaying = false;
     }
 
     @Override
     public boolean shouldPlaySound() {
-        return hasRedstoneSignal.getValue();
+	return hasRedstoneSignal.getValue();
     }
 
     @Override
     public void onNeightborChanged(BlockPos neighbor, boolean blockStateTrigger) {
-        if(!level.isClientSide) {
-            boolean currVal = hasRedstoneSignal.getValue();
-            hasRedstoneSignal.setValue(level.getBestNeighborSignal(getBlockPos()) > 0);
-            boolean newVal = hasRedstoneSignal.getValue();
-            if(currVal ^ newVal) {
-                BlockEntityUtils.updateLit(this, newVal);
-            }
-        }
+	if (!level.isClientSide) {
+	    boolean currVal = hasRedstoneSignal.getValue();
+	    hasRedstoneSignal.setValue(level.getBestNeighborSignal(getBlockPos()) > 0);
+	    boolean newVal = hasRedstoneSignal.getValue();
+	    if (currVal ^ newVal) {
+		BlockEntityUtils.updateLit(this, newVal);
+	    }
+	}
     }
 }

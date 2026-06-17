@@ -61,11 +61,7 @@ public class BlastInfestive extends BlastLasting {
 	    BlockPos p = new BlockPos(iterator.next()).offset(position);
 	    BlockState state = world.getBlockState(p);
 
-	    if (state.isAir()) {
-		continue;
-	    }
-
-	    if (!InfestedBlock.isCompatibleHostBlock(state)) {
+	    if (state.isAir() || !InfestedBlock.isCompatibleHostBlock(state)) {
 		continue;
 	    }
 

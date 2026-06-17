@@ -27,7 +27,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -60,7 +59,7 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	    threadRay = new ThreadDynamicRaycastBlast(world, position, (int) BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE,
 		    (float) BallistixConstants.EXPLOSIVE_NUCLEAR_ENERGY, null);
 	    threadSimple = new ThreadSimpleBlast(world, position,
-		    (int) (BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS), Integer.MAX_VALUE, null,
+		    (int) BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS, Integer.MAX_VALUE, null,
 		    getBlastType().id());
 	    threadSimple.strictnessAtEdges = 1.7;
 	    if (BallistixConstants.SHOULD_MULTITHREAD_RAYTRACING) {
@@ -149,7 +148,7 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 				    .forEach(pl -> NetworkHandler.CHANNEL.sendTo(
 					    new PacketSpawnBlastParticle(p,
 						    BlastParticleSpawnType.EXPLOSIVE_BLOCK_BREAK),
-					    ((ServerPlayer) pl).connection.connection,
+					    pl.connection.connection,
 					    NetworkDirection.PLAY_TO_CLIENT));
 			}
 		    }
@@ -169,15 +168,15 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	    if (canSpawnParticle(position)) {
 		RadiationSystem.addRadiationSource(world,
 			new SimpleRadiationSource(150000.0, 2,
-				(int) (BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS), false, 86400 * 20,
+				(int) BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS, false, 86400 * 20,
 				position, true, false));
 	    }
 	    if (perticksimple == -1) {
 		cachedIterator = threadSimple.results.iterator();
 	    }
 	    perticksimple = (int) (4 * Math.PI * 0.5
-		    * (Mth.clamp(callCount * callCount, 0, (int) (BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS
-			    * BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS))));
+		    * Mth.clamp(callCount * callCount, 0, (int) (BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS
+			    * BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS)));
 
 	    int finished = perticksimple;
 	    while (cachedIterator.hasNext()) {

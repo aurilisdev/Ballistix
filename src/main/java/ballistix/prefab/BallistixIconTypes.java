@@ -24,48 +24,49 @@ public enum BallistixIconTypes implements ITexture {
     private final int imgHeight;
     private final ResourceLocation loc;
 
-    private BallistixIconTypes(int textU, int textV, int textWidth, int textHeight, int imgWidth, int imgHeight, ResourceLocation loc) {
-        this.textU = textU;
-        this.textV = textV;
-        this.textWidth = textWidth;
-        this.textHeight = textHeight;
-        this.imgWidth = imgWidth;
-        this.imgHeight = imgHeight;
-        this.loc = loc;
+    private BallistixIconTypes(int textU, int textV, int textWidth, int textHeight, int imgWidth, int imgHeight,
+	    ResourceLocation loc) {
+	this.textU = textU;
+	this.textV = textV;
+	this.textWidth = textWidth;
+	this.textHeight = textHeight;
+	this.imgWidth = imgWidth;
+	this.imgHeight = imgHeight;
+	this.loc = loc;
     }
 
     @Override
     public ResourceLocation getLocation() {
-        return loc;
+	return loc;
     }
 
     @Override
     public int imageHeight() {
-        return imgHeight;
+	return imgHeight;
     }
 
     @Override
     public int imageWidth() {
-        return imgWidth;
+	return imgWidth;
     }
 
     @Override
     public int textureHeight() {
-        return textHeight;
+	return textHeight;
     }
 
     @Override
     public int textureU() {
-        return textU;
+	return textU;
     }
 
     @Override
     public int textureV() {
-        return textV;
+	return textV;
     }
 
     @Override
     public int textureWidth() {
-        return textWidth;
+	return textWidth;
     }
 }

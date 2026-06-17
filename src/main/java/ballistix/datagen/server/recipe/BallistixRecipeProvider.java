@@ -7,14 +7,14 @@ import voltaic.datagen.utils.server.recipe.BaseRecipeProvider;
 
 public class BallistixRecipeProvider extends BaseRecipeProvider {
 
-	public BallistixRecipeProvider(PackOutput output) {
-		super(output);
-	}
+    public BallistixRecipeProvider(PackOutput output) {
+	super(output);
+    }
 
-	@Override
-	public void addRecipes() {
-		generators.add(new BallistixCraftingTableRecipes());
-		generators.add(new BallistixMineralGrinderRecipes());
-	}
+    @Override
+    public void addRecipes() {
+	generators.add(new BallistixCraftingTableRecipes());
+	generators.add(new BallistixMineralGrinderRecipes());
+    }
 
 }

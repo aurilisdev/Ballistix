@@ -15,46 +15,47 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 
 public class RenderBlast extends EntityRenderer<EntityBlast> {
-	
-	public static final HashMap<ResourceLocation, RegisterBlastRenderersEvent.BlastRenderer> RENDERERS = new HashMap<>();
+
+    public static final HashMap<ResourceLocation, RegisterBlastRenderersEvent.BlastRenderer> RENDERERS = new HashMap<>();
 
     public RenderBlast(Context renderManagerIn) {
-        super(renderManagerIn);
-        shadowRadius = 0.5F;
+	super(renderManagerIn);
+	shadowRadius = 0.5F;
     }
 
     @Override
-    public void render(EntityBlast entityIn, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource bufferIn, int packedLightIn) {
-    	IBlast blast = entityIn.getBlastType();
+    public void render(EntityBlast entityIn, float entityYaw, float partialTicks, PoseStack matrixStack,
+	    MultiBufferSource bufferIn, int packedLightIn) {
+	IBlast blast = entityIn.getBlastType();
 
-        if(blast == null) {
-            super.render(entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn);
-            return;
-        }
+	if (blast == null) {
+	    super.render(entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn);
+	    return;
+	}
 
-        RegisterBlastRenderersEvent.BlastRenderer renderer = RENDERERS.get(blast.id());
+	RegisterBlastRenderersEvent.BlastRenderer renderer = RENDERERS.get(blast.id());
 
-        if(renderer == null) {
-            super.render(entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn);
-            return;
-        }
+	if (renderer == null) {
+	    super.render(entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn);
+	    return;
+	}
 
-        matrixStack.pushPose();
+	matrixStack.pushPose();
 
-        renderer.render(entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn);
+	renderer.render(entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn);
 
-        matrixStack.popPose();
+	matrixStack.popPose();
 
-        super.render(entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn);
+	super.render(entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn);
     }
 
     @Override
     public boolean shouldRender(EntityBlast b, Frustum f, double x, double y, double z) {
-        return true;
+	return true;
     }
 
     @Override
     public ResourceLocation getTextureLocation(EntityBlast entity) {
-        return InventoryMenu.BLOCK_ATLAS;
+	return InventoryMenu.BLOCK_ATLAS;
     }
 }

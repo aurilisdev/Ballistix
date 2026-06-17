@@ -122,14 +122,10 @@ public class BlastEMP extends Blast implements IHasCustomRender {
 
 	    for (Entity entity : entities) {
 
-		if (!entity.isAlive()) {
+		if (!entity.isAlive() || !canHarmEntity(entity)) {
 		    continue;
 		}
 
-		if (!canHarmEntity(entity)) {
-		    continue;
-		}
-		
 		IEnergyStorage entityFE = entity.getCapability(ForgeCapabilities.ENERGY)
 			.orElse(CapabilityUtils.EMPTY_FE);
 

@@ -72,8 +72,8 @@ public class BlastExothermic extends BlastLasting implements IHasCustomRender {
 	    BlockPos p = new BlockPos(iterator.next()).offset(position);
 	    BlockState state = world.getBlockState(p);
 
-	    if (state.isAir() || (!(state.getBlock() instanceof LiquidBlock) && (state.getDestroySpeed(world, p) < 0
-		    || state.getDestroySpeed(world, p) > BallistixConstants.EXPLOSIVE_EXOTHERMIC_MAXHARDNESS))) {
+	    if (state.isAir() || !(state.getBlock() instanceof LiquidBlock) && (state.getDestroySpeed(world, p) < 0
+		    || state.getDestroySpeed(world, p) > BallistixConstants.EXPLOSIVE_EXOTHERMIC_MAXHARDNESS)) {
 		continue;
 	    }
 	    if (!canBreakBlockState(world, state, p, owner)) {

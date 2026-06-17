@@ -15,49 +15,50 @@ public enum RadarTextures implements ITexture {
     private final int imageHeight;
     private final ResourceLocation loc;
 
-    private RadarTextures(int textureWidth, int textureHeight, int textureU, int textureV, int imageWidth, int imageHeight, ResourceLocation loc) {
-        this.textureWidth = textureWidth;
-        this.textureHeight = textureHeight;
-        this.textureU = textureU;
-        this.textureV = textureV;
-        this.imageWidth = imageWidth;
-        this.imageHeight = imageHeight;
-        this.loc = loc;
+    private RadarTextures(int textureWidth, int textureHeight, int textureU, int textureV, int imageWidth,
+	    int imageHeight, ResourceLocation loc) {
+	this.textureWidth = textureWidth;
+	this.textureHeight = textureHeight;
+	this.textureU = textureU;
+	this.textureV = textureV;
+	this.imageWidth = imageWidth;
+	this.imageHeight = imageHeight;
+	this.loc = loc;
     }
 
     @Override
     public ResourceLocation getLocation() {
-        return this.loc;
+	return this.loc;
     }
 
     @Override
     public int imageHeight() {
-        return this.imageHeight;
+	return this.imageHeight;
     }
 
     @Override
     public int imageWidth() {
-        return this.imageWidth;
+	return this.imageWidth;
     }
 
     @Override
     public int textureHeight() {
-        return this.textureHeight;
+	return this.textureHeight;
     }
 
     @Override
     public int textureU() {
-        return this.textureU;
+	return this.textureU;
     }
 
     @Override
     public int textureV() {
-        return this.textureV;
+	return this.textureV;
     }
 
     @Override
     public int textureWidth() {
-        return this.textureWidth;
+	return this.textureWidth;
     }
 
 }

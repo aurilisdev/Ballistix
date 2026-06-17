@@ -14,15 +14,16 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 
 public class BallistixItemTagsProvider extends ItemTagsProvider {
 
-	public BallistixItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, BlockTagsProvider provider, ExistingFileHelper existingFileHelper) {
-		super(output, lookupProvider, provider.contentsGetter(), Ballistix.ID, existingFileHelper);
-	}
+    public BallistixItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider,
+	    BlockTagsProvider provider, ExistingFileHelper existingFileHelper) {
+	super(output, lookupProvider, provider.contentsGetter(), Ballistix.ID, existingFileHelper);
+    }
 
-	@Override
-	protected void addTags(Provider pProvider) {
+    @Override
+    protected void addTags(Provider pProvider) {
 
-		tag(BallistixTags.Items.DUST_POISON).add(BallistixItems.ITEM_DUSTPOISON.get());
+	tag(BallistixTags.Items.DUST_POISON).add(BallistixItems.ITEM_DUSTPOISON.get());
 
-	}
+    }
 
 }

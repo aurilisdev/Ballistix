@@ -18,7 +18,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 
 public class BlastAntigravity extends Blast {
-    public BlastAntigravity(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+    public BlastAntigravity(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
 	super(world, position, owner, blastEntity);
     }
 

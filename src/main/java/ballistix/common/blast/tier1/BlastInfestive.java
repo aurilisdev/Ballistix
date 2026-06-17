@@ -23,7 +23,7 @@ public class BlastInfestive extends BlastLasting {
     private Iterator<BlockPos> iterator;
     private int pertick = -1;
 
-    public BlastInfestive(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+    public BlastInfestive(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
 	super(world, position, owner, blastEntity);
     }
 
@@ -63,11 +63,7 @@ public class BlastInfestive extends BlastLasting {
 	    BlockPos p = new BlockPos(iterator.next()).offset(position);
 	    BlockState state = world.getBlockState(p);
 
-	    if (state.isAir()) {
-		continue;
-	    }
-
-	    if (!InfestedBlock.isCompatibleHostBlock(state)) {
+	    if (state.isAir() || !InfestedBlock.isCompatibleHostBlock(state)) {
 		continue;
 	    }
 

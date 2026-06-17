@@ -12,11 +12,11 @@ import voltaic.prefab.inventory.container.types.GenericContainerBlockEntity;
 public class ContainerESMTower extends GenericContainerBlockEntity<TileESMTower> {
 
     public ContainerESMTower(int id, Inventory playerinv) {
-        this(id, playerinv, new SimpleContainer(0), new SimpleContainerData(3));
+	this(id, playerinv, new SimpleContainer(0), new SimpleContainerData(3));
     }
 
     public ContainerESMTower(int id, Inventory playerinv, Container inventory, ContainerData inventorydata) {
-        super(BallistixMenuTypes.CONTAINER_ESMTOWER.get(), id, playerinv, inventory, inventorydata);
+	super(BallistixMenuTypes.CONTAINER_ESMTOWER.get(), id, playerinv, inventory, inventorydata);
     }
 
     @Override

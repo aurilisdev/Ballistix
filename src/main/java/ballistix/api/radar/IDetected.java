@@ -13,20 +13,20 @@ public interface IDetected {
 
     public static record Detected(Vec3 position, Item item, boolean showBearing) implements IDetected {
 
-        @Override
-        public Vec3 getPosition() {
-            return position;
-        }
+	@Override
+	public Vec3 getPosition() {
+	    return position;
+	}
 
-        @Override
-        public Item getItem() {
-            return item;
-        }
+	@Override
+	public Item getItem() {
+	    return item;
+	}
 
-        @Override
-        public boolean showBearing() {
-            return showBearing;
-        }
+	@Override
+	public boolean showBearing() {
+	    return showBearing;
+	}
     }
 
 }

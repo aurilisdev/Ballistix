@@ -20,8 +20,8 @@ public class ParticleOptionsMissileSmoke extends ParticleType<ParticleOptionsMis
 		    Codec.FLOAT.fieldOf("scale").forGetter(instance0 -> instance0.scale),
 		    Codec.INT.fieldOf("lifetime").forGetter(instance0 -> instance0.lifetime),
 		    Codec.BOOL.fieldOf("physics").forGetter(instance0 -> instance0.hasPhysics))
-	    .apply(instance, (r, g, b, scale, lifetime, physics) -> new ParticleOptionsMissileSmoke().setParameters(r, g,
-		    b, scale, lifetime, physics)));
+	    .apply(instance, (r, g, b, scale, lifetime, physics) -> new ParticleOptionsMissileSmoke().setParameters(r,
+		    g, b, scale, lifetime, physics)));
     public static final StreamCodec<RegistryFriendlyByteBuf, ParticleOptionsMissileSmoke> STREAM_CODEC = StreamCodec
 	    .composite(ByteBufCodecs.FLOAT, instance0 -> instance0.r, ByteBufCodecs.FLOAT, instance0 -> instance0.g,
 		    ByteBufCodecs.FLOAT, instance0 -> instance0.b, ByteBufCodecs.FLOAT, instance0 -> instance0.scale,

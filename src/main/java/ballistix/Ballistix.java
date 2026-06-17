@@ -43,7 +43,8 @@ public final class Ballistix {
 	container.registerConfig(ModConfig.Type.COMMON, BallistixConfig.INSTANCE.SPEC);
 	if (FMLEnvironment.dist == Dist.CLIENT) {
 	    container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
-	}	BallistixVoxelShapes.init();
+	}
+	BallistixVoxelShapes.init();
 	UnifiedBallistixRegister.register(bus);
     }
 
@@ -78,26 +79,36 @@ public final class Ballistix {
 	    event.registerMinecart(minecart.explosiveType, BallistixItems.ITEMS_MINECART.getValue(minecart));
 	}
 	event.submitCachedThreads(() -> {
-	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConfig.INSTANCE.EXPLOSIVE_ANTIMATTER_RADIUS.getAsDouble(),
-		    Integer.MAX_VALUE, null, SubtypeBlast.antimatter.id()).start();
-	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_RADIUS.getAsDouble(),
-		    Integer.MAX_VALUE, null, SubtypeBlast.darkmatter.id()).start();
-	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_RADIUS.getAsDouble(),
-		    Integer.MAX_VALUE, null, SubtypeBlast.largeantimatter.id()).start();
-	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble() * 2,
-		    Integer.MAX_VALUE, null, SubtypeBlast.nuclear.id()).start();
-	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConfig.INSTANCE.EXPLOSIVE_EMP_RADIUS.getAsDouble(), Integer.MAX_VALUE,
-		    null, SubtypeBlast.emp.id());
-	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConfig.INSTANCE.EXPLOSIVE_SONIC_RADIUS.getAsDouble(),
-		    Integer.MAX_VALUE, null, SubtypeBlast.sonic.id(), true);
-	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_RADIUS.getAsDouble(),
-		    Integer.MAX_VALUE, null, SubtypeBlast.hypersonic.id(), true);
-	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConfig.INSTANCE.EXPLOSIVE_ENDOTHERMIC_RADIUS.getAsDouble(),
-		    Integer.MAX_VALUE, null, SubtypeBlast.endothermic.id(), true);
-	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConfig.INSTANCE.EXPLOSIVE_INFESTIVE_RADIUS.getAsDouble(),
-		    Integer.MAX_VALUE, null, SubtypeBlast.infestive.id());
-	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConfig.INSTANCE.EXPLOSIVE_EXOTHERMIC_RADIUS.getAsDouble(),
-		    Integer.MAX_VALUE, null, SubtypeBlast.exothermic.id());
+	    new ThreadSimpleBlast(null, BlockPos.ZERO,
+		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_ANTIMATTER_RADIUS.getAsDouble(), Integer.MAX_VALUE, null,
+		    SubtypeBlast.antimatter.id()).start();
+	    new ThreadSimpleBlast(null, BlockPos.ZERO,
+		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_RADIUS.getAsDouble(), Integer.MAX_VALUE, null,
+		    SubtypeBlast.darkmatter.id()).start();
+	    new ThreadSimpleBlast(null, BlockPos.ZERO,
+		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_RADIUS.getAsDouble(), Integer.MAX_VALUE,
+		    null, SubtypeBlast.largeantimatter.id()).start();
+	    new ThreadSimpleBlast(null, BlockPos.ZERO,
+		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble() * 2, Integer.MAX_VALUE, null,
+		    SubtypeBlast.nuclear.id()).start();
+	    new ThreadSimpleBlast(null, BlockPos.ZERO,
+		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_EMP_RADIUS.getAsDouble(), Integer.MAX_VALUE, null,
+		    SubtypeBlast.emp.id());
+	    new ThreadSimpleBlast(null, BlockPos.ZERO,
+		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_SONIC_RADIUS.getAsDouble(), Integer.MAX_VALUE, null,
+		    SubtypeBlast.sonic.id(), true);
+	    new ThreadSimpleBlast(null, BlockPos.ZERO,
+		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_RADIUS.getAsDouble(), Integer.MAX_VALUE, null,
+		    SubtypeBlast.hypersonic.id(), true);
+	    new ThreadSimpleBlast(null, BlockPos.ZERO,
+		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_ENDOTHERMIC_RADIUS.getAsDouble(), Integer.MAX_VALUE, null,
+		    SubtypeBlast.endothermic.id(), true);
+	    new ThreadSimpleBlast(null, BlockPos.ZERO,
+		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_INFESTIVE_RADIUS.getAsDouble(), Integer.MAX_VALUE, null,
+		    SubtypeBlast.infestive.id());
+	    new ThreadSimpleBlast(null, BlockPos.ZERO,
+		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_EXOTHERMIC_RADIUS.getAsDouble(), Integer.MAX_VALUE, null,
+		    SubtypeBlast.exothermic.id());
 	});
     }
 

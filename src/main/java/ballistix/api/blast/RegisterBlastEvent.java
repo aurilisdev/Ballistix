@@ -19,33 +19,34 @@ public class RegisterBlastEvent extends Event implements IModBusEvent {
     private final List<Runnable> threadsToCache = new ArrayList<>();
 
     public void registerBlast(IBlast blast) {
-        registeredBlasts.put(blast.id(), blast);
+	registeredBlasts.put(blast.id(), blast);
     }
 
     public void registerGrenade(IBlast blast, Item item) {
-        registeredGrenades.put(blast, item);
+	registeredGrenades.put(blast, item);
     }
 
     public void registerMinecart(IBlast blast, Item item) {
-        registeredMinecarts.put(blast, item);
+	registeredMinecarts.put(blast, item);
     }
+
     public void submitCachedThreads(Runnable threadsSupplier) {
-        threadsToCache.add(threadsSupplier);
+	threadsToCache.add(threadsSupplier);
     }
 
     public void stashBlasts() {
-        Blast.BLAST_MAP.clear();
-        Blast.BLAST_MAP.putAll(registeredBlasts);
-        Blast.ITEM_TO_BLAST_MAP.clear();
-        for(Map.Entry<ResourceLocation, IBlast> entry : registeredBlasts.entrySet()) {
-            Blast.ITEM_TO_BLAST_MAP.put(entry.getValue().getExplosiveItem().get(), entry.getValue());
-        }
-        Blast.BLAST_TO_GRENADE_MAP.clear();
-        Blast.BLAST_TO_GRENADE_MAP.putAll(registeredGrenades);
-        Blast.BLAST_TO_MINECART_MAP.clear();
-        Blast.BLAST_TO_MINECART_MAP.putAll(registeredMinecarts);
-        for(Runnable runnable : threadsToCache) {
-            runnable.run();
-        }
+	Blast.BLAST_MAP.clear();
+	Blast.BLAST_MAP.putAll(registeredBlasts);
+	Blast.ITEM_TO_BLAST_MAP.clear();
+	for (Map.Entry<ResourceLocation, IBlast> entry : registeredBlasts.entrySet()) {
+	    Blast.ITEM_TO_BLAST_MAP.put(entry.getValue().getExplosiveItem().get(), entry.getValue());
+	}
+	Blast.BLAST_TO_GRENADE_MAP.clear();
+	Blast.BLAST_TO_GRENADE_MAP.putAll(registeredGrenades);
+	Blast.BLAST_TO_MINECART_MAP.clear();
+	Blast.BLAST_TO_MINECART_MAP.putAll(registeredMinecarts);
+	for (Runnable runnable : threadsToCache) {
+	    runnable.run();
+	}
     }
 }

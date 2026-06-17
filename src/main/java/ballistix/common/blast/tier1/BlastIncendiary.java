@@ -18,7 +18,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 public class BlastIncendiary extends Blast implements IHasCustomRender {
 
-    public BlastIncendiary(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+    public BlastIncendiary(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
 	super(world, position, owner, blastEntity);
     }
 

@@ -96,7 +96,7 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
 	double distanceToTarget = TileFireControlRadar.getDistanceToMissile(getProjectileLaunchPosition(),
 		target.getTargetLocation());
 
-	double multiplier = 1.0 - (distanceToTarget / currentRange.getValue());
+	double multiplier = 1.0 - distanceToTarget / currentRange.getValue();
 
 	float damage = (float) (multiplier * BallistixConfig.INSTANCE.LASER_TURRET_BASE_DAMAGE.get());
 

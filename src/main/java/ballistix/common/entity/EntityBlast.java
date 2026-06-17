@@ -261,7 +261,7 @@ public class EntityBlast extends Entity implements TraceableEntity {
 
 				    // min weight
 
-				    if (dY < 0 && getY() <= (level().getMinBuildHeight() + fifths)) {
+				    if (dY < 0 && getY() <= level().getMinBuildHeight() + fifths) {
 
 					float relativeHeight = (float) (getY() - level().getMinBuildHeight());
 					float perc = 1.0F - relativeHeight / fifths;
@@ -274,7 +274,7 @@ public class EntityBlast extends Entity implements TraceableEntity {
 
 				    // max weight
 
-				    if (dY > 0 && getY() >= (level().getMinBuildHeight() + fifths * 3)) {
+				    if (dY > 0 && getY() >= level().getMinBuildHeight() + fifths * 3) {
 
 					float relativeHeight = (float) (getY() - level().getMinBuildHeight());
 					float perc = relativeHeight / (fifths * 5);

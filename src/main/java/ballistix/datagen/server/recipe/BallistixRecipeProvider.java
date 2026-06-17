@@ -14,23 +14,23 @@ import voltaic.datagen.utils.server.recipe.AbstractRecipeGenerator;
 
 public class BallistixRecipeProvider extends RecipeProvider {
 
-	public final List<AbstractRecipeGenerator> GENERATORS = new ArrayList<>();
+    public final List<AbstractRecipeGenerator> GENERATORS = new ArrayList<>();
 
-	public BallistixRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
-		super(output, lookupProvider);
-		addRecipes();
-	}
+    public BallistixRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+	super(output, lookupProvider);
+	addRecipes();
+    }
 
-	public void addRecipes() {
-		GENERATORS.add(new BallistixCraftingTableRecipes());
-		GENERATORS.add(new BallistixMineralGrinderRecipes());
-	}
+    public void addRecipes() {
+	GENERATORS.add(new BallistixCraftingTableRecipes());
+	GENERATORS.add(new BallistixMineralGrinderRecipes());
+    }
 
-	@Override
-	protected void buildRecipes(RecipeOutput output) {
-		for (AbstractRecipeGenerator generator : GENERATORS) {
-			generator.addRecipes(output);
-		}
+    @Override
+    protected void buildRecipes(RecipeOutput output) {
+	for (AbstractRecipeGenerator generator : GENERATORS) {
+	    generator.addRecipes(output);
 	}
+    }
 
 }

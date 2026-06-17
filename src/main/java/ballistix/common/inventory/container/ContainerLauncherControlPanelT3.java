@@ -12,17 +12,18 @@ import voltaic.prefab.inventory.container.types.GenericContainerBlockEntity;
 
 public class ContainerLauncherControlPanelT3 extends GenericContainerBlockEntity<TileLauncherControlPanelT3> {
 
-	public ContainerLauncherControlPanelT3(int id, Inventory playerinv) {
-		this(id, playerinv, new SimpleContainer(1), new SimpleContainerData(3));
-	}
+    public ContainerLauncherControlPanelT3(int id, Inventory playerinv) {
+	this(id, playerinv, new SimpleContainer(1), new SimpleContainerData(3));
+    }
 
-	public ContainerLauncherControlPanelT3(int id, Inventory playerinv, Container inventory, ContainerData inventorydata) {
-		super(BallistixMenuTypes.CONTAINER_LAUNCHER_CONTROL_PANEL_T3.get(), id, playerinv, inventory, inventorydata);
-	}
+    public ContainerLauncherControlPanelT3(int id, Inventory playerinv, Container inventory,
+	    ContainerData inventorydata) {
+	super(BallistixMenuTypes.CONTAINER_LAUNCHER_CONTROL_PANEL_T3.get(), id, playerinv, inventory, inventorydata);
+    }
 
-	@Override
-	public void addInventorySlots(Container inv, Inventory playerinv) {
-		//setPlayerInvOffset(20);
-		addSlot(new SlotGeneric(inv, nextIndex(), 81, 51));
-	}
+    @Override
+    public void addInventorySlots(Container inv, Inventory playerinv) {
+	// setPlayerInvOffset(20);
+	addSlot(new SlotGeneric(inv, nextIndex(), 81, 51));
+    }
 }

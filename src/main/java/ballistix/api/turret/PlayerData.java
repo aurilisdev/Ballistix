@@ -9,10 +9,10 @@ import net.minecraft.core.UUIDUtil;
 
 public record PlayerData(UUID id, String name) {
 
-    public static final Codec<PlayerData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            UUIDUtil.CODEC.fieldOf("id").forGetter(PlayerData::id),
-            Codec.STRING.fieldOf("name").forGetter(PlayerData::name)
+    public static final Codec<PlayerData> CODEC = RecordCodecBuilder
+	    .create(instance -> instance.group(UUIDUtil.CODEC.fieldOf("id").forGetter(PlayerData::id),
+		    Codec.STRING.fieldOf("name").forGetter(PlayerData::name)
 
-    ).apply(instance, PlayerData::new));
+	    ).apply(instance, PlayerData::new));
 
 }

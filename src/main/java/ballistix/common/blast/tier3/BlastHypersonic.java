@@ -28,7 +28,7 @@ public class BlastHypersonic extends BlastLasting {
     private Iterator<BlockPos> iterator;
     private int pertick = -1;
 
-    public BlastHypersonic(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+    public BlastHypersonic(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
 	super(world, position, owner, blastEntity);
     }
 
@@ -77,7 +77,6 @@ public class BlastHypersonic extends BlastLasting {
 		    || state.liquid()) {
 		continue;
 	    }
-
 
 	    if (!canBreakBlockState(world, state, p, owner)) {
 		continue;

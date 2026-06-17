@@ -26,10 +26,10 @@ public interface IBlast {
     /**
      * Creates a new instance of this Blast
      * 
-     * @param world the level this Blast is created in
-     * @param pos   The center of this Blast
-     * @param owner   The causing entity of this blast. Can be null
-     * @param blastEntity   The entity exploding in this blast. Can be null
+     * @param world       the level this Blast is created in
+     * @param pos         The center of this Blast
+     * @param owner       The causing entity of this blast. Can be null
+     * @param blastEntity The entity exploding in this blast. Can be null
      * @return a new Blast instance
      */
     Blast createBlast(Level world, BlockPos pos, @Nullable Entity owner, @Nullable Entity blastEntity);

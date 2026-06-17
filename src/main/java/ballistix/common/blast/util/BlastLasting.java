@@ -8,7 +8,7 @@ import net.minecraft.world.level.Level;
 
 public abstract class BlastLasting extends Blast {
 
-    protected BlastLasting(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+    protected BlastLasting(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
 	super(world, position, owner, blastEntity);
     }
 

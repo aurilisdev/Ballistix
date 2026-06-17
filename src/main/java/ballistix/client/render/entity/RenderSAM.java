@@ -22,48 +22,50 @@ import voltaic.prefab.utilities.math.MathUtils;
 public class RenderSAM extends EntityRenderer<EntitySAM> {
 
     public RenderSAM(EntityRendererProvider.Context context) {
-        super(context);
+	super(context);
     }
 
     @Override
-    public void render(EntitySAM entity, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
+    public void render(EntitySAM entity, float entityYaw, float partialTicks, PoseStack matrixStackIn,
+	    MultiBufferSource bufferIn, int packedLightIn) {
 
-        Level world = entity.level();
+	Level world = entity.level();
 
-        if(entity.getDeltaMovement().length() <= 0) {
-            return;
-        }
+	if (entity.getDeltaMovement().length() <= 0) {
+	    return;
+	}
 
-        matrixStackIn.pushPose();
+	matrixStackIn.pushPose();
 
-        matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(entity.getYRot() + 90.0F, MathUtils.YP));
-        matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(90 - entity.getXRot(), MathUtils.ZP));
+	matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(entity.getYRot() + 90.0F, MathUtils.YP));
+	matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(90 - entity.getXRot(), MathUtils.ZP));
 
-        BakedModel model;
-        if(entity.variant == 0) {
-            model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_AAMISSILE);
+	BakedModel model;
+	if (entity.variant == 0) {
+	    model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_AAMISSILE);
 
-        } else {
-            model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_AAMISSILE_MK2);
+	} else {
+	    model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_AAMISSILE_MK2);
 
-            matrixStackIn.translate(0, 1.05f, 0);
-            matrixStackIn.scale(1f, 1f, 1f);
+	    matrixStackIn.translate(0, 1.05f, 0);
+	    matrixStackIn.scale(1f, 1f, 1f);
 
-        }
-        Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateWithoutAO(world, model, Blocks.AIR.defaultBlockState(), entity.blockPosition(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, world.random, new Random().nextLong(), 0);
+	}
+	Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateWithoutAO(world, model,
+		Blocks.AIR.defaultBlockState(), entity.blockPosition(), matrixStackIn,
+		bufferIn.getBuffer(RenderType.solid()), false, world.random, new Random().nextLong(), 0);
 
-        matrixStackIn.popPose();
-
+	matrixStackIn.popPose();
 
     }
 
     @Override
     public boolean shouldRender(EntitySAM livingEntityIn, Frustum camera, double camX, double camY, double camZ) {
-        return true;
+	return true;
     }
 
     @Override
     public ResourceLocation getTextureLocation(EntitySAM entity) {
-        return InventoryMenu.BLOCK_ATLAS;
+	return InventoryMenu.BLOCK_ATLAS;
     }
 }

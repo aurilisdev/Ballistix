@@ -45,7 +45,7 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
     public CompoundTag blockData;
     protected static final EntityDataAccessor<BlockPos> DATA_START_POS = SynchedEntityData
 	    .defineId(EntityBallistixFallingBlock.class, EntityDataSerializers.BLOCK_POS);
-    private Set<BlockPos> whitelist = new HashSet<BlockPos>();
+    private Set<BlockPos> whitelist = new HashSet<>();
 
     public EntityBallistixFallingBlock(EntityType<? extends EntityBallistixFallingBlock> entityType, Level level) {
 	super(entityType, level);
@@ -57,7 +57,7 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
 	this.blockState = blockState;
 	this.blocksBuilding = true;
 	this.hurtEntities = true;
-	this.setPos(x, y + (double) ((1.0F - this.getBbHeight()) / 2.0F), z);
+	this.setPos(x, y + (1.0F - this.getBbHeight()) / 2.0F, z);
 	this.setDeltaMovement(Vec3.ZERO);
 	this.xo = x;
 	this.yo = y;
@@ -133,7 +133,7 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
 		    entity.hurt(
 			    flag ? entity.damageSources().anvil(getOwner())
 				    : entity.damageSources().fallingBlock(getOwner()),
-			    (float) Math.min(Mth.floor((float) i * this.fallDamageAmount), this.fallDamageMax));
+			    Math.min(Mth.floor(i * this.fallDamageAmount), this.fallDamageMax));
 		}
 	    }
 	}

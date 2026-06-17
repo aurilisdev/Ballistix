@@ -38,53 +38,76 @@ import voltaic.common.item.ItemVoltaic;
 
 public class BallistixItems {
 
-	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, Ballistix.ID);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, Ballistix.ID);
 
-	public static final BulkDeferredHolder<Item, BlockItemDescriptable, SubtypeBallistixMachine> ITEMS_BALLISTIXMACHINE = new BulkDeferredHolder<>(SubtypeBallistixMachine.values(), subtype -> ITEMS.register(subtype.tag(), () -> new BlockItemDescriptable(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(subtype), new Item.Properties(), BallistixCreativeTabs.MAIN)));
-	public static final BulkDeferredHolder<Item, BlockItemDescriptable, SubtypeBlast> ITEMS_EXPLOSIVE = new BulkDeferredHolder<>(SubtypeBlast.values(), subtype -> ITEMS.register(subtype.tag(), () -> {
-		if(subtype == SubtypeBlast.antimatter || subtype == SubtypeBlast.darkmatter || subtype == SubtypeBlast.largeantimatter) {
-			return new BlockItemExplosive(subtype, BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype), new Item.Properties().rarity(Rarity.EPIC), BallistixCreativeTabs.MAIN);
+    public static final BulkDeferredHolder<Item, BlockItemDescriptable, SubtypeBallistixMachine> ITEMS_BALLISTIXMACHINE = new BulkDeferredHolder<>(
+	    SubtypeBallistixMachine.values(),
+	    subtype -> ITEMS.register(subtype.tag(),
+		    () -> new BlockItemDescriptable(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(subtype),
+			    new Item.Properties(), BallistixCreativeTabs.MAIN)));
+    public static final BulkDeferredHolder<Item, BlockItemDescriptable, SubtypeBlast> ITEMS_EXPLOSIVE = new BulkDeferredHolder<>(
+	    SubtypeBlast.values(), subtype -> ITEMS.register(subtype.tag(), () -> {
+		if (subtype == SubtypeBlast.antimatter || subtype == SubtypeBlast.darkmatter
+			|| subtype == SubtypeBlast.largeantimatter) {
+		    return new BlockItemExplosive(subtype, BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype),
+			    new Item.Properties().rarity(Rarity.EPIC), BallistixCreativeTabs.MAIN);
 		} else if (subtype == SubtypeBlast.nuclear || subtype == SubtypeBlast.rejuvination) {
-			return new BlockItemExplosive(subtype, BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype), new Item.Properties().rarity(Rarity.UNCOMMON), BallistixCreativeTabs.MAIN);
+		    return new BlockItemExplosive(subtype, BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype),
+			    new Item.Properties().rarity(Rarity.UNCOMMON), BallistixCreativeTabs.MAIN);
 		} else {
-			return new BlockItemExplosive(subtype, BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype), new Item.Properties(), BallistixCreativeTabs.MAIN);
+		    return new BlockItemExplosive(subtype, BallistixBlocks.BLOCKS_EXPLOSIVE.getValue(subtype),
+			    new Item.Properties(), BallistixCreativeTabs.MAIN);
 		}
-	}));
-	public static final BulkDeferredHolder<Item, ItemGrenade, SubtypeGrenade> ITEMS_GRENADE = new BulkDeferredHolder<>(SubtypeGrenade.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemGrenade(subtype.explosiveType)));
-	public static final BulkDeferredHolder<Item, ItemMinecart, SubtypeMinecart> ITEMS_MINECART = new BulkDeferredHolder<>(SubtypeMinecart.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemMinecart(subtype.explosiveType)));
-	public static final BulkDeferredHolder<Item, ItemMissile, SubtypeMissile> ITEMS_MISSILE = new BulkDeferredHolder<>(SubtypeMissile.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemMissile(subtype)));
+	    }));
+    public static final BulkDeferredHolder<Item, ItemGrenade, SubtypeGrenade> ITEMS_GRENADE = new BulkDeferredHolder<>(
+	    SubtypeGrenade.values(),
+	    subtype -> ITEMS.register(subtype.tag(), () -> new ItemGrenade(subtype.explosiveType)));
+    public static final BulkDeferredHolder<Item, ItemMinecart, SubtypeMinecart> ITEMS_MINECART = new BulkDeferredHolder<>(
+	    SubtypeMinecart.values(),
+	    subtype -> ITEMS.register(subtype.tag(), () -> new ItemMinecart(subtype.explosiveType)));
+    public static final BulkDeferredHolder<Item, ItemMissile, SubtypeMissile> ITEMS_MISSILE = new BulkDeferredHolder<>(
+	    SubtypeMissile.values(), subtype -> ITEMS.register(subtype.tag(), () -> new ItemMissile(subtype)));
 
-	public static final DeferredHolder<Item, ItemVoltaic> ITEM_AAMISSILE = ITEMS.register("aamissile", () -> new ItemAAMissile(new Item.Properties().stacksTo(10), BallistixCreativeTabs.MAIN, () -> BallistixConfig.INSTANCE.SAM_CHANCE_TO_DESTROY.get()));
-	public static final DeferredHolder<Item, ItemVoltaic> ITEM_AAMISSILEMK2 = ITEMS.register("aamissilemk2", () -> new ItemAAMissile(new Item.Properties().stacksTo(5), BallistixCreativeTabs.MAIN, () -> BallistixConfig.INSTANCE.ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY.get()));
-	public static final DeferredHolder<Item, ItemVoltaic> ITEM_BULLET = ITEMS.register("bullet", () -> new ItemVoltaic(new Item.Properties().stacksTo(64), BallistixCreativeTabs.MAIN));
-	public static final DeferredHolder<Item, ItemVoltaic> ITEM_DUSTPOISON = ITEMS.register("dustpoison", () -> new ItemVoltaic(new Item.Properties(), BallistixCreativeTabs.MAIN));
-	public static final DeferredHolder<Item, ItemRocketLauncher> ITEM_ROCKETLAUNCHER = ITEMS.register("rocketlauncher", ItemRocketLauncher::new);
-	public static final DeferredHolder<Item, ItemRadarGun> ITEM_RADARGUN = ITEMS.register("radargun", ItemRadarGun::new);
-	public static final DeferredHolder<Item, ItemTracker> ITEM_TRACKER = ITEMS.register("tracker", ItemTracker::new);
-	public static final DeferredHolder<Item, ItemScanner> ITEM_SCANNER = ITEMS.register("scanner", ItemScanner::new);
-	public static final DeferredHolder<Item, ItemLaserDesignator> ITEM_LASERDESIGNATOR = ITEMS.register("laserdesignator", ItemLaserDesignator::new);
-	public static final DeferredHolder<Item, ItemDefuser> ITEM_DEFUSER = ITEMS.register("defuser", ItemDefuser::new);
+    public static final DeferredHolder<Item, ItemVoltaic> ITEM_AAMISSILE = ITEMS.register("aamissile",
+	    () -> new ItemAAMissile(new Item.Properties().stacksTo(10), BallistixCreativeTabs.MAIN,
+		    () -> BallistixConfig.INSTANCE.SAM_CHANCE_TO_DESTROY.get()));
+    public static final DeferredHolder<Item, ItemVoltaic> ITEM_AAMISSILEMK2 = ITEMS.register("aamissilemk2",
+	    () -> new ItemAAMissile(new Item.Properties().stacksTo(5), BallistixCreativeTabs.MAIN,
+		    () -> BallistixConfig.INSTANCE.ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY.get()));
+    public static final DeferredHolder<Item, ItemVoltaic> ITEM_BULLET = ITEMS.register("bullet",
+	    () -> new ItemVoltaic(new Item.Properties().stacksTo(64), BallistixCreativeTabs.MAIN));
+    public static final DeferredHolder<Item, ItemVoltaic> ITEM_DUSTPOISON = ITEMS.register("dustpoison",
+	    () -> new ItemVoltaic(new Item.Properties(), BallistixCreativeTabs.MAIN));
+    public static final DeferredHolder<Item, ItemRocketLauncher> ITEM_ROCKETLAUNCHER = ITEMS.register("rocketlauncher",
+	    ItemRocketLauncher::new);
+    public static final DeferredHolder<Item, ItemRadarGun> ITEM_RADARGUN = ITEMS.register("radargun",
+	    ItemRadarGun::new);
+    public static final DeferredHolder<Item, ItemTracker> ITEM_TRACKER = ITEMS.register("tracker", ItemTracker::new);
+    public static final DeferredHolder<Item, ItemScanner> ITEM_SCANNER = ITEMS.register("scanner", ItemScanner::new);
+    public static final DeferredHolder<Item, ItemLaserDesignator> ITEM_LASERDESIGNATOR = ITEMS
+	    .register("laserdesignator", ItemLaserDesignator::new);
+    public static final DeferredHolder<Item, ItemDefuser> ITEM_DEFUSER = ITEMS.register("defuser", ItemDefuser::new);
 
-	@EventBusSubscriber(value = Dist.CLIENT, modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)
-	private static class BallistixCreativeRegistry {
+    @EventBusSubscriber(value = Dist.CLIENT, modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)
+    private static class BallistixCreativeRegistry {
 
-		@SubscribeEvent
-		public static void registerItems(BuildCreativeModeTabContentsEvent event) {
+	@SubscribeEvent
+	public static void registerItems(BuildCreativeModeTabContentsEvent event) {
 
-			ITEMS.getEntries().forEach(reg -> {
+	    ITEMS.getEntries().forEach(reg -> {
 
-				CreativeTabSupplier supplier = (CreativeTabSupplier) reg.get();
+		CreativeTabSupplier supplier = (CreativeTabSupplier) reg.get();
 
-				if (supplier.hasCreativeTab() && supplier.isAllowedInCreativeTab(event.getTab())) {
-					List<ItemStack> toAdd = new ArrayList<>();
-					supplier.addCreativeModeItems(event.getTab(), toAdd);
-					event.acceptAll(toAdd);
-				}
-
-			});
-
+		if (supplier.hasCreativeTab() && supplier.isAllowedInCreativeTab(event.getTab())) {
+		    List<ItemStack> toAdd = new ArrayList<>();
+		    supplier.addCreativeModeItems(event.getTab(), toAdd);
+		    event.acceptAll(toAdd);
 		}
+
+	    });
 
 	}
+
+    }
 
 }

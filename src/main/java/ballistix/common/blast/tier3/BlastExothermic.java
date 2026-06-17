@@ -32,7 +32,7 @@ public class BlastExothermic extends BlastLasting implements IHasCustomRender {
     private Iterator<BlockPos> iterator;
     private int pertick = -1;
 
-    public BlastExothermic(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+    public BlastExothermic(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
 	super(world, position, owner, blastEntity);
     }
 
@@ -75,9 +75,9 @@ public class BlastExothermic extends BlastLasting implements IHasCustomRender {
 	    BlockPos p = new BlockPos(iterator.next()).offset(position);
 	    BlockState state = world.getBlockState(p);
 
-	    if (state.isAir() || (!(state.getBlock() instanceof LiquidBlock)
+	    if (state.isAir() || !(state.getBlock() instanceof LiquidBlock)
 		    && (state.getDestroySpeed(world, p) < 0 || state.getDestroySpeed(world,
-			    p) > BallistixConfig.INSTANCE.EXPLOSIVE_EXOTHERMIC_MAXHARDNESS.get()))) {
+			    p) > BallistixConfig.INSTANCE.EXPLOSIVE_EXOTHERMIC_MAXHARDNESS.get())) {
 		continue;
 	    }
 

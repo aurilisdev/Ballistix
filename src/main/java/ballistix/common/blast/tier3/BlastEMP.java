@@ -33,7 +33,7 @@ import voltaic.registers.VoltaicCapabilities;
 
 public class BlastEMP extends Blast implements IHasCustomRender {
 
-    public BlastEMP(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+    public BlastEMP(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
 	super(world, position, owner, blastEntity);
     }
 
@@ -122,11 +122,7 @@ public class BlastEMP extends Blast implements IHasCustomRender {
 
 	    for (Entity entity : entities) {
 
-		if (!entity.isAlive()) {
-		    continue;
-		}
-
-		if (!canHarmEntity(entity)) {
+		if (!entity.isAlive() || !canHarmEntity(entity)) {
 		    continue;
 		}
 

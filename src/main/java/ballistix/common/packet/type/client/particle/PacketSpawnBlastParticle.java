@@ -29,7 +29,7 @@ public class PacketSpawnBlastParticle implements CustomPacketPayload {
 
     public PacketSpawnBlastParticle(BlockPos pos, BlastParticleSpawnType type) {
 	this.pos = pos;
-	this.type =type;
+	this.type = type;
     }
 
     public static void handle(PacketSpawnBlastParticle message, IPayloadContext context) {

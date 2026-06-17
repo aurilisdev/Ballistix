@@ -8,11 +8,11 @@ import net.minecraft.sounds.SoundEvent;
 public class SoundBarrierMethods {
 
     public static void playMissileSound(SoundEvent sound, EntityMissile missile) {
-        Minecraft.getInstance().getSoundManager().play(new SoundInstanceMissile(sound, missile));
+	Minecraft.getInstance().getSoundManager().play(new SoundInstanceMissile(sound, missile));
     }
 
     public static void playAirRaidSirenSound(SoundEvent sound, TileAirRaidSiren tile, double range) {
-        Minecraft.getInstance().getSoundManager().play(new SoundInstanceAirRaidSiren(sound, tile, range, true));
+	Minecraft.getInstance().getSoundManager().play(new SoundInstanceAirRaidSiren(sound, tile, range, true));
     }
 
 }

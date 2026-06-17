@@ -9,39 +9,39 @@ import voltaic.Voltaic;
 
 public class BallistixTags {
 
-	public static void init() {
-		Items.init();
-		Blocks.init();
+    public static void init() {
+	Items.init();
+	Blocks.init();
+    }
+
+    public static class Items {
+
+	public static final TagKey<Item> DUST_POISON = forgeTag("dusts/poison");
+	public static final TagKey<Item> CELL_ANTIMATTER_LARGE = forgeTag("cells/anti_matter_large");
+	public static final TagKey<Item> CELL_ANTIMATTER_VERY_LARGE = forgeTag("cells/anti_matter_very_large");
+	public static final TagKey<Item> CELL_DARK_MATTER = forgeTag("cells/dark_matter");
+	public static final TagKey<Item> FUELROD_URANIUM_HIGH_EN = forgeTag("fuel_rods/heuo2");
+
+	private static void init() {
 	}
 
-	public static class Items {
-
-		public static final TagKey<Item> DUST_POISON = forgeTag("dusts/poison");
-		public static final TagKey<Item> CELL_ANTIMATTER_LARGE = forgeTag("cells/anti_matter_large");
-		public static final TagKey<Item> CELL_ANTIMATTER_VERY_LARGE = forgeTag("cells/anti_matter_very_large");
-		public static final TagKey<Item> CELL_DARK_MATTER = forgeTag("cells/dark_matter");
-		public static final TagKey<Item> FUELROD_URANIUM_HIGH_EN = forgeTag("fuel_rods/heuo2");
-
-		private static void init() {
-		}
-
-		private static TagKey<Item> forgeTag(String name) {
-			return ItemTags.create(Voltaic.commonrl(name));
-		}
-
+	private static TagKey<Item> forgeTag(String name) {
+	    return ItemTags.create(Voltaic.commonrl(name));
 	}
 
-	public static class Blocks {
+    }
 
-		public static final TagKey<Block> WHITELISTED_TURRET_BLOCKS = forgeTag("whitelistedturretblocks");
+    public static class Blocks {
 
-		private static void init() {
-		}
+	public static final TagKey<Block> WHITELISTED_TURRET_BLOCKS = forgeTag("whitelistedturretblocks");
 
-		private static TagKey<Block> forgeTag(String name) {
-			return BlockTags.create(Voltaic.commonrl(name));
-		}
-
+	private static void init() {
 	}
+
+	private static TagKey<Block> forgeTag(String name) {
+	    return BlockTags.create(Voltaic.commonrl(name));
+	}
+
+    }
 
 }

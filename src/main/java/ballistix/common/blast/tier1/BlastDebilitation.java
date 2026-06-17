@@ -24,7 +24,7 @@ import net.minecraft.world.phys.AABB;
 
 public class BlastDebilitation extends Blast {
 
-    public BlastDebilitation(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+    public BlastDebilitation(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
 	super(world, position, owner, blastEntity);
     }
 

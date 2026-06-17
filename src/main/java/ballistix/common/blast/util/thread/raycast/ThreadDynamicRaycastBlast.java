@@ -17,17 +17,17 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import voltaic.prefab.block.HashDistanceBlockPos;
 
-
 /**
  * 
- * The fact that this is raytraced is legacy. This was optimal in 1.16 but after minecraft made world changes
- * more thread safe, using multithreading (with inworld access) is actually ALOT slower. It is only worth
- * it for pure math (Like antimatter explosions).
+ * The fact that this is raytraced is legacy. This was optimal in 1.16 but after
+ * minecraft made world changes more thread safe, using multithreading (with
+ * inworld access) is actually ALOT slower. It is only worth it for pure math
+ * (Like antimatter explosions).
  * 
- * This could probably be more optimised in newer versions if we remove the sided explosion part completely, 
- * like how it was previously.
+ * This could probably be more optimised in newer versions if we remove the
+ * sided explosion part completely, like how it was previously.
  * 
- * **/
+ **/
 
 public class ThreadDynamicRaycastBlast extends ThreadBlast {
 
@@ -66,7 +66,7 @@ public class ThreadDynamicRaycastBlast extends ThreadBlast {
 	}
 	if (BallistixConfig.INSTANCE.SHOULD_MULTITHREAD_RAYTRACING.isTrue()) {
 	    while (!underBlasts.isEmpty()) {
-		HashSet<BlockPos> current = new HashSet<BlockPos>();
+		HashSet<BlockPos> current = new HashSet<>();
 		synchronized (intermediateResults) {
 		    current.addAll(intermediateResults);
 		    intermediateResults.clear();

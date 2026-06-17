@@ -10,57 +10,57 @@ import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 public class SiloRegistry {
 
-	public static void registerSilo(int frequency, ILauncherControlPanel silo) {
-		ServerLevel overworld = getOverworld();
+    public static void registerSilo(int frequency, ILauncherControlPanel silo) {
+	ServerLevel overworld = getOverworld();
 
-		HashMap<Integer, HashSet<BlockPos>> siloRegistry = overworld.getData(BallistixAttachmentTypes.SILO_FREQUENCIES);
+	HashMap<Integer, HashSet<BlockPos>> siloRegistry = overworld.getData(BallistixAttachmentTypes.SILO_FREQUENCIES);
 
-		HashSet<BlockPos> registered = siloRegistry.getOrDefault(frequency, new HashSet<>());
+	HashSet<BlockPos> registered = siloRegistry.getOrDefault(frequency, new HashSet<>());
 
-		registered.add(silo.getPos());
+	registered.add(silo.getPos());
 
-		siloRegistry.put(frequency, registered);
+	siloRegistry.put(frequency, registered);
 
-		overworld.setData(BallistixAttachmentTypes.SILO_FREQUENCIES, siloRegistry);
+	overworld.setData(BallistixAttachmentTypes.SILO_FREQUENCIES, siloRegistry);
 
-	}
+    }
 
-	public static void unregisterSilo(int frequency, ILauncherControlPanel silo) {
+    public static void unregisterSilo(int frequency, ILauncherControlPanel silo) {
 
-		ServerLevel overworld = getOverworld();
+	ServerLevel overworld = getOverworld();
 
-		HashMap<Integer, HashSet<BlockPos>> siloRegistry = overworld.getData(BallistixAttachmentTypes.SILO_FREQUENCIES);
+	HashMap<Integer, HashSet<BlockPos>> siloRegistry = overworld.getData(BallistixAttachmentTypes.SILO_FREQUENCIES);
 
-		HashSet<BlockPos> registered = siloRegistry.getOrDefault(frequency, new HashSet<>());
+	HashSet<BlockPos> registered = siloRegistry.getOrDefault(frequency, new HashSet<>());
 
-		registered.remove(silo.getPos());
+	registered.remove(silo.getPos());
 
-		siloRegistry.put(frequency, registered);
+	siloRegistry.put(frequency, registered);
 
-		overworld.setData(BallistixAttachmentTypes.SILO_FREQUENCIES, siloRegistry);
-	}
+	overworld.setData(BallistixAttachmentTypes.SILO_FREQUENCIES, siloRegistry);
+    }
 
-	public static HashSet<ILauncherControlPanel> getSilos(int freq) {
+    public static HashSet<ILauncherControlPanel> getSilos(int freq) {
 
-		ServerLevel overworld = getOverworld();
+	ServerLevel overworld = getOverworld();
 
-		HashMap<Integer, HashSet<BlockPos>> siloRegistry = overworld.getData(BallistixAttachmentTypes.SILO_FREQUENCIES);
+	HashMap<Integer, HashSet<BlockPos>> siloRegistry = overworld.getData(BallistixAttachmentTypes.SILO_FREQUENCIES);
 
-		HashSet<ILauncherControlPanel> silos = new HashSet<>();
+	HashSet<ILauncherControlPanel> silos = new HashSet<>();
 
-		for (BlockPos pos : siloRegistry.getOrDefault(freq, new HashSet<>())) {
+	for (BlockPos pos : siloRegistry.getOrDefault(freq, new HashSet<>())) {
 
-			if (overworld.getBlockEntity(pos) instanceof ILauncherControlPanel silo) {
-				silos.add(silo);
-			}
-
-		}
-
-		return silos;
+	    if (overworld.getBlockEntity(pos) instanceof ILauncherControlPanel silo) {
+		silos.add(silo);
+	    }
 
 	}
 
-	public static ServerLevel getOverworld() {
-		return ServerLifecycleHooks.getCurrentServer().overworld();
-	}
+	return silos;
+
+    }
+
+    public static ServerLevel getOverworld() {
+	return ServerLifecycleHooks.getCurrentServer().overworld();
+    }
 }

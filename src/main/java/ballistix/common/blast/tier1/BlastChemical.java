@@ -26,7 +26,7 @@ import net.minecraft.world.phys.AABB;
 
 public class BlastChemical extends Blast {
 
-    public BlastChemical(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+    public BlastChemical(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
 	super(world, position, owner, blastEntity);
     }
 

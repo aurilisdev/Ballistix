@@ -55,7 +55,8 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
 	    } else {
 		thread.run();
 	    }
-	    Explosion ex = new Explosion(world, blastEntity, world.damageSources().explosion(blastEntity, owner), null, position.getX(), position.getY(), position.getZ(),
+	    Explosion ex = new Explosion(world, blastEntity, world.damageSources().explosion(blastEntity, owner), null,
+		    position.getX(), position.getY(), position.getZ(),
 		    (float) BallistixConfig.INSTANCE.EXPLOSIVE_THERMOBARIC_SIZE.getAsDouble() * 3, false,
 		    BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER,
 		    SoundEvents.GENERIC_EXPLODE);
@@ -75,7 +76,8 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
 	    return !world.isClientSide;
 	}
 	if (callCount % 2 == 0) {
-	    Explosion ex = new Explosion(world, blastEntity, world.damageSources().explosion(blastEntity, owner), null, position.getX(), position.getY(), position.getZ(),
+	    Explosion ex = new Explosion(world, blastEntity, world.damageSources().explosion(blastEntity, owner), null,
+		    position.getX(), position.getY(), position.getZ(),
 		    (float) BallistixConfig.INSTANCE.EXPLOSIVE_THERMOBARIC_SIZE.getAsDouble() * 3, false,
 		    BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER,
 		    SoundEvents.GENERIC_EXPLODE);

@@ -65,13 +65,11 @@ public class BlastBreaching extends BlastLasting implements IHasCustomRender {
     public boolean doExplode(int callCount) {
 	hasStarted = true;
 	super.doExplode(callCount);
-	if (thread == null) {
+	if ((thread == null) || world.isClientSide || !thread.isComplete) {
 	    return ticksSinceBlastStart > BallistixConfig.INSTANCE.EXPLOSIVE_BREACHING_SIZE.getAsDouble() * 3;
 	}
-	if (world.isClientSide || !thread.isComplete) {
-	    return ticksSinceBlastStart > BallistixConfig.INSTANCE.EXPLOSIVE_BREACHING_SIZE.getAsDouble() * 3;
-	}
-	Explosion ex = new Explosion(world, blastEntity, world.damageSources().explosion(blastEntity, owner), null, position.getX(), position.getY(), position.getZ(),
+	Explosion ex = new Explosion(world, blastEntity, world.damageSources().explosion(blastEntity, owner), null,
+		position.getX(), position.getY(), position.getZ(),
 		(float) BallistixConfig.INSTANCE.EXPLOSIVE_BREACHING_SIZE.getAsDouble() * 3, false,
 		BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER,
 		SoundEvents.GENERIC_EXPLODE);

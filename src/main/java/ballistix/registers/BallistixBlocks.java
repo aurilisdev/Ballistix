@@ -12,9 +12,12 @@ import voltaic.common.block.BlockMachine;
 
 public class BallistixBlocks {
 
-	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, Ballistix.ID);
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, Ballistix.ID);
 
-	public static final BulkDeferredHolder<Block, BlockMachine, SubtypeBallistixMachine> BLOCKS_BALLISTIXMACHINE = new BulkDeferredHolder<>(SubtypeBallistixMachine.values(), subtype -> BLOCKS.register(subtype.tag(), () -> new BlockMachine(subtype)));
-	public static final BulkDeferredHolder<Block, BlockExplosive, SubtypeBlast> BLOCKS_EXPLOSIVE = new BulkDeferredHolder<>(SubtypeBlast.values(), subtype -> BLOCKS.register(subtype.tag(), () -> new BlockExplosive(subtype)));
+    public static final BulkDeferredHolder<Block, BlockMachine, SubtypeBallistixMachine> BLOCKS_BALLISTIXMACHINE = new BulkDeferredHolder<>(
+	    SubtypeBallistixMachine.values(),
+	    subtype -> BLOCKS.register(subtype.tag(), () -> new BlockMachine(subtype)));
+    public static final BulkDeferredHolder<Block, BlockExplosive, SubtypeBlast> BLOCKS_EXPLOSIVE = new BulkDeferredHolder<>(
+	    SubtypeBlast.values(), subtype -> BLOCKS.register(subtype.tag(), () -> new BlockExplosive(subtype)));
 
 }

@@ -14,7 +14,7 @@ import net.minecraft.world.level.Level;
 
 public class BlastFragmentation extends Blast {
 
-    public BlastFragmentation(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+    public BlastFragmentation(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
 	super(world, position, owner, blastEntity);
     }
 

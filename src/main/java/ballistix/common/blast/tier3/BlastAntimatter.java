@@ -40,7 +40,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 public class BlastAntimatter extends BlastLasting implements IHasCustomRender {
 
-    public BlastAntimatter(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+    public BlastAntimatter(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
 	super(world, position, owner, blastEntity);
     }
 
@@ -74,7 +74,8 @@ public class BlastAntimatter extends BlastLasting implements IHasCustomRender {
 	if (world.isClientSide || !thread.isComplete) {
 	    return false;
 	}
-	Explosion ex = new Explosion(world, blastEntity, world.damageSources().explosion(blastEntity, owner), null, position.getX(), position.getY(), position.getZ(),
+	Explosion ex = new Explosion(world, blastEntity, world.damageSources().explosion(blastEntity, owner), null,
+		position.getX(), position.getY(), position.getZ(),
 		(float) BallistixConfig.INSTANCE.EXPLOSIVE_ANTIMATTER_RADIUS.getAsDouble(), false,
 		BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER,
 		SoundEvents.GENERIC_EXPLODE);

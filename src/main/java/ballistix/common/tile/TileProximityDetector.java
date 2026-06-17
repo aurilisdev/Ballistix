@@ -122,8 +122,6 @@ public class TileProximityDetector extends GenericTile {
 		}
 	    }
 
-	    redstoneSignal.setValue(0);
-
 	} else {
 
 	    Class<? extends LivingEntity> type = mode == GenericTileTurret.TargetingMode.ONLY_PLAYERS ? Player.class
@@ -172,9 +170,8 @@ public class TileProximityDetector extends GenericTile {
 
 	    }
 
-	    redstoneSignal.setValue(0);
-
 	}
+	redstoneSignal.setValue(0);
 
     }
 

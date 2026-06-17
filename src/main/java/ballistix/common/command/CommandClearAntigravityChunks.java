@@ -12,13 +12,13 @@ public class CommandClearAntigravityChunks {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
 
-        dispatcher.register(Commands.literal(Ballistix.ID).requires(source -> source.hasPermission(4)).then(Commands.literal("wipeallantigravitychunks").executes(source -> {
+	dispatcher.register(Commands.literal(Ballistix.ID).requires(source -> source.hasPermission(4))
+		.then(Commands.literal("wipeallantigravitychunks").executes(source -> {
 
-            source.getSource().getLevel().removeData(BallistixAttachmentTypes.ANTIGRAVED_CHUNKS);
-            source.getSource().sendSuccess(() -> Component.literal("wiped"), true);
-            return 1;
-        })));
-
+		    source.getSource().getLevel().removeData(BallistixAttachmentTypes.ANTIGRAVED_CHUNKS);
+		    source.getSource().sendSuccess(() -> Component.literal("wiped"), true);
+		    return 1;
+		})));
 
     }
 

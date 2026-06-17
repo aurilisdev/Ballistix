@@ -17,17 +17,18 @@ public class RegisterBlastRenderersEvent extends Event implements IModBusEvent {
     private final HashMap<ResourceLocation, BlastRenderer> renderers = new HashMap<>();
 
     public void register(IBlast blast, BlastRenderer renderer) {
-        renderers.put(blast.id(), renderer);
+	renderers.put(blast.id(), renderer);
     }
 
     public void process() {
-        RenderBlast.RENDERERS.clear();
-        RenderBlast.RENDERERS.putAll(renderers);
+	RenderBlast.RENDERERS.clear();
+	RenderBlast.RENDERERS.putAll(renderers);
     }
 
     public static interface BlastRenderer {
 
-        void render(EntityBlast entityIn, float entityYaw, float partialTicks, PoseStack matrixStack, MultiBufferSource bufferIn, int packedLightIn);
+	void render(EntityBlast entityIn, float entityYaw, float partialTicks, PoseStack matrixStack,
+		MultiBufferSource bufferIn, int packedLightIn);
     }
 
 }

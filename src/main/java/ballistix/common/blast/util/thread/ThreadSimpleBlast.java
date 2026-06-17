@@ -31,7 +31,7 @@ public class ThreadSimpleBlast extends ThreadBlast {
 	    ResourceLocation id) {
 	super(world, position, range, energy, source);
 	setName("Simple blast thread");
-	this.idPair = new Pair<Integer, ResourceLocation>(range, id);
+	this.idPair = new Pair<>(range, id);
 	setPriority(MAX_PRIORITY);
     }
 
@@ -68,7 +68,7 @@ public class ThreadSimpleBlast extends ThreadBlast {
 		    currentlyCalculating.add(explosionRadius);
 		}
 	    }
-            if (CACHED_EUCLIDEAN_RESULTS.get(idPair) == null) {
+	    if (CACHED_EUCLIDEAN_RESULTS.get(idPair) == null) {
 		int rSqrd = explosionRadius * explosionRadius;
 		ArrayList<BlockPos> positions = new ArrayList<>(
 			(int) (Math.PI * 4.0 / 3.0 * rSqrd * (explosionRadius + 1)));

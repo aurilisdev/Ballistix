@@ -9,41 +9,41 @@ import net.minecraft.world.level.ChunkPos;
 
 public class AntigravedChunk {
 
-    public static final Codec<AntigravedChunk> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            BallistixCodecUtils.CHUNK_POS.fieldOf("pos").forGetter(AntigravedChunk::getPos),
-            Codec.INT.fieldOf("time").forGetter(AntigravedChunk::getTime)
-    ).apply(instance, AntigravedChunk::new));
+    public static final Codec<AntigravedChunk> CODEC = RecordCodecBuilder.create(instance -> instance
+	    .group(BallistixCodecUtils.CHUNK_POS.fieldOf("pos").forGetter(AntigravedChunk::getPos),
+		    Codec.INT.fieldOf("time").forGetter(AntigravedChunk::getTime))
+	    .apply(instance, AntigravedChunk::new));
 
     private final ChunkPos pos;
     private int time = 0;
 
     public AntigravedChunk(ChunkPos pos, int time) {
-        this.pos = pos;
-        this.time = time;
+	this.pos = pos;
+	this.time = time;
     }
 
     public ChunkPos getPos() {
-        return pos;
+	return pos;
     }
 
     public int getTime() {
-        return time;
+	return time;
     }
 
     public void decrementTime() {
-        time--;
+	time--;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof AntigravedChunk other) {
-            return other.pos.equals(pos) && other.time == time;
-        }
-        return false;
+	if (obj instanceof AntigravedChunk other) {
+	    return other.pos.equals(pos) && other.time == time;
+	}
+	return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(pos);
+	return Objects.hashCode(pos);
     }
 }

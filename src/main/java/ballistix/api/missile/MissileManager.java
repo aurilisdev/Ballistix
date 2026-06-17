@@ -26,300 +26,319 @@ public class MissileManager {
     @SubscribeEvent
     public static void tick(ServerTickEvent.Post event) {
 
-        ServerLevel overworld = getOverworld();
+	ServerLevel overworld = getOverworld();
 
-        HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> missiles = overworld.getData(BallistixAttachmentTypes.ACTIVE_MISSILES);
+	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> missiles = overworld
+		.getData(BallistixAttachmentTypes.ACTIVE_MISSILES);
 
-        for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> entry : missiles.entrySet()) {
+	for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> entry : missiles.entrySet()) {
 
-            ServerLevel level = event.getServer().getLevel(entry.getKey());
+	    ServerLevel level = event.getServer().getLevel(entry.getKey());
 
-            //level isn't loaded
-            if (level == null) {
-                continue;
-            }
+	    // level isn't loaded
+	    if (level == null) {
+		continue;
+	    }
 
-            Iterator<Map.Entry<UUID, VirtualMissile>> it = entry.getValue().entrySet().iterator();
+	    Iterator<Map.Entry<UUID, VirtualMissile>> it = entry.getValue().entrySet().iterator();
 
-            while (it.hasNext()) {
+	    while (it.hasNext()) {
 
-                Map.Entry<UUID, VirtualMissile> active = it.next();
+		Map.Entry<UUID, VirtualMissile> active = it.next();
 
-                active.getValue().tick(level);
+		active.getValue().tick(level);
 
-                if (active.getValue().hasExploded()) {
-                    it.remove();
-                }
+		if (active.getValue().hasExploded()) {
+		    it.remove();
+		}
 
-            }
+	    }
 
-        }
+	}
 
-        overworld.setData(BallistixAttachmentTypes.ACTIVE_MISSILES, missiles);
+	overworld.setData(BallistixAttachmentTypes.ACTIVE_MISSILES, missiles);
 
-        HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>> bullets = overworld.getData(BallistixAttachmentTypes.ACTIVE_BULLETS);
+	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>> bullets = overworld
+		.getData(BallistixAttachmentTypes.ACTIVE_BULLETS);
 
-        for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>> entry : bullets.entrySet()) {
+	for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>> entry : bullets.entrySet()) {
 
-            ServerLevel level = event.getServer().getLevel(entry.getKey());
+	    ServerLevel level = event.getServer().getLevel(entry.getKey());
 
-            //level isn't loaded
-            if (level == null) {
-                continue;
-            }
+	    // level isn't loaded
+	    if (level == null) {
+		continue;
+	    }
 
-            Iterator<Map.Entry<UUID, VirtualProjectile.VirtualBullet>> it = entry.getValue().entrySet().iterator();
+	    Iterator<Map.Entry<UUID, VirtualProjectile.VirtualBullet>> it = entry.getValue().entrySet().iterator();
 
-            while (it.hasNext()) {
+	    while (it.hasNext()) {
 
-                Map.Entry<UUID, VirtualProjectile.VirtualBullet> active = it.next();
+		Map.Entry<UUID, VirtualProjectile.VirtualBullet> active = it.next();
 
-                active.getValue().tick(level);
+		active.getValue().tick(level);
 
-                if (active.getValue().hasExploded()) {
-                    it.remove();
-                }
+		if (active.getValue().hasExploded()) {
+		    it.remove();
+		}
 
-            }
+	    }
 
-        }
+	}
 
-        overworld.setData(BallistixAttachmentTypes.ACTIVE_BULLETS, bullets);
+	overworld.setData(BallistixAttachmentTypes.ACTIVE_BULLETS, bullets);
 
-        HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> railgunrounds = overworld.getData(BallistixAttachmentTypes.ACTIVE_RAILGUNROUNDS);
+	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> railgunrounds = overworld
+		.getData(BallistixAttachmentTypes.ACTIVE_RAILGUNROUNDS);
 
-        for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> entry : railgunrounds.entrySet()) {
+	for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> entry : railgunrounds
+		.entrySet()) {
 
-            ServerLevel level = event.getServer().getLevel(entry.getKey());
+	    ServerLevel level = event.getServer().getLevel(entry.getKey());
 
-            //level isn't loaded
-            if (level == null) {
-                continue;
-            }
+	    // level isn't loaded
+	    if (level == null) {
+		continue;
+	    }
 
-            Iterator<Map.Entry<UUID, VirtualProjectile.VirtualRailgunRound>> it = entry.getValue().entrySet().iterator();
+	    Iterator<Map.Entry<UUID, VirtualProjectile.VirtualRailgunRound>> it = entry.getValue().entrySet()
+		    .iterator();
 
-            while (it.hasNext()) {
+	    while (it.hasNext()) {
 
-                Map.Entry<UUID, VirtualProjectile.VirtualRailgunRound> active = it.next();
+		Map.Entry<UUID, VirtualProjectile.VirtualRailgunRound> active = it.next();
 
-                active.getValue().tick(level);
+		active.getValue().tick(level);
 
-                if (active.getValue().hasExploded()) {
-                    it.remove();
-                }
+		if (active.getValue().hasExploded()) {
+		    it.remove();
+		}
 
-            }
+	    }
 
-        }
+	}
 
-        overworld.setData(BallistixAttachmentTypes.ACTIVE_RAILGUNROUNDS, railgunrounds);
+	overworld.setData(BallistixAttachmentTypes.ACTIVE_RAILGUNROUNDS, railgunrounds);
 
-        HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>> sams = overworld.getData(BallistixAttachmentTypes.ACTIVE_SAMS);
+	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>> sams = overworld
+		.getData(BallistixAttachmentTypes.ACTIVE_SAMS);
 
-        for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>> entry : sams.entrySet()) {
+	for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>> entry : sams.entrySet()) {
 
-            ServerLevel level = event.getServer().getLevel(entry.getKey());
+	    ServerLevel level = event.getServer().getLevel(entry.getKey());
 
-            //level isn't loaded
-            if (level == null) {
-                continue;
-            }
+	    // level isn't loaded
+	    if (level == null) {
+		continue;
+	    }
 
-            Iterator<Map.Entry<UUID, VirtualProjectile.VirtualSAM>> it = entry.getValue().entrySet().iterator();
+	    Iterator<Map.Entry<UUID, VirtualProjectile.VirtualSAM>> it = entry.getValue().entrySet().iterator();
 
-            while (it.hasNext()) {
+	    while (it.hasNext()) {
 
-                Map.Entry<UUID, VirtualProjectile.VirtualSAM> active = it.next();
+		Map.Entry<UUID, VirtualProjectile.VirtualSAM> active = it.next();
 
-                active.getValue().tick(level);
+		active.getValue().tick(level);
 
-                if (active.getValue().hasExploded()) {
-                    it.remove();
-                }
+		if (active.getValue().hasExploded()) {
+		    it.remove();
+		}
 
-            }
+	    }
 
-        }
+	}
 
-        overworld.setData(BallistixAttachmentTypes.ACTIVE_SAMS, sams);
+	overworld.setData(BallistixAttachmentTypes.ACTIVE_SAMS, sams);
 
     }
 
     public static void addMissile(ResourceKey<Level> key, VirtualMissile missile) {
 
-        ServerLevel overworld = getOverworld();
+	ServerLevel overworld = getOverworld();
 
-        HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> data = overworld.getData(BallistixAttachmentTypes.ACTIVE_MISSILES);
+	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> data = overworld
+		.getData(BallistixAttachmentTypes.ACTIVE_MISSILES);
 
-        HashMap<UUID, VirtualMissile> virtual = data.getOrDefault(key, new HashMap<>());
+	HashMap<UUID, VirtualMissile> virtual = data.getOrDefault(key, new HashMap<>());
 
-        virtual.put(missile.getId(), missile);
+	virtual.put(missile.getId(), missile);
 
-        data.put(key, virtual);
+	data.put(key, virtual);
 
-        overworld.setData(BallistixAttachmentTypes.ACTIVE_MISSILES, data);
+	overworld.setData(BallistixAttachmentTypes.ACTIVE_MISSILES, data);
 
     }
 
     public static void removeMissile(ResourceKey<Level> level, UUID id) {
 
-        ServerLevel overworld = getOverworld();
+	ServerLevel overworld = getOverworld();
 
-        HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> data = overworld.getData(BallistixAttachmentTypes.ACTIVE_MISSILES);
+	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> data = overworld
+		.getData(BallistixAttachmentTypes.ACTIVE_MISSILES);
 
-        HashMap<UUID, VirtualMissile> virtual = data.getOrDefault(level, new HashMap<>());
+	HashMap<UUID, VirtualMissile> virtual = data.getOrDefault(level, new HashMap<>());
 
-        virtual.remove(id);
+	virtual.remove(id);
 
-        overworld.setData(BallistixAttachmentTypes.ACTIVE_MISSILES, data);
+	overworld.setData(BallistixAttachmentTypes.ACTIVE_MISSILES, data);
 
     }
 
     public static Collection<VirtualMissile> getMissilesForLevel(ResourceKey<Level> level) {
-        ServerLevel overworld = getOverworld();
+	ServerLevel overworld = getOverworld();
 
-        HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> data = overworld.getData(BallistixAttachmentTypes.ACTIVE_MISSILES);
+	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> data = overworld
+		.getData(BallistixAttachmentTypes.ACTIVE_MISSILES);
 
-        HashMap<UUID, VirtualMissile> virtual = data.getOrDefault(level, new HashMap<>());
+	HashMap<UUID, VirtualMissile> virtual = data.getOrDefault(level, new HashMap<>());
 
-        return virtual.values();
+	return virtual.values();
     }
 
     @Nullable
     public static VirtualMissile getMissile(ResourceKey<Level> level, UUID id) {
-        ServerLevel overworld = getOverworld();
+	ServerLevel overworld = getOverworld();
 
-        HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> data = overworld.getData(BallistixAttachmentTypes.ACTIVE_MISSILES);
+	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> data = overworld
+		.getData(BallistixAttachmentTypes.ACTIVE_MISSILES);
 
-        HashMap<UUID, VirtualMissile> virtual = data.getOrDefault(level, new HashMap<>());
+	HashMap<UUID, VirtualMissile> virtual = data.getOrDefault(level, new HashMap<>());
 
-        return virtual.get(id);
+	return virtual.get(id);
     }
 
     public static void wipeAllMissiles() {
-        getOverworld().removeData(BallistixAttachmentTypes.ACTIVE_MISSILES);
+	getOverworld().removeData(BallistixAttachmentTypes.ACTIVE_MISSILES);
     }
 
     public static void addBullet(ResourceKey<Level> key, VirtualProjectile.VirtualBullet bullet) {
-        ServerLevel overworld = getOverworld();
+	ServerLevel overworld = getOverworld();
 
-        HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>> data = overworld.getData(BallistixAttachmentTypes.ACTIVE_BULLETS);
+	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>> data = overworld
+		.getData(BallistixAttachmentTypes.ACTIVE_BULLETS);
 
-        HashMap<UUID, VirtualProjectile.VirtualBullet> virtual = data.getOrDefault(key, new HashMap<>());
+	HashMap<UUID, VirtualProjectile.VirtualBullet> virtual = data.getOrDefault(key, new HashMap<>());
 
-        virtual.put(bullet.id, bullet);
+	virtual.put(bullet.id, bullet);
 
-        data.put(key, virtual);
+	data.put(key, virtual);
 
-        overworld.setData(BallistixAttachmentTypes.ACTIVE_BULLETS, data);
+	overworld.setData(BallistixAttachmentTypes.ACTIVE_BULLETS, data);
     }
 
     @Nullable
     public static VirtualProjectile.VirtualBullet getBullet(ResourceKey<Level> level, UUID id) {
-        ServerLevel overworld = getOverworld();
+	ServerLevel overworld = getOverworld();
 
-        HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>> data = overworld.getData(BallistixAttachmentTypes.ACTIVE_BULLETS);
+	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>> data = overworld
+		.getData(BallistixAttachmentTypes.ACTIVE_BULLETS);
 
-        HashMap<UUID, VirtualProjectile.VirtualBullet> virtual = data.getOrDefault(level, new HashMap<>());
+	HashMap<UUID, VirtualProjectile.VirtualBullet> virtual = data.getOrDefault(level, new HashMap<>());
 
-        return virtual.get(id);
+	return virtual.get(id);
     }
 
     public static Collection<VirtualProjectile.VirtualBullet> getBulletsForLevel(ResourceKey<Level> level) {
-        ServerLevel overworld = getOverworld();
+	ServerLevel overworld = getOverworld();
 
-        HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>> data = overworld.getData(BallistixAttachmentTypes.ACTIVE_BULLETS);
+	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>> data = overworld
+		.getData(BallistixAttachmentTypes.ACTIVE_BULLETS);
 
-        HashMap<UUID, VirtualProjectile.VirtualBullet> virtual = data.getOrDefault(level, new HashMap<>());
+	HashMap<UUID, VirtualProjectile.VirtualBullet> virtual = data.getOrDefault(level, new HashMap<>());
 
-        return virtual.values();
+	return virtual.values();
     }
 
     public static void wipeAllBullets() {
-        getOverworld().removeData(BallistixAttachmentTypes.ACTIVE_BULLETS);
+	getOverworld().removeData(BallistixAttachmentTypes.ACTIVE_BULLETS);
     }
 
     public static void addRailgunRound(ResourceKey<Level> key, VirtualProjectile.VirtualRailgunRound railgun) {
-        ServerLevel overworld = getOverworld();
+	ServerLevel overworld = getOverworld();
 
-        HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> data = overworld.getData(BallistixAttachmentTypes.ACTIVE_RAILGUNROUNDS);
+	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> data = overworld
+		.getData(BallistixAttachmentTypes.ACTIVE_RAILGUNROUNDS);
 
-        HashMap<UUID, VirtualProjectile.VirtualRailgunRound> virtual = data.getOrDefault(key, new HashMap<>());
+	HashMap<UUID, VirtualProjectile.VirtualRailgunRound> virtual = data.getOrDefault(key, new HashMap<>());
 
-        virtual.put(railgun.id, railgun);
+	virtual.put(railgun.id, railgun);
 
-        data.put(key, virtual);
+	data.put(key, virtual);
 
-        overworld.setData(BallistixAttachmentTypes.ACTIVE_RAILGUNROUNDS, data);
+	overworld.setData(BallistixAttachmentTypes.ACTIVE_RAILGUNROUNDS, data);
     }
 
     @Nullable
     public static VirtualProjectile.VirtualRailgunRound getRailgunRound(ResourceKey<Level> level, UUID id) {
-        ServerLevel overworld = getOverworld();
+	ServerLevel overworld = getOverworld();
 
-        HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> data = overworld.getData(BallistixAttachmentTypes.ACTIVE_RAILGUNROUNDS);
+	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> data = overworld
+		.getData(BallistixAttachmentTypes.ACTIVE_RAILGUNROUNDS);
 
-        HashMap<UUID, VirtualProjectile.VirtualRailgunRound> virtual = data.getOrDefault(level, new HashMap<>());
+	HashMap<UUID, VirtualProjectile.VirtualRailgunRound> virtual = data.getOrDefault(level, new HashMap<>());
 
-        return virtual.get(id);
+	return virtual.get(id);
     }
 
     public static Collection<VirtualProjectile.VirtualRailgunRound> getRailgunRoundsForLevel(ResourceKey<Level> level) {
-        ServerLevel overworld = getOverworld();
+	ServerLevel overworld = getOverworld();
 
-        HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> data = overworld.getData(BallistixAttachmentTypes.ACTIVE_RAILGUNROUNDS);
+	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> data = overworld
+		.getData(BallistixAttachmentTypes.ACTIVE_RAILGUNROUNDS);
 
-        HashMap<UUID, VirtualProjectile.VirtualRailgunRound> virtual = data.getOrDefault(level, new HashMap<>());
+	HashMap<UUID, VirtualProjectile.VirtualRailgunRound> virtual = data.getOrDefault(level, new HashMap<>());
 
-        return virtual.values();
+	return virtual.values();
     }
 
     public static void wipeAllRailgunRounds() {
-        getOverworld().removeData(BallistixAttachmentTypes.ACTIVE_RAILGUNROUNDS);
+	getOverworld().removeData(BallistixAttachmentTypes.ACTIVE_RAILGUNROUNDS);
     }
 
     public static void addSAM(ResourceKey<Level> key, VirtualProjectile.VirtualSAM bullet) {
-        ServerLevel overworld = getOverworld();
+	ServerLevel overworld = getOverworld();
 
-        HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>> data = overworld.getData(BallistixAttachmentTypes.ACTIVE_SAMS);
+	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>> data = overworld
+		.getData(BallistixAttachmentTypes.ACTIVE_SAMS);
 
-        HashMap<UUID, VirtualProjectile.VirtualSAM> virtual = data.getOrDefault(key, new HashMap<>());
+	HashMap<UUID, VirtualProjectile.VirtualSAM> virtual = data.getOrDefault(key, new HashMap<>());
 
-        virtual.put(bullet.id, bullet);
+	virtual.put(bullet.id, bullet);
 
-        data.put(key, virtual);
+	data.put(key, virtual);
 
-        overworld.setData(BallistixAttachmentTypes.ACTIVE_SAMS, data);
+	overworld.setData(BallistixAttachmentTypes.ACTIVE_SAMS, data);
     }
 
     @Nullable
     public static VirtualProjectile.VirtualSAM getSAM(ResourceKey<Level> level, UUID id) {
-        ServerLevel overworld = getOverworld();
+	ServerLevel overworld = getOverworld();
 
-        HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>> data = overworld.getData(BallistixAttachmentTypes.ACTIVE_SAMS);
+	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>> data = overworld
+		.getData(BallistixAttachmentTypes.ACTIVE_SAMS);
 
-        HashMap<UUID, VirtualProjectile.VirtualSAM> virtual = data.getOrDefault(level, new HashMap<>());
+	HashMap<UUID, VirtualProjectile.VirtualSAM> virtual = data.getOrDefault(level, new HashMap<>());
 
-        return virtual.get(id);
+	return virtual.get(id);
     }
 
     public static Collection<VirtualProjectile.VirtualSAM> getSAMsForLevel(ResourceKey<Level> level) {
-        ServerLevel overworld = getOverworld();
+	ServerLevel overworld = getOverworld();
 
-        HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>> data = overworld.getData(BallistixAttachmentTypes.ACTIVE_SAMS);
+	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>> data = overworld
+		.getData(BallistixAttachmentTypes.ACTIVE_SAMS);
 
-        HashMap<UUID, VirtualProjectile.VirtualSAM> virtual = data.getOrDefault(level, new HashMap<>());
+	HashMap<UUID, VirtualProjectile.VirtualSAM> virtual = data.getOrDefault(level, new HashMap<>());
 
-        return virtual.values();
+	return virtual.values();
     }
 
     public static void wipeAllSAMs() {
-        getOverworld().removeData(BallistixAttachmentTypes.ACTIVE_SAMS);
+	getOverworld().removeData(BallistixAttachmentTypes.ACTIVE_SAMS);
     }
 
     private static ServerLevel getOverworld() {
-        return ServerLifecycleHooks.getCurrentServer().overworld();
+	return ServerLifecycleHooks.getCurrentServer().overworld();
     }
 
 }

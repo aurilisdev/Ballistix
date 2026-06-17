@@ -14,7 +14,7 @@ import net.minecraft.world.level.Level;
 
 public class BlastLandmine extends Blast {
 
-    public BlastLandmine(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+    public BlastLandmine(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
 	super(world, position, owner, blastEntity);
     }
 

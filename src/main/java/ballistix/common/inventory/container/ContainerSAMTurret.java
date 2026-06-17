@@ -18,23 +18,23 @@ public class ContainerSAMTurret extends GenericContainerBlockEntity<TileTurretSA
     public static final SubtypeItemUpgrade[] VALID_UPGRADES = { SubtypeItemUpgrade.range };
 
     public ContainerSAMTurret(int id, Inventory playerinv) {
-        this(id, playerinv, new SimpleContainer(4), new SimpleContainerData(3));
+	this(id, playerinv, new SimpleContainer(4), new SimpleContainerData(3));
     }
 
     public ContainerSAMTurret(int id, Inventory playerinv, Container inventory, ContainerData inventorydata) {
-        super(BallistixMenuTypes.CONTAINER_SAMTURRET.get(), id, playerinv, inventory, inventorydata);
+	super(BallistixMenuTypes.CONTAINER_SAMTURRET.get(), id, playerinv, inventory, inventorydata);
     }
 
     @Override
     public void addInventorySlots(Container inv, Inventory playerinv) {
 
-        setPlayerInvOffset(10);
+	setPlayerInvOffset(10);
 
-        addSlot(new SlotGeneric(inv, nextIndex(), 80, 20).setIOColor(new Color(0, 240, 255, 255)));
+	addSlot(new SlotGeneric(inv, nextIndex(), 80, 20).setIOColor(new Color(0, 240, 255, 255)));
 
-        this.addSlot(new SlotUpgrade(inv, this.nextIndex(), 153, 14, VALID_UPGRADES));
-        this.addSlot(new SlotUpgrade(inv, this.nextIndex(), 153, 37, VALID_UPGRADES));
-        this.addSlot(new SlotUpgrade(inv, this.nextIndex(), 153, 60, VALID_UPGRADES));
+	this.addSlot(new SlotUpgrade(inv, this.nextIndex(), 153, 14, VALID_UPGRADES));
+	this.addSlot(new SlotUpgrade(inv, this.nextIndex(), 153, 37, VALID_UPGRADES));
+	this.addSlot(new SlotUpgrade(inv, this.nextIndex(), 153, 60, VALID_UPGRADES));
 
     }
 }

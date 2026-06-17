@@ -11,34 +11,35 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class PacketPushPlayer implements CustomPacketPayload {
 
-    public static final ResourceLocation PACKET_SETSEARCHRADARTRACKEDCLIENT_PACKETID = NetworkHandler.id("packetpushplayer");
+    public static final ResourceLocation PACKET_SETSEARCHRADARTRACKEDCLIENT_PACKETID = NetworkHandler
+	    .id("packetpushplayer");
     public static final Type<PacketPushPlayer> TYPE = new Type<>(PACKET_SETSEARCHRADARTRACKEDCLIENT_PACKETID);
 
     public static final StreamCodec<RegistryFriendlyByteBuf, PacketPushPlayer> CODEC = new StreamCodec<>() {
 
-        @Override
-        public PacketPushPlayer decode(RegistryFriendlyByteBuf buf) {
-            return new PacketPushPlayer(buf.readUUID());
-        }
+	@Override
+	public PacketPushPlayer decode(RegistryFriendlyByteBuf buf) {
+	    return new PacketPushPlayer(buf.readUUID());
+	}
 
-        @Override
-        public void encode(RegistryFriendlyByteBuf buf, PacketPushPlayer packet) {
-            buf.writeUUID(packet.id);
-        }
+	@Override
+	public void encode(RegistryFriendlyByteBuf buf, PacketPushPlayer packet) {
+	    buf.writeUUID(packet.id);
+	}
     };
 
     private final UUID id;
 
     public PacketPushPlayer(UUID player) {
-        id = player;
+	id = player;
     }
 
     public static void handle(PacketPushPlayer message, IPayloadContext context) {
-        ClientBarrierMethods.handlePushPlayer(message.id);
+	ClientBarrierMethods.handlePushPlayer(message.id);
     }
 
     @Override
     public Type<? extends CustomPacketPayload> type() {
-        return TYPE;
+	return TYPE;
     }
 }

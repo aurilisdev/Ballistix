@@ -36,7 +36,7 @@ import net.minecraft.world.level.storage.ServerLevelData;
 import voltaic.Voltaic;
 
 public class BlastRejuvination extends Blast {
-    public BlastRejuvination(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+    public BlastRejuvination(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
 	super(world, position, owner, blastEntity);
     }
 

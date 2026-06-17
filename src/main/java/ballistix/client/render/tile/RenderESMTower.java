@@ -16,24 +16,26 @@ import voltaic.prefab.utilities.RenderingUtils;
 public class RenderESMTower extends AbstractTileRenderer<TileESMTower> {
 
     public RenderESMTower(BlockEntityRendererProvider.Context context) {
-        super(context);
+	super(context);
     }
 
     @Override
-    public void render(@NotNull TileESMTower tileEntityIn, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+    public void render(@NotNull TileESMTower tileEntityIn, float partialTicks, PoseStack matrixStackIn,
+	    MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 
-        matrixStackIn.pushPose();
+	matrixStackIn.pushPose();
 
-        matrixStackIn.translate(0.5, 1.5, 0.5);
+	matrixStackIn.translate(0.5, 1.5, 0.5);
 
-        RenderingUtils.renderModel(getModel(BallistixClientRegister.MODEL_ESMTOWER), tileEntityIn, RenderType.solid(), matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
+	RenderingUtils.renderModel(getModel(BallistixClientRegister.MODEL_ESMTOWER), tileEntityIn, RenderType.solid(),
+		matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
 
-        matrixStackIn.popPose();
+	matrixStackIn.popPose();
 
     }
 
     @Override
     public AABB getRenderBoundingBox(TileESMTower blockEntity) {
-        return super.getRenderBoundingBox(blockEntity).inflate(0, 2, 0);
+	return super.getRenderBoundingBox(blockEntity).inflate(0, 2, 0);
     }
 }

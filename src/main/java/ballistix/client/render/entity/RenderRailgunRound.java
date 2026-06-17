@@ -23,36 +23,39 @@ public class RenderRailgunRound extends EntityRenderer<EntityRailgunRound> {
     private static final AABB BOX = new AABB(0, 0, 0, 0.0625, 1, 0.0625);
 
     public RenderRailgunRound(EntityRendererProvider.Context context) {
-        super(context);
+	super(context);
     }
 
     @Override
-    public void render(EntityRailgunRound entity, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
+    public void render(EntityRailgunRound entity, float entityYaw, float partialTicks, PoseStack matrixStackIn,
+	    MultiBufferSource bufferIn, int packedLightIn) {
 
+	if (entity.getDeltaMovement().length() <= 0) {
+	    return;
+	}
 
-        if (entity.getDeltaMovement().length() <= 0) {
-            return;
-        }
+	TextureAtlasSprite sprite = VoltaicClientRegister.whiteSprite();
 
-        TextureAtlasSprite sprite = VoltaicClientRegister.whiteSprite();
+	matrixStackIn.pushPose();
 
-        matrixStackIn.pushPose();
+	matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(entity.getYRot() + 90.0F, MathUtils.YP));
+	matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(90 - entity.getXRot(), MathUtils.ZP));
 
-        matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(entity.getYRot() + 90.0F, MathUtils.YP));
-        matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(90 - entity.getXRot(), MathUtils.ZP));
+	RenderingUtils.renderFilledBoxNoOverlay(matrixStackIn, bufferIn.getBuffer(RenderType.solid()), BOX,
+		COLOR.rFloat(), COLOR.gFloat(), COLOR.bFloat(), COLOR.aFloat(), sprite.getU0(), sprite.getV0(),
+		sprite.getU1(), sprite.getV1(), packedLightIn, RenderingUtils.ALL_FACES);
 
-        RenderingUtils.renderFilledBoxNoOverlay(matrixStackIn, bufferIn.getBuffer(RenderType.solid()), BOX, COLOR.rFloat(), COLOR.gFloat(), COLOR.bFloat(), COLOR.aFloat(), sprite.getU0(), sprite.getV0(), sprite.getU1(), sprite.getV1(), packedLightIn, RenderingUtils.ALL_FACES);
-
-        matrixStackIn.popPose();
+	matrixStackIn.popPose();
     }
 
     @Override
-    public boolean shouldRender(EntityRailgunRound livingEntity, Frustum camera, double camX, double camY, double camZ) {
-        return true;
+    public boolean shouldRender(EntityRailgunRound livingEntity, Frustum camera, double camX, double camY,
+	    double camZ) {
+	return true;
     }
 
     @Override
     public ResourceLocation getTextureLocation(EntityRailgunRound entity) {
-        return InventoryMenu.BLOCK_ATLAS;
+	return InventoryMenu.BLOCK_ATLAS;
     }
 }

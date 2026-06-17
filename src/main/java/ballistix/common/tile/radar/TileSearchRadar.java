@@ -46,10 +46,14 @@ import voltaic.registers.VoltaicCapabilities;
 
 public class TileSearchRadar extends GenericTile {
 
-    public final SingleProperty<Boolean> usingWhitelist = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "usingwhitelist", false));
-    public final ListProperty<Integer> whitelistedFrequencies = property(new ListProperty<>(PropertyTypes.INTEGER_LIST, "whitelistedfreqs", new ArrayList<>()));
-    public final SingleProperty<Boolean> redstone = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "redstone", false));
-    public final SingleProperty<Boolean> isRunning = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "isrunning", false));
+    public final SingleProperty<Boolean> usingWhitelist = property(
+	    new SingleProperty<>(PropertyTypes.BOOLEAN, "usingwhitelist", false));
+    public final ListProperty<Integer> whitelistedFrequencies = property(
+	    new ListProperty<>(PropertyTypes.INTEGER_LIST, "whitelistedfreqs", new ArrayList<>()));
+    public final SingleProperty<Boolean> redstone = property(
+	    new SingleProperty<>(PropertyTypes.BOOLEAN, "redstone", false));
+    public final SingleProperty<Boolean> isRunning = property(
+	    new SingleProperty<>(PropertyTypes.BOOLEAN, "isrunning", false));
 
     private final AABB searchArea = new AABB(getBlockPos()).inflate(BallistixConfig.INSTANCE.RADAR_RANGE.get());
     private final HashSet<VirtualMissile> trackedMissiles = new HashSet<>();
@@ -60,126 +64,139 @@ public class TileSearchRadar extends GenericTile {
     public double clientRotationSpeed;
 
     public TileSearchRadar(BlockPos pos, BlockState state) {
-        super(BallistixTiles.TILE_RADAR.get(), pos, state);
-        addComponent(new ComponentTickable(this).tickServer(this::tickServer).tickClient(this::tickClient));
-        addComponent(new ComponentPacketHandler(this));
-        addComponent(new ComponentElectrodynamic(this, false, true).voltage(VoltaicCapabilities.DEFAULT_VOLTAGE).setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM).maxJoules(BallistixConfig.INSTANCE.RADAR_USAGE.get() * 20));
-        addComponent(new ComponentContainerProvider("searchradar", this).createMenu((id, player) -> new ContainerSearchRadar(id, player, new SimpleContainer(0), getCoordsArray())));
-        addComponent(new ComponentForgeEnergy(this));
+	super(BallistixTiles.TILE_RADAR.get(), pos, state);
+	addComponent(new ComponentTickable(this).tickServer(this::tickServer).tickClient(this::tickClient));
+	addComponent(new ComponentPacketHandler(this));
+	addComponent(new ComponentElectrodynamic(this, false, true).voltage(VoltaicCapabilities.DEFAULT_VOLTAGE)
+		.setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM)
+		.maxJoules(BallistixConfig.INSTANCE.RADAR_USAGE.get() * 20));
+	addComponent(new ComponentContainerProvider("searchradar", this).createMenu(
+		(id, player) -> new ContainerSearchRadar(id, player, new SimpleContainer(0), getCoordsArray())));
+	addComponent(new ComponentForgeEnergy(this));
     }
 
     public void tickServer(ComponentTickable tickable) {
-        ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
+	ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
 
-        isRunning.setValue(electro.getJoulesStored() > (BallistixConfig.INSTANCE.RADAR_USAGE.get() / 20.0) && level.getBrightness(LightLayer.SKY, getBlockPos()) > 0);
+	isRunning.setValue(electro.getJoulesStored() > BallistixConfig.INSTANCE.RADAR_USAGE.get() / 20.0
+		&& level.getBrightness(LightLayer.SKY, getBlockPos()) > 0);
 
-        trackedMissiles.clear();
-        trackedEsmTowers.clear();
+	trackedMissiles.clear();
+	trackedEsmTowers.clear();
 
-        if (!isRunning.getValue()) {
-            if (redstone.getValue()) {
-                redstone.setValue(false);
-                level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
-            }
-            TileESMTower.removeSearchRadar(this);
-            return;
-        }
+	if (!isRunning.getValue()) {
+	    if (redstone.getValue()) {
+		redstone.setValue(false);
+		level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
+	    }
+	    TileESMTower.removeSearchRadar(this);
+	    return;
+	}
 
-        TileESMTower.addSearchRadar(this);
+	TileESMTower.addSearchRadar(this);
 
-        electro.joules(electro.getJoulesStored() - (BallistixConfig.INSTANCE.RADAR_USAGE.get() / 20.0));
+	electro.joules(electro.getJoulesStored() - BallistixConfig.INSTANCE.RADAR_USAGE.get() / 20.0);
 
-        for (VirtualMissile missile : MissileManager.getMissilesForLevel(level.dimension())) {
-            if (missile.getBoundingBox().intersects(searchArea) && (!usingWhitelist.getValue() || (usingWhitelist.getValue() && !whitelistedFrequencies.getValue().contains(missile.payloadData.frequency))) && !missile.hasExploded()) {
-                trackedMissiles.add(missile);
-            }
-        }
+	for (VirtualMissile missile : MissileManager.getMissilesForLevel(level.dimension())) {
+	    if (missile.getBoundingBox().intersects(searchArea)
+		    && (!usingWhitelist.getValue() || usingWhitelist.getValue()
+			    && !whitelistedFrequencies.getValue().contains(missile.payloadData.frequency))
+		    && !missile.hasExploded()) {
+		trackedMissiles.add(missile);
+	    }
+	}
 
-        for (TileESMTower tower : TileESMTower.ESM_TOWERS.getOrDefault(level.dimension(), new HashSet<>())) {
-            if (new AABB(tower.getBlockPos()).intersects(searchArea)) {
-                trackedEsmTowers.add(tower);
-            }
-        }
+	for (TileESMTower tower : TileESMTower.ESM_TOWERS.getOrDefault(level.dimension(), new HashSet<>())) {
+	    if (new AABB(tower.getBlockPos()).intersects(searchArea)) {
+		trackedEsmTowers.add(tower);
+	    }
+	}
 
-        if ((trackedMissiles.isEmpty() && trackedEsmTowers.isEmpty()) && redstone.getValue()) {
-            redstone.setValue(false);
-            level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
-        } else if ((!trackedMissiles.isEmpty() || !trackedEsmTowers.isEmpty()) && !redstone.getValue()) {
-            redstone.setValue(true);
-            level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
-        }
+	if (trackedMissiles.isEmpty() && trackedEsmTowers.isEmpty() && redstone.getValue()) {
+	    redstone.setValue(false);
+	    level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
+	} else if ((!trackedMissiles.isEmpty() || !trackedEsmTowers.isEmpty()) && !redstone.getValue()) {
+	    redstone.setValue(true);
+	    level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
+	}
 
-        detections.clear();
+	detections.clear();
 
-        for (VirtualMissile missile : trackedMissiles) {
-            detections.add(new IDetected.Detected(missile.position, BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.values()[missile.payloadData.missileType < 1 ? 0 : missile.payloadData.missileType - 1]), true));
-        }
+	for (VirtualMissile missile : trackedMissiles) {
+	    detections.add(new IDetected.Detected(missile.position,
+		    BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile
+			    .values()[missile.payloadData.missileType < 1 ? 0 : missile.payloadData.missileType - 1]),
+		    true));
+	}
 
-        for (TileESMTower tile : trackedEsmTowers) {
-            detections.add(new IDetected.Detected(new Vec3(tile.getBlockPos().getX(), tile.getBlockPos().getY(), tile.getBlockPos().getZ()), BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.esmtower), false));
-        }
+	for (TileESMTower tile : trackedEsmTowers) {
+	    detections.add(new IDetected.Detected(
+		    new Vec3(tile.getBlockPos().getX(), tile.getBlockPos().getY(), tile.getBlockPos().getZ()),
+		    BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.esmtower), false));
+	}
 
     }
 
     public void tickClient(ComponentTickable tickable) {
 
-        clientRotation += clientRotationSpeed;
+	clientRotation += clientRotationSpeed;
 
-        clientRotationSpeed = Mth.clamp(clientRotationSpeed + 0.25 * (isRunning.getValue() ? 1 : -1), 0.0, 10.0);
+	clientRotationSpeed = Mth.clamp(clientRotationSpeed + 0.25 * (isRunning.getValue() ? 1 : -1), 0.0, 10.0);
 
-        if (tickable.getTicks() % 50 == 0 && isRunning.getValue()) {
-            SoundAPI.playSound(BallistixSounds.SOUND_RADAR.get(), SoundSource.BLOCKS, 1.0F, 1.0F, worldPosition);
-        }
+	if (tickable.getTicks() % 50 == 0 && isRunning.getValue()) {
+	    SoundAPI.playSound(BallistixSounds.SOUND_RADAR.get(), SoundSource.BLOCKS, 1.0F, 1.0F, worldPosition);
+	}
     }
 
     @Override
     public int getSignal(Direction dir) {
-        return redstone.getValue() ? 15 : 0;
+	return redstone.getValue() ? 15 : 0;
     }
 
     @Override
     public int getComparatorSignal() {
-        if (!trackedMissiles.isEmpty() && !trackedEsmTowers.isEmpty()) {
-            return 15;
-        } else if (trackedMissiles.isEmpty() && !trackedEsmTowers.isEmpty()) {
-            return 8;
-        } else {
-            return 0;
-        }
+	if (!trackedMissiles.isEmpty() && !trackedEsmTowers.isEmpty()) {
+	    return 15;
+	} else if (trackedMissiles.isEmpty() && !trackedEsmTowers.isEmpty()) {
+	    return 8;
+	} else {
+	    return 0;
+	}
     }
 
     @Override
     public void onBlockDestroyed() {
-        super.onBlockDestroyed();
+	super.onBlockDestroyed();
 
-        if (!level.isClientSide) {
-            TileESMTower.removeSearchRadar(this);
-            ChunkPos pos = level.getChunk(getBlockPos()).getPos();
-            ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, getBlockPos(), pos.x, pos.z, false, true);
-        }
-
+	if (!level.isClientSide) {
+	    TileESMTower.removeSearchRadar(this);
+	    ChunkPos pos = level.getChunk(getBlockPos()).getPos();
+	    ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, getBlockPos(), pos.x, pos.z, false,
+		    true);
+	}
 
     }
 
     @Override
     public void onPlace(BlockState oldState, boolean isMoving) {
-        super.onPlace(oldState, isMoving);
-        if (!level.isClientSide) {
-            ChunkPos pos = level.getChunk(getBlockPos()).getPos();
-            ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, getBlockPos(), pos.x, pos.z, true, true);
-        }
+	super.onPlace(oldState, isMoving);
+	if (!level.isClientSide) {
+	    ChunkPos pos = level.getChunk(getBlockPos()).getPos();
+	    ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, getBlockPos(), pos.x, pos.z, true,
+		    true);
+	}
     }
 
     @EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)
     private static final class ChunkloaderManager {
 
-        private static final TicketController TICKET_CONTROLLER = new TicketController(Ballistix.rl("searchradarcontroller"));
+	private static final TicketController TICKET_CONTROLLER = new TicketController(
+		Ballistix.rl("searchradarcontroller"));
 
-        @SubscribeEvent
-        public static void register(RegisterTicketControllersEvent event) {
-            event.register(TICKET_CONTROLLER);
-        }
-
+	@SubscribeEvent
+	public static void register(RegisterTicketControllersEvent event) {
+	    event.register(TICKET_CONTROLLER);
+	}
 
     }
 }

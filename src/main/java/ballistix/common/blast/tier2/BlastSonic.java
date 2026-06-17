@@ -27,7 +27,7 @@ public class BlastSonic extends BlastLasting {
     private Iterator<BlockPos> iterator;
     private int pertick = -1;
 
-    public BlastSonic(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+    public BlastSonic(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
 	super(world, position, owner, blastEntity);
     }
 

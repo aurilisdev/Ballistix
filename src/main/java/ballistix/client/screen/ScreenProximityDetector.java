@@ -55,400 +55,442 @@ public class ScreenProximityDetector extends GenericScreen<ContainerProximityDet
 
     private boolean needsUpdate = true;
 
-
     public ScreenProximityDetector(ContainerProximityDetector container, Inventory inv, Component title) {
-        super(container, inv, title);
+	super(container, inv, title);
 
-        inventoryLabelY += 10;
-        imageHeight += 10;
+	inventoryLabelY += 10;
+	imageHeight += 10;
 
-        addComponent(background = new ScreenComponentFillArea(10, 20, 157, 95, new Color(130, 130, 130, 255)));
+	addComponent(background = new ScreenComponentFillArea(10, 20, 157, 95, new Color(130, 130, 130, 255)));
 
-        whitelistWrapper = new WrapperPlayerWhitelistDetector(this, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE + 2, 0, 0);
-        addComponent(whitelistSlider = new ScreenComponentVerticalSlider(11, 80, 75).setClickConsumer(whitelistWrapper.getSliderClickedConsumer()).setDragConsumer(whitelistWrapper.getSliderDraggedConsumer()));
+	whitelistWrapper = new WrapperPlayerWhitelistDetector(this, -AbstractScreenComponentInfo.SIZE + 1,
+		AbstractScreenComponentInfo.SIZE + 2, 0, 0);
+	addComponent(whitelistSlider = new ScreenComponentVerticalSlider(11, 80, 75)
+		.setClickConsumer(whitelistWrapper.getSliderClickedConsumer())
+		.setDragConsumer(whitelistWrapper.getSliderDraggedConsumer()));
 
-        whitelistSlider.setVisible(false);
+	whitelistSlider.setVisible(false);
 
-        addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2).wattage(BallistixConfig.INSTANCE.SAM_TURRET_USAGEPERTICK.getAsDouble() * 20));
+	addComponent(new ScreenComponentElectricInfo(-AbstractScreenComponentInfo.SIZE + 1, 2)
+		.wattage(BallistixConfig.INSTANCE.SAM_TURRET_USAGEPERTICK.getAsDouble() * 20));
 
-        addComponent(new ScreenComponentButton<>(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE * 2 + 2).setOnPress(button -> {
-            TileProximityDetector turret = menu.getSafeHost();
-            if(turret == null) {
-                return;
-            }
-            int mode = turret.entityTargetingMode.getValue();
-            mode++;
-            if(mode >= GenericTileTurret.TargetingMode.values().length) {
-                mode = 0;
-            }
-            turret.entityTargetingMode.setValue(mode);
-        }).onTooltip((graphics, but, xAxis, yAxis) -> {
-            //
-            TileProximityDetector turret = menu.getSafeHost();
-            if(turret == null) {
-                return;
-            }
-            List<Component> tooltips = new ArrayList<>();
-            tooltips.add(BallistixTextUtils.tooltip("turret.targetmode").withStyle(ChatFormatting.DARK_GRAY));
-            GenericTileTurret.TargetingMode mode = GenericTileTurret.TargetingMode.values()[turret.entityTargetingMode.getValue()];
-            if (mode == GenericTileTurret.TargetingMode.ONLY_PLAYERS) {
-                tooltips.add(BallistixTextUtils.tooltip("turret.targetmodeplayers").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
-            } else if (mode == GenericTileTurret.TargetingMode.ALL) {
-                tooltips.add(BallistixTextUtils.tooltip("turret.targetmodeliving").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
-            } else {
-                tooltips.add(BallistixTextUtils.tooltip("turret.targetmodenone").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
-            }
+	addComponent(new ScreenComponentButton<>(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR,
+		-AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE * 2 + 2).setOnPress(button -> {
+		    TileProximityDetector turret = menu.getSafeHost();
+		    if (turret == null) {
+			return;
+		    }
+		    int mode = turret.entityTargetingMode.getValue();
+		    mode++;
+		    if (mode >= GenericTileTurret.TargetingMode.values().length) {
+			mode = 0;
+		    }
+		    turret.entityTargetingMode.setValue(mode);
+		}).onTooltip((graphics, but, xAxis, yAxis) -> {
+		    //
+		    TileProximityDetector turret = menu.getSafeHost();
+		    if (turret == null) {
+			return;
+		    }
+		    List<Component> tooltips = new ArrayList<>();
+		    tooltips.add(BallistixTextUtils.tooltip("turret.targetmode").withStyle(ChatFormatting.DARK_GRAY));
+		    GenericTileTurret.TargetingMode mode = GenericTileTurret.TargetingMode
+			    .values()[turret.entityTargetingMode.getValue()];
+		    if (mode == GenericTileTurret.TargetingMode.ONLY_PLAYERS) {
+			tooltips.add(BallistixTextUtils.tooltip("turret.targetmodeplayers")
+				.withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+		    } else if (mode == GenericTileTurret.TargetingMode.ALL) {
+			tooltips.add(BallistixTextUtils.tooltip("turret.targetmodeliving")
+				.withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+		    } else {
+			tooltips.add(BallistixTextUtils.tooltip("turret.targetmodenone")
+				.withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+		    }
 
-            graphics.renderComponentTooltip(getFontRenderer(), tooltips, xAxis, yAxis);
+		    graphics.renderComponentTooltip(getFontRenderer(), tooltips, xAxis, yAxis);
 
-        }).setIcon(BallistixIconTypes.TARGET_ONLY_PLAYERS));
+		}).setIcon(BallistixIconTypes.TARGET_ONLY_PLAYERS));
 
-        for (int i = 0; i < menu.slots.size(); i++) {
+	for (int i = 0; i < menu.slots.size(); i++) {
 
-            ((SlotGeneric) menu.slots.get(i)).setActive(false);
+	    ((SlotGeneric) menu.slots.get(i)).setActive(false);
 
-        }
+	}
 
-        addComponent(coordFieldLabel = new ScreenComponentSimpleLabel(15, 25, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("proximitydetector.detectionrange")));
-        addComponent(coordMinLabel = new ScreenComponentSimpleLabel(80, 40, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("proximitydetector.min")));
-        addComponent(coordMaxLabel = new ScreenComponentSimpleLabel(130, 40, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("proximitydetector.max")));
+	addComponent(coordFieldLabel = new ScreenComponentSimpleLabel(15, 25, 10, Color.TEXT_GRAY,
+		BallistixTextUtils.gui("proximitydetector.detectionrange")));
+	addComponent(coordMinLabel = new ScreenComponentSimpleLabel(80, 40, 10, Color.TEXT_GRAY,
+		BallistixTextUtils.gui("proximitydetector.min")));
+	addComponent(coordMaxLabel = new ScreenComponentSimpleLabel(130, 40, 10, Color.TEXT_GRAY,
+		BallistixTextUtils.gui("proximitydetector.max")));
 
-        addEditBox(xMin = new ScreenComponentEditBox(80, 50, 20, 16, this.getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(1).setFilter(ScreenComponentEditBox.POSITIVE_INTEGER).setResponder(this::setXMin));
-        addEditBox(xMax = new ScreenComponentEditBox(130, 50, 20, 16, this.getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(1).setFilter(ScreenComponentEditBox.POSITIVE_INTEGER).setResponder(this::setXMax));
-        addEditBox(yMin = new ScreenComponentEditBox(80, 70, 20, 16, this.getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(1).setFilter(ScreenComponentEditBox.POSITIVE_INTEGER).setResponder(this::setYMin));
-        addEditBox(yMax = new ScreenComponentEditBox(130, 70, 20, 16, this.getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(1).setFilter(ScreenComponentEditBox.POSITIVE_INTEGER).setResponder(this::setYMax));
-        addEditBox(zMin = new ScreenComponentEditBox(80, 90, 20, 16, this.getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(1).setFilter(ScreenComponentEditBox.POSITIVE_INTEGER).setResponder(this::setZMin));
-        addEditBox(zMax = new ScreenComponentEditBox(130, 90, 20, 16, this.getFontRenderer()).setTextColor(Color.WHITE).setTextColorUneditable(Color.WHITE).setMaxLength(1).setFilter(ScreenComponentEditBox.POSITIVE_INTEGER).setResponder(this::setZMax));
+	addEditBox(xMin = new ScreenComponentEditBox(80, 50, 20, 16, this.getFontRenderer()).setTextColor(Color.WHITE)
+		.setTextColorUneditable(Color.WHITE).setMaxLength(1).setFilter(ScreenComponentEditBox.POSITIVE_INTEGER)
+		.setResponder(this::setXMin));
+	addEditBox(xMax = new ScreenComponentEditBox(130, 50, 20, 16, this.getFontRenderer()).setTextColor(Color.WHITE)
+		.setTextColorUneditable(Color.WHITE).setMaxLength(1).setFilter(ScreenComponentEditBox.POSITIVE_INTEGER)
+		.setResponder(this::setXMax));
+	addEditBox(yMin = new ScreenComponentEditBox(80, 70, 20, 16, this.getFontRenderer()).setTextColor(Color.WHITE)
+		.setTextColorUneditable(Color.WHITE).setMaxLength(1).setFilter(ScreenComponentEditBox.POSITIVE_INTEGER)
+		.setResponder(this::setYMin));
+	addEditBox(yMax = new ScreenComponentEditBox(130, 70, 20, 16, this.getFontRenderer()).setTextColor(Color.WHITE)
+		.setTextColorUneditable(Color.WHITE).setMaxLength(1).setFilter(ScreenComponentEditBox.POSITIVE_INTEGER)
+		.setResponder(this::setYMax));
+	addEditBox(zMin = new ScreenComponentEditBox(80, 90, 20, 16, this.getFontRenderer()).setTextColor(Color.WHITE)
+		.setTextColorUneditable(Color.WHITE).setMaxLength(1).setFilter(ScreenComponentEditBox.POSITIVE_INTEGER)
+		.setResponder(this::setZMin));
+	addEditBox(zMax = new ScreenComponentEditBox(130, 90, 20, 16, this.getFontRenderer()).setTextColor(Color.WHITE)
+		.setTextColorUneditable(Color.WHITE).setMaxLength(1).setFilter(ScreenComponentEditBox.POSITIVE_INTEGER)
+		.setResponder(this::setZMax));
 
-        addComponent(xCoordLabel = new ScreenComponentSimpleLabel(20, 55, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("proximitydetector.xcoord")));
-        addComponent(yCoordLabel = new ScreenComponentSimpleLabel(20, 75, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("proximitydetector.ycoord")));
-        addComponent(zCoordLabel = new ScreenComponentSimpleLabel(20, 95, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("proximitydetector.zcoord")));
+	addComponent(xCoordLabel = new ScreenComponentSimpleLabel(20, 55, 10, Color.TEXT_GRAY,
+		BallistixTextUtils.gui("proximitydetector.xcoord")));
+	addComponent(yCoordLabel = new ScreenComponentSimpleLabel(20, 75, 10, Color.TEXT_GRAY,
+		BallistixTextUtils.gui("proximitydetector.ycoord")));
+	addComponent(zCoordLabel = new ScreenComponentSimpleLabel(20, 95, 10, Color.TEXT_GRAY,
+		BallistixTextUtils.gui("proximitydetector.zcoord")));
 
-        addComponent(whitelistLabel = new ScreenComponentSimpleLabel(13, 126, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("radar.frequencywhitelist.mode")));
-        addComponent(toggleButton = new ScreenComponentButton<>(92, 120, 70, 20).setOnPress(button -> {
+	addComponent(whitelistLabel = new ScreenComponentSimpleLabel(13, 126, 10, Color.TEXT_GRAY,
+		BallistixTextUtils.gui("radar.frequencywhitelist.mode")));
+	addComponent(toggleButton = new ScreenComponentButton<>(92, 120, 70, 20).setOnPress(button -> {
 
-            TileProximityDetector detector = getMenu().getSafeHost();
+	    TileProximityDetector detector = getMenu().getSafeHost();
 
-            if(detector == null) {
-                return;
-            }
+	    if (detector == null) {
+		return;
+	    }
 
-            detector.usingWhitelist.setValue(!detector.usingWhitelist.getValue());
+	    detector.usingWhitelist.setValue(!detector.usingWhitelist.getValue());
 
-        }).setLabel(() -> {
+	}).setLabel(() -> {
 
-            TileProximityDetector detector = getMenu().getSafeHost();
+	    TileProximityDetector detector = getMenu().getSafeHost();
 
-            if(detector == null) {
-                return Component.empty();
-            }
+	    if (detector == null) {
+		return Component.empty();
+	    }
 
-            return detector.usingWhitelist.getValue() ? BallistixTextUtils.gui("radar.frequencywhitelist.enabled") : BallistixTextUtils.gui("radar.frequencywhitelist.disabled");
+	    return detector.usingWhitelist.getValue() ? BallistixTextUtils.gui("radar.frequencywhitelist.enabled")
+		    : BallistixTextUtils.gui("radar.frequencywhitelist.disabled");
 
-        }));
+	}));
 
-        addComponent(toggleLabel = new ScreenComponentSimpleLabel(13, 151, 10, Color.TEXT_GRAY, BallistixTextUtils.gui("proximitydetector.detectionfield")));
-        addComponent(toggleLines = new ScreenComponentButton<>(92, 145, 70, 20).setLabel(() -> {
-            TileProximityDetector detector = menu.getSafeHost();
-            if (detector != null) {
-                return HandlerDetectorLines.containsLines(detector.getBlockPos()) ? BallistixTextUtils.gui("proximitydetector.hidefield") : BallistixTextUtils.gui("proximitydetector.showfield");
-            }
-            return Component.empty();
-        }).setOnPress(button ->  {
-            TileProximityDetector detector = menu.getSafeHost();
-            if (detector != null) {
-                BlockPos pos = detector.getBlockPos();
-                if (HandlerDetectorLines.containsLines(pos)) {
-                    HandlerDetectorLines.removeLines(pos);
-                } else {
-                    AABB box = AABB.encapsulatingFullBlocks(detector.getBlockPos().offset(detector.minCorner.getValue().multiply(-1)), detector.getBlockPos().offset(detector.maxCorner.getValue()));
-                    HandlerDetectorLines.addLines(detector.getBlockPos(), box);
-                }
-            }
-        }));
+	addComponent(toggleLabel = new ScreenComponentSimpleLabel(13, 151, 10, Color.TEXT_GRAY,
+		BallistixTextUtils.gui("proximitydetector.detectionfield")));
+	addComponent(toggleLines = new ScreenComponentButton<>(92, 145, 70, 20).setLabel(() -> {
+	    TileProximityDetector detector = menu.getSafeHost();
+	    if (detector != null) {
+		return HandlerDetectorLines.containsLines(detector.getBlockPos())
+			? BallistixTextUtils.gui("proximitydetector.hidefield")
+			: BallistixTextUtils.gui("proximitydetector.showfield");
+	    }
+	    return Component.empty();
+	}).setOnPress(button -> {
+	    TileProximityDetector detector = menu.getSafeHost();
+	    if (detector != null) {
+		BlockPos pos = detector.getBlockPos();
+		if (HandlerDetectorLines.containsLines(pos)) {
+		    HandlerDetectorLines.removeLines(pos);
+		} else {
+		    AABB box = AABB.encapsulatingFullBlocks(
+			    detector.getBlockPos().offset(detector.minCorner.getValue().multiply(-1)),
+			    detector.getBlockPos().offset(detector.maxCorner.getValue()));
+		    HandlerDetectorLines.addLines(detector.getBlockPos(), box);
+		}
+	    }
+	}));
 
     }
 
     public void updateVisibility(boolean show) {
-        toggleButton.setVisible(show);
-        whitelistLabel.setVisible(show);
-        xMin.setVisible(show);
-        xMax.setVisible(show);
-        yMin.setVisible(show);
-        yMax.setVisible(show);
-        zMin.setVisible(show);
-        zMax.setVisible(show);
-        xCoordLabel.setVisible(show);
-        yCoordLabel.setVisible(show);
-        zCoordLabel.setVisible(show);
-        coordMaxLabel.setVisible(show);
-        coordMinLabel.setVisible(show);
-        coordFieldLabel.setVisible(show);
-        background.setVisible(show);
-        toggleLines.setVisible(show);
-        toggleLabel.setVisible(show);
+	toggleButton.setVisible(show);
+	whitelistLabel.setVisible(show);
+	xMin.setVisible(show);
+	xMax.setVisible(show);
+	yMin.setVisible(show);
+	yMax.setVisible(show);
+	zMin.setVisible(show);
+	zMax.setVisible(show);
+	xCoordLabel.setVisible(show);
+	yCoordLabel.setVisible(show);
+	zCoordLabel.setVisible(show);
+	coordMaxLabel.setVisible(show);
+	coordMinLabel.setVisible(show);
+	coordFieldLabel.setVisible(show);
+	background.setVisible(show);
+	toggleLines.setVisible(show);
+	toggleLabel.setVisible(show);
     }
 
     @Override
     protected void initializeComponents() {
-        super.initializeComponents();
-        playerInvLabel.setVisible(false);
+	super.initializeComponents();
+	playerInvLabel.setVisible(false);
     }
 
     @Override
     protected void containerTick() {
-        super.containerTick();
-        whitelistWrapper.tick();
-        TileProximityDetector detector = menu.getSafeHost();
-        if (detector != null && HandlerDetectorLines.containsLines(detector.getBlockPos())) {
-            HandlerDetectorLines.removeLines(detector.getBlockPos());
-            AABB box = AABB.encapsulatingFullBlocks(detector.getBlockPos().offset(detector.minCorner.getValue().multiply(-1)), detector.getBlockPos().offset(detector.maxCorner.getValue()));
-            HandlerDetectorLines.addLines(detector.getBlockPos(), box);
-        }
+	super.containerTick();
+	whitelistWrapper.tick();
+	TileProximityDetector detector = menu.getSafeHost();
+	if (detector != null && HandlerDetectorLines.containsLines(detector.getBlockPos())) {
+	    HandlerDetectorLines.removeLines(detector.getBlockPos());
+	    AABB box = AABB.encapsulatingFullBlocks(
+		    detector.getBlockPos().offset(detector.minCorner.getValue().multiply(-1)),
+		    detector.getBlockPos().offset(detector.maxCorner.getValue()));
+	    HandlerDetectorLines.addLines(detector.getBlockPos(), box);
+	}
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        if (whitelistWrapper != null) {
-            if (scrollY > 0) {
-                // scroll up
-                whitelistWrapper.handleMouseScroll(-1);
-            } else if (scrollY < 0) {
-                // scroll down
-                whitelistWrapper.handleMouseScroll(1);
-            }
-        }
-        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+	if (whitelistWrapper != null) {
+	    if (scrollY > 0) {
+		// scroll up
+		whitelistWrapper.handleMouseScroll(-1);
+	    } else if (scrollY < 0) {
+		// scroll down
+		whitelistWrapper.handleMouseScroll(1);
+	    }
+	}
+	return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (whitelistSlider != null && whitelistSlider.isVisible()) {
-            whitelistSlider.mouseClicked(mouseX, mouseY, button);
-        }
-        return super.mouseClicked(mouseX, mouseY, button);
+	if (whitelistSlider != null && whitelistSlider.isVisible()) {
+	    whitelistSlider.mouseClicked(mouseX, mouseY, button);
+	}
+	return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if (whitelistSlider != null && whitelistSlider.isVisible()) {
-            whitelistSlider.mouseReleased(mouseX, mouseY, button);
-        }
-        return super.mouseReleased(mouseX, mouseY, button);
+	if (whitelistSlider != null && whitelistSlider.isVisible()) {
+	    whitelistSlider.mouseReleased(mouseX, mouseY, button);
+	}
+	return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if (whitelistSlider.isVisible()) {
-            return whitelistSlider.mouseDragged(mouseX, mouseY, button, dragX, dragY);
-        }
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+	if (whitelistSlider.isVisible()) {
+	    return whitelistSlider.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+	}
+	return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
 
     @Override
     public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
-        InputConstants.Key mouseKey = InputConstants.getKey(pKeyCode, pScanCode);
-        if (this.minecraft.options.keyInventory.isActiveAndMatches(mouseKey) && whitelistWrapper.addEditBox.isVisible() && whitelistWrapper.addEditBox.isFocused()) {
-            return false;
-        }
-        return super.keyPressed(pKeyCode, pScanCode, pModifiers);
+	InputConstants.Key mouseKey = InputConstants.getKey(pKeyCode, pScanCode);
+	if (this.minecraft.options.keyInventory.isActiveAndMatches(mouseKey) && whitelistWrapper.addEditBox.isVisible()
+		&& whitelistWrapper.addEditBox.isFocused()) {
+	    return false;
+	}
+	return super.keyPressed(pKeyCode, pScanCode, pModifiers);
     }
 
     private void setXMin(String val) {
-        this.xMin.setFocus(true);
-        this.xMax.setFocus(false);
-        this.yMin.setFocus(false);
-        this.yMax.setFocus(false);
-        this.zMin.setFocus(false);
-        this.zMax.setFocus(false);
-        this.handleXMin(val);
+	this.xMin.setFocus(true);
+	this.xMax.setFocus(false);
+	this.yMin.setFocus(false);
+	this.yMax.setFocus(false);
+	this.zMin.setFocus(false);
+	this.zMax.setFocus(false);
+	this.handleXMin(val);
     }
 
     private void setXMax(String val) {
-        this.xMin.setFocus(false);
-        this.xMax.setFocus(true);
-        this.yMin.setFocus(false);
-        this.yMax.setFocus(false);
-        this.zMin.setFocus(false);
-        this.zMax.setFocus(false);
-        this.handleXMax(val);
+	this.xMin.setFocus(false);
+	this.xMax.setFocus(true);
+	this.yMin.setFocus(false);
+	this.yMax.setFocus(false);
+	this.zMin.setFocus(false);
+	this.zMax.setFocus(false);
+	this.handleXMax(val);
     }
 
     private void setYMin(String val) {
-        this.xMin.setFocus(false);
-        this.xMax.setFocus(false);
-        this.yMin.setFocus(true);
-        this.yMax.setFocus(false);
-        this.zMin.setFocus(false);
-        this.zMax.setFocus(false);
-        this.handleYMin(val);
+	this.xMin.setFocus(false);
+	this.xMax.setFocus(false);
+	this.yMin.setFocus(true);
+	this.yMax.setFocus(false);
+	this.zMin.setFocus(false);
+	this.zMax.setFocus(false);
+	this.handleYMin(val);
     }
 
     private void setYMax(String val) {
-        this.xMin.setFocus(false);
-        this.xMax.setFocus(false);
-        this.yMin.setFocus(false);
-        this.yMax.setFocus(true);
-        this.zMin.setFocus(false);
-        this.zMax.setFocus(false);
-        this.handleYMax(val);
+	this.xMin.setFocus(false);
+	this.xMax.setFocus(false);
+	this.yMin.setFocus(false);
+	this.yMax.setFocus(true);
+	this.zMin.setFocus(false);
+	this.zMax.setFocus(false);
+	this.handleYMax(val);
     }
 
     private void setZMin(String val) {
-        this.xMin.setFocus(false);
-        this.xMax.setFocus(false);
-        this.yMin.setFocus(false);
-        this.yMax.setFocus(false);
-        this.zMin.setFocus(true);
-        this.zMax.setFocus(false);
-        this.handleZMin(val);
+	this.xMin.setFocus(false);
+	this.xMax.setFocus(false);
+	this.yMin.setFocus(false);
+	this.yMax.setFocus(false);
+	this.zMin.setFocus(true);
+	this.zMax.setFocus(false);
+	this.handleZMin(val);
     }
 
     private void setZMax(String val) {
-        this.xMin.setFocus(false);
-        this.xMax.setFocus(false);
-        this.yMin.setFocus(false);
-        this.yMax.setFocus(false);
-        this.zMin.setFocus(false);
-        this.zMax.setFocus(true);
-        this.handleZMax(val);
+	this.xMin.setFocus(false);
+	this.xMax.setFocus(false);
+	this.yMin.setFocus(false);
+	this.yMax.setFocus(false);
+	this.zMin.setFocus(false);
+	this.zMax.setFocus(true);
+	this.handleZMax(val);
     }
 
     private void handleXMin(String val) {
-        if(val.isEmpty()) {
-            return;
-        }
-        Integer xCoord = 0;
+	if (val.isEmpty()) {
+	    return;
+	}
+	Integer xCoord = 0;
 
-        try {
-            xCoord = Integer.parseInt(val);
-        } catch (Exception ex) {
+	try {
+	    xCoord = Integer.parseInt(val);
+	} catch (Exception ex) {
 
-        }
+	}
 
-        TileProximityDetector detector = menu.getSafeHost();
-        if (detector == null) {
-            return;
-        }
+	TileProximityDetector detector = menu.getSafeHost();
+	if (detector == null) {
+	    return;
+	}
 
-        detector.minCorner.setValue(new BlockPos(xCoord, detector.minCorner.getValue().getY(), detector.minCorner.getValue().getZ()));
+	detector.minCorner.setValue(
+		new BlockPos(xCoord, detector.minCorner.getValue().getY(), detector.minCorner.getValue().getZ()));
     }
 
     private void handleXMax(String val) {
-        if(val.isEmpty()) {
-            return;
-        }
-        Integer xCoord = 0;
+	if (val.isEmpty()) {
+	    return;
+	}
+	Integer xCoord = 0;
 
-        try {
-            xCoord = Integer.parseInt(val);
-        } catch (Exception ex) {
+	try {
+	    xCoord = Integer.parseInt(val);
+	} catch (Exception ex) {
 
-        }
+	}
 
-        TileProximityDetector detector = menu.getSafeHost();
-        if (detector == null) {
-            return;
-        }
+	TileProximityDetector detector = menu.getSafeHost();
+	if (detector == null) {
+	    return;
+	}
 
-        detector.maxCorner.setValue(new BlockPos(xCoord, detector.maxCorner.getValue().getY(), detector.maxCorner.getValue().getZ()));
+	detector.maxCorner.setValue(
+		new BlockPos(xCoord, detector.maxCorner.getValue().getY(), detector.maxCorner.getValue().getZ()));
     }
 
     private void handleYMin(String val) {
-        if(val.isEmpty()) {
-            return;
-        }
-        Integer yCoord = 0;
+	if (val.isEmpty()) {
+	    return;
+	}
+	Integer yCoord = 0;
 
-        try {
-            yCoord = Integer.parseInt(val);
-        } catch (Exception ex) {
+	try {
+	    yCoord = Integer.parseInt(val);
+	} catch (Exception ex) {
 
-        }
+	}
 
-        TileProximityDetector detector = menu.getSafeHost();
-        if (detector == null) {
-            return;
-        }
+	TileProximityDetector detector = menu.getSafeHost();
+	if (detector == null) {
+	    return;
+	}
 
-        detector.minCorner.setValue(new BlockPos(detector.minCorner.getValue().getX(), yCoord, detector.minCorner.getValue().getZ()));
+	detector.minCorner.setValue(
+		new BlockPos(detector.minCorner.getValue().getX(), yCoord, detector.minCorner.getValue().getZ()));
     }
 
     private void handleYMax(String val) {
-        if(val.isEmpty()) {
-            return;
-        }
-        Integer yCoord = 0;
+	if (val.isEmpty()) {
+	    return;
+	}
+	Integer yCoord = 0;
 
-        try {
-            yCoord = Integer.parseInt(val);
-        } catch (Exception ex) {
+	try {
+	    yCoord = Integer.parseInt(val);
+	} catch (Exception ex) {
 
-        }
+	}
 
-        TileProximityDetector detector = menu.getSafeHost();
-        if (detector == null) {
-            return;
-        }
+	TileProximityDetector detector = menu.getSafeHost();
+	if (detector == null) {
+	    return;
+	}
 
-        detector.maxCorner.setValue(new BlockPos(detector.maxCorner.getValue().getX(), yCoord, detector.maxCorner.getValue().getZ()));
+	detector.maxCorner.setValue(
+		new BlockPos(detector.maxCorner.getValue().getX(), yCoord, detector.maxCorner.getValue().getZ()));
     }
 
     private void handleZMin(String val) {
-        if(val.isEmpty()) {
-            return;
-        }
-        Integer zCoord = 0;
+	if (val.isEmpty()) {
+	    return;
+	}
+	Integer zCoord = 0;
 
-        try {
-            zCoord = Integer.parseInt(val);
-        } catch (Exception ex) {
+	try {
+	    zCoord = Integer.parseInt(val);
+	} catch (Exception ex) {
 
-        }
+	}
 
-        TileProximityDetector detector = menu.getSafeHost();
-        if (detector == null) {
-            return;
-        }
+	TileProximityDetector detector = menu.getSafeHost();
+	if (detector == null) {
+	    return;
+	}
 
-        detector.minCorner.setValue(new BlockPos(detector.minCorner.getValue().getX(), detector.minCorner.getValue().getY(), zCoord));
+	detector.minCorner.setValue(
+		new BlockPos(detector.minCorner.getValue().getX(), detector.minCorner.getValue().getY(), zCoord));
     }
 
     private void handleZMax(String val) {
-        if(val.isEmpty()) {
-            return;
-        }
-        Integer zCoord = 0;
+	if (val.isEmpty()) {
+	    return;
+	}
+	Integer zCoord = 0;
 
-        try {
-            zCoord = Integer.parseInt(val);
-        } catch (Exception ex) {
+	try {
+	    zCoord = Integer.parseInt(val);
+	} catch (Exception ex) {
 
-        }
+	}
 
-        TileProximityDetector detector = menu.getSafeHost();
-        if (detector == null) {
-            return;
-        }
+	TileProximityDetector detector = menu.getSafeHost();
+	if (detector == null) {
+	    return;
+	}
 
-        detector.maxCorner.setValue(new BlockPos(detector.maxCorner.getValue().getX(), detector.maxCorner.getValue().getY(), zCoord));
+	detector.maxCorner.setValue(
+		new BlockPos(detector.maxCorner.getValue().getX(), detector.maxCorner.getValue().getY(), zCoord));
     }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        super.render(graphics, mouseX, mouseY, partialTicks);
-        if (this.needsUpdate) {
-            this.needsUpdate = false;
-            TileProximityDetector detector = menu.getSafeHost();
-            if (detector != null) {
-                this.xMin.setValue("" + detector.minCorner.getValue().getX());
-                this.xMax.setValue("" + detector.maxCorner.getValue().getX());
-                this.yMin.setValue("" + detector.minCorner.getValue().getY());
-                this.yMax.setValue("" + detector.maxCorner.getValue().getY());
-                this.zMin.setValue("" + detector.minCorner.getValue().getZ());
-                this.zMax.setValue("" + detector.maxCorner.getValue().getZ());
-            }
-        }
+	super.render(graphics, mouseX, mouseY, partialTicks);
+	if (this.needsUpdate) {
+	    this.needsUpdate = false;
+	    TileProximityDetector detector = menu.getSafeHost();
+	    if (detector != null) {
+		this.xMin.setValue("" + detector.minCorner.getValue().getX());
+		this.xMax.setValue("" + detector.maxCorner.getValue().getX());
+		this.yMin.setValue("" + detector.minCorner.getValue().getY());
+		this.yMax.setValue("" + detector.maxCorner.getValue().getY());
+		this.zMin.setValue("" + detector.minCorner.getValue().getZ());
+		this.zMax.setValue("" + detector.maxCorner.getValue().getZ());
+	    }
+	}
 
     }
 

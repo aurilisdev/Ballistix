@@ -15,26 +15,32 @@ import voltaic.common.item.ItemVoltaic;
 
 public class ItemMissile extends ItemVoltaic {
 
-	public final SubtypeMissile missile;
+    public final SubtypeMissile missile;
 
-	public ItemMissile(SubtypeMissile missile) {
-		super(new Item.Properties(), BallistixCreativeTabs.MAIN);
-		this.missile = missile;
-	}
+    public ItemMissile(SubtypeMissile missile) {
+	super(new Item.Properties(), BallistixCreativeTabs.MAIN);
+	this.missile = missile;
+    }
 
-	@Override
-	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-		super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-		if(missile != SubtypeMissile.clustershard) {
-			tooltipComponents.add(BallistixTextUtils.tooltip("missile.maxbombtier", Component.literal("" + missile.tier()).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY));
-			tooltipComponents.add(BallistixTextUtils.tooltip("missile.range", Component.literal("" + missile.range()).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY));
-		}
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents,
+	    TooltipFlag tooltipFlag) {
+	super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+	if (missile != SubtypeMissile.clustershard) {
+	    tooltipComponents.add(BallistixTextUtils
+		    .tooltip("missile.maxbombtier",
+			    Component.literal("" + missile.tier()).withStyle(ChatFormatting.GRAY))
+		    .withStyle(ChatFormatting.DARK_GRAY));
+	    tooltipComponents.add(BallistixTextUtils
+		    .tooltip("missile.range", Component.literal("" + missile.range()).withStyle(ChatFormatting.GRAY))
+		    .withStyle(ChatFormatting.DARK_GRAY));
 	}
+    }
 
-	@Override
-	public void addCreativeModeItems(CreativeModeTab tab, List<ItemStack> items) {
-		if(missile != SubtypeMissile.clustershard) {
-			super.addCreativeModeItems(tab, items);
-		}
+    @Override
+    public void addCreativeModeItems(CreativeModeTab tab, List<ItemStack> items) {
+	if (missile != SubtypeMissile.clustershard) {
+	    super.addCreativeModeItems(tab, items);
 	}
+    }
 }

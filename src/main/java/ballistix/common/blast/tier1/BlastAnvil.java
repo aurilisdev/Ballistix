@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.Blocks;
 
 public class BlastAnvil extends Blast {
 
-    public BlastAnvil(Level world, BlockPos position, @Nullable  Entity owner, @Nullable Entity blastEntity) {
+    public BlastAnvil(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
 	super(world, position, owner, blastEntity);
     }
 

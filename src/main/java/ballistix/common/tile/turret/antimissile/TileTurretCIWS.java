@@ -32,173 +32,190 @@ import voltaic.prefab.utilities.BlockEntityUtils;
 
 public class TileTurretCIWS extends TileTurretAntimissileProjectile implements ITickableSound {
 
-    public final SingleProperty<Boolean> outOfAmmo = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "noammo", false));
-    public final SingleProperty<Boolean> firing = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "isfiring", false));
-    public final SingleProperty<Boolean> targetingEntity = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "targetingentity", false));
+    public final SingleProperty<Boolean> outOfAmmo = property(
+	    new SingleProperty<>(PropertyTypes.BOOLEAN, "noammo", false));
+    public final SingleProperty<Boolean> firing = property(
+	    new SingleProperty<>(PropertyTypes.BOOLEAN, "isfiring", false));
+    public final SingleProperty<Boolean> targetingEntity = property(
+	    new SingleProperty<>(PropertyTypes.BOOLEAN, "targetingentity", false));
 
     private boolean isPlaying = false;
     private LivingEntity livingTarget = null;
 
     public TileTurretCIWS(BlockPos worldPos, BlockState blockState) {
-        super(BallistixTiles.TILE_CIWSTURRET.get(), worldPos, blockState, BallistixConfig.INSTANCE.CIWS_TURRET_BASE_RANGE.get(), 0, BallistixConfig.INSTANCE.CIWS_TURRET_USAGEPERTICK.get(), BallistixConfig.INSTANCE.CIWS_TURRET_ROTATIONSPEEDRADIANS.get(), BallistixConfig.INSTANCE.CIWS_INNACCURACY.get());
+	super(BallistixTiles.TILE_CIWSTURRET.get(), worldPos, blockState,
+		BallistixConfig.INSTANCE.CIWS_TURRET_BASE_RANGE.get(), 0,
+		BallistixConfig.INSTANCE.CIWS_TURRET_USAGEPERTICK.get(),
+		BallistixConfig.INSTANCE.CIWS_TURRET_ROTATIONSPEEDRADIANS.get(),
+		BallistixConfig.INSTANCE.CIWS_INNACCURACY.get());
     }
 
     @Override
     public ComponentInventory getInventory() {
-        return new ComponentInventory(this, ComponentInventory.InventoryBuilder.newInv().inputs(2).upgrades(3)).setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).valid((index, stack, inv) -> {
+	return new ComponentInventory(this, ComponentInventory.InventoryBuilder.newInv().inputs(2).upgrades(3))
+		.setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values()).valid((index, stack, inv) -> {
 
-            if (index < 2) {
-                return stack.is(BallistixItems.ITEM_BULLET);
-            } else if (index >= inv.getUpgradeSlotStartIndex()) {
-                return stack.getItem() instanceof ItemUpgrade upgrade && inv.isUpgradeValid(upgrade.subtype);
-            } else {
-                return false;
-            }
+		    if (index < 2) {
+			return stack.is(BallistixItems.ITEM_BULLET);
+		    } else if (index >= inv.getUpgradeSlotStartIndex()) {
+			return stack.getItem() instanceof ItemUpgrade upgrade && inv.isUpgradeValid(upgrade.subtype);
+		    } else {
+			return false;
+		    }
 
-        });
+		});
     }
 
     @Override
     public ComponentContainerProvider getContainer() {
-        return new ComponentContainerProvider("ciwsturret", this).createMenu((id, player) -> new ContainerCIWSTurret(id, player, getComponent(IComponentType.Inventory), getCoordsArray()));
+	return new ComponentContainerProvider("ciwsturret", this).createMenu((id, player) -> new ContainerCIWSTurret(id,
+		player, getComponent(IComponentType.Inventory), getCoordsArray()));
     }
 
     @Override
     public void tickServerActive(ComponentTickable tickable) {
-        if(!canFire.getValue()) {
-            firing.setValue(false);
-        }
+	if (!canFire.getValue()) {
+	    firing.setValue(false);
+	}
     }
 
     @Override
     public void fireTickServer(long ticks) {
 
-        ComponentInventory inv = getComponent(IComponentType.Inventory);
+	ComponentInventory inv = getComponent(IComponentType.Inventory);
 
-        int slot = 0;
+	int slot = 0;
 
-        ItemStack bul = inv.getItem(slot);
+	ItemStack bul = inv.getItem(slot);
 
-        if(bul.isEmpty()) {
-            slot = 1;
-            bul = inv.getItem(slot);
-        }
+	if (bul.isEmpty()) {
+	    slot = 1;
+	    bul = inv.getItem(slot);
+	}
 
-        if (bul.isEmpty()) {
-            outOfAmmo.setValue(true);
-            firing.setValue(false);
-            return;
-        }
+	if (bul.isEmpty()) {
+	    outOfAmmo.setValue(true);
+	    firing.setValue(false);
+	    return;
+	}
 
-        outOfAmmo.setValue(false);
-        firing.setValue(true);
+	outOfAmmo.setValue(false);
+	firing.setValue(true);
 
-        Vec3 trajectory = getProjectileTrajectoryFromInaccuracy(inaccuracy, baseRange, inaccuracyMultiplier.getValue(), getProjectileLaunchPosition(), getTargetPosition(getTarget(ticks)));
+	Vec3 trajectory = getProjectileTrajectoryFromInaccuracy(inaccuracy, baseRange, inaccuracyMultiplier.getValue(),
+		getProjectileLaunchPosition(), getTargetPosition(getTarget(ticks)));
 
-        VirtualProjectile.VirtualBullet bullet = new VirtualProjectile.VirtualBullet(getProjectileSpeed(), getProjectileLaunchPosition(), trajectory, currentRange.getValue().floatValue());
+	VirtualProjectile.VirtualBullet bullet = new VirtualProjectile.VirtualBullet(getProjectileSpeed(),
+		getProjectileLaunchPosition(), trajectory, currentRange.getValue().floatValue());
 
-        MissileManager.addBullet(level.dimension(), bullet);
+	MissileManager.addBullet(level.dimension(), bullet);
 
-        inv.removeItem(slot, 1);
+	inv.removeItem(slot, 1);
 
     }
 
     @Override
     public void tickClient(ComponentTickable tickable) {
-        if(shouldPlaySound() && !isPlaying) {
-            isPlaying = true;
-            SoundBarrierMethods.playTileSound(BallistixSounds.SOUND_CIWS_TURRETFIRING.get(), SoundSource.BLOCKS, this, 1.0F, 1.0F, true);
-        }
+	if (shouldPlaySound() && !isPlaying) {
+	    isPlaying = true;
+	    SoundBarrierMethods.playTileSound(BallistixSounds.SOUND_CIWS_TURRETFIRING.get(), SoundSource.BLOCKS, this,
+		    1.0F, 1.0F, true);
+	}
     }
 
     @Override
     public Vec3 getProjectileLaunchPosition() {
-        BlockPos above = getBlockPos();
-        return new Vec3(above.getX() + 0.5, above.getY() + 0.8, above.getZ() + 0.5);
+	BlockPos above = getBlockPos();
+	return new Vec3(above.getX() + 0.5, above.getY() + 0.8, above.getZ() + 0.5);
     }
 
     @Override
     public double getMinElevation() {
-        return -0.5;
+	return -0.5;
     }
 
     @Override
     public double getMaxElevation() {
-        return 1;
+	return 1;
     }
 
     @Override
     public float getProjectileSpeed() {
-        return 5.0F;
+	return 5.0F;
     }
 
     @Override
     public void setNotPlaying() {
-        isPlaying = false;
+	isPlaying = false;
     }
 
     @Override
     public boolean shouldPlaySound() {
-        return firing.getValue();
+	return firing.getValue();
     }
 
     @Nullable
     @Override
     public ITarget getTarget(long ticks) {
 
-        targetingEntity.setValue(false);
+	targetingEntity.setValue(false);
 
-        ITarget target = super.getTarget(ticks);
+	ITarget target = super.getTarget(ticks);
 
-        TargetingMode mode = TargetingMode.values()[entityTargetingMode.getValue()];
+	TargetingMode mode = TargetingMode.values()[entityTargetingMode.getValue()];
 
-        if(target != null || mode == TargetingMode.NONE) {
-            livingTarget = null;
-            return target;
-        }
+	if (target != null || mode == TargetingMode.NONE) {
+	    livingTarget = null;
+	    return target;
+	}
 
-        if(livingTarget != null && (livingTarget.isRemoved() || livingTarget.isDeadOrDying())) {
-            livingTarget = null;
-        }
+	if (livingTarget != null && (livingTarget.isRemoved() || livingTarget.isDeadOrDying())) {
+	    livingTarget = null;
+	}
 
-        if(ticks % 5 == 0) {
+	if (ticks % 5 == 0) {
 
-            LivingEntity selected = null;
-            double lastMag = 0;
+	    LivingEntity selected = null;
+	    double lastMag = 0;
 
-            Class<? extends LivingEntity> type = mode == TargetingMode.ONLY_PLAYERS ? Player.class : LivingEntity.class;
+	    Class<? extends LivingEntity> type = mode == TargetingMode.ONLY_PLAYERS ? Player.class : LivingEntity.class;
 
-            for(LivingEntity entity : level.getEntitiesOfClass(type, new AABB(getBlockPos()).inflate(currentRange.getValue() / 4.0))) {
-                if(raycastToBlockPos(level, getProjectileLaunchPosition(), entity.position().add(0, entity.getEyeHeight(), 0)).isEmpty() && !(entity instanceof Player player && (player.isCreative() || whitelistedPlayers.getValue().contains(player.getName().getString()))) && !entity.isDeadOrDying() && !entity.isRemoved()) {
-                    double deltaX = entity.getX() - getBlockPos().getX();
-                    double deltaY = entity.getY() - getBlockPos().getY();
-                    double deltaZ = entity.getZ() - getBlockPos().getZ();
+	    for (LivingEntity entity : level.getEntitiesOfClass(type,
+		    new AABB(getBlockPos()).inflate(currentRange.getValue() / 4.0))) {
+		if (raycastToBlockPos(level, getProjectileLaunchPosition(),
+			entity.position().add(0, entity.getEyeHeight(), 0)).isEmpty()
+			&& !(entity instanceof Player player && (player.isCreative()
+				|| whitelistedPlayers.getValue().contains(player.getName().getString())))
+			&& !entity.isDeadOrDying() && !entity.isRemoved()) {
+		    double deltaX = entity.getX() - getBlockPos().getX();
+		    double deltaY = entity.getY() - getBlockPos().getY();
+		    double deltaZ = entity.getZ() - getBlockPos().getZ();
 
-                    double mag = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+		    double mag = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
-                    if(selected == null) {
-                        selected = entity;
-                        lastMag = mag;
-                    } else if(mag < lastMag){
-                        selected = entity;
-                    }
-                }
-            }
+		    if (selected == null) {
+			selected = entity;
+			lastMag = mag;
+		    } else if (mag < lastMag) {
+			selected = entity;
+		    }
+		}
+	    }
 
-            livingTarget = selected;
-        }
+	    livingTarget = selected;
+	}
 
-        if(livingTarget != null) {
-            targetingEntity.setValue(true);
-            return new ITarget.TargetLivingEntity(livingTarget);
-        }
+	if (livingTarget != null) {
+	    targetingEntity.setValue(true);
+	    return new ITarget.TargetLivingEntity(livingTarget);
+	}
 
-        return null;
+	return null;
     }
 
     @Override
     public boolean isValidPlacement() {
-        return targetingEntity.getValue() || super.isValidPlacement();
+	return targetingEntity.getValue() || super.isValidPlacement();
     }
 
 }

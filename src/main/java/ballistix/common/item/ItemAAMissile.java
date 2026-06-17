@@ -15,17 +15,19 @@ import voltaic.api.electricity.formatting.DisplayUnits;
 import voltaic.common.item.ItemVoltaic;
 
 public class ItemAAMissile extends ItemVoltaic {
-	private Supplier<Double> accuracy;
+    private Supplier<Double> accuracy;
 
-	public ItemAAMissile(Properties properties, Holder<CreativeModeTab> creativeTab, Supplier<Double> accuracy) {
-		super(properties, creativeTab);
-		this.accuracy = accuracy;
-	}
+    public ItemAAMissile(Properties properties, Holder<CreativeModeTab> creativeTab, Supplier<Double> accuracy) {
+	super(properties, creativeTab);
+	this.accuracy = accuracy;
+    }
 
-	@Override
-	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, context, tooltip, flagIn);
-		tooltip.add(BallistixTextUtils.tooltip("aamissile.hitrate", ChatFormatter.getChatDisplayShort(accuracy.get() * 100.0, DisplayUnits.PERCENTAGE).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY));
-	}
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+	super.appendHoverText(stack, context, tooltip, flagIn);
+	tooltip.add(BallistixTextUtils.tooltip("aamissile.hitrate", ChatFormatter
+		.getChatDisplayShort(accuracy.get() * 100.0, DisplayUnits.PERCENTAGE).withStyle(ChatFormatting.GRAY))
+		.withStyle(ChatFormatting.DARK_GRAY));
+    }
 
 }

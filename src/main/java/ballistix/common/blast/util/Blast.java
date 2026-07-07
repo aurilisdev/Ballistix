@@ -262,7 +262,7 @@ public abstract class Blast {
 	    entity.hurt(explosion.getDamageSource(),
 		    (int) ((damageAmount * damageAmount + damageAmount) / 2.0D * 7.0D * doubleSize + 1.0D));
 
-	    double actualDamange = damageAmount;
+	    double actualDamage = damageAmount;
 
 	    if (entity instanceof LivingEntity le) {
 		double damage = damageAmount;
@@ -271,11 +271,11 @@ public abstract class Blast {
 		    damage *= Mth.clamp(1.0D - i * 0.15D, 0.0D, 1.0D);
 		}
 
-		actualDamange = damage;
+		actualDamage = damage;
 	    }
 
-	    entity.setDeltaMovement(entity.getDeltaMovement().add(deltaX * actualDamange, deltaY * actualDamange,
-		    deltaZ * actualDamange));
+	    entity.push(deltaX * actualDamage, deltaY * actualDamage, deltaZ * actualDamage);
+
 	    if (entity instanceof Player playerentity) {
 		if (!playerentity.isSpectator()
 			&& (!playerentity.isCreative() || !playerentity.getAbilities().flying)) {

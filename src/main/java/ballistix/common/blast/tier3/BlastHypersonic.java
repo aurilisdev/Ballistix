@@ -132,7 +132,7 @@ public class BlastHypersonic extends BlastLasting {
 		double velX = deltaX * inverseMag * BallistixConstants.EXPLOSIVE_HYPERSONIC_VELOCITY;
 		double velY = Math.abs(deltaY) * inverseMag * BallistixConstants.EXPLOSIVE_HYPERSONIC_VELOCITY;
 		double velZ = deltaZ * inverseMag * BallistixConstants.EXPLOSIVE_HYPERSONIC_VELOCITY;
-		entity.setDeltaMovement(entity.getDeltaMovement().add(velX, velY, velZ));
+		entity.push(velX, velY, velZ);
 	    }
 	} else {
 	    return true;

@@ -25,6 +25,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import voltaic.prefab.configuration.ConfigurationHandler;
 
 @Mod(Ballistix.ID)
@@ -79,27 +80,36 @@ public class Ballistix {
 	    event.registerMinecart(minecart.explosiveType, BallistixItems.ITEMS_MINECART.getValue(minecart));
 	}
 	event.submitCachedThreads(() -> {
-	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_ANTIMATTER_RADIUS,
-		    Integer.MAX_VALUE, null, SubtypeBlast.antimatter.id()).start();
-	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_DARKMATTER_RADIUS,
-		    Integer.MAX_VALUE, null, SubtypeBlast.darkmatter.id()).start();
-	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_LARGEANTIMATTER_RADIUS,
-		    Integer.MAX_VALUE, null, SubtypeBlast.largeantimatter.id()).start();
-	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE * 2,
-		    Integer.MAX_VALUE, null, SubtypeBlast.nuclear.id()).start();
-	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_EMP_RADIUS, Integer.MAX_VALUE,
-		    null, SubtypeBlast.emp.id());
-	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_SONIC_RADIUS,
-		    Integer.MAX_VALUE, null, SubtypeBlast.sonic.id(), true);
-	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_HYPERSONIC_RADIUS,
-		    Integer.MAX_VALUE, null, SubtypeBlast.hypersonic.id(), true);
-	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_ENDOTHERMIC_RADIUS,
-		    Integer.MAX_VALUE, null, SubtypeBlast.endothermic.id(), true);
-	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_INFESTIVE_RADIUS,
-		    Integer.MAX_VALUE, null, SubtypeBlast.infestive.id());
-	    new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_EXOTHERMIC_RADIUS,
-		    Integer.MAX_VALUE, null, SubtypeBlast.exothermic.id());
+	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_ANTIMATTER_RADIUS,
+		    Integer.MAX_VALUE, null, SubtypeBlast.antimatter.id()));
+	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_DARKMATTER_RADIUS,
+		    Integer.MAX_VALUE, null, SubtypeBlast.darkmatter.id()));
+	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO,
+		    (int) BallistixConstants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, Integer.MAX_VALUE, null,
+		    SubtypeBlast.largeantimatter.id()));
+	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE * 2,
+		    Integer.MAX_VALUE, null, SubtypeBlast.nuclear.id()));
+	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_EMP_RADIUS,
+		    Integer.MAX_VALUE, null, SubtypeBlast.emp.id()));
+	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_SONIC_RADIUS,
+		    Integer.MAX_VALUE, null, SubtypeBlast.sonic.id(), true));
+	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_HYPERSONIC_RADIUS,
+		    Integer.MAX_VALUE, null, SubtypeBlast.hypersonic.id(), true));
+	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_ENDOTHERMIC_RADIUS,
+		    Integer.MAX_VALUE, null, SubtypeBlast.endothermic.id(), true));
+	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_INFESTIVE_RADIUS,
+		    Integer.MAX_VALUE, null, SubtypeBlast.infestive.id()));
+	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_EXOTHERMIC_RADIUS,
+		    Integer.MAX_VALUE, null, SubtypeBlast.exothermic.id()));
 	});
+    }
+
+    private static void cacheBlast(ThreadSimpleBlast blast) {
+	if (FMLEnvironment.production) {
+	    blast.start();
+	} else {
+	    blast.run();
+	}
     }
 
     public static final ResourceLocation rl(String path) {

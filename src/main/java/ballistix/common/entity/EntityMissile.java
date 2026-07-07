@@ -107,7 +107,7 @@ public class EntityMissile extends Entity {
 
 	    if (!blockPosition().equals(missile.blockPosition())) {
 		setPos(missile.position);
-		setDeltaMovement(missile.deltaMovement);
+		setDeltaMovement(missile.getVelocity());
 		speed = missile.speed;
 	    }
 
@@ -197,7 +197,7 @@ public class EntityMissile extends Entity {
 		float x = (float) (iDeltaX / initialDistance * Math.sin(phi));
 		float z = (float) (iDeltaZ / initialDistance * Math.sin(phi));
 
-		setDeltaMovement(new Vec3(x, Math.cos(phi) * signY, z));
+		setDeltaMovement(new Vec3(x, Math.cos(phi) * signY, z).scale(speed));
 
 	    } else {
 
@@ -239,7 +239,7 @@ public class EntityMissile extends Entity {
 		float x = (float) (iDeltaX / initialDistance * Math.sin(phi));
 		float z = (float) (iDeltaZ / initialDistance * Math.sin(phi));
 
-		setDeltaMovement(new Vec3(x, Math.cos(phi) * signY, z));
+		setDeltaMovement(new Vec3(x, Math.cos(phi) * signY, z).scale(speed));
 
 	    }
 
@@ -260,7 +260,7 @@ public class EntityMissile extends Entity {
 		if (dotProduct != 0) {
 
 		    if (Math.acos(dotProduct) <= maxTurnRadians) {
-			setDeltaMovement(desiredVector);
+			setDeltaMovement(desiredVector.scale(speed));
 		    } else {
 
 			Vec3 perpVector = currVector.cross(desiredVector).cross(currVector).normalize();
@@ -268,7 +268,7 @@ public class EntityMissile extends Entity {
 			Vec3 result = currVector.scale(Math.cos(maxTurnRadians))
 				.add(perpVector.scale(Math.sin(maxTurnRadians)));
 
-			setDeltaMovement(result.normalize());
+			setDeltaMovement(result.normalize().scale(speed));
 
 		    }
 		}
@@ -276,8 +276,8 @@ public class EntityMissile extends Entity {
 	}
 
 	if (tickCount != 0) {
-	    Vec3 vec = new Vec3(getX() + speed * getDeltaMovement().x, getY() + speed * getDeltaMovement().y,
-		    getZ() + speed * getDeltaMovement().z);
+	    Vec3 vec = new Vec3(getX() + getDeltaMovement().x, getY() + getDeltaMovement().y,
+		    getZ() + getDeltaMovement().z);
 	    setPos(vec);
 	}
 
@@ -295,9 +295,9 @@ public class EntityMissile extends Entity {
 	float x = (float) getX();
 	float y = (float) getY();
 	float z = (float) getZ();
-	float motionX = (float) (speed * getDeltaMovement().x);
-	float motionY = (float) (speed * getDeltaMovement().y);
-	float motionZ = (float) (speed * getDeltaMovement().z);
+	float motionX = (float) (getDeltaMovement().x);
+	float motionY = (float) (getDeltaMovement().y);
+	float motionZ = (float) (getDeltaMovement().z);
 	x -= motionX;
 	y -= motionY;
 	z -= motionZ;
@@ -310,6 +310,19 @@ public class EntityMissile extends Entity {
 		    -motionZ * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()));
 	}
 
+    }
+
+    @Override
+    public void push(double x, double y, double z) {
+	super.push(x, y, z);
+
+	if (!level().isClientSide && id != null) {
+	    VirtualMissile missile = MissileManager.getMissile(level().dimension(), id);
+
+	    if (missile != null && !missile.hasExploded()) {
+		missile.applyImpulse(new Vec3(x, y, z));
+	    }
+	}
     }
 
     @Override

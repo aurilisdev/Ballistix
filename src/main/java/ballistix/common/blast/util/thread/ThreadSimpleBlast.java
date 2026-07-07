@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
@@ -22,9 +23,10 @@ import voltaic.prefab.block.HashDistanceBlockPos;
 
 public class ThreadSimpleBlast extends ThreadBlast {
 
-    private static final HashMap<Pair<Integer, ResourceLocation>, Set<BlockPos>> CACHED_EUCLIDEAN_RESULTS = new HashMap<>();
-    private static final Set<Integer> currentlyCalculating = Collections.synchronizedSet(new HashSet<>());
-
+    private static final Map<Pair<Integer, ResourceLocation>, Set<BlockPos>> CACHED_EUCLIDEAN_RESULTS = Collections
+	    .synchronizedMap(new HashMap<>());
+    private static final Set<Pair<Integer, ResourceLocation>> currentlyCalculating = Collections
+	    .synchronizedSet(new HashSet<>());
     private final Pair<Integer, ResourceLocation> idPair;
 
     public ThreadSimpleBlast(Level world, BlockPos position, int range, float energy, Entity source,
@@ -55,84 +57,97 @@ public class ThreadSimpleBlast extends ThreadBlast {
 
     public void runEuclidian(int explosionRadius, Random random) {
 	if (BallistixConstants.SHOULD_CACHE_EXPLOSIONS) {
-	    synchronized (currentlyCalculating) {
-		while (currentlyCalculating.contains(explosionRadius)) {
-		    try {
-			sleep(100);
-		    } catch (InterruptedException e) {
-			e.printStackTrace();
+	    boolean shouldCalculate = false;
+
+	    while (true) {
+		synchronized (currentlyCalculating) {
+		    if (!currentlyCalculating.contains(idPair)) {
+			if (CACHED_EUCLIDEAN_RESULTS.get(idPair) == null) {
+			    currentlyCalculating.add(idPair);
+			    shouldCalculate = true;
+			}
 			break;
 		    }
 		}
-		if (CACHED_EUCLIDEAN_RESULTS.get(idPair) == null) {
-		    currentlyCalculating.add(explosionRadius);
+
+		try {
+		    sleep(100);
+		} catch (InterruptedException e) {
+		    Thread.currentThread().interrupt();
+		    break;
 		}
 	    }
-	    if (CACHED_EUCLIDEAN_RESULTS.get(idPair) == null) {
-		int rSqrd = explosionRadius * explosionRadius;
-		ArrayList<BlockPos> positions = new ArrayList<>(
-			(int) (Math.PI * 4.0 / 3.0 * rSqrd * (explosionRadius + 1)));
-		for (int i = -explosionRadius; i <= explosionRadius; i++) {
-		    for (int j = 0; j <= explosionRadius; j++) {
-			int dist2D = i * i + j * j;
-			if (dist2D <= rSqrd) {
-			    int kMax = (int) Math.floor(Math.sqrt(rSqrd - dist2D));
-			    for (int k = 0; k <= kMax; k++) {
-				int dist3D = dist2D + k * k;
-				if (random.nextFloat() * rSqrd < rSqrd * strictnessAtEdges - dist3D) {
-				    positions.add(new HashDistanceBlockPos(i, k, j,
-					    (int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
-				    if (k != 0) {
-					positions.add(new HashDistanceBlockPos(i, -k, j,
+
+	    if (shouldCalculate) {
+		try {
+		    int rSqrd = explosionRadius * explosionRadius;
+		    ArrayList<BlockPos> positions = new ArrayList<>(
+			    (int) (Math.PI * 4.0 / 3.0 * rSqrd * (explosionRadius + 1)));
+		    for (int i = -explosionRadius; i <= explosionRadius; i++) {
+			for (int j = 0; j <= explosionRadius; j++) {
+			    int dist2D = i * i + j * j;
+			    if (dist2D <= rSqrd) {
+				int kMax = (int) Math.floor(Math.sqrt(rSqrd - dist2D));
+				for (int k = 0; k <= kMax; k++) {
+				    int dist3D = dist2D + k * k;
+				    if (random.nextFloat() * rSqrd < rSqrd * strictnessAtEdges - dist3D) {
+					positions.add(new HashDistanceBlockPos(i, k, j,
 						(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+					if (k != 0) {
+					    positions.add(new HashDistanceBlockPos(i, -k, j,
+						    (int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+					    if (j != 0) {
+						positions.add(new HashDistanceBlockPos(i, -k, -j,
+							(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
+					    }
+					}
 					if (j != 0) {
-					    positions.add(new HashDistanceBlockPos(i, -k, -j,
+					    positions.add(new HashDistanceBlockPos(i, k, -j,
 						    (int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
 					}
-				    }
-				    if (j != 0) {
-					positions.add(new HashDistanceBlockPos(i, k, -j,
-						(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
 				    }
 				}
 			    }
 			}
 		    }
-		}
-		// Sort
-		Random rand = Voltaic.RANDOM;
-		for (int i = 0; i < positions.size(); i++) {
-		    int newIndex = rand.nextInt(Math.max(0, i - 10), Math.min(positions.size() - 1, i + 10));
-		    BlockPos atNew = positions.get(newIndex);
-		    positions.set(newIndex, positions.get(i));
-		    positions.set(i, atNew);
-		}
-		if (sortBasedOnDistance) {
+		    // Sort
+		    Random rand = Voltaic.RANDOM;
+		    for (int i = 0; i < positions.size(); i++) {
+			int from = Math.max(0, i - 10);
+			int to = Math.min(positions.size(), i + 11);
+			int newIndex = rand.nextInt(from, to);
+			BlockPos atNew = positions.get(newIndex);
+			positions.set(newIndex, positions.get(i));
+			positions.set(i, atNew);
 
-		    Comparator<BlockPos> byCenterDistance = Comparator.comparingLong(pos -> {
-			long x = pos.getX();
-			long y = pos.getY();
-			long z = pos.getZ();
-			// distance from (0.5, 0.5, 0.5) equals x² + y² + z² for integer block coords
-			return x * x + y * y + z * z;
-		    });
-		    byCenterDistance = byCenterDistance.thenComparingInt(BlockPos::getX)
-			    .thenComparingInt(BlockPos::getY).thenComparingInt(BlockPos::getZ);
+		    }
+		    if (sortBasedOnDistance) {
 
-		    // turn results into a sorted set, closest to farthest
-		    Set<BlockPos> sorted = new TreeSet<>(byCenterDistance);
-		    sorted.addAll(positions);
-		    CACHED_EUCLIDEAN_RESULTS.put(idPair, sorted);
+			Comparator<BlockPos> byCenterDistance = Comparator.comparingLong(pos -> {
+			    long x = pos.getX();
+			    long y = pos.getY();
+			    long z = pos.getZ();
+			    // distance from (0.5, 0.5, 0.5) equals x² + y² + z² for integer block coords
+			    return x * x + y * y + z * z;
+			});
+			byCenterDistance = byCenterDistance.thenComparingInt(BlockPos::getX)
+				.thenComparingInt(BlockPos::getY).thenComparingInt(BlockPos::getZ);
 
-		} else {
-		    CACHED_EUCLIDEAN_RESULTS.put(idPair, Sets.newHashSet(positions));
+			// turn results into a sorted set, closest to farthest
+			Set<BlockPos> sorted = new TreeSet<>(byCenterDistance);
+			sorted.addAll(positions);
+			CACHED_EUCLIDEAN_RESULTS.put(idPair, sorted);
+
+		    } else {
+			CACHED_EUCLIDEAN_RESULTS.put(idPair, Sets.newHashSet(positions));
+		    }
+		} finally {
+		    synchronized (currentlyCalculating) {
+			currentlyCalculating.remove(idPair);
+		    }
 		}
 	    }
-
 	    results = CACHED_EUCLIDEAN_RESULTS.get(idPair);
-	    synchronized (currentlyCalculating) {
-		currentlyCalculating.remove(explosionRadius);
-	    }
 	} else {
 	    int rSqrd = explosionRadius * explosionRadius;
 	    ArrayList<BlockPos> positions = new ArrayList<>(

@@ -82,12 +82,12 @@ public class EntityMissile extends Entity {
 
     @Override
     public void tick() {
-
 	Level level = level();
 	boolean isClientSide = level.isClientSide;
 	boolean isServerSide = !isClientSide;
 
 	if (isServerSide) {
+
 	    if (id == null) {
 		removeAfterChangingDimensions();
 		return;
@@ -95,24 +95,31 @@ public class EntityMissile extends Entity {
 
 	    VirtualMissile missile = MissileManager.getMissile(level.dimension(), id);
 
-	    if ((missile == null) || missile.hasExploded()) {
+	    if (missile == null || missile.hasExploded()) {
 		removeAfterChangingDimensions();
 		return;
 	    }
-	    if (missile.blastEntity != null) {
-		isExploding = true;
+
+	    isExploding = missile.blastEntity != null;
+
+	    setPos(missile.position);
+	    setDeltaMovement(missile.getVelocity());
+	    speed = missile.speed;
+
+	    missileType = missile.payloadData.missileType;
+	    target = missile.targetData.target;
+	    startX = missile.targetData.startX;
+	    startZ = missile.targetData.startZ;
+	    flightPath = missile.payloadData.getFlightPath().ordinal();
+	    hasIgnighted = missile.payloadData.hasIgnighted;
+
+	    if (getDeltaMovement().length() > 0) {
+		setXRot((float) (Math
+			.atan(getDeltaMovement().y() / Math.sqrt(getDeltaMovement().x() * getDeltaMovement().x()
+				+ getDeltaMovement().z() * getDeltaMovement().z()))
+			* 180.0D / Math.PI));
+		setYRot((float) (Math.atan2(getDeltaMovement().x(), getDeltaMovement().z()) * 180.0D / Math.PI));
 	    }
-
-	    if (!blockPosition().equals(missile.blockPosition())) {
-		setPos(missile.position);
-		setDeltaMovement(missile.getVelocity());
-		speed = missile.speed;
-		hasIgnighted = missile.payloadData.hasIgnighted;
-	    }
-
-	}
-
-	if (isServerSide) {
 
 	    entityData.set(TARGET, target);
 	    entityData.set(MISSILE_TYPE, missileType);
@@ -123,17 +130,17 @@ public class EntityMissile extends Entity {
 	    entityData.set(CURRENTLYEXPLODING, isExploding);
 	    entityData.set(HASIGNIGHTED, hasIgnighted);
 
-	} else {
-
-	    target = entityData.get(TARGET);
-	    missileType = entityData.get(MISSILE_TYPE);
-	    startX = entityData.get(START_X);
-	    startZ = entityData.get(START_Z);
-	    speed = entityData.get(SPEED);
-	    flightPath = entityData.get(FLIGHT_PATH);
-	    isExploding = entityData.get(CURRENTLYEXPLODING);
-	    hasIgnighted = entityData.get(HASIGNIGHTED);
+	    return;
 	}
+
+	target = entityData.get(TARGET);
+	missileType = entityData.get(MISSILE_TYPE);
+	startX = entityData.get(START_X);
+	startZ = entityData.get(START_Z);
+	speed = entityData.get(SPEED);
+	flightPath = entityData.get(FLIGHT_PATH);
+	isExploding = entityData.get(CURRENTLYEXPLODING);
+	hasIgnighted = entityData.get(HASIGNIGHTED);
 	if (isExploding) {
 	    return;
 	}
@@ -307,20 +314,20 @@ public class EntityMissile extends Entity {
 	}
 
     }
-    
+
     @Override
     public void push(double x, double y, double z) {
-        super.push(x, y, z);
+	super.push(x, y, z);
 
-        if (!level().isClientSide && id != null) {
-            VirtualMissile missile = MissileManager.getMissile(level().dimension(), id);
+	if (!level().isClientSide && id != null) {
+	    VirtualMissile missile = MissileManager.getMissile(level().dimension(), id);
 
-            if (missile != null && !missile.hasExploded()) {
-                missile.applyImpulse(new Vec3(x, y, z));
-            }
-        }
+	    if (missile != null && !missile.hasExploded()) {
+		missile.applyImpulse(new Vec3(x, y, z));
+	    }
+	}
     }
-    
+
     @Override
     protected boolean canRide(Entity entityIn) {
 	return true;

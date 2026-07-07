@@ -13,11 +13,9 @@ import ballistix.registers.BallistixTiles;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import voltaic.Voltaic;
 import voltaic.common.item.ItemUpgrade;
@@ -151,40 +149,12 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
 	    return target;
 	}
 
-	if (livingTarget != null && (livingTarget.isRemoved() || livingTarget.isDeadOrDying())) {
+	if (!isLivingTargetValid(livingTarget, mode)) {
 	    livingTarget = null;
 	}
 
-	if (ticks % 5 == 0) {
-
-	    LivingEntity selected = null;
-	    double lastMag = 0;
-
-	    Class<? extends LivingEntity> type = mode == TargetingMode.ONLY_PLAYERS ? Player.class : LivingEntity.class;
-
-	    for (LivingEntity entity : level.getEntitiesOfClass(type,
-		    new AABB(getBlockPos()).inflate(currentRange.getValue() / 4.0))) {
-		if (raycastToBlockPos(level, getProjectileLaunchPosition(),
-			entity.position().add(0, entity.getEyeHeight(), 0)).isEmpty()
-			&& !(entity instanceof Player player && (player.isCreative()
-				|| whitelistedPlayers.getValue().contains(player.getName().getString())))
-			&& !entity.isDeadOrDying() && !entity.isRemoved()) {
-		    double deltaX = entity.getX() - getBlockPos().getX();
-		    double deltaY = entity.getY() - getBlockPos().getY();
-		    double deltaZ = entity.getZ() - getBlockPos().getZ();
-
-		    double mag = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
-
-		    if (selected == null) {
-			selected = entity;
-			lastMag = mag;
-		    } else if (mag < lastMag) {
-			selected = entity;
-		    }
-		}
-	    }
-
-	    livingTarget = selected;
+	if (ticks % 20 == 0) {
+	    livingTarget = findLivingTarget(mode);
 	}
 
 	if (livingTarget != null) {

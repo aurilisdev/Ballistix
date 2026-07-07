@@ -325,17 +325,18 @@ public class BallistixConfig {
 	builder.push("sam_entity");
 	SAM_ENTITY_TURNINGSPEEDRADIANS = builder.defineInRange("sam_entity_turning_speed_radians", 0.1, 0,
 		Double.MAX_VALUE);
-	SAM_TOP_SPEED = builder.defineInRange("sam_top_speed", 3.0, 0, Double.MAX_VALUE);
-	SAM_ACCELERATION = builder.defineInRange("sam_acceleration", 0.04, 0, Double.MAX_VALUE);
+	SAM_TOP_SPEED = builder.defineInRange("sam_top_speed", 5.0, 0, Double.MAX_VALUE);
+	SAM_ACCELERATION = builder.defineInRange("sam_acceleration", 0.065, 0, Double.MAX_VALUE);
 	SAM_MINTURNSPEED_PERC = builder.defineInRange("sam_minturnspeed_perc", 0.25, 0, 1);
-	SAM_CHANCE_TO_DESTROY = builder.defineInRange("sam_chance_to_destroy", 0.5, 0, 1);
+	SAM_CHANCE_TO_DESTROY = builder.defineInRange("sam_chance_to_destroy", 0.7, 0, 1);
 	builder.pop();
 
 	// Anti-ballistic entity
 	builder.push("anti_ballistic_entity");
 	ANTIBALLISTICMISSILE_ENTITY_TURNINGSPEEDRADIANS = builder
 		.defineInRange("antiballisticmissile_entity_turning_speed_radians", 0.05, 0, Double.MAX_VALUE);
-	ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY = builder.defineInRange("antiballisticmissile_chance_to_destroy", 0.85,
+	ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY = builder.defineInRange("antiballisticmissile_chance_to_destroy",
+		0.95,
 		0, 1);
 	ANTIBALLISTICMISSILE_TOP_SPEED = builder.defineInRange("antiballisticmissile_top_speed", 5.0, 0,
 		Double.MAX_VALUE);
@@ -365,7 +366,7 @@ public class BallistixConfig {
 		Double.MAX_VALUE);
 	LASER_TURRET_MAXHEAT = builder.defineInRange("laser_turret_max_heat", 100.0, 0, Double.MAX_VALUE);
 	LASER_TURRET_COOLTHRESHHOLD = builder.defineInRange("laser_turret_cool_threshold", 40.0, 0, Double.MAX_VALUE);
-	LASER_TURRET_BASE_DAMAGE = builder.defineInRange("laser_turret_base_damage", 1.0, 0, Double.MAX_VALUE);
+	LASER_TURRET_BASE_DAMAGE = builder.defineInRange("laser_turret_base_damage", 3.0, 0, Double.MAX_VALUE);
 	builder.pop();
 
 	// Railgun turret

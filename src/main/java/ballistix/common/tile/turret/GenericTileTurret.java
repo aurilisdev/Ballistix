@@ -1,7 +1,6 @@
 package ballistix.common.tile.turret;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -18,14 +17,17 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
@@ -234,6 +236,90 @@ public abstract class GenericTileTurret extends GenericTile {
 
     }
 
+    @Nullable
+    protected LivingEntity findLivingTarget(TargetingMode mode) {
+
+	if (mode == TargetingMode.NONE) {
+	    return null;
+	}
+
+	LivingEntity selected = null;
+	double selectedDistSqr = Double.MAX_VALUE;
+
+	double range = currentRange.getValue();
+	double rangeSqr = range * range;
+	double minRangeSqr = minimumRange * minimumRange;
+
+	Class<? extends LivingEntity> type = mode == TargetingMode.ONLY_PLAYERS ? Player.class : LivingEntity.class;
+
+	Vec3 turretCenter = Vec3.atCenterOf(getBlockPos());
+
+	for (LivingEntity entity : level.getEntitiesOfClass(type, new AABB(getBlockPos()).inflate(range / 4))) {
+
+	    if (entity.isDeadOrDying() || entity.isRemoved()) {
+		continue;
+	    }
+
+	    if (entity instanceof Player player
+		    && (player.isCreative() || whitelistedPlayers.getValue().contains(player.getName().getString()))) {
+		continue;
+	    }
+
+	    double distSqr = entity.distanceToSqr(turretCenter);
+
+	    if (distSqr > rangeSqr || distSqr < minRangeSqr) {
+		continue;
+	    }
+
+	    if (!canRaycastTo(level, getProjectileLaunchPosition(), entity.position().add(0, entity.getEyeHeight(), 0),
+		    getBlockPos())) {
+		continue;
+	    }
+
+	    if (distSqr < selectedDistSqr) {
+		selected = entity;
+		selectedDistSqr = distSqr;
+	    }
+	}
+
+	return selected;
+    }
+
+    protected boolean isLivingTargetValid(@Nullable LivingEntity entity, TargetingMode mode) {
+
+	if (entity == null || mode == TargetingMode.NONE) {
+	    return false;
+	}
+
+	if (entity.isRemoved() || entity.isDeadOrDying()) {
+	    return false;
+	}
+
+	if (mode == TargetingMode.ONLY_PLAYERS && !(entity instanceof Player)) {
+	    return false;
+	}
+
+	if (entity instanceof Player player
+		&& (player.isCreative() || whitelistedPlayers.getValue().contains(player.getName().getString()))) {
+	    return false;
+	}
+
+	Vec3 launchPos = getProjectileLaunchPosition();
+	Vec3 targetPos = entity.position().add(0, entity.getEyeHeight(), 0);
+
+	double deltaX = targetPos.x - launchPos.x;
+	double deltaY = targetPos.y - launchPos.y;
+	double deltaZ = targetPos.z - launchPos.z;
+
+	double distSqr = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
+
+	double range = currentRange.getValue() / 4;
+	double rangeSqr = range * range;
+	double minRangeSqr = minimumRange * minimumRange;
+
+	return distSqr <= rangeSqr && distSqr >= minRangeSqr;
+    }
+
     public void tickClient(ComponentTickable tickable) {
 
     }
@@ -312,97 +398,45 @@ public abstract class GenericTileTurret extends GenericTile {
 	return Math.atan2(vector.z, vector.x);
     }
 
-    public static List<Block> raycastToBlockPos(Level world, Vec3 start, Vec3 end) {
-	BlockPos endCheck = new BlockPos((int) end.x, (int) end.y, (int) end.z);
+    public static boolean canRaycastTo(Level world, Vec3 start, Vec3 end, BlockPos... ignoredPositions) {
 
-	List<Block> blocks = new ArrayList<>();
+	BlockPos originCheck = BlockPos.containing(start);
+	BlockPos endCheck = BlockPos.containing(end);
 
-	Vec3 delta = end.subtract(start);
-	int maxChecks = (int) Math.ceil(delta.length());
+	BlockHitResult hit = BlockGetter.traverseBlocks(start, end, ignoredPositions, (ignored, pos) -> {
 
-	delta = delta.normalize();
-
-	int i = 0;
-	BlockPos toCheck;
-	BlockState state;
-
-	while (i < maxChecks) {
-
-	    start = start.add(delta);
-	    BlockPos startCheck = new BlockPos((int) start.x, (int) start.y, (int) start.z);
-
-	    // Cieled Y
-	    toCheck = new BlockPos((int) Math.ceil(start.x), (int) Math.ceil(start.y), (int) Math.ceil(start.z));
-	    if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
-		state = world.getBlockState(toCheck);
-		if (willStopTurrret(state)) {
-		    blocks.add(state.getBlock());
-		}
+	    if (pos.equals(originCheck) || pos.equals(endCheck) || isIgnoredRaycastPos(pos, ignored)) {
+		return null;
 	    }
 
-	    toCheck = new BlockPos((int) Math.ceil(start.x), (int) Math.ceil(start.y), (int) Math.floor(start.z));
-	    if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
-		state = world.getBlockState(toCheck);
-		if (willStopTurrret(state)) {
-		    blocks.add(state.getBlock());
-		}
+	    BlockState state = world.getBlockState(pos);
+
+	    if (!willStopTurrret(state)) {
+		return null;
 	    }
 
-	    toCheck = new BlockPos((int) Math.floor(start.x), (int) Math.ceil(start.y), (int) Math.ceil(start.z));
-	    if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
-		state = world.getBlockState(toCheck);
-		if (willStopTurrret(state)) {
-		    blocks.add(state.getBlock());
-		}
+	    VoxelShape shape = state.getCollisionShape(world, pos);
+
+	    if (shape.isEmpty()) {
+		return null;
 	    }
 
-	    toCheck = new BlockPos((int) Math.floor(start.x), (int) Math.ceil(start.y), (int) Math.floor(start.z));
-	    if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
-		state = world.getBlockState(toCheck);
-		if (willStopTurrret(state)) {
-		    blocks.add(state.getBlock());
-		}
+	    return shape.clip(start, end, pos);
+
+	}, ignored -> null);
+
+	return hit == null;
+    }
+
+    private static boolean isIgnoredRaycastPos(BlockPos pos, BlockPos... ignoredPositions) {
+
+	for (BlockPos ignored : ignoredPositions) {
+	    if (pos.equals(ignored)) {
+		return true;
 	    }
-
-	    // Floored Y
-
-	    toCheck = new BlockPos((int) Math.ceil(start.x), (int) Math.floor(start.y), (int) Math.ceil(start.z));
-	    if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
-		state = world.getBlockState(toCheck);
-		if (willStopTurrret(state)) {
-		    blocks.add(state.getBlock());
-		}
-	    }
-
-	    toCheck = new BlockPos((int) Math.ceil(start.x), (int) Math.floor(start.y), (int) Math.floor(start.z));
-	    if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
-		state = world.getBlockState(toCheck);
-		if (willStopTurrret(state)) {
-		    blocks.add(state.getBlock());
-		}
-	    }
-
-	    toCheck = new BlockPos((int) Math.floor(start.x), (int) Math.floor(start.y), (int) Math.ceil(start.z));
-	    if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
-		state = world.getBlockState(toCheck);
-		if (willStopTurrret(state)) {
-		    blocks.add(state.getBlock());
-		}
-	    }
-
-	    toCheck = new BlockPos((int) Math.floor(start.x), (int) Math.floor(start.y), (int) Math.floor(start.z));
-	    if (!toCheck.equals(startCheck) && !toCheck.equals(endCheck)) {
-		state = world.getBlockState(toCheck);
-		if (willStopTurrret(state)) {
-		    blocks.add(state.getBlock());
-		}
-	    }
-
-	    i++;
-
 	}
 
-	return blocks;
+	return false;
     }
 
     @Override
@@ -436,7 +470,8 @@ public abstract class GenericTileTurret extends GenericTile {
     }
 
     public static boolean willStopTurrret(BlockState state) {
-	if (state.isAir() || state.is(Blocks.LIGHT) || (state.is(Blocks.SNOW) && state.getValue(SnowLayerBlock.LAYERS) < 4)) {
+	if (state.isAir() || state.is(Blocks.LIGHT)
+		|| (state.is(Blocks.SNOW) && state.getValue(SnowLayerBlock.LAYERS) < 4)) {
 	    return false;
 	}
 	if (state.is(BallistixTags.Blocks.WHITELISTED_TURRET_BLOCKS)) {

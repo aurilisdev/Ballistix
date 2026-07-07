@@ -1,6 +1,9 @@
 package ballistix.common.tile.turret.antimissile;
 
+import java.util.UUID;
+
 import ballistix.api.missile.MissileManager;
+import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.api.missile.virtual.VirtualProjectile;
 import ballistix.common.inventory.container.ContainerSAMTurret;
 import ballistix.common.settings.BallistixConfig;
@@ -83,8 +86,14 @@ public class TileTurretSAM extends TileTurretAntimissileProjectile {
 
 	outOfAmmo.setValue(false);
 
+	UUID targetId = target != null && target.getTarget() instanceof VirtualMissile m ? m.getId() : null;
+
+	if (targetId == null) {
+	    return;
+	}
 	VirtualProjectile.VirtualSAM sam = new VirtualProjectile.VirtualSAM(0.0F, getProjectileLaunchPosition(),
-		targetMovement.getValue(), currentRange.getValue().floatValue(), boundFireControl.getValue(), 0);
+		targetMovement.getValue(), currentRange.getValue().floatValue(), boundFireControl.getValue(), 0,
+		targetId);
 
 	MissileManager.addSAM(level.dimension(), sam);
 

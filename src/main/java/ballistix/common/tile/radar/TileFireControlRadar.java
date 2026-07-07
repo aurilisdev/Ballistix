@@ -1,6 +1,12 @@
 package ballistix.common.tile.radar;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -63,6 +69,31 @@ public class TileFireControlRadar extends GenericTile {
     @Nullable
     public VirtualMissile tracking;
 
+    private final ArrayList<VirtualMissile> trackedMissiles = new ArrayList<>();
+    private final Map<BlockPos, UUID> assignments = new HashMap<>();
+
+    public List<VirtualMissile> getTrackedMissiles() {
+	return Collections.unmodifiableList(trackedMissiles);
+    }
+
+    private boolean isValidThreat(VirtualMissile missile) {
+
+	if (missile == null || missile.hasExploded() || missile.getId() == null) {
+	    return false;
+	}
+
+	if (!missile.getBoundingBox().intersects(searchArea)) {
+	    return false;
+	}
+
+	return !usingWhitelist.getValue() || !whitelistedFrequencies.getValue().contains(missile.payloadData.frequency);
+    }
+
+    @Nullable
+    private VirtualMissile getMissileById(UUID id) {
+	return MissileManager.getMissile(level.dimension(), id);
+    }
+
     public double clientRotation;
     public double clientRotationSpeed;
 
@@ -102,29 +133,22 @@ public class TileFireControlRadar extends GenericTile {
 	    trackingPos.setValue(OUT_OF_REACH);
 	}
 
-	VirtualMissile temp = null;
+	trackedMissiles.clear();
 
 	for (VirtualMissile missile : MissileManager.getMissilesForLevel(level.dimension())) {
-	    if (missile.getBoundingBox().intersects(searchArea)) {
-		if (temp == null
-			&& (!usingWhitelist.getValue() || usingWhitelist.getValue()
-				&& !whitelistedFrequencies.getValue().contains(missile.payloadData.frequency))
-			&& !missile.hasExploded()) {
-		    temp = missile;
-		} else if (temp != null
-			&& getDistanceToMissile(searchPos, missile.position) < getDistanceToMissile(searchPos,
-				temp.position)
-			&& (!usingWhitelist.getValue() || usingWhitelist.getValue()
-				&& !whitelistedFrequencies.getValue().contains(missile.payloadData.frequency))
-			&& !missile.hasExploded()) {
-		    temp = missile;
-		}
+	    if (isValidThreat(missile)) {
+		trackedMissiles.add(missile);
 	    }
 	}
 
-	if (tracking == null) {
-	    tracking = temp;
-	}
+	trackedMissiles.sort(Comparator.comparingDouble(missile -> scoreThreat(missile, searchPos, 0)));
+
+	assignments.entrySet().removeIf(entry -> {
+	    VirtualMissile missile = getMissileById(entry.getValue());
+	    return missile == null || !isValidThreat(missile);
+	});
+
+	tracking = trackedMissiles.isEmpty() ? null : trackedMissiles.get(0);
 
 	if (tracking != null && !tracking.hasExploded()) {
 	    trackingPos.setValue(tracking.position);
@@ -138,6 +162,75 @@ public class TileFireControlRadar extends GenericTile {
 	    trackingPos.setValue(OUT_OF_REACH);
 	    missileType.setValue(-1);
 	}
+    }
+
+    private double scoreThreat(VirtualMissile missile, Vec3 requesterPos, float interceptorSpeed) {
+
+	double distanceToRequester = missile.position.distanceTo(requesterPos);
+
+	double interceptTime = interceptorSpeed > 0
+		? getTimeToIntercept(missile.position, missile.deltaMovement, missile.speed, interceptorSpeed,
+			requesterPos)
+		: -1;
+
+	if (interceptTime > 0) {
+	    return interceptTime * 1000.0 + distanceToRequester;
+	}
+
+	return distanceToRequester;
+    }
+
+    @Nullable
+    public VirtualMissile getTargetFor(BlockPos requesterBlockPos, Vec3 requesterPos, float interceptorSpeed) {
+
+	UUID currentAssignment = assignments.get(requesterBlockPos);
+
+	if (currentAssignment != null) {
+	    VirtualMissile assigned = getMissileById(currentAssignment);
+	    if (assigned != null && isValidThreat(assigned)) {
+		return assigned;
+	    }
+	    assignments.remove(requesterBlockPos);
+	}
+
+	VirtualMissile best = null;
+	int bestAssignmentCount = Integer.MAX_VALUE;
+	double bestScore = Double.MAX_VALUE;
+
+	for (VirtualMissile missile : trackedMissiles) {
+
+	    if (missile.getId() == null || !isValidThreat(missile)) {
+		continue;
+	    }
+
+	    int assignmentCount = getAssignmentCount(missile.getId());
+	    double score = scoreThreat(missile, requesterPos, interceptorSpeed);
+
+	    if (assignmentCount < bestAssignmentCount || assignmentCount == bestAssignmentCount && score < bestScore) {
+		best = missile;
+		bestAssignmentCount = assignmentCount;
+		bestScore = score;
+	    }
+	}
+
+	if (best != null) {
+	    assignments.put(requesterBlockPos, best.getId());
+	}
+
+	return best;
+    }
+
+    private int getAssignmentCount(UUID missileId) {
+
+	int count = 0;
+
+	for (UUID assigned : assignments.values()) {
+	    if (missileId.equals(assigned)) {
+		count++;
+	    }
+	}
+
+	return count;
     }
 
     public void tickClient(ComponentTickable tickable) {

@@ -228,21 +228,21 @@ public class BallistixConstants {
 
     @DoubleValue(def = 0.1)
     public static double SAM_ENTITY_TURNINGSPEEDRADIANS = 0.1;
-    @FloatValue(def = 3.0F)
-    public static float SAM_TOP_SPEED = 3.0F;
-    @FloatValue(def = 0.04F)
-    public static float SAM_ACCELERATION = 0.04F;
+    @FloatValue(def = 5.0F)
+    public static float SAM_TOP_SPEED = 5.0F;
+    @FloatValue(def = 0.1F)
+    public static float SAM_ACCELERATION = 0.065F;
     @FloatValue(def = 0.25F)
     public static float SAM_MINTURNSPEED_PERC = 0.25F;
-    @DoubleValue(def = 0.5)
-    public static double SAM_CHANCE_TO_DESTROY = 0.5;
+    @DoubleValue(def = 0.7)
+    public static double SAM_CHANCE_TO_DESTROY = 0.7;
 
     /* ANTI-BALLISTIC ENTITY */
 
     @DoubleValue(def = 0.05)
     public static double ANTIBALLISTICMISSILE_ENTITY_TURNINGSPEEDRADIANS = 0.05;
-    @DoubleValue(def = 0.85)
-    public static double ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY = 0.85;
+    @DoubleValue(def = 0.95)
+    public static double ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY = 0.95;
     @FloatValue(def = 5.0F)
     public static float ANTIBALLISTICMISSILE_TOP_SPEED = 5.0F;
     @FloatValue(def = 0.04F)
@@ -276,8 +276,8 @@ public class BallistixConstants {
     public static double LASER_TURRET_MAXHEAT = 100;
     @DoubleValue(def = 40)
     public static double LASER_TURRET_COOLTHRESHHOLD = 40;
-    @DoubleValue(def = 1)
-    public static double LASER_TURRET_BASE_DAMAGE = 1;
+    @DoubleValue(def = 3)
+    public static double LASER_TURRET_BASE_DAMAGE = 3;
 
     /* RAILGUN TURRET */
 

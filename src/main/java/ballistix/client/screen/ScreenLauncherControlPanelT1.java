@@ -153,6 +153,10 @@ public class ScreenLauncherControlPanelT1 extends GenericScreen<ContainerLaunche
 		zCoordField.setValue("" + silo.target.getValue().getZ());
 	    }
 
+	    if (xCoordField.isFocused() || zCoordField.isFocused()) {
+		return;
+	    }
+
 	    Integer x = parseIntOrNull(xCoordField.getValue());
 	    Integer z = parseIntOrNull(zCoordField.getValue());
 

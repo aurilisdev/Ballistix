@@ -1,5 +1,6 @@
 package ballistix.api.missile.virtual;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -217,7 +218,7 @@ public abstract class VirtualProjectile {
 	    state = world.getBlockState(pos);
 
 	    if (state.getCollisionShape(world, blockPosition()).isEmpty() || isInValidBlockstate(pos, world)) {
-		currPos.add(deltaMovement);
+		currPos = currPos.add(deltaMovement);
 		continue;
 	    }
 
@@ -353,37 +354,43 @@ public abstract class VirtualProjectile {
 
     public static class VirtualSAM extends VirtualProjectile {
 
-	public static final Codec<VirtualSAM> CODEC = RecordCodecBuilder
-		.create(instance -> instance
-			.group(Codec.FLOAT.fieldOf("speed").forGetter(instance0 -> instance0.speed),
-				Vec3.CODEC.fieldOf("position").forGetter(instance0 -> instance0.position),
-				Vec3.CODEC.fieldOf("movement").forGetter(instance0 -> instance0.deltaMovement),
-				Codec.FLOAT.fieldOf("range").forGetter(instance0 -> instance0.range),
-				Codec.FLOAT.fieldOf("distancetraveled")
-					.forGetter(instance0 -> instance0.distanceTraveled),
-				UUIDUtil.CODEC.fieldOf("id").forGetter(instance0 -> instance0.id),
-				Codec.BOOL.fieldOf("hasexploded").forGetter(instance0 -> instance0.hasExploded),
-				Codec.BOOL.fieldOf("hasspawned").forGetter(instance0 -> instance0.isSpawned),
-				Codec.INT.fieldOf("entityid").forGetter(instance0 -> instance0.entityId),
-				BlockPos.CODEC.fieldOf("radarpos").forGetter(instance0 -> instance0.radarPos),
-				Codec.INT.fieldOf("variant").forGetter(instance0 -> instance0.variant))
-			.apply(instance, VirtualSAM::new));
+	public static final Codec<VirtualSAM> CODEC = RecordCodecBuilder.create(instance -> instance
+		.group(Codec.FLOAT.fieldOf("speed").forGetter(instance0 -> instance0.speed),
+			Vec3.CODEC.fieldOf("position").forGetter(instance0 -> instance0.position),
+			Vec3.CODEC.fieldOf("movement").forGetter(instance0 -> instance0.deltaMovement),
+			Codec.FLOAT.fieldOf("range").forGetter(instance0 -> instance0.range),
+			Codec.FLOAT.fieldOf("distancetraveled").forGetter(instance0 -> instance0.distanceTraveled),
+			UUIDUtil.CODEC.fieldOf("id").forGetter(instance0 -> instance0.id),
+			Codec.BOOL.fieldOf("hasexploded").forGetter(instance0 -> instance0.hasExploded),
+			Codec.BOOL.fieldOf("hasspawned").forGetter(instance0 -> instance0.isSpawned),
+			Codec.INT.fieldOf("entityid").forGetter(instance0 -> instance0.entityId),
+			BlockPos.CODEC.fieldOf("radarpos").forGetter(instance0 -> instance0.radarPos),
+			Codec.INT.fieldOf("variant").forGetter(instance0 -> instance0.variant),
+			UUIDUtil.CODEC.optionalFieldOf("targetmissileid")
+				.forGetter(instance0 -> Optional.ofNullable(instance0.targetMissileId)))
+		.apply(instance, VirtualSAM::new));
 
 	private BlockPos radarPos = BlockEntityUtils.OUT_OF_REACH;
 	private final int variant;
 	private TileFireControlRadar radar = null;
+	@Nullable
+	private UUID targetMissileId;
 
 	protected VirtualSAM(float speed, Vec3 position, Vec3 deltaMovement, float range, float distanceTraveled,
-		UUID id, boolean hasExploded, boolean isSpawned, int entityId, BlockPos radarPos, int variant) {
+		UUID id, boolean hasExploded, boolean isSpawned, int entityId, BlockPos radarPos, int variant,
+		Optional<UUID> targetMissileId) {
 	    super(speed, position, deltaMovement, range, true, distanceTraveled, id, hasExploded, isSpawned, entityId);
 	    this.radarPos = radarPos;
 	    this.variant = variant;
+	    this.targetMissileId = targetMissileId.orElse(null);
 	}
 
-	public VirtualSAM(float speed, Vec3 position, Vec3 deltaMovement, float range, BlockPos radarPos, int variant) {
+	public VirtualSAM(float speed, Vec3 position, Vec3 deltaMovement, float range, BlockPos radarPos, int variant,
+		@Nullable UUID targetMissileId) {
 	    super(speed, position, deltaMovement, range, false, UUID.randomUUID());
 	    this.radarPos = radarPos;
 	    this.variant = variant;
+	    this.targetMissileId = targetMissileId;
 	}
 
 	@Override
@@ -417,7 +424,8 @@ public abstract class VirtualProjectile {
 		    : BallistixConstants.ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY)) {
 		MissileManager.removeMissile(world.dimension(), missile.getId());
 	    }
-	    world.playSound(null, blockPosition(), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 2.0F, 1.0F);
+	    world.explode(null, null, null, position.x, position.y, position.z, 2.0F, false,
+		    Level.ExplosionInteraction.BLOCK);
 	}
 
 	@Override
@@ -488,9 +496,22 @@ public abstract class VirtualProjectile {
 		return;
 	    }
 
-	    VirtualMissile tracking = radar.tracking;
+	    VirtualMissile tracking = null;
 
-	    float trackingSpeed = 0F;// radar.tracking.speed;
+	    if (targetMissileId != null) {
+		tracking = MissileManager.getMissile(level.dimension(), targetMissileId);
+	    }
+
+	    if ((tracking == null || tracking.hasExploded()) && radar != null) {
+		tracking = radar.getTargetFor(blockPosition(), position, topSpeed);
+	    }
+
+	    if (tracking == null || tracking.hasExploded()) {
+		super.updatePosition(level);
+		return;
+	    }
+
+	    float trackingSpeed = 0;
 	    Vec3 trackingVector = tracking.deltaMovement;
 
 	    double timeToIntercept = TileFireControlRadar.getTimeToIntercept(tracking.position, trackingVector,

@@ -75,4 +75,8 @@ public abstract class TileTurretAntimissileProjectile extends TileTurretAntimiss
 
     }
 
+    @Override
+    protected float getInterceptorSpeedForTargeting() {
+	return getProjectileSpeed();
+    }
 }

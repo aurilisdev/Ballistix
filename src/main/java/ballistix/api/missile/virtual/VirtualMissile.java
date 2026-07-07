@@ -528,7 +528,7 @@ public class VirtualMissile {
 	    state = world.getBlockState(pos);
 
 	    if (state.getCollisionShape(world, blockPosition()).isEmpty() || isInValidBlockstate(pos, world)) {
-		currPos.add(deltaMovement);
+		currPos = currPos.add(deltaMovement);
 		continue;
 	    }
 

@@ -233,7 +233,7 @@ public abstract class Blast {
 
 	for (Entity entity : entities) {
 
-	    boolean ignoreEntity = entity.ignoreExplosion() || canHarmEntity(entity);
+	    boolean ignoreEntity = entity.ignoreExplosion() || !canHarmEntity(entity);
 	    if (ignoreEntity) {
 		continue;
 	    }

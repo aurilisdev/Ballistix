@@ -232,6 +232,11 @@ public class ScreenLauncherControlPanelT3 extends GenericScreen<ContainerLaunche
 		frequencyField.setValue("" + silo.frequency.getValue());
 	    }
 
+	    if (xCoordField.isFocused() || yCoordField.isFocused() || zCoordField.isFocused()
+		    || frequencyField.isFocused()) {
+		return;
+	    }
+
 	    Integer x = ScreenLauncherControlPanelT1.parseIntOrNull(xCoordField.getValue());
 	    Integer y = ScreenLauncherControlPanelT1.parseIntOrNull(yCoordField.getValue());
 	    Integer z = ScreenLauncherControlPanelT1.parseIntOrNull(zCoordField.getValue());

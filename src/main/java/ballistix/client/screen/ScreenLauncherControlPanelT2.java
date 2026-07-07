@@ -154,22 +154,16 @@ public class ScreenLauncherControlPanelT2 extends GenericScreen<ContainerLaunche
 
     private void setX(String val) {
 	xCoordField.setFocus(true);
-	yCoordField.setFocus(false);
-	zCoordField.setFocus(false);
 	setSiloTargetX(val);
     }
 
     private void setY(String val) {
 	yCoordField.setFocus(true);
-	xCoordField.setFocus(false);
-	zCoordField.setFocus(false);
 	setSiloTargetY(val);
     }
 
     private void setZ(String val) {
 	zCoordField.setFocus(true);
-	yCoordField.setFocus(false);
-	xCoordField.setFocus(false);
 	setSiloTargetZ(val);
     }
 
@@ -183,6 +177,10 @@ public class ScreenLauncherControlPanelT2 extends GenericScreen<ContainerLaunche
 		xCoordField.setValue("" + silo.target.getValue().getX());
 		yCoordField.setValue("" + silo.target.getValue().getY());
 		zCoordField.setValue("" + silo.target.getValue().getZ());
+	    }
+
+	    if (xCoordField.isFocused() || yCoordField.isFocused() || zCoordField.isFocused()) {
+		return;
 	    }
 
 	    Integer x = ScreenLauncherControlPanelT1.parseIntOrNull(xCoordField.getValue());

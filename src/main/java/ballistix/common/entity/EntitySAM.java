@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualProjectile;
 import ballistix.client.particle.ParticleOptionsMissileSmoke;
-import ballistix.common.settings.BallistixConstants;
 import ballistix.registers.BallistixEntities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.UUIDUtil;
@@ -52,6 +51,40 @@ public class EntitySAM extends Entity {
 	this(BallistixEntities.ENTITY_SAM.get(), level);
     }
 
+    private static final double MIN_YAW_HORIZONTAL_RATIO_SQR = 0.0025D;
+
+    private void updateRotationFromMovement(Vec3 movement) {
+	double horizontalSqr = movement.x * movement.x + movement.z * movement.z;
+	double lengthSqr = horizontalSqr + movement.y * movement.y;
+
+	if (lengthSqr <= 1.0E-7D) {
+	    return;
+	}
+
+	double horizontal = Math.sqrt(horizontalSqr);
+
+	setXRot((float) (Math.atan2(movement.y, horizontal) * RAD2DEG));
+
+	// Near vertical, yaw is unstable and visually meaningless.
+	// Keep the previous yaw instead of letting atan2 tiny x/z noise flicker it.
+	if (horizontalSqr > lengthSqr * MIN_YAW_HORIZONTAL_RATIO_SQR) {
+	    float targetYaw = (float) (Math.atan2(movement.x, movement.z) * RAD2DEG);
+	    setYRot(unwrapYaw(targetYaw, getYRot()));
+	}
+    }
+
+    private static float unwrapYaw(float yaw, float referenceYaw) {
+	while (yaw - referenceYaw < -180.0F) {
+	    yaw += 360.0F;
+	}
+
+	while (yaw - referenceYaw >= 180.0F) {
+	    yaw -= 360.0F;
+	}
+
+	return yaw;
+    }
+
     @Override
     public void tick() {
 	Level level = level();
@@ -75,64 +108,52 @@ public class EntitySAM extends Entity {
 
 	    VirtualProjectile.VirtualSAM sam = MissileManager.getSAM(level.dimension(), id);
 
-	    if ((sam == null) || sam.hasExploded()) {
+	    if (sam == null || sam.hasExploded()) {
 		removeAfterChangingDimensions();
 		return;
 	    }
+	    setPos(sam.position);
+	    setDeltaMovement(sam.deltaMovement);
+	    speed = sam.speed;
 
-	    if (!blockPosition().equals(sam.blockPosition()) || !getDeltaMovement().equals(sam.deltaMovement)) {
-		setPos(sam.position);
-		speed = sam.speed;
-		setDeltaMovement(sam.deltaMovement);
-	    }
-
-	}
-
-	if (isServer) {
 	    entityData.set(SPEED, speed);
 	    entityData.set(VARIANT, variant);
-	} else {
-	    speed = entityData.get(SPEED);
-	    variant = entityData.get(VARIANT);
+
+	    return;
 	}
 
-	setPos(new Vec3(getX() + getDeltaMovement().x * speed, getY() + getDeltaMovement().y * speed,
-		getZ() + getDeltaMovement().z * speed));
+	speed = entityData.get(SPEED);
+	variant = entityData.get(VARIANT);
 
-	setXRot((float) (Math.atan(getDeltaMovement().y() / Math.sqrt(
-		getDeltaMovement().x() * getDeltaMovement().x() + getDeltaMovement().z() * getDeltaMovement().z()))
-		* RAD2DEG));
-	setYRot((float) (Math.atan2(getDeltaMovement().x(), getDeltaMovement().z()) * RAD2DEG));
+	Vec3 movement = getDeltaMovement();
 
-	float topSpeed = variant == 0 ? BallistixConstants.SAM_TOP_SPEED
-		: BallistixConstants.ANTIBALLISTICMISSILE_TOP_SPEED;
+	setPos(new Vec3(getX() + movement.x * speed, getY() + movement.y * speed, getZ() + movement.z * speed));
 
-	if (speed < topSpeed) {
-	    speed += variant == 0 ? BallistixConstants.SAM_ACCELERATION
-		    : BallistixConstants.ANTIBALLISTICMISSILE_ACCELERATION;
-	}
+	updateRotationFromMovement(movement);
 
-	if (isServer || speed >= 3.0F) {
+	if (speed >= 3.0F) {
 	    return;
 	}
 
 	float x = (float) getX();
 	float y = (float) getY();
 	float z = (float) getZ();
-	float motionX = (float) (speed * getDeltaMovement().x);
-	float motionY = (float) (speed * getDeltaMovement().y);
-	float motionZ = (float) (speed * getDeltaMovement().z);
+
+	float motionX = (float) (speed * movement.x);
+	float motionY = (float) (speed * movement.y);
+	float motionZ = (float) (speed * movement.z);
+
 	x -= motionX;
 	y -= motionY;
 	z -= motionZ;
+
 	for (int i = 0; i < (variant == 0 ? 2 : 4); i++) {
 	    Minecraft.getInstance().particleEngine.createParticle(
-		    new ParticleOptionsMissileSmoke().setParameters(1, 1, 1, variant == 0 ? 0.2F : 0.5f, 50, true), x,
+		    new ParticleOptionsMissileSmoke().setParameters(1, 1, 1, variant == 0 ? 0.2F : 0.5F, 50, true), x,
 		    y, z, -motionX * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()),
 		    -motionY * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()),
 		    -motionZ * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()));
 	}
-
     }
 
     @Override

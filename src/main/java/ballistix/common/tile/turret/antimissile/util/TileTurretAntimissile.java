@@ -2,6 +2,7 @@ package ballistix.common.tile.turret.antimissile.util;
 
 import javax.annotation.Nullable;
 
+import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.api.turret.ITarget;
 import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tile.radar.TileFireControlRadar;
@@ -23,7 +24,7 @@ public abstract class TileTurretAntimissile extends GenericTileTurret {
     public final SingleProperty<BlockPos> boundFireControl = property(
 	    new SingleProperty<>(PropertyTypes.BLOCK_POS, "bound", BlockEntityUtils.OUT_OF_REACH));
     @Nullable
-    private TileFireControlRadar radar;
+    protected TileFireControlRadar radar;
 
     public TileTurretAntimissile(BlockEntityType<?> tileEntityTypeIn, BlockPos worldPos, BlockState blockState,
 	    double range, double minRange, double usage, double rotationSpeedRadians, double inaccuracy) {
@@ -54,9 +55,10 @@ public abstract class TileTurretAntimissile extends GenericTileTurret {
 	return new Vec3(facing.getStepX() / mag, 0, facing.getStepZ() / mag);
     }
 
-    @org.jetbrains.annotations.Nullable
+    @Nullable
     @Override
     public ITarget getTarget(long ticks) {
+
 	if (ticks % 10 == 0) {
 	    if (level.getBlockEntity(boundFireControl.getValue()) instanceof TileFireControlRadar fire) {
 		radar = fire;
@@ -65,12 +67,25 @@ public abstract class TileTurretAntimissile extends GenericTileTurret {
 		boundFireControl.setValue(BlockEntityUtils.OUT_OF_REACH);
 	    }
 	}
+
 	isNotLinked.setValue(radar == null);
 
-	if (isNotLinked.getValue() || radar.tracking == null || radar.tracking.hasExploded()) {
+	if (isNotLinked.getValue()) {
 	    return null;
 	}
-	return new ITarget.TargetMissile(radar.tracking);
+
+	VirtualMissile missile = radar.getTargetFor(getBlockPos(), getProjectileLaunchPosition(),
+		getInterceptorSpeedForTargeting());
+
+	if (missile == null || missile.hasExploded()) {
+	    return null;
+	}
+
+	return new ITarget.TargetMissile(missile);
+    }
+
+    protected float getInterceptorSpeedForTargeting() {
+	return 0.0F;
     }
 
     public static double getDistanceToPos(BlockPos start, BlockPos end) {

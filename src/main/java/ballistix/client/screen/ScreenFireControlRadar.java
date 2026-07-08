@@ -80,7 +80,7 @@ public class ScreenFireControlRadar extends GenericScreen<ContainerFireControlRa
 		    ? BallistixTextUtils.gui("turret.radarnone").withStyle(ChatFormatting.GREEN)
 		    : Component.literal(new BlockPos((int) tile.trackingPos.getValue().x,
 			    (int) tile.trackingPos.getValue().y, (int) tile.trackingPos.getValue().z).toString())
-			    .withStyle(ChatFormatting.DARK_GRAY);
+			    .withStyle(ChatFormatting.RED);
 
 	    int x = (int) (getGuiWidth() + 10);
 	    int y = (int) (getGuiHeight() + 20);

@@ -1,9 +1,12 @@
 package ballistix.prefab.screen;
 
+import java.util.List;
+
 import ballistix.client.screen.ScreenFireControlRadar;
 import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.BlockPos;
 import voltaic.prefab.screen.component.ScreenComponentGeneric;
 import voltaic.prefab.tile.components.IComponentType;
 import voltaic.prefab.tile.components.type.ComponentTickable;
@@ -118,26 +121,35 @@ public class ScreenComponentRadarGrid extends ScreenComponentGeneric {
 	graphics.fill((int) Math.floor(x + center - 1), (int) Math.floor(y + center - 1),
 		(int) Math.ceil(x + center + 1), (int) Math.ceil(y + center + 1), Color.JEI_TEXT_GRAY.color());
 
-	// DOT
+	// DOTS
 
-	if (tile.trackingPos.getValue().equals(TileFireControlRadar.OUT_OF_REACH)) {
+	List<BlockPos> missiles = tile.trackedMissilePositions.getValue();
+
+	if (missiles.isEmpty()) {
 	    return;
 	}
 
-	float deltaX = (float) ((tile.trackingPos.getValue().x - tile.getBlockPos().getX())
-		/ (2.0f * BallistixConfig.INSTANCE.FIRE_CONTROL_RADAR_RANGE.get())) * width;
+	for (int i = 0; i < missiles.size(); i++) {
+	    BlockPos pos = missiles.get(i);
 
-	float deltaZ = (float) ((tile.trackingPos.getValue().z - tile.getBlockPos().getZ())
-		/ (2.0f * BallistixConfig.INSTANCE.FIRE_CONTROL_RADAR_RANGE.get())) * width;
+	    float deltaX = (pos.getX() - tile.getBlockPos().getX())
+		    / (2.0f * BallistixConfig.INSTANCE.FIRE_CONTROL_RADAR_RANGE.get()) * width;
 
-	double angleRads = Math.atan2(deltaZ, deltaX);
+	    float deltaZ = (pos.getZ() - tile.getBlockPos().getZ())
+		    / (2.0f * BallistixConfig.INSTANCE.FIRE_CONTROL_RADAR_RANGE.get()) * width;
 
-	float dotTheta = (float) (angleRads / Math.PI * 180.0) + 180.0F;
+	    double angleRads = Math.atan2(deltaZ, deltaX);
 
-	int alpha = (int) ((dotTheta + 360.0F - theta) / 360.0F * 255.0F);
+	    float dotTheta = (float) (angleRads / Math.PI * 180.0) + 180.0F;
 
-	graphics.fill((int) Math.floor(x + center + deltaX - 1), (int) Math.floor(y + center + deltaZ - 1),
-		(int) Math.ceil(x + center + deltaX + 1), (int) Math.ceil(y + center + deltaZ + 1),
-		new Color(255, 0, 0, alpha).color());
+	    int alpha = (int) ((dotTheta + 360.0F - theta) / 360.0F * 255.0F);
+
+	    int colour = i == 0 ? new Color(255, 0, 0, alpha).color() : new Color(255, 255, 0, alpha).color();
+
+	    int dotX = Math.round(x + center + deltaX);
+	    int dotY = Math.round(y + center + deltaZ);
+
+	    graphics.fill(dotX, dotY, dotX + 1, dotY + 1, colour);
+	}
     }
 }

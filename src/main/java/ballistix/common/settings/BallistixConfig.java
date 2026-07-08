@@ -318,14 +318,14 @@ public class BallistixConfig {
 	SAM_TURRET_BASE_RANGE = builder.defineInRange("sam_turret_base_range", 300.0, 0, Double.MAX_VALUE);
 	SAM_TURRET_ROTATIONSPEEDRADIANS = builder.defineInRange("sam_turret_rotation_speed_radians", 0.2, 0,
 		Double.MAX_VALUE);
-	SAM_TURRET_COOLDOWN = builder.defineInRange("sam_turret_cooldown_ticks", 100, 0, Integer.MAX_VALUE);
+	SAM_TURRET_COOLDOWN = builder.defineInRange("sam_turret_cooldown_ticks", 80, 0, Integer.MAX_VALUE);
 	builder.pop();
 
 	// SAM entity
 	builder.push("sam_entity");
 	SAM_ENTITY_TURNINGSPEEDRADIANS = builder.defineInRange("sam_entity_turning_speed_radians", 0.1, 0,
 		Double.MAX_VALUE);
-	SAM_TOP_SPEED = builder.defineInRange("sam_top_speed", 5.0, 0, Double.MAX_VALUE);
+	SAM_TOP_SPEED = builder.defineInRange("sam_top_speed", 4.5, 0, Double.MAX_VALUE);
 	SAM_ACCELERATION = builder.defineInRange("sam_acceleration", 0.065, 0, Double.MAX_VALUE);
 	SAM_MINTURNSPEED_PERC = builder.defineInRange("sam_minturnspeed_perc", 0.25, 0, 1);
 	SAM_CHANCE_TO_DESTROY = builder.defineInRange("sam_chance_to_destroy", 0.7, 0, 1);
@@ -340,7 +340,7 @@ public class BallistixConfig {
 		0, 1);
 	ANTIBALLISTICMISSILE_TOP_SPEED = builder.defineInRange("antiballisticmissile_top_speed", 5.0, 0,
 		Double.MAX_VALUE);
-	ANTIBALLISTICMISSILE_ACCELERATION = builder.defineInRange("antiballisticmissile_acceleration", 0.04, 0,
+	ANTIBALLISTICMISSILE_ACCELERATION = builder.defineInRange("antiballisticmissile_acceleration", 0.07, 0,
 		Double.MAX_VALUE);
 	ANTIBALLISTICMISSILE_MINTURNSPEED_PERC = builder.defineInRange("antiballisticmissile_minturnspeed_perc", 0.15,
 		0, 1);

@@ -66,6 +66,8 @@ public class TileFireControlRadar extends GenericTile {
 	    new SingleProperty<>(PropertyTypes.BOOLEAN, "redstone", false));
     public final SingleProperty<Boolean> running = property(
 	    new SingleProperty<>(PropertyTypes.BOOLEAN, "running", false));
+    public final ListProperty<BlockPos> trackedMissilePositions = property(
+	    new ListProperty<>(PropertyTypes.BLOCK_POS_LIST, "trackedmissilepositions", new ArrayList<>()));
 
     public final Vec3 searchPos;
     private final AABB searchArea = new AABB(getBlockPos())
@@ -146,7 +148,13 @@ public class TileFireControlRadar extends GenericTile {
 	}
 
 	trackedMissiles.sort(Comparator.comparingDouble(missile -> scoreThreat(missile, searchPos, 0)));
+	
+	trackedMissilePositions.getValue().clear();
 
+	for (VirtualMissile missile : trackedMissiles) {
+	    trackedMissilePositions.addValue(missile.blockPosition());
+	}
+	
 	assignments.entrySet().removeIf(entry -> {
 	    VirtualMissile missile = getMissileById(entry.getValue());
 	    return missile == null || !isValidThreat(missile);

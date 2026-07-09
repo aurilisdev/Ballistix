@@ -335,8 +335,7 @@ public class BallistixConfig {
 	builder.push("anti_ballistic_entity");
 	ANTIBALLISTICMISSILE_ENTITY_TURNINGSPEEDRADIANS = builder
 		.defineInRange("antiballisticmissile_entity_turning_speed_radians", 0.05, 0, Double.MAX_VALUE);
-	ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY = builder.defineInRange("antiballisticmissile_chance_to_destroy",
-		0.95,
+	ANTIBALLISTICMISSILE_CHANCE_TO_DESTROY = builder.defineInRange("antiballisticmissile_chance_to_destroy", 0.95,
 		0, 1);
 	ANTIBALLISTICMISSILE_TOP_SPEED = builder.defineInRange("antiballisticmissile_top_speed", 5.0, 0,
 		Double.MAX_VALUE);

@@ -23,8 +23,8 @@ import voltaic.prefab.block.HashDistanceBlockPos;
 
 public class ThreadSimpleBlast extends ThreadBlast {
 
-    private static final Map<Pair<Integer, ResourceLocation>, Set<BlockPos>> CACHED_EUCLIDEAN_RESULTS =
-	        Collections.synchronizedMap(new HashMap<>());
+    private static final Map<Pair<Integer, ResourceLocation>, Set<BlockPos>> CACHED_EUCLIDEAN_RESULTS = Collections
+	    .synchronizedMap(new HashMap<>());
     private static final Set<Pair<Integer, ResourceLocation>> currentlyCalculating = Collections
 	    .synchronizedSet(new HashSet<>());
     private final Pair<Integer, ResourceLocation> idPair;

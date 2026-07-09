@@ -19,20 +19,15 @@ public class BallistixCapabilities {
 
 	BallistixTiles.BLOCK_ENTITY_TYPES.getEntries().forEach(entry -> {
 	    event.registerBlockEntity(VoltaicCapabilities.CAPABILITY_ELECTRODYNAMIC_BLOCK,
-		    (BlockEntityType<? extends GenericTile>) entry.get(),
-		    GenericTile::getElectrodynamicCapability);
+		    (BlockEntityType<? extends GenericTile>) entry.get(), GenericTile::getElectrodynamicCapability);
 	    event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
-		    (BlockEntityType<? extends GenericTile>) entry.get(),
-		    GenericTile::getFluidHandlerCapability);
+		    (BlockEntityType<? extends GenericTile>) entry.get(), GenericTile::getFluidHandlerCapability);
 	    event.registerBlockEntity(VoltaicCapabilities.CAPABILITY_GASHANDLER_BLOCK,
-		    (BlockEntityType<? extends GenericTile>) entry.get(),
-		    GenericTile::getGasHandlerCapability);
+		    (BlockEntityType<? extends GenericTile>) entry.get(), GenericTile::getGasHandlerCapability);
 	    event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
-		    (BlockEntityType<? extends GenericTile>) entry.get(),
-		    GenericTile::getItemHandlerCapability);
+		    (BlockEntityType<? extends GenericTile>) entry.get(), GenericTile::getItemHandlerCapability);
 	    event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
-		    (BlockEntityType<? extends GenericTile>) entry.get(),
-		    GenericTile::getForgeEnergyCapability);
+		    (BlockEntityType<? extends GenericTile>) entry.get(), GenericTile::getForgeEnergyCapability);
 	});
 
 	event.registerItem(Capabilities.EnergyStorage.ITEM,

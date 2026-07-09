@@ -57,11 +57,12 @@ public class RenderLauncherPlatform<T extends GenericTile & ILauncherPlatform> e
 	    } else {
 		if (missile.missile.ordinal() == 2) {
 
-		model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILETIER3);
+		    model = Minecraft.getInstance().getModelManager()
+			    .getModel(BallistixClientRegister.MODEL_MISSILETIER3);
 
 		} else {
-		model = Minecraft.getInstance().getModelManager()
-			.getModel(BallistixClientRegister.MODEL_MISSILECLUSTER);
+		    model = Minecraft.getInstance().getModelManager()
+			    .getModel(BallistixClientRegister.MODEL_MISSILECLUSTER);
 		}
 		matrixStackIn.translate(0.5f, 1.1f, 0.5f);
 		matrixStackIn.scale(1f, 1.25f, 1f);

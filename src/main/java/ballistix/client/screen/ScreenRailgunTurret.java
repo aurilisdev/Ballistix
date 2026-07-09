@@ -155,7 +155,8 @@ public class ScreenRailgunTurret extends ScreenPlayerWhitelistTurret<ContainerRa
 		status = BallistixTextUtils.gui("turret.statusnopower").withStyle(ChatFormatting.RED);
 	    } else {
 
-		if (turret.targetingEntity.getValue() || !turret.boundFireControl.getValue().equals(BlockEntityUtils.OUT_OF_REACH)) {
+		if (turret.targetingEntity.getValue()
+			|| !turret.boundFireControl.getValue().equals(BlockEntityUtils.OUT_OF_REACH)) {
 		    if (!turret.hasTarget.getValue()) {
 			status = BallistixTextUtils.gui("turret.statusnotarget").withStyle(ChatFormatting.GREEN);
 		    } else if (!turret.inRange.getValue()) {
@@ -169,7 +170,7 @@ public class ScreenRailgunTurret extends ScreenPlayerWhitelistTurret<ContainerRa
 			status = BallistixTextUtils.gui("turret.statusgood").withStyle(ChatFormatting.GREEN);
 		    }
 		} else {
-		status = BallistixTextUtils.gui("turret.statusunlinked").withStyle(ChatFormatting.RED);
+		    status = BallistixTextUtils.gui("turret.statusunlinked").withStyle(ChatFormatting.RED);
 		}
 	    }
 

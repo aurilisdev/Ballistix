@@ -148,13 +148,13 @@ public class TileFireControlRadar extends GenericTile {
 	}
 
 	trackedMissiles.sort(Comparator.comparingDouble(missile -> scoreThreat(missile, searchPos, 0)));
-	
+
 	trackedMissilePositions.getValue().clear();
 
 	for (VirtualMissile missile : trackedMissiles) {
 	    trackedMissilePositions.addValue(missile.blockPosition());
 	}
-	
+
 	assignments.entrySet().removeIf(entry -> {
 	    VirtualMissile missile = getMissileById(entry.getValue());
 	    return missile == null || !isValidThreat(missile);

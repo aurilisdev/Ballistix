@@ -61,8 +61,8 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble(),
 		    (float) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_ENERGY.getAsDouble(), null);
 	    threadSimple = new ThreadSimpleBlast(world, position,
-		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS.getAsDouble(),
-		    Integer.MAX_VALUE, null, getBlastType().id());
+		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS.getAsDouble(), Integer.MAX_VALUE,
+		    null, getBlastType().id());
 	    threadSimple.strictnessAtEdges = 1.7;
 	    if (BallistixConfig.INSTANCE.SHOULD_MULTITHREAD_RAYTRACING.isTrue()) {
 		threadRay.start();
@@ -172,8 +172,8 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	    if (canSpawnParticle(position)) {
 		RadiationSystem.addRadiationSource(world,
 			new SimpleRadiationSource(150000.0, 2,
-				(int) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS.getAsDouble(),
-				false, 86400 * 20, position, true, false));
+				(int) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS.getAsDouble(), false,
+				86400 * 20, position, true, false));
 	    }
 	    if (perticksimple == -1) {
 		cachedIterator = threadSimple.results.iterator();
@@ -181,7 +181,8 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	    perticksimple = (int) (4 * Math.PI * 0.5
 		    * Math.clamp(callCount * callCount, 0,
 			    (int) (BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS.getAsDouble()
-				    * BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS.getAsDouble()))) * 4;
+				    * BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS.getAsDouble())))
+		    * 4;
 	    int finished = perticksimple;
 	    while (cachedIterator.hasNext()) {
 		if (finished-- < 0) {

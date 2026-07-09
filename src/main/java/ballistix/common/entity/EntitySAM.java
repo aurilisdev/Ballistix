@@ -44,41 +44,41 @@ public class EntitySAM extends Entity {
     public EntitySAM(Level level) {
 	this(BallistixEntities.ENTITY_SAM.get(), level);
     }
-    
+
     private static final double MIN_YAW_HORIZONTAL_RATIO_SQR = 0.0025D;
-    
+
     private void updateRotationFromMovement(Vec3 movement) {
-	    double horizontalSqr = movement.x * movement.x + movement.z * movement.z;
-	    double lengthSqr = horizontalSqr + movement.y * movement.y;
+	double horizontalSqr = movement.x * movement.x + movement.z * movement.z;
+	double lengthSqr = horizontalSqr + movement.y * movement.y;
 
-	    if (lengthSqr <= 1.0E-7D) {
-		return;
-	    }
-
-	    double horizontal = Math.sqrt(horizontalSqr);
-
-	    setXRot((float) (Math.atan2(movement.y, horizontal) * RAD2DEG));
-
-	    // Near vertical, yaw is unstable and visually meaningless.
-	    // Keep the previous yaw instead of letting atan2 tiny x/z noise flicker it.
-	    if (horizontalSqr > lengthSqr * MIN_YAW_HORIZONTAL_RATIO_SQR) {
-		float targetYaw = (float) (Math.atan2(movement.x, movement.z) * RAD2DEG);
-		setYRot(unwrapYaw(targetYaw, getYRot()));
-	    }
+	if (lengthSqr <= 1.0E-7D) {
+	    return;
 	}
 
-	private static float unwrapYaw(float yaw, float referenceYaw) {
-	    while (yaw - referenceYaw < -180.0F) {
-		yaw += 360.0F;
-	    }
+	double horizontal = Math.sqrt(horizontalSqr);
 
-	    while (yaw - referenceYaw >= 180.0F) {
-		yaw -= 360.0F;
-	    }
+	setXRot((float) (Math.atan2(movement.y, horizontal) * RAD2DEG));
 
-	    return yaw;
+	// Near vertical, yaw is unstable and visually meaningless.
+	// Keep the previous yaw instead of letting atan2 tiny x/z noise flicker it.
+	if (horizontalSqr > lengthSqr * MIN_YAW_HORIZONTAL_RATIO_SQR) {
+	    float targetYaw = (float) (Math.atan2(movement.x, movement.z) * RAD2DEG);
+	    setYRot(unwrapYaw(targetYaw, getYRot()));
 	}
-	
+    }
+
+    private static float unwrapYaw(float yaw, float referenceYaw) {
+	while (yaw - referenceYaw < -180.0F) {
+	    yaw += 360.0F;
+	}
+
+	while (yaw - referenceYaw >= 180.0F) {
+	    yaw -= 360.0F;
+	}
+
+	return yaw;
+    }
+
     @Override
     public void tick() {
 	Level level = level();

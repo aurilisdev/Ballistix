@@ -1,22 +1,27 @@
 package ballistix.common.item;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map.Entry;
-
+import ballistix.Ballistix;
+import ballistix.common.world.TrackerSecurityData;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixCreativeTabs;
+import net.minecraft.ChatFormatting;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import voltaic.prefab.item.ElectricItemProperties;
 import voltaic.prefab.item.ItemElectric;
 import voltaic.prefab.utilities.object.TransferPack;
 
+@EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.GAME)
 public class ItemScanner extends ItemElectric {
 
     public static final double USAGE = 150.0;
@@ -29,30 +34,55 @@ public class ItemScanner extends ItemElectric {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-	boolean action = false;
-	ItemStack stack = playerIn.getItemInHand(handIn);
-	for (Entry<ServerLevel, HashSet<Integer>> en : ItemTracker.validuuids.entrySet()) {
-	    Iterator<Integer> it = en.getValue().iterator();
-	    while (it.hasNext()) {
-		int uuid = it.next();
-		if (uuid == playerIn.getId() && getJoulesStored(stack) >= USAGE) {
-		    it.remove();
-		    action = true;
-		    extractPower(stack, USAGE, false);
-		}
-	    }
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+
+	ItemStack stack = player.getItemInHand(hand);
+
+	InteractionResult result = scanEntity(stack, player, player);
+
+	return new InteractionResultHolder<>(result, stack);
+    }
+
+    public InteractionResult scanEntity(ItemStack stack, Player player, LivingEntity target) {
+
+	if (getJoulesStored(stack) < USAGE) {
+	    return InteractionResult.PASS;
 	}
 
-	if (worldIn.isClientSide) {
-	    if (action) {
-		playerIn.displayClientMessage(BallistixTextUtils.chatMessage("scanner.cleared"), true);
-	    } else {
-		playerIn.displayClientMessage(BallistixTextUtils.chatMessage("scanner.none"), true);
-	    }
+	if (player.level() instanceof ServerLevel serverLevel) {
+
+	    TrackerSecurityData.get(serverLevel.getServer()).incrementRevision(target.getUUID());
+
+	    extractPower(stack, USAGE, false);
+
+	    player.displayClientMessage(BallistixTextUtils
+		    .chatMessage("scanner.cleared", target.getName().copy().withStyle(ChatFormatting.YELLOW))
+		    .withStyle(ChatFormatting.WHITE), true);
 	}
 
-	return super.use(worldIn, playerIn, handIn);
+	return InteractionResult.sidedSuccess(player.level().isClientSide);
+    }
+
+    @SubscribeEvent
+    public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
+
+	Player player = event.getEntity();
+	ItemStack stack = player.getItemInHand(event.getHand());
+
+	if (!(stack.getItem() instanceof ItemScanner scanner)) {
+	    return;
+	}
+
+	if (!(event.getTarget() instanceof LivingEntity target)) {
+	    return;
+	}
+
+	InteractionResult result = scanner.scanEntity(stack, player, target);
+
+	if (result.consumesAction()) {
+	    event.setCancellationResult(result);
+	    event.setCanceled(true);
+	}
     }
 
     @Override

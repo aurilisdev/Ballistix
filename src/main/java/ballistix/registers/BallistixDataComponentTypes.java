@@ -31,5 +31,7 @@ public class BallistixDataComponentTypes {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> TRACKER_ID = DATA_COMPONENT_TYPES
 	    .register("trackerid", () -> DataComponentType.<Integer>builder().persistent(Codec.INT)
 		    .networkSynchronized(ByteBufCodecs.INT).cacheEncoding().build());
-
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> TRACKER_REVISION = DATA_COMPONENT_TYPES
+	    .register("trackerrevision", () -> DataComponentType.<Long>builder().persistent(Codec.LONG)
+		    .networkSynchronized(ByteBufCodecs.VAR_LONG).cacheEncoding().build());
 }

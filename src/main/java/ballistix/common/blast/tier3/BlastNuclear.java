@@ -170,10 +170,12 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	    }
 
 	    if (canSpawnParticle(position)) {
+		int radiationDurationTicks = (int) (BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_RADIATION_DURATION_REAL_DAYS
+			.get() * 24 * 60 * 60 * 20);
 		RadiationSystem.addRadiationSource(world,
 			new SimpleRadiationSource(150000.0, 2,
-				(int) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS.getAsDouble(), false,
-				86400 * 20, position, true, false));
+				(int) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS.getAsDouble(), true,
+				radiationDurationTicks, position, false, false));
 	    }
 	    if (perticksimple == -1) {
 		cachedIterator = threadSimple.results.iterator();

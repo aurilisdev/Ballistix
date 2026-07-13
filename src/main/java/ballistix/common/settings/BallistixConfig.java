@@ -55,6 +55,7 @@ public class BallistixConfig {
     public ModConfigSpec.DoubleValue EXPLOSIVE_NUCLEAR_DURATION;
     public ModConfigSpec.DoubleValue EXPLOSIVE_NUCLEAR_ENERGY;
     public ModConfigSpec.DoubleValue EXPLOSIVE_NUCLEAR_RADIATION_RADIUS;
+    public ModConfigSpec.DoubleValue EXPLOSIVE_NUCLEAR_RADIATION_DURATION_REAL_DAYS;
     public ModConfigSpec.DoubleValue EXPLOSIVE_ENDOTHERMIC_MAXHARDNESS;
     public ModConfigSpec.DoubleValue EXPLOSIVE_ENDOTHERMIC_RADIUS;
     public ModConfigSpec.DoubleValue EXPLOSIVE_ENDOTHERMIC_VELOCITY;
@@ -231,6 +232,8 @@ public class BallistixConfig {
 	EXPLOSIVE_NUCLEAR_ENERGY = builder.defineInRange("explosive_nuclear_energy", 120.0, 0, Double.MAX_VALUE);
 	EXPLOSIVE_NUCLEAR_RADIATION_RADIUS = builder.defineInRange("explosive_nuclear_radiation_radius", 90.0, 0,
 		Double.MAX_VALUE);
+	EXPLOSIVE_NUCLEAR_RADIATION_DURATION_REAL_DAYS = builder
+		.defineInRange("explosive_nuclear_radiation_duration_real_days", 3.0, 0, Double.MAX_VALUE);
 	EXPLOSIVE_ENDOTHERMIC_MAXHARDNESS = builder.defineInRange("explosive_endothermic_maxhardness", 1.0, 0,
 		Double.MAX_VALUE);
 	EXPLOSIVE_ENDOTHERMIC_RADIUS = builder.defineInRange("explosive_endothermic_radius", 30.0, 0, Double.MAX_VALUE);

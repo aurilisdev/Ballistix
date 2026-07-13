@@ -148,8 +148,7 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 				    .forEach(pl -> NetworkHandler.CHANNEL.sendTo(
 					    new PacketSpawnBlastParticle(p,
 						    BlastParticleSpawnType.EXPLOSIVE_BLOCK_BREAK),
-					    pl.connection.connection,
-					    NetworkDirection.PLAY_TO_CLIENT));
+					    pl.connection.connection, NetworkDirection.PLAY_TO_CLIENT));
 			}
 		    }
 		    cachedIteratorRay.remove();
@@ -166,17 +165,20 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 		thirdDamage = true;
 	    }
 	    if (canSpawnParticle(position)) {
+		int radiationDurationTicks = (int) (BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_DURATION_REAL_DAYS
+			* 24 * 60 * 60 * 20);
 		RadiationSystem.addRadiationSource(world,
 			new SimpleRadiationSource(150000.0, 2,
-				(int) BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS, false, 86400 * 20,
-				position, true, false));
+				(int) BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS, true,
+				radiationDurationTicks, position, false, false));
 	    }
 	    if (perticksimple == -1) {
 		cachedIterator = threadSimple.results.iterator();
 	    }
 	    perticksimple = (int) (4 * Math.PI * 0.5
 		    * Mth.clamp(callCount * callCount, 0, (int) (BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS
-			    * BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS))) * 4;
+			    * BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS)))
+		    * 4;
 
 	    int finished = perticksimple;
 	    while (cachedIterator.hasNext()) {

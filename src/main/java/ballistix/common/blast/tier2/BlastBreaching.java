@@ -18,10 +18,10 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -50,10 +50,7 @@ public class BlastBreaching extends BlastLasting implements IHasCustomRender {
 	public boolean doExplode(int callCount) {
 		hasStarted = true;
 		super.doExplode(callCount);
-		if (thread == null) {
-			return ticksSinceBlastStart > BallistixConstants.EXPLOSIVE_BREACHING_SIZE * 3;
-		}
-		if (world.isClientSide || !thread.isComplete) {
+		if ((thread == null) || world.isClientSide || !thread.isComplete) {
 			return ticksSinceBlastStart > BallistixConstants.EXPLOSIVE_BREACHING_SIZE * 3;
 		}
 

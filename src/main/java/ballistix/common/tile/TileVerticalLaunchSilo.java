@@ -41,7 +41,11 @@ import voltaic.prefab.properties.types.PropertyTypes;
 import voltaic.prefab.properties.variant.SingleProperty;
 import voltaic.prefab.tile.GenericTile;
 import voltaic.prefab.tile.components.IComponentType;
-import voltaic.prefab.tile.components.type.*;
+import voltaic.prefab.tile.components.type.ComponentContainerProvider;
+import voltaic.prefab.tile.components.type.ComponentElectrodynamic;
+import voltaic.prefab.tile.components.type.ComponentForgeEnergy;
+import voltaic.prefab.tile.components.type.ComponentInventory;
+import voltaic.prefab.tile.components.type.ComponentTickable;
 import voltaic.prefab.utilities.BlockEntityUtils;
 import voltaic.prefab.utilities.NBTUtils;
 import voltaic.registers.VoltaicCapabilities;
@@ -103,7 +107,7 @@ public class TileVerticalLaunchSilo extends GenericTile implements ILauncherCont
 
         ILauncherPlatform platform = this;
 
-        if (!platform.hasMissile() || (platform.hasExplosive() && platform.hasSAM()) || (!platform.hasExplosive() && !platform.hasSAM()) || (!hasRedstone && !shouldLaunch.getValue())) {
+        if (!platform.hasMissile() || platform.hasExplosive() && platform.hasSAM() || !platform.hasExplosive() && !platform.hasSAM() || !hasRedstone && !shouldLaunch.getValue()) {
             return;
         }
 
@@ -127,7 +131,7 @@ public class TileVerticalLaunchSilo extends GenericTile implements ILauncherCont
     protected boolean isItemValidForSlot(int index, ItemStack stack, ComponentInventory inv) {
         Item item = stack.getItem();
         if (index == 0) {
-            return (item instanceof ItemMissile missile && missile.missile.tier() <= getTier()) || stack.is(BallistixItems.ITEM_AAMISSILEMK2.get());
+            return item instanceof ItemMissile missile && missile.missile.tier() <= getTier() || stack.is(BallistixItems.ITEM_AAMISSILEMK2.get());
         } else if (index == 1) {
             IBlast blast = Blast.ITEM_TO_BLAST_MAP.get(item);
             return blast != null && blast.tier() <= getTier() && blast.tier() > -1;
@@ -192,7 +196,7 @@ public class TileVerticalLaunchSilo extends GenericTile implements ILauncherCont
     private void handleExplosive(ComponentInventory inv, int index) {
         if (index == 1 || index == -1) {
             ItemStack explosive = inv.getItem(1);
-            if ((!explosive.isEmpty() && Blast.ITEM_TO_BLAST_MAP.get(explosive.getItem()) != null) || (explosive.isEmpty() && inv.getItem(MISSILE_SLOT).is(BallistixItems.ITEM_AAMISSILEMK2.get()))) {
+            if (!explosive.isEmpty() && Blast.ITEM_TO_BLAST_MAP.get(explosive.getItem()) != null || explosive.isEmpty() && inv.getItem(MISSILE_SLOT).is(BallistixItems.ITEM_AAMISSILEMK2.get())) {
                 hasExplosive.setValue(true);
             } else {
                 hasExplosive.setValue(false);
@@ -399,6 +403,7 @@ public class TileVerticalLaunchSilo extends GenericTile implements ILauncherCont
     	return use(player, hand, hit);
     }
 
+    @Override
     public void onSubnodeDestroyed(TileMultiSubnode subnode) {
         this.level.destroyBlock(this.worldPosition, true);
     }

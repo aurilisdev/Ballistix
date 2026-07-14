@@ -16,7 +16,7 @@ public class PacketSetSearchRadarTrackedClient {
 	
 	public static final StreamCodec<FriendlyByteBuf, PacketSetSearchRadarTrackedClient> CODEC = new StreamCodec<>() {
 
-        private static final StreamCodec<ByteBuf, Vec3> VEC_3_STREAM_CODEC = new StreamCodec<ByteBuf, Vec3>() {
+        private static final StreamCodec<ByteBuf, Vec3> VEC_3_STREAM_CODEC = new StreamCodec<>() {
             @Override
             public Vec3 decode(ByteBuf buffer) {
                 return new Vec3(buffer.readDouble(), buffer.readDouble(), buffer.readDouble());

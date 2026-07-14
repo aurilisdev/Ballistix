@@ -42,9 +42,9 @@ public class ParticleShockwave extends TextureSheetParticle {
 		// explosives, but this needs to be done for every explosive. Thus this saves
 		// space...
 		double brightnessRandom = 0.4 * level.random.nextDouble();
-		rCol *= (0.6 + brightnessRandom);
-		gCol *= (0.6 + brightnessRandom);
-		bCol *= (0.6 + brightnessRandom);
+		rCol *= 0.6 + brightnessRandom;
+		gCol *= 0.6 + brightnessRandom;
+		bCol *= 0.6 + brightnessRandom;
 	}
 
 	@Override
@@ -64,12 +64,12 @@ public class ParticleShockwave extends TextureSheetParticle {
 	public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
 		super.render(buffer, renderInfo, partialTicks);
 
-		float lifeProgress = (float) (this.age + partialTicks) / (float) this.lifetime;
+		float lifeProgress = (this.age + partialTicks) / this.lifetime;
 		if (lifeProgress <= 1 && lifeProgress >= 0) {
 			// Gradually shrink and expand the particle
-			this.quadSize = startQuadSize * Mth.cos((float) (Mth.PI * 2 * Math.pow((lifeProgress - 0.5), 2)));
+			this.quadSize = startQuadSize * Mth.cos((float) (Mth.PI * 2 * Math.pow(lifeProgress - 0.5, 2)));
 
-			this.alpha = startAlpha * Mth.cos((float) (Mth.PI * 2 * Math.pow((lifeProgress - 0.5), 2)));
+			this.alpha = startAlpha * Mth.cos((float) (Mth.PI * 2 * Math.pow(lifeProgress - 0.5, 2)));
 		}
 	}
 

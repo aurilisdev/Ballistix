@@ -26,7 +26,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.ChunkPos;
@@ -126,7 +125,7 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
                             });
                         }
                         if (world.random.nextFloat() < 1 / 20.0) {
-                        	serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnBlastParticle(p, BlastParticleSpawnType.EXPLOSIVE_BLOCK_BREAK), ((ServerPlayer) pl).connection.connection, NetworkDirection.PLAY_TO_CLIENT));
+                        	serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnBlastParticle(p, BlastParticleSpawnType.EXPLOSIVE_BLOCK_BREAK), pl.connection.connection, NetworkDirection.PLAY_TO_CLIENT));
                         }
                     }
                     cachedIteratorRay.remove();
@@ -142,7 +141,7 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
             };
 
             if (add) {
-            	RadiationSystem.addRadiationSource(world, new SimpleRadiationSource(150000.0, 2, (int) (BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS), false, 86400 * 20, position, true, false));
+            	RadiationSystem.addRadiationSource(world, new SimpleRadiationSource(150000.0, 2, (int) BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS, false, 86400 * 20, position, true, false));
             }
             if (perticksimple == -1) {
                 cachedIterator = threadSimple.results.iterator();

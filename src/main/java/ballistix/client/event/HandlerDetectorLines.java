@@ -1,5 +1,8 @@
 package ballistix.client.event;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
@@ -14,11 +17,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
-
 import voltaic.client.event.AbstractLevelStageHandler;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class HandlerDetectorLines extends AbstractLevelStageHandler {
 

@@ -4,6 +4,7 @@ import ballistix.Ballistix;
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.block.subtype.SubtypeMissile;
+import ballistix.common.blockitem.BlockItemExplosive;
 import ballistix.common.item.ItemAAMissile;
 import ballistix.common.item.ItemDefuser;
 import ballistix.common.item.ItemGrenade;
@@ -18,14 +19,13 @@ import ballistix.common.item.ItemScanner;
 import ballistix.common.item.ItemTracker;
 import ballistix.common.settings.BallistixConstants;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import voltaic.api.registration.BulkRegistryObject;
 import voltaic.common.blockitem.BlockItemDescriptable;
 import voltaic.common.item.ItemVoltaic;
-import net.minecraft.world.item.Rarity;
-import ballistix.common.blockitem.BlockItemExplosive;
 
 public class BallistixItems {
 

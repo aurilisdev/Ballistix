@@ -47,7 +47,7 @@ public abstract class TileTurretAntimissileProjectile extends TileTurretAntimiss
 
 		if (distanceToTarget > baseRange) {
 
-			rangePenalty = ((distanceToTarget - baseRange) / baseRange) * inaccuracyMultiplier * Voltaic.RANDOM.nextDouble();
+			rangePenalty = (distanceToTarget - baseRange) / baseRange * inaccuracyMultiplier * Voltaic.RANDOM.nextDouble();
 
 		}
 

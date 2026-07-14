@@ -297,9 +297,10 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 
 			addGuidebook("chapter.explosives", "Explosives");
 
-			addGuidebook("chapter.explosives.l1", "Ballistix offers a wide variety of explosives to choose from. Each explosive will have its own specialty, with some focusing on maximum destruction while others focus on biological and chemical warfare. Before we continue, it is important to note that some explosives will have both a \"radius\" and an \"energy\". The radius of " +
-					"an explosive determines the overall area it can effect. The energy on the other hand determines what amount of blocks in that area will be destroyed starting at the center of the blast. The harder a block, the more energy the blast will lose destroying it, reducing the effective area of the explosive. For example, a blast with a small radius and a high energy will destroy a " +
-					"smaller area, but will be able to more effectively destroy the blocks inside of its radius. Keep this in mind when selecting explosives for a task! It should be noted here that most explosives can have their parameters tweaked in the config file.");
+			addGuidebook("chapter.explosives.l1", """
+				Ballistix offers a wide variety of explosives to choose from. Each explosive will have its own specialty, with some focusing on maximum destruction while others focus on biological and chemical warfare. Before we continue, it is important to note that some explosives will have both a "radius" and an "energy". The radius of \
+				an explosive determines the overall area it can effect. The energy on the other hand determines what amount of blocks in that area will be destroyed starting at the center of the blast. The harder a block, the more energy the blast will lose destroying it, reducing the effective area of the explosive. For example, a blast with a small radius and a high energy will destroy a \
+				smaller area, but will be able to more effectively destroy the blocks inside of its radius. Keep this in mind when selecting explosives for a task! It should be noted here that most explosives can have their parameters tweaked in the config file.""");
 			addGuidebook("chapter.explosives.tier", "Tier: %s");
 			addGuidebook("chapter.explosives.radius", "Radius: %s blocks");
 			addGuidebook("chapter.explosives.energy", "Energy: %s");
@@ -393,17 +394,20 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 			addGuidebook("chapter.missiledefense.turretelevation", "Elevation: +%s" + '\u02DA');
 			addGuidebook("chapter.missiledefense.turretdepression", "Depression: -%s" + '\u02DA');
 
-			addGuidebook("chapter.missiledefense.samturret1", "The SAM Turret specializes in long-range missile defense. Its base maximum range can also be further upgraded with Range Upgrades. The %1$s it fires is homing so long as the radar the turret is linked to remains operational, thus increasing the chance of a successful hit. A SAM has a %2$s chance to destroy a missile upon impact! " +
-					"Upon firing, the turret will need to wait %3$s ticks before it is able to fire again. The effectiveness of the turret comes at a price however, as it can only engage missiles. Also, once a missile is within the minimum range of the turret, it will not be able to fire! The turret is powered from the bottom. If Electrodynamics is installed, it will require Joules at the appropriate " +
-					"Voltage. Otherwise it will use FE.");
+			addGuidebook("chapter.missiledefense.samturret1", """
+				The SAM Turret specializes in long-range missile defense. Its base maximum range can also be further upgraded with Range Upgrades. The %1$s it fires is homing so long as the radar the turret is linked to remains operational, thus increasing the chance of a successful hit. A SAM has a %2$s chance to destroy a missile upon impact! \
+				Upon firing, the turret will need to wait %3$s ticks before it is able to fire again. The effectiveness of the turret comes at a price however, as it can only engage missiles. Also, once a missile is within the minimum range of the turret, it will not be able to fire! The turret is powered from the bottom. If Electrodynamics is installed, it will require Joules at the appropriate \
+				Voltage. Otherwise it will use FE.""");
 
-			addGuidebook("chapter.missiledefense.ciwsturret1", "The Close-In Weapons System or CIWS Turret is designed as a last line of defense against an incoming missile, boasting an impressive 20 rounds / second! The turret is reasonably accurate, but accuracy quickly decreases the further a target is from it. Its base range can be increased with Range Upgrades. Each %1$s will " +
-					"inflict one damage to an incoming missile with each missile having %2$s health. The turret must have a direct line of sight to the missile, and it can only hold up to 128 rounds. The CIWS is able to engage both missiles and entities, and bullets deal 10 damage upon hitting an entity. The turret is powered from the bottom. If Electrodynamics is installed, it will require Joules " +
-					"at the appropriate Voltage. Otherwise it will use FE.");
+			addGuidebook("chapter.missiledefense.ciwsturret1", """
+				The Close-In Weapons System or CIWS Turret is designed as a last line of defense against an incoming missile, boasting an impressive 20 rounds / second! The turret is reasonably accurate, but accuracy quickly decreases the further a target is from it. Its base range can be increased with Range Upgrades. Each %1$s will \
+				inflict one damage to an incoming missile with each missile having %2$s health. The turret must have a direct line of sight to the missile, and it can only hold up to 128 rounds. The CIWS is able to engage both missiles and entities, and bullets deal 10 damage upon hitting an entity. The turret is powered from the bottom. If Electrodynamics is installed, it will require Joules \
+				at the appropriate Voltage. Otherwise it will use FE.""");
 
-			addGuidebook("chapter.missiledefense.laserturret1", "The Laser Turret offers an alternative to the CIWS and SAM turrets, as it does not utilize ammunition. However this comes at the cost of being incredibly power hungry. On top of being incredibly power hungry, the turret also has a heat buffer that builds up while firing. If the temperature of the turret reaches past " +
-					"a certain point, the turret will need to cool down before it can engage targets again. The turret deals a maximum of one damage/tick, however the further a target is from the turret, the less damage it will deal. The maximum range of the turret also cannot be upgraded. The Laser Turret can engage both missiles and entities, however it must have a clear line of sight to the target. " +
-					"Entities damaged by the turret will also be set on fire! The turret is powered from the bottom. If Electrodynamics is installed, it will require Joules at the appropriate Voltage. Otherwise it will use FE.");
+			addGuidebook("chapter.missiledefense.laserturret1", """
+				The Laser Turret offers an alternative to the CIWS and SAM turrets, as it does not utilize ammunition. However this comes at the cost of being incredibly power hungry. On top of being incredibly power hungry, the turret also has a heat buffer that builds up while firing. If the temperature of the turret reaches past \
+				a certain point, the turret will need to cool down before it can engage targets again. The turret deals a maximum of one damage/tick, however the further a target is from the turret, the less damage it will deal. The maximum range of the turret also cannot be upgraded. The Laser Turret can engage both missiles and entities, however it must have a clear line of sight to the target. \
+				Entities damaged by the turret will also be set on fire! The turret is powered from the bottom. If Electrodynamics is installed, it will require Joules at the appropriate Voltage. Otherwise it will use FE.""");
 			addGuidebook("chapter.missiledefense.laserturret.energy", "Energy");
 
 			addGuidebook("chapter.missiledefense.railgunturret1", "The Railgun Turret is a hybrid between the CIWS and SAM turrets. It fires Steel Rods that destroy a missile on contact. Its maximum range can also be increased with Range Upgrades. The turret must wait %1$s ticks between shots, and like with the Laser Turret, it is incredibly power-hungry. The Railgun Turret can " +
@@ -429,9 +433,10 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 
 			addGuidebook("chapter.missiledefense.l7", "The ESM Tower's existence means that if you leave your Fire Control Radar running all the time, you will be a very easy target for base hunters! However simply turning the Radar off is not a good solution, as then you will be left a sitting duck. Fortunately, there is a way you can fight back against any potential base hunter.");
 
-			addGuidebook("chapter.missiledefense.searchradar1", "The Search Radar is a lower-powered radar that can be utilized as an early warning device. It is able to detect missiles or ESM Towers out to a range of %s blocks. Due to the block being a weaker radiation source, the ESM Tower will only be able to determine that a Search Radar is in its detection range without listing " +
-					"any coordinates. The Radar can detect an unlimited amount of incoming missiles or ESM Towers, but more importantly however, the Radar will emit a redstone signal upon detecting something. It will also read a comparator signal of 0 if only detecting missiles, a signal of 8 if it is only detecting ESM Towers, and will read a signal of 15 if it is detecting both missiles " +
-					"and ESM Towers. You can therefore use these redstone signals to automate when your defenses flip on!");
+			addGuidebook("chapter.missiledefense.searchradar1", """
+				The Search Radar is a lower-powered radar that can be utilized as an early warning device. It is able to detect missiles or ESM Towers out to a range of %s blocks. Due to the block being a weaker radiation source, the ESM Tower will only be able to determine that a Search Radar is in its detection range without listing \
+				any coordinates. The Radar can detect an unlimited amount of incoming missiles or ESM Towers, but more importantly however, the Radar will emit a redstone signal upon detecting something. It will also read a comparator signal of 0 if only detecting missiles, a signal of 8 if it is only detecting ESM Towers, and will read a signal of 15 if it is detecting both missiles \
+				and ESM Towers. You can therefore use these redstone signals to automate when your defenses flip on!""");
 			addGuidebook("chapter.missiledefense.searchradar2", "It is important to note however that the Search Radar does not discriminate between the missiles it detects, meaning it can detect the missiles you launch as well! To prevent this, you can whitelist certain launch frequencies to exclude them from detection. To add frequencies, select the Frequency Manager tab inside " +
 					"the radar's GUI:");
 			addGuidebook("chapter.missiledefense.searchradar3", "Note the whitelist mode must be enabled for the frequencies to actually be ignored. Disabling whitelist mode won't wipe any stored frequencies! The Fire Control Radar has an identical whitelist feature for reference. The Search Radar must be placed above-ground in order to work and is powered from the bottom. " +

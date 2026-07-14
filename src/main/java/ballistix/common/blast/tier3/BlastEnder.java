@@ -1,5 +1,10 @@
 package ballistix.common.blast.tier3;
 
+import java.util.List;
+import java.util.function.Function;
+
+import javax.annotation.Nullable;
+
 import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.client.particle.ParticleOptionsShockwave;
@@ -17,8 +22,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.EnderMan;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.Explosion.BlockInteraction;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.portal.PortalInfo;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -26,11 +31,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.ITeleporter;
 import net.minecraftforge.server.ServerLifecycleHooks;
-
-import java.util.List;
-import java.util.function.Function;
-
-import javax.annotation.Nullable;
 
 public class BlastEnder extends Blast implements IHasCustomRender {
 	
@@ -87,11 +87,10 @@ public class BlastEnder extends Blast implements IHasCustomRender {
 
             if(world.dimension().equals(Level.END)) {
             	entity.changeDimension(ServerLifecycleHooks.getCurrentServer().getLevel(Level.OVERWORLD), MANAGER);
-                entity.teleportTo(entity.getX(), entity.getY(), entity.getZ());
             } else {
             	entity.changeDimension(ServerLifecycleHooks.getCurrentServer().getLevel(Level.END), MANAGER);
-                entity.teleportTo(entity.getX(), entity.getY(), entity.getZ());
             }
+	    entity.teleportTo(entity.getX(), entity.getY(), entity.getZ());
 
         }
 

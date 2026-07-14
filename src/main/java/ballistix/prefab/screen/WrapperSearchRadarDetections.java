@@ -100,7 +100,7 @@ public class WrapperSearchRadarDetections {
     }
 
     public Consumer<Integer> getSliderClickedConsumer() {
-        return (mouseY) -> {
+        return mouseY -> {
             ScreenComponentVerticalSlider slider = screen.detectionsSlider;
             if (slider.isSliderActive()) {
                 int sliderY = slider.yLocation;
@@ -124,7 +124,7 @@ public class WrapperSearchRadarDetections {
     }
 
     public Consumer<Integer> getSliderDraggedConsumer() {
-        return (mouseY) -> {
+        return mouseY -> {
             ScreenComponentVerticalSlider slider = screen.detectionsSlider;
             if (slider.isSliderActive()) {
                 int sliderY = slider.yLocation;

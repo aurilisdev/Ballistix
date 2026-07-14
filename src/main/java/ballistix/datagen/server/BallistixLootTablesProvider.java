@@ -2,8 +2,8 @@ package ballistix.datagen.server;
 
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.block.subtype.SubtypeBlast;
-import ballistix.registers.BallistixTiles;
 import ballistix.registers.BallistixBlocks;
+import ballistix.registers.BallistixTiles;
 import electrodynamics.datagen.server.ElectrodynamicsLootTablesProvider;
 import net.minecraft.data.DataGenerator;
 

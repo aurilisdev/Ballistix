@@ -87,12 +87,7 @@ public class EntityMissile extends Entity {
 
 			VirtualMissile missile = MissileManager.getMissile(level.dimension(), id);
 
-			if (missile == null) {
-				removeAfterChangingDimensions();
-				return;
-			}
-
-			if (missile.hasExploded()) {
+			if ((missile == null) || missile.hasExploded()) {
 				removeAfterChangingDimensions();
 				return;
 			}
@@ -186,8 +181,8 @@ public class EntityMissile extends Entity {
 
 				}
 
-				float x = (float) ((iDeltaX / initialDistance) * Math.sin(phi));
-				float z = (float) ((iDeltaZ / initialDistance) * Math.sin(phi));
+				float x = (float) (iDeltaX / initialDistance * Math.sin(phi));
+				float z = (float) (iDeltaZ / initialDistance * Math.sin(phi));
 
 				setDeltaMovement(new Vec3(x, Math.cos(phi) * signY, z));
 
@@ -271,17 +266,17 @@ public class EntityMissile extends Entity {
 			setPos(vec);
 		}
 
-		if ((path == VirtualMissile.FlightPath.SILO || path == VirtualMissile.FlightPath.SILO_CLUSTER || (path == VirtualMissile.FlightPath.VLS && hasIgnighted)) && !target.equals(BlockEntityUtils.OUT_OF_REACH) && speed < 3.0F) {
+		if ((path == VirtualMissile.FlightPath.SILO || path == VirtualMissile.FlightPath.SILO_CLUSTER || path == VirtualMissile.FlightPath.VLS && hasIgnighted) && !target.equals(BlockEntityUtils.OUT_OF_REACH) && speed < 3.0F) {
 			speed += 0.02F;
 		}
 
-		if (missileType == -1 || isServerSide || speed >= 3.0F || (path == VirtualMissile.FlightPath.VLS && !hasIgnighted)) {
+		if (missileType == -1 || isServerSide || speed >= 3.0F || path == VirtualMissile.FlightPath.VLS && !hasIgnighted) {
 			return;
 		}
 
-		float x = (float) (getX());
-		float y = (float) (getY());
-		float z = (float) (getZ());
+		float x = (float) getX();
+		float y = (float) getY();
+		float z = (float) getZ();
 		float motionX = (float) (speed * getDeltaMovement().x);
 		float motionY = (float) (speed * getDeltaMovement().y);
 		float motionZ = (float) (speed * getDeltaMovement().z);

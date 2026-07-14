@@ -2,12 +2,12 @@ package ballistix.client.render.tile;
 
 import java.util.Random;
 
-import ballistix.client.BallistixClientRegister;
-import ballistix.registers.BallistixItems;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import ballistix.api.silo.ILauncherPlatform;
+import ballistix.client.BallistixClientRegister;
 import ballistix.common.item.ItemMissile;
+import ballistix.registers.BallistixItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -52,16 +52,16 @@ public class RenderLauncherPlatform<T extends GenericTile & ILauncherPlatform> e
 				matrixStackIn.translate(0.5f, 1.1f, 0.5f);
 				matrixStackIn.scale(1f, 1f, 1f);
 
-			} else if(missile.missile.ordinal() == 2) {
-
-				model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILETIER3);
-				matrixStackIn.translate(0.5f, 1.1f, 0.5f);
-				matrixStackIn.scale(1f, 1.25f, 1f);
-
 			} else {
-				model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILECLUSTER);
-				matrixStackIn.translate(0.5f, 1.1f, 0.5f);
-				matrixStackIn.scale(1f, 1.25f, 1f);
+			    if(missile.missile.ordinal() == 2) {
+
+			    	model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILETIER3);
+
+			    } else {
+			    	model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILECLUSTER);
+			    }
+			    matrixStackIn.translate(0.5f, 1.1f, 0.5f);
+			    matrixStackIn.scale(1f, 1.25f, 1f);
 			}
 
 			Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model, tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(), 0);

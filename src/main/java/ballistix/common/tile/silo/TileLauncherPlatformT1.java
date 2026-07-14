@@ -1,17 +1,11 @@
 package ballistix.common.tile.silo;
 
-import ballistix.api.missile.virtual.VirtualProjectile;
-import ballistix.common.tile.TileESMTower;
-import ballistix.common.tile.radar.TileFireControlRadar;
-import ballistix.common.tile.radar.TileSearchRadar;
-import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
-import ballistix.registers.BallistixItems;
-
 import org.jetbrains.annotations.NotNull;
 
 import ballistix.api.blast.IBlast;
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualMissile;
+import ballistix.api.missile.virtual.VirtualProjectile;
 import ballistix.api.silo.ILauncherControlPanel;
 import ballistix.api.silo.ILauncherPlatform;
 import ballistix.common.blast.util.Blast;
@@ -22,6 +16,11 @@ import ballistix.common.inventory.container.ContainerLauncherPlatformT2;
 import ballistix.common.inventory.container.ContainerLauncherPlatformT3;
 import ballistix.common.item.ItemMissile;
 import ballistix.common.settings.BallistixConstants;
+import ballistix.common.tile.TileESMTower;
+import ballistix.common.tile.radar.TileFireControlRadar;
+import ballistix.common.tile.radar.TileSearchRadar;
+import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
+import ballistix.registers.BallistixItems;
 import ballistix.registers.BallistixSounds;
 import ballistix.registers.BallistixTiles;
 import net.minecraft.core.BlockPos;
@@ -240,7 +239,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
     protected boolean isItemValidForSlot(int index, ItemStack stack, ComponentInventory inv) {
         Item item = stack.getItem();
         if (index == 0) {
-            return (item instanceof ItemMissile missile && missile.missile.tier() <= getTier()) || stack.getItem() == BallistixItems.ITEM_AAMISSILEMK2.get();
+            return item instanceof ItemMissile missile && missile.missile.tier() <= getTier() || stack.getItem() == BallistixItems.ITEM_AAMISSILEMK2.get();
         } else if (index == 1) {
         	IBlast blast = Blast.ITEM_TO_BLAST_MAP.get(item);
             return blast != null && blast.tier() <= getTier() && blast.tier() > -1;
@@ -284,7 +283,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
     private void handleExplosive(ComponentInventory inv, int index) {
         if (index == 1 || index == -1) {
             ItemStack explosive = inv.getItem(1);
-            if ((!explosive.isEmpty() && Blast.ITEM_TO_BLAST_MAP.get(explosive.getItem()) != null) || (explosive.isEmpty() && inv.getItem(MISSILE_SLOT).is(BallistixItems.ITEM_AAMISSILEMK2.get()))) {
+            if (!explosive.isEmpty() && Blast.ITEM_TO_BLAST_MAP.get(explosive.getItem()) != null || explosive.isEmpty() && inv.getItem(MISSILE_SLOT).is(BallistixItems.ITEM_AAMISSILEMK2.get())) {
                 hasExplosive.setValue(true);
             } else {
                 hasExplosive.setValue(false);

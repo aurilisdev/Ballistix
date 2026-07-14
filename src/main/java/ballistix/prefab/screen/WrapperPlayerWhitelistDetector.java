@@ -1,5 +1,9 @@
 package ballistix.prefab.screen;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
 import ballistix.client.screen.ScreenProximityDetector;
 import ballistix.common.tile.TileProximityDetector;
 import ballistix.prefab.BallistixIconTypes;
@@ -15,10 +19,6 @@ import voltaic.prefab.screen.component.types.ScreenComponentVerticalSlider;
 import voltaic.prefab.screen.component.types.guitab.ScreenComponentGuiTab;
 import voltaic.prefab.utilities.VoltaicTextUtils;
 import voltaic.prefab.utilities.math.Color;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
 
 public class WrapperPlayerWhitelistDetector {
 
@@ -198,7 +198,7 @@ public class WrapperPlayerWhitelistDetector {
     }
 
     public Consumer<Integer> getSliderClickedConsumer() {
-        return (mouseY) -> {
+        return mouseY -> {
             ScreenComponentVerticalSlider slider = screen.whitelistSlider;
             if (slider.isSliderActive()) {
                 int sliderY = slider.yLocation;
@@ -222,7 +222,7 @@ public class WrapperPlayerWhitelistDetector {
     }
 
     public Consumer<Integer> getSliderDraggedConsumer() {
-        return (mouseY) -> {
+        return mouseY -> {
             ScreenComponentVerticalSlider slider = screen.whitelistSlider;
             if (slider.isSliderActive()) {
                 int sliderY = slider.yLocation;

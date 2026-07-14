@@ -62,12 +62,7 @@ public class EntityBullet extends Entity {
 
             VirtualProjectile.VirtualBullet bullet = MissileManager.getBullet(level.dimension(), id);
 
-            if (bullet == null) {
-                removeAfterChangingDimensions();
-                return;
-            }
-
-            if (bullet.hasExploded()) {
+            if ((bullet == null) || bullet.hasExploded()) {
                 removeAfterChangingDimensions();
                 return;
             }

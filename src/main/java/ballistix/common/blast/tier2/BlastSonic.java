@@ -1,5 +1,8 @@
 package ballistix.common.blast.tier2;
 
+import java.util.Iterator;
+import java.util.List;
+
 import ballistix.api.blast.IBlast;
 import ballistix.common.blast.util.BlastLasting;
 import ballistix.common.blast.util.thread.ThreadSimpleBlast;
@@ -16,9 +19,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-
-import java.util.Iterator;
-import java.util.List;
 
 public class BlastSonic extends BlastLasting {
 

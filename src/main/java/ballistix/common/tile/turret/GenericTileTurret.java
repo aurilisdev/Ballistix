@@ -33,7 +33,11 @@ import voltaic.prefab.properties.variant.ListProperty;
 import voltaic.prefab.properties.variant.SingleProperty;
 import voltaic.prefab.tile.GenericTile;
 import voltaic.prefab.tile.components.IComponentType;
-import voltaic.prefab.tile.components.type.*;
+import voltaic.prefab.tile.components.type.ComponentContainerProvider;
+import voltaic.prefab.tile.components.type.ComponentElectrodynamic;
+import voltaic.prefab.tile.components.type.ComponentForgeEnergy;
+import voltaic.prefab.tile.components.type.ComponentInventory;
+import voltaic.prefab.tile.components.type.ComponentTickable;
 import voltaic.prefab.utilities.BlockEntityUtils;
 import voltaic.registers.VoltaicCapabilities;
 
@@ -193,11 +197,7 @@ public abstract class GenericTileTurret extends GenericTile {
 
             //thetaCurrXZ = getXZAngleRadians(turretRotation.getValue());
 
-            if (angleDifXZ >= 0 && thetaCurrXZ > thetaDesiredXZ) {
-
-                turretRotation.setValue(new Vec3(desiredRotation.getValue().x, turretRotation.getValue().y, desiredRotation.getValue().z));
-
-            } else if (angleDifXZ < 0 && thetaCurrXZ < thetaDesiredXZ) {
+            if ((angleDifXZ >= 0 && thetaCurrXZ > thetaDesiredXZ) || (angleDifXZ < 0 && thetaCurrXZ < thetaDesiredXZ)) {
 
                 turretRotation.setValue(new Vec3(desiredRotation.getValue().x, turretRotation.getValue().y, desiredRotation.getValue().z));
 
@@ -416,13 +416,7 @@ public abstract class GenericTileTurret extends GenericTile {
     }
     
     public static boolean willStopTurrret(BlockState state) {
-        if(state.isAir()) {
-            return false;
-        }
-        if(state.is(Blocks.SNOW) && state.getValue(SnowLayerBlock.LAYERS) < 4) {
-            return false;
-        }
-        if(state.is(BallistixTags.Blocks.WHITELISTED_TURRET_BLOCKS)) {
+        if(state.isAir() || (state.is(Blocks.SNOW) && state.getValue(SnowLayerBlock.LAYERS) < 4) || state.is(BallistixTags.Blocks.WHITELISTED_TURRET_BLOCKS)) {
             return false;
         }
         return true;

@@ -33,7 +33,11 @@ import voltaic.prefab.properties.variant.ListProperty;
 import voltaic.prefab.properties.variant.SingleProperty;
 import voltaic.prefab.tile.GenericTile;
 import voltaic.prefab.tile.components.IComponentType;
-import voltaic.prefab.tile.components.type.*;
+import voltaic.prefab.tile.components.type.ComponentContainerProvider;
+import voltaic.prefab.tile.components.type.ComponentElectrodynamic;
+import voltaic.prefab.tile.components.type.ComponentForgeEnergy;
+import voltaic.prefab.tile.components.type.ComponentPacketHandler;
+import voltaic.prefab.tile.components.type.ComponentTickable;
 import voltaic.prefab.utilities.BlockEntityUtils;
 import voltaic.registers.VoltaicCapabilities;
 
@@ -64,7 +68,7 @@ public class TileSearchRadar extends GenericTile {
     public void tickServer(ComponentTickable tickable) {
         ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
 
-        isRunning.setValue(electro.getJoulesStored() > (BallistixConstants.RADAR_USAGE / 20.0) && level.getBrightness(LightLayer.SKY, getBlockPos()) > 0);
+        isRunning.setValue(electro.getJoulesStored() > BallistixConstants.RADAR_USAGE / 20.0 && level.getBrightness(LightLayer.SKY, getBlockPos()) > 0);
 
         trackedMissiles.clear();
         trackedEsmTowers.clear();
@@ -80,10 +84,10 @@ public class TileSearchRadar extends GenericTile {
 
         TileESMTower.addSearchRadar(this);
 
-        electro.joules(electro.getJoulesStored() - (BallistixConstants.RADAR_USAGE / 20.0));
+        electro.joules(electro.getJoulesStored() - BallistixConstants.RADAR_USAGE / 20.0);
 
         for (VirtualMissile missile : MissileManager.getMissilesForLevel(level.dimension())) {
-            if (missile.getBoundingBox().intersects(searchArea) && (!usingWhitelist.getValue() || (usingWhitelist.getValue() && !whitelistedFrequencies.getValue().contains(missile.payloadData.frequency))) && !missile.hasExploded()) {
+            if (missile.getBoundingBox().intersects(searchArea) && (!usingWhitelist.getValue() || usingWhitelist.getValue() && !whitelistedFrequencies.getValue().contains(missile.payloadData.frequency)) && !missile.hasExploded()) {
                 trackedMissiles.add(missile);
             }
         }
@@ -94,7 +98,7 @@ public class TileSearchRadar extends GenericTile {
             }
         }
 
-        if ((trackedMissiles.isEmpty() && trackedEsmTowers.isEmpty()) && redstone.getValue()) {
+        if (trackedMissiles.isEmpty() && trackedEsmTowers.isEmpty() && redstone.getValue()) {
             redstone.setValue(false);
             level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
         } else if ((!trackedMissiles.isEmpty() || !trackedEsmTowers.isEmpty()) && !redstone.getValue()) {

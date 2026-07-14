@@ -61,7 +61,7 @@ public class RenderCIWSTurret extends AbstractTileRenderer<TileTurretCIWS> {
 
         matrixStackIn.pushPose();
 
-        float rotation = tileEntityIn.firing.getValue() ? ((System.currentTimeMillis() % 100L) / 100.0F) * 360.0F : 0.0F;
+        float rotation = tileEntityIn.firing.getValue() ? System.currentTimeMillis() % 100L / 100.0F * 360.0F : 0.0F;
 
         //matrixStackIn.translate(0.5, 0.84375, 0.5);
 

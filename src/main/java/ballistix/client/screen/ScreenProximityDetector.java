@@ -1,5 +1,11 @@
 package ballistix.client.screen;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.vertex.PoseStack;
+
 import ballistix.client.event.HandlerDetectorLines;
 import ballistix.common.inventory.container.ContainerProximityDetector;
 import ballistix.common.settings.BallistixConstants;
@@ -8,9 +14,6 @@ import ballistix.common.tile.turret.GenericTileTurret;
 import ballistix.prefab.BallistixIconTypes;
 import ballistix.prefab.screen.WrapperPlayerWhitelistDetector;
 import ballistix.prefab.utils.BallistixTextUtils;
-import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -27,9 +30,6 @@ import voltaic.prefab.screen.component.types.guitab.ScreenComponentElectricInfo;
 import voltaic.prefab.screen.component.types.guitab.ScreenComponentGuiTab;
 import voltaic.prefab.screen.component.utils.AbstractScreenComponentInfo;
 import voltaic.prefab.utilities.math.Color;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ScreenProximityDetector extends GenericScreen<ContainerProximityDetector> {
 
@@ -434,6 +434,7 @@ public class ScreenProximityDetector extends GenericScreen<ContainerProximityDet
         detector.maxCorner.setValue(new BlockPos(detector.maxCorner.getValue().getX(), detector.maxCorner.getValue().getY(), zCoord));
     }
 
+    @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
         super.render(poseStack, mouseX, mouseY, partialTicks);
         if (this.needsUpdate) {

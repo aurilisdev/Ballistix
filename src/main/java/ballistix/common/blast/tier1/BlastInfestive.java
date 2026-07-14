@@ -1,5 +1,7 @@
 package ballistix.common.blast.tier1;
 
+import java.util.Iterator;
+
 import ballistix.api.blast.IBlast;
 import ballistix.common.blast.util.BlastLasting;
 import ballistix.common.blast.util.thread.ThreadSimpleBlast;
@@ -12,8 +14,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.InfestedBlock;
 import net.minecraft.world.level.block.state.BlockState;
-
-import java.util.Iterator;
 
 public class BlastInfestive extends BlastLasting {
 
@@ -58,11 +58,7 @@ public class BlastInfestive extends BlastLasting {
             BlockPos p = new BlockPos(iterator.next()).offset(position);
             BlockState state = world.getBlockState(p);
 
-            if(state.isAir()) {
-                continue;
-            }
-
-            if(!InfestedBlock.isCompatibleHostBlock(state)) {
+            if(state.isAir() || !InfestedBlock.isCompatibleHostBlock(state)) {
                 continue;
             }
 

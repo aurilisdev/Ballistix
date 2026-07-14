@@ -10,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.Futures;
+import com.mojang.datafixers.util.Either;
 
 import ballistix.api.blast.IBlast;
 import ballistix.common.blast.util.Blast;
@@ -103,7 +104,7 @@ public class BlastRejuvination extends Blast {
 
                     ChunkPos pos = new ChunkPos(position);
 
-                    CompletableFuture<IChunk> loadedChunk = newWorld.getChunkSource().getChunkFuture(pos.x, pos.z, ChunkStatus.FEATURES, true).thenApply(either -> either.orThrow());
+                    CompletableFuture<IChunk> loadedChunk = newWorld.getChunkSource().getChunkFuture(pos.x, pos.z, ChunkStatus.FEATURES, true).thenApply(Either::orThrow);
 
                     ThreadTaskExecutor<Runnable> executor = newWorld.getChunkSource().mainThreadProcessor;
 

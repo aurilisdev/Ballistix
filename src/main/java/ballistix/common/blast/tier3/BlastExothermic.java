@@ -1,5 +1,9 @@
 package ballistix.common.blast.tier3;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+
 import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.common.blast.util.BlastLasting;
@@ -21,10 +25,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
 
 public class BlastExothermic extends BlastLasting implements IHasCustomRender {
 
@@ -70,7 +70,7 @@ public class BlastExothermic extends BlastLasting implements IHasCustomRender {
             BlockPos p = new BlockPos(iterator.next()).offset(position);
             BlockState state = world.getBlockState(p);
 
-            if(state.isAir(world, p) || (!(state.getBlock() instanceof FlowingFluidBlock) && (state.getDestroySpeed(world, p) < 0 || state.getDestroySpeed(world, p) > BallistixConstants.EXPLOSIVE_EXOTHERMIC_MAXHARDNESS))) {
+            if(state.isAir(world, p) || !(state.getBlock() instanceof FlowingFluidBlock) && (state.getDestroySpeed(world, p) < 0 || state.getDestroySpeed(world, p) > BallistixConstants.EXPLOSIVE_EXOTHERMIC_MAXHARDNESS)) {
                 continue;
             }
 

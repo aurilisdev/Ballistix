@@ -30,7 +30,11 @@ import voltaic.prefab.properties.variant.ListProperty;
 import voltaic.prefab.properties.variant.SingleProperty;
 import voltaic.prefab.tile.GenericTile;
 import voltaic.prefab.tile.components.IComponentType;
-import voltaic.prefab.tile.components.type.*;
+import voltaic.prefab.tile.components.type.ComponentContainerProvider;
+import voltaic.prefab.tile.components.type.ComponentElectrodynamic;
+import voltaic.prefab.tile.components.type.ComponentForgeEnergy;
+import voltaic.prefab.tile.components.type.ComponentPacketHandler;
+import voltaic.prefab.tile.components.type.ComponentTickable;
 import voltaic.prefab.utilities.BlockEntityUtils;
 import voltaic.registers.VoltaicCapabilities;
 
@@ -75,7 +79,7 @@ public class TileFireControlRadar extends GenericTile {
     public void tickServer(ComponentTickable tickable) {
         ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
 
-        running.setValue(electro.getJoulesStored() > BallistixConstants.RADAR_USAGE / 20.0 && level.getBrightness(LightType.SKY, getBlockPos()) > 0 && (!usingRedstone.getValue() || (usingRedstone.getValue() && redstone.getValue())));
+        running.setValue(electro.getJoulesStored() > BallistixConstants.RADAR_USAGE / 20.0 && level.getBrightness(LightType.SKY, getBlockPos()) > 0 && (!usingRedstone.getValue() || usingRedstone.getValue() && redstone.getValue()));
 
         if (!running.getValue()) {
             tracking = null;
@@ -85,7 +89,7 @@ public class TileFireControlRadar extends GenericTile {
 
         TileESMTower.addFireControlRadar(this);
 
-        electro.joules(electro.getJoulesStored() - (BallistixConstants.RADAR_USAGE / 20.0));
+        electro.joules(electro.getJoulesStored() - BallistixConstants.RADAR_USAGE / 20.0);
 
         if (tracking != null && (tracking.hasExploded() || tracking.getId() == null || MissileManager.getMissile(level.dimension(), tracking.getId()) == null)) {
             tracking = null;
@@ -157,7 +161,7 @@ public class TileFireControlRadar extends GenericTile {
 
         double b = missPos.dot(missVector) * 2;
         double c = missPos.dot(missPos);
-        double root = (b * b) - 4 * a * c;
+        double root = b * b - 4 * a * c;
         if (root < 0) {
 
             return -1;

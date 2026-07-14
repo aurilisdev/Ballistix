@@ -1,12 +1,11 @@
 package ballistix.common.packet.type.client;
 
-import voltaic.api.codec.StreamCodec;
-
 import java.util.UUID;
 import java.util.function.Supplier;
 
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
+import voltaic.api.codec.StreamCodec;
 
 public class PacketPushPlayer {
 

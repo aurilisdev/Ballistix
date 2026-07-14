@@ -45,7 +45,7 @@ public class BallistixCapabilities {
 				}
 			}
 			
-		}, () -> new CapabilitySiloRegistry());
+		}, CapabilitySiloRegistry::new);
 		
 		CapabilityManager.INSTANCE.register(CapabilityActiveBullets.class, new IStorage<CapabilityActiveBullets>() {
 
@@ -61,7 +61,7 @@ public class BallistixCapabilities {
 				}
 			}
 			
-		}, () -> new CapabilityActiveBullets());
+		}, CapabilityActiveBullets::new);
 		
 		CapabilityManager.INSTANCE.register(CapabilityActiveRailgunRounds.class, new IStorage<CapabilityActiveRailgunRounds>() {
 
@@ -77,7 +77,7 @@ public class BallistixCapabilities {
 				}
 			}
 			
-		}, () -> new CapabilityActiveRailgunRounds());
+		}, CapabilityActiveRailgunRounds::new);
 		
 		CapabilityManager.INSTANCE.register(CapabilityActiveSAMs.class, new IStorage<CapabilityActiveSAMs>() {
 
@@ -93,7 +93,7 @@ public class BallistixCapabilities {
 				}
 			}
 			
-		}, () -> new CapabilityActiveSAMs());
+		}, CapabilityActiveSAMs::new);
 		
 		CapabilityManager.INSTANCE.register(CapabilityActiveMissiles.class, new IStorage<CapabilityActiveMissiles>() {
 
@@ -109,7 +109,7 @@ public class BallistixCapabilities {
 				}
 			}
 			
-		}, () -> new CapabilityActiveMissiles());
+		}, CapabilityActiveMissiles::new);
 		
 		CapabilityManager.INSTANCE.register(CapabilityAntigravedChunks.class, new IStorage<CapabilityAntigravedChunks>() {
 
@@ -126,7 +126,7 @@ public class BallistixCapabilities {
 				
 			}
 			
-		}, () -> new CapabilityAntigravedChunks());
+		}, CapabilityAntigravedChunks::new);
 		
 	}
 

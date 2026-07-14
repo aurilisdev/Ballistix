@@ -40,7 +40,7 @@ public class SiloRegistry {
 
 				tile = world.getBlockEntity(pos);
 
-				if (tile != null && tile instanceof ILauncherControlPanel) {
+				if (tile instanceof ILauncherControlPanel) {
 					silos.add((ILauncherControlPanel) tile);
 				}
 

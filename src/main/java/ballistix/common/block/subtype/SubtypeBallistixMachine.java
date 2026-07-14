@@ -375,7 +375,7 @@ public enum SubtypeBallistixMachine implements ISubtype, IMachine {
 		}
 
 		private static VoxelShape rotate(Direction to, VoxelShape shape) {
-			VoxelShape[] buffer = new VoxelShape[] { shape, VoxelShapes.empty() };
+			VoxelShape[] buffer = { shape, VoxelShapes.empty() };
 
 			int times = (to.get2DDataValue() - Direction.SOUTH.get2DDataValue() + 4) % 4;
 			for (int i = 0; i < times; i++) {

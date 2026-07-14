@@ -198,7 +198,7 @@ public class WrapperPlayerWhitelistTurret {
     }
 
     public Consumer<Integer> getSliderClickedConsumer() {
-        return (mouseY) -> {
+        return mouseY -> {
             ScreenComponentVerticalSlider slider = screen.whitelistSlider;
             if (slider.isSliderActive()) {
                 int sliderY = slider.y;
@@ -222,7 +222,7 @@ public class WrapperPlayerWhitelistTurret {
     }
 
     public Consumer<Integer> getSliderDraggedConsumer() {
-        return (mouseY) -> {
+        return mouseY -> {
             ScreenComponentVerticalSlider slider = screen.whitelistSlider;
             if (slider.isSliderActive()) {
                 int sliderY = slider.y;

@@ -31,7 +31,12 @@ import voltaic.prefab.properties.types.PropertyTypes;
 import voltaic.prefab.properties.variant.SingleProperty;
 import voltaic.prefab.tile.GenericTile;
 import voltaic.prefab.tile.components.IComponentType;
-import voltaic.prefab.tile.components.type.*;
+import voltaic.prefab.tile.components.type.ComponentContainerProvider;
+import voltaic.prefab.tile.components.type.ComponentElectrodynamic;
+import voltaic.prefab.tile.components.type.ComponentForgeEnergy;
+import voltaic.prefab.tile.components.type.ComponentInventory;
+import voltaic.prefab.tile.components.type.ComponentPacketHandler;
+import voltaic.prefab.tile.components.type.ComponentTickable;
 import voltaic.prefab.utilities.BlockEntityUtils;
 import voltaic.prefab.utilities.NBTUtils;
 import voltaic.prefab.utilities.object.CachedTileOutput;
@@ -110,11 +115,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 
 		boolean hasRedstone = level.hasNeighborSignal(getBlockPos());
 
-		if (!launcherPlatform.valid()) {
-			return;
-		}
-		
-		if(!(launcherPlatform.getSafe() instanceof ILauncherPlatform)) {
+		if(!launcherPlatform.valid() || !(launcherPlatform.getSafe() instanceof ILauncherPlatform)) {
 			return;
 		}
 
@@ -126,7 +127,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 			return;
 		}
 
-		if (!platform.hasMissile() || (platform.hasExplosive() && platform.hasSAM()) || (!platform.hasExplosive() && !platform.hasSAM()) || (!hasRedstone && !shouldLaunch.getValue())) {
+		if (!platform.hasMissile() || platform.hasExplosive() && platform.hasSAM() || !platform.hasExplosive() && !platform.hasSAM() || !hasRedstone && !shouldLaunch.getValue()) {
 			return;
 		}
 

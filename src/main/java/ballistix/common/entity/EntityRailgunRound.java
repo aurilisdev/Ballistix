@@ -61,12 +61,7 @@ public class EntityRailgunRound extends Entity {
 
 			VirtualProjectile.VirtualRailgunRound railgunround = MissileManager.getRailgunRound(level.dimension(), id);
 
-			if (railgunround == null) {
-				removeAfterChangingDimensions();
-				return;
-			}
-
-			if (railgunround.hasExploded()) {
+			if (railgunround == null || railgunround.hasExploded()) {
 				removeAfterChangingDimensions();
 				return;
 			}
@@ -105,7 +100,7 @@ public class EntityRailgunRound extends Entity {
 
 	@Override
 	protected void addAdditionalSaveData(CompoundNBT compound) {
-		if (level instanceof ServerWorld && (!((ServerWorld) level).getChunkSource().isEntityTickingChunk(new ChunkPos(blockPosition())) || !((ServerWorld) level).hasChunkAt(blockPosition()))) {
+		if (level instanceof ServerWorld && (!((ServerWorld) level).getChunkSource().isEntityTickingChunk(new ChunkPos(blockPosition())) || !level.hasChunkAt(blockPosition()))) {
 			remove(false);
 		}
 		if (id != null) {

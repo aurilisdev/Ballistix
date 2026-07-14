@@ -7,6 +7,8 @@ import ballistix.registers.BallistixCreativeTabs;
 import net.minecraft.block.AbstractRailBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.DispenserBlock;
+import net.minecraft.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.dispenser.IBlockSource;
 import net.minecraft.dispenser.IDispenseItemBehavior;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -20,8 +22,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.WorldEvents;
 import voltaic.api.ISubtype;
 import voltaic.common.item.ItemVoltaic;
-import net.minecraft.dispenser.DefaultDispenseItemBehavior;
-import net.minecraft.dispenser.IBlockSource;
 
 public class ItemMinecart extends ItemVoltaic {
 

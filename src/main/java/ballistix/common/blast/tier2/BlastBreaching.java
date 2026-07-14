@@ -50,10 +50,7 @@ public class BlastBreaching extends BlastLasting implements IHasCustomRender {
 	public boolean doExplode(int callCount) {
 		hasStarted = true;
 		super.doExplode(callCount);
-		if (thread == null) {
-			return ticksSinceBlastStart > BallistixConstants.EXPLOSIVE_BREACHING_SIZE * 3;
-		}
-		if (world.isClientSide || !thread.isComplete) {
+		if (thread == null || world.isClientSide || !thread.isComplete) {
 			return ticksSinceBlastStart > BallistixConstants.EXPLOSIVE_BREACHING_SIZE * 3;
 		}
 

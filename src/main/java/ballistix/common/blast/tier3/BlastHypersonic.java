@@ -1,5 +1,8 @@
 package ballistix.common.blast.tier3;
 
+import java.util.Iterator;
+import java.util.List;
+
 import ballistix.api.blast.IBlast;
 import ballistix.common.blast.util.BlastLasting;
 import ballistix.common.blast.util.thread.ThreadSimpleBlast;
@@ -16,9 +19,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidBlock;
-
-import java.util.Iterator;
-import java.util.List;
 
 public class BlastHypersonic extends BlastLasting {
 

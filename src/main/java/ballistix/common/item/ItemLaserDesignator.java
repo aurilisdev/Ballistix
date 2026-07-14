@@ -45,7 +45,7 @@ public class ItemLaserDesignator extends ItemElectric {
 		TileEntity ent = context.getLevel().getBlockEntity(context.getClickedPos());
 		ILauncherControlPanel silo = ent instanceof ILauncherControlPanel ? (ILauncherControlPanel) ent : null;
 		if (ent instanceof TileMultiSubnode) {
-			TileEntity core = ((TileMultiSubnode) ent).getLevel().getBlockEntity(((TileMultiSubnode) ent).parentPos.getValue());
+			TileEntity core = ent.getLevel().getBlockEntity(((TileMultiSubnode) ent).parentPos.getValue());
 			if (core instanceof ILauncherControlPanel) {
 				silo = (ILauncherControlPanel) core;
 			}
@@ -106,7 +106,7 @@ public class ItemLaserDesignator extends ItemElectric {
 			range = platform.getRange();
 			distance = TileLauncherControlPanelT1.calculateDistance(silo.getPos(), target);
 
-			if (range == 0 || (range > 0 && range < distance) || distance > BallistixConstants.LASER_DESIGNATOR_RANGE) {
+			if (range == 0 || range > 0 && range < distance || distance > BallistixConstants.LASER_DESIGNATOR_RANGE) {
 				continue;
 			}
 

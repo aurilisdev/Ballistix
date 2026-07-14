@@ -4,11 +4,10 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import ballistix.common.settings.BallistixConstants;
-
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualProjectile;
 import ballistix.client.particle.ParticleOptionsMissileSmoke;
+import ballistix.common.settings.BallistixConstants;
 import ballistix.registers.BallistixEntities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -23,7 +22,6 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -73,12 +71,7 @@ public class EntitySAM extends Entity {
 
             VirtualProjectile.VirtualSAM sam = MissileManager.getSAM(level.dimension(), id);
 
-            if (sam == null) {
-                removeAfterChangingDimensions();
-                return;
-            }
-
-            if (sam.hasExploded()) {
+            if (sam == null || sam.hasExploded()) {
                 removeAfterChangingDimensions();
                 return;
             }
@@ -116,9 +109,9 @@ public class EntitySAM extends Entity {
             return;
         }
 
-        float x = (float) (getX());
-        float y = (float) (getY());
-        float z = (float) (getZ());
+        float x = (float) getX();
+        float y = (float) getY();
+        float z = (float) getZ();
         float motionX = (float) (speed * getDeltaMovement().x);
         float motionY = (float) (speed * getDeltaMovement().y);
         float motionZ = (float) (speed * getDeltaMovement().z);
@@ -139,7 +132,7 @@ public class EntitySAM extends Entity {
 
     @Override
     protected void readAdditionalSaveData(CompoundNBT compound) {
-    	if (level instanceof ServerWorld && (!((ServerWorld) level).getChunkSource().isEntityTickingChunk(new ChunkPos(blockPosition())) || !((ServerWorld) level).hasChunkAt(blockPosition()))) {
+    	if (level instanceof ServerWorld && (!((ServerWorld) level).getChunkSource().isEntityTickingChunk(new ChunkPos(blockPosition())) || !level.hasChunkAt(blockPosition()))) {
             remove(false);
         }
         if (id != null) {

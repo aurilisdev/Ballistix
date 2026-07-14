@@ -1,7 +1,5 @@
 package ballistix.common.tile.turret.antimissile;
 
-import ballistix.registers.BallistixSounds;
-
 import javax.annotation.Nullable;
 
 import ballistix.api.missile.MissileManager;
@@ -10,6 +8,7 @@ import ballistix.api.turret.ITarget;
 import ballistix.common.inventory.container.ContainerRailgunTurret;
 import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissileProjectile;
+import ballistix.registers.BallistixSounds;
 import ballistix.registers.BallistixTiles;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;

@@ -47,9 +47,9 @@ public class ItemRadarGun extends ItemElectric {
 
             ((ILauncherControlPanel) tile).setTargetFromDesignator(getCoordiantes(stack));
 
-        } else if (tile instanceof TileMultiSubnode && ((TileMultiSubnode) tile).getLevel().getBlockEntity(((TileMultiSubnode) tile).parentPos.getValue()) instanceof ILauncherControlPanel) {
+        } else if (tile instanceof TileMultiSubnode && tile.getLevel().getBlockEntity(((TileMultiSubnode) tile).parentPos.getValue()) instanceof ILauncherControlPanel) {
 
-        	((ILauncherControlPanel) ((TileMultiSubnode) tile).getLevel().getBlockEntity(((TileMultiSubnode) tile).parentPos.getValue())).setTargetFromDesignator(getCoordiantes(stack));
+        	((ILauncherControlPanel) tile.getLevel().getBlockEntity(((TileMultiSubnode) tile).parentPos.getValue())).setTargetFromDesignator(getCoordiantes(stack));
 
         } else if (tile instanceof TileTurretAntimissile) {
             if (((TileTurretAntimissile) tile).bindFireControlRadar(getCoordiantes(stack))) {
@@ -90,7 +90,7 @@ public class ItemRadarGun extends ItemElectric {
 
         TileEntity tileentity = trace.getTile(playerIn.level);
         
-        if (tileentity instanceof ILauncherControlPanel || tileentity instanceof TileMultiSubnode && ((TileMultiSubnode) tileentity).getLevel().getBlockEntity(((TileMultiSubnode) tileentity).parentPos.getValue()) instanceof ILauncherControlPanel || tileentity instanceof TileTurretAntimissile) {
+        if (tileentity instanceof ILauncherControlPanel || tileentity instanceof TileMultiSubnode && tileentity.getLevel().getBlockEntity(((TileMultiSubnode) tileentity).parentPos.getValue()) instanceof ILauncherControlPanel || tileentity instanceof TileTurretAntimissile) {
             return super.use(worldIn, playerIn, handIn);
         }
 

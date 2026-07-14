@@ -203,7 +203,7 @@ public class EntityBlast extends Entity {
 
                                     // min weight
 
-                                    if(dY < 0 && getY() <= (0 + fifths)) {
+                                    if(dY < 0 && getY() <= 0 + fifths) {
 
                                         float relativeHeight = (float) (getY() - 0);
                                         float perc = 1.0F - relativeHeight / fifths;
@@ -217,7 +217,7 @@ public class EntityBlast extends Entity {
 
                                     // max weight
 
-                                    if(dY > 0 && getY() >= (0 + fifths * 3)) {
+                                    if(dY > 0 && getY() >= 0 + fifths * 3) {
 
                                         float relativeHeight = (float) (getY() - 0);
                                         float perc = relativeHeight / (fifths * 5);
@@ -295,7 +295,7 @@ public class EntityBlast extends Entity {
 
 	@Override
 	public void remove(boolean reason) {
-		if (!level.isClientSide && reason == false && !hasMatured) {
+		if (!level.isClientSide && !reason && !hasMatured) {
 			ChunkPos pos = level.getChunk(blockPosition()).getPos();
 			ForgeChunkManager.forceChunk((ServerWorld) level, Ballistix.ID, blockPosition(), pos.x, pos.z, false, true);
 		}

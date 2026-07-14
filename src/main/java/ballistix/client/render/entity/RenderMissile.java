@@ -5,7 +5,6 @@ import java.util.Random;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import ballistix.client.BallistixClientRegister;
-
 import ballistix.common.entity.EntityMissile;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;

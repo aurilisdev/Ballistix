@@ -20,7 +20,7 @@ public class ThreadDynamicRaySideBlast extends Thread {
 
 	public final Direction direction;
 	private final Random random = Voltaic.RANDOM;
-	private ArrayList<DynamicRay> rays = new ArrayList<DynamicRay>();
+	private ArrayList<DynamicRay> rays = new ArrayList<>();
 
 	private static final float DEFAULT_POWER_DEC = 1.125f;
 
@@ -76,7 +76,7 @@ public class ThreadDynamicRaySideBlast extends Thread {
 				float currentZ = position.getZ() + 0.5F;
 
 				float len = MathHelper.sqrt(x * x + y * y + z * z); // from net.minecraft.util.MathHelper
-				float invLen = (len == 0.0F ? 0.0F : 1.0F / len);
+				float invLen = len == 0.0F ? 0.0F : 1.0F / len;
 				float dx = x * invLen;
 				float dy = y * invLen;
 				float dz = z * invLen;
@@ -95,7 +95,7 @@ public class ThreadDynamicRaySideBlast extends Thread {
 
 		while (!rays.isEmpty()) {
 			Iterator<DynamicRay> it = rays.iterator();
-			HashMap<BlockPos, BlockState> positions = new HashMap<BlockPos, BlockState>();
+			HashMap<BlockPos, BlockState> positions = new HashMap<>();
 			while (it.hasNext()) {
 				DynamicRay ray = it.next();
 				if (ray.tick(position, world, callback, explosionSource, positions))

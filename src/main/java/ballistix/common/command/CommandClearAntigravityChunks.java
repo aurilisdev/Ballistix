@@ -1,12 +1,12 @@
 package ballistix.common.command;
 
+import com.mojang.brigadier.CommandDispatcher;
+
 import ballistix.Ballistix;
 import ballistix.registers.BallistixCapabilities;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.util.text.StringTextComponent;
-
-import com.mojang.brigadier.CommandDispatcher;
 
 public class CommandClearAntigravityChunks {
 

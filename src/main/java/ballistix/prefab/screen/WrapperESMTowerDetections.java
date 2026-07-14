@@ -102,7 +102,7 @@ public class WrapperESMTowerDetections {
 	}
 
 	public Consumer<Integer> getSliderClickedConsumer() {
-		return (mouseY) -> {
+		return mouseY -> {
 			ScreenComponentVerticalSlider slider = screen.slider;
 			if (slider.isSliderActive()) {
 				int sliderY = slider.y;
@@ -126,7 +126,7 @@ public class WrapperESMTowerDetections {
 	}
 
 	public Consumer<Integer> getSliderDraggedConsumer() {
-		return (mouseY) -> {
+		return mouseY -> {
 			ScreenComponentVerticalSlider slider = screen.slider;
 			if (slider.isSliderActive()) {
 				int sliderY = slider.y;

@@ -21,9 +21,9 @@ public class SoundInstanceAirRaidSiren extends TickableSoundTile<TileAirRaidSire
         this.pitch = tile.pitch.getValue().floatValue();
         PlayerEntity player = Minecraft.getInstance().player;
         double distance = WorldUtils.distanceBetweenPositions(player.blockPosition(), this.tile.getBlockPos());
-        if (distance <= (tile.range.getValue() + 1)) {
+        if (distance <= tile.range.getValue() + 1) {
             this.volume = tile.volume.getValue().floatValue();
-        } else if (distance > (tile.range.getValue() + 1) && distance <= tile.range.getValue() * 2) {
+        } else if (distance > tile.range.getValue() + 1 && distance <= tile.range.getValue() * 2) {
             this.volume = (float) (tile.volume.getValue() / (distance - tile.range.getValue()));
         } else if (distance > tile.range.getValue() * 2) {
             this.volume = 0.0F;

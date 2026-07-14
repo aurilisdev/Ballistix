@@ -62,12 +62,7 @@ public class EntityBullet extends Entity {
 
             VirtualProjectile.VirtualBullet bullet = MissileManager.getBullet(level.dimension(), id);
 
-            if (bullet == null) {
-                removeAfterChangingDimensions();
-                return;
-            }
-
-            if (bullet.hasExploded()) {
+            if (bullet == null || bullet.hasExploded()) {
                 removeAfterChangingDimensions();
                 return;
             }
@@ -107,7 +102,7 @@ public class EntityBullet extends Entity {
 
     @Override
     protected void addAdditionalSaveData(CompoundNBT compound) {
-    	if (level instanceof ServerWorld && (!((ServerWorld) level).getChunkSource().isEntityTickingChunk(new ChunkPos(blockPosition())) || !((ServerWorld) level).hasChunkAt(blockPosition()))) {
+    	if (level instanceof ServerWorld && (!((ServerWorld) level).getChunkSource().isEntityTickingChunk(new ChunkPos(blockPosition())) || !level.hasChunkAt(blockPosition()))) {
             remove(false);
         }
         if (id != null) {

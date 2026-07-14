@@ -2,15 +2,15 @@ package ballistix.client.particle;
 
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
+import net.minecraft.client.particle.IAnimatedSprite;
+import net.minecraft.client.particle.IParticleFactory;
+import net.minecraft.client.particle.IParticleRenderType;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleManager.IParticleMetaFactory;
 import net.minecraft.client.particle.SpriteTexturedParticle;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.client.particle.IParticleFactory;
-import net.minecraft.client.particle.IParticleRenderType;
-import net.minecraft.client.particle.IAnimatedSprite;
 import voltaic.Voltaic;
 
 public class ParticleMissileSmoke extends SpriteTexturedParticle {
@@ -43,18 +43,18 @@ public class ParticleMissileSmoke extends SpriteTexturedParticle {
 		// explosives, but this needs to be done for every explosive. Thus this saves
 		// space...
 		double brightnessRandom = 0.2 * Voltaic.RANDOM.nextDouble();
-		startRed *= (0.8 + brightnessRandom);
-		startGreen *= (0.8 + brightnessRandom);
-		startBlue *= (0.8 + brightnessRandom);
-		endRed *= (0.8 + brightnessRandom);
-		endGreen *= (0.8 + brightnessRandom);
-		endBlue *= (0.8 + brightnessRandom);
-		rCol *= (0.4 + brightnessRandom);
-		gCol *= (0.4 + brightnessRandom);
-		bCol *= (0.4 + brightnessRandom);
-		endGray *= (0.8 + brightnessRandom);
+		startRed *= 0.8 + brightnessRandom;
+		startGreen *= 0.8 + brightnessRandom;
+		startBlue *= 0.8 + brightnessRandom;
+		endRed *= 0.8 + brightnessRandom;
+		endGreen *= 0.8 + brightnessRandom;
+		endBlue *= 0.8 + brightnessRandom;
+		rCol *= 0.4 + brightnessRandom;
+		gCol *= 0.4 + brightnessRandom;
+		bCol *= 0.4 + brightnessRandom;
+		endGray *= 0.8 + brightnessRandom;
 		setColor(startRed, startGreen, startBlue);
-		gravity *= burning ? (0.75 + Voltaic.RANDOM.nextDouble() * 0.5) : 1.5 * Voltaic.RANDOM.nextDouble();
+		gravity *= burning ? 0.75 + Voltaic.RANDOM.nextDouble() * 0.5 : 1.5 * Voltaic.RANDOM.nextDouble();
 	}
 
 	@Override
@@ -78,7 +78,7 @@ public class ParticleMissileSmoke extends SpriteTexturedParticle {
 	@Override
 	public void render(IVertexBuilder buffer, ActiveRenderInfo renderInfo, float partialTicks) {
 		super.render(buffer, renderInfo, partialTicks);
-		float lifeProgress = (float) (this.age + partialTicks) / (float) this.lifetime;
+		float lifeProgress = (this.age + partialTicks) / this.lifetime;
 		if (lifeProgress <= 1 && lifeProgress >= 0) {
 			int burningTime = lifetime / 3;
 			int orangeTime = (int) (burningTime / 1.3);
@@ -87,7 +87,7 @@ public class ParticleMissileSmoke extends SpriteTexturedParticle {
 			this.bCol = ParticleBlastSmoke.smoothTransition(age + partialTicks, startBlue, endBlue, endGray, orangeTime, burningTime - orangeTime);
 
 			// Gradually shrink the particle
-			this.quadSize = startQuadSize * MathHelper.cos((float) (Math.PI / 2f * Math.pow((1 - lifeProgress) - 1, 5)));
+			this.quadSize = startQuadSize * MathHelper.cos((float) (Math.PI / 2f * Math.pow(1 - lifeProgress - 1, 5)));
 		}
 	}
 

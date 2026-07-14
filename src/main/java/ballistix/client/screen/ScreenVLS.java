@@ -1,5 +1,10 @@
 package ballistix.client.screen;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import ballistix.common.inventory.container.ContainerVLS;
 import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tile.TileVerticalLaunchSilo;
@@ -21,11 +26,6 @@ import voltaic.prefab.tile.components.IComponentType;
 import voltaic.prefab.tile.components.type.ComponentElectrodynamic;
 import voltaic.prefab.utilities.VoltaicTextUtils;
 import voltaic.prefab.utilities.math.Color;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import com.mojang.blaze3d.matrix.MatrixStack;
 
 public class ScreenVLS extends GenericScreen<ContainerVLS> {
 

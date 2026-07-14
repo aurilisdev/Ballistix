@@ -1,5 +1,10 @@
 package ballistix.common.blast.tier3;
 
+import java.util.List;
+import java.util.function.Function;
+
+import javax.annotation.Nullable;
+
 import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.client.particle.ParticleOptionsShockwave;
@@ -27,11 +32,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.ITeleporter;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
-
-import java.util.List;
-import java.util.function.Function;
-
-import javax.annotation.Nullable;
 
 public class BlastEnder extends Blast implements IHasCustomRender {
 	
@@ -88,11 +88,10 @@ public class BlastEnder extends Blast implements IHasCustomRender {
 
             if(world.dimension().equals(World.END)) {
             	entity.changeDimension(ServerLifecycleHooks.getCurrentServer().getLevel(World.OVERWORLD), MANAGER);
-                entity.teleportTo(entity.getX(), entity.getY(), entity.getZ());
             } else {
             	entity.changeDimension(ServerLifecycleHooks.getCurrentServer().getLevel(World.END), MANAGER);
-                entity.teleportTo(entity.getX(), entity.getY(), entity.getZ());
             }
+	    entity.teleportTo(entity.getX(), entity.getY(), entity.getZ());
 
         }
 

@@ -63,9 +63,9 @@ public class ItemTracker extends ItemElectric {
 
         	((ILauncherControlPanel) tile).setTarget(new BlockPos((int) entity.getX(), 0, (int) entity.getZ()));
 
-        } else if (tile instanceof TileMultiSubnode && ((TileMultiSubnode) tile).getLevel().getBlockEntity(((TileMultiSubnode) tile).parentPos.getValue()) instanceof ILauncherControlPanel) {
+        } else if (tile instanceof TileMultiSubnode && tile.getLevel().getBlockEntity(((TileMultiSubnode) tile).parentPos.getValue()) instanceof ILauncherControlPanel) {
 
-        	((ILauncherControlPanel) ((TileMultiSubnode) tile).getLevel().getBlockEntity(((TileMultiSubnode) tile).parentPos.getValue())).setTarget(new BlockPos((int) entity.getX(), 0, (int) entity.getZ()));
+        	((ILauncherControlPanel) tile.getLevel().getBlockEntity(((TileMultiSubnode) tile).parentPos.getValue())).setTarget(new BlockPos((int) entity.getX(), 0, (int) entity.getZ()));
 
         }
 

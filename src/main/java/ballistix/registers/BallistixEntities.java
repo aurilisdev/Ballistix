@@ -1,10 +1,10 @@
 package ballistix.registers;
 
 import ballistix.Ballistix;
+import ballistix.common.entity.EntityBallistixFallingBlock;
 import ballistix.common.entity.EntityBlast;
 import ballistix.common.entity.EntityBullet;
 import ballistix.common.entity.EntityExplosive;
-import ballistix.common.entity.EntityBallistixFallingBlock;
 import ballistix.common.entity.EntityGrenade;
 import ballistix.common.entity.EntityMinecart;
 import ballistix.common.entity.EntityMissile;

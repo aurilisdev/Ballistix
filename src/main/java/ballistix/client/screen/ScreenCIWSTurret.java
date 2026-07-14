@@ -129,7 +129,7 @@ public class ScreenCIWSTurret extends ScreenPlayerWhitelistTurret<ContainerCIWST
                 status = BallistixTextUtils.gui("turret.statusnopower").withStyle(TextFormatting.RED);
             } else {
 
-                if(turret.targetingEntity.getValue()) {
+                if(turret.targetingEntity.getValue() || !turret.boundFireControl.getValue().equals(BlockEntityUtils.OUT_OF_REACH)) {
                     if (!turret.hasTarget.getValue()) {
                         status = BallistixTextUtils.gui("turret.statusnotarget").withStyle(TextFormatting.GREEN);
                     } else if (!turret.inRange.getValue()) {
@@ -140,18 +140,8 @@ public class ScreenCIWSTurret extends ScreenPlayerWhitelistTurret<ContainerCIWST
                         status = BallistixTextUtils.gui("turret.statusgood").withStyle(TextFormatting.GREEN);
                     }
                 } else {
-                    if (turret.boundFireControl.getValue().equals(BlockEntityUtils.OUT_OF_REACH)) {
-                        status = BallistixTextUtils.gui("turret.statusunlinked").withStyle(TextFormatting.RED);
-                    } else if (!turret.hasTarget.getValue()) {
-                        status = BallistixTextUtils.gui("turret.statusnotarget").withStyle(TextFormatting.GREEN);
-                    } else if (!turret.inRange.getValue()) {
-                        status = BallistixTextUtils.gui("turret.statusoutofrange").withStyle(TextFormatting.YELLOW);
-                    } else if (turret.outOfAmmo.getValue()) {
-                        status = BallistixTextUtils.gui("turret.statusnoammo").withStyle(TextFormatting.RED);
-                    } else {
-                        status = BallistixTextUtils.gui("turret.statusgood").withStyle(TextFormatting.GREEN);
-                    }
-                }
+		    status = BallistixTextUtils.gui("turret.statusunlinked").withStyle(TextFormatting.RED);
+		}
             }
 
 

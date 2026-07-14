@@ -1,5 +1,7 @@
 package ballistix.common.effect;
 
+import java.util.List;
+
 import ballistix.common.settings.BallistixConstants;
 import ballistix.registers.BallistixDamageTypes;
 import ballistix.registers.BallistixEffects;
@@ -11,8 +13,6 @@ import net.minecraft.potion.EffectType;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import voltaic.prefab.utilities.math.Color;
-
-import java.util.List;
 
 public class EffectVirus extends Effect {
 

@@ -1,10 +1,7 @@
 package ballistix.common.block;
 
-import java.util.List;
-
 import ballistix.api.blast.IBlast;
 import ballistix.common.entity.EntityExplosive;
-import ballistix.prefab.utils.BallistixTextUtils;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -27,14 +24,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import voltaic.common.block.states.VoltaicBlockStates;
 
 public class BlockExplosive extends Block {

@@ -2,10 +2,22 @@ package ballistix.api.missile.virtual;
 
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import ballistix.api.missile.MissileManager;
+import ballistix.api.silo.ILauncherPlatform;
+import ballistix.api.silo.ILauncherSupportFrame;
 import ballistix.client.particle.ParticleOptionsMissileSmoke;
+import ballistix.common.entity.EntityBullet;
+import ballistix.common.entity.EntityRailgunRound;
+import ballistix.common.entity.EntitySAM;
 import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.turret.GenericTileTurret;
+import ballistix.registers.BallistixDamageTypes;
 import ballistix.registers.BallistixSounds;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -21,23 +33,10 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.Explosion.Mode;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-
-import ballistix.api.missile.MissileManager;
-import ballistix.api.silo.ILauncherPlatform;
-import ballistix.api.silo.ILauncherSupportFrame;
-import ballistix.common.entity.EntityBullet;
-import ballistix.common.entity.EntityRailgunRound;
-import ballistix.common.entity.EntitySAM;
-import ballistix.registers.BallistixDamageTypes;
 import voltaic.Voltaic;
 import voltaic.api.multiblock.subnodebased.TileMultiSubnode;
 import voltaic.prefab.utilities.BlockEntityUtils;
 import voltaic.prefab.utilities.CodecUtils;
-
-import javax.annotation.Nullable;
 
 public abstract class VirtualProjectile {
 

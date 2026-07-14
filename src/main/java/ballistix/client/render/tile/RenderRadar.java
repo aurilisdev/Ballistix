@@ -5,7 +5,6 @@ import java.util.Random;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import ballistix.client.BallistixClientRegister;
-
 import ballistix.common.tile.radar.TileSearchRadar;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;

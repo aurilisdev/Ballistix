@@ -95,7 +95,7 @@ public class ScreenComponentDetection extends ScreenComponentGeneric {
 
             double angleRads = Math.atan2(deltaZ, deltaX);
 
-            double theta = (angleRads / Math.PI * 180.0) + (angleRads > 0 ? 0.0 : 360.0);
+            double theta = angleRads / Math.PI * 180.0 + (angleRads > 0 ? 0.0 : 360.0);
 
             int thetaMin = (int) (Math.floor(theta) - 1);
             int thetaMax = (int) (Math.floor(theta) + 1);

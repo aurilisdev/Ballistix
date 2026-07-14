@@ -1,5 +1,10 @@
 package ballistix.client.screen;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import ballistix.client.event.HandlerDetectorLines;
 import ballistix.common.inventory.container.ContainerProximityDetector;
 import ballistix.common.settings.BallistixConstants;
@@ -24,13 +29,8 @@ import voltaic.prefab.screen.component.types.ScreenComponentVerticalSlider;
 import voltaic.prefab.screen.component.types.guitab.ScreenComponentElectricInfo;
 import voltaic.prefab.screen.component.types.guitab.ScreenComponentGuiTab;
 import voltaic.prefab.screen.component.utils.AbstractScreenComponentInfo;
-import voltaic.prefab.utilities.math.Color;
 import voltaic.prefab.utilities.VoltaicTextUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import com.mojang.blaze3d.matrix.MatrixStack;
+import voltaic.prefab.utilities.math.Color;
 
 public class ScreenProximityDetector extends GenericScreen<ContainerProximityDetector> {
 
@@ -441,6 +441,7 @@ public class ScreenProximityDetector extends GenericScreen<ContainerProximityDet
         detector.maxCorner.setValue(new BlockPos(detector.maxCorner.getValue().getX(), detector.maxCorner.getValue().getY(), zCoord));
     }
 
+    @Override
     public void render(MatrixStack poseStack, int mouseX, int mouseY, float partialTicks) {
         super.render(poseStack, mouseX, mouseY, partialTicks);
         if (this.needsUpdate) {

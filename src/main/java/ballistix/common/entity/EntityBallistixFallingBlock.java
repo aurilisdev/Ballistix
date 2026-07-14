@@ -51,7 +51,7 @@ public class EntityBallistixFallingBlock extends ThrowableEntity implements IEnt
 		this.blockState = blockState;
 		this.blocksBuilding = true;
 		this.hurtEntities = true;
-		this.setPos(x, y + (double) ((1.0F - this.getBbHeight()) / 2.0F), z);
+		this.setPos(x, y + (1.0F - this.getBbHeight()) / 2.0F, z);
 		this.setDeltaMovement(Vector3d.ZERO);
 		this.xo = x;
 		this.yo = y;
@@ -59,6 +59,7 @@ public class EntityBallistixFallingBlock extends ThrowableEntity implements IEnt
 		this.setStartPos(this.blockPosition());
 	}
 
+	@Override
 	public boolean isAttackable() {
 		return false;
 	}
@@ -72,18 +73,22 @@ public class EntityBallistixFallingBlock extends ThrowableEntity implements IEnt
 		return this.entityData.get(DATA_START_POS);
 	}
 
+	@Override
 	protected boolean isMovementNoisy() {
 		return false;
 	}
 
+	@Override
 	protected void defineSynchedData() {
 		this.entityData.define(DATA_START_POS, BlockPos.ZERO);
 	}
 
+	@Override
 	public boolean isPickable() {
 		return !this.removed;
 	}
 
+	@Override
 	protected void addAdditionalSaveData(CompoundNBT tag) {
 		tag.put("BlockState", NBTUtil.writeBlockState(this.blockState));
 		tag.putInt("Time", this.time);
@@ -109,6 +114,7 @@ public class EntityBallistixFallingBlock extends ThrowableEntity implements IEnt
 		}
 	}
 
+	@Override
 	public boolean causeFallDamage(float fallDistance, float multiplier) {
 		if (this.hurtEntities) {
 			int i = MathHelper.ceil(fallDistance - 1.0F);
@@ -118,7 +124,7 @@ public class EntityBallistixFallingBlock extends ThrowableEntity implements IEnt
 				DamageSource damagesource = flag ? DamageSource.ANVIL : DamageSource.FALLING_BLOCK;
 
 				for (Entity entity : list) {
-					entity.hurt(damagesource, (float) Math.min(MathHelper.floor((float) i * this.fallDamageAmount), this.fallDamageMax));
+					entity.hurt(damagesource, Math.min(MathHelper.floor(i * this.fallDamageAmount), this.fallDamageMax));
 				}
 			}
 		}
@@ -126,6 +132,7 @@ public class EntityBallistixFallingBlock extends ThrowableEntity implements IEnt
 		return false;
 	}
 
+	@Override
 	protected void readAdditionalSaveData(CompoundNBT tag) {
 		this.blockState = NBTUtil.readBlockState(tag.getCompound("BlockState"));
 		this.time = tag.getInt("Time");
@@ -160,11 +167,13 @@ public class EntityBallistixFallingBlock extends ThrowableEntity implements IEnt
 		this.hurtEntities = shouldHurt;
 	}
 
+	@Override
 	@OnlyIn(Dist.CLIENT)
 	public boolean displayFireAnimation() {
 		return false;
 	}
 
+	@Override
 	public void fillCrashReportCategory(CrashReportCategory report) {
 		super.fillCrashReportCategory(report);
 		report.setDetail("Immitating BlockState", this.blockState.toString());
@@ -174,10 +183,12 @@ public class EntityBallistixFallingBlock extends ThrowableEntity implements IEnt
 		return this.blockState;
 	}
 
+	@Override
 	public boolean onlyOpCanSetNbt() {
 		return true;
 	}
 
+	@Override
 	public IPacket<?> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}

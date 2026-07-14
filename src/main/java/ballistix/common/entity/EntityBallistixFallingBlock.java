@@ -1,7 +1,10 @@
 package ballistix.common.entity;
 
-import ballistix.registers.BallistixEntities;
+import java.util.List;
+
 import com.google.common.collect.Lists;
+
+import ballistix.registers.BallistixEntities;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -29,8 +32,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.network.NetworkHooks;
 
-import java.util.List;
-
 public class EntityBallistixFallingBlock extends ThrowableProjectile implements IEntityAdditionalSpawnData {
 
     private BlockState blockState = Blocks.SAND.defaultBlockState();
@@ -51,7 +52,7 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
         this.blockState = blockState;
         this.blocksBuilding = true;
         this.hurtEntities = true;
-        this.setPos(x, y + (double) ((1.0F - this.getBbHeight()) / 2.0F), z);
+        this.setPos(x, y + (1.0F - this.getBbHeight()) / 2.0F, z);
         this.setDeltaMovement(Vec3.ZERO);
         this.xo = x;
         this.yo = y;
@@ -59,6 +60,7 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
         this.setStartPos(this.blockPosition());
     }
 
+    @Override
     public boolean isAttackable() {
         return false;
     }
@@ -77,6 +79,7 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
         entityData.define(DATA_START_POS, BlockPos.ZERO);
     }
 
+    @Override
     public boolean isPickable() {
         return !this.isRemoved();
     }
@@ -116,7 +119,7 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
                 boolean flag = this.blockState.is(BlockTags.ANVIL);
 
                 for (Entity entity : list) {
-                    entity.hurt(flag ? DamageSource.ANVIL : DamageSource.FALLING_BLOCK, (float) Math.min(Mth.floor((float) i * this.fallDamageAmount), this.fallDamageMax));
+                    entity.hurt(flag ? DamageSource.ANVIL : DamageSource.FALLING_BLOCK, Math.min(Mth.floor(i * this.fallDamageAmount), this.fallDamageMax));
                 }
             }
         }
@@ -159,11 +162,13 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
         this.hurtEntities = shouldHurt;
     }
 
+    @Override
     @OnlyIn(Dist.CLIENT)
     public boolean displayFireAnimation() {
         return false;
     }
 
+    @Override
     public void fillCrashReportCategory(CrashReportCategory report) {
         super.fillCrashReportCategory(report);
         report.setDetail("Immitating BlockState", this.blockState.toString());
@@ -173,6 +178,7 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
         return this.blockState;
     }
 
+    @Override
     public boolean onlyOpCanSetNbt() {
         return true;
     }

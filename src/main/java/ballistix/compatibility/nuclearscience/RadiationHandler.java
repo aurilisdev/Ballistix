@@ -5,7 +5,6 @@ import ballistix.common.packet.type.client.particle.BlastParticleSpawnType;
 import ballistix.common.packet.type.client.particle.PacketSpawnBlastParticle;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -23,14 +22,14 @@ public class RadiationHandler {
         if (BlockIrradiated.isValidPlacement(state)) {
             world.setBlock(p, BlockIrradiated.getIrradiatedBlockstate(state), 3);
             if (world.random.nextFloat() < 1 / 15.0 && world instanceof ServerLevel serverlevel) {
-                serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnBlastParticle(p, BlastParticleSpawnType.TURNRADIOACTIVE), ((ServerPlayer) pl).connection.connection, NetworkDirection.PLAY_TO_CLIENT));
+                serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnBlastParticle(p, BlastParticleSpawnType.TURNRADIOACTIVE), pl.connection.connection, NetworkDirection.PLAY_TO_CLIENT));
 //		Minecraft.getInstance().particleEngine.createParticle(ParticleTypes.ASH, p.getX() + 0.5, p.getY() + 1.5,
 //			p.getZ() + 0.5, 0, 0, 0);
             }
         } else if (state.is(BlockTags.LEAVES)) {
             world.setBlock(p, Blocks.AIR.defaultBlockState(), 3);
             if (world.random.nextFloat() < 1 / 15.0 && world instanceof ServerLevel serverlevel) {
-                serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnBlastParticle(p, BlastParticleSpawnType.LEAVES_BREAKING), ((ServerPlayer) pl).connection.connection, NetworkDirection.PLAY_TO_CLIENT));
+                serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(pl -> NetworkHandler.CHANNEL.sendTo(new PacketSpawnBlastParticle(p, BlastParticleSpawnType.LEAVES_BREAKING), pl.connection.connection, NetworkDirection.PLAY_TO_CLIENT));
 //		Minecraft.getInstance().particleEngine.createParticle(ParticleTypes.GUST, p.getX() + 0.5,
 //			p.getY() + 1.5, p.getZ() + 0.5, 0, 0, 0);
             }

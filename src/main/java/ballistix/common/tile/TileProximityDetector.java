@@ -1,5 +1,8 @@
 package ballistix.common.tile;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ballistix.common.inventory.container.ContainerProximityDetector;
 import ballistix.common.settings.BallistixConstants;
 import ballistix.common.tile.turret.GenericTileTurret;
@@ -25,9 +28,6 @@ import voltaic.prefab.tile.components.type.ComponentForgeEnergy;
 import voltaic.prefab.tile.components.type.ComponentTickable;
 import voltaic.prefab.utilities.BlockEntityUtils;
 import voltaic.registers.VoltaicCapabilities;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class TileProximityDetector extends GenericTile {
 
@@ -112,8 +112,6 @@ public class TileProximityDetector extends GenericTile {
                 }
             }
 
-            redstoneSignal.setValue(0);
-
         } else {
 
             Class<? extends LivingEntity> type = mode == GenericTileTurret.TargetingMode.ONLY_PLAYERS ? Player.class : LivingEntity.class;
@@ -162,10 +160,9 @@ public class TileProximityDetector extends GenericTile {
 
             }
 
-            redstoneSignal.setValue(0);
-
 
         }
+	redstoneSignal.setValue(0);
 
     }
 

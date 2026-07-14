@@ -1,9 +1,9 @@
 package ballistix.common.command;
 
+import com.mojang.brigadier.CommandDispatcher;
+
 import ballistix.Ballistix;
 import ballistix.registers.BallistixCapabilities;
-
-import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.TextComponent;

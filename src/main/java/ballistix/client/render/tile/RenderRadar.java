@@ -2,10 +2,10 @@ package ballistix.client.render.tile;
 
 import java.util.Random;
 
-import ballistix.client.BallistixClientRegister;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Quaternion;
 
+import ballistix.client.BallistixClientRegister;
 import ballistix.common.tile.radar.TileSearchRadar;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;

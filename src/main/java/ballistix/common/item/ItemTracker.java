@@ -6,12 +6,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
-import ballistix.Ballistix;
-import ballistix.api.silo.ILauncherControlPanel;
-
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import ballistix.Ballistix;
+import ballistix.api.silo.ILauncherControlPanel;
 import ballistix.prefab.utils.BallistixTextUtils;
 import ballistix.registers.BallistixCreativeTabs;
 import io.netty.buffer.ByteBuf;
@@ -200,7 +199,7 @@ public class ItemTracker extends ItemElectric {
                 Codec.DOUBLE.fieldOf("z").forGetter(Target::z)
         ).apply(instance, Target::new));
 
-        public static final StreamCodec<ByteBuf, Target> STREAM_CODEC = new StreamCodec<ByteBuf, ItemTracker.Target>() {
+        public static final StreamCodec<ByteBuf, Target> STREAM_CODEC = new StreamCodec<>() {
 			
 			@Override
 			public void encode(ByteBuf buf, Target data) {

@@ -11,7 +11,7 @@ import voltaic.api.codec.StreamCodec;
 
 public class PacketSpawnBlastParticle {
 
-	public static final StreamCodec<ByteBuf, PacketSpawnBlastParticle> CODEC = new StreamCodec<ByteBuf, PacketSpawnBlastParticle>() {
+	public static final StreamCodec<ByteBuf, PacketSpawnBlastParticle> CODEC = new StreamCodec<>() {
 		
 		@Override
 		public void encode(ByteBuf buf, PacketSpawnBlastParticle data) {

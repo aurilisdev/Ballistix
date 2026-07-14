@@ -42,7 +42,7 @@ public class ThreadDynamicRaycastBlast extends ThreadBlast {
 			underBlasts.add(sideBlast);
 		}
 		while (!underBlasts.isEmpty()) {
-			HashSet<BlockPos> current = new HashSet<BlockPos>();
+			HashSet<BlockPos> current = new HashSet<>();
 			synchronized (intermediateResults) {
 				current.addAll(intermediateResults);
 				intermediateResults.clear();

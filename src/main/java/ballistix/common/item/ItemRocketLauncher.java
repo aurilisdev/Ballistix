@@ -69,11 +69,7 @@ public class ItemRocketLauncher extends ItemVoltaic {
     @Override
     public void releaseUsing(ItemStack stack, Level world, LivingEntity entityLiving, int timeLeft) {
 
-        if (world.isClientSide || !(entityLiving instanceof Player)) {
-            return;
-        }
-
-        if (stack.getOrCreateTag().getInt(NBTUtils.TIMER) > 0) {
+        if (world.isClientSide || !(entityLiving instanceof Player) || (stack.getOrCreateTag().getInt(NBTUtils.TIMER) > 0)) {
             return;
         }
 
@@ -99,7 +95,7 @@ public class ItemRocketLauncher extends ItemVoltaic {
                 hasExplosive = true;
                 ex = st;
             }
-            if (!hasRange && (it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier1) || (player.isCreative() && (it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier1) || it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier2) || it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier3))))) {
+            if (!hasRange && (it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier1) || player.isCreative() && (it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier1) || it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier2) || it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier3)))) {
                 hasRange = true;
                 missile = st;
             }

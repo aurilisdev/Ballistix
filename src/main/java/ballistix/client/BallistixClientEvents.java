@@ -1,5 +1,8 @@
 package ballistix.client;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ballistix.client.event.HandlerDetectorLines;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
@@ -9,9 +12,6 @@ import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import voltaic.client.event.AbstractLevelStageHandler;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class BallistixClientEvents {

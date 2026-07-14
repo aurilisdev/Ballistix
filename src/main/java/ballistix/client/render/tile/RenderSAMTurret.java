@@ -74,7 +74,7 @@ public class RenderSAMTurret extends AbstractTileRenderer<TileTurretSAM> {
 
         matrixStackIn.translate(-0.5, -0.90625, -0.5);
 
-        matrixStackIn.translate(Math.sin(yAng * 0.27 - (Math.PI / 2.0)) + 1.6, 1 - Math.sin(yAng * 0.2 + ((9.4 * Math.PI) / 4)) + 0.39, 0.5); //0 = 0.6, 0.5, 0.5, pi/4 = 0.625, 0.43, 0.5, pi/2 = 0.69, 0.41, 0.5 I fucking hate rotating models in this game
+        matrixStackIn.translate(Math.sin(yAng * 0.27 - Math.PI / 2.0) + 1.6, 1 - Math.sin(yAng * 0.2 + 9.4 * Math.PI / 4) + 0.39, 0.5); //0 = 0.6, 0.5, 0.5, pi/4 = 0.625, 0.43, 0.5, pi/2 = 0.69, 0.41, 0.5 I fucking hate rotating models in this game
 
         model = getModel(BallistixClientRegister.MODEL_AAMISSILE);
         Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model, tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(), 0);

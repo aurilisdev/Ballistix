@@ -2,10 +2,10 @@ package ballistix.client.render.entity;
 
 import java.util.Random;
 
-import ballistix.client.BallistixClientRegister;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 
+import ballistix.client.BallistixClientRegister;
 import ballistix.common.entity.EntityMissile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;

@@ -102,9 +102,7 @@ public class ScreenSearchRadar extends GenericScreen<ContainerSearchRadar> {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (slider != null && slider.isVisible()) {
-            slider.mouseClicked(mouseX, mouseY, button);
-        } else if (detectionsSlider != null && detectionsSlider.isVisible()) {
+        if ((slider != null && slider.isVisible()) || (detectionsSlider != null && detectionsSlider.isVisible())) {
             slider.mouseClicked(mouseX, mouseY, button);
         }
         return super.mouseClicked(mouseX, mouseY, button);
@@ -112,9 +110,7 @@ public class ScreenSearchRadar extends GenericScreen<ContainerSearchRadar> {
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if (slider != null && slider.isVisible()) {
-            slider.mouseReleased(mouseX, mouseY, button);
-        } else if (detectionsSlider != null && detectionsSlider.isVisible()) {
+        if ((slider != null && slider.isVisible()) || (detectionsSlider != null && detectionsSlider.isVisible())) {
             slider.mouseReleased(mouseX, mouseY, button);
         }
         return super.mouseReleased(mouseX, mouseY, button);

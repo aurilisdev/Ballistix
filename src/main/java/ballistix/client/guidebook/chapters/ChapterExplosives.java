@@ -1,6 +1,5 @@
 package ballistix.client.guidebook.chapters;
 
-import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.BallistixConstants;
 import ballistix.prefab.utils.BallistixTextUtils;
@@ -42,7 +41,7 @@ public class ChapterExplosives extends Chapter {
         // Obsidian
 
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.obsidian).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.obsidian))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.obsidian)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.obsidian.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.obsidian.fuse())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.radius", BallistixConstants.EXPLOSIVE_OBSIDIAN_SIZE)).setSeparateStart());
@@ -51,7 +50,7 @@ public class ChapterExplosives extends Chapter {
 
         // Condensive
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.condensive).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.condensive))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.condensive)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.condensive.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.condensive.fuse())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.radius", BallistixConstants.EXPLOSIVE_CONDENSIVE_SIZE)).setSeparateStart());
@@ -60,7 +59,7 @@ public class ChapterExplosives extends Chapter {
 
         // Attractive
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.attractive).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.attractive))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.attractive)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.attractive.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.attractive.fuse())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.radius", BallistixConstants.EXPLOSIVE_ATTRACTIVE_SIZE)).setSeparateStart());
@@ -69,7 +68,7 @@ public class ChapterExplosives extends Chapter {
 
         // Repulsive
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.repulsive).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.repulsive))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.repulsive)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.repulsive.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.repulsive.fuse())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.radius", BallistixConstants.EXPLOSIVE_REPULSIVE_SIZE)).setSeparateStart());
@@ -78,7 +77,7 @@ public class ChapterExplosives extends Chapter {
 
         // Incendiary
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.incendiary).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.incendiary))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.incendiary)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.incendiary.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.incendiary.fuse())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.radius", BallistixConstants.EXPLOSIVE_INCENDIARY_RADIUS)).setSeparateStart());
@@ -87,7 +86,7 @@ public class ChapterExplosives extends Chapter {
 
         // Shrapnel
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.shrapnel).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.shrapnel))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.shrapnel)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.shrapnel.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.shrapnel.fuse())).setSeparateStart());
         blankLine();
@@ -95,7 +94,7 @@ public class ChapterExplosives extends Chapter {
 
         // Chemical
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.chemical).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.chemical))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.chemical)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.chemical.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.chemical.fuse())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.radius", BallistixConstants.EXPLOSIVE_CHEMICAL_SIZE)).setSeparateStart());
@@ -105,7 +104,7 @@ public class ChapterExplosives extends Chapter {
 
         // Shrapnel
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.anvil).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.anvil))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.anvil)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.anvil.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.anvil.fuse())).setSeparateStart());
         blankLine();
@@ -113,7 +112,7 @@ public class ChapterExplosives extends Chapter {
 
         // Infestive
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.infestive).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.infestive))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.infestive)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.infestive.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.infestive.fuse())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.radius", BallistixConstants.EXPLOSIVE_INFESTIVE_RADIUS)).setSeparateStart());
@@ -122,7 +121,7 @@ public class ChapterExplosives extends Chapter {
 
         // Debilitation
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.debilitation).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.debilitation))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.debilitation)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.debilitation.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.debilitation.fuse())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.radius", BallistixConstants.EXPLOSIVE_DEBILITATION_SIZE)).setSeparateStart());
@@ -134,7 +133,7 @@ public class ChapterExplosives extends Chapter {
 
         // Fragmentation
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.fragmentation).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.fragmentation))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.fragmentation)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.fragmentation.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.fragmentation.fuse())).setSeparateStart());
         blankLine();
@@ -142,7 +141,7 @@ public class ChapterExplosives extends Chapter {
 
         // Contagious
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.contagious).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.contagious))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.contagious)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.contagious.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.contagious.fuse())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.radius", BallistixConstants.EXPLOSIVE_CONTAGIOUS_SIZE)).setSeparateStart());
@@ -152,7 +151,7 @@ public class ChapterExplosives extends Chapter {
 
         // Breaching
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.breaching).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.breaching))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.breaching)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.breaching.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.breaching.fuse())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.radius", BallistixConstants.EXPLOSIVE_BREACHING_SIZE)).setSeparateStart());
@@ -162,7 +161,7 @@ public class ChapterExplosives extends Chapter {
 
         // Thermobaric
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.thermobaric).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.thermobaric))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.thermobaric)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.thermobaric.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.thermobaric.fuse())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.radius", BallistixConstants.EXPLOSIVE_THERMOBARIC_SIZE)).setSeparateStart());
@@ -172,7 +171,7 @@ public class ChapterExplosives extends Chapter {
 
         // Sonic
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.sonic).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.sonic))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.sonic)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.sonic.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.sonic.fuse())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.radius", BallistixConstants.EXPLOSIVE_SONIC_RADIUS)).setSeparateStart());
@@ -183,7 +182,7 @@ public class ChapterExplosives extends Chapter {
 
         // Antigravity
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.antigravity).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.antigravity))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.antigravity)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.antigravity.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.antigravity.fuse())).setSeparateStart());
         blankLine();
@@ -191,7 +190,7 @@ public class ChapterExplosives extends Chapter {
 
         // EMP
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.emp).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.emp))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.emp)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.emp.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.emp.fuse())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.radius", BallistixConstants.EXPLOSIVE_EMP_RADIUS)).setSeparateStart());
@@ -200,7 +199,7 @@ public class ChapterExplosives extends Chapter {
 
         // Nuclear
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.nuclear).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.nuclear))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.nuclear)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.nuclear.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.nuclear.fuse())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.radius", BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE)).setSeparateStart());
@@ -210,7 +209,7 @@ public class ChapterExplosives extends Chapter {
 
         // Endothermic
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.endothermic).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.endothermic))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.endothermic)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.endothermic.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.endothermic.fuse())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.radius", BallistixConstants.EXPLOSIVE_ENDOTHERMIC_RADIUS)).setSeparateStart());
@@ -219,7 +218,7 @@ public class ChapterExplosives extends Chapter {
 
         // Exothermic
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.exothermic).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.exothermic))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.exothermic)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.exothermic.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.exothermic.fuse())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.radius", BallistixConstants.EXPLOSIVE_EXOTHERMIC_RADIUS)).setSeparateStart());
@@ -228,7 +227,7 @@ public class ChapterExplosives extends Chapter {
 
         // Ender
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.ender).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.ender))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.ender)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.ender.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.ender.fuse())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.radius", BallistixConstants.EXPLOSIVE_ENDER_RADIUS)).setSeparateStart());
@@ -237,7 +236,7 @@ public class ChapterExplosives extends Chapter {
 
         // Hypersonic
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.hypersonic).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.hypersonic))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.hypersonic)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.hypersonic.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.hypersonic.fuse())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.radius", BallistixConstants.EXPLOSIVE_HYPERSONIC_RADIUS)).setSeparateStart());
@@ -246,7 +245,7 @@ public class ChapterExplosives extends Chapter {
 
         // Rejuvination
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.rejuvination).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.rejuvination))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.rejuvination)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.rejuvination.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.rejuvination.fuse())).setSeparateStart());
         blankLine();
@@ -254,7 +253,7 @@ public class ChapterExplosives extends Chapter {
 
         // Antimatter
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.antimatter).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.antimatter))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.antimatter)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.antimatter.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.antimatter.fuse())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.radius", BallistixConstants.EXPLOSIVE_ANTIMATTER_RADIUS)).setSeparateStart());
@@ -263,7 +262,7 @@ public class ChapterExplosives extends Chapter {
 
         // Large Antimatter
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.largeantimatter).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.largeantimatter))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.largeantimatter)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.largeantimatter.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.largeantimatter.fuse())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.radius", BallistixConstants.EXPLOSIVE_LARGEANTIMATTER_RADIUS)).setSeparateStart());
@@ -272,7 +271,7 @@ public class ChapterExplosives extends Chapter {
 
         // Dark Matter
         pageData.add(new TextWrapperObject(BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.darkmatter).getDescription().copy().withStyle(ChatFormatting.BOLD)).setCentered().setNewPage());
-        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, (BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.darkmatter))));
+        pageData.add(new ItemWrapperObject(7 + ScreenGuidebook.TEXT_WIDTH / 2 - 16, 10, 32, 32, 32, 2.0F, BallistixItems.ITEMS_EXPLOSIVE.getValue(SubtypeBlast.darkmatter)));
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.tier", SubtypeBlast.darkmatter.tier())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.fuse", SubtypeBlast.darkmatter.fuse())).setSeparateStart());
         pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.radius", BallistixConstants.EXPLOSIVE_DARKMATTER_RADIUS)).setSeparateStart());

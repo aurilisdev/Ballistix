@@ -2,6 +2,7 @@ package ballistix.prefab.utils;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import net.minecraft.world.level.ChunkPos;
 
 public class BallistixCodecUtils {

@@ -76,18 +76,18 @@ public class ParticleBlastSmoke extends TextureSheetParticle {
 		// explosives, but this needs to be done for every explosive. Thus this saves
 		// space...
 		double brightnessRandom = 0.2 * level.random.nextDouble();
-		burningTime *= (0.9 + brightnessRandom);
-		startRed *= (0.8 + brightnessRandom);
-		startGreen *= (0.8 + brightnessRandom);
-		startBlue *= (0.8 + brightnessRandom);
-		endRed *= (0.8 + brightnessRandom);
-		endGreen *= (0.8 + brightnessRandom);
-		endBlue *= (0.8 + brightnessRandom);
-		rCol *= (0.4 + brightnessRandom);
-		gCol *= (0.4 + brightnessRandom);
-		bCol *= (0.4 + brightnessRandom);
-		endGray *= (0.8 + brightnessRandom);
-		gravity *= burning ? (0.75 + level.random.nextDouble() * 0.5) : 1.5 * level.random.nextDouble();
+		burningTime *= 0.9 + brightnessRandom;
+		startRed *= 0.8 + brightnessRandom;
+		startGreen *= 0.8 + brightnessRandom;
+		startBlue *= 0.8 + brightnessRandom;
+		endRed *= 0.8 + brightnessRandom;
+		endGreen *= 0.8 + brightnessRandom;
+		endBlue *= 0.8 + brightnessRandom;
+		rCol *= 0.4 + brightnessRandom;
+		gCol *= 0.4 + brightnessRandom;
+		bCol *= 0.4 + brightnessRandom;
+		endGray *= 0.8 + brightnessRandom;
+		gravity *= burning ? 0.75 + level.random.nextDouble() * 0.5 : 1.5 * level.random.nextDouble();
 	}
 
 	@Override
@@ -108,7 +108,7 @@ public class ParticleBlastSmoke extends TextureSheetParticle {
 
 	@Override
 	public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
-		float lifeProgress = (float) (this.age + partialTicks) / (float) this.lifetime;
+		float lifeProgress = (this.age + partialTicks) / this.lifetime;
 		if (lifeProgress <= 1 && lifeProgress >= 0) {
 			if (burning) {
 
@@ -120,7 +120,7 @@ public class ParticleBlastSmoke extends TextureSheetParticle {
 			}
 
 			// Gradually shrink the particle
-			this.quadSize = startQuadSize * Mth.cos((float) (Mth.PI / 2f * Math.pow((1 - lifeProgress) - 1, 5)));
+			this.quadSize = startQuadSize * Mth.cos((float) (Mth.PI / 2f * Math.pow(1 - lifeProgress - 1, 5)));
 
 		}
 		super.render(buffer, renderInfo, partialTicks);

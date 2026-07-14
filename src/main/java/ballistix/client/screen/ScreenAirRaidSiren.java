@@ -37,7 +37,7 @@ public class ScreenAirRaidSiren extends GenericScreen<ContainerAirRaidSiren> {
             return new TextComponent("" + siren.volume.getValue());
         }));
 
-        addComponent(volumeSlider = new ScreenComponentHorizontalSlider(20, 40, 138).setClickConsumer((mouseX) -> {
+        addComponent(volumeSlider = new ScreenComponentHorizontalSlider(20, 40, 138).setClickConsumer(mouseX -> {
             ScreenComponentHorizontalSlider slider = volumeSlider;
             TileAirRaidSiren siren = getMenu().getSafeHost();
             if (slider.isSliderActive() && siren != null) {
@@ -58,7 +58,7 @@ public class ScreenAirRaidSiren extends GenericScreen<ContainerAirRaidSiren> {
                     slider.setSliderXOffset((int) (moveRoom * moved));
                 }
             }
-        }).setDragConsumer((mouseX) -> {
+        }).setDragConsumer(mouseX -> {
             ScreenComponentHorizontalSlider slider = volumeSlider;
             TileAirRaidSiren siren = getMenu().getSafeHost();
             if (slider.isSliderActive() && siren != null) {
@@ -95,7 +95,7 @@ public class ScreenAirRaidSiren extends GenericScreen<ContainerAirRaidSiren> {
             return new TextComponent("" + siren.pitch.getValue());
         }));
 
-        addComponent(pitchSlider = new ScreenComponentHorizontalSlider(20, 80, 138).setClickConsumer((mouseX) -> {
+        addComponent(pitchSlider = new ScreenComponentHorizontalSlider(20, 80, 138).setClickConsumer(mouseX -> {
             ScreenComponentHorizontalSlider slider = pitchSlider;
             TileAirRaidSiren siren = getMenu().getSafeHost();
             if (slider.isSliderActive() && siren != null) {
@@ -116,7 +116,7 @@ public class ScreenAirRaidSiren extends GenericScreen<ContainerAirRaidSiren> {
                     slider.setSliderXOffset((int) (moveRoom * moved + TileAirRaidSiren.MIN_PITCH));
                 }
             }
-        }).setDragConsumer((mouseX) -> {
+        }).setDragConsumer(mouseX -> {
             ScreenComponentHorizontalSlider slider = pitchSlider;
             TileAirRaidSiren siren = getMenu().getSafeHost();
             if (slider.isSliderActive() && siren != null) {
@@ -153,7 +153,7 @@ public class ScreenAirRaidSiren extends GenericScreen<ContainerAirRaidSiren> {
             return new TextComponent("" + siren.range.getValue());
         }));
 
-        addComponent(rangeSlider = new ScreenComponentHorizontalSlider(20, 120, 138).setClickConsumer((mouseX) -> {
+        addComponent(rangeSlider = new ScreenComponentHorizontalSlider(20, 120, 138).setClickConsumer(mouseX -> {
             ScreenComponentHorizontalSlider slider = rangeSlider;
             TileAirRaidSiren siren = getMenu().getSafeHost();
             if (slider.isSliderActive() && siren != null) {
@@ -174,7 +174,7 @@ public class ScreenAirRaidSiren extends GenericScreen<ContainerAirRaidSiren> {
                     slider.setSliderXOffset((int) (moveRoom * moved + TileAirRaidSiren.MIN_RANGE));
                 }
             }
-        }).setDragConsumer((mouseX) -> {
+        }).setDragConsumer(mouseX -> {
             ScreenComponentHorizontalSlider slider = rangeSlider;
             TileAirRaidSiren siren = getMenu().getSafeHost();
             if (slider.isSliderActive() && siren != null) {

@@ -117,7 +117,7 @@ public class VirtualMissile {
             return;
         }
 
-        if ((payloadData.getFlightPath() != FlightPath.ROCKET_LAUNCHER && targetData.target.equals(BlockEntityUtils.OUT_OF_REACH)) || payloadData.blastId == null) {
+        if (payloadData.getFlightPath() != FlightPath.ROCKET_LAUNCHER && targetData.target.equals(BlockEntityUtils.OUT_OF_REACH) || payloadData.blastId == null) {
             hasExploded = true;
             return;
         }
@@ -135,7 +135,7 @@ public class VirtualMissile {
 
         BlockPos collisionPos = projectMovementForCollision(level);
 
-        if ((collisionPos != null || (targetData.usingAirburst && targetData.pastHalfwayPoint && position.y <= targetData.target.getY())) && (payloadData.getFlightPath() == FlightPath.ROCKET_LAUNCHER || !isInValidBlockstate(collisionPos, level)) || position.y <= level.getMinBuildHeight()) {
+        if ((collisionPos != null || targetData.usingAirburst && targetData.pastHalfwayPoint && position.y <= targetData.target.getY()) && (payloadData.getFlightPath() == FlightPath.ROCKET_LAUNCHER || !isInValidBlockstate(collisionPos, level)) || position.y <= level.getMinBuildHeight()) {
 
         	IBlast explosive = Blast.BLAST_MAP.get(payloadData.blastId);
 
@@ -154,7 +154,7 @@ public class VirtualMissile {
 
                 } else {
                     blastEntity = b.performExplosion();
-                    if(!targetData.usingAirburst || (targetData.usingAirburst && position.y > targetData.target.getY())) {
+                    if(!targetData.usingAirburst || targetData.usingAirburst && position.y > targetData.target.getY()) {
                         position = new Vec3(position.x - speed * deltaMovement.x, position.y - speed * deltaMovement.y, position.z - speed * deltaMovement.z);
                     }
                 }
@@ -245,8 +245,8 @@ public class VirtualMissile {
 
                 }
 
-                float x = (float) ((iDeltaX / initialDistance) * Math.sin(phi));
-                float z = (float) ((iDeltaZ / initialDistance) * Math.sin(phi));
+                float x = (float) (iDeltaX / initialDistance * Math.sin(phi));
+                float z = (float) (iDeltaZ / initialDistance * Math.sin(phi));
 
                 deltaMovement = new Vec3(x, Math.cos(phi) * signY, z);
 
@@ -369,7 +369,7 @@ public class VirtualMissile {
             position = new Vec3(position.x + speed * deltaMovement.x, position.y + speed * deltaMovement.y, position.z + speed * deltaMovement.z);
         }
 
-        if ((payloadData.getFlightPath() == FlightPath.SILO || payloadData.getFlightPath() == FlightPath.SILO_CLUSTER || (payloadData.getFlightPath() == FlightPath.VLS && payloadData.hasIgnighted)) && !targetData.target.equals(BlockEntityUtils.OUT_OF_REACH) && speed < 3.0F) {
+        if ((payloadData.getFlightPath() == FlightPath.SILO || payloadData.getFlightPath() == FlightPath.SILO_CLUSTER || payloadData.getFlightPath() == FlightPath.VLS && payloadData.hasIgnighted) && !targetData.target.equals(BlockEntityUtils.OUT_OF_REACH) && speed < 3.0F) {
             speed += 0.02F;
         }
 
@@ -410,8 +410,7 @@ public class VirtualMissile {
             return true;
         }
 
-        if(blockentity instanceof TileMultiSubnode) {
-            TileMultiSubnode subnode = (TileMultiSubnode) blockentity;
+        if(blockentity instanceof TileMultiSubnode subnode) {
             BlockEntity owner = world.getBlockEntity(subnode.parentPos.getValue());
 
             return owner instanceof ILauncherPlatform || owner instanceof ILauncherSupportFrame;

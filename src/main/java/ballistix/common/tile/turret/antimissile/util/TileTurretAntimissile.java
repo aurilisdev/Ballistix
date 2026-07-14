@@ -64,11 +64,7 @@ public abstract class TileTurretAntimissile extends GenericTileTurret {
         }
         isNotLinked.setValue(radar == null);
 
-        if(isNotLinked.getValue()) {
-            return null;
-        }
-
-        if(radar.tracking == null  || radar.tracking.hasExploded()) {
+        if(isNotLinked.getValue() || radar.tracking == null  || radar.tracking.hasExploded()) {
             return null;
         }
         return new ITarget.TargetMissile(radar.tracking);

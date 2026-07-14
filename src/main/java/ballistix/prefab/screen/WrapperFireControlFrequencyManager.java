@@ -234,7 +234,7 @@ public class WrapperFireControlFrequencyManager {
     }
 
     public Consumer<Integer> getSliderClickedConsumer() {
-        return (mouseY) -> {
+        return mouseY -> {
             ScreenComponentVerticalSlider slider = screen.slider;
             if (slider.isSliderActive()) {
                 int sliderY = slider.yLocation;
@@ -258,7 +258,7 @@ public class WrapperFireControlFrequencyManager {
     }
 
     public Consumer<Integer> getSliderDraggedConsumer() {
-        return (mouseY) -> {
+        return mouseY -> {
             ScreenComponentVerticalSlider slider = screen.slider;
             if (slider.isSliderActive()) {
                 int sliderY = slider.yLocation;

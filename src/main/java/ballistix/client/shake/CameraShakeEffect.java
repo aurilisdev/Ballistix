@@ -72,6 +72,6 @@ public class CameraShakeEffect {
 	}
 
 	public boolean isComplete(long currentTime) {
-		return (currentTime - startTime) > duration;
+		return currentTime - startTime > duration;
 	}
 }

@@ -1,9 +1,10 @@
 package ballistix.api.blast;
 
-import ballistix.prefab.utils.BallistixCodecUtils;
 import com.google.common.base.Objects;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import ballistix.prefab.utils.BallistixCodecUtils;
 import net.minecraft.world.level.ChunkPos;
 
 public class AntigravedChunk {

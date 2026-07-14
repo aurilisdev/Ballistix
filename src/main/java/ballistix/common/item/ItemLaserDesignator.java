@@ -112,7 +112,7 @@ public class ItemLaserDesignator extends ItemElectric {
 			range = platform.getRange();
 			distance = TileLauncherControlPanelT1.calculateDistance(silo.getPos(), target);
 
-			if (range == 0 || (range > 0 && range < distance) || distance > BallistixConstants.LASER_DESIGNATOR_RANGE) {
+			if (range == 0 || range > 0 && range < distance || distance > BallistixConstants.LASER_DESIGNATOR_RANGE) {
 				continue;
 			}
 

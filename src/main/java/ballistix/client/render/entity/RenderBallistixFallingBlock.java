@@ -1,11 +1,10 @@
 package ballistix.client.render.entity;
 
-import ballistix.common.entity.EntityBallistixFallingBlock;
-
 import java.util.Random;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import ballistix.common.entity.EntityBallistixFallingBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;

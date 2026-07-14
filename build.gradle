@@ -10,17 +10,11 @@ buildscript {
         classpath 'org.parchmentmc:librarian:1.+'
     }
 }
-plugins {
-    id "com.matthewprenger.cursegradle" version '1.4.0'
-}
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
-
-libsDirName = "../output"
-distsDirName = "../output"
 
 libsDirName = "../output"
 distsDirName = "../output"
@@ -99,6 +93,9 @@ dependencies {
     }
 
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    implementation fg.deobf("voltaic:Voltaic:1.16.5-1.0.0-8")
+    implementation fg.deobf("electrodynamics:Electrodynamics:1.16.5-0.5.2-5")
+    implementation fg.deobf("nuclearscience:Nuclear-Science:1.16.5-0.4.2-6")
     compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
     compileOnly group: 'com.griefdefender', name: 'api', version: '2.1.1-SNAPSHOT'
@@ -151,6 +148,7 @@ publishing {
 This needs to stay. It's the Maven repository for JEI along with a fallback!
 */
 repositories{
+    mavenLocal()
     mavenCentral()
     maven {
         // location of the maven that hosts JEI files since January 2023
@@ -167,5 +165,3 @@ repositories{
         url = 'https://repo.glaremasters.me/repository/bloodshot'
     }
 }
-
-tasks.curseforge.dependsOn jar

@@ -270,6 +270,7 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable, Trac
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compound) {
+	super.addAdditionalSaveData(compound);
 	compound.putInt("Fuse", fuse);
 	if (this.ownerUUID != null) {
 	    compound.putUUID("Owner", this.ownerUUID);
@@ -280,6 +281,7 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable, Trac
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
+	super.readAdditionalSaveData(compound);
 	fuse = compound.getInt("Fuse");
 	if (compound.hasUUID("Owner")) {
 	    this.ownerUUID = compound.getUUID("Owner");

@@ -61,8 +61,9 @@ public class BlastExothermic extends BlastLasting implements IHasCustomRender {
 	    pertick = (int) (thread.results.size() * 1.5 / BallistixConstants.EXPLOSIVE_EXOTHERMIC_DURATION + 1);
 	    iterator = thread.results.iterator();
 	    world.playSound(null, position, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 25.0F, 1.0F);
-	    world.explode(null, position.getX(), position.getY(), position.getZ(),
-		    (float) BallistixConstants.EXPLOSIVE_EXOTHERMIC_RADIUS * 0.85F, Level.ExplosionInteraction.BLOCK);
+	    world.explode(blastEntity, world.damageSources().explosion(blastEntity, owner), null, position.getX(),
+		    position.getY(), position.getZ(), (float) BallistixConstants.EXPLOSIVE_EXOTHERMIC_RADIUS * 0.85F,
+		    true, Level.ExplosionInteraction.BLOCK);
 	}
 	int finished = pertick;
 	while (iterator.hasNext()) {

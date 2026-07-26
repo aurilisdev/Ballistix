@@ -97,6 +97,7 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
 
     @Override
     protected void addAdditionalSaveData(CompoundTag tag) {
+	super.addAdditionalSaveData(tag);
 	tag.put("BlockState", NbtUtils.writeBlockState(this.blockState));
 	tag.putInt("Time", this.time);
 	tag.putBoolean("DropItem", this.dropItem);
@@ -145,6 +146,7 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
 
     @Override
     protected void readAdditionalSaveData(CompoundTag tag) {
+	super.readAdditionalSaveData(tag);
 	BlockState.CODEC.decode(NbtOps.INSTANCE, tag.get("BlockState")).result()
 		.ifPresent(pair -> blockState = pair.getFirst());
 	this.time = tag.getInt("Time");

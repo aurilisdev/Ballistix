@@ -114,12 +114,14 @@ public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compound) {
+	super.addAdditionalSaveData(compound);
 	compound.putInt("Fuse", fuse);
 	ResourceLocation.CODEC.encodeStart(NbtOps.INSTANCE, blastId).ifSuccess(tag -> compound.put("type", tag));
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
+	super.readAdditionalSaveData(compound);
 	fuse = compound.getInt("Fuse");
 	ResourceLocation.CODEC.decode(NbtOps.INSTANCE, compound.get("type"))
 		.ifSuccess(pair -> blastId = pair.getFirst());

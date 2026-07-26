@@ -14,7 +14,6 @@ import ballistix.registers.BallistixTiles;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -146,54 +145,31 @@ public class TileTurretCIWS extends TileTurretAntimissileProjectile implements I
     @Override
     public ITarget getTarget(long ticks) {
 
-        targetingEntity.setValue(false);
+	targetingEntity.setValue(false);
 
-        ITarget target = super.getTarget(ticks);
+	ITarget target = super.getTarget(ticks);
 
-        TargetingMode mode = TargetingMode.values()[entityTargetingMode.getValue()];
+	TargetingMode mode = TargetingMode.values()[entityTargetingMode.getValue()];
 
-        if(target != null || mode == TargetingMode.NONE) {
-            livingTarget = null;
-            return target;
-        }
+	if (target != null || mode == TargetingMode.NONE) {
+	    livingTarget = null;
+	    return target;
+	}
 
-        if(livingTarget != null && (livingTarget.isRemoved() || livingTarget.isDeadOrDying())) {
-            livingTarget = null;
-        }
+	if (!isLivingTargetValid(livingTarget, mode)) {
+	    livingTarget = null;
+	}
 
-        if(ticks % 5 == 0) {
+	if (ticks % 20 == 0) {
+	    livingTarget = findLivingTarget(mode);
+	}
 
-            LivingEntity selected = null;
-            double lastMag = 0;
+	if (livingTarget != null) {
+	    targetingEntity.setValue(true);
+	    return new ITarget.TargetLivingEntity(livingTarget);
+	}
 
-            Class<? extends LivingEntity> type = mode == TargetingMode.ONLY_PLAYERS ? Player.class : LivingEntity.class;
-
-            for(LivingEntity entity : level.getEntitiesOfClass(type, new AABB(getBlockPos()).inflate(currentRange.getValue() / 4.0))) {
-                if(raycastToBlockPos(level, getProjectileLaunchPosition(), entity.position().add(0, entity.getEyeHeight(), 0)).isEmpty() && !(entity instanceof Player player && (player.isCreative() || whitelistedPlayers.getValue().contains(player.getName().getString()))) && !entity.isDeadOrDying() && !entity.isRemoved()) {
-                    double deltaX = entity.getX() - getBlockPos().getX();
-                    double deltaY = entity.getY() - getBlockPos().getY();
-                    double deltaZ = entity.getZ() - getBlockPos().getZ();
-
-                    double mag = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
-
-                    if(selected == null) {
-                        selected = entity;
-                        lastMag = mag;
-                    } else if(mag < lastMag){
-                        selected = entity;
-                    }
-                }
-            }
-
-            livingTarget = selected;
-        }
-
-        if(livingTarget != null) {
-            targetingEntity.setValue(true);
-            return new ITarget.TargetLivingEntity(livingTarget);
-        }
-
-        return null;
+	return null;
     }
 
     @Override

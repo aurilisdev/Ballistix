@@ -1,5 +1,7 @@
 package ballistix.common.blast.tier3;
 
+import javax.annotation.Nullable;
+
 import ballistix.api.blast.AntigravedChunk;
 import ballistix.api.blast.IBlast;
 import ballistix.common.blast.util.Blast;
@@ -9,13 +11,14 @@ import ballistix.registers.BallistixCapabilities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 
 public class BlastAntigravity extends Blast {
-    public BlastAntigravity(Level world, BlockPos position) {
-        super(world, position);
-    }
+    public BlastAntigravity(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
+ 	super(world, position, owner, blastEntity);
+     }
 
     @Override
     public IBlast getBlastType() {

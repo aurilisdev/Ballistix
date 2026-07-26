@@ -2,7 +2,10 @@ package ballistix.common.block;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import ballistix.api.blast.IBlast;
+import ballistix.api.entity.ITraceableEntity;
 import ballistix.common.entity.EntityExplosive;
 import ballistix.prefab.utils.BallistixTextUtils;
 import net.minecraft.ChatFormatting;
@@ -35,107 +38,130 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import voltaic.common.block.states.VoltaicBlockStates;
 
 public class BlockExplosive extends Block {
-	
-	public final IBlast explosive;
 
-	public BlockExplosive(IBlast explosive) {
-		super(BlockBehaviour.Properties.copy(Blocks.TNT).instabreak().sound(SoundType.GRASS).noOcclusion().isRedstoneConductor((a, b, c) -> false));
-		this.explosive = explosive;
+    public final IBlast explosive;
+
+    public BlockExplosive(IBlast explosive) {
+	super(BlockBehaviour.Properties.copy(Blocks.TNT).instabreak().sound(SoundType.GRASS).noOcclusion()
+		.isRedstoneConductor((a, b, c) -> false));
+	this.explosive = explosive;
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+	if (state.hasProperty(VoltaicBlockStates.FACING)) {
+	    return explosive.getShape().getShape(state.getValue(VoltaicBlockStates.FACING));
+	}
+	return explosive.getShape().getShape(null);
+    }
+
+    @Override
+    public void onCaughtFire(BlockState state, Level world, BlockPos pos, Direction face, LivingEntity igniter) {
+	explode(world, pos, explosive, igniter);
+    }
+
+    @Override
+    public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
+	if (!oldState.is(state.getBlock()) && worldIn.hasNeighborSignal(pos)) {
+	    onCaughtFire(state, worldIn, pos, null, null);
+	    worldIn.removeBlock(pos, false);
+	}
+    }
+
+    @Override
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity ent) {
+	super.entityInside(state, level, pos, ent);
+	explosive.onEntityInside(state, level, pos, ent);
+    }
+
+    @Override
+    public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos,
+	    boolean isMoving) {
+	if (worldIn.hasNeighborSignal(pos)) {
+	    onCaughtFire(state, worldIn, pos, null, null);
+	    worldIn.removeBlock(pos, false);
 	}
 
-	@Override
-	public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-		if (state.hasProperty(VoltaicBlockStates.FACING)) {
-			return explosive.getShape().getShape(state.getValue(VoltaicBlockStates.FACING));
-		}
-		return explosive.getShape().getShape(null);
-	}
+    }
 
-	@Override
-	public void onCaughtFire(BlockState state, Level world, BlockPos pos, Direction face, LivingEntity igniter) {
-		explode(world, pos, explosive);
-	}
+    @Override
+    public void wasExploded(Level worldIn, BlockPos pos, Explosion explosionIn) {
+	if (!worldIn.isClientSide) {
 
-	@Override
-	public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
-		if (!oldState.is(state.getBlock()) && worldIn.hasNeighborSignal(pos)) {
-			onCaughtFire(state, worldIn, pos, null, null);
-			worldIn.removeBlock(pos, false);
-		}
-	}
+	    Entity owner = explosionIn.getSourceMob();
 
-	@Override
-	public void entityInside(BlockState state, Level level, BlockPos pos, Entity ent) {
-		super.entityInside(state, level, pos, ent);
-		explosive.onEntityInside(state, level, pos, ent);
-	}
+	    if (owner == null) {
+		owner = explosionIn.getExploder();
+	    }
 
-	@Override
-	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
-		if (worldIn.hasNeighborSignal(pos)) {
-			onCaughtFire(state, worldIn, pos, null, null);
-			worldIn.removeBlock(pos, false);
-		}
+	    if (owner instanceof Projectile projectile) {
+		owner = projectile.getOwner();
+	    }
+	    
+	    if (owner instanceof ITraceableEntity traceable) {
+		owner = traceable.getOwner();
+	    }
 
+	    explode(worldIn, pos, explosive, owner);
 	}
+    }
 
-	@Override
-	public void wasExploded(Level worldIn, BlockPos pos, Explosion explosionIn) {
-		if (!worldIn.isClientSide) {
-			explode(worldIn, pos, explosive);
-		}
+    public static void explode(Level worldIn, BlockPos pos, IBlast explosive, @Nullable Entity owner) {
+	if (!worldIn.isClientSide) {
+	    EntityExplosive explosiveEntity = new EntityExplosive(worldIn, pos.getX() + 0.5D, pos.getY(),
+		    pos.getZ() + 0.5D, owner);
+	    explosiveEntity.setBlastType(explosive);
+	    worldIn.addFreshEntity(explosiveEntity);
+	    worldIn.playSound((Player) null, explosiveEntity.getX(), explosiveEntity.getY(), explosiveEntity.getZ(),
+		    SoundEvents.TNT_PRIMED, SoundSource.BLOCKS, 1.0F, 1.0F);
 	}
+    }
 
-	public static void explode(Level worldIn, BlockPos pos, IBlast explosive) {
-		if (!worldIn.isClientSide) {
-			EntityExplosive explosiveEntity = new EntityExplosive(worldIn, pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D);
-			explosiveEntity.setBlastType(explosive);
-			worldIn.addFreshEntity(explosiveEntity);
-			worldIn.playSound((Player) null, explosiveEntity.getX(), explosiveEntity.getY(), explosiveEntity.getZ(), SoundEvents.TNT_PRIMED, SoundSource.BLOCKS, 1.0F, 1.0F);
-		}
+    @Override
+    public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn,
+	    BlockHitResult hit) {
+	ItemStack itemstack = player.getItemInHand(handIn);
+	Item item = itemstack.getItem();
+	if (item != Items.FLINT_AND_STEEL && item != Items.FIRE_CHARGE) {
+	    return super.use(state, worldIn, pos, player, handIn, hit);
 	}
+	onCaughtFire(state, worldIn, pos, hit.getDirection(), player);
+	worldIn.setBlock(pos, Blocks.AIR.defaultBlockState(), 11);
+	if (!player.isCreative()) {
+	    if (item == Items.FLINT_AND_STEEL) {
+		itemstack.hurtAndBreak(1, player, player1 -> player1.broadcastBreakEvent(handIn));
+	    } else {
+		itemstack.shrink(1);
+	    }
+	}
+	return InteractionResult.sidedSuccess(worldIn.isClientSide);
+    }
 
-	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
-		ItemStack itemstack = player.getItemInHand(handIn);
-		Item item = itemstack.getItem();
-		if (item != Items.FLINT_AND_STEEL && item != Items.FIRE_CHARGE) {
-			return super.use(state, worldIn, pos, player, handIn, hit);
-		}
-		onCaughtFire(state, worldIn, pos, hit.getDirection(), player);
-		worldIn.setBlock(pos, Blocks.AIR.defaultBlockState(), 11);
-		if (!player.isCreative()) {
-			if (item == Items.FLINT_AND_STEEL) {
-				itemstack.hurtAndBreak(1, player, player1 -> player1.broadcastBreakEvent(handIn));
-			} else {
-				itemstack.shrink(1);
-			}
-		}
-		return InteractionResult.sidedSuccess(worldIn.isClientSide);
+    @Override
+    public void onProjectileHit(Level worldIn, BlockState state, BlockHitResult hit, Projectile projectile) {
+	if (!worldIn.isClientSide) {
+	    Entity entity = projectile.getOwner();
+	    if (projectile.isOnFire()) {
+		BlockPos blockpos = hit.getBlockPos();
+		onCaughtFire(state, worldIn, blockpos, null, entity instanceof LivingEntity l ? l : null);
+		worldIn.removeBlock(blockpos, false);
+	    }
 	}
+    }
 
-	@Override
-	public void onProjectileHit(Level worldIn, BlockState state, BlockHitResult hit, Projectile projectile) {
-		if (!worldIn.isClientSide) {
-			Entity entity = projectile.getOwner();
-			if (projectile.isOnFire()) {
-				BlockPos blockpos = hit.getBlockPos();
-				onCaughtFire(state, worldIn, blockpos, null, entity instanceof LivingEntity l ? l : null);
-				worldIn.removeBlock(blockpos, false);
-			}
-		}
-	}
+    @Override
+    public boolean dropFromExplosion(Explosion explosionIn) {
+	return false;
+    }
 
-	@Override
-	public boolean dropFromExplosion(Explosion explosionIn) {
-		return false;
+    @Override
+    public void appendHoverText(ItemStack stack, BlockGetter context, List<Component> tooltipComponents,
+	    TooltipFlag tooltipFlag) {
+	super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+	if (explosive.tier() >= 0) {
+	    tooltipComponents.add(BallistixTextUtils
+		    .tooltip("explosive.tier", Component.literal(explosive.tier() + "").withStyle(ChatFormatting.GRAY))
+		    .withStyle(ChatFormatting.DARK_GRAY));
 	}
-	
-	@Override
-    public void appendHoverText(ItemStack stack, BlockGetter context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-        if(explosive.tier() >= 0) {
-            tooltipComponents.add(BallistixTextUtils.tooltip("explosive.tier", Component.literal(explosive.tier() + "").withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY));
-        }    
     }
 }

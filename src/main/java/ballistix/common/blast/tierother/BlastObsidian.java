@@ -1,10 +1,15 @@
 package ballistix.common.blast.tierother;
 
+import javax.annotation.Nullable;
+
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.BallistixConstants;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
@@ -12,20 +17,22 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class BlastObsidian extends Blast implements IHasCustomRender {
 
-    public BlastObsidian(Level world, BlockPos position) {
-        super(world, position);
+    public BlastObsidian(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
+	super(world, position, owner, blastEntity);
     }
 
     @Override
     public boolean doExplode(int callCount) {
-        super.doExplode(callCount);
-        hasStarted = true;
-        if (!world.isClientSide) {
-            world.explode(null, position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, (float) BallistixConstants.EXPLOSIVE_OBSIDIAN_SIZE, BlockInteraction.BREAK);
-        } else {
-            produceParticles();
-        }
-        return true;
+	super.doExplode(callCount);
+	hasStarted = true;
+	if (!world.isClientSide) {
+	    world.explode(blastEntity, DamageSource.explosion(owner instanceof LivingEntity ent ? ent : null), null,
+		    position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5,
+		    (float) BallistixConstants.EXPLOSIVE_OBSIDIAN_SIZE, true, BlockInteraction.BREAK);
+	} else {
+	    produceParticles();
+	}
+	return true;
     }
 
     @Override
@@ -35,7 +42,7 @@ public class BlastObsidian extends Blast implements IHasCustomRender {
 
     @Override
     public SubtypeBlast getBlastType() {
-        return SubtypeBlast.obsidian;
+	return SubtypeBlast.obsidian;
     }
 
 }

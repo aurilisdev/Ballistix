@@ -17,26 +17,34 @@ import voltaic.common.item.ItemVoltaic;
 
 public class ItemMissile extends ItemVoltaic {
 
-	public final SubtypeMissile missile;
+    public final SubtypeMissile missile;
 
-	public ItemMissile(SubtypeMissile missile) {
-		super(new Item.Properties(), () -> BallistixCreativeTabs.MAIN);
-		this.missile = missile;
-	}
-	
-	@Override
-	public void appendHoverText(ItemStack pStack, Level pLevel, List<Component> tooltipComponents, TooltipFlag pIsAdvanced) {
-		super.appendHoverText(pStack, pLevel, tooltipComponents, pIsAdvanced);
-		if(missile != SubtypeMissile.clustershard) {
-			tooltipComponents.add(BallistixTextUtils.tooltip("missile.maxbombtier", Component.literal("" + missile.tier()).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY));
-		}
-	}
+    public ItemMissile(SubtypeMissile missile) {
+	super(new Item.Properties(), () -> BallistixCreativeTabs.MAIN);
+	this.missile = missile;
+    }
 
-	@Override
-	public void fillItemCategory(CreativeModeTab tab, NonNullList<ItemStack> items) {
-		if(missile != SubtypeMissile.clustershard) {
-			super.fillItemCategory(tab, items);
-		}
+    @Override
+    public void appendHoverText(ItemStack pStack, Level pLevel, List<Component> tooltipComponents,
+	    TooltipFlag pIsAdvanced) {
+	super.appendHoverText(pStack, pLevel, tooltipComponents, pIsAdvanced);
+	if (missile != SubtypeMissile.clustershard) {
+	    tooltipComponents.add(BallistixTextUtils
+		    .tooltip("missile.maxbombtier",
+			    Component.literal("" + missile.tier()).withStyle(ChatFormatting.GRAY))
+		    .withStyle(ChatFormatting.DARK_GRAY));
+	    tooltipComponents.add(BallistixTextUtils
+		    .tooltip("missile.range", Component.literal("" + missile.range()).withStyle(ChatFormatting.GRAY))
+		    .withStyle(ChatFormatting.DARK_GRAY));
+
 	}
-	
+    }
+
+    @Override
+    public void fillItemCategory(CreativeModeTab tab, NonNullList<ItemStack> items) {
+	if (missile != SubtypeMissile.clustershard) {
+	    super.fillItemCategory(tab, items);
+	}
+    }
+
 }

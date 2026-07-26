@@ -53,7 +53,7 @@ public class ItemGrenade extends ItemVoltaic {
 
 		float throwEnergy = (float) (getUseDuration(itemStack) - timeLeft) / (float) getUseDuration(itemStack) + 0.7f;
 
-		EntityGrenade grenade = new EntityGrenade(world);
+		EntityGrenade grenade = new EntityGrenade(world, entityLiving);
 		grenade.moveTo(entityLiving.getX(), entityLiving.getY() + entityLiving.getEyeHeight() * 0.8, entityLiving.getZ(), entityLiving.getYRot(), entityLiving.getXRot());
 		grenade.setExplosiveType(this.grenade);
 		grenade.shootFromRotation(entityLiving, entityLiving.getXRot() - 20, entityLiving.getYRot(), 0.0F, throwEnergy, 1.0F);

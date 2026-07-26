@@ -67,7 +67,11 @@ public class ScreenFireControlRadar extends GenericScreen<ContainerFireControlRa
             if (tile == null) {
                 return;
             }
-            Component radar = tile.trackingPos.getValue().equals(TileFireControlRadar.OUT_OF_REACH) ? BallistixTextUtils.gui("turret.radarnone").withStyle(ChatFormatting.GREEN) : Component.literal(new BlockPos((int)tile.trackingPos.getValue().x,(int)tile.trackingPos.getValue().y,(int)tile.trackingPos.getValue().z).toString()).withStyle(ChatFormatting.DARK_GRAY);
+	    Component radar = tile.trackingPos.getValue().equals(TileFireControlRadar.OUT_OF_REACH)
+		    ? BallistixTextUtils.gui("turret.radarnone").withStyle(ChatFormatting.GREEN)
+		    : Component.literal(new BlockPos((int) tile.trackingPos.getValue().x,
+			    (int) tile.trackingPos.getValue().y, (int) tile.trackingPos.getValue().z).toString())
+			    .withStyle(ChatFormatting.RED);
 
             int x = (int) (getGuiWidth() + 10);
             int y = (int) (getGuiHeight() + 20);

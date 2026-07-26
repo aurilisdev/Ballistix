@@ -19,7 +19,7 @@ public class TileLauncherPlatformT2 extends TileLauncherPlatformT1 {
 
 	@Override
 	public int getRange() {
-		return BallistixConstants.LAUNCHER_PLATFORM_RANGE_T2;
+		return limitRangeBasedOnMissile(BallistixConstants.LAUNCHER_PLATFORM_RANGE_T2);
 	}
 
 	@Override

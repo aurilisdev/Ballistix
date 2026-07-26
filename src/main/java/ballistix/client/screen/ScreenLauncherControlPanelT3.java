@@ -206,14 +206,26 @@ public class ScreenLauncherControlPanelT3 extends GenericScreen<ContainerLaunche
 	@Override
 	public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
 		super.render(poseStack, mouseX, mouseY, partialTicks);
-		if (needsUpdate) {
-			needsUpdate = false;
-			TileLauncherControlPanelT3 silo = menu.getSafeHost();
-			if (silo != null) {
+		TileLauncherControlPanelT3 silo = menu.getSafeHost();
+		if (silo != null) {
+			if (needsUpdate) {
+				needsUpdate = false;
 				xCoordField.setValue("" + silo.target.getValue().getX());
 				yCoordField.setValue("" + silo.target.getValue().getY());
 				zCoordField.setValue("" + silo.target.getValue().getZ());
 				frequencyField.setValue("" + silo.frequency.getValue());
+			}
+
+			Integer x = ScreenLauncherControlPanelT1.parseIntOrNull(xCoordField.getValue());
+			Integer y = ScreenLauncherControlPanelT1.parseIntOrNull(yCoordField.getValue());
+			Integer z = ScreenLauncherControlPanelT1.parseIntOrNull(zCoordField.getValue());
+			Integer frequency = ScreenLauncherControlPanelT1.parseIntOrNull(frequencyField.getValue());
+
+			BlockPos target = silo.target.getValue();
+
+			if (target != null && x != null && y != null && z != null && frequency != null && (x != target.getX()
+					|| y != target.getY() || z != target.getZ() || frequency != silo.frequency.getValue())) {
+				needsUpdate = true;
 			}
 		}
 	}
@@ -227,7 +239,7 @@ public class ScreenLauncherControlPanelT3 extends GenericScreen<ContainerLaunche
 		}
 
 		ComponentElectrodynamic el = silo.getComponent(IComponentType.Electrodynamic);
-		list.add(BallistixTextUtils.tooltip("missilesilo.charge", ChatFormatter.getChatDisplayShort(el.getJoulesStored(), DisplayUnits.JOULES).withStyle(ChatFormatting.GRAY), ChatFormatter.getChatDisplayShort(BallistixConstants.MISSILESILO_USAGE, DisplayUnits.JOULES).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+		list.add(BallistixTextUtils.tooltip("missilesilo.charge", ChatFormatter.getChatDisplayShort(el.getJoulesStored(), DisplayUnits.JOULES).withStyle(ChatFormatting.GRAY), ChatFormatter.getChatDisplayShort(BallistixConstants.MISSILESILO_USAGE * 20 * 3, DisplayUnits.JOULES).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
 		list.add(VoltaicTextUtils.gui("machine.voltage", ChatFormatter.getChatDisplayShort(el.getVoltage(), DisplayUnits.VOLTAGE).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
 
 		return list;

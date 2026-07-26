@@ -80,7 +80,7 @@ public class ParticleUtilities {
 				int rz = (int) (z + r * dirZ);
 				int ry = world.getHeight(Types.WORLD_SURFACE, rx, rz);
 
-				int life = (int) (15 * (1.0f - progress));
+				int life = 15;
 				if (life > 0) {
 					Minecraft.getInstance().particleEngine.createParticle(new ParticleOptionsShockwave().setParameters(1f, 1f, 1f, (float) (1.0f - progress), 1.3f, life, false, 1), rx + 1.5, ry, rz + 0.5, 0, 0, 0);
 				}

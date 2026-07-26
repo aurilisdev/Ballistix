@@ -16,7 +16,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -147,69 +146,46 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
 
     @Override
     public @Nullable ITarget getTarget(long ticks) {
-        targetingEntity.setValue(false);
+	targetingEntity.setValue(false);
 
-        ITarget target = super.getTarget(ticks);
-        
-        TargetingMode mode = TargetingMode.values()[entityTargetingMode.getValue()];
+	ITarget target = super.getTarget(ticks);
 
-        if (target != null && raycastToBlockPos(level, getProjectileLaunchPosition(), target.getTargetLocation()).isEmpty()) {
+	TargetingMode mode = TargetingMode.values()[entityTargetingMode.getValue()];
 
-            livingTarget = null;
-            targetPos.setValue(target.getTargetLocation());
-            return target;
+	if (target != null
+		&& canRaycastTo(level, getProjectileLaunchPosition(), target.getTargetLocation(), getBlockPos())) {
 
-        }
-        
-        if(mode == TargetingMode.NONE) {
-            livingTarget = null;
-            targetPos.setValue(TileFireControlRadar.OUT_OF_REACH);
-            return null;
-        }
+	    livingTarget = null;
+	    targetPos.setValue(target.getTargetLocation());
+	    return target;
 
-        if (livingTarget != null && (livingTarget.isRemoved() || livingTarget.isDeadOrDying())) {
-            livingTarget = null;
-        }
+	}
 
-        if (ticks % 5 == 0) {
+	if (mode == TargetingMode.NONE) {
+	    livingTarget = null;
+	    targetPos.setValue(TileFireControlRadar.OUT_OF_REACH);
+	    return null;
+	}
 
-            LivingEntity selected = null;
-            double lastMag = 0;
+	if (!isLivingTargetValid(livingTarget, mode)) {
+	    livingTarget = null;
+	}
 
-            Class<? extends LivingEntity> type = mode == TargetingMode.ONLY_PLAYERS ? Player.class : LivingEntity.class;
+	if (ticks % 20 == 0) {
+	    livingTarget = findLivingTarget(mode);
+	}
 
-            for (LivingEntity entity : level.getEntitiesOfClass(type, new AABB(getBlockPos()).inflate(currentRange.getValue() / 4.0))) {
-                if (raycastToBlockPos(level, getProjectileLaunchPosition(), entity.position().add(0, entity.getEyeHeight(), 0)).isEmpty() && !(entity instanceof Player player && (player.isCreative() || whitelistedPlayers.getValue().contains(player.getName().getString()))) && !entity.isDeadOrDying() && !entity.isRemoved()) {
-                    double deltaX = entity.getX() - getBlockPos().getX();
-                    double deltaY = entity.getY() - getBlockPos().getY();
-                    double deltaZ = entity.getZ() - getBlockPos().getZ();
+	if (livingTarget != null) {
+	    target = new ITarget.TargetLivingEntity(livingTarget);
+	    targetingEntity.setValue(true);
+	    targetPos.setValue(target.getTargetLocation());
+	    return target;
+	}
 
-                    double mag = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+	targetPos.setValue(TileFireControlRadar.OUT_OF_REACH);
 
-                    if (selected == null) {
-                        selected = entity;
-                        lastMag = mag;
-                    } else if (mag < lastMag) {
-                        selected = entity;
-                    }
-                }
-            }
-
-            livingTarget = selected;
-        }
-
-        if (livingTarget != null) {
-            target = new ITarget.TargetLivingEntity(livingTarget);
-            targetingEntity.setValue(true);
-            targetPos.setValue(target.getTargetLocation());
-            return target;
-        }
-
-        targetPos.setValue(TileFireControlRadar.OUT_OF_REACH);
-
-        return null;
+	return null;
     }
-
     @Override
     public boolean isValidPlacement() {
         return targetingEntity.getValue() || super.isValidPlacement();

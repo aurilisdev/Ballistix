@@ -125,16 +125,35 @@ public class ScreenLauncherControlPanelT1 extends GenericScreen<ContainerLaunche
 		xCoordField.setFocus(false);
 		setSiloTargetZ(val);
 	}
-
+	public static Integer parseIntOrNull(String value) {
+	    try {
+	        return Integer.parseInt(value.trim());
+	    } catch (NumberFormatException e) {
+	        return null;
+	    }
+	}
 	@Override
 	public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
 		super.render(poseStack, mouseX, mouseY, partialTicks);
-		if (needsUpdate) {
-			needsUpdate = false;
-			TileLauncherControlPanelT1 silo = menu.getSafeHost();
-			if (silo != null) {
+		TileLauncherControlPanelT1 silo = menu.getSafeHost();
+		if (silo != null) {
+			if (needsUpdate) {
+				needsUpdate = false;
 				xCoordField.setValue("" + silo.target.getValue().getX());
 				zCoordField.setValue("" + silo.target.getValue().getZ());
+			}
+
+			Integer x = parseIntOrNull(xCoordField.getValue());
+			Integer z = parseIntOrNull(zCoordField.getValue());
+
+			BlockPos target = silo.target.getValue();
+
+			if (target != null
+			        && x != null
+			        && z != null
+			        && (x != target.getX()
+			                || z != target.getZ())) {
+			    needsUpdate = true;
 			}
 		}
 	}
@@ -148,7 +167,7 @@ public class ScreenLauncherControlPanelT1 extends GenericScreen<ContainerLaunche
 		}
 
 		ComponentElectrodynamic el = silo.getComponent(IComponentType.Electrodynamic);
-		list.add(BallistixTextUtils.tooltip("missilesilo.charge", ChatFormatter.getChatDisplayShort(el.getJoulesStored(), DisplayUnits.JOULES).withStyle(ChatFormatting.GRAY), ChatFormatter.getChatDisplayShort(BallistixConstants.MISSILESILO_USAGE, DisplayUnits.JOULES).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+		list.add(BallistixTextUtils.tooltip("missilesilo.charge", ChatFormatter.getChatDisplayShort(el.getJoulesStored(), DisplayUnits.JOULES).withStyle(ChatFormatting.GRAY), ChatFormatter.getChatDisplayShort(BallistixConstants.MISSILESILO_USAGE * 20 * 3, DisplayUnits.JOULES).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
 		list.add(VoltaicTextUtils.gui("machine.voltage", ChatFormatter.getChatDisplayShort(el.getVoltage(), DisplayUnits.VOLTAGE).withStyle(ChatFormatting.GRAY)).withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
 
 		return list;

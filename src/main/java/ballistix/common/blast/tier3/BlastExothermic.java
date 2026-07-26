@@ -3,20 +3,23 @@ package ballistix.common.blast.tier3;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.common.blast.util.BlastLasting;
 import ballistix.common.blast.util.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.BallistixConstants;
-import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
@@ -31,179 +34,163 @@ public class BlastExothermic extends BlastLasting implements IHasCustomRender {
     private Iterator<BlockPos> iterator;
     private int pertick = -1;
 
-    public BlastExothermic(Level world, BlockPos position) {
-        super(world, position);
+    public BlastExothermic(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
+	super(world, position, owner, blastEntity);
     }
 
     @Override
     public void doPreExplode() {
-        if (!world.isClientSide) {
-            thread = new ThreadSimpleBlast(world, position, (int) BallistixConstants.EXPLOSIVE_EXOTHERMIC_RADIUS, Integer.MAX_VALUE, null, getBlastType().id());
-            thread.start();
-            world.playSound(null, position, BallistixSounds.SOUND_ENDOTHERMICBEAM.get(), SoundSource.BLOCKS, 25, 1);
-        }
+	if (!world.isClientSide) {
+	    thread = new ThreadSimpleBlast(world, position, (int) BallistixConstants.EXPLOSIVE_EXOTHERMIC_RADIUS,
+		    Integer.MAX_VALUE, null, getBlastType().id());
+	    thread.start();
+	    world.playSound(null, position, BallistixSounds.SOUND_ENDOTHERMICBEAM.get(), SoundSource.BLOCKS, 25, 1);
+	}
     }
 
     @Override
     public boolean doExplode(int callCount) {
-        hasStarted = true;
-        super.doExplode(callCount);
-        if (thread == null) {
-            return !world.isClientSide;
-        }
-        if (world.isClientSide || !thread.isComplete || ticksSinceBlastStart < 20) {
-            return false;
-        }
-        if (pertick == -1) {
-            hasStarted = true;
-            pertick = (int) (thread.results.size() * 1.5 / BallistixConstants.EXPLOSIVE_EXOTHERMIC_DURATION + 1);
-            iterator = thread.results.iterator();
-            world.playSound(null, position, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 25.0F, 1.0F);
-            world.explode(null, position.getX(), position.getY(), position.getZ(), (float) BallistixConstants.EXPLOSIVE_EXOTHERMIC_RADIUS * 0.85F, BlockInteraction.DESTROY);
-        }
-        int finished = pertick;
-        while (iterator.hasNext()) {
-            if (finished-- < 0) {
-                break;
-            }
-            BlockPos p = new BlockPos(iterator.next()).offset(position);
-            BlockState state = world.getBlockState(p);
+	hasStarted = true;
+	super.doExplode(callCount);
+	if (thread == null) {
+	    return !world.isClientSide;
+	}
+	if (world.isClientSide || !thread.isComplete || ticksSinceBlastStart < 20) {
+	    return false;
+	}
+	if (pertick == -1) {
+	    hasStarted = true;
+	    pertick = (int) (thread.results.size() * 1.5 / BallistixConstants.EXPLOSIVE_EXOTHERMIC_DURATION + 1);
+	    iterator = thread.results.iterator();
+	    world.playSound(null, position, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 25.0F, 1.0F);
+	    world.explode(blastEntity, DamageSource.explosion(owner instanceof LivingEntity ent ? ent : null), null,
+		    position.getX(), position.getY(), position.getZ(),
+		    (float) BallistixConstants.EXPLOSIVE_EXOTHERMIC_RADIUS * 0.85F, true, BlockInteraction.DESTROY);
+	}
+	int finished = pertick;
+	while (iterator.hasNext()) {
+	    if (finished-- < 0) {
+		break;
+	    }
+	    BlockPos p = new BlockPos(iterator.next()).offset(position);
+	    BlockState state = world.getBlockState(p);
 
-            if(state.isAir() || !(state.getBlock() instanceof LiquidBlock) && (state.getDestroySpeed(world, p) < 0 || state.getDestroySpeed(world, p) > BallistixConstants.EXPLOSIVE_EXOTHERMIC_MAXHARDNESS)) {
-                continue;
-            }
+	    if (state.isAir() || !(state.getBlock() instanceof LiquidBlock) && (state.getDestroySpeed(world, p) < 0
+		    || state.getDestroySpeed(world, p) > BallistixConstants.EXPLOSIVE_EXOTHERMIC_MAXHARDNESS)) {
+		continue;
+	    }
 
-            boolean shouldRepulse = true;
+	    if (!canBreakBlockState(world, state, p, owner)) {
+		continue;
+	    }
 
-            switch (griefPreventionMethod) {
-                case NONE:
-                    break;
-                case GRIEF_DEFENDER:
-                    shouldRepulse = GriefDefenderHandler.shouldHarmBlock(p);
-                    break;
-                case SABER_FACTIONS:
-                    break;
-            }
+	    if (state.getBlock() instanceof LiquidBlock) {
+		world.setBlockAndUpdate(p, Blocks.AIR.defaultBlockState());
+		continue;
+	    }
 
-            if(!shouldRepulse) {
-                continue;
-            }
+	    double chance = world.random.nextDouble();
 
-            if(state.getBlock() instanceof LiquidBlock) {
-                world.setBlockAndUpdate(p, Blocks.AIR.defaultBlockState());
-                continue;
-            }
+	    if (chance <= BallistixConstants.EXPLOSIVE_EXOTHERMIC_CHANCE_FOR_LAVA) {
 
-            double chance = world.random.nextDouble();
+		world.setBlockAndUpdate(p, Blocks.LAVA.defaultBlockState());
 
-            if(chance <= BallistixConstants.EXPLOSIVE_EXOTHERMIC_CHANCE_FOR_LAVA) {
+	    } else if (chance <= BallistixConstants.EXPLOSIVE_EXOTHERMIC_CHANCE_TO_BURN) {
 
-                world.setBlockAndUpdate(p, Blocks.LAVA.defaultBlockState());
+		int selection = world.random.nextIntBetweenInclusive(0, 5);
 
-            } else if (chance <= BallistixConstants.EXPLOSIVE_EXOTHERMIC_CHANCE_TO_BURN) {
+		BlockState newState = null;
 
-                int selection = world.random.nextIntBetweenInclusive(0, 5);
+		switch (selection) {
+		case 1:
+		    newState = Blocks.NETHERRACK.defaultBlockState();
+		    break;
+		case 2:
+		    newState = Blocks.NETHER_BRICKS.defaultBlockState();
+		    break;
+		case 3:
+		    newState = Blocks.SOUL_SAND.defaultBlockState();
+		    break;
+		case 4:
+		    newState = Blocks.SOUL_SOIL.defaultBlockState();
+		    break;
+		case 5:
+		    newState = Blocks.OBSIDIAN.defaultBlockState();
+		    break;
+		}
 
-                BlockState newState = null;
+		if (newState == null) {
+		    continue;
+		}
 
-                switch(selection) {
-                    case 1:
-                        newState = Blocks.NETHERRACK.defaultBlockState();
-                        break;
-                    case 2 :
-                        newState = Blocks.NETHER_BRICKS.defaultBlockState();
-                        break;
-                    case 3:
-                        newState = Blocks.SOUL_SAND.defaultBlockState();
-                        break;
-                    case 4:
-                        newState = Blocks.SOUL_SOIL.defaultBlockState();
-                        break;
-                    case 5:
-                        newState = Blocks.OBSIDIAN.defaultBlockState();
-                        break;
-                }
+		world.setBlockAndUpdate(p, newState);
 
-                if(newState == null) {
-                    continue;
-                }
+	    } else {
+		continue;
+	    }
+	}
 
-                world.setBlockAndUpdate(p, newState);
+	if (!iterator.hasNext()) {
+	    float x = position.getX();
+	    float y = position.getY();
+	    float z = position.getZ();
 
-            } else {
-                continue;
-            }
-        }
+	    float size = (float) BallistixConstants.EXPLOSIVE_SONIC_RADIUS;
+	    float doubleSize = size * 2.0F;
 
-        if(!iterator.hasNext()) {
-            float x = position.getX();
-            float y = position.getY();
-            float z = position.getZ();
+	    int x0 = Mth.floor(x - (double) doubleSize - 1.0D);
+	    int x1 = Mth.floor(x + (double) doubleSize + 1.0D);
+	    int y0 = Mth.floor(y - (double) doubleSize - 1.0D);
+	    int y1 = Mth.floor(y + (double) doubleSize + 1.0D);
+	    int z0 = Mth.floor(z - (double) doubleSize - 1.0D);
+	    int z1 = Mth.floor(z + (double) doubleSize + 1.0D);
 
-            float size = (float) BallistixConstants.EXPLOSIVE_SONIC_RADIUS;
-            float doubleSize = size * 2.0F;
+	    List<LivingEntity> entities = world.getEntitiesOfClass(LivingEntity.class,
+		    new AABB(x0, y0, z0, x1, y1, z1));
 
-            int x0 = Mth.floor(x - (double) doubleSize - 1.0D);
-            int x1 = Mth.floor(x + (double) doubleSize + 1.0D);
-            int y0 = Mth.floor(y - (double) doubleSize - 1.0D);
-            int y1 = Mth.floor(y + (double) doubleSize + 1.0D);
-            int z0 = Mth.floor(z - (double) doubleSize - 1.0D);
-            int z1 = Mth.floor(z + (double) doubleSize + 1.0D);
+	    for (LivingEntity entity : entities) {
 
-            List<LivingEntity> entities = world.getEntitiesOfClass(LivingEntity.class, new AABB(x0, y0, z0, x1, y1, z1));
+		if (!canHarmEntity(entity)) {
+		    continue;
+		}
+		double deltaX = entity.getX() - position.getX();
+		double deltaY = entity.getY() - position.getY();
+		double deltaZ = entity.getZ() - position.getZ();
 
-            for (LivingEntity entity : entities) {
+		double inverseMag = Mth.fastInvSqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
-                switch (griefPreventionMethod) {
-                    case GRIEF_DEFENDER:
-                        if (!GriefDefenderHandler.shouldEntityBeHarmed(entity)) {
-                            continue;
-                        }
-                        break;
-                    default:
-                        break;
-                }
+		double velX = deltaX * inverseMag * BallistixConstants.EXPLOSIVE_ENDOTHERMIC_VELOCITY;
+		double velY = deltaY * inverseMag * BallistixConstants.EXPLOSIVE_ENDOTHERMIC_VELOCITY;
+		double velZ = deltaZ * inverseMag * BallistixConstants.EXPLOSIVE_ENDOTHERMIC_VELOCITY;
+		entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 10000), owner);
+		entity.setRemainingFireTicks(10000);
+		// entity.addEffect(new MobEffectInstance(BallistixEffects.FROSTBITE, 10000));
+		entity.setDeltaMovement(entity.getDeltaMovement().add(velX, velY, velZ));
+	    }
 
-                double deltaX = entity.getX() - position.getX();
-                double deltaY = entity.getY() - position.getY();
-                double deltaZ = entity.getZ() - position.getZ();
+	    return true;
+	}
 
-                double inverseMag = Mth.fastInvSqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
-
-                double velX = deltaX * inverseMag * BallistixConstants.EXPLOSIVE_ENDOTHERMIC_VELOCITY;
-                double velY = deltaY * inverseMag * BallistixConstants.EXPLOSIVE_ENDOTHERMIC_VELOCITY;
-                double velZ = deltaZ * inverseMag * BallistixConstants.EXPLOSIVE_ENDOTHERMIC_VELOCITY;
-                entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 10000));
-                entity.setRemainingFireTicks(10000);
-                //entity.addEffect(new MobEffectInstance(BallistixEffects.FROSTBITE, 10000));
-                entity.setDeltaMovement(entity.getDeltaMovement().add(velX, velY, velZ));
-            }
-
-            return true;
-        }
-
-        return false;
-
+	return false;
 
     }
 
     @Override
     public boolean isInstantaneous() {
-        return false;
+	return false;
     }
 
     @Override
     public boolean isDoneCalculating() {
-        if (world.isClientSide) {
-            return shouldRenderCustomClient;
-        }
-        return thread == null || thread.isComplete;
+	if (world.isClientSide) {
+	    return shouldRenderCustomClient;
+	}
+	return thread == null || thread.isComplete;
     }
-
 
     @Override
     public boolean shouldRender() {
-        return ticksSinceBlastStart < 20;
+	return ticksSinceBlastStart < 20;
     }
 
     @Override
@@ -213,6 +200,6 @@ public class BlastExothermic extends BlastLasting implements IHasCustomRender {
 
     @Override
     public IBlast getBlastType() {
-        return SubtypeBlast.exothermic;
+	return SubtypeBlast.exothermic;
     }
 }

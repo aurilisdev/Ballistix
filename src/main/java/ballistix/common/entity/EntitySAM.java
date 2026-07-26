@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualProjectile;
 import ballistix.client.particle.ParticleOptionsMissileSmoke;
-import ballistix.common.settings.BallistixConstants;
 import ballistix.registers.BallistixEntities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.UUIDUtil;
@@ -33,8 +32,10 @@ public class EntitySAM extends Entity {
 
     private static final float RAD2DEG = (float) (180.0F / Math.PI);
 
-    private static final EntityDataAccessor<Float> SPEED = SynchedEntityData.defineId(EntitySAM.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Integer> VARIANT = SynchedEntityData.defineId(EntitySAM.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Float> SPEED = SynchedEntityData.defineId(EntitySAM.class,
+	    EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Integer> VARIANT = SynchedEntityData.defineId(EntitySAM.class,
+	    EntityDataSerializers.INT);
 
     @Nullable
     public UUID id;
@@ -42,121 +43,152 @@ public class EntitySAM extends Entity {
     public int variant = 0;
 
     public EntitySAM(EntityType<?> entityType, Level level) {
-        super(entityType, level);
+	super(entityType, level);
     }
 
     public EntitySAM(Level level) {
-        this(BallistixEntities.ENTITY_SAM.get(), level);
+	this(BallistixEntities.ENTITY_SAM.get(), level);
+    }
+
+    private static final double MIN_YAW_HORIZONTAL_RATIO_SQR = 0.0025D;
+
+    private void updateRotationFromMovement(Vec3 movement) {
+	double horizontalSqr = movement.x * movement.x + movement.z * movement.z;
+	double lengthSqr = horizontalSqr + movement.y * movement.y;
+
+	if (lengthSqr <= 1.0E-7D) {
+	    return;
+	}
+
+	double horizontal = Math.sqrt(horizontalSqr);
+
+	setXRot((float) (Math.atan2(movement.y, horizontal) * RAD2DEG));
+
+	// Near vertical, yaw is unstable and visually meaningless.
+	// Keep the previous yaw instead of letting atan2 tiny x/z noise flicker it.
+	if (horizontalSqr > lengthSqr * MIN_YAW_HORIZONTAL_RATIO_SQR) {
+	    float targetYaw = (float) (Math.atan2(movement.x, movement.z) * RAD2DEG);
+	    setYRot(unwrapYaw(targetYaw, getYRot()));
+	}
+    }
+
+    private static float unwrapYaw(float yaw, float referenceYaw) {
+	while (yaw - referenceYaw < -180.0F) {
+	    yaw += 360.0F;
+	}
+
+	while (yaw - referenceYaw >= 180.0F) {
+	    yaw -= 360.0F;
+	}
+
+	return yaw;
     }
 
     @Override
     public void tick() {
+	boolean isClient = level.isClientSide();
 
-        boolean isClient = level.isClientSide();
+	boolean isServer = !isClient;
 
-        boolean isServer = !isClient;
+	if (tickCount > 30 && getDeltaMovement().length() <= 0) {
+	    if (isServer) {
+		removeAfterChangingDimensions();
+	    }
+	    return;
+	}
 
-        if (tickCount > 30 && getDeltaMovement().length() <= 0) {
-            if (isServer) {
-                removeAfterChangingDimensions();
-            }
-            return;
-        }
+	if (isServer) {
+	    if (id == null) {
+		removeAfterChangingDimensions();
+		return;
+	    }
 
-        if (isServer) {
-            if (id == null) {
-                removeAfterChangingDimensions();
-                return;
-            }
+	    VirtualProjectile.VirtualSAM sam = MissileManager.getSAM(level.dimension(), id);
 
-            VirtualProjectile.VirtualSAM sam = MissileManager.getSAM(level.dimension(), id);
+	    if (sam == null || sam.hasExploded()) {
+		removeAfterChangingDimensions();
+		return;
+	    }
+	    setPos(sam.position);
+	    setDeltaMovement(sam.deltaMovement);
+	    speed = sam.speed;
 
-            if ((sam == null) || sam.hasExploded()) {
-                removeAfterChangingDimensions();
-                return;
-            }
+	    entityData.set(SPEED, speed);
+	    entityData.set(VARIANT, variant);
 
-            if (!blockPosition().equals(sam.blockPosition()) || !getDeltaMovement().equals(sam.deltaMovement)) {
-                setPos(sam.position);
-                speed = sam.speed;
-                setDeltaMovement(sam.deltaMovement);
-            }
+	    return;
+	}
 
+	speed = entityData.get(SPEED);
+	variant = entityData.get(VARIANT);
 
+	Vec3 movement = getDeltaMovement();
 
-        }
+	setPos(new Vec3(getX() + movement.x * speed, getY() + movement.y * speed, getZ() + movement.z * speed));
 
-        if (isServer) {
-            entityData.set(SPEED, speed);
-            entityData.set(VARIANT, variant);
-        } else {
-            speed = entityData.get(SPEED);
-            variant = entityData.get(VARIANT);
-        }
+	updateRotationFromMovement(movement);
 
-        setPos(new Vec3(getX() + getDeltaMovement().x * speed, getY() + getDeltaMovement().y * speed, getZ() + getDeltaMovement().z * speed));
+	if (speed >= 3.0F) {
+	    return;
+	}
 
-        setXRot((float) (Math.atan(getDeltaMovement().y() / Math.sqrt(getDeltaMovement().x() * getDeltaMovement().x() + getDeltaMovement().z() * getDeltaMovement().z())) * RAD2DEG));
-        setYRot((float) (Math.atan2(getDeltaMovement().x(), getDeltaMovement().z()) * RAD2DEG));
+	float x = (float) getX();
+	float y = (float) getY();
+	float z = (float) getZ();
 
-        float topSpeed = variant == 0 ? BallistixConstants.SAM_TOP_SPEED : BallistixConstants.ANTIBALLISTICMISSILE_TOP_SPEED;
+	float motionX = (float) (speed * movement.x);
+	float motionY = (float) (speed * movement.y);
+	float motionZ = (float) (speed * movement.z);
 
-        if(speed < topSpeed) {
-            speed += variant == 0 ? BallistixConstants.SAM_ACCELERATION : BallistixConstants.ANTIBALLISTICMISSILE_ACCELERATION;
-        }
-        
-        if (isServer || speed >= 3.0F) {
-            return;
-        }
+	x -= motionX;
+	y -= motionY;
+	z -= motionZ;
 
-        float x = (float) getX();
-        float y = (float) getY();
-        float z = (float) getZ();
-        float motionX = (float) (speed * getDeltaMovement().x);
-        float motionY = (float) (speed * getDeltaMovement().y);
-        float motionZ = (float) (speed * getDeltaMovement().z);
-        x -= motionX;
-        y -= motionY;
-        z -= motionZ;
-        for (int i = 0; i < (variant == 0 ? 2 : 4); i++) {
-            Minecraft.getInstance().particleEngine.createParticle(new ParticleOptionsMissileSmoke().setParameters(1, 1, 1, variant == 0 ? 0.2F : 0.5f, 50, true), x, y, z, -motionX * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()), -motionY * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()), -motionZ * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()));
-        }
-
+	for (int i = 0; i < (variant == 0 ? 2 : 4); i++) {
+	    Minecraft.getInstance().particleEngine.createParticle(
+		    new ParticleOptionsMissileSmoke().setParameters(1, 1, 1, variant == 0 ? 0.2F : 0.5F, 50, true), x,
+		    y, z, -motionX * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()),
+		    -motionY * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()),
+		    -motionZ * (0.4 + 0.2 * Voltaic.RANDOM.nextDouble()));
+	}
     }
 
     @Override
     protected void defineSynchedData() {
-        entityData.define(SPEED, 0.0F);
-        entityData.define(VARIANT, 0);
+	entityData.define(SPEED, 0.0F);
+	entityData.define(VARIANT, 0);
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
-        if (level instanceof ServerLevel server && (!server.isPositionEntityTicking(blockPosition()) || !server.hasChunkAt(blockPosition()))) {
-            setRemoved(RemovalReason.DISCARDED);
-        }
-        if (id != null) {
-            UUIDUtil.CODEC.encode(id, NbtOps.INSTANCE, new CompoundTag()).result().ifPresent(tag -> compound.put("id", tag));
-        }
-        speed = compound.getFloat("speed");
-        variant = compound.getInt("variant");
+	if (level instanceof ServerLevel server
+		&& (!server.isPositionEntityTicking(blockPosition()) || !server.hasChunkAt(blockPosition()))) {
+	    setRemoved(RemovalReason.DISCARDED);
+	}
+	if (id != null) {
+	    UUIDUtil.CODEC.encode(id, NbtOps.INSTANCE, new CompoundTag()).result()
+		    .ifPresent(tag -> compound.put("id", tag));
+	}
+	speed = compound.getFloat("speed");
+	variant = compound.getInt("variant");
     }
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compound) {
-        UUIDUtil.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("id")).result().ifPresent(pair -> id = pair.getFirst());
-        compound.putFloat("speed", speed);
-        compound.putInt("variant", variant);
+	UUIDUtil.CODEC.decode(NbtOps.INSTANCE, compound.getCompound("id")).result()
+		.ifPresent(pair -> id = pair.getFirst());
+	compound.putFloat("speed", speed);
+	compound.putInt("variant", variant);
     }
 
     @Override
     public boolean isPickable() {
-        return true;
+	return true;
     }
 
     @Override
     protected boolean canRide(Entity vehicle) {
-        return true;
+	return true;
     }
 
     @Override
@@ -166,34 +198,35 @@ public class EntitySAM extends Entity {
 
     @Override
     public InteractionResult interact(Player player, InteractionHand hand) {
-        if (player.isSecondaryUseActive()) {
-            return InteractionResult.PASS;
-        }
-        if (!this.level.isClientSide) {
-            return player.startRiding(this, true) ? InteractionResult.CONSUME : InteractionResult.PASS;
-        }
-        return InteractionResult.SUCCESS;
+	if (player.isSecondaryUseActive()) {
+	    return InteractionResult.PASS;
+	}
+	if (!this.level.isClientSide) {
+	    return player.startRiding(this, true) ? InteractionResult.CONSUME : InteractionResult.PASS;
+	}
+	return InteractionResult.SUCCESS;
     }
 
     @Override
     public void remove(RemovalReason reason) {
-        if (!level.isClientSide) {
-            if (id != null) {
-                VirtualProjectile.VirtualSAM missile = MissileManager.getSAM(level.dimension(), id);
-                if (missile != null) missile.setSpawned(false, -1);
-            }
-        }
-        super.remove(reason);
+	if (!level.isClientSide) {
+	    if (id != null) {
+		VirtualProjectile.VirtualSAM missile = MissileManager.getSAM(level.dimension(), id);
+		if (missile != null)
+		    missile.setSpawned(false, -1);
+	    }
+	}
+	super.remove(reason);
     }
 
     @Override
     public boolean isAlwaysTicking() {
-        return true;
+	return true;
     }
-    
+
     @Override
-	public Packet<?> getAddEntityPacket() {
-		return NetworkHooks.getEntitySpawningPacket(this);
-	}
+    public Packet<?> getAddEntityPacket() {
+	return NetworkHooks.getEntitySpawningPacket(this);
+    }
 
 }

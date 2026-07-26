@@ -2,12 +2,13 @@ package ballistix.common.blast.tier2;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import com.mojang.math.Vector3f;
 
 import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.BallistixConstants;
-import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import ballistix.registers.BallistixDamageTypes;
 import ballistix.registers.BallistixEffects;
 import net.minecraft.client.Minecraft;
@@ -25,97 +26,85 @@ import net.minecraft.world.phys.AABB;
 
 public class BlastContagious extends Blast {
 
-	public BlastContagious(Level world, BlockPos position) {
-		super(world, position);
+    public BlastContagious(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
+	super(world, position, owner, blastEntity);
+    }
+
+    @Override
+    public boolean isInstantaneous() {
+	return false;
+    }
+
+    @Override
+    public void doPreExplode() {
+	if (!world.isClientSide) {
+	    world.playSound(null, position, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 25, 1);
 	}
+    }
 
-	@Override
-	public boolean isInstantaneous() {
-		return false;
-	}
+    @Override
+    public boolean doExplode(int callCount) {
+	hasStarted = true;
+	int radius = (int) BallistixConstants.EXPLOSIVE_CONTAGIOUS_SIZE;
+	if (world.isClientSide && callCount % 3 == 0) {
+	    for (int x = -radius; x <= radius; x++) {
+		for (int y = -radius; y <= radius; y++) {
+		    for (int z = -radius; z <= radius; z++) {
 
-	@Override
-	public void doPreExplode() {
-		if(!world.isClientSide) {
-			world.playSound(null, position, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 25, 1);
-		}
-	}
+			double xPos = position.getX() + x + 0.5 + world.random.nextDouble() - 1.0;
+			double yPos = position.getY() + y + 0.5 + world.random.nextDouble() - 1.0;
+			double zPos = position.getZ() + z + 0.5 + world.random.nextDouble() - 1.0;
+			boolean add = canSpawnParticle(new BlockPos((int) xPos, (int) yPos, (int) zPos));
 
-	@Override
-	public boolean doExplode(int callCount) {
-		hasStarted = true;
-		int radius = (int) BallistixConstants.EXPLOSIVE_CONTAGIOUS_SIZE;
-		if (world.isClientSide && callCount % 3 == 0) {
-			for (int x = -radius; x <= radius; x++) {
-				for (int y = -radius; y <= radius; y++) {
-					for (int z = -radius; z <= radius; z++) {
-
-						double xPos = position.getX() + x + 0.5 + world.random.nextDouble() - 1.0;
-						double yPos = position.getY() + y + 0.5 + world.random.nextDouble() - 1.0;
-						double zPos = position.getZ() + z + 0.5 + world.random.nextDouble() - 1.0;
-
-
-						boolean add = switch(griefPreventionMethod) {
-							case GRIEF_DEFENDER -> GriefDefenderHandler.shouldAddParticle(new BlockPos((int) xPos, (int) yPos, (int) zPos));
-							default -> true;
-						};
-
-						if (add && x * x + y * y + z * z < radius * radius && world.random.nextDouble() < 1 / 10.0) {
-							Minecraft.getInstance().particleEngine.createParticle(new DustParticleOptions(new Vector3f(0.5f, 0.4f, 0), 5), xPos, yPos , zPos, 0.0D, 0.0D, 0.0D);
-						}
-					}
-				}
+			if (add && x * x + y * y + z * z < radius * radius && world.random.nextDouble() < 1 / 10.0) {
+			    Minecraft.getInstance().particleEngine.createParticle(
+				    new DustParticleOptions(new Vector3f(0.5f, 0.4f, 0), 5), xPos, yPos, zPos, 0.0D,
+				    0.0D, 0.0D);
 			}
+		    }
 		}
-		if (!world.isClientSide) {
+	    }
+	}
+	if (!world.isClientSide) {
 
-			float x = position.getX();
-			float y = position.getY();
-			float z = position.getZ();
+	    float x = position.getX();
+	    float y = position.getY();
+	    float z = position.getZ();
 
-			int x0 = Mth.floor(x - (double) radius - 1.0D);
-			int x1 = Mth.floor(x + (double) radius + 1.0D);
-			int y0 = Mth.floor(y - (double) radius - 1.0D);
-			int y1 = Mth.floor(y + (double) radius + 1.0D);
-			int z0 = Mth.floor(z - (double) radius - 1.0D);
-			int z1 = Mth.floor(z + (double) radius + 1.0D);
+	    int x0 = Mth.floor(x - (double) radius - 1.0D);
+	    int x1 = Mth.floor(x + (double) radius + 1.0D);
+	    int y0 = Mth.floor(y - (double) radius - 1.0D);
+	    int y1 = Mth.floor(y + (double) radius + 1.0D);
+	    int z0 = Mth.floor(z - (double) radius - 1.0D);
+	    int z1 = Mth.floor(z + (double) radius + 1.0D);
 
-			List<Entity> entities = world.getEntities(null, new AABB(x0, y0, z0, x1, y1, z1));
+	    List<Entity> entities = world.getEntities(null, new AABB(x0, y0, z0, x1, y1, z1));
+	    for (Entity entity : entities) {
 
-			for (Entity entity : entities) {
-
-				switch (griefPreventionMethod) {
-					case GRIEF_DEFENDER :
-						if(!GriefDefenderHandler.shouldEntityBeHarmed(entity)) {
-							continue;
-						}
-						break;
-					default:
-						break;
-				}
-
-				if (entity instanceof LivingEntity living) {
-					living.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 360, 2));
-					living.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 360, 2));
-					living.addEffect(new MobEffectInstance(MobEffects.HUNGER, 360, 3));
-					MobEffectInstance effect = new MobEffectInstance(BallistixEffects.VIRUS.get(), Integer.MAX_VALUE);
-					effect.setNoCounter(true);
-					living.addEffect(effect);
-					
-					if (callCount % 10 == 0) {
-
-						living.hurt(BallistixDamageTypes.CHEMICAL_GAS, 2);
-
-					}
-				}
-			}
+		if (!canHarmEntity(entity)) {
+		    continue;
 		}
-		return callCount > BallistixConstants.EXPLOSIVE_CONTAGIOUS_DURATION;
-	}
 
-	@Override
-	public SubtypeBlast getBlastType() {
-		return SubtypeBlast.contagious;
+		if (entity instanceof LivingEntity living) {
+		    living.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 360, 2), owner);
+		    living.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 360, 2), owner);
+		    living.addEffect(new MobEffectInstance(MobEffects.HUNGER, 360, 3), owner);
+		    living.addEffect(new MobEffectInstance(BallistixEffects.VIRUS.get(), -1), owner);
+
+		    if (callCount % 10 == 0) {
+
+			living.hurt(BallistixDamageTypes.CHEMICAL_GAS, 2);
+
+		    }
+		}
+	    }
 	}
+	return callCount > BallistixConstants.EXPLOSIVE_CONTAGIOUS_DURATION;
+    }
+
+    @Override
+    public SubtypeBlast getBlastType() {
+	return SubtypeBlast.contagious;
+    }
 
 }

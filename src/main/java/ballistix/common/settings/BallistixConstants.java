@@ -94,10 +94,10 @@ public class BallistixConstants {
     // TIER 3
 
     // antigravity
-    @IntValue(def = 3)
-    public static int EXPLOSIVE_ANTIGRAVITY_CHUNKRADIUS = 3;
-    @IntValue(def = 12000, comment = "Value is in ticks.")
-    public static int EXPLOSIVE_ANTIGRAVITY_CHUNKDURATION = 12000;
+    @IntValue(def = 30)
+    public static int EXPLOSIVE_ANTIGRAVITY_RADIUS = 30;
+    @IntValue(def = 2400, comment = "Value is in ticks.")
+    public static int EXPLOSIVE_ANTIGRAVITY_CHUNKDURATION = 2400;
     @DoubleValue(def = 1.1)
     public static double EXPLOSIVE_ANTIGRAVITY_GRAVITYFACTOR = 1.1;
     @IntValue(def = 300)

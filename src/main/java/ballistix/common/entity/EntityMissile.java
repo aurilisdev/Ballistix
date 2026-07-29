@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualMissile;
+import ballistix.api.missile.virtual.VirtualMissile.FlightPath;
 import ballistix.client.particle.ParticleOptionsMissileSmoke;
 import ballistix.registers.BallistixEntities;
 import net.minecraft.client.Minecraft;
@@ -145,7 +146,12 @@ public class EntityMissile extends Entity {
 	if (isExploding) {
 	    return;
 	}
+	FlightPath path = FlightPath.values()[flightPath];
 
+	if (path == FlightPath.ROCKET_LAUNCHER
+		&& getDeltaMovement().y > VirtualMissile.ROCKET_LAUNCHER_MAX_FALLING_SPEED) {
+	    setDeltaMovement(getDeltaMovement().add(0, -VirtualMissile.ROCKET_LAUNCHER_GRAVITY, 0));
+	}
 	if (getDeltaMovement().length() > 0) {
 
 	    setXRot((float) (Math.atan(getDeltaMovement().y() / Math.sqrt(
@@ -154,8 +160,6 @@ public class EntityMissile extends Entity {
 	    setYRot((float) (Math.atan2(getDeltaMovement().x(), getDeltaMovement().z()) * 180.0D / Math.PI));
 
 	}
-
-	VirtualMissile.FlightPath path = VirtualMissile.FlightPath.values()[flightPath];
 
 	if ((path == VirtualMissile.FlightPath.SILO || path == VirtualMissile.FlightPath.SILO_CLUSTER)
 		&& missileType != -1) {
@@ -321,15 +325,19 @@ public class EntityMissile extends Entity {
 
     @Override
     public void push(double x, double y, double z) {
-	super.push(x, y, z);
-
 	if (!level().isClientSide && id != null) {
 	    VirtualMissile missile = MissileManager.getMissile(level().dimension(), id);
+
+	    if (missile != null && missile.blastEntity != null) {
+		return;
+	    }
 
 	    if (missile != null && !missile.hasExploded()) {
 		missile.applyImpulse(new Vec3(x, y, z));
 	    }
 	}
+
+	super.push(x, y, z);
     }
 
     @Override

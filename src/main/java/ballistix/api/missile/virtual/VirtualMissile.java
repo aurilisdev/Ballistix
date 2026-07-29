@@ -38,6 +38,8 @@ public class VirtualMissile {
     public static final int MAX_CRUISING_ALTITUDE = 500;
     public static final int WORLD_BUILD_HEIGHT = 320;
     public static final int ARC_TURN_HEIGHT_MIN = 400;
+    public static final double ROCKET_LAUNCHER_GRAVITY = 0.035;
+    public static final double ROCKET_LAUNCHER_MAX_FALLING_SPEED = -3.92;
 
     public static final Codec<VirtualMissile> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 	    //
@@ -142,7 +144,10 @@ public class VirtualMissile {
 	    }
 	    return;
 	}
-
+	if (payloadData.getFlightPath() == FlightPath.ROCKET_LAUNCHER
+		&& getVelocity().y > ROCKET_LAUNCHER_MAX_FALLING_SPEED) {
+	    applyImpulse(new Vec3(0, -ROCKET_LAUNCHER_GRAVITY, 0));
+	}
 	BlockPos collisionPos = projectMovementForCollision(level);
 
 	if ((collisionPos != null

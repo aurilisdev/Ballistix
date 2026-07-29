@@ -27,6 +27,7 @@ import voltaic.common.item.ItemVoltaic;
 import voltaic.registers.VoltaicDataComponentTypes;
 
 public class ItemRocketLauncher extends ItemVoltaic {
+    public static final float ROCKET_LAUNCHER_SPEED = 2.5F;
 
     public ItemRocketLauncher() {
 	super(new Item.Properties().stacksTo(1), BallistixCreativeTabs.MAIN);
@@ -118,7 +119,7 @@ public class ItemRocketLauncher extends ItemVoltaic {
 		    new Vec3(entityLiving.getLookAngle().x, entityLiving.getLookAngle().y,
 			    entityLiving.getLookAngle().z),
 		    //
-		    1.333F,
+		    ROCKET_LAUNCHER_SPEED,
 		    //
 		    FlightPath.ROCKET_LAUNCHER,
 		    //

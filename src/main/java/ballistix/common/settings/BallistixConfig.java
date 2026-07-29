@@ -45,7 +45,7 @@ public class BallistixConfig {
     public ModConfigSpec.DoubleValue EXPLOSIVE_SONIC_DURATION;
 
     // Tier 3
-    public ModConfigSpec.IntValue EXPLOSIVE_ANTIGRAVITY_CHUNKRADIUS;
+    public ModConfigSpec.IntValue EXPLOSIVE_ANTIGRAVITY_RADIUS;
     public ModConfigSpec.IntValue EXPLOSIVE_ANTIGRAVITY_CHUNKDURATION;
     public ModConfigSpec.DoubleValue EXPLOSIVE_ANTIGRAVITY_GRAVITYFACTOR;
     public ModConfigSpec.IntValue EXPLOSIVE_ANTIGRAVITY_MAXHEIGHT;
@@ -215,10 +215,10 @@ public class BallistixConfig {
 
 	// Tier 3
 	builder.push("tier3");
-	EXPLOSIVE_ANTIGRAVITY_CHUNKRADIUS = builder.defineInRange("explosive_antigravity_chunkradius", 3, 0,
+	EXPLOSIVE_ANTIGRAVITY_RADIUS = builder.defineInRange("explosive_antigravity_radius", 30, 0,
 		Integer.MAX_VALUE);
 	EXPLOSIVE_ANTIGRAVITY_CHUNKDURATION = builder.comment("Value is in ticks.")
-		.defineInRange("explosive_antigravity_chunkduration_ticks", 12000, 0, Integer.MAX_VALUE);
+		.defineInRange("explosive_antigravity_chunkduration_ticks", 2400, 0, Integer.MAX_VALUE);
 	EXPLOSIVE_ANTIGRAVITY_GRAVITYFACTOR = builder.defineInRange("explosive_antigravity_gravityfactor", 1.1, 0,
 		Double.MAX_VALUE);
 	EXPLOSIVE_ANTIGRAVITY_MAXHEIGHT = builder.defineInRange("explosive_antigravity_maxheight", 300, 0,

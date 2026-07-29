@@ -58,7 +58,10 @@ public class ClientBarrierMethods {
 	if (player == null) {
 	    return;
 	}
-
+	
+	if(player.isCreative()) {
+	    return;
+	}
 	player.push(0, player.getGravity() * BallistixConfig.INSTANCE.EXPLOSIVE_ANTIGRAVITY_GRAVITYFACTOR.get(), 0);
 
     }

@@ -313,7 +313,7 @@ public class ChapterExplosives extends Chapter {
 		.setSeparateStart());
 	blankLine();
 	pageData.add(new TextWrapperObject(BallistixTextUtils.guidebook("chapter.explosives.antigravity1",
-		BallistixConfig.INSTANCE.EXPLOSIVE_ANTIGRAVITY_CHUNKRADIUS.get(),
+		BallistixConfig.INSTANCE.EXPLOSIVE_ANTIGRAVITY_RADIUS.get(),
 		BallistixConfig.INSTANCE.EXPLOSIVE_ANTIGRAVITY_CHUNKDURATION.get())).setSeparateStart());
 
 	// EMP

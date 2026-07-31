@@ -15,81 +15,97 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 
 public class RenderMissile extends EntityRenderer<EntityMissile> {
 
-	public RenderMissile(Context renderManagerIn) {
-		super(renderManagerIn);
-		shadowRadius = 0.15F;
-		shadowStrength = 0.75F;
+    public RenderMissile(Context renderManagerIn) {
+	super(renderManagerIn);
+	shadowRadius = 0.15F;
+	shadowStrength = 0.75F;
+    }
+
+    @Override
+    public void render(EntityMissile entity, float entityYaw, float partialTicks, PoseStack matrixStackIn,
+	    MultiBufferSource bufferIn, int packedLightIn) {
+
+	int type = entity.missileType;
+	Level world = entity.level;
+
+	// matrixStackIn.mulPose(new Quaternion(new Vector3f(0, 1, 0), entity.getYRot()
+	// + 90.0F, true));
+	// matrixStackIn.mulPose(new Quaternion(new Vector3f(0, 0, 1), 90 -
+	// entity.getXRot(), true));
+
+	if (type < 1) {
+	    return;
 	}
 
-	@Override
-	public void render(EntityMissile entity, float entityYaw, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn) {
+	float pitch = Mth.lerp(
+	        partialTicks,
+	        entity.xRotO,
+	        entity.getXRot()
+	);
 
-		int type = entity.missileType;
-		Level world = entity.level;
+	matrixStackIn.pushPose();
 
-		// matrixStackIn.mulPose(new Quaternion(new Vector3f(0, 1, 0), entity.getYRot() + 90.0F, true));
-		// matrixStackIn.mulPose(new Quaternion(new Vector3f(0, 0, 1), 90 - entity.getXRot(), true));
+	matrixStackIn.mulPose(
+	        Vector3f.YP.rotationDegrees(entityYaw + 90.0F)
+	);
 
+	matrixStackIn.mulPose(
+	        Vector3f.ZP.rotationDegrees(90.0F - pitch)
+	);
+	BakedModel model = null;
+	if (type == 1) {
 
-		if(type < 1) {
-			return;
-		}
+	    model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILETIER1);
+	    matrixStackIn.translate(0, 0.82, 0);
+	    matrixStackIn.scale(1f, 0.75f, 1f);
 
-		matrixStackIn.pushPose();
+	} else if (type == 2) {
 
-		matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(entity.getYRot() + 90.0F));
-        matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(90 - entity.getXRot()));
+	    model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILETIER2);
+	    matrixStackIn.translate(0, 1.05f, 0);
+	    matrixStackIn.scale(1f, 1f, 1f);
 
-        BakedModel model = null;
-		if (type == 1) {
+	} else if (type == 3) {
 
-			model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILETIER1);
-			matrixStackIn.translate(0, 0.82, 0);
-			matrixStackIn.scale(1f, 0.75f, 1f);
+	    model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILETIER3);
+	    matrixStackIn.translate(0, 1.05f, 0);
+	    matrixStackIn.scale(1f, 1.25f, 1f);
 
-		} else if (type == 2) {
+	} else if (type == 4) {
 
-			model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILETIER2);
-			matrixStackIn.translate(0, 1.05f, 0);
-			matrixStackIn.scale(1f, 1f, 1f);
+	    model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILECLUSTER);
+	    matrixStackIn.translate(0, 1.05f, 0);
+	    matrixStackIn.scale(1f, 1.25f, 1f);
 
-		} else if (type == 3) {
-
-			model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILETIER3);
-			matrixStackIn.translate(0, 1.05f, 0);
-			matrixStackIn.scale(1f, 1.25f, 1f);
-
-		} else if (type == 4) {
-
-			model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILECLUSTER);
-			matrixStackIn.translate(0, 1.05f, 0);
-			matrixStackIn.scale(1f, 1.25f, 1f);
-
-		} else if (type == 5) {
-			model = Minecraft.getInstance().getModelManager().getModel(BallistixClientRegister.MODEL_MISSILECLUSTERSHARD);
-			matrixStackIn.translate(0, 0.82, 0);
-			matrixStackIn.scale(1f, 0.75f, 1f);
-		}
-
-		if(model != null) {
-			Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateWithoutAO(world, model, Blocks.AIR.defaultBlockState(), entity.blockPosition(), matrixStackIn, bufferIn.getBuffer(RenderType.solid()), false, world.random, new Random().nextLong(), 0);
-		}
-		matrixStackIn.popPose();
+	} else if (type == 5) {
+	    model = Minecraft.getInstance().getModelManager()
+		    .getModel(BallistixClientRegister.MODEL_MISSILECLUSTERSHARD);
+	    matrixStackIn.translate(0, 0.82, 0);
+	    matrixStackIn.scale(1f, 0.75f, 1f);
 	}
 
-	@Override
-	public boolean shouldRender(EntityMissile livingEntityIn, Frustum camera, double camX, double camY, double camZ) {
-		return true;
+	if (model != null) {
+	    Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateWithoutAO(world, model,
+		    Blocks.AIR.defaultBlockState(), entity.blockPosition(), matrixStackIn,
+		    bufferIn.getBuffer(RenderType.solid()), false, world.random, new Random().nextLong(), 0);
 	}
+	matrixStackIn.popPose();
+    }
 
-	@Override
-	public ResourceLocation getTextureLocation(EntityMissile entity) {
-		return InventoryMenu.BLOCK_ATLAS;
-	}
+    @Override
+    public boolean shouldRender(EntityMissile livingEntityIn, Frustum camera, double camX, double camY, double camZ) {
+	return true;
+    }
+
+    @Override
+    public ResourceLocation getTextureLocation(EntityMissile entity) {
+	return InventoryMenu.BLOCK_ATLAS;
+    }
 }

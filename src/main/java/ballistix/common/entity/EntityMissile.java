@@ -84,6 +84,7 @@ public class EntityMissile extends Entity {
 
     @Override
     public void tick() {
+	super.tick();
 
 	boolean isClientSide = level.isClientSide;
 	boolean isServerSide = !isClientSide;

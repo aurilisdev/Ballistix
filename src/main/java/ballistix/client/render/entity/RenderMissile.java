@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -45,8 +46,11 @@ public class RenderMissile extends EntityRenderer<EntityMissile> {
 
 	matrixStackIn.pushPose();
 
-	matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(entity.getYRot() + 90.0F, MathUtils.YP));
-	matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(90 - entity.getXRot(), MathUtils.ZP));
+	float pitch = Mth.lerp(partialTicks, entity.xRotO, entity.getXRot());
+
+	matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(entityYaw + 90.0F, MathUtils.YP));
+
+	matrixStackIn.mulPose(MathUtils.rotVectorQuaternionDeg(90.0F - pitch, MathUtils.ZP));
 
 	BakedModel model = null;
 	if (type == 1) {

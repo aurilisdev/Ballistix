@@ -82,6 +82,7 @@ public class EntityMissile extends Entity {
 
     @Override
     public void tick() {
+	super.tick();
 	Level level = level();
 	boolean isClientSide = level.isClientSide;
 	boolean isServerSide = !isClientSide;
@@ -104,6 +105,7 @@ public class EntityMissile extends Entity {
 
 	    setPos(missile.position);
 	    setDeltaMovement(missile.getVelocity());
+
 	    speed = missile.speed;
 
 	    missileType = missile.payloadData.missileType;
@@ -146,7 +148,8 @@ public class EntityMissile extends Entity {
 	}
 	FlightPath path = FlightPath.values()[flightPath];
 
-	if (path == FlightPath.ROCKET_LAUNCHER && getDeltaMovement().y > VirtualMissile.ROCKET_LAUNCHER_MAX_FALLING_SPEED) {
+	if (path == FlightPath.ROCKET_LAUNCHER
+		&& getDeltaMovement().y > VirtualMissile.ROCKET_LAUNCHER_MAX_FALLING_SPEED) {
 	    setDeltaMovement(getDeltaMovement().add(0, -VirtualMissile.ROCKET_LAUNCHER_GRAVITY, 0));
 	}
 	if (getDeltaMovement().length() > 0) {

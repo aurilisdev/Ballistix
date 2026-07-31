@@ -87,6 +87,7 @@ public class EntitySAM extends Entity {
 
     @Override
     public void tick() {
+	super.tick();
 	Level level = level();
 
 	boolean isClient = level.isClientSide();
@@ -112,9 +113,12 @@ public class EntitySAM extends Entity {
 		removeAfterChangingDimensions();
 		return;
 	    }
+
+	    Vec3 movement = sam.deltaMovement;
+
 	    setPos(sam.position);
-	    setDeltaMovement(sam.deltaMovement);
-	    speed = sam.speed;
+	    setDeltaMovement(movement);
+	    updateRotationFromMovement(movement);
 
 	    entityData.set(SPEED, speed);
 	    entityData.set(VARIANT, variant);

@@ -27,18 +27,14 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.TraceableEntity;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.network.NetworkHooks;
@@ -156,11 +152,6 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable, Trac
 	double d0 = getDeltaMovement().horizontalDistanceSqr();
 	if (!source.is(DamageTypeTags.IS_FIRE) && !source.is(DamageTypeTags.IS_EXPLOSION) && d0 < 0.01F) {
 	    super.destroy(source);
-	    if (!source.is(DamageTypeTags.IS_EXPLOSION)
-		    && level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
-		this.spawnAtLocation(Blocks.TNT);
-	    }
-
 	} else if (fuse < 0) {
 	    primeFuse();
 	    fuse = random.nextInt(20) + random.nextInt(20);
@@ -177,18 +168,6 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable, Trac
 		if (b != null) {
 		    b.performExplosion();
 		}
-	    }
-	}
-    }
-
-    @Override
-    public void remove(RemovalReason reason) {
-	super.remove(reason);
-	if (!exploded) {
-	    if (blastId != null) {
-		ItemEntity item = new ItemEntity(level(), getBlockX() + 0.5, getBlockY() + 0.5, getBlockZ() + 0.5,
-			new ItemStack(Blast.BLAST_TO_MINECART_MAP.get(Blast.BLAST_MAP.get(blastId))));
-		level().addFreshEntity(item);
 	    }
 	}
     }

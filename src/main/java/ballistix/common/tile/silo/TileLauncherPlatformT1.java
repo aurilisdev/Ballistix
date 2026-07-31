@@ -123,44 +123,29 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 	    ComponentInventory inv = getComponent(IComponentType.Inventory);
 	    BlockPos target = controlPanel.getTarget();
 
-	    if (
-	    //
-	    level.getBlockEntity(target) instanceof TileFireControlRadar radar &&
-	    //
-		    TileTurretAntimissile.getDistanceToPos(getBlockPos(),
-			    radar.getBlockPos()) < BallistixConstants.MAX_DISTANCE_FROM_RADAR
-		    &&
-		    //
-		    radar.tracking != null &&
-		    //
-		    TileFireControlRadar.getDistanceToMissile(
-			    new Vec3(getBlockPos().getX(), getBlockPos().getY(), getBlockPos().getZ()),
-			    radar.tracking.position) > 100
-	    //
-	    ) {
-		VirtualProjectile.VirtualSAM sam = new VirtualProjectile.VirtualSAM(
-			//
-			0.0F,
-			//
-			new Vec3(getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5),
-			//
-			new Vec3(0, 1, 0),
-			//
-			BallistixConstants.FIRE_CONTROL_RADAR_RANGE * 3F,
-			//
-			target,
-			//
-			1,
-			//
-			radar.tracking.getId()
-		//
-		);
+	    if (level.getBlockEntity(target) instanceof TileFireControlRadar radar
+		    && TileTurretAntimissile.getDistanceToPos(getBlockPos(),
+			    radar.getBlockPos()) < BallistixConstants.MAX_DISTANCE_FROM_RADAR) {
 
-		MissileManager.addSAM(level.dimension(), sam);
+		Vec3 launchPos = new Vec3(getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5,
+			getBlockPos().getZ() + 0.5);
 
-		inv.removeItem(MISSILE_SLOT, 1);
+		VirtualMissile trackedMissile = radar.getTargetFor(getBlockPos(), launchPos,
+			BallistixConstants.ANTIBALLISTICMISSILE_TOP_SPEED);
 
-		cooldown = COOLDOWN * 2;
+		if (trackedMissile != null && !trackedMissile.hasExploded()
+			&& TileFireControlRadar.getDistanceToMissile(launchPos, trackedMissile.position) > 100) {
+
+		    VirtualProjectile.VirtualSAM sam = new VirtualProjectile.VirtualSAM(0.0F, launchPos,
+			    new Vec3(0, 1, 0), BallistixConstants.FIRE_CONTROL_RADAR_RANGE * 3F, target, 1,
+			    trackedMissile.getId());
+
+		    MissileManager.addSAM(level.dimension(), sam);
+
+		    inv.removeItem(MISSILE_SLOT, 1);
+
+		    cooldown = COOLDOWN * 2;
+		}
 	    }
 	} else if (!hasSam.getValue()) {
 

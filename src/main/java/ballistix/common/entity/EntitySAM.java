@@ -120,6 +120,8 @@ public class EntitySAM extends Entity {
 	    setDeltaMovement(movement);
 	    updateRotationFromMovement(movement);
 
+	    speed = sam.speed;
+
 	    entityData.set(SPEED, speed);
 	    entityData.set(VARIANT, variant);
 

@@ -40,7 +40,6 @@ public class RenderSAM extends EntityRenderer<EntitySAM> {
 
 	float pitch = Mth.lerp(partialTicks, entity.xRotO, entity.getXRot());
 
-	matrixStackIn.pushPose();
 
 	matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(entityYaw + 90.0F));
 

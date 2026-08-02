@@ -115,7 +115,9 @@ public class EntitySAM extends Entity {
 	    setPos(sam.position);
 	    setDeltaMovement(movement);
 	    updateRotationFromMovement(movement);
-
+	    
+	    speed = sam.speed;
+	    
 	    entityData.set(SPEED, speed);
 	    entityData.set(VARIANT, variant);
 

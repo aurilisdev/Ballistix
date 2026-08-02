@@ -519,9 +519,8 @@ public abstract class VirtualProjectile {
 		return;
 	    }
 
-	    float trackingSpeed = 0;
+	    float trackingSpeed = tracking.speed;
 	    Vec3 trackingVector = tracking.deltaMovement;
-
 	    double timeToIntercept = TileFireControlRadar.getTimeToIntercept(tracking.position, trackingVector,
 		    trackingSpeed, topSpeed, position);
 
@@ -530,7 +529,9 @@ public abstract class VirtualProjectile {
 		return;
 	    }
 
-	    Vec3 interceptionPos = tracking.position.add(trackingVector.scale(trackingSpeed).scale(timeToIntercept));
+	    Vec3 missileVelocity = trackingVector.scale(trackingSpeed);
+
+	    Vec3 interceptionPos = tracking.position.add(missileVelocity.scale(timeToIntercept));
 
 	    double deltaX = interceptionPos.x - position.x;
 	    double deltaY = interceptionPos.y - position.y;

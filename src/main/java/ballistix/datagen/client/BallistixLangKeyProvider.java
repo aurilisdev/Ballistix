@@ -639,7 +639,7 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 	    addConfiguration("explosive_sonic_duration_ticks", "Sonic Duration (ticks)");
 
 	    // Explosives → Tier 3
-	    addConfiguration("explosive_antigravity_chunkradius", "Antigravity Chunk Radius");
+	    addConfiguration("explosive_antigravity_radius", "Antigravity Radius");
 	    addConfiguration("explosive_antigravity_chunkduration_ticks", "Antigravity Chunk Duration (ticks)");
 	    addConfiguration("explosive_antigravity_gravityfactor", "Antigravity Gravity Factor");
 	    addConfiguration("explosive_antigravity_maxheight", "Antigravity Max Height");

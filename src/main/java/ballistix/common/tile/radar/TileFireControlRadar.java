@@ -269,52 +269,59 @@ public class TileFireControlRadar extends GenericTile {
 
     // will return negative one if can't hit;
     // otherwise returns the time in seconds
-    public static double getTimeToIntercept(Vec3 missPos, Vec3 missVect, float missSpeed, float bulletSpeed,
-	    Vec3 interceptorPos) {
-	Vec3 missVector = missVect.scale(missSpeed);
+    public static double getTimeToIntercept(Vec3 missilePos, Vec3 missileDirection, float missileSpeed,
+	    float interceptorSpeed, Vec3 interceptorPos) {
 
-	double a = missVector.dot(missVector) - bulletSpeed * bulletSpeed; // if this is zero it means the proj can
-	// never catch the target
-
-	if (a == 0) {
+	if (interceptorSpeed <= 0) {
 	    return -1;
 	}
 
-	double b = missPos.dot(missVector) * 2;
-	double c = missPos.dot(missPos);
-	double root = b * b - 4 * a * c;
-	if (root < 0) {
+	// Position relative to the interceptor, not the world origin
+	Vec3 relativePosition = missilePos.subtract(interceptorPos);
 
-	    return -1;
+	// Actual missile velocity in blocks per tick
+	Vec3 missileVelocity = missileDirection.scale(missileSpeed);
 
-	} else if (root == 0) {
+	double a = missileVelocity.lengthSqr() - interceptorSpeed * interceptorSpeed;
 
-	    return -b / (2 * a);
+	double b = 2.0 * relativePosition.dot(missileVelocity);
 
-	} else {
+	double c = relativePosition.lengthSqr();
 
-	    root = Math.sqrt(root);
+	final double epsilon = 1.0E-7;
 
-	    double sol1 = (-b - root) / (2 * a);
-	    double sol2 = (-b + root) / (2 * a);
-
-	    if (sol1 > 0 && sol2 > 0) {
+	// Linear case
+	if (Math.abs(a) < epsilon) {
+	    if (Math.abs(b) < epsilon) {
 		return -1;
-	    } else if (sol1 > 0) {
-
-		return -sol2;
-
-	    } else if (sol2 > 0) {
-
-		return -sol1;
-
-	    } else {
-
-		return -Math.max(sol1, sol2);
-
 	    }
 
+	    double time = -c / b;
+	    return time > 0 ? time : -1;
 	}
+
+	double discriminant = b * b - 4.0 * a * c;
+
+	if (discriminant < 0) {
+	    return -1;
+	}
+
+	double root = Math.sqrt(discriminant);
+
+	double timeOne = (-b - root) / (2.0 * a);
+	double timeTwo = (-b + root) / (2.0 * a);
+
+	double result = Double.POSITIVE_INFINITY;
+
+	if (timeOne > 0) {
+	    result = timeOne;
+	}
+
+	if (timeTwo > 0 && timeTwo < result) {
+	    result = timeTwo;
+	}
+
+	return Double.isFinite(result) ? result : -1;
     }
 
     @Override

@@ -157,9 +157,9 @@ public class BlastExothermic extends BlastLasting implements IHasCustomRender {
 
 		double inverseMag = Mth.fastInvSqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
-		double velX = deltaX * inverseMag * BallistixConstants.EXPLOSIVE_ENDOTHERMIC_VELOCITY;
-		double velY = deltaY * inverseMag * BallistixConstants.EXPLOSIVE_ENDOTHERMIC_VELOCITY;
-		double velZ = deltaZ * inverseMag * BallistixConstants.EXPLOSIVE_ENDOTHERMIC_VELOCITY;
+		double velX = deltaX * inverseMag * BallistixConstants.EXPLOSIVE_EXOTHERMIC_VELOCITY;
+		double velY = deltaY * inverseMag * BallistixConstants.EXPLOSIVE_EXOTHERMIC_VELOCITY;
+		double velZ = deltaZ * inverseMag * BallistixConstants.EXPLOSIVE_EXOTHERMIC_VELOCITY;
 		entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 10000), owner);
 		entity.setRemainingFireTicks(10000);
 		// entity.addEffect(new MobEffectInstance(BallistixEffects.FROSTBITE, 10000));

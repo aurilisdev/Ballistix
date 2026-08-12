@@ -107,6 +107,9 @@ public class BallistixConstants {
     // emp
     @DoubleValue(def = 45.0)
     public static double EXPLOSIVE_EMP_RADIUS = 45.0;
+    // emp
+    @DoubleValue(def = 80.0)
+    public static double EXPLOSIVE_EMP_DURATION = 80.0;
     // nuclear
     @DoubleValue(def = 45.0)
     public static double EXPLOSIVE_NUCLEAR_SIZE = 45.0;
@@ -136,6 +139,8 @@ public class BallistixConstants {
     public static double EXPLOSIVE_EXOTHERMIC_CHANCE_FOR_LAVA = 0.01;
     @DoubleValue(def = 0.3)
     public static double EXPLOSIVE_EXOTHERMIC_CHANCE_TO_BURN = 0.3;
+    @DoubleValue(def = 1.5)
+    public static double EXPLOSIVE_EXOTHERMIC_VELOCITY = 1.5;
     @DoubleValue(def = 20.0, comment = "Value is in ticks.")
     public static double EXPLOSIVE_EXOTHERMIC_DURATION = 20.0;
     // ender

@@ -116,7 +116,7 @@ public class BlastEndothermic extends BlastLasting implements IHasCustomRender {
 	    float y = position.getY();
 	    float z = position.getZ();
 
-	    float size = (float) BallistixConfig.INSTANCE.EXPLOSIVE_SONIC_RADIUS.getAsDouble();
+	    float size = (float) BallistixConfig.INSTANCE.EXPLOSIVE_ENDOTHERMIC_RADIUS.getAsDouble();
 	    float doubleSize = size * 2.0F;
 
 	    int x0 = Mth.floor(x - (double) doubleSize - 1.0D);
@@ -147,7 +147,7 @@ public class BlastEndothermic extends BlastLasting implements IHasCustomRender {
 			* BallistixConfig.INSTANCE.EXPLOSIVE_ENDOTHERMIC_VELOCITY.getAsDouble();
 		double velZ = deltaZ * inverseMag
 			* BallistixConfig.INSTANCE.EXPLOSIVE_ENDOTHERMIC_VELOCITY.getAsDouble();
-		entity.setTicksFrozen(10000);
+		entity.setTicksFrozen(entity.getTicksRequiredToFreeze());
 		entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 10000), owner);
 		entity.addEffect(new MobEffectInstance(BallistixEffects.FROSTBITE, 10000), owner);
 		entity.setDeltaMovement(entity.getDeltaMovement().add(velX, velY, velZ));

@@ -137,7 +137,7 @@ public class BlastExothermic extends BlastLasting implements IHasCustomRender {
 	    float y = position.getY();
 	    float z = position.getZ();
 
-	    float size = (float) BallistixConfig.INSTANCE.EXPLOSIVE_SONIC_RADIUS.getAsDouble();
+	    float size = (float) BallistixConfig.INSTANCE.EXPLOSIVE_EXOTHERMIC_RADIUS.getAsDouble();
 	    float doubleSize = size * 2.0F;
 
 	    int x0 = Mth.floor(x - (double) doubleSize - 1.0D);
@@ -161,9 +161,9 @@ public class BlastExothermic extends BlastLasting implements IHasCustomRender {
 
 		double inverseMag = Mth.fastInvSqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
-		double velX = deltaX * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_ENDOTHERMIC_VELOCITY.get();
-		double velY = deltaY * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_ENDOTHERMIC_VELOCITY.get();
-		double velZ = deltaZ * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_ENDOTHERMIC_VELOCITY.get();
+		double velX = deltaX * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_EXOTHERMIC_VELOCITY.get();
+		double velY = deltaY * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_EXOTHERMIC_VELOCITY.get();
+		double velZ = deltaZ * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_EXOTHERMIC_VELOCITY.get();
 		entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 10000), owner);
 		entity.igniteForTicks(10000);
 		// entity.addEffect(new MobEffectInstance(BallistixEffects.FROSTBITE, 10000));

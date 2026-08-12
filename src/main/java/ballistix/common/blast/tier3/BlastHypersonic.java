@@ -107,7 +107,7 @@ public class BlastHypersonic extends BlastLasting {
 	    float y = position.getY();
 	    float z = position.getZ();
 
-	    float size = (float) BallistixConfig.INSTANCE.EXPLOSIVE_SONIC_RADIUS.getAsDouble();
+	    float size = (float) BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_RADIUS.getAsDouble();
 	    float doubleSize = size * 2.0F;
 
 	    int x0 = Mth.floor(x - (double) doubleSize - 1.0D);
@@ -132,10 +132,10 @@ public class BlastHypersonic extends BlastLasting {
 
 		double inverseMag = Mth.fastInvSqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
-		double velX = deltaX * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_SONIC_VELOCITY.getAsDouble();
+		double velX = deltaX * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_VELOCITY.getAsDouble();
 		double velY = Math.abs(deltaY) * inverseMag
-			* BallistixConfig.INSTANCE.EXPLOSIVE_SONIC_VELOCITY.getAsDouble();
-		double velZ = deltaZ * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_SONIC_VELOCITY.getAsDouble();
+			* BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_VELOCITY.getAsDouble();
+		double velZ = deltaZ * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_VELOCITY.getAsDouble();
 		entity.push(velX, velY, velZ);
 	    }
 	} else {

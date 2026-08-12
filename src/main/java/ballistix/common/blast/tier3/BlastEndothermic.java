@@ -84,7 +84,6 @@ public class BlastEndothermic extends BlastLasting implements IHasCustomRender {
 	    } else {
 		state = Blocks.SNOW_BLOCK.defaultBlockState();
 	    }
-
 	    double deltaX = p.getX() - position.getX();
 	    double deltaY = p.getY() - position.getY();
 	    double deltaZ = p.getZ() - position.getZ();
@@ -109,7 +108,7 @@ public class BlastEndothermic extends BlastLasting implements IHasCustomRender {
 	    float y = position.getY();
 	    float z = position.getZ();
 
-	    float size = (float) BallistixConstants.EXPLOSIVE_SONIC_RADIUS;
+	    float size = (float) BallistixConstants.EXPLOSIVE_ENDOTHERMIC_RADIUS;
 	    float doubleSize = size * 2.0F;
 
 	    int x0 = Mth.floor(x - (double) doubleSize - 1.0D);
@@ -123,7 +122,6 @@ public class BlastEndothermic extends BlastLasting implements IHasCustomRender {
 		    new AABB(x0, y0, z0, x1, y1, z1));
 
 	    for (LivingEntity entity : entities) {
-
 		if (!canHarmEntity(entity)) {
 		    continue;
 		}
@@ -137,7 +135,7 @@ public class BlastEndothermic extends BlastLasting implements IHasCustomRender {
 		double velX = deltaX * inverseMag * BallistixConstants.EXPLOSIVE_ENDOTHERMIC_VELOCITY;
 		double velY = deltaY * inverseMag * BallistixConstants.EXPLOSIVE_ENDOTHERMIC_VELOCITY;
 		double velZ = deltaZ * inverseMag * BallistixConstants.EXPLOSIVE_ENDOTHERMIC_VELOCITY;
-		entity.setTicksFrozen(10000);
+		entity.setTicksFrozen(entity.getTicksRequiredToFreeze());
 		entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 10000));
 		entity.addEffect(new MobEffectInstance(BallistixEffects.FROSTBITE.get(), 10000));
 		entity.setDeltaMovement(entity.getDeltaMovement().add(velX, velY, velZ));

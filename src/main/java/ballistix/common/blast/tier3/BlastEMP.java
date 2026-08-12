@@ -33,6 +33,7 @@ import voltaic.prefab.utilities.CapabilityUtils;
 import voltaic.registers.VoltaicCapabilities;
 
 public class BlastEMP extends Blast implements IHasCustomRender {
+
     public BlastEMP(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
 	super(world, position, owner, blastEntity);
     }
@@ -71,7 +72,7 @@ public class BlastEMP extends Blast implements IHasCustomRender {
 	}
 	hasStarted = true;
 	if (pertick == -1) {
-	    pertick = (int) (thread.results.size() / BallistixConstants.EXPLOSIVE_ANTIMATTER_DURATION + 1);
+	    pertick = (int) (thread.results.size() / BallistixConstants.EXPLOSIVE_EMP_DURATION + 1);
 	    cachedIterator = thread.results.iterator();
 	}
 	int finished = pertick;
@@ -101,9 +102,7 @@ public class BlastEMP extends Blast implements IHasCustomRender {
 			IEnergyStorage fe = entity.getCapability(ForgeCapabilities.ENERGY, dir)
 				.orElse(CapabilityUtils.EMPTY_FE);
 
-			if (fe != CapabilityUtils.EMPTY_FE) {
-			    fe.extractEnergy(Integer.MAX_VALUE, false);
-			}
+			drainEnergy(fe);
 		    }
 		}
 	    }
@@ -121,22 +120,14 @@ public class BlastEMP extends Blast implements IHasCustomRender {
 
 	    for (Entity entity : entities) {
 
-		if (!entity.isAlive()) {
-		    continue;
-		}
-
-		if (!canHarmEntity(entity)) {
+		if (!entity.isAlive() || !canHarmEntity(entity)) {
 		    continue;
 		}
 
 		IEnergyStorage entityFE = entity.getCapability(ForgeCapabilities.ENERGY)
 			.orElse(CapabilityUtils.EMPTY_FE);
 
-		if (entityFE != CapabilityUtils.EMPTY_FE && entityFE.canExtract()) {
-		    while (entityFE.getEnergyStored() > 0) {
-			entityFE.extractEnergy(Integer.MAX_VALUE, false);
-		    }
-		}
+		drainEnergy(entityFE);
 
 		if (entity instanceof Player player) {
 		    Inventory inv = player.getInventory();
@@ -151,16 +142,10 @@ public class BlastEMP extends Blast implements IHasCustomRender {
 			IEnergyStorage itemFE = stack.getCapability(ForgeCapabilities.ENERGY)
 				.orElse(CapabilityUtils.EMPTY_FE);
 
-			if (itemFE != null && itemFE.canExtract()) {
-			    while (itemFE.getEnergyStored() > 0) {
-				itemFE.extractEnergy(Integer.MAX_VALUE, false);
-			    }
-			}
+			drainEnergy(itemFE);
 
 			if (stack.getItem() instanceof IItemElectric electric) {
-			    while (electric.getJoulesStored(stack) > 0) {
-				electric.extractPower(stack, Double.MAX_VALUE, false);
-			    }
+			    drainEnergy(electric, stack);
 			}
 
 			inv.setItem(i, stack);
@@ -175,6 +160,45 @@ public class BlastEMP extends Blast implements IHasCustomRender {
 	    return true;
 	}
 	return false;
+    }
+
+    private static void drainEnergy(IEnergyStorage storage) {
+	if (storage == null || !storage.canExtract()) {
+	    return;
+	}
+
+	for (int i = 0; i < 100; i++) {
+	    int before = storage.getEnergyStored();
+
+	    if (before <= 0) {
+		return;
+	    }
+
+	    int extracted = storage.extractEnergy(before, false);
+	    int after = storage.getEnergyStored();
+
+	    if (extracted <= 0 || after >= before) {
+		return;
+	    }
+	}
+    }
+
+    private static void drainEnergy(IItemElectric electric, ItemStack stack) {
+	for (int i = 0; i < 16; i++) {
+	    double before = electric.getJoulesStored(stack);
+
+	    if (before <= 0) {
+		return;
+	    }
+
+	    electric.extractPower(stack, Double.MAX_VALUE, false);
+
+	    double after = electric.getJoulesStored(stack);
+
+	    if (after >= before) {
+		return;
+	    }
+	}
     }
 
     @OnlyIn(Dist.CLIENT)

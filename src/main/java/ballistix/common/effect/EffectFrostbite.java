@@ -21,7 +21,7 @@ public class EffectFrostbite extends MobEffect {
     @Override
     public boolean isDurationEffectTick(int duration, int amplifier) {
         int i = 25 >> amplifier;
-        return i > 0 ? amplifier % i == 0 : true;
+	return i > 0 ? duration % i == 0 : true;
     }
 
     @Override

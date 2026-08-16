@@ -1,14 +1,18 @@
 package ballistix.common.blast.tier3;
 
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
+import ballistix.Ballistix;
 import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.client.particle.ParticleOptionsBlastSmoke;
 import ballistix.client.shake.CameraShakeEffect;
 import ballistix.client.shake.CameraShakeManager;
+import ballistix.common.blast.util.Blast;
 import ballistix.common.blast.util.BlastLasting;
 import ballistix.common.blast.util.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
@@ -18,6 +22,8 @@ import ballistix.common.packet.type.client.particle.PacketSpawnBlastParticle;
 import ballistix.common.settings.BallistixConstants;
 import ballistix.prefab.utils.ParticleUtilities;
 import ballistix.registers.BallistixSounds;
+import modularforcefields.common.world.FortronFieldData;
+import modularforcefields.common.world.FortronProtectionRegion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
@@ -53,6 +59,7 @@ public class BlastLargeAntimatter extends BlastLasting implements IHasCustomRend
 	}
     }
 
+    private List<FortronProtectionRegion> protectionRegions = Collections.emptyList();
     private ThreadSimpleBlast thread;
     private int pertick = -1;
 
@@ -77,15 +84,41 @@ public class BlastLargeAntimatter extends BlastLasting implements IHasCustomRend
 		(float) BallistixConstants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, false, BlockInteraction.DESTROY);
 	if (pertick == -1) {
 	    hasStarted = true;
-	    pertick = (int) (thread.results.size() * 1.5 / BallistixConstants.EXPLOSIVE_LARGEANTIMATTER_DURATION + 1);
-	    iterator = thread.results.iterator();
+	    int radius = (int) BallistixConstants.EXPLOSIVE_LARGEANTIMATTER_RADIUS;
+
+	    if (Ballistix.MFFS_LOADED && world instanceof ServerLevel serverLevel) {
+		protectionRegions = FortronFieldData.get(serverLevel).getProtectionRegions(position, radius);
+	    }
+
 	}
 	int finished = pertick;
 	while (iterator.hasNext()) {
 	    if (finished-- < 0) {
 		break;
 	    }
-	    BlockPos p = new BlockPos(iterator.next()).offset(position);
+	    BlockPos p = iterator.next().offset(position);
+
+	    if (Ballistix.MFFS_LOADED && world instanceof ServerLevel serverLevel) {
+
+		Iterator<FortronProtectionRegion> regionIterator = protectionRegions.iterator();
+
+		while (regionIterator.hasNext()) {
+
+		    FortronProtectionRegion region = regionIterator.next();
+
+		    if (!region.separates(position, p)) {
+			continue;
+		    }
+
+		    Blast.damageFortronProjector(serverLevel, region.getProjectorId(), 1.01);
+
+		    /*
+		     * Ignore this field for the remainder of this explosion so the antimatter
+		     * immediately continues through it.
+		     */
+		    regionIterator.remove();
+		}
+	    }
 	    BlockState state = world.getBlockState(p);
 	    Block block = state.getBlock();
 

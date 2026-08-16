@@ -93,7 +93,9 @@ dependencies {
     implementation "voltaic:Voltaic:1.20.1-1.0.2:deobf"
     implementation "electrodynamics:Electrodynamics:1.20.1-1.0.2:deobf"
     implementation "nuclearscience:Nuclear-Science:1.20.1-0.8.1:deobf"
-        compileOnly group: 'com.griefdefender', name: 'api', version: '2.1.1-SNAPSHOT'
+    implementation "modularforcefields:Modular-Forcefields:1.20.1-0.5.2:deobf"
+    
+    compileOnly group: 'com.griefdefender', name: 'api', version: '2.1.1-SNAPSHOT'
     
     compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
     compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")

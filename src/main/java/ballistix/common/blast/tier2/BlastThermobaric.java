@@ -1,13 +1,17 @@
 package ballistix.common.blast.tier2;
 
 import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Nullable;
 
+import ballistix.Ballistix;
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.client.particle.ParticleOptionsBlastSmoke;
 import ballistix.client.shake.CameraShakeEffect;
 import ballistix.client.shake.CameraShakeManager;
+import ballistix.common.blast.util.Blast;
 import ballistix.common.blast.util.BlastLasting;
 import ballistix.common.blast.util.thread.raycast.ThreadDynamicRaycastBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
@@ -64,6 +68,7 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
     private ThreadDynamicRaycastBlast thread;
     private int pertick = -1;
     private Iterator<BlockPos> cachedIterator;
+    private boolean appliedFortronDamage = false;
 
     @Override
     public boolean doExplode(int callCount) {
@@ -113,6 +118,18 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
 					pl.connection.connection, NetworkDirection.PLAY_TO_CLIENT));
 		    }
 		    cachedIterator.remove();
+		}
+		if (thread.isComplete && !appliedFortronDamage) {
+		    if (world instanceof ServerLevel serverLevel && Ballistix.MFFS_LOADED) {
+			for (Entry<BlockPos, AtomicInteger> entry : thread.fortronRayHits.entrySet()) {
+			    long raysHit = entry.getValue().get();
+			    double damagePercentage = raysHit / (double) thread.totalRayCount;
+			    Blast.damageFortronField(serverLevel, entry.getKey(), damagePercentage * 0.1);
+			    // Hitting the wall of an infinitely large forcefield would here then yield 5
+			    // percent damage.
+			}
+		    }
+		    appliedFortronDamage = true;
 		}
 		if (!cachedIterator.hasNext() && thread.isComplete) {
 		    attackEntities((float) BallistixConstants.EXPLOSIVE_THERMOBARIC_SIZE * 2, ex);

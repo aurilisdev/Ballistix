@@ -1,14 +1,20 @@
 package ballistix.common.blast.tier3;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import ballistix.Ballistix;
 import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.client.particle.ParticleOptionsBlastSmoke;
 import ballistix.client.shake.CameraShakeEffect;
 import ballistix.client.shake.CameraShakeManager;
+import ballistix.common.blast.util.Blast;
 import ballistix.common.blast.util.BlastLasting;
 import ballistix.common.blast.util.thread.ThreadSimpleBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
@@ -17,6 +23,8 @@ import ballistix.common.packet.type.client.particle.PacketSpawnBlastParticle;
 import ballistix.common.settings.BallistixConfig;
 import ballistix.prefab.utils.ParticleUtilities;
 import ballistix.registers.BallistixSounds;
+import modularforcefields.common.world.FortronFieldData;
+import modularforcefields.common.world.FortronProtectionRegion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
@@ -55,6 +63,8 @@ public class BlastAntimatter extends BlastLasting implements IHasCustomRender {
 	}
     }
 
+    private List<FortronProtectionRegion> protectionRegions = Collections.emptyList();
+    private final Set<Long> damagedFortronFields = new HashSet<>();
     private ThreadSimpleBlast thread;
     private int pertick = -1;
 
@@ -81,8 +91,16 @@ public class BlastAntimatter extends BlastLasting implements IHasCustomRender {
 		SoundEvents.GENERIC_EXPLODE);
 	if (pertick == -1) {
 	    hasStarted = true;
+
+	    int radius = (int) BallistixConfig.INSTANCE.EXPLOSIVE_ANTIMATTER_RADIUS.getAsDouble();
+
+	    if (Ballistix.MFFS_LOADED && world instanceof ServerLevel serverLevel) {
+		protectionRegions = FortronFieldData.get(serverLevel).getProtectionRegions(position, radius);
+	    }
+
 	    pertick = (int) (thread.results.size() * 1.5 / BallistixConfig.INSTANCE.EXPLOSIVE_ANTIMATTER_DURATION.get()
 		    + 1);
+
 	    iterator = thread.results.iterator();
 	}
 	int finished = pertick;
@@ -90,7 +108,21 @@ public class BlastAntimatter extends BlastLasting implements IHasCustomRender {
 	    if (finished-- < 0) {
 		break;
 	    }
-	    BlockPos p = new BlockPos(iterator.next()).offset(position);
+	    BlockPos p = iterator.next().offset(position);
+
+	    boolean protectedByField = false;
+
+	    for (FortronProtectionRegion region : protectionRegions) {
+		if (region.separates(position, p)) {
+		    protectedByField = true;
+		    damagedFortronFields.add(region.getProjectorId());
+		}
+	    }
+
+	    if (protectedByField) {
+		continue;
+	    }
+
 	    BlockState state = world.getBlockState(p);
 	    Block block = state.getBlock();
 
@@ -112,6 +144,13 @@ public class BlastAntimatter extends BlastLasting implements IHasCustomRender {
 	if (!iterator.hasNext()) {
 	    position = position.above().above();
 	    attackEntities((float) BallistixConfig.INSTANCE.EXPLOSIVE_ANTIMATTER_RADIUS.getAsDouble() * 2, ex);
+
+	    if (world instanceof ServerLevel serverLevel && Ballistix.MFFS_LOADED) {
+		for (long projector : damagedFortronFields) {
+		    Blast.damageFortronProjector(serverLevel, projector, 0.5);
+		}
+	    }
+
 	    return true;
 	}
 	return false;

@@ -645,10 +645,14 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 	    addConfiguration("explosive_antigravity_maxheight", "Antigravity Max Height");
 	    addConfiguration("explosive_antigravity_maxblockchecks", "Antigravity Max Block Checks");
 	    addConfiguration("explosive_emp_radius", "EMP Radius");
+	    addConfiguration("explosive_emp_duration_ticks", "EMP Duration (ticks)");
+
 	    addConfiguration("explosive_nuclear_size", "Nuclear Size");
 	    addConfiguration("explosive_nuclear_duration_ticks", "Nuclear Duration (ticks)");
 	    addConfiguration("explosive_nuclear_energy", "Nuclear Energy");
 	    addConfiguration("explosive_nuclear_radiation_radius", "Nuclear Radiation Radius");
+	    addConfiguration("explosive_nuclear_radiation_duration_real_days",
+	            "Nuclear Radiation Duration (real days)");
 	    addConfiguration("explosive_endothermic_maxhardness", "Endothermic Max Hardness");
 	    addConfiguration("explosive_endothermic_radius", "Endothermic Radius");
 	    addConfiguration("explosive_endothermic_velocity", "Endothermic Velocity");
@@ -657,6 +661,7 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 	    addConfiguration("explosive_exothermic_radius", "Exothermic Radius");
 	    addConfiguration("explosive_exothermic_chance_for_lava", "Exothermic Chance for Lava");
 	    addConfiguration("explosive_exothermic_chance_to_burn", "Exothermic Chance to Burn");
+	    addConfiguration("explosive_exothermic_velocity", "Exothermic Velocity");
 	    addConfiguration("explosive_exothermic_duration_ticks", "Exothermic Duration (ticks)");
 	    addConfiguration("explosive_ender_radius", "Ender Radius");
 	    addConfiguration("explosive_ender_endermancount", "Ender Enderman Count");

@@ -1,17 +1,13 @@
 package ballistix.common.blast.util.thread;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
-
-import com.google.common.collect.Sets;
-import com.mojang.datafixers.util.Pair;
+import java.util.concurrent.ConcurrentHashMap;
 
 import ballistix.common.settings.BallistixConfig;
 import net.minecraft.core.BlockPos;
@@ -23,191 +19,115 @@ import voltaic.prefab.block.HashDistanceBlockPos;
 
 public class ThreadSimpleBlast extends ThreadBlast {
 
-    private static final Map<Pair<Integer, ResourceLocation>, Set<BlockPos>> CACHED_EUCLIDEAN_RESULTS = Collections
-	    .synchronizedMap(new HashMap<>());
-    private static final Set<Pair<Integer, ResourceLocation>> currentlyCalculating = Collections
-	    .synchronizedSet(new HashSet<>());
-    private final Pair<Integer, ResourceLocation> idPair;
+    private static final Map<CacheKey, Set<BlockPos>> CACHED_EUCLIDEAN_RESULTS = new ConcurrentHashMap<>();
+
+    private static final Comparator<BlockPos> BY_CENTER_DISTANCE = Comparator
+	    .comparingLong(ThreadSimpleBlast::distanceSq).thenComparingInt(BlockPos::getX)
+	    .thenComparingInt(BlockPos::getY).thenComparingInt(BlockPos::getZ);
+
+    private final ResourceLocation id;
+    private final boolean sortBasedOnDistance;
+
+    public double strictnessAtEdges = 1.85;
+
+    private record CacheKey(int radius, ResourceLocation id, boolean sorted, long strictness) {
+    }
 
     public ThreadSimpleBlast(Level world, BlockPos position, int range, float energy, Entity source,
 	    ResourceLocation id) {
-	super(world, position, range, energy, source);
-	setName("Simple blast thread");
-	this.idPair = new Pair<>(range, id);
-	setPriority(MAX_PRIORITY);
+	this(world, position, range, energy, source, id, false);
     }
 
     public ThreadSimpleBlast(Level world, BlockPos position, int range, float energy, Entity source,
 	    ResourceLocation id, boolean sortBasedOnDistance) {
-	this(world, position, range, energy, source, id);
+	super(world, position, range, energy, source);
+	setName("Simple blast thread");
+	this.id = id;
 	this.sortBasedOnDistance = sortBasedOnDistance;
     }
 
-    private boolean sortBasedOnDistance = false;
-
-    public double strictnessAtEdges = 1.85;
-
     @Override
     public void run() {
-	int explosionRadius = this.explosionRadius;
-	Random random = Voltaic.RANDOM;
-	runEuclidian(explosionRadius, random);
+	runEuclidian(explosionRadius, Voltaic.RANDOM);
 	super.run();
     }
 
     public void runEuclidian(int explosionRadius, Random random) {
-	if (BallistixConfig.INSTANCE.SHOULD_CACHE_EXPLOSIONS.get()) {
-	    boolean shouldCalculate = false;
-
-	    while (true) {
-		synchronized (currentlyCalculating) {
-		    if (!currentlyCalculating.contains(idPair)) {
-			if (CACHED_EUCLIDEAN_RESULTS.get(idPair) == null) {
-			    currentlyCalculating.add(idPair);
-			    shouldCalculate = true;
-			}
-			break;
-		    }
-		}
-
-		try {
-		    sleep(100);
-		} catch (InterruptedException e) {
-		    Thread.currentThread().interrupt();
-		    break;
-		}
-	    }
-
-	    if (shouldCalculate) {
-		try {
-		    int rSqrd = explosionRadius * explosionRadius;
-		    ArrayList<BlockPos> positions = new ArrayList<>(
-			    (int) (Math.PI * 4.0 / 3.0 * rSqrd * (explosionRadius + 1)));
-		    for (int i = -explosionRadius; i <= explosionRadius; i++) {
-			for (int j = 0; j <= explosionRadius; j++) {
-			    int dist2D = i * i + j * j;
-			    if (dist2D <= rSqrd) {
-				int kMax = (int) Math.floor(Math.sqrt(rSqrd - dist2D));
-				for (int k = 0; k <= kMax; k++) {
-				    int dist3D = dist2D + k * k;
-				    if (random.nextFloat() * rSqrd < rSqrd * strictnessAtEdges - dist3D) {
-					positions.add(new HashDistanceBlockPos(i, k, j,
-						(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
-					if (k != 0) {
-					    positions.add(new HashDistanceBlockPos(i, -k, j,
-						    (int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
-					    if (j != 0) {
-						positions.add(new HashDistanceBlockPos(i, -k, -j,
-							(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
-					    }
-					}
-					if (j != 0) {
-					    positions.add(new HashDistanceBlockPos(i, k, -j,
-						    (int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
-					}
-				    }
-				}
-			    }
-			}
-		    }
-		    // Sort
-		    Random rand = Voltaic.RANDOM;
-		    for (int i = 0; i < positions.size(); i++) {
-			int from = Math.max(0, i - 10);
-			int to = Math.min(positions.size(), i + 11);
-			int newIndex = rand.nextInt(from, to);
-			BlockPos atNew = positions.get(newIndex);
-			positions.set(newIndex, positions.get(i));
-			positions.set(i, atNew);
-
-		    }
-		    if (sortBasedOnDistance) {
-
-			Comparator<BlockPos> byCenterDistance = Comparator.comparingLong(pos -> {
-			    long x = pos.getX();
-			    long y = pos.getY();
-			    long z = pos.getZ();
-			    // distance from (0.5, 0.5, 0.5) equals x² + y² + z² for integer block coords
-			    return x * x + y * y + z * z;
-			});
-			byCenterDistance = byCenterDistance.thenComparingInt(BlockPos::getX)
-				.thenComparingInt(BlockPos::getY).thenComparingInt(BlockPos::getZ);
-
-			// turn results into a sorted set, closest to farthest
-			Set<BlockPos> sorted = new TreeSet<>(byCenterDistance);
-			sorted.addAll(positions);
-			CACHED_EUCLIDEAN_RESULTS.put(idPair, sorted);
-
-		    } else {
-			CACHED_EUCLIDEAN_RESULTS.put(idPair, Sets.newHashSet(positions));
-		    }
-		} finally {
-		    synchronized (currentlyCalculating) {
-			currentlyCalculating.remove(idPair);
-		    }
-		}
-	    }
-	    results = CACHED_EUCLIDEAN_RESULTS.get(idPair);
-	} else {
-	    int rSqrd = explosionRadius * explosionRadius;
-	    ArrayList<BlockPos> positions = new ArrayList<>(
-		    (int) (Math.PI * 4.0 / 3.0 * rSqrd * (explosionRadius + 1)));
-	    for (int i = -explosionRadius; i <= explosionRadius; i++) {
-		for (int j = 0; j <= explosionRadius; j++) {
-		    int dist2D = i * i + j * j;
-		    if (dist2D <= rSqrd) {
-			int kMax = (int) Math.floor(Math.sqrt(rSqrd - dist2D));
-			for (int k = 0; k <= kMax; k++) {
-			    int dist3D = dist2D + k * k;
-			    if (random.nextFloat() * rSqrd < rSqrd * strictnessAtEdges - dist3D) {
-				positions.add(new HashDistanceBlockPos(i, k, j,
-					(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
-				if (k != 0) {
-				    positions.add(new HashDistanceBlockPos(i, -k, j,
-					    (int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
-				    if (j != 0) {
-					positions.add(new HashDistanceBlockPos(i, -k, -j,
-						(int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
-				    }
-				}
-				if (j != 0) {
-				    positions.add(new HashDistanceBlockPos(i, k, -j,
-					    (int) Math.max(1, dist3D - 50 + random.nextFloat() * 100)));
-				}
-			    }
-			}
-		    }
-		}
-	    }
-	    // Sort
-	    Random rand = Voltaic.RANDOM;
-	    for (int i = 0; i < positions.size(); i++) {
-		int newIndex = rand.nextInt(Math.max(0, i - 10), Math.min(positions.size() - 1, i + 10));
-		BlockPos atNew = positions.get(newIndex);
-		positions.set(newIndex, positions.get(i));
-		positions.set(i, atNew);
-	    }
-	    results = Sets.newHashSet(positions);
-	    if (sortBasedOnDistance) {
-		Comparator<BlockPos> byCenterDistance = Comparator.comparingLong(pos -> {
-		    long x = pos.getX();
-		    long y = pos.getY();
-		    long z = pos.getZ();
-		    // distance from (0.5, 0.5, 0.5) equals x² + y² + z² for integer block coords
-		    return x * x + y * y + z * z;
-		});
-		byCenterDistance = byCenterDistance.thenComparingInt(BlockPos::getX).thenComparingInt(BlockPos::getY)
-			.thenComparingInt(BlockPos::getZ);
-
-		// turn results into a sorted set, closest to farthest
-		Set<BlockPos> sorted = new TreeSet<>(byCenterDistance);
-		sorted.addAll(positions);
-		results = sorted;
-	    }
+	if (!BallistixConfig.INSTANCE.SHOULD_CACHE_EXPLOSIONS.get()) {
+	    results = calculateEuclidean(explosionRadius, random);
+	    return;
 	}
-
+	CacheKey key = new CacheKey(explosionRadius, id, sortBasedOnDistance,
+		Double.doubleToLongBits(strictnessAtEdges));
+	results = CACHED_EUCLIDEAN_RESULTS.computeIfAbsent(key, unused -> calculateEuclidean(explosionRadius, random));
     }
 
-}
+    private Set<BlockPos> calculateEuclidean(int explosionRadius, Random random) {
+	int radiusSq = explosionRadius * explosionRadius;
+	double edgeThreshold = radiusSq * strictnessAtEdges;
+	int estimatedSize = (int) Math.min(Integer.MAX_VALUE - 8L,
+		(long) (Math.PI * 4.0 / 3.0 * radiusSq * (explosionRadius + 1)));
+	ArrayList<BlockPos> positions = new ArrayList<>(Math.max(16, estimatedSize));
+	for (int i = -explosionRadius; i <= explosionRadius; i++) {
+	    int iSq = i * i;
+	    for (int j = 0; j <= explosionRadius; j++) {
+		int dist2D = iSq + j * j;
+		if (dist2D > radiusSq) {
+		    continue;
+		}
+		int kMax = (int) Math.sqrt(radiusSq - dist2D);
+		for (int k = 0; k <= kMax; k++) {
+		    int dist3D = dist2D + k * k;
+		    if (random.nextFloat() * radiusSq >= edgeThreshold - dist3D) {
+			continue;
+		    }
+		    addPosition(positions, i, k, j, dist3D, random);
+		    if (k != 0) {
+			addPosition(positions, i, -k, j, dist3D, random);
+			if (j != 0) {
+			    addPosition(positions, i, -k, -j, dist3D, random);
+			}
+		    }
+		    if (j != 0) {
+			addPosition(positions, i, k, -j, dist3D, random);
+		    }
+		}
+	    }
+	}
+	if (sortBasedOnDistance) {
+	    TreeSet<BlockPos> sorted = new TreeSet<>(BY_CENTER_DISTANCE);
+	    sorted.addAll(positions);
+	    return sorted;
+	}
+	locallyShuffle(positions, random);
+	return new HashSet<>(positions);
+    }
 
-//TODO: Create a thread manager pool thingy so u cant spam threads.
+    private static void addPosition(ArrayList<BlockPos> positions, int x, int y, int z, int distanceSq, Random random) {
+	int hash = (int) Math.max(1, distanceSq - 50 + random.nextFloat() * 100);
+	positions.add(new HashDistanceBlockPos(x, y, z, hash));
+    }
+
+    private static void locallyShuffle(ArrayList<BlockPos> positions, Random random) {
+	int size = positions.size();
+	for (int i = 0; i < size; i++) {
+	    int from = Math.max(0, i - 10);
+	    int to = Math.min(size, i + 11);
+	    int newIndex = random.nextInt(from, to);
+	    BlockPos swap = positions.get(newIndex);
+	    positions.set(newIndex, positions.get(i));
+	    positions.set(i, swap);
+	}
+    }
+
+    private static long distanceSq(BlockPos pos) {
+	long x = pos.getX();
+	long y = pos.getY();
+	long z = pos.getZ();
+	return x * x + y * y + z * z;
+    }
+
+    public static void clearCache() {
+	CACHED_EUCLIDEAN_RESULTS.clear();
+    }
+}

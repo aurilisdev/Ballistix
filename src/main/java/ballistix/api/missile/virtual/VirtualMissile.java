@@ -27,6 +27,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import voltaic.api.multiblock.subnodebased.TileMultiSubnode;
@@ -109,8 +110,7 @@ public class VirtualMissile {
 	this.payloadData = new MissilePayloadData(missileType, blast.id(), frequency, flightPath.ordinal(), false);
 
     }
-    
-    
+
     // ticks on server only
     public void tick(ServerLevel level) {
 
@@ -142,13 +142,13 @@ public class VirtualMissile {
 
 	if (blastEntity != null) {
 	    if (blastEntity.isRemoved() || blastEntity.getBlast().hasStarted) {
-	        hasExploded = true;
+		hasExploded = true;
 	    }
 	    return;
 	}
 
 	if (payloadData.getFlightPath() == FlightPath.ROCKET_LAUNCHER
-	        && getVelocity().y > ROCKET_LAUNCHER_MAX_FALLING_SPEED) {
+		&& getVelocity().y > ROCKET_LAUNCHER_MAX_FALLING_SPEED) {
 	    applyImpulse(new Vec3(0, -ROCKET_LAUNCHER_GRAVITY, 0));
 	}
 
@@ -523,30 +523,29 @@ public class VirtualMissile {
 
     @Nullable
     public BlockPos projectMovementForCollision(ServerLevel world) {
-
-	Vec3 currPos = position.scale(1.0);
-
+	Vec3 currPos = position;
+	BlockPos previousPos = null;
 	int iterations = Math.abs((int) Math.ceil(speed));
-
-	BlockPos pos;
-	BlockState state;
-
 	for (int i = 0; i < iterations; i++) {
-
-	    pos = new BlockPos((int) Math.floor(currPos.x), (int) Math.floor(currPos.y), (int) Math.floor(currPos.z));
-	    state = world.getBlockState(pos);
-
-	    if (state.getCollisionShape(world, blockPosition()).isEmpty() || isInValidBlockstate(pos, world)) {
+	    BlockPos pos = new BlockPos((int) Math.floor(currPos.x), (int) Math.floor(currPos.y),
+		    (int) Math.floor(currPos.z));
+	    LevelChunk chunk = world.getChunkSource().getChunkNow(pos.getX() >> 4, pos.getZ() >> 4);
+	    if (chunk == null) {
+		return null;
+	    }
+	    BlockState state = chunk.getBlockState(pos);
+	    if (state.getCollisionShape(world, pos).isEmpty() || isInValidBlockstate(pos, world)) {
+		previousPos = pos;
 		currPos = currPos.add(deltaMovement);
 		continue;
 	    }
-
-	    return pos;
-
+	    if (previousPos != null) {
+		return previousPos;
+	    }
+	    Vec3 behind = currPos.subtract(deltaMovement);
+	    return new BlockPos((int) Math.floor(behind.x), (int) Math.floor(behind.y), (int) Math.floor(behind.z));
 	}
-
 	return null;
-
     }
 
     public static class MissileEntityData {

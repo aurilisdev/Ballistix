@@ -1,9 +1,9 @@
 package ballistix.common.blast.util.thread.raycast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -21,7 +21,7 @@ public class ThreadDynamicRaySideBlast extends Thread {
     private final RandomSource random = RandomSource.createThreadSafe();
     private ArrayList<DynamicRay> rays = new ArrayList<>();
 
-    private static final float DEFAULT_POWER_DEC = 1.125f;
+    public static final float DEFAULT_POWER_DEC = 1.125f;
 
     public ThreadDynamicRaySideBlast(ThreadDynamicRaycastBlast threadRaycastBlast, Direction dir) {
 	mainBlast = threadRaycastBlast;
@@ -68,8 +68,6 @@ public class ThreadDynamicRaySideBlast extends Thread {
 
 		float power = explosionEnergy - explosionEnergy * random.nextFloat() / 2;
 
-		BlockPos currentBlockPos = new BlockPos(position);
-
 		float currentX = position.getX() + 0.5F;
 		float currentY = position.getY() + 0.5F;
 		float currentZ = position.getZ() + 0.5F;
@@ -79,8 +77,7 @@ public class ThreadDynamicRaySideBlast extends Thread {
 		float dx = x * invLen;
 		float dy = y * invLen;
 		float dz = z * invLen;
-		rays.add(new DynamicRay(currentX, currentY, currentZ, dx, dy, dz, power, currentBlockPos,
-			DEFAULT_POWER_DEC, mainBlast));
+		rays.add(new DynamicRay(currentX, currentY, currentZ, dx, dy, dz, power, DEFAULT_POWER_DEC, mainBlast));
 
 	    }
 	}
@@ -92,14 +89,14 @@ public class ThreadDynamicRaySideBlast extends Thread {
 	IResistanceCallback callback = mainBlast.callBack;
 	Entity explosionSource = mainBlast.explosionSource;
 	BlockPos position = mainBlast.position;
-
 	while (!rays.isEmpty()) {
 	    Iterator<DynamicRay> it = rays.iterator();
-	    HashMap<BlockPos, BlockState> positions = new HashMap<>();
+	    Long2ObjectOpenHashMap<BlockState> positions = new Long2ObjectOpenHashMap<>();
 	    while (it.hasNext()) {
 		DynamicRay ray = it.next();
-		if (ray.tick(position, world, callback, explosionSource, positions))
+		if (ray.tick(position, world, callback, explosionSource, positions)) {
 		    it.remove();
+		}
 	    }
 	}
 	mainBlast.underBlasts.remove(this);

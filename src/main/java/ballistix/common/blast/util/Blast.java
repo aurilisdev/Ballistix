@@ -22,6 +22,9 @@ import ballistix.api.event.BlastEvent.PostBlastEvent;
 import ballistix.api.event.BlastEvent.PreBlastEvent;
 import ballistix.common.entity.EntityBlast;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
+import modularforcefields.common.settings.MFFSConfig;
+import modularforcefields.common.tile.TileFortronFieldProjector;
+import modularforcefields.common.world.FortronFieldData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
@@ -308,5 +311,40 @@ public abstract class Blast {
 
 	NONE, GRIEF_DEFENDER, SABER_FACTIONS;
 
+    }
+
+    public static void damageFortronField(ServerLevel level, BlockPos fieldPos, double damagePercentage) {
+
+	FortronFieldData data = FortronFieldData.get(level);
+
+	for (long owner : data.getOwners(fieldPos)) {
+
+	    TileFortronFieldProjector projector = data.getLoadedProjector(level, owner);
+
+	    if (projector == null) {
+		continue;
+	    }
+
+	    double maxHealth = MFFSConfig.INSTANCE.FORTRONFIELD_MAXHEALTH.getAsDouble();
+
+	    double damage = maxHealth * damagePercentage;
+
+	    projector.health.setValue(projector.health.getValue() - damage);
+	}
+    }
+
+    public static void damageFortronProjector(ServerLevel level, long owner, double damagePercentage) {
+
+	FortronFieldData data = FortronFieldData.get(level);
+
+	TileFortronFieldProjector projector = data.getLoadedProjector(level, owner);
+	if (projector != null) {
+
+	    double maxHealth = MFFSConfig.INSTANCE.FORTRONFIELD_MAXHEALTH.getAsDouble();
+
+	    double damage = maxHealth * damagePercentage;
+
+	    projector.health.setValue(projector.health.getValue() - damage);
+	}
     }
 }

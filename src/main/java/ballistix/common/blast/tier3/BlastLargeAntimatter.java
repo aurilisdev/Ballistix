@@ -90,7 +90,7 @@ public class BlastLargeAntimatter extends BlastLasting implements IHasCustomRend
 	if (pertick == -1) {
 	    hasStarted = true;
 
-	    int radius = (int) BallistixConfig.INSTANCE.EXPLOSIVE_ANTIMATTER_RADIUS.getAsDouble();
+	    int radius = (int) BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_RADIUS.getAsDouble();
 
 	    if (Ballistix.MFFS_LOADED && world instanceof ServerLevel serverLevel) {
 		protectionRegions = FortronFieldData.get(serverLevel).getProtectionRegions(position, radius);

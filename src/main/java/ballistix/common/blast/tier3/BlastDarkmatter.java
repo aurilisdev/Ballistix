@@ -12,6 +12,7 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import ballistix.Ballistix;
 import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IMovingBlast;
 import ballistix.common.blast.util.Blast;
@@ -41,7 +42,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.fml.ModList;
 import voltaic.prefab.utilities.WorldUtils;
 
 public class BlastDarkmatter extends Blast implements IMovingBlast {
@@ -108,7 +108,7 @@ public class BlastDarkmatter extends Blast implements IMovingBlast {
 	     * Dark matter needs current field data every tick. Once a field dies,
 	     * previously protected blocks must become available for destruction.
 	     */
-	    if (ModList.get().isLoaded("modularforcefields") && world instanceof ServerLevel serverLevel) {
+	    if (Ballistix.MFFS_LOADED && world instanceof ServerLevel serverLevel) {
 		int radius = (int) BallistixConfig.INSTANCE.EXPLOSIVE_DARKMATTER_RADIUS.getAsDouble();
 		protectionRegions = FortronFieldData.get(serverLevel).getProtectionRegions(position, radius);
 	    } else {
@@ -251,7 +251,7 @@ public class BlastDarkmatter extends Blast implements IMovingBlast {
 	     * may still be chewing through a forcefield or catching up on blocks that the
 	     * forcefield protected earlier.
 	     */
-	    if (!cachedIterator.hasNext() && retryFortronBlocks.isEmpty() && blockedFortronBlocks.isEmpty()) {
+	    if (!cachedIterator.hasNext()) {
 		WorldUtils.clearChunkCache();
 		return true;
 	    }

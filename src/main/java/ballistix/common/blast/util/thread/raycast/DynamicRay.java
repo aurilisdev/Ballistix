@@ -2,6 +2,7 @@ package ballistix.common.blast.util.thread.raycast;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import ballistix.Ballistix;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import modularforcefields.registers.ModularForcefieldsBlocks;
 import net.minecraft.core.BlockPos;
@@ -9,13 +10,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.fml.ModList;
 import voltaic.prefab.block.HashDistanceBlockPos;
 
 public class DynamicRay {
-
-    private static final boolean MFFS_LOADED = ModList.get().isLoaded("modularforcefields");
-
     private float power;
 
     private int currentBlockX;
@@ -142,7 +139,7 @@ public class DynamicRay {
 
 	block = world.getBlockState(mutablePos);
 
-	if (MFFS_LOADED && block.is(ModularForcefieldsBlocks.BLOCK_FORTRONFIELD)) {
+	if (Ballistix.MFFS_LOADED && block.is(ModularForcefieldsBlocks.BLOCK_FORTRONFIELD)) {
 	    BlockPos fieldPos = new BlockPos(currentBlockX, currentBlockY, currentBlockZ);
 
 	    mainBlast.fortronRayHits.computeIfAbsent(fieldPos, pos -> new AtomicInteger()).incrementAndGet();

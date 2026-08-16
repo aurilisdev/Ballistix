@@ -3,6 +3,8 @@ package ballistix.common.blast.util.thread.raycast;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import ballistix.common.blast.util.thread.ThreadBlast;
 import ballistix.common.settings.BallistixConstants;
@@ -17,10 +19,10 @@ import voltaic.prefab.block.HashDistanceBlockPos;
 
 /**
  * 
- * The fact that this is raytraced is legacy. This was optimal in 1.16 but after
- * minecraft made world changes more thread safe, using multithreading (with
- * inworld access) is actually ALOT slower. It is only worth it for pure math
- * (Like antimatter explosions).
+ * The fact that this is multithreaded is legacy. This was optimal in 1.16 but
+ * after minecraft made world changes more thread safe, using multithreading
+ * (with inworld access) is actually ALOT slower. It is only worth it for pure
+ * math (Like antimatter explosions).
  * 
  * This could probably be more optimised in newer versions if we remove the
  * sided explosion part completely, like how it was previously.
@@ -35,17 +37,23 @@ public class ThreadDynamicRaycastBlast extends ThreadBlast {
     public final Set<BlockPos> finishedBlocks = Collections.synchronizedSet(new HashSet<>());
     public boolean locked = false;
 
+    public final long totalRayCount;
+    public final ConcurrentHashMap<BlockPos, AtomicInteger> fortronRayHits = new ConcurrentHashMap<>();
+
     public ThreadDynamicRaycastBlast(Level world, BlockPos position, int range, float energy, Entity source,
 	    IResistanceCallback cb) {
+
 	super(world, position, range, energy, source);
+
 	callBack = cb;
+	totalRayCount = 24L * range * range;
+
 	setName("RaycastBlast Main Thread");
     }
 
     public ThreadDynamicRaycastBlast(Level world, BlockPos position, int range, float energy, Entity source) {
 	this(world, position, range, energy, source, new IResistanceCallbackImp(new Explosion(world, source, null, null,
 		position.getX(), position.getY(), position.getZ(), range, false, BlockInteraction.DESTROY)));
-
     }
 
     @Override
@@ -62,7 +70,7 @@ public class ThreadDynamicRaycastBlast extends ThreadBlast {
 	}
 	if (BallistixConstants.SHOULD_MULTITHREAD_RAYTRACING) {
 	    while (!underBlasts.isEmpty()) {
-		HashSet<BlockPos> current = new HashSet<BlockPos>();
+		HashSet<BlockPos> current = new HashSet<>();
 		synchronized (intermediateResults) {
 		    current.addAll(intermediateResults);
 		    intermediateResults.clear();

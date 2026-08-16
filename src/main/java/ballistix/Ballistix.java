@@ -19,6 +19,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -37,6 +38,8 @@ public class Ballistix {
 
     public static final String NUCLEAR_SCIENCE_ID = "nuclearscience";
     public static final String GRIEF_DEFENDER_ID = "griefdefender";
+
+    public static final boolean MFFS_LOADED = ModList.get().isLoaded("modularforcefields");
 
     public Ballistix() {
 	ConfigurationHandler.registerConfig(BallistixConstants.class);

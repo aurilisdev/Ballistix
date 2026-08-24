@@ -1,9 +1,9 @@
 package ballistix.registers;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -31,13 +31,13 @@ public class BallistixAttachmentTypes {
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister
 	    .create(NeoForgeRegistries.ATTACHMENT_TYPES, Ballistix.ID);
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<HashMap<Integer, HashSet<BlockPos>>>> SILO_FREQUENCIES = ATTACHMENT_TYPES
-	    .register("silofrequencies", () -> AttachmentType.builder(() -> new HashMap<Integer, HashSet<BlockPos>>())
-		    .serialize(new IAttachmentSerializer<CompoundTag, HashMap<Integer, HashSet<BlockPos>>>() {
+	public static final DeferredHolder<AttachmentType<?>, AttachmentType<ConcurrentHashMap<Integer, Set<BlockPos>>>> SILO_FREQUENCIES = ATTACHMENT_TYPES
+	    .register("silofrequencies", () -> AttachmentType.builder(() -> new ConcurrentHashMap<Integer, Set<BlockPos>>())
+		    .serialize(new IAttachmentSerializer<CompoundTag, ConcurrentHashMap<Integer, Set<BlockPos>>>() {
 			@Override
-			public HashMap<Integer, HashSet<BlockPos>> read(IAttachmentHolder holder, CompoundTag tag,
+			public ConcurrentHashMap<Integer, Set<BlockPos>> read(IAttachmentHolder holder, CompoundTag tag,
 				HolderLookup.Provider provider) {
-			    HashMap<Integer, HashSet<BlockPos>> data = new HashMap<>();
+			    ConcurrentHashMap<Integer, Set<BlockPos>> data = new ConcurrentHashMap<>();
 
 			    int size = tag.getInt("size");
 			    for (int i = 0; i < size; i++) {
@@ -48,7 +48,7 @@ public class BallistixAttachmentTypes {
 
 				int setSize = stored.getInt("setsize");
 
-				HashSet<BlockPos> tiles = new HashSet<>();
+				Set<BlockPos> tiles = ConcurrentHashMap.newKeySet();
 
 				for (int j = 0; j < setSize; j++) {
 				    BlockPos.CODEC.decode(NbtOps.INSTANCE, stored.get("pos" + j))
@@ -62,19 +62,19 @@ public class BallistixAttachmentTypes {
 			}
 
 			@Override
-			public @Nullable CompoundTag write(HashMap<Integer, HashSet<BlockPos>> attachment,
+			public @Nullable CompoundTag write(ConcurrentHashMap<Integer, Set<BlockPos>> attachment,
 				HolderLookup.Provider provider) {
 			    CompoundTag data = new CompoundTag();
 			    int size = attachment.size();
 			    data.putInt("size", size);
 			    int i = 0;
-			    for (Map.Entry<Integer, HashSet<BlockPos>> entry : attachment.entrySet()) {
+			    for (Map.Entry<Integer, Set<BlockPos>> entry : attachment.entrySet()) {
 
 				CompoundTag store = new CompoundTag();
 
 				store.putInt("freq", entry.getKey());
 
-				HashSet<BlockPos> tiles = entry.getValue();
+				Set<BlockPos> tiles = entry.getValue();
 
 				store.putInt("setsize", tiles.size());
 
@@ -97,18 +97,18 @@ public class BallistixAttachmentTypes {
 			}
 		    }).build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>>>> ACTIVE_MISSILES = ATTACHMENT_TYPES
+	public static final DeferredHolder<AttachmentType<?>, AttachmentType<ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualMissile>>>> ACTIVE_MISSILES = ATTACHMENT_TYPES
 	    .register("activemissiles", () -> AttachmentType
-		    .builder(() -> new HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>>()).serialize(
-			    new IAttachmentSerializer<CompoundTag, HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>>>() {
+		    .builder(() -> new ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualMissile>>()).serialize(
+			    new IAttachmentSerializer<CompoundTag, ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualMissile>>>() {
 
 				private static final Codec<ResourceKey<Level>> CODEC = ResourceKey
 					.codec(Registries.DIMENSION);
 
 				@Override
-				public HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> read(
+				public ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualMissile>> read(
 					IAttachmentHolder holder, CompoundTag tag, HolderLookup.Provider provider) {
-				    HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> data = new HashMap<>();
+				    ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualMissile>> data = new ConcurrentHashMap<>();
 
 				    int size = tag.getInt("size");
 
@@ -123,7 +123,7 @@ public class BallistixAttachmentTypes {
 					ResourceKey<Level> key = CODEC.decode(NbtOps.INSTANCE, stored.get("key"))
 						.getOrThrow().getFirst();
 
-					HashMap<UUID, VirtualMissile> active = new HashMap<>();
+					ConcurrentHashMap<UUID, VirtualMissile> active = new ConcurrentHashMap<>();
 
 					int activeSize = stored.getInt("size");
 
@@ -145,7 +145,7 @@ public class BallistixAttachmentTypes {
 
 				@Override
 				public @Nullable CompoundTag write(
-					HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> attachment,
+					ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualMissile>> attachment,
 					HolderLookup.Provider provider) {
 
 				    CompoundTag data = new CompoundTag();
@@ -154,7 +154,7 @@ public class BallistixAttachmentTypes {
 
 				    int i = 0;
 
-				    for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> entry : attachment
+				    for (Map.Entry<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualMissile>> entry : attachment
 					    .entrySet()) {
 
 					if (entry.getValue().size() <= 0) {
@@ -195,19 +195,19 @@ public class BallistixAttachmentTypes {
 			    })
 		    .build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>>>> ACTIVE_BULLETS = ATTACHMENT_TYPES
+	public static final DeferredHolder<AttachmentType<?>, AttachmentType<ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualProjectile.VirtualBullet>>>> ACTIVE_BULLETS = ATTACHMENT_TYPES
 	    .register("activebullets", () -> AttachmentType
-		    .builder(() -> new HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>>())
+		    .builder(() -> new ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualProjectile.VirtualBullet>>())
 		    .serialize(
-			    new IAttachmentSerializer<CompoundTag, HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>>>() {
+			    new IAttachmentSerializer<CompoundTag, ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualProjectile.VirtualBullet>>>() {
 
 				private static final Codec<ResourceKey<Level>> CODEC = ResourceKey
 					.codec(Registries.DIMENSION);
 
 				@Override
-				public HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>> read(
+				public ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualProjectile.VirtualBullet>> read(
 					IAttachmentHolder holder, CompoundTag tag, HolderLookup.Provider provider) {
-				    HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>> data = new HashMap<>();
+				    ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualProjectile.VirtualBullet>> data = new ConcurrentHashMap<>();
 
 				    int size = tag.getInt("size");
 
@@ -222,7 +222,7 @@ public class BallistixAttachmentTypes {
 					ResourceKey<Level> key = CODEC.decode(NbtOps.INSTANCE, stored.get("key"))
 						.getOrThrow().getFirst();
 
-					HashMap<UUID, VirtualProjectile.VirtualBullet> active = new HashMap<>();
+					ConcurrentHashMap<UUID, VirtualProjectile.VirtualBullet> active = new ConcurrentHashMap<>();
 
 					int activeSize = stored.getInt("size");
 
@@ -244,7 +244,7 @@ public class BallistixAttachmentTypes {
 
 				@Override
 				public @Nullable CompoundTag write(
-					HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>> attachment,
+					ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualProjectile.VirtualBullet>> attachment,
 					HolderLookup.Provider provider) {
 
 				    CompoundTag data = new CompoundTag();
@@ -253,7 +253,7 @@ public class BallistixAttachmentTypes {
 
 				    int i = 0;
 
-				    for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>> entry : attachment
+				    for (Map.Entry<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualProjectile.VirtualBullet>> entry : attachment
 					    .entrySet()) {
 
 					if (entry.getValue().size() <= 0) {
@@ -294,19 +294,19 @@ public class BallistixAttachmentTypes {
 			    })
 		    .build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>>>> ACTIVE_RAILGUNROUNDS = ATTACHMENT_TYPES
+	public static final DeferredHolder<AttachmentType<?>, AttachmentType<ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualProjectile.VirtualRailgunRound>>>> ACTIVE_RAILGUNROUNDS = ATTACHMENT_TYPES
 	    .register("activerailgunrounds", () -> AttachmentType.builder(
-		    () -> new HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>>())
+		    () -> new ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualProjectile.VirtualRailgunRound>>())
 		    .serialize(
-			    new IAttachmentSerializer<CompoundTag, HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>>>() {
+			    new IAttachmentSerializer<CompoundTag, ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualProjectile.VirtualRailgunRound>>>() {
 
 				private static final Codec<ResourceKey<Level>> CODEC = ResourceKey
 					.codec(Registries.DIMENSION);
 
 				@Override
-				public HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> read(
+				public ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualProjectile.VirtualRailgunRound>> read(
 					IAttachmentHolder holder, CompoundTag tag, HolderLookup.Provider provider) {
-				    HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> data = new HashMap<>();
+				    ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualProjectile.VirtualRailgunRound>> data = new ConcurrentHashMap<>();
 
 				    int size = tag.getInt("size");
 
@@ -321,7 +321,7 @@ public class BallistixAttachmentTypes {
 					ResourceKey<Level> key = CODEC.decode(NbtOps.INSTANCE, stored.get("key"))
 						.getOrThrow().getFirst();
 
-					HashMap<UUID, VirtualProjectile.VirtualRailgunRound> active = new HashMap<>();
+					ConcurrentHashMap<UUID, VirtualProjectile.VirtualRailgunRound> active = new ConcurrentHashMap<>();
 
 					int activeSize = stored.getInt("size");
 
@@ -343,7 +343,7 @@ public class BallistixAttachmentTypes {
 
 				@Override
 				public @Nullable CompoundTag write(
-					HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> attachment,
+					ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualProjectile.VirtualRailgunRound>> attachment,
 					HolderLookup.Provider provider) {
 
 				    CompoundTag data = new CompoundTag();
@@ -352,7 +352,7 @@ public class BallistixAttachmentTypes {
 
 				    int i = 0;
 
-				    for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> entry : attachment
+				    for (Map.Entry<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualProjectile.VirtualRailgunRound>> entry : attachment
 					    .entrySet()) {
 
 					if (entry.getValue().size() <= 0) {
@@ -395,19 +395,19 @@ public class BallistixAttachmentTypes {
 			    })
 		    .build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>>>> ACTIVE_SAMS = ATTACHMENT_TYPES
+	public static final DeferredHolder<AttachmentType<?>, AttachmentType<ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualProjectile.VirtualSAM>>>> ACTIVE_SAMS = ATTACHMENT_TYPES
 	    .register("activesams", () -> AttachmentType
-		    .builder(() -> new HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>>())
+		    .builder(() -> new ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualProjectile.VirtualSAM>>())
 		    .serialize(
-			    new IAttachmentSerializer<CompoundTag, HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>>>() {
+			    new IAttachmentSerializer<CompoundTag, ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualProjectile.VirtualSAM>>>() {
 
 				private static final Codec<ResourceKey<Level>> CODEC = ResourceKey
 					.codec(Registries.DIMENSION);
 
 				@Override
-				public HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>> read(
+				public ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualProjectile.VirtualSAM>> read(
 					IAttachmentHolder holder, CompoundTag tag, HolderLookup.Provider provider) {
-				    HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>> data = new HashMap<>();
+				    ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualProjectile.VirtualSAM>> data = new ConcurrentHashMap<>();
 
 				    int size = tag.getInt("size");
 
@@ -422,7 +422,7 @@ public class BallistixAttachmentTypes {
 					ResourceKey<Level> key = CODEC.decode(NbtOps.INSTANCE, stored.get("key"))
 						.getOrThrow().getFirst();
 
-					HashMap<UUID, VirtualProjectile.VirtualSAM> active = new HashMap<>();
+					ConcurrentHashMap<UUID, VirtualProjectile.VirtualSAM> active = new ConcurrentHashMap<>();
 
 					int activeSize = stored.getInt("size");
 
@@ -444,7 +444,7 @@ public class BallistixAttachmentTypes {
 
 				@Override
 				public @Nullable CompoundTag write(
-					HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>> attachment,
+					ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualProjectile.VirtualSAM>> attachment,
 					HolderLookup.Provider provider) {
 
 				    CompoundTag data = new CompoundTag();
@@ -453,7 +453,7 @@ public class BallistixAttachmentTypes {
 
 				    int i = 0;
 
-				    for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>> entry : attachment
+				    for (Map.Entry<ResourceKey<Level>, ConcurrentHashMap<UUID, VirtualProjectile.VirtualSAM>> entry : attachment
 					    .entrySet()) {
 
 					if (entry.getValue().size() <= 0) {

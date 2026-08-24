@@ -17,7 +17,7 @@ public abstract class ThreadBlast extends Thread {
     public float explosionEnergy;
     public Entity explosionSource;
 
-    public boolean isComplete = false;
+	public volatile boolean isComplete = false;
 
     protected ThreadBlast(Level world, BlockPos pos, int radius, float energy, Entity source) {
 	level = world;

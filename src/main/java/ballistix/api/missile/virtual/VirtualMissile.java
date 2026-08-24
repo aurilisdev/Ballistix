@@ -17,6 +17,7 @@ import ballistix.common.block.subtype.SubtypeMissile;
 import ballistix.common.entity.EntityBlast;
 import ballistix.common.entity.EntityMissile;
 import ballistix.common.settings.BallistixConfig;
+import ballistix.compatibility.TessellateCompat;
 import ballistix.registers.BallistixSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
@@ -66,20 +67,21 @@ public class VirtualMissile {
     //
     ).apply(instance, VirtualMissile::new));
 
-    public Vec3 position = Vec3.ZERO;
-    public Vec3 deltaMovement = Vec3.ZERO;
-    public float speed = 0.0F;
-    public float health = BallistixConfig.INSTANCE.MISSILE_HEALTH.get();
+	public volatile Vec3 position = Vec3.ZERO;
+	public volatile Vec3 deltaMovement = Vec3.ZERO;
+	public volatile float speed = 0.0F;
+	public volatile float health = BallistixConfig.INSTANCE.MISSILE_HEALTH.get();
     private final UUID id;
-    private boolean hasExploded = false;
+	private volatile boolean hasExploded = false;
     public final MissileEntityData entityData;
     public final MissileTargetData targetData;
     public final MissilePayloadData payloadData;
 
-    private int tickCount = 0;
+    private volatile int tickCount = 0;
+    private volatile boolean spawnPending;
 
     @Nullable
-    public EntityBlast blastEntity;
+	public volatile EntityBlast blastEntity;
 
     private VirtualMissile(Vec3 pos, Vec3 deltaMovement, float speed, float health, boolean hasExploded, UUID id,
 	    int tickCount, MissileTargetData targetData, MissileEntityData entityData, MissilePayloadData payloadData) {
@@ -432,7 +434,7 @@ public class VirtualMissile {
 	    speed += 0.02F;
 	}
 
-	if (!entityData.isSpawned && level.hasChunkAt(blockPosition())
+	if (!spawnPending && !entityData.isSpawned && level.hasChunkAt(blockPosition())
 		&& level.isPositionEntityTicking(blockPosition())) {
 
 	    EntityMissile missile = new EntityMissile(level);
@@ -446,8 +448,20 @@ public class VirtualMissile {
 	    missile.startX = targetData.startX;
 	    missile.startZ = targetData.startZ;
 
-	    if (level.addFreshEntity(missile)) {
-		setSpawned(true, missile.getId());
+	    spawnPending = true;
+	    try {
+		TessellateCompat.runOnMain(() -> {
+		    try {
+			if (!hasExploded && level.addFreshEntity(missile)) {
+			    setSpawned(true, missile.getId());
+			}
+		    } finally {
+			spawnPending = false;
+		    }
+		});
+	    } catch (RuntimeException e) {
+		spawnPending = false;
+		throw e;
 	    }
 
 	}
@@ -512,8 +526,8 @@ public class VirtualMissile {
     }
 
     public void setSpawned(boolean spawned, int id) {
-	entityData.isSpawned = spawned;
 	entityData.entityId = id;
+	entityData.isSpawned = spawned;
     }
 
     public AABB getBoundingBox() {
@@ -558,8 +572,8 @@ public class VirtualMissile {
 	//
 	).apply(instance, MissileEntityData::new));
 
-	public boolean isSpawned = false;
-	public int entityId = -1;
+	public volatile boolean isSpawned = false;
+	public volatile int entityId = -1;
 
 	public MissileEntityData(boolean isSpawned, int entityId) {
 	    this.entityId = entityId;
@@ -587,7 +601,7 @@ public class VirtualMissile {
 	public final float startX;
 	public final float startZ;
 	public final BlockPos target;
-	public boolean pastHalfwayPoint = false;
+	public volatile boolean pastHalfwayPoint = false;
 	public final boolean usingAirburst;
 
 	public MissileTargetData(float startX, float startZ, BlockPos target, boolean pastHalfway,
@@ -620,7 +634,7 @@ public class VirtualMissile {
 	public final ResourceLocation blastId;
 	public final int frequency;
 	private final int flightPath;
-	public boolean hasIgnighted;
+	public volatile boolean hasIgnighted;
 
 	public MissilePayloadData(int missileType, ResourceLocation blastId, int frequency, int flightPath,
 		boolean hasIgnighted) {

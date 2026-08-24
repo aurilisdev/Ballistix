@@ -1,9 +1,7 @@
 package ballistix.common.tile;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import ballistix.Ballistix;
@@ -45,9 +43,9 @@ import voltaic.registers.VoltaicCapabilities;
 
 public class TileESMTower extends GenericTile implements IMultiblockParentTile {
 
-    public static final ConcurrentHashMap<ResourceKey<Level>, HashSet<TileSearchRadar>> SEARCH_RADARS = new ConcurrentHashMap<>();
-    public static final ConcurrentHashMap<ResourceKey<Level>, HashSet<TileFireControlRadar>> FIRE_CONTROL_RADARS = new ConcurrentHashMap<>();
-    public static final ConcurrentHashMap<ResourceKey<Level>, HashSet<TileESMTower>> ESM_TOWERS = new ConcurrentHashMap<>();
+	public static final ConcurrentHashMap<ResourceKey<Level>, Set<TileSearchRadar>> SEARCH_RADARS = new ConcurrentHashMap<>();
+	public static final ConcurrentHashMap<ResourceKey<Level>, Set<TileFireControlRadar>> FIRE_CONTROL_RADARS = new ConcurrentHashMap<>();
+	public static final ConcurrentHashMap<ResourceKey<Level>, Set<TileESMTower>> ESM_TOWERS = new ConcurrentHashMap<>();
 
     public final SingleProperty<Boolean> active = property(
 	    new SingleProperty<>(PropertyTypes.BOOLEAN, "active", false));
@@ -91,14 +89,14 @@ public class TileESMTower extends GenericTile implements IMultiblockParentTile {
 	searchRadarDetected.setValue(false);
 	fireControlRadars.wipeList();
 
-	for (TileSearchRadar radar : SEARCH_RADARS.getOrDefault(getLevel().dimension(), new HashSet<>())) {
+	for (TileSearchRadar radar : SEARCH_RADARS.getOrDefault(getLevel().dimension(), Set.of())) {
 	    if (searchArea.intersects(new AABB(radar.getBlockPos()))) {
 		searchRadarDetected.setValue(true);
 		break;
 	    }
 	}
 
-	for (TileFireControlRadar radar : FIRE_CONTROL_RADARS.getOrDefault(getLevel().dimension(), new HashSet<>())) {
+	for (TileFireControlRadar radar : FIRE_CONTROL_RADARS.getOrDefault(getLevel().dimension(), Set.of())) {
 	    if (searchArea.intersects(new AABB(radar.getBlockPos()))) {
 		fireControlRadars.addValue(radar.getBlockPos());
 	    }
@@ -127,34 +125,38 @@ public class TileESMTower extends GenericTile implements IMultiblockParentTile {
     }
 
     public static void removeSearchRadar(TileSearchRadar radar) {
-	SEARCH_RADARS.getOrDefault(radar.getLevel().dimension(), new HashSet<>()).remove(radar);
+	Set<TileSearchRadar> radars = SEARCH_RADARS.get(radar.getLevel().dimension());
+	if (radars != null) {
+	    radars.remove(radar);
+	}
     }
 
     public static void removeFireControlRadar(TileFireControlRadar radar) {
-	FIRE_CONTROL_RADARS.getOrDefault(radar.getLevel().dimension(), new HashSet<>()).remove(radar);
+	Set<TileFireControlRadar> radars = FIRE_CONTROL_RADARS.get(radar.getLevel().dimension());
+	if (radars != null) {
+	    radars.remove(radar);
+	}
     }
 
     public static void removeESMTower(TileESMTower esm) {
-	ESM_TOWERS.getOrDefault(esm.getLevel().dimension(), new HashSet<>()).remove(esm);
+	Set<TileESMTower> towers = ESM_TOWERS.get(esm.getLevel().dimension());
+	if (towers != null) {
+	    towers.remove(esm);
+	}
     }
 
     public static void addSearchRadar(TileSearchRadar radar) {
-	HashSet<TileSearchRadar> radars = SEARCH_RADARS.getOrDefault(radar.getLevel().dimension(), new HashSet<>());
-	radars.add(radar);
-	SEARCH_RADARS.put(radar.getLevel().dimension(), radars);
+	SEARCH_RADARS.computeIfAbsent(radar.getLevel().dimension(), ignored -> ConcurrentHashMap.newKeySet())
+		.add(radar);
     }
 
     public static void addFireControlRadar(TileFireControlRadar radar) {
-	HashSet<TileFireControlRadar> radars = FIRE_CONTROL_RADARS.getOrDefault(radar.getLevel().dimension(),
-		new HashSet<>());
-	radars.add(radar);
-	FIRE_CONTROL_RADARS.put(radar.getLevel().dimension(), radars);
+	FIRE_CONTROL_RADARS.computeIfAbsent(radar.getLevel().dimension(), ignored -> ConcurrentHashMap.newKeySet())
+		.add(radar);
     }
 
     public static void addESMTower(TileESMTower esm) {
-	HashSet<TileESMTower> esmTowers = ESM_TOWERS.getOrDefault(esm.getLevel().dimension(), new HashSet<>());
-	esmTowers.add(esm);
-	ESM_TOWERS.put(esm.getLevel().dimension(), esmTowers);
+	ESM_TOWERS.computeIfAbsent(esm.getLevel().dimension(), ignored -> ConcurrentHashMap.newKeySet()).add(esm);
     }
 
     @EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.GAME)
@@ -162,61 +164,9 @@ public class TileESMTower extends GenericTile implements IMultiblockParentTile {
 
 	@SubscribeEvent
 	private static void clearMaps(ServerTickEvent.Post event) {
-
-	    Iterator<Map.Entry<ResourceKey<Level>, HashSet<TileSearchRadar>>> searchIterator = SEARCH_RADARS.entrySet()
-		    .iterator();
-
-	    while (searchIterator.hasNext()) {
-		Map.Entry<ResourceKey<Level>, HashSet<TileSearchRadar>> entry = searchIterator.next();
-
-		Iterator<TileSearchRadar> it = entry.getValue().iterator();
-
-		while (it.hasNext()) {
-		    TileSearchRadar radar = it.next();
-
-		    if (radar == null || radar.isRemoved()) {
-			it.remove();
-		    }
-		}
-
-	    }
-
-	    Iterator<Map.Entry<ResourceKey<Level>, HashSet<TileFireControlRadar>>> fireIterator = FIRE_CONTROL_RADARS
-		    .entrySet().iterator();
-
-	    while (fireIterator.hasNext()) {
-		Map.Entry<ResourceKey<Level>, HashSet<TileFireControlRadar>> entry = fireIterator.next();
-
-		Iterator<TileFireControlRadar> it = entry.getValue().iterator();
-
-		while (it.hasNext()) {
-		    TileFireControlRadar radar = it.next();
-
-		    if (radar == null || radar.isRemoved()) {
-			it.remove();
-		    }
-		}
-
-	    }
-
-	    Iterator<Map.Entry<ResourceKey<Level>, HashSet<TileESMTower>>> esmIterator = ESM_TOWERS.entrySet()
-		    .iterator();
-
-	    while (esmIterator.hasNext()) {
-		Map.Entry<ResourceKey<Level>, HashSet<TileESMTower>> entry = esmIterator.next();
-
-		Iterator<TileESMTower> it = entry.getValue().iterator();
-
-		while (it.hasNext()) {
-		    TileESMTower radar = it.next();
-
-		    if (radar == null || radar.isRemoved()) {
-			it.remove();
-		    }
-		}
-
-	    }
-
+	    SEARCH_RADARS.values().forEach(radars -> radars.removeIf(radar -> radar == null || radar.isRemoved()));
+	    FIRE_CONTROL_RADARS.values().forEach(radars -> radars.removeIf(radar -> radar == null || radar.isRemoved()));
+	    ESM_TOWERS.values().forEach(towers -> towers.removeIf(tower -> tower == null || tower.isRemoved()));
 	}
     }
 

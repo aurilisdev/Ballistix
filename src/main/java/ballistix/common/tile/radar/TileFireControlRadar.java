@@ -1,7 +1,6 @@
 package ballistix.common.tile.radar;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -73,13 +72,13 @@ public class TileFireControlRadar extends GenericTile {
     private final AABB searchArea = new AABB(getBlockPos())
 	    .inflate(BallistixConfig.INSTANCE.FIRE_CONTROL_RADAR_RANGE.get());
     @Nullable
-    public VirtualMissile tracking;
+	public volatile VirtualMissile tracking;
 
     private final ArrayList<VirtualMissile> trackedMissiles = new ArrayList<>();
     private final Map<BlockPos, UUID> assignments = new HashMap<>();
 
-    public List<VirtualMissile> getTrackedMissiles() {
-	return Collections.unmodifiableList(trackedMissiles);
+	public synchronized List<VirtualMissile> getTrackedMissiles() {
+	return List.copyOf(trackedMissiles);
     }
 
     private boolean isValidThreat(VirtualMissile missile) {
@@ -116,7 +115,7 @@ public class TileFireControlRadar extends GenericTile {
 	searchPos = new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
     }
 
-    public void tickServer(ComponentTickable tickable) {
+	public synchronized void tickServer(ComponentTickable tickable) {
 	ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
 
 	running.setValue(electro.getJoulesStored() > BallistixConfig.INSTANCE.RADAR_USAGE.get() / 20.0
@@ -192,7 +191,8 @@ public class TileFireControlRadar extends GenericTile {
     }
 
     @Nullable
-    public VirtualMissile getTargetFor(BlockPos requesterBlockPos, Vec3 requesterPos, float interceptorSpeed) {
+	public synchronized VirtualMissile getTargetFor(BlockPos requesterBlockPos, Vec3 requesterPos,
+	    float interceptorSpeed) {
 
 	UUID currentAssignment = assignments.get(requesterBlockPos);
 

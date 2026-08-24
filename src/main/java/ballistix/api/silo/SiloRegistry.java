@@ -1,7 +1,8 @@
 package ballistix.api.silo;
 
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import ballistix.registers.BallistixAttachmentTypes;
 import net.minecraft.core.BlockPos;
@@ -13,15 +14,9 @@ public class SiloRegistry {
     public static void registerSilo(int frequency, ILauncherControlPanel silo) {
 	ServerLevel overworld = getOverworld();
 
-	HashMap<Integer, HashSet<BlockPos>> siloRegistry = overworld.getData(BallistixAttachmentTypes.SILO_FREQUENCIES);
-
-	HashSet<BlockPos> registered = siloRegistry.getOrDefault(frequency, new HashSet<>());
-
-	registered.add(silo.getPos());
-
-	siloRegistry.put(frequency, registered);
-
-	overworld.setData(BallistixAttachmentTypes.SILO_FREQUENCIES, siloRegistry);
+	ConcurrentHashMap<Integer, Set<BlockPos>> siloRegistry = overworld
+		.getData(BallistixAttachmentTypes.SILO_FREQUENCIES);
+	siloRegistry.computeIfAbsent(frequency, ignored -> ConcurrentHashMap.newKeySet()).add(silo.getPos());
 
     }
 
@@ -29,26 +24,29 @@ public class SiloRegistry {
 
 	ServerLevel overworld = getOverworld();
 
-	HashMap<Integer, HashSet<BlockPos>> siloRegistry = overworld.getData(BallistixAttachmentTypes.SILO_FREQUENCIES);
+	ConcurrentHashMap<Integer, Set<BlockPos>> siloRegistry = overworld
+		.getData(BallistixAttachmentTypes.SILO_FREQUENCIES);
+	Set<BlockPos> registered = siloRegistry.get(frequency);
+	if (registered != null) {
+	    registered.remove(silo.getPos());
+	}
+    }
 
-	HashSet<BlockPos> registered = siloRegistry.getOrDefault(frequency, new HashSet<>());
-
-	registered.remove(silo.getPos());
-
-	siloRegistry.put(frequency, registered);
-
-	overworld.setData(BallistixAttachmentTypes.SILO_FREQUENCIES, siloRegistry);
+    public static Set<BlockPos> getSiloPositions(int frequency) {
+	Set<BlockPos> positions = getOverworld().getData(BallistixAttachmentTypes.SILO_FREQUENCIES).get(frequency);
+	return positions == null ? Set.of() : Set.copyOf(positions);
     }
 
     public static HashSet<ILauncherControlPanel> getSilos(int freq) {
 
 	ServerLevel overworld = getOverworld();
 
-	HashMap<Integer, HashSet<BlockPos>> siloRegistry = overworld.getData(BallistixAttachmentTypes.SILO_FREQUENCIES);
+	ConcurrentHashMap<Integer, Set<BlockPos>> siloRegistry = overworld
+		.getData(BallistixAttachmentTypes.SILO_FREQUENCIES);
 
 	HashSet<ILauncherControlPanel> silos = new HashSet<>();
 
-	for (BlockPos pos : siloRegistry.getOrDefault(freq, new HashSet<>())) {
+	for (BlockPos pos : siloRegistry.getOrDefault(freq, Set.of())) {
 
 	    if (overworld.getBlockEntity(pos) instanceof ILauncherControlPanel silo) {
 		silos.add(silo);

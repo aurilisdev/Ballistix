@@ -1,15 +1,11 @@
 package ballistix.common.blast.util;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 
-import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 
 import ballistix.Ballistix;
@@ -21,6 +17,7 @@ import ballistix.api.event.BlastEvent.ConstructBlastEvent;
 import ballistix.api.event.BlastEvent.PostBlastEvent;
 import ballistix.api.event.BlastEvent.PreBlastEvent;
 import ballistix.common.entity.EntityBlast;
+import ballistix.compatibility.TessellateCompat;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import modularforcefields.common.settings.MFFSConfig;
 import modularforcefields.common.tile.TileFortronFieldProjector;
@@ -36,7 +33,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -223,7 +219,6 @@ public abstract class Blast {
     }
 
     protected void attackEntities(float size, boolean useRaytrace, Explosion explosion) {
-	Map<Player, Vec3> playerKnockbackMap = Maps.newHashMap();
 	float doubleSize = size * 2.0F;
 	int x0 = Mth.floor(position.getX() - (double) doubleSize - 1.0D);
 	int x1 = Mth.floor(position.getX() + (double) doubleSize + 1.0D);
@@ -237,64 +232,65 @@ public abstract class Blast {
 	Vec3 posVector = new Vec3(position.getX(), position.getY(), position.getZ());
 
 	for (Entity entity : entities) {
-
-	    boolean ignoreEntity = entity.ignoreExplosion(explosion) || !canHarmEntity(entity);
-	    if (ignoreEntity) {
-		continue;
-	    }
-
-	    double normalizedDiameter = Mth.sqrt((float) entity.distanceToSqr(posVector)) / doubleSize;
-	    if (normalizedDiameter > 1.0D) {
-		continue;
-	    }
-	    double deltaX = entity.getX() - position.getX();
-	    double deltaY = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - position.getY();
-	    double deltaZ = entity.getZ() - position.getZ();
-	    double deltaDistance = Mth.sqrt((float) (deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ));
-
-	    if (deltaDistance == 0.0D) {
-		continue;
-	    }
-
-	    deltaX = deltaX / deltaDistance;
-	    deltaY = deltaY / deltaDistance;
-	    deltaZ = deltaZ / deltaDistance;
-
-	    double seenAmount = useRaytrace ? Explosion.getSeenPercent(posVector, entity) : 1;
-
-	    double damageAmount = (1.0D - normalizedDiameter) * seenAmount;
-
-	    entity.hurt(Explosion.getDefaultDamageSource(world, owner),
-		    (int) ((damageAmount * damageAmount + damageAmount) / 2.0D * 7.0D * doubleSize + 1.0D));
-
-	    double actualDamage = damageAmount;
-
-	    if (entity instanceof LivingEntity le) {
-		double damage = damageAmount;
-		int i = EnchantmentHelper
-			.getEnchantmentLevel(world.registryAccess().holderOrThrow(Enchantments.BLAST_PROTECTION), le);
-		if (i > 0) {
-		    damage *= Mth.clamp(1.0D - i * 0.15D, 0.0D, 1.0D);
-		}
-
-		actualDamage = damage;
-	    }
-
-	    entity.push(deltaX * actualDamage, deltaY * actualDamage, deltaZ * actualDamage);
-	    if (entity instanceof Player playerentity) {
-		if (!playerentity.isSpectator()
-			&& (!playerentity.isCreative() || !playerentity.getAbilities().flying)) {
-		    playerKnockbackMap.put(playerentity,
-			    new Vec3(deltaX * damageAmount, deltaY * damageAmount, deltaZ * damageAmount));
-		}
+	    if (world instanceof ServerLevel level) {
+		TessellateCompat.runOnRegion(level, entity.blockPosition(),
+			() -> attackEntity(entity, size, doubleSize, useRaytrace, explosion, posVector));
+	    } else {
+		attackEntity(entity, size, doubleSize, useRaytrace, explosion, posVector);
 	    }
 	}
-	for (Entry<Player, Vec3> entry : playerKnockbackMap.entrySet()) {
-	    if (entry.getKey() instanceof ServerPlayer serverplayerentity) {
-		serverplayerentity.connection.send(new ClientboundExplodePacket(position.getX(), position.getY(),
-			position.getZ(), size, new ArrayList<>(), entry.getValue(), BlockInteraction.DESTROY,
-			ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE));
+    }
+    private void attackEntity(Entity entity, float size, float doubleSize, boolean useRaytrace, Explosion explosion,
+	    Vec3 posVector) {
+	boolean ignoreEntity = entity.ignoreExplosion(explosion) || !canHarmEntity(entity);
+	if (ignoreEntity) {
+	    return;
+	}
+
+	double normalizedDiameter = Mth.sqrt((float) entity.distanceToSqr(posVector)) / doubleSize;
+	if (normalizedDiameter > 1.0D) {
+	    return;
+	}
+	double deltaX = entity.getX() - position.getX();
+	double deltaY = (entity instanceof PrimedTnt ? entity.getY() : entity.getEyeY()) - position.getY();
+	double deltaZ = entity.getZ() - position.getZ();
+	double deltaDistance = Mth.sqrt((float) (deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ));
+
+	if (deltaDistance == 0.0D) {
+	    return;
+	}
+
+	deltaX = deltaX / deltaDistance;
+	deltaY = deltaY / deltaDistance;
+	deltaZ = deltaZ / deltaDistance;
+
+	double seenAmount = useRaytrace ? Explosion.getSeenPercent(posVector, entity) : 1;
+
+	double damageAmount = (1.0D - normalizedDiameter) * seenAmount;
+
+	entity.hurt(Explosion.getDefaultDamageSource(world, owner),
+		(int) ((damageAmount * damageAmount + damageAmount) / 2.0D * 7.0D * doubleSize + 1.0D));
+
+	double actualDamage = damageAmount;
+
+	if (entity instanceof LivingEntity le) {
+	    double damage = damageAmount;
+	    int i = EnchantmentHelper
+		    .getEnchantmentLevel(world.registryAccess().holderOrThrow(Enchantments.BLAST_PROTECTION), le);
+	    if (i > 0) {
+		damage *= Mth.clamp(1.0D - i * 0.15D, 0.0D, 1.0D);
 	    }
+
+	    actualDamage = damage;
+	}
+
+	entity.push(deltaX * actualDamage, deltaY * actualDamage, deltaZ * actualDamage);
+	if (entity instanceof ServerPlayer player && !player.isSpectator()
+		&& (!player.isCreative() || !player.getAbilities().flying)) {
+	    player.connection.send(new ClientboundExplodePacket(position.getX(), position.getY(), position.getZ(), size,
+		    List.of(), new Vec3(deltaX * damageAmount, deltaY * damageAmount, deltaZ * damageAmount),
+		    BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER,
+		    SoundEvents.GENERIC_EXPLODE));
 	}
     }
 

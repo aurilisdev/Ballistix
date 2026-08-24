@@ -1,6 +1,7 @@
 package ballistix.common.packet.type.client;
 
 import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import ballistix.api.radar.IDetected;
@@ -16,8 +17,7 @@ import net.minecraft.world.entity.player.Player;
 public class ClientBarrierMethods {
     public static void handleSetSearchRadarTrackedClient(HashSet<IDetected.Detected> detected, BlockPos tilePos) {
 	if (Minecraft.getInstance().level.getBlockEntity(tilePos) instanceof TileSearchRadar radar) {
-	    radar.detections.clear();
-	    radar.detections.addAll(detected);
+	    radar.detections = Set.copyOf(detected);
 	}
     }
 

@@ -1,8 +1,8 @@
 package ballistix.common.world;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -17,7 +17,7 @@ public class TrackerSecurityData extends SavedData {
 
     private static final String DATA_NAME = "ballistix_tracker_security";
 
-    private final HashMap<UUID, Long> revisions = new HashMap<>();
+	private final ConcurrentHashMap<UUID, Long> revisions = new ConcurrentHashMap<>();
 
     public static TrackerSecurityData load(CompoundTag tag, HolderLookup.Provider registries) {
 
@@ -65,9 +65,7 @@ public class TrackerSecurityData extends SavedData {
 
     public long incrementRevision(UUID uuid) {
 
-	long revision = getRevision(uuid) + 1L;
-
-	revisions.put(uuid, revision);
+	long revision = revisions.merge(uuid, 1L, Long::sum);
 	setDirty();
 
 	return revision;

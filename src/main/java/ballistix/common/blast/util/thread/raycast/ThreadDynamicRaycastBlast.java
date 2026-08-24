@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import ballistix.common.blast.util.thread.ThreadBlast;
 import ballistix.common.settings.BallistixConfig;
+import ballistix.compatibility.TessellateCompat;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -62,19 +63,30 @@ public class ThreadDynamicRaycastBlast extends ThreadBlast {
     }
 
     @Override
+    public synchronized void start() {
+	if (TessellateCompat.isLoaded()) {
+	    run();
+	} else {
+	    super.start();
+	}
+    }
+
+    @Override
     public void run() {
 	results.add(new HashDistanceBlockPos(position.getX(), position.getY(), position.getZ(), 0));
 	for (Direction dir : Direction.values()) {
 	    ThreadDynamicRaySideBlast sideBlast = new ThreadDynamicRaySideBlast(this, dir);
-	    underBlasts.add(sideBlast);
-	    if (BallistixConfig.INSTANCE.SHOULD_MULTITHREAD_RAYTRACING.isTrue()) {
+	    synchronized (underBlasts) {
+		underBlasts.add(sideBlast);
+	    }
+	    if (shouldMultithread()) {
 		sideBlast.start();
 	    } else {
 		sideBlast.run();
 	    }
 	}
-	if (BallistixConfig.INSTANCE.SHOULD_MULTITHREAD_RAYTRACING.isTrue()) {
-	    while (!underBlasts.isEmpty()) {
+	if (shouldMultithread()) {
+	    while (hasUnderBlasts()) {
 		HashSet<BlockPos> current = new HashSet<>();
 		synchronized (intermediateResults) {
 		    current.addAll(intermediateResults);
@@ -94,6 +106,16 @@ public class ThreadDynamicRaycastBlast extends ThreadBlast {
 	    finishedBlocks.addAll(intermediateResults);
 	}
 	super.run();
+    }
+
+    private static boolean shouldMultithread() {
+	return BallistixConfig.INSTANCE.SHOULD_MULTITHREAD_RAYTRACING.isTrue() && !TessellateCompat.isLoaded();
+    }
+
+    private boolean hasUnderBlasts() {
+	synchronized (underBlasts) {
+	    return !underBlasts.isEmpty();
+	}
     }
 
     public static record IResistanceCallbackImp(Explosion explosion) implements IResistanceCallback {

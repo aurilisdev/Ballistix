@@ -2,6 +2,8 @@ package ballistix.common.tile.radar;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import ballistix.Ballistix;
 import ballistix.api.missile.MissileManager;
@@ -56,9 +58,9 @@ public class TileSearchRadar extends GenericTile {
 	    new SingleProperty<>(PropertyTypes.BOOLEAN, "isrunning", false));
 
     private final AABB searchArea = new AABB(getBlockPos()).inflate(BallistixConfig.INSTANCE.RADAR_RANGE.get());
-    private final HashSet<VirtualMissile> trackedMissiles = new HashSet<>();
-    public final HashSet<TileESMTower> trackedEsmTowers = new HashSet<>();
-    public final HashSet<IDetected.Detected> detections = new HashSet<>();
+    private final Set<VirtualMissile> trackedMissiles = ConcurrentHashMap.newKeySet();
+    public volatile Set<TileESMTower> trackedEsmTowers = Set.of();
+    public volatile Set<IDetected.Detected> detections = Set.of();
 
     public double clientRotation;
     public double clientRotationSpeed;
@@ -82,7 +84,7 @@ public class TileSearchRadar extends GenericTile {
 		&& level.getBrightness(LightLayer.SKY, getBlockPos()) > 0);
 
 	trackedMissiles.clear();
-	trackedEsmTowers.clear();
+	trackedEsmTowers = Set.of();
 
 	if (!isRunning.getValue()) {
 	    if (redstone.getValue()) {
@@ -106,34 +108,38 @@ public class TileSearchRadar extends GenericTile {
 	    }
 	}
 
-	for (TileESMTower tower : TileESMTower.ESM_TOWERS.getOrDefault(level.dimension(), new HashSet<>())) {
+	HashSet<TileESMTower> nextTrackedEsmTowers = new HashSet<>();
+	for (TileESMTower tower : TileESMTower.ESM_TOWERS.getOrDefault(level.dimension(), Set.of())) {
 	    if (new AABB(tower.getBlockPos()).intersects(searchArea)) {
-		trackedEsmTowers.add(tower);
+		nextTrackedEsmTowers.add(tower);
 	    }
 	}
+	trackedEsmTowers = Set.copyOf(nextTrackedEsmTowers);
 
-	if (trackedMissiles.isEmpty() && trackedEsmTowers.isEmpty() && redstone.getValue()) {
+	boolean hasTrackedEsmTowers = !nextTrackedEsmTowers.isEmpty();
+	if (trackedMissiles.isEmpty() && !hasTrackedEsmTowers && redstone.getValue()) {
 	    redstone.setValue(false);
 	    level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
-	} else if ((!trackedMissiles.isEmpty() || !trackedEsmTowers.isEmpty()) && !redstone.getValue()) {
+	} else if ((!trackedMissiles.isEmpty() || hasTrackedEsmTowers) && !redstone.getValue()) {
 	    redstone.setValue(true);
 	    level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
 	}
 
-	detections.clear();
+	HashSet<IDetected.Detected> nextDetections = new HashSet<>();
 
 	for (VirtualMissile missile : trackedMissiles) {
-	    detections.add(new IDetected.Detected(missile.position,
+	    nextDetections.add(new IDetected.Detected(missile.position,
 		    BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile
 			    .values()[missile.payloadData.missileType < 1 ? 0 : missile.payloadData.missileType - 1]),
 		    true));
 	}
 
-	for (TileESMTower tile : trackedEsmTowers) {
-	    detections.add(new IDetected.Detected(
+	for (TileESMTower tile : nextTrackedEsmTowers) {
+	    nextDetections.add(new IDetected.Detected(
 		    new Vec3(tile.getBlockPos().getX(), tile.getBlockPos().getY(), tile.getBlockPos().getZ()),
 		    BallistixItems.ITEMS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.esmtower), false));
 	}
+	detections = Set.copyOf(nextDetections);
 
     }
 
@@ -155,9 +161,10 @@ public class TileSearchRadar extends GenericTile {
 
     @Override
     public int getComparatorSignal() {
-	if (!trackedMissiles.isEmpty() && !trackedEsmTowers.isEmpty()) {
+	boolean hasTrackedEsmTowers = !trackedEsmTowers.isEmpty();
+	if (!trackedMissiles.isEmpty() && hasTrackedEsmTowers) {
 	    return 15;
-	} else if (trackedMissiles.isEmpty() && !trackedEsmTowers.isEmpty()) {
+	} else if (trackedMissiles.isEmpty() && hasTrackedEsmTowers) {
 	    return 8;
 	} else {
 	    return 0;

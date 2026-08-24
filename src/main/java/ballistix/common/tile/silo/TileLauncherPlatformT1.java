@@ -1,5 +1,7 @@
 package ballistix.common.tile.silo;
 
+import java.util.Set;
+
 import org.jetbrains.annotations.Nullable;
 
 import ballistix.api.blast.IBlast;
@@ -152,12 +154,13 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 	    // launch and blow up stuff on accident!
 
 	    if (level.getBlockEntity(controlPanel.getTarget()) instanceof TileSearchRadar radar) {
+		Set<TileESMTower> trackedTowers = radar.trackedEsmTowers;
 
 		if (TileTurretAntimissile.getDistanceToPos(getBlockPos(),
 			radar.getBlockPos()) <= BallistixConfig.INSTANCE.MAX_DISTANCE_FROM_RADAR.get()
-			&& redstoneTriggered && !radar.trackedEsmTowers.isEmpty()) {
+			&& redstoneTriggered && !trackedTowers.isEmpty()) {
 
-		    for (TileESMTower tower : radar.trackedEsmTowers) {
+		    for (TileESMTower tower : trackedTowers) {
 
 			if (tower != null && !tower.isRemoved()
 				&& launchMissile(tower.getBlockPos(), controlPanel.getFrequency())) {

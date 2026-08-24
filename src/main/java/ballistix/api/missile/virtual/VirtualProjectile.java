@@ -18,6 +18,7 @@ import ballistix.common.entity.EntitySAM;
 import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.turret.GenericTileTurret;
+import ballistix.compatibility.TessellateCompat;
 import ballistix.registers.BallistixDamageTypes;
 import ballistix.registers.BallistixSounds;
 import net.minecraft.core.BlockPos;
@@ -40,17 +41,18 @@ import voltaic.prefab.utilities.BlockEntityUtils;
 
 public abstract class VirtualProjectile {
 
-    public float speed;
-    public Vec3 position;
-    public Vec3 deltaMovement;
+	public volatile float speed;
+	public volatile Vec3 position;
+	public volatile Vec3 deltaMovement;
     public final float range;
     public final boolean canHitPlayers;
     public final UUID id;
-    protected boolean hasExploded = false;
-    protected boolean isSpawned = false;
-    public float distanceTraveled = 0.0F;
+	protected volatile boolean hasExploded = false;
+	protected volatile boolean isSpawned = false;
+	public volatile float distanceTraveled = 0.0F;
     protected int tickCount = 0;
-    protected int entityId = -1;
+	protected volatile int entityId = -1;
+    private volatile boolean spawnPending;
 
     protected VirtualProjectile(float speed, Vec3 position, Vec3 deltaMovement, float range, boolean canHitPlayers,
 	    float distanceTraveled, UUID id, boolean hasExploded, boolean isSpawned, int entityId) {
@@ -147,10 +149,23 @@ public abstract class VirtualProjectile {
 
 	distanceTraveled += speed;
 
-	if (!isSpawned && level.hasChunkAt(blockPosition()) && level.isPositionEntityTicking(blockPosition())) {
+	if (!spawnPending && !isSpawned && level.hasChunkAt(blockPosition())
+		&& level.isPositionEntityTicking(blockPosition())) {
 	    Entity entity = makeNewEntity(level);
-	    if (level.addFreshEntity(entity)) {
-		setSpawned(true, entity.getId());
+	    spawnPending = true;
+	    try {
+		TessellateCompat.runOnMain(() -> {
+		    try {
+			if (!hasExploded && level.addFreshEntity(entity)) {
+			    setSpawned(true, entity.getId());
+			}
+		    } finally {
+			spawnPending = false;
+		    }
+		});
+	    } catch (RuntimeException e) {
+		spawnPending = false;
+		throw e;
 	    }
 	}
 
@@ -193,8 +208,8 @@ public abstract class VirtualProjectile {
     }
 
     public void setSpawned(boolean spawned, int id) {
-	isSpawned = spawned;
 	entityId = id;
+	isSpawned = spawned;
     }
 
     public boolean hasExploded() {

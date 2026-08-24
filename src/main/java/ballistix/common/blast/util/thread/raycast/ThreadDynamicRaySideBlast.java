@@ -99,6 +99,8 @@ public class ThreadDynamicRaySideBlast extends Thread {
 		}
 	    }
 	}
-	mainBlast.underBlasts.remove(this);
+	synchronized (mainBlast.underBlasts) {
+	    mainBlast.underBlasts.remove(this);
+	}
     }
 }

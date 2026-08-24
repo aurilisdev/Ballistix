@@ -1,10 +1,12 @@
 package ballistix.common.item;
 
 import java.util.List;
+import java.util.Set;
 
 import ballistix.api.silo.ILauncherControlPanel;
 import ballistix.api.silo.ILauncherPlatform;
 import ballistix.api.silo.SiloRegistry;
+import ballistix.compatibility.TessellateCompat;
 import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.silo.TileLauncherControlPanelT1;
 import ballistix.prefab.utils.BallistixTextUtils;
@@ -13,6 +15,7 @@ import ballistix.registers.BallistixDataComponentTypes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -91,34 +94,40 @@ public class ItemLaserDesignator extends ItemElectric {
 
 	int frequency = designator.get(BallistixDataComponentTypes.BOUND_FREQUENCY);
 
-	int range;
-
 	BlockPos target = trace.toBlockPos();
+	Set<BlockPos> siloPositions = SiloRegistry.getSiloPositions(frequency);
 
-	double distance;
+	if (siloPositions.isEmpty()) {
+	    return super.use(worldIn, playerIn, handIn);
+	}
 
-	for (ILauncherControlPanel silo : SiloRegistry.getSilos(frequency)) {
+	extractPower(designator, USAGE, false);
+	ServerLevel level = (ServerLevel) worldIn;
+	for (BlockPos siloPos : siloPositions) {
+	    TessellateCompat.runOnRegion(level, siloPos, () -> {
+		if (!(level.getBlockEntity(siloPos) instanceof ILauncherControlPanel silo)) {
+		    return;
+		}
 
-	    ILauncherPlatform platform = silo.getPlatform();
+		ILauncherPlatform platform = silo.getPlatform();
 
-	    if (platform == null) {
-		continue;
-	    }
+		if (platform == null) {
+		    return;
+		}
 
-	    range = platform.getRange();
-	    distance = TileLauncherControlPanelT1.calculateDistance(silo.getPos(), target);
+		int range = platform.getRange();
+		double distance = TileLauncherControlPanelT1.calculateDistance(silo.getPos(), target);
 
-	    if (range == 0 || range > 0 && range < distance
-		    || distance > BallistixConfig.INSTANCE.LASER_DESIGNATOR_RANGE.get()) {
-		continue;
-	    }
+		if (range == 0 || range > 0 && range < distance
+			|| distance > BallistixConfig.INSTANCE.LASER_DESIGNATOR_RANGE.get()) {
+		    return;
+		}
 
-	    silo.setTargetFromDesignator(trace.toBlockPos());
+		silo.setTargetFromDesignator(target);
 
-	    silo.launch();
+		silo.launch();
 
-	    extractPower(designator, USAGE, false);
-
+	    });
 	}
 
 	playerIn.displayClientMessage(BallistixTextUtils.chatMessage("laserdesignator.launch", frequency), false);

@@ -27,8 +27,8 @@ public class RenderESMTower extends AbstractTileRenderer<TileESMTower> {
 
 	matrixStackIn.translate(0.5, 1.5, 0.5);
 
-	RenderingUtils.renderModel(getModel(BallistixClientRegister.MODEL_ESMTOWER), tileEntityIn, RenderType.solid(),
-		matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
+	RenderingUtils.renderModel(getModel(BallistixClientRegister.MODEL_ESMTOWER), RenderType.solid(), matrixStackIn,
+		bufferIn, combinedLightIn, combinedOverlayIn);
 
 	matrixStackIn.popPose();
 

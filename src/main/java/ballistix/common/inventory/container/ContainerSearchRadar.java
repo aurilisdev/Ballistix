@@ -37,10 +37,13 @@ public class ContainerSearchRadar extends GenericContainerBlockEntity<TileSearch
     @Override
     public void broadcastChanges() {
 	super.broadcastChanges();
-	if (!getLevel().isClientSide() && getPlayer() != null && getSafeHost() != null) {
-	    PacketSetSearchRadarTrackedClient packet = new PacketSetSearchRadarTrackedClient(
-		    new HashSet<>(getSafeHost().detections), getSafeHost().getBlockPos());
-	    PacketDistributor.sendToPlayer((ServerPlayer) getPlayer(), packet);
-	}
+	getSafeHost().ifPresent(host -> {
+	    if (!getLevel().isClientSide()) {
+		PacketSetSearchRadarTrackedClient packet = new PacketSetSearchRadarTrackedClient(
+			new HashSet<>(host.detections), host.getBlockPos());
+		PacketDistributor.sendToPlayer((ServerPlayer) getPlayer(), packet);
+	    }
+	});
+
     }
 }

@@ -302,8 +302,8 @@ public class BallistixClientRegister {
 		    // false));
 		    // matrixStack.mulPose(new Quaternion(new Vector3f(0, 0, 1), -animationRadians,
 		    // false));
-		    RenderingUtils.renderModel(modelSphere, null, RenderType.solid(), matrixStack, bufferIn,
-			    packedLightIn, packedLightIn);
+		    RenderingUtils.renderModel(modelSphere, RenderType.solid(), matrixStack, bufferIn, packedLightIn,
+			    packedLightIn);
 		    matrixStack.popPose();
 
 		    matrixStack.pushPose();
@@ -313,7 +313,7 @@ public class BallistixClientRegister {
 		    // matrixStack.mulPose(new Quaternion(new Vector3f(0, 1, 0), -animationRadians,
 		    // false));
 		    matrixStack.scale(1.25f, 1.25f, 1.25f);
-		    RenderingUtils.renderModel(modelDisk, null, RenderType.translucent(), matrixStack, bufferIn,
+		    RenderingUtils.renderModel(modelDisk, RenderType.translucent(), matrixStack, bufferIn,
 			    packedLightIn, packedLightIn);
 		    matrixStack.popPose();
 

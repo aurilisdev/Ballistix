@@ -45,17 +45,21 @@ public class ItemRadarGun extends ItemElectric {
 	}
 	BlockEntity tile = context.getLevel().getBlockEntity(context.getClickedPos());
 
+	Player player = context.getPlayer();
+	if (player == null) {
+	    return super.onItemUseFirst(stack, context);
+	}
 	if (tile instanceof ILauncherControlPanel silo) {
 	    silo.setTargetFromDesignator(stack.get(VoltaicDataComponentTypes.BLOCK_POS));
 
-	    context.getPlayer().displayClientMessage(BallistixTextUtils.chatMessage("radargun.inserted",
+	    player.displayClientMessage(BallistixTextUtils.chatMessage("radargun.inserted",
 		    stack.get(VoltaicDataComponentTypes.BLOCK_POS).toShortString()), true);
 	    return InteractionResult.FAIL;
 	} else if (tile instanceof TileTurretAntimissile turret) {
 	    if (turret.bindFireControlRadar(stack.get(VoltaicDataComponentTypes.BLOCK_POS))) {
-		context.getPlayer().displayClientMessage(BallistixTextUtils.chatMessage("radargun.turretsucess"), true);
+		player.displayClientMessage(BallistixTextUtils.chatMessage("radargun.turretsucess"), true);
 	    } else {
-		context.getPlayer().displayClientMessage(BallistixTextUtils.chatMessage("radargun.turrettoofar"), true);
+		player.displayClientMessage(BallistixTextUtils.chatMessage("radargun.turrettoofar"), true);
 	    }
 	}
 
@@ -89,12 +93,19 @@ public class ItemRadarGun extends ItemElectric {
 	// prevents using the radar gun on missile silo from overriding the stored
 	// coords
 
-	if (trace.getTile(playerIn.level()) instanceof ILauncherControlPanel
-		|| trace.getTile(playerIn.level()) instanceof TileMultiSubnode subnode && subnode.getLevel()
-			.getBlockEntity(subnode.parentPos.getValue()) instanceof ILauncherControlPanel
-		|| trace.getTile(worldIn) instanceof TileTurretAntimissile) {
-	    return super.use(worldIn, playerIn, handIn);
+	BlockEntity tile = trace.getTile(playerIn.level());
+
+	boolean isLauncherControlPanel = tile instanceof ILauncherControlPanel;
+
+	if (!isLauncherControlPanel && tile instanceof TileMultiSubnode subnode) {
+	    Level subnodeLevel = subnode.getLevel();
+
+	    isLauncherControlPanel = subnodeLevel != null
+		    && subnodeLevel.getBlockEntity(subnode.parentPos.getValue()) instanceof ILauncherControlPanel;
 	}
+
+	if (isLauncherControlPanel || trace.getTile(worldIn) instanceof TileTurretAntimissile)
+	    return super.use(worldIn, playerIn, handIn);
 
 	radarGun.set(VoltaicDataComponentTypes.BLOCK_POS, trace.toBlockPos());
 

@@ -132,10 +132,12 @@ public class BlastHypersonic extends BlastLasting {
 
 		double inverseMag = Mth.fastInvSqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
-		double velX = deltaX * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_VELOCITY.getAsDouble();
+		double velX = deltaX * inverseMag
+			* BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_VELOCITY.getAsDouble();
 		double velY = Math.abs(deltaY) * inverseMag
 			* BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_VELOCITY.getAsDouble();
-		double velZ = deltaZ * inverseMag * BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_VELOCITY.getAsDouble();
+		double velZ = deltaZ * inverseMag
+			* BallistixConfig.INSTANCE.EXPLOSIVE_HYPERSONIC_VELOCITY.getAsDouble();
 		entity.push(velX, velY, velZ);
 	    }
 	} else {

@@ -30,7 +30,14 @@ public class RenderLauncherPlatform<T extends GenericTile & ILauncherPlatform> e
     public void render(T tileEntityIn, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn,
 	    int combinedLightIn, int combinedOverlayIn) {
 
-	ItemStack stack = tileEntityIn.<ComponentInventory>getComponent(IComponentType.Inventory).getItem(0);
+	// level may be null in some contexts; guard against NPE
+	var level = tileEntityIn.getLevel();
+	if (level == null) {
+	    return;
+	}
+
+	ItemStack stack = tileEntityIn.<ComponentInventory>getComponent(IComponentType.Inventory)
+		.map(inv -> inv.getItem(0)).orElse(ItemStack.EMPTY);
 
 	if (stack.isEmpty()) {
 	    return;
@@ -68,10 +75,9 @@ public class RenderLauncherPlatform<T extends GenericTile & ILauncherPlatform> e
 		matrixStackIn.scale(1f, 1.25f, 1f);
 	    }
 
-	    Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model,
+	    Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(level, model,
 		    tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn,
-		    bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random,
-		    new Random().nextLong(), 0);
+		    bufferIn.getBuffer(RenderType.solid()), false, level.random, new Random().nextLong(), 0);
 
 	    matrixStackIn.popPose();
 
@@ -85,10 +91,9 @@ public class RenderLauncherPlatform<T extends GenericTile & ILauncherPlatform> e
 	    matrixStackIn.translate(0.5f, 1F, 0.5f);
 	    // matrixStackIn.scale(1.5f, 2.5f, 1.5f);
 
-	    Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model,
+	    Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(level, model,
 		    tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn,
-		    bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random,
-		    new Random().nextLong(), 0);
+		    bufferIn.getBuffer(RenderType.solid()), false, level.random, new Random().nextLong(), 0);
 
 	    matrixStackIn.popPose();
 

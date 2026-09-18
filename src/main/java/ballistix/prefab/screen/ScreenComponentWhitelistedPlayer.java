@@ -1,7 +1,10 @@
 package ballistix.prefab.screen;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import voltaic.api.screen.IScreenWrapper;
 import voltaic.api.screen.ITexture;
 import voltaic.prefab.screen.component.ScreenComponentGeneric;
 import voltaic.prefab.screen.component.editbox.ScreenComponentEditBox;
@@ -21,6 +24,11 @@ public class ScreenComponentWhitelistedPlayer extends ScreenComponentGeneric {
 	    return;
 	}
 
+	IScreenWrapper pGui = gui;
+	if (pGui == null) {
+	    return;
+	}
+
 	ITexture texture = RadarTextures.FREQUENCY;
 
 	ScreenComponentEditBox.drawExpandedBox(graphics, texture.getLocation(), xLocation + guiWidth,
@@ -30,13 +38,13 @@ public class ScreenComponentWhitelistedPlayer extends ScreenComponentGeneric {
 	    return;
 	}
 
-	graphics.drawString(gui.getFontRenderer(), Component.literal(playerName), guiWidth + xLocation + 5,
+	graphics.drawString(pGui.getFontRenderer(), Component.literal(playerName), guiWidth + xLocation + 5,
 		guiHeight + yLocation + 5, Color.WHITE.color(), false);
 
     }
 
-    public void setFrequency(String name) {
-	this.playerName = name;
+    public void setFrequency(@Nullable String name) {
+	playerName = name;
     }
 
     public String getName() {

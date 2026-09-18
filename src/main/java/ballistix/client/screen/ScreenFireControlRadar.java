@@ -13,6 +13,7 @@ import ballistix.prefab.screen.ScreenComponentRadarGrid;
 import ballistix.prefab.screen.WrapperFireControlFrequencyManager;
 import ballistix.prefab.utils.BallistixTextUtils;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
@@ -43,22 +44,16 @@ public class ScreenFireControlRadar extends GenericScreen<ContainerFireControlRa
 	addComponent(new ScreenComponentGuiTab(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR,
 		ScreenComponentSlot.IconType.SONAR_PROFILE, () -> {
 		    List<FormattedCharSequence> info = new ArrayList<>();
-
-		    TileFireControlRadar radar = menu.getSafeHost();
-
-		    if (radar == null) {
-			return info;
-		    }
-
-		    info.add(BallistixTextUtils.tooltip("turret.blockrange").withStyle(ChatFormatting.DARK_GRAY)
-			    .getVisualOrderText());
-		    info.add(
-			    BallistixTextUtils
-				    .tooltip("turret.maxrange",
-					    ChatFormatter.formatDecimals(
-						    BallistixConfig.INSTANCE.FIRE_CONTROL_RADAR_RANGE.getDefault(), 1)
-						    .withStyle(ChatFormatting.GRAY))
-				    .withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+		    menu.getSafeHost().ifPresent(radar -> {
+			info.add(BallistixTextUtils.tooltip("turret.blockrange").withStyle(ChatFormatting.DARK_GRAY)
+				.getVisualOrderText());
+			info.add(BallistixTextUtils
+				.tooltip("turret.maxrange",
+					ChatFormatter.formatDecimals(
+						BallistixConfig.INSTANCE.FIRE_CONTROL_RADAR_RANGE.getDefault(), 1)
+						.withStyle(ChatFormatting.GRAY))
+				.withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+		    });
 
 		    return info;
 
@@ -74,47 +69,45 @@ public class ScreenFireControlRadar extends GenericScreen<ContainerFireControlRa
 	slider.setVisible(false);
 
 	addComponent(trackingLabel = new ScreenComponentCustomRender(10, 20, graphics -> {
-	    TileFireControlRadar tile = menu.getSafeHost();
-	    if (tile == null) {
-		return;
-	    }
-	    Component radar = tile.trackingPos.getValue().equals(TileFireControlRadar.OUT_OF_REACH)
-		    ? BallistixTextUtils.gui("turret.radarnone").withStyle(ChatFormatting.GREEN)
-		    : Component.literal(new BlockPos((int) tile.trackingPos.getValue().x,
-			    (int) tile.trackingPos.getValue().y, (int) tile.trackingPos.getValue().z).toString())
-			    .withStyle(ChatFormatting.RED);
+	    menu.getSafeHost().ifPresent(tile -> {
+		Component radar = tile.trackingPos.getValue().equals(TileFireControlRadar.OUT_OF_REACH)
+			? BallistixTextUtils.gui("turret.radarnone").withStyle(ChatFormatting.GREEN)
+			: Component.literal(new BlockPos((int) tile.trackingPos.getValue().x,
+				(int) tile.trackingPos.getValue().y, (int) tile.trackingPos.getValue().z).toString())
+				.withStyle(ChatFormatting.RED);
 
-	    int x = (int) (getGuiWidth() + 10);
-	    int y = (int) (getGuiHeight() + 20);
+		int x = (int) (getGuiWidth() + 10);
+		int y = (int) (getGuiHeight() + 20);
 
-	    Component label = BallistixTextUtils.gui("radar.tracking").withStyle(ChatFormatting.BLACK);
+		Component label = BallistixTextUtils.gui("radar.tracking").withStyle(ChatFormatting.BLACK);
 
-	    int width = getFontRenderer().width(label);
-	    int height = getFontRenderer().lineHeight;
+		int width = getFontRenderer().width(label);
+		int height = getFontRenderer().lineHeight;
 
-	    graphics.drawString(getFontRenderer(), label, x, y, Color.WHITE.color(), false);
+		graphics.drawString(getFontRenderer(), label, x, y, Color.WHITE.color(), false);
 
-	    x += width;
+		x += width;
 
-	    float scale = 1.0F;
+		float scale = 1.0F;
 
-	    width = font.width(radar);
+		width = font.width(radar);
 
-	    if (width > 100) {
-		scale = 100.0F / width;
-	    }
+		if (width > 100) {
+		    scale = 100.0F / width;
+		}
 
-	    float remHeight = (height - height * scale) / 2.0F;
+		float remHeight = (height - height * scale) / 2.0F;
 
-	    graphics.pose().pushPose();
+		graphics.pose().pushPose();
 
-	    graphics.pose().translate(x, y + remHeight, 0);
+		graphics.pose().translate(x, y + remHeight, 0);
 
-	    graphics.pose().scale(scale, scale, scale);
+		graphics.pose().scale(scale, scale, scale);
 
-	    graphics.drawString(getFontRenderer(), radar, 0, 0, Color.WHITE.color(), false);
+		graphics.drawString(getFontRenderer(), radar, 0, 0, Color.WHITE.color(), false);
 
-	    graphics.pose().popPose();
+		graphics.pose().popPose();
+	    });
 
 	}));
 
@@ -125,13 +118,7 @@ public class ScreenFireControlRadar extends GenericScreen<ContainerFireControlRa
 		//
 		.setOnPress(button -> {
 
-		    TileFireControlRadar tile = menu.getSafeHost();
-
-		    if (tile == null) {
-			return;
-		    }
-
-		    tile.usingRedstone.setValue(!tile.usingRedstone.getValue());
+		    menu.getSafeHost().ifPresent(tile -> tile.usingRedstone.setValue(!tile.usingRedstone.getValue()));
 
 		})
 		//
@@ -139,23 +126,20 @@ public class ScreenFireControlRadar extends GenericScreen<ContainerFireControlRa
 		//
 		.onTooltip((graphics, button, x, y) -> {
 
-		    TileFireControlRadar tile = menu.getSafeHost();
+		    menu.getSafeHost().ifPresent(tile -> {
+			List<FormattedCharSequence> info = new ArrayList<>();
 
-		    if (tile == null) {
-			return;
-		    }
+			info.add(BallistixTextUtils.tooltip("radar.redstone").withStyle(ChatFormatting.DARK_GRAY)
+				.getVisualOrderText());
 
-		    List<FormattedCharSequence> info = new ArrayList<>();
+			String key = tile.usingRedstone.getValue() ? "radar.redstone.enabled"
+				: "radar.redstone.disabled";
 
-		    info.add(BallistixTextUtils.tooltip("radar.redstone").withStyle(ChatFormatting.DARK_GRAY)
-			    .getVisualOrderText());
+			info.add(BallistixTextUtils.tooltip(key).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
+				.getVisualOrderText());
 
-		    String key = tile.usingRedstone.getValue() ? "radar.redstone.enabled" : "radar.redstone.disabled";
-
-		    info.add(BallistixTextUtils.tooltip(key).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
-			    .getVisualOrderText());
-
-		    graphics.renderTooltip(getFontRenderer(), info, x, y);
+			graphics.renderTooltip(getFontRenderer(), info, x, y);
+		    });
 
 		}));
     }
@@ -169,7 +153,9 @@ public class ScreenFireControlRadar extends GenericScreen<ContainerFireControlRa
     @Override
     protected void initializeComponents() {
 	super.initializeComponents();
-	playerInvLabel.setVisible(false);
+	if (playerInvLabel != null) {
+	    playerInvLabel.setVisible(false);
+	}
     }
 
     @Override
@@ -205,8 +191,10 @@ public class ScreenFireControlRadar extends GenericScreen<ContainerFireControlRa
     @Override
     public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
 	InputConstants.Key mouseKey = InputConstants.getKey(pKeyCode, pScanCode);
-	if (this.minecraft.options.keyInventory.isActiveAndMatches(mouseKey) && frequencyWrapper.addEditBox.isVisible()
-		&& frequencyWrapper.addEditBox.isFocused()) {
+	Minecraft minecraft = this.minecraft;
+	if (minecraft != null && minecraft.options != null
+		&& minecraft.options.keyInventory.isActiveAndMatches(mouseKey)
+		&& frequencyWrapper.addEditBox.isVisible() && frequencyWrapper.addEditBox.isFocused()) {
 	    return false;
 	}
 	return super.keyPressed(pKeyCode, pScanCode, pModifiers);

@@ -19,13 +19,13 @@ public class CameraShakeEffect {
 	this.fadeOutTime = fadeOutTime;
 	this.amplitude = amplitude;
 	this.frequency = frequency;
-	this.startTime = worldTime;
+	startTime = worldTime;
 
-	this.noise = new PerlinNoise(seed);
+	noise = new PerlinNoise(seed);
 	// Random offsets so that x/y samples don't use the same chunk of noise
 	// This prevents them from being locked in the same pattern.
-	this.xOffsetSeed = seed * 1.37;
-	this.yOffsetSeed = seed * 2.17;
+	xOffsetSeed = seed * 1.37;
+	yOffsetSeed = seed * 2.17;
     }
 
     /**

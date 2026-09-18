@@ -22,6 +22,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
@@ -55,14 +56,14 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
 	    Set<BlockPos> whitelist, @Nullable Entity owner) {
 	this(BallistixEntities.ENTITY_BALLISTIXFALLINGBLOCK.get(), world);
 	this.blockState = blockState;
-	this.blocksBuilding = true;
-	this.hurtEntities = true;
-	this.setPos(x, y + (1.0F - this.getBbHeight()) / 2.0F, z);
+	blocksBuilding = true;
+	hurtEntities = true;
+	this.setPos(x, y + (1.0F - getBbHeight()) / 2.0F, z);
 	this.setDeltaMovement(Vec3.ZERO);
-	this.xo = x;
-	this.yo = y;
-	this.zo = z;
-	this.setStartPos(this.blockPosition());
+	xo = x;
+	yo = y;
+	zo = z;
+	setStartPos(blockPosition());
 	this.whitelist = whitelist;
 	setOwner(owner);
     }
@@ -73,12 +74,12 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
     }
 
     public void setStartPos(BlockPos pos) {
-	this.entityData.set(DATA_START_POS, pos);
+	entityData.set(DATA_START_POS, pos);
     }
 
     @OnlyIn(Dist.CLIENT)
     public BlockPos getStartPos() {
-	return this.entityData.get(DATA_START_POS);
+	return entityData.get(DATA_START_POS);
     }
 
     @Override
@@ -88,22 +89,21 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
 
     @Override
     public boolean isPickable() {
-	return !this.isRemoved();
+	return !isRemoved();
     }
 
     @Override
     protected void addAdditionalSaveData(CompoundTag tag) {
 	super.addAdditionalSaveData(tag);
-	tag.put("BlockState", NbtUtils.writeBlockState(this.blockState));
-	tag.putInt("Time", this.time);
-	tag.putBoolean("DropItem", this.dropItem);
-	tag.putBoolean("HurtEntities", this.hurtEntities);
-	tag.putFloat("FallHurtAmount", this.fallDamageAmount);
-	tag.putInt("FallHurtMax", this.fallDamageMax);
-	if (this.blockData != null) {
-	    tag.put("TileEntityData", this.blockData);
+	tag.put("BlockState", NbtUtils.writeBlockState(blockState));
+	tag.putInt("Time", time);
+	tag.putBoolean("DropItem", dropItem);
+	tag.putBoolean("HurtEntities", hurtEntities);
+	tag.putFloat("FallHurtAmount", fallDamageAmount);
+	tag.putInt("FallHurtMax", fallDamageMax);
+	if (blockData != null) {
+	    tag.put("TileEntityData", blockData);
 	}
-
     }
 
     @Override
@@ -124,17 +124,17 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
 
     @Override
     public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource source) {
-	if (this.hurtEntities) {
+	if (hurtEntities) {
 	    int i = Mth.ceil(fallDistance - 1.0F);
 	    if (i > 0) {
-		List<Entity> list = Lists.newArrayList(level().getEntities(this, this.getBoundingBox()));
-		boolean flag = this.blockState.is(BlockTags.ANVIL);
+		List<Entity> list = Lists.newArrayList(level().getEntities(this, getBoundingBox()));
+		boolean flag = blockState.is(BlockTags.ANVIL);
 
 		for (Entity entity : list) {
 		    entity.hurt(
-			    flag ? entity.damageSources().anvil(getOwner())
-				    : entity.damageSources().fallingBlock(getOwner()),
-			    Math.min(Mth.floor(i * this.fallDamageAmount), this.fallDamageMax));
+			    flag ? entity.damageSources().source(DamageTypes.FALLING_ANVIL, getOwner())
+				    : entity.damageSources().source(DamageTypes.FALLING_BLOCK, getOwner()),
+			    Math.min(Mth.floor(i * fallDamageAmount), fallDamageMax));
 		}
 	    }
 	}
@@ -146,25 +146,25 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
     protected void readAdditionalSaveData(CompoundTag tag) {
 	super.readAdditionalSaveData(tag);
 	BlockState.CODEC.decode(NbtOps.INSTANCE, tag.get("BlockState")).ifSuccess(pair -> blockState = pair.getFirst());
-	this.time = tag.getInt("Time");
+	time = tag.getInt("Time");
 	if (tag.contains("HurtEntities", 99)) {
-	    this.hurtEntities = tag.getBoolean("HurtEntities");
-	    this.fallDamageAmount = tag.getFloat("FallHurtAmount");
-	    this.fallDamageMax = tag.getInt("FallHurtMax");
-	} else if (this.blockState.is(BlockTags.ANVIL)) {
-	    this.hurtEntities = true;
+	    hurtEntities = tag.getBoolean("HurtEntities");
+	    fallDamageAmount = tag.getFloat("FallHurtAmount");
+	    fallDamageMax = tag.getInt("FallHurtMax");
+	} else if (blockState.is(BlockTags.ANVIL)) {
+	    hurtEntities = true;
 	}
 
 	if (tag.contains("DropItem", 99)) {
-	    this.dropItem = tag.getBoolean("DropItem");
+	    dropItem = tag.getBoolean("DropItem");
 	}
 
 	if (tag.contains("TileEntityData", 10)) {
-	    this.blockData = tag.getCompound("TileEntityData");
+	    blockData = tag.getCompound("TileEntityData");
 	}
 
-	if (this.blockState.isAir()) {
-	    this.blockState = Blocks.SAND.defaultBlockState();
+	if (blockState.isAir()) {
+	    blockState = Blocks.SAND.defaultBlockState();
 	}
 
     }
@@ -175,7 +175,7 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
     }
 
     public void setHurtsEntities(boolean shouldHurt) {
-	this.hurtEntities = shouldHurt;
+	hurtEntities = shouldHurt;
     }
 
     @Override
@@ -187,11 +187,11 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
     @Override
     public void fillCrashReportCategory(CrashReportCategory report) {
 	super.fillCrashReportCategory(report);
-	report.setDetail("Immitating BlockState", this.blockState.toString());
+	report.setDetail("Immitating BlockState", blockState.toString());
     }
 
     public BlockState getBlockState() {
-	return this.blockState;
+	return blockState;
     }
 
     @Override
@@ -208,7 +208,9 @@ public class EntityBallistixFallingBlock extends ThrowableProjectile implements 
 
     @Override
     public void readSpawnData(RegistryFriendlyByteBuf buffer) {
-	readAdditionalSaveData(buffer.readNbt());
+	CompoundTag tag = buffer.readNbt();
+	if (tag != null)
+	    readAdditionalSaveData(tag);
     }
 
     @Override

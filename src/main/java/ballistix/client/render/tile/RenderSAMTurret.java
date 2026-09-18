@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import voltaic.client.render.AbstractTileRenderer;
@@ -28,6 +29,10 @@ public class RenderSAMTurret extends AbstractTileRenderer<TileTurretSAM> {
     @Override
     public void render(@NotNull TileTurretSAM tileEntityIn, float partialTicks, PoseStack matrixStackIn,
 	    MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+
+	Level level = tileEntityIn.getLevel();
+	if (level == null)
+	    return;
 
 	BakedModel model = getModel(BallistixClientRegister.MODEL_SAMTURRET_BALLJOINT);
 
@@ -47,10 +52,9 @@ public class RenderSAMTurret extends AbstractTileRenderer<TileTurretSAM> {
 
 	// matrixStackIn.mulPose(new Quaternion(0,(float)
 	// ((tileEntityIn.savedTickRotation + partial)), 0, true));
-	Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model,
+	Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(level, model,
 		tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn,
-		bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(),
-		0);
+		bufferIn.getBuffer(RenderType.solid()), false, level.random, new Random().nextLong(), 0);
 
 	matrixStackIn.popPose();
 
@@ -62,16 +66,15 @@ public class RenderSAMTurret extends AbstractTileRenderer<TileTurretSAM> {
 
 	model = getModel(BallistixClientRegister.MODEL_SAMTURRET_RAIL);
 
-	Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model,
+	Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(level, model,
 		tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn,
-		bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(),
-		0);
+		bufferIn.getBuffer(RenderType.solid()), false, level.random, new Random().nextLong(), 0);
 
 	matrixStackIn.popPose();
 
-	ComponentInventory inv = tileEntityIn.getComponent(IComponentType.Inventory);
+	ComponentInventory inv = tileEntityIn.<ComponentInventory>getComponent(IComponentType.Inventory).orElse(null);
 
-	if (inv.getItem(0).isEmpty()) {
+	if (inv == null || inv.getItem(0).isEmpty()) {
 	    return;
 	}
 
@@ -89,10 +92,9 @@ public class RenderSAMTurret extends AbstractTileRenderer<TileTurretSAM> {
 									   // hate rotating models in this game
 
 	model = getModel(BallistixClientRegister.MODEL_AAMISSILE);
-	Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model,
+	Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(level, model,
 		tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn,
-		bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(),
-		0);
+		bufferIn.getBuffer(RenderType.solid()), false, level.random, new Random().nextLong(), 0);
 
 	matrixStackIn.popPose();
 

@@ -17,7 +17,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class RenderGrenade extends EntityRenderer<EntityGrenade> {
     private ItemEntity itemEntity;
-    private ItemEntityRenderer itemRenderer;
+    private final ItemEntityRenderer itemRenderer;
 
     public RenderGrenade(Context renderManagerIn) {
 	super(renderManagerIn);

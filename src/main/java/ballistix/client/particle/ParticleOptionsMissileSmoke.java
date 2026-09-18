@@ -48,7 +48,7 @@ public class ParticleOptionsMissileSmoke extends ParticleType<ParticleOptionsMis
 	this.b = b;
 	this.scale = scale;
 	this.lifetime = lifetime;
-	this.hasPhysics = physics;
+	hasPhysics = physics;
 	return this;
     }
 

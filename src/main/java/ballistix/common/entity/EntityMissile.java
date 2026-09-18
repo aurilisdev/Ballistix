@@ -303,9 +303,9 @@ public class EntityMissile extends Entity {
 	float x = (float) getX();
 	float y = (float) getY();
 	float z = (float) getZ();
-	float motionX = (float) (getDeltaMovement().x);
-	float motionY = (float) (getDeltaMovement().y);
-	float motionZ = (float) (getDeltaMovement().z);
+	float motionX = (float) getDeltaMovement().x;
+	float motionY = (float) getDeltaMovement().y;
+	float motionZ = (float) getDeltaMovement().z;
 	x -= motionX;
 	y -= motionY;
 	z -= motionZ;
@@ -376,7 +376,7 @@ public class EntityMissile extends Entity {
 	if (player.isSecondaryUseActive()) {
 	    return InteractionResult.PASS;
 	}
-	if (!this.level().isClientSide) {
+	if (!level().isClientSide) {
 	    return player.startRiding(this, true) ? InteractionResult.CONSUME : InteractionResult.PASS;
 	}
 	return InteractionResult.SUCCESS;

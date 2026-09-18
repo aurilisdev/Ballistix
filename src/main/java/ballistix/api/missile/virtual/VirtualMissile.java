@@ -84,7 +84,7 @@ public class VirtualMissile {
     private VirtualMissile(Vec3 pos, Vec3 deltaMovement, float speed, float health, boolean hasExploded, UUID id,
 	    int tickCount, MissileTargetData targetData, MissileEntityData entityData, MissilePayloadData payloadData) {
 
-	this.position = pos;
+	position = pos;
 	this.deltaMovement = deltaMovement;
 	this.speed = speed;
 	this.hasExploded = hasExploded;
@@ -100,14 +100,14 @@ public class VirtualMissile {
     public VirtualMissile(Vec3 startPos, Vec3 initialMovement, float initialSpeed, FlightPath flightPath, float startX,
 	    float startZ, BlockPos target, int missileType, IBlast blast, int frequency, boolean usingAirburst) {
 
-	this.position = startPos;
-	this.deltaMovement = initialMovement;
-	this.speed = initialSpeed;
-	this.id = UUID.randomUUID();
+	position = startPos;
+	deltaMovement = initialMovement;
+	speed = initialSpeed;
+	id = UUID.randomUUID();
 
-	this.targetData = new MissileTargetData(startX, startZ, target, false, usingAirburst);
-	this.entityData = new MissileEntityData(false, -1);
-	this.payloadData = new MissilePayloadData(missileType, blast.id(), frequency, flightPath.ordinal(), false);
+	targetData = new MissileTargetData(startX, startZ, target, false, usingAirburst);
+	entityData = new MissileEntityData(false, -1);
+	payloadData = new MissilePayloadData(missileType, blast.id(), frequency, flightPath.ordinal(), false);
 
     }
 
@@ -140,8 +140,9 @@ public class VirtualMissile {
 	    return;
 	}
 
-	if (blastEntity != null) {
-	    if (blastEntity.isRemoved() || blastEntity.getBlast().hasStarted) {
+	EntityBlast pBlastEntity = blastEntity;
+	if (pBlastEntity != null) {
+	    if (pBlastEntity.isRemoved() || pBlastEntity.getBlast().hasStarted) {
 		hasExploded = true;
 	    }
 	    return;
@@ -166,7 +167,7 @@ public class VirtualMissile {
 		collisionPos = new BlockPos((int) position.x, targetData.target.getY(), (int) position.z);
 	    }
 
-	    Blast b = explosive.createBlast(level, collisionPos, null, blastEntity);
+	    Blast b = explosive.createBlast(level, collisionPos, null, pBlastEntity);
 
 	    if (b != null) {
 
@@ -459,12 +460,7 @@ public class VirtualMissile {
 
     }
 
-    private boolean isInValidBlockstate(BlockPos pos, ServerLevel world) {
-
-	if (pos == null) {
-	    return true;
-	}
-
+    private static boolean isInValidBlockstate(BlockPos pos, ServerLevel world) {
 	BlockEntity blockentity = world.getBlockEntity(pos);
 
 	if (blockentity instanceof ILauncherPlatform || blockentity instanceof ILauncherSupportFrame) {
@@ -595,7 +591,7 @@ public class VirtualMissile {
 	    this.startX = startX;
 	    this.startZ = startZ;
 	    this.target = target;
-	    this.pastHalfwayPoint = pastHalfway;
+	    pastHalfwayPoint = pastHalfway;
 	    this.usingAirburst = usingAirburst;
 	}
 

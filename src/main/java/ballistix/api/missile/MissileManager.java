@@ -152,7 +152,7 @@ public class MissileManager {
 
     }
 
-    public static void addMissile(ResourceKey<Level> key, VirtualMissile missile) {
+    public static void addMissile(@Nullable ResourceKey<Level> key, VirtualMissile missile) {
 
 	ServerLevel overworld = getOverworld();
 
@@ -169,7 +169,7 @@ public class MissileManager {
 
     }
 
-    public static void removeMissile(ResourceKey<Level> level, UUID id) {
+    public static void removeMissile(@Nullable ResourceKey<Level> level, @Nullable UUID id) {
 
 	ServerLevel overworld = getOverworld();
 
@@ -184,7 +184,7 @@ public class MissileManager {
 
     }
 
-    public static Collection<VirtualMissile> getMissilesForLevel(ResourceKey<Level> level) {
+    public static Collection<VirtualMissile> getMissilesForLevel(@Nullable ResourceKey<Level> level) {
 	ServerLevel overworld = getOverworld();
 
 	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> data = overworld
@@ -196,7 +196,7 @@ public class MissileManager {
     }
 
     @Nullable
-    public static VirtualMissile getMissile(ResourceKey<Level> level, UUID id) {
+    public static VirtualMissile getMissile(@Nullable ResourceKey<Level> level, @Nullable UUID id) {
 	ServerLevel overworld = getOverworld();
 
 	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> data = overworld
@@ -211,7 +211,7 @@ public class MissileManager {
 	getOverworld().removeData(BallistixAttachmentTypes.ACTIVE_MISSILES);
     }
 
-    public static void addBullet(ResourceKey<Level> key, VirtualProjectile.VirtualBullet bullet) {
+    public static void addBullet(@Nullable ResourceKey<Level> key, VirtualProjectile.VirtualBullet bullet) {
 	ServerLevel overworld = getOverworld();
 
 	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>> data = overworld
@@ -227,7 +227,7 @@ public class MissileManager {
     }
 
     @Nullable
-    public static VirtualProjectile.VirtualBullet getBullet(ResourceKey<Level> level, UUID id) {
+    public static VirtualProjectile.VirtualBullet getBullet(@Nullable ResourceKey<Level> level, @Nullable UUID id) {
 	ServerLevel overworld = getOverworld();
 
 	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>> data = overworld
@@ -238,7 +238,7 @@ public class MissileManager {
 	return virtual.get(id);
     }
 
-    public static Collection<VirtualProjectile.VirtualBullet> getBulletsForLevel(ResourceKey<Level> level) {
+    public static Collection<VirtualProjectile.VirtualBullet> getBulletsForLevel(@Nullable ResourceKey<Level> level) {
 	ServerLevel overworld = getOverworld();
 
 	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>> data = overworld
@@ -253,7 +253,8 @@ public class MissileManager {
 	getOverworld().removeData(BallistixAttachmentTypes.ACTIVE_BULLETS);
     }
 
-    public static void addRailgunRound(ResourceKey<Level> key, VirtualProjectile.VirtualRailgunRound railgun) {
+    public static void addRailgunRound(@Nullable ResourceKey<Level> key,
+	    VirtualProjectile.VirtualRailgunRound railgun) {
 	ServerLevel overworld = getOverworld();
 
 	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> data = overworld
@@ -269,7 +270,8 @@ public class MissileManager {
     }
 
     @Nullable
-    public static VirtualProjectile.VirtualRailgunRound getRailgunRound(ResourceKey<Level> level, UUID id) {
+    public static VirtualProjectile.VirtualRailgunRound getRailgunRound(@Nullable ResourceKey<Level> level,
+	    @Nullable UUID id) {
 	ServerLevel overworld = getOverworld();
 
 	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> data = overworld
@@ -280,7 +282,8 @@ public class MissileManager {
 	return virtual.get(id);
     }
 
-    public static Collection<VirtualProjectile.VirtualRailgunRound> getRailgunRoundsForLevel(ResourceKey<Level> level) {
+    public static Collection<VirtualProjectile.VirtualRailgunRound> getRailgunRoundsForLevel(
+	    @Nullable ResourceKey<Level> level) {
 	ServerLevel overworld = getOverworld();
 
 	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> data = overworld
@@ -311,7 +314,7 @@ public class MissileManager {
     }
 
     @Nullable
-    public static VirtualProjectile.VirtualSAM getSAM(ResourceKey<Level> level, UUID id) {
+    public static VirtualProjectile.VirtualSAM getSAM(@Nullable ResourceKey<Level> level, @Nullable UUID id) {
 	ServerLevel overworld = getOverworld();
 
 	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>> data = overworld
@@ -322,7 +325,7 @@ public class MissileManager {
 	return virtual.get(id);
     }
 
-    public static Collection<VirtualProjectile.VirtualSAM> getSAMsForLevel(ResourceKey<Level> level) {
+    public static Collection<VirtualProjectile.VirtualSAM> getSAMsForLevel(@Nullable ResourceKey<Level> level) {
 	ServerLevel overworld = getOverworld();
 
 	HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>> data = overworld

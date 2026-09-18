@@ -30,8 +30,8 @@ public class WrapperFireControlFrequencyManager {
 
     private ScreenComponentSimpleLabel whitelistLabel;
 
-    private ScreenComponentButton[] deleteButtons = new ScreenComponentButton[5];
-    private ScreenComponentFrequency[] frequencies = new ScreenComponentFrequency[5];
+    private final ScreenComponentButton[] deleteButtons = new ScreenComponentButton[5];
+    private final ScreenComponentFrequency[] frequencies = new ScreenComponentFrequency[5];
 
     public ScreenComponentEditBox addEditBox;
 
@@ -92,7 +92,7 @@ public class WrapperFireControlFrequencyManager {
 		BallistixTextUtils.gui("radar.frequencywhitelist.mode")));
 	screen.addComponent(toggleButton = new ScreenComponentButton<>(x + 90, y + 25, 70, 20).setOnPress(button -> {
 
-	    TileFireControlRadar radar = screen.getMenu().getSafeHost();
+	    TileFireControlRadar radar = screen.getMenu().getSafeHost().orElse(null);
 
 	    if (radar == null) {
 		return;
@@ -102,7 +102,7 @@ public class WrapperFireControlFrequencyManager {
 
 	}).setLabel(() -> {
 
-	    TileFireControlRadar radar = screen.getMenu().getSafeHost();
+	    TileFireControlRadar radar = screen.getMenu().getSafeHost().orElse(null);
 
 	    if (radar == null) {
 		return Component.empty();
@@ -115,7 +115,7 @@ public class WrapperFireControlFrequencyManager {
 
 	screen.addComponent(add = new ScreenComponentButton<>(x + 90, y + 50, 70, 20).setOnPress(button -> {
 
-	    TileFireControlRadar radar = screen.getMenu().getSafeHost();
+	    TileFireControlRadar radar = screen.getMenu().getSafeHost().orElse(null);
 
 	    if (radar == null) {
 		return;
@@ -153,7 +153,7 @@ public class WrapperFireControlFrequencyManager {
 
 			ScreenComponentFrequency frequency = frequencies[index];
 
-			TileFireControlRadar tile = screen.getMenu().getSafeHost();
+			TileFireControlRadar tile = screen.getMenu().getSafeHost().orElse(null);
 
 			if (frequency.getFrequency() == null) {
 			    return;
@@ -188,7 +188,7 @@ public class WrapperFireControlFrequencyManager {
     }
 
     public void tick() {
-	TileFireControlRadar tile = screen.getMenu().getSafeHost();
+	TileFireControlRadar tile = screen.getMenu().getSafeHost().orElse(null);
 	if (tile == null) {
 	    return;
 	}

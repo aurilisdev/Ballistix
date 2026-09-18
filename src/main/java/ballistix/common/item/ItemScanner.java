@@ -69,11 +69,7 @@ public class ItemScanner extends ItemElectric {
 	Player player = event.getEntity();
 	ItemStack stack = player.getItemInHand(event.getHand());
 
-	if (!(stack.getItem() instanceof ItemScanner scanner)) {
-	    return;
-	}
-
-	if (!(event.getTarget() instanceof LivingEntity target)) {
+	if (!(stack.getItem() instanceof ItemScanner scanner) || !(event.getTarget() instanceof LivingEntity target)) {
 	    return;
 	}
 

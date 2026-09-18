@@ -31,24 +31,29 @@ import voltaic.registers.VoltaicCapabilities;
 
 public class TileProximityDetector extends GenericTile {
 
-    public final ListProperty<String> whitelistedPlayers = property(
-	    new ListProperty<>(PropertyTypes.STRING_LIST, "whitelistedplayers", new ArrayList<>()));
+    public final ListProperty<String> whitelistedPlayers = property(new ListProperty<>(getPropertyManager(),
+	    PropertyTypes.STRING_LIST, "whitelistedplayers", new ArrayList<>())).setUpdateServer();
     public final SingleProperty<Integer> entityTargetingMode = property(
-	    new SingleProperty<>(PropertyTypes.INTEGER, "entitytargetingmode", 0));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.INTEGER, "entitytargetingmode", 0))
+	    .setUpdateServer();
     public final SingleProperty<Boolean> usingWhitelist = property(
-	    new SingleProperty<>(PropertyTypes.BOOLEAN, "usingwhitelist", false));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BOOLEAN, "usingwhitelist", false))
+	    .setUpdateServer();
     public final SingleProperty<BlockPos> minCorner = property(
-	    new SingleProperty<>(PropertyTypes.BLOCK_POS, "mincorner", BlockPos.ZERO));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BLOCK_POS, "mincorner", BlockPos.ZERO));
     public final SingleProperty<BlockPos> maxCorner = property(
-	    new SingleProperty<>(PropertyTypes.BLOCK_POS, "maxcorner", BlockPos.ZERO));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BLOCK_POS, "maxcorner", BlockPos.ZERO));
     public final SingleProperty<Integer> redstoneSignal = property(
-	    new SingleProperty<>(PropertyTypes.INTEGER, "redstonesignal", 0)).onChange((prop, old) -> {
-		if (level != null && !level.isClientSide) {
-		    level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.INTEGER, "redstonesignal", 0))
+	    .onChange((prop, old) -> {
+		final net.minecraft.world.level.Level lvl = this.level;
+		if (lvl != null && !lvl.isClientSide) {
+		    lvl.updateNeighborsAt(worldPosition, getBlockState().getBlock());
 		}
 	    }).onTileLoaded(prop -> {
-		if (level != null && !level.isClientSide) {
-		    level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
+		final net.minecraft.world.level.Level lvl = this.level;
+		if (lvl != null && !lvl.isClientSide) {
+		    lvl.updateNeighborsAt(worldPosition, getBlockState().getBlock());
 		}
 	    });
 
@@ -64,9 +69,14 @@ public class TileProximityDetector extends GenericTile {
 		(id, inv) -> new ContainerProximityDetector(id, inv, new SimpleContainer(0), getCoordsArray())));
     }
 
-    public void tickServer(ComponentTickable componentTickable) {
+    public void tickServer(net.minecraft.world.level.Level level, ComponentTickable componentTickable) {
 
-	ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
+	java.util.Optional<ComponentElectrodynamic> electroOpt = getComponent(IComponentType.Electrodynamic);
+	if (electroOpt.isEmpty()) {
+	    redstoneSignal.setValue(0);
+	    return;
+	}
+	ComponentElectrodynamic electro = electroOpt.get();
 
 	if (electro.getJoulesStored() < BallistixConfig.INSTANCE.PROXIMITYDETECTOR_USAGEPERTICK.get()) {
 	    redstoneSignal.setValue(0);

@@ -2,6 +2,7 @@ package ballistix.client.screen;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import ballistix.common.inventory.container.ContainerVLS;
 import ballistix.common.settings.BallistixConfig;
@@ -67,12 +68,8 @@ public class ScreenVLS extends GenericScreen<ContainerVLS> {
 		BallistixTextUtils.gui("missilesilo.sync")));
 
 	addComponent(new ScreenComponentButton<>(130, 32, 20, 20).setOnPress(button -> {
-	    //
-	    TileVerticalLaunchSilo silo = getMenu().getSafeHost();
-	    if (silo == null) {
-		return;
-	    }
-	    silo.shouldLaunch.setValue(true);
+	    // use Optional host
+	    menu.getSafeHost().ifPresent(silo -> silo.shouldLaunch.setValue(true));
 
 	}).setColor(new Color(255, 0, 0, 255)).onTooltip((graphics, component, mouseX, mouseY) -> graphics
 		.renderTooltip(getFontRenderer(), BallistixTextUtils.tooltip("silo.launch"), mouseX, mouseY)));
@@ -90,21 +87,15 @@ public class ScreenVLS extends GenericScreen<ContainerVLS> {
 	    return;
 	}
 
-	TileVerticalLaunchSilo silo = menu.getSafeHost();
-
-	if (silo == null) {
-	    return;
-	}
-
-	int x = silo.target.getValue().getX();
-
-	try {
-	    x = Integer.parseInt(coord);
-	} catch (Exception e) {
-	    // Filler
-	}
-
-	updateSiloCoords(x, silo.target.getValue().getY(), silo.target.getValue().getZ(), silo);
+	menu.getSafeHost().ifPresent(silo -> {
+	    int x = silo.target.getValue().getX();
+	    try {
+		x = Integer.parseInt(coord);
+	    } catch (Exception e) {
+		// Filler
+	    }
+	    updateSiloCoords(x, silo.target.getValue().getY(), silo.target.getValue().getZ(), silo);
+	});
 
     }
 
@@ -114,21 +105,15 @@ public class ScreenVLS extends GenericScreen<ContainerVLS> {
 	    return;
 	}
 
-	TileVerticalLaunchSilo silo = menu.getSafeHost();
-
-	if (silo == null) {
-	    return;
-	}
-
-	int y = silo.target.getValue().getY();
-
-	try {
-	    y = Integer.parseInt(coord);
-	} catch (Exception e) {
-	    // Filler
-	}
-
-	updateSiloCoords(silo.target.getValue().getX(), y, silo.target.getValue().getZ(), silo);
+	menu.getSafeHost().ifPresent(silo -> {
+	    int y = silo.target.getValue().getY();
+	    try {
+		y = Integer.parseInt(coord);
+	    } catch (Exception e) {
+		// Filler
+	    }
+	    updateSiloCoords(silo.target.getValue().getX(), y, silo.target.getValue().getZ(), silo);
+	});
 
     }
 
@@ -138,21 +123,15 @@ public class ScreenVLS extends GenericScreen<ContainerVLS> {
 	    return;
 	}
 
-	TileVerticalLaunchSilo silo = menu.getSafeHost();
-
-	if (silo == null) {
-	    return;
-	}
-
-	int z = silo.target.getValue().getZ();
-
-	try {
-	    z = Integer.parseInt(coord);
-	} catch (Exception e) {
-	    // Filler
-	}
-
-	updateSiloCoords(silo.target.getValue().getX(), silo.target.getValue().getY(), z, silo);
+	menu.getSafeHost().ifPresent(silo -> {
+	    int z = silo.target.getValue().getZ();
+	    try {
+		z = Integer.parseInt(coord);
+	    } catch (Exception e) {
+		// Filler
+	    }
+	    updateSiloCoords(silo.target.getValue().getX(), silo.target.getValue().getY(), z, silo);
+	});
 
     }
 
@@ -166,21 +145,15 @@ public class ScreenVLS extends GenericScreen<ContainerVLS> {
 	    return;
 	}
 
-	TileVerticalLaunchSilo silo = menu.getSafeHost();
-
-	if (silo == null) {
-	    return;
-	}
-
-	int frequency = 0;
-
-	try {
-	    frequency = Integer.parseInt(val);
-	} catch (Exception e) {
-	    // Filler
-	}
-
-	silo.frequency.setValue(frequency);
+	menu.getSafeHost().ifPresent(silo -> {
+	    int frequency = 0;
+	    try {
+		frequency = Integer.parseInt(val);
+	    } catch (Exception e) {
+		// Filler
+	    }
+	    silo.frequency.setValue(frequency);
+	});
 
     }
 
@@ -221,37 +194,37 @@ public class ScreenVLS extends GenericScreen<ContainerVLS> {
 	super.render(graphics, mouseX, mouseY, partialTicks);
 	if (needsUpdate) {
 	    needsUpdate = false;
-	    TileVerticalLaunchSilo silo = menu.getSafeHost();
-	    if (silo != null) {
+	    menu.getSafeHost().ifPresent(silo -> {
 		xCoordField.setValue("" + silo.target.getValue().getX());
 		yCoordField.setValue("" + silo.target.getValue().getY());
 		zCoordField.setValue("" + silo.target.getValue().getZ());
 		frequencyField.setValue("" + silo.frequency.getValue());
-	    }
+	    });
 	}
     }
 
     private List<? extends FormattedCharSequence> getElectricInformation() {
 	ArrayList<FormattedCharSequence> list = new ArrayList<>();
 
-	TileVerticalLaunchSilo silo = menu.getSafeHost();
-	if (silo == null) {
-	    return list;
-	}
-
-	ComponentElectrodynamic el = silo.getComponent(IComponentType.Electrodynamic);
-	list.add(BallistixTextUtils
-		.tooltip("missilesilo.charge",
-			ChatFormatter.getChatDisplayShort(el.getJoulesStored(), DisplayUnits.JOULES)
-				.withStyle(ChatFormatting.GRAY),
-			ChatFormatter.getChatDisplayShort(BallistixConfig.INSTANCE.MISSILESILO_USAGE.getAsDouble(),
-				DisplayUnits.JOULES).withStyle(ChatFormatting.GRAY))
-		.withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
-	list.add(VoltaicTextUtils
-		.gui("machine.voltage",
-			ChatFormatter.getChatDisplayShort(el.getVoltage(), DisplayUnits.VOLTAGE)
-				.withStyle(ChatFormatting.GRAY))
-		.withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+	menu.getSafeHost().ifPresent(silo -> {
+	    Optional<ComponentElectrodynamic> elOpt = silo.getComponent(IComponentType.Electrodynamic);
+	    elOpt.ifPresent(el -> {
+		list.add(BallistixTextUtils
+			.tooltip("missilesilo.charge",
+				ChatFormatter.getChatDisplayShort(el.getJoulesStored(), DisplayUnits.JOULES)
+					.withStyle(ChatFormatting.GRAY),
+				ChatFormatter
+					.getChatDisplayShort(BallistixConfig.INSTANCE.MISSILESILO_USAGE.getAsDouble(),
+						DisplayUnits.JOULES)
+					.withStyle(ChatFormatting.GRAY))
+			.withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+		list.add(VoltaicTextUtils
+			.gui("machine.voltage",
+				ChatFormatter.getChatDisplayShort(el.getVoltage(), DisplayUnits.VOLTAGE)
+					.withStyle(ChatFormatting.GRAY))
+			.withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+	    });
+	});
 
 	return list;
     }

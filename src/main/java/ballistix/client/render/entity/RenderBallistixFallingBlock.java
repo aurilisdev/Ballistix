@@ -23,8 +23,8 @@ public class RenderBallistixFallingBlock extends EntityRenderer<EntityBallistixF
 
     public RenderBallistixFallingBlock(EntityRendererProvider.Context context) {
 	super(context);
-	this.shadowRadius = 0.5F;
-	this.dispatcher = context.getBlockRenderDispatcher();
+	shadowRadius = 0.5F;
+	dispatcher = context.getBlockRenderDispatcher();
     }
 
     @Override
@@ -38,11 +38,11 @@ public class RenderBallistixFallingBlock extends EntityRenderer<EntityBallistixF
 		poseStack.pushPose();
 		BlockPos blockpos = BlockPos.containing(entity.getX(), entity.getBoundingBox().maxY, entity.getZ());
 		poseStack.translate(-0.5, 0.0, -0.5);
-		var model = this.dispatcher.getBlockModel(blockstate);
+		var model = dispatcher.getBlockModel(blockstate);
 		for (var renderType : model.getRenderTypes(blockstate,
 			RandomSource.create(blockstate.getSeed(entity.getStartPos())),
 			net.neoforged.neoforge.client.model.data.ModelData.EMPTY))
-		    this.dispatcher.getModelRenderer().tesselateBlock(level, this.dispatcher.getBlockModel(blockstate),
+		    dispatcher.getModelRenderer().tesselateBlock(level, dispatcher.getBlockModel(blockstate),
 			    blockstate, blockpos, poseStack,
 			    buffer.getBuffer(net.neoforged.neoforge.client.RenderTypeHelper
 				    .getMovingBlockRenderType(renderType)),

@@ -15,15 +15,19 @@ import net.minecraft.world.entity.player.Player;
 
 public class ClientBarrierMethods {
     public static void handleSetSearchRadarTrackedClient(HashSet<IDetected.Detected> detected, BlockPos tilePos) {
-	if (Minecraft.getInstance().level.getBlockEntity(tilePos) instanceof TileSearchRadar radar) {
+	ClientLevel level = Minecraft.getInstance().level;
+	if (level == null) {
+	    return;
+	}
+	if (level.getBlockEntity(tilePos) instanceof TileSearchRadar radar) {
 	    radar.detections.clear();
 	    radar.detections.addAll(detected);
 	}
     }
 
     public static void handlerSpawnBlastParticle(BlockPos p, BlastParticleSpawnType type) {
-	ClientLevel world = Minecraft.getInstance().level;
-	if (world == null) {
+	ClientLevel level = Minecraft.getInstance().level;
+	if (level == null) {
 	    return;
 	}
 	switch (type) {
@@ -55,11 +59,7 @@ public class ClientBarrierMethods {
 
 	Player player = world.getPlayerByUUID(id);
 
-	if (player == null) {
-	    return;
-	}
-	
-	if(player.isCreative()) {
+	if ((player == null) || player.isCreative()) {
 	    return;
 	}
 	player.push(0, player.getGravity() * BallistixConfig.INSTANCE.EXPLOSIVE_ANTIGRAVITY_GRAVITYFACTOR.get(), 0);

@@ -69,75 +69,48 @@ public class ItemRocketLauncher extends ItemVoltaic {
     }
 
     @Override
-    public void releaseUsing(ItemStack stack, Level world, LivingEntity entityLiving, int timeLeft) {
-
-	if (world.isClientSide || !(entityLiving instanceof Player)
-		|| (stack.getOrDefault(VoltaicDataComponentTypes.TIMER, 0) > 0)) {
+    public void releaseUsing(ItemStack usingStack, Level world, LivingEntity entityLiving, int timeLeft) {
+	if (world.isClientSide || !(entityLiving instanceof Player player)
+		|| usingStack.getOrDefault(VoltaicDataComponentTypes.TIMER, 0) > 0) {
 	    return;
 	}
 
-	Player player = (Player) entityLiving;
-
 	if (!player.isCreative())
-	    stack.set(VoltaicDataComponentTypes.TIMER, BallistixConfig.INSTANCE.ROCKET_LAUNCHER_COOLDOWN_TICKS.get());
-
+	    usingStack.set(VoltaicDataComponentTypes.TIMER,
+		    BallistixConfig.INSTANCE.ROCKET_LAUNCHER_COOLDOWN_TICKS.get());
 	IBlast blast = null;
-
-	boolean hasExplosive = false;
-
-	boolean hasRange = false;
-
 	ItemStack ex = ItemStack.EMPTY;
-
 	ItemStack missile = ItemStack.EMPTY;
 
-	for (ItemStack st : player.getInventory().items) {
-	    Item it = st.getItem();
-	    IBlast bl = Blast.ITEM_TO_BLAST_MAP.get(it);
-	    if (!hasExplosive && bl != null && (player.isCreative() || bl.tier() <= 1)) {
-		blast = bl;
-		hasExplosive = true;
-		ex = st;
+	boolean creative = player.isCreative();
+
+	for (ItemStack stack : player.getInventory().items) {
+
+	    Item item = stack.getItem();
+	    IBlast candidate = Blast.ITEM_TO_BLAST_MAP.get(item);
+
+	    if (blast == null && candidate != null && (creative || candidate.tier() <= 1)) {
+		blast = candidate;
+		ex = stack;
 	    }
-	    if (!hasRange && (it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier1)
-		    || player.isCreative() && (it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier1)
-			    || it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier2)
-			    || it == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier3)))) {
-		hasRange = true;
-		missile = st;
+
+	    if (missile.isEmpty() && (item == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier1)
+		    || creative && (item == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier2)
+			    || item == BallistixItems.ITEMS_MISSILE.getValue(SubtypeMissile.tier3)))) {
+		missile = stack;
 	    }
-	    if (hasRange && hasExplosive) {
+
+	    if (blast != null && !missile.isEmpty())
 		break;
-	    }
 	}
-	if (hasExplosive && hasRange) {
+
+	if (blast != null && missile.getItem() instanceof ItemMissile missileItem) {
+
 	    VirtualMissile virtualMissile = new VirtualMissile(
-		    //
 		    new Vec3(entityLiving.getX(), entityLiving.getY() + entityLiving.getEyeHeight() * 0.8,
 			    entityLiving.getZ()),
-		    //
-		    new Vec3(entityLiving.getLookAngle().x, entityLiving.getLookAngle().y,
-			    entityLiving.getLookAngle().z),
-		    //
-		    ROCKET_LAUNCHER_SPEED,
-		    //
-		    FlightPath.ROCKET_LAUNCHER,
-		    //
-		    0,
-		    //
-		    0,
-		    //
-		    BlockPos.ZERO,
-		    //
-		    ((ItemMissile) missile.getItem()).missile.ordinal() + 1,
-		    //
-		    blast,
-		    //
-		    0,
-		    //
-		    false
-	    //
-	    );
+		    entityLiving.getLookAngle(), ROCKET_LAUNCHER_SPEED, FlightPath.ROCKET_LAUNCHER, 0, 0, BlockPos.ZERO,
+		    missileItem.missile.ordinal() + 1, blast, 0, false);
 
 	    ex.shrink(1);
 	    missile.shrink(1);

@@ -29,6 +29,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
@@ -51,7 +52,7 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
     @Override
     public void doPreExplode() {
 	if (!world.isClientSide) {
-	    thread = new ThreadDynamicRaycastBlast(world, position,
+	    ThreadDynamicRaycastBlast thread = this.thread = new ThreadDynamicRaycastBlast(world, position,
 		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_THERMOBARIC_SIZE.getAsDouble(),
 		    (float) BallistixConfig.INSTANCE.EXPLOSIVE_THERMOBARIC_ENERGY.getAsDouble(), null);
 	    if (BallistixConfig.INSTANCE.SHOULD_MULTITHREAD_RAYTRACING.isTrue()) {
@@ -68,14 +69,15 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
 	}
     }
 
-    private ThreadDynamicRaycastBlast thread;
     private int pertick = -1;
-    private Iterator<BlockPos> cachedIterator;
     private boolean appliedFortronDamage = false;
+
+    private @Nullable ThreadDynamicRaycastBlast thread;
 
     @Override
     public boolean doExplode(int callCount) {
 	super.doExplode(callCount);
+	ThreadDynamicRaycastBlast thread = this.thread;
 	if (thread == null) {
 	    return !world.isClientSide;
 	}
@@ -93,7 +95,7 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
 		    pertick = (int) (1200 * 45.0
 			    / BallistixConfig.INSTANCE.EXPLOSIVE_THERMOBARIC_DURATION.getAsDouble());
 		}
-		cachedIterator = thread.finishedBlocks.iterator();
+		Iterator<BlockPos> cachedIterator = thread.finishedBlocks.iterator();
 		int finished = pertick;
 		while (cachedIterator.hasNext()) {
 		    if (finished-- < 0) {
@@ -182,7 +184,11 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
 	if (hasShaken)
 	    return;
 	Vec3 pos = new Vec3(x, y, z);
-	double realDistance = Minecraft.getInstance().player.position().distanceTo(pos);
+	Player player = Minecraft.getInstance().player;
+	if (player == null)
+	    return;
+
+	double realDistance = player.position().distanceTo(pos);
 	double dist = Mth.abs((float) (realDistance - size));
 	if (dist < 3) {
 	    hasShaken = true;
@@ -209,6 +215,7 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
 	if (world.isClientSide) {
 	    return shouldRenderCustomClient;
 	}
+	ThreadDynamicRaycastBlast thread = this.thread;
 	return thread == null || thread.isComplete;
     }
 

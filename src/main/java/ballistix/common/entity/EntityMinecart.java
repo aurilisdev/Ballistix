@@ -52,7 +52,7 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable, Trac
 
     public void setOwner(@Nullable Entity cachedOwner) {
 	if (cachedOwner != null) {
-	    this.ownerUUID = cachedOwner.getUUID();
+	    ownerUUID = cachedOwner.getUUID();
 	    this.cachedOwner = cachedOwner;
 	}
     }
@@ -60,18 +60,19 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable, Trac
     @Nullable
     @Override
     public Entity getOwner() {
-	if (this.cachedOwner != null && !this.cachedOwner.isRemoved()) {
-	    return this.cachedOwner;
-	} else if (this.ownerUUID != null && this.level() instanceof ServerLevel serverlevel) {
-	    this.cachedOwner = serverlevel.getEntity(this.ownerUUID);
-	    return this.cachedOwner;
-	} else {
-	    return null;
+	if (cachedOwner != null && !cachedOwner.isRemoved()) {
+	    return cachedOwner;
 	}
+	UUID pOwnerUUID = ownerUUID;
+	if (pOwnerUUID != null && level() instanceof ServerLevel serverlevel) {
+	    cachedOwner = serverlevel.getEntity(pOwnerUUID);
+	    return cachedOwner;
+	}
+	return null;
     }
 
     protected boolean ownedBy(Entity entity) {
-	return entity.getUUID().equals(this.ownerUUID);
+	return entity.getUUID().equals(ownerUUID);
     }
 
     public EntityMinecart(EntityType<? extends EntityMinecart> type, Level worldIn) {
@@ -92,9 +93,11 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable, Trac
 	blastId = explosive.id();
     }
 
-    @Nullable
     public IBlast getExplosiveType() {
-	return blastId == null ? null : Blast.BLAST_MAP.get(blastId);
+	if (Blast.BLAST_MAP.get(blastId) == null) {
+	    return Blast.BLAST_MAP.get(Blast.BLAST_MAP.keySet().iterator().next());
+	}
+	throw new IllegalStateException("No explosive type set for minecart");
     }
 
     @Override
@@ -251,8 +254,8 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable, Trac
 	super.addAdditionalSaveData(compound);
 	compound.putInt("Fuse", fuse);
 	compound.putInt("Fuse", fuse);
-	if (this.ownerUUID != null) {
-	    compound.putUUID("Owner", this.ownerUUID);
+	if (ownerUUID != null) {
+	    compound.putUUID("Owner", ownerUUID);
 	}
 	ResourceLocation.CODEC.encodeStart(NbtOps.INSTANCE, blastId).ifSuccess(tag -> compound.put("type", tag));
     }
@@ -262,8 +265,8 @@ public class EntityMinecart extends AbstractMinecart implements IDefusable, Trac
 	super.readAdditionalSaveData(compound);
 	fuse = compound.getInt("Fuse");
 	if (compound.hasUUID("Owner")) {
-	    this.ownerUUID = compound.getUUID("Owner");
-	    this.cachedOwner = null;
+	    ownerUUID = compound.getUUID("Owner");
+	    cachedOwner = null;
 	}
 	ResourceLocation.CODEC.decode(NbtOps.INSTANCE, compound.get("type"))
 		.ifSuccess(pair -> blastId = pair.getFirst());

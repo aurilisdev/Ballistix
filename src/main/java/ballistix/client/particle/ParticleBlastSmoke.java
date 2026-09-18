@@ -14,13 +14,13 @@ import net.minecraft.util.Mth;
 
 public class ParticleBlastSmoke extends TextureSheetParticle {
     private final SpriteSet sprites;
-    private boolean burning;
+    private final boolean burning;
     private int burningTime;
     private double friction = 0.95;
     private float startRed = 1.0F, startGreen = 0.7F, startBlue = 0.2F;
     private float endRed = 0.6F, endGreen = 0.2f, endBlue = 0.2f;
     private float endGray = 0.325F;
-    private float startQuadSize;
+    private final float startQuadSize;
 
     public static double smoothStep(double u) {
 	// clamp u to [0, 1] to be safe, though ideally caller ensures that
@@ -54,24 +54,24 @@ public class ParticleBlastSmoke extends TextureSheetParticle {
     public ParticleBlastSmoke(ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed,
 	    double zSpeed, ParticleOptionsBlastSmoke options, SpriteSet set) {
 	super(level, x, y, z, 0.0, 0.0, 0.0);
-	this.friction = 0.96F;
-	this.gravity = options.gravity;
-	this.speedUpWhenYMotionIsBlocked = true;
-	this.burningTime = options.burningTime;
-	this.sprites = set;
-	this.xd = xSpeed;
-	this.yd = ySpeed;
-	this.zd = zSpeed;
-	this.rCol = options.r;
-	this.gCol = options.g;
-	this.bCol = options.b;
-	this.quadSize = options.scale;
-	this.startQuadSize = options.scale;
-	this.lifetime = options.lifetime;
-	this.setSprite(sprites.get(level.random));
-	this.hasPhysics = options.hasPhysics;
-	this.burning = options.burning;
-	this.friction = options.friction;
+	friction = 0.96F;
+	gravity = options.gravity;
+	speedUpWhenYMotionIsBlocked = true;
+	burningTime = options.burningTime;
+	sprites = set;
+	xd = xSpeed;
+	yd = ySpeed;
+	zd = zSpeed;
+	rCol = options.r;
+	gCol = options.g;
+	bCol = options.b;
+	quadSize = options.scale;
+	startQuadSize = options.scale;
+	lifetime = options.lifetime;
+	setSprite(sprites.get(level.random));
+	hasPhysics = options.hasPhysics;
+	burning = options.burning;
+	friction = options.friction;
 
 	// Randomize values so particles don't look the same. Could be done in
 	// explosives, but this needs to be done for every explosive. Thus this saves
@@ -98,9 +98,9 @@ public class ParticleBlastSmoke extends TextureSheetParticle {
 
     @Override
     public void tick() {
-	this.xd *= friction;
-	this.yd *= friction;
-	this.zd *= friction;
+	xd *= friction;
+	yd *= friction;
+	zd *= friction;
 
 	// Proceed with default ticking (position update, age increment, etc.)
 	super.tick();
@@ -109,22 +109,22 @@ public class ParticleBlastSmoke extends TextureSheetParticle {
 
     @Override
     public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
-	float lifeProgress = (this.age + partialTicks) / this.lifetime;
+	float lifeProgress = (age + partialTicks) / lifetime;
 	if (lifeProgress <= 1 && lifeProgress >= 0) {
 	    if (burning) {
 
 		int orangeLast = (int) (burningTime / 1.4);
 
-		this.rCol = smoothTransition(age + partialTicks, startRed, endRed, endGray, orangeLast,
+		rCol = smoothTransition(age + partialTicks, startRed, endRed, endGray, orangeLast,
 			burningTime - orangeLast);
-		this.gCol = smoothTransition(age + partialTicks, startGreen, endGreen, endGray, orangeLast,
+		gCol = smoothTransition(age + partialTicks, startGreen, endGreen, endGray, orangeLast,
 			burningTime - orangeLast);
-		this.bCol = smoothTransition(age + partialTicks, startBlue, endBlue, endGray, orangeLast,
+		bCol = smoothTransition(age + partialTicks, startBlue, endBlue, endGray, orangeLast,
 			burningTime - orangeLast);
 	    }
 
 	    // Gradually shrink the particle
-	    this.quadSize = startQuadSize * Mth.cos((float) (Mth.PI / 2f * Math.pow(1 - lifeProgress - 1, 5)));
+	    quadSize = startQuadSize * Mth.cos((float) (Mth.PI / 2f * Math.pow(1 - lifeProgress - 1, 5)));
 
 	}
 	super.render(buffer, renderInfo, partialTicks);

@@ -25,15 +25,16 @@ public class ScreenComponentDetection extends ScreenComponentGeneric {
     }
 
     @Override
+    @SuppressWarnings("null")
     public void renderBackground(GuiGraphics graphics, int xAxis, int yAxis, int guiWidth, int guiHeight) {
 
-	if (!isVisible()) {
+	if (!isVisible() || gui == null || !(gui instanceof GenericScreen)) {
 	    return;
 	}
 
 	GenericScreen<ContainerSearchRadar> screen = (GenericScreen<ContainerSearchRadar>) gui;
 
-	TileSearchRadar tile = screen.getMenu().getSafeHost();
+	TileSearchRadar tile = screen.getMenu().getSafeHost().orElse(null);
 
 	if (tile == null) {
 	    return;
@@ -128,7 +129,7 @@ public class ScreenComponentDetection extends ScreenComponentGeneric {
 
     }
 
-    public void setDetection(IDetected.Detected detection) {
+    public void setDetection(@javax.annotation.Nullable IDetected.Detected detection) {
 	this.detection = detection;
     }
 

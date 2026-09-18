@@ -40,7 +40,7 @@ public final class Ballistix {
     public static final String GRIEF_DEFENDER_ID = "griefdefender";
 
     public static final boolean MFFS_LOADED = ModList.get().isLoaded("modularforcefields");
-    
+
     public Ballistix(IEventBus bus, ModContainer container) {
 	BallistixConfig.INSTANCE = new BallistixConfig();
 	container.registerConfig(ModConfig.Type.COMMON, BallistixConfig.INSTANCE.SPEC);
@@ -54,9 +54,7 @@ public final class Ballistix {
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public static void onClientSetup(FMLClientSetupEvent event) {
-	event.enqueueWork(() -> {
-	    BallistixClientRegister.setup();
-	});
+	event.enqueueWork(() -> { BallistixClientRegister.setup(); });
     }
 
     @SubscribeEvent
@@ -125,7 +123,7 @@ public final class Ballistix {
     }
 
     private static void cacheBlast(ThreadSimpleBlast blast) {
-	if (FMLEnvironment.production) {
+	if (!FMLEnvironment.production) {
 	    blast.start();
 	} else {
 	    blast.run();

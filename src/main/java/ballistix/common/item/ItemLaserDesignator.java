@@ -47,18 +47,20 @@ public class ItemLaserDesignator extends ItemElectric {
 	BlockEntity ent = context.getLevel().getBlockEntity(context.getClickedPos());
 	ILauncherControlPanel silo = ent instanceof ILauncherControlPanel s ? s : null;
 	if (ent instanceof TileMultiSubnode node) {
-	    BlockEntity core = node.getLevel().getBlockEntity(node.parentPos.getValue());
+	    BlockEntity core = context.getLevel().getBlockEntity(node.parentPos.getValue());
 	    if (core instanceof ILauncherControlPanel c) {
 		silo = c;
 	    }
 	}
 	if (silo != null && !context.getLevel().isClientSide) {
+	    Player player = context.getPlayer();
+	    if (player != null) {
+		player.displayClientMessage(
+			BallistixTextUtils.chatMessage("laserdesignator.setfrequency", silo.getFrequency()), false);
 
-	    context.getPlayer().displayClientMessage(
-		    BallistixTextUtils.chatMessage("laserdesignator.setfrequency", silo.getFrequency()), false);
+		stack.set(BallistixDataComponentTypes.BOUND_FREQUENCY, silo.getFrequency());
 
-	    stack.set(BallistixDataComponentTypes.BOUND_FREQUENCY, silo.getFrequency());
-
+	    }
 	}
 	return super.onItemUseFirst(stack, context);
     }

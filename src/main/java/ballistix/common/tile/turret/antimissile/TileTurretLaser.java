@@ -16,6 +16,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import voltaic.prefab.properties.types.PropertyTypes;
@@ -29,15 +30,16 @@ import voltaic.prefab.tile.components.type.ComponentTickable;
 
 public class TileTurretLaser extends TileTurretAntimissile implements ITickableSound {
 
-    public final SingleProperty<Vec3> targetPos = property(
-	    new SingleProperty<>(PropertyTypes.VEC3, "targetposition", TileFireControlRadar.OUT_OF_REACH));
+    public final SingleProperty<Vec3> targetPos = property(new SingleProperty<>(getPropertyManager(),
+	    PropertyTypes.VEC3, "targetposition", TileFireControlRadar.OUT_OF_REACH));
     public final SingleProperty<Boolean> targetingEntity = property(
-	    new SingleProperty<>(PropertyTypes.BOOLEAN, "targetingentity", false));
-    public final SingleProperty<Double> heat = property(new SingleProperty<>(PropertyTypes.DOUBLE, "heat", 0.0));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BOOLEAN, "targetingentity", false));
+    public final SingleProperty<Double> heat = property(
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.DOUBLE, "heat", 0.0));
     public final SingleProperty<Boolean> overheated = property(
-	    new SingleProperty<>(PropertyTypes.BOOLEAN, "overheated", false));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BOOLEAN, "overheated", false));
     public final SingleProperty<Boolean> firing = property(
-	    new SingleProperty<>(PropertyTypes.BOOLEAN, "isfiring", false));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BOOLEAN, "isfiring", false));
 
     private LivingEntity livingTarget = null;
     private boolean isPlaying = false;
@@ -57,12 +59,12 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
     @Override
     public ComponentContainerProvider getContainer() {
 	return new ComponentContainerProvider("laserturret", this)
-		.createMenu((id, player) -> new ContainerLaserTurret(id, player, getComponent(IComponentType.Inventory),
-			getCoordsArray()));
+		.createMenu((id, player) -> new ContainerLaserTurret(id, player,
+			requireComponent(IComponentType.Inventory), getCoordsArray()));
     }
 
     @Override
-    public void tickServer(ComponentTickable tickable) {
+    public void tickServer(Level level, ComponentTickable tickable) {
 	if (heat.getValue() > 0) {
 	    heat.setValue(heat.getValue() - 1.0);
 	}
@@ -73,7 +75,7 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
 	    overheated.setValue(false);
 	    firing.setValue(false);
 	}
-	super.tickServer(tickable);
+	super.tickServer(level, tickable);
     }
 
     @Override
@@ -82,8 +84,7 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
     }
 
     @Override
-    public void fireTickServer(long ticks) {
-
+    public void fireTickServer(Level level, ITarget target, long ticks) {
 	if (overheated.getValue()) {
 	    firing.setValue(false);
 	    return;
@@ -120,7 +121,7 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
     }
 
     @Override
-    public void tickClient(ComponentTickable tickable) {
+    public void tickClient(Level level, ComponentTickable tickable) {
 	if (shouldPlaySound() && !isPlaying) {
 	    isPlaying = true;
 	    SoundBarrierMethods.playTileSound(BallistixSounds.SOUND_LASER_TURRETFIRING.get(), SoundSource.BLOCKS, this,
@@ -156,10 +157,10 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
     }
 
     @Override
-    public @Nullable ITarget getTarget(long ticks) {
+    public @Nullable ITarget getTarget(Level level, long ticks) {
 	targetingEntity.setValue(false);
 
-	ITarget target = super.getTarget(ticks);
+	ITarget target = super.getTarget(level, ticks);
 
 	TargetingMode mode = TargetingMode.values()[entityTargetingMode.getValue()];
 
@@ -182,7 +183,7 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
 	}
 
 	if (ticks % 20 == 0) {
-	    livingTarget = findLivingTarget(mode);
+	    livingTarget = findLivingTarget(level, mode);
 	}
 
 	if (livingTarget != null) {
@@ -198,8 +199,8 @@ public class TileTurretLaser extends TileTurretAntimissile implements ITickableS
     }
 
     @Override
-    public boolean isValidPlacement() {
-	return targetingEntity.getValue() || super.isValidPlacement();
+    public boolean isValidPlacement(Level level) {
+	return targetingEntity.getValue() || super.isValidPlacement(level);
     }
 
     @Override

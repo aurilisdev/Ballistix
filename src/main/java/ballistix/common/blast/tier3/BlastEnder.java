@@ -14,6 +14,7 @@ import ballistix.common.settings.BallistixConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -70,11 +71,15 @@ public class BlastEnder extends Blast implements IHasCustomRender {
 	    }
 
 	    if (world.dimension().registryKey().equals(Level.END)) {
-		entity.teleportTo(ServerLifecycleHooks.getCurrentServer().getLevel(Level.OVERWORLD), entity.getX(),
-			entity.getY(), entity.getZ(), Collections.emptySet(), entity.getYRot(), entity.getXRot());
+		ServerLevel overworld = ServerLifecycleHooks.getCurrentServer().getLevel(Level.OVERWORLD);
+		if (overworld != null)
+		    entity.teleportTo(overworld, entity.getX(), entity.getY(), entity.getZ(), Collections.emptySet(),
+			    entity.getYRot(), entity.getXRot());
 	    } else {
-		entity.teleportTo(ServerLifecycleHooks.getCurrentServer().getLevel(Level.END), entity.getX(),
-			entity.getY(), entity.getZ(), Collections.emptySet(), entity.getYRot(), entity.getXRot());
+		ServerLevel end = ServerLifecycleHooks.getCurrentServer().getLevel(Level.END);
+		if (end != null)
+		    entity.teleportTo(end, entity.getX(), entity.getY(), entity.getZ(), Collections.emptySet(),
+			    entity.getYRot(), entity.getXRot());
 	    }
 
 	}

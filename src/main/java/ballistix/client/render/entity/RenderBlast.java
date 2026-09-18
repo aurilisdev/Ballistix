@@ -27,7 +27,7 @@ public class RenderBlast extends EntityRenderer<EntityBlast> {
     public void render(EntityBlast entityIn, float entityYaw, float partialTicks, PoseStack matrixStack,
 	    MultiBufferSource bufferIn, int packedLightIn) {
 
-	IBlast blast = entityIn.getBlastType();
+	IBlast blast = entityIn.getIBlastType();
 
 	if (blast == null) {
 	    super.render(entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn);

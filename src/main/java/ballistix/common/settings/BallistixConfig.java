@@ -67,7 +67,7 @@ public class BallistixConfig {
     public ModConfigSpec.DoubleValue EXPLOSIVE_EXOTHERMIC_CHANCE_TO_BURN;
     public ModConfigSpec.DoubleValue EXPLOSIVE_EXOTHERMIC_VELOCITY;
     public ModConfigSpec.DoubleValue EXPLOSIVE_EXOTHERMIC_DURATION;
-    
+
     public ModConfigSpec.DoubleValue EXPLOSIVE_ENDER_RADIUS;
     public ModConfigSpec.IntValue EXPLOSIVE_ENDER_ENDERMANCOUNT;
     public ModConfigSpec.DoubleValue EXPLOSIVE_HYPERSONIC_MAXHARDNESS;
@@ -218,8 +218,7 @@ public class BallistixConfig {
 
 	// Tier 3
 	builder.push("tier3");
-	EXPLOSIVE_ANTIGRAVITY_RADIUS = builder.defineInRange("explosive_antigravity_radius", 30, 0,
-		Integer.MAX_VALUE);
+	EXPLOSIVE_ANTIGRAVITY_RADIUS = builder.defineInRange("explosive_antigravity_radius", 30, 0, Integer.MAX_VALUE);
 	EXPLOSIVE_ANTIGRAVITY_CHUNKDURATION = builder.comment("Value is in ticks.")
 		.defineInRange("explosive_antigravity_chunkduration_ticks", 2400, 0, Integer.MAX_VALUE);
 	EXPLOSIVE_ANTIGRAVITY_GRAVITYFACTOR = builder.defineInRange("explosive_antigravity_gravityfactor", 1.1, 0,
@@ -229,8 +228,8 @@ public class BallistixConfig {
 	EXPLOSIVE_ANTIGRAVITY_MAXBLOCKCHECKS = builder.comment("It is recommended to keep this value low")
 		.defineInRange("explosive_antigravity_maxblockchecks", 1, 0, Integer.MAX_VALUE);
 	EXPLOSIVE_EMP_RADIUS = builder.defineInRange("explosive_emp_radius", 45.0, 0, Double.MAX_VALUE);
-	EXPLOSIVE_EMP_DURATION = builder.comment("Value is in ticks.")
-		.defineInRange("explosive_emp_duration_ticks", 80.0, 0, Double.MAX_VALUE);
+	EXPLOSIVE_EMP_DURATION = builder.comment("Value is in ticks.").defineInRange("explosive_emp_duration_ticks",
+		80.0, 0, Double.MAX_VALUE);
 	EXPLOSIVE_NUCLEAR_SIZE = builder.defineInRange("explosive_nuclear_size", 45.0, 0, Double.MAX_VALUE);
 	EXPLOSIVE_NUCLEAR_DURATION = builder.comment("Value is in ticks.")
 		.defineInRange("explosive_nuclear_duration_ticks", 360.0, 0, Double.MAX_VALUE);

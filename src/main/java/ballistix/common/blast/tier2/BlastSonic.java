@@ -23,8 +23,8 @@ import net.minecraft.world.phys.AABB;
 
 public class BlastSonic extends BlastLasting {
 
-    private ThreadSimpleBlast thread;
-    private Iterator<BlockPos> iterator;
+    private @Nullable ThreadSimpleBlast thread;
+    private @Nullable Iterator<BlockPos> iterator;
     private int pertick = -1;
 
     public BlastSonic(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
@@ -51,6 +51,7 @@ public class BlastSonic extends BlastLasting {
     public boolean doExplode(int callCount) {
 	hasStarted = true;
 	super.doExplode(callCount);
+	ThreadSimpleBlast thread = this.thread;
 	if (thread == null) {
 	    return !world.isClientSide;
 	}
@@ -63,6 +64,10 @@ public class BlastSonic extends BlastLasting {
 		    + 1);
 	    iterator = thread.results.iterator();
 	}
+	Iterator<BlockPos> iterator = this.iterator;
+	if (iterator == null)
+	    return false;
+
 	int finished = pertick;
 	while (iterator.hasNext()) {
 	    if (finished-- < 0) {
@@ -153,6 +158,7 @@ public class BlastSonic extends BlastLasting {
 	if (world.isClientSide) {
 	    return shouldRenderCustomClient;
 	}
+	ThreadSimpleBlast thread = this.thread;
 	return thread == null || thread.isComplete;
     }
 }

@@ -5,6 +5,7 @@ import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.registers.BallistixTiles;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import voltaic.api.multiblock.subnodebased.TileMultiSubnode;
@@ -27,7 +28,7 @@ public class TileLauncherSupportFrameT1 extends GenericTile implements IMultiblo
     }
 
     @Override
-    public void onSubnodeDestroyed(TileMultiSubnode tileMultiSubnode) {
+    public void onSubnodeDestroyed(Level level, TileMultiSubnode tileMultiSubnode) {
 	level.destroyBlock(worldPosition, true);
     }
 

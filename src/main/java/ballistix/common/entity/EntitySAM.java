@@ -81,7 +81,7 @@ public class EntitySAM extends Entity {
 
     @Override
     public void tick() {
-	    super.tick();
+	super.tick();
 
 	Level level = level();
 
@@ -206,7 +206,7 @@ public class EntitySAM extends Entity {
 	if (player.isSecondaryUseActive()) {
 	    return InteractionResult.PASS;
 	}
-	if (!this.level().isClientSide) {
+	if (!level().isClientSide) {
 	    return player.startRiding(this, true) ? InteractionResult.CONSUME : InteractionResult.PASS;
 	}
 	return InteractionResult.SUCCESS;

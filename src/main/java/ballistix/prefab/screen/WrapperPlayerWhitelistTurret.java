@@ -29,8 +29,8 @@ public class WrapperPlayerWhitelistTurret {
 
     private ScreenComponentSimpleLabel whitelistLabel;
 
-    private ScreenComponentButton[] deleteButtons = new ScreenComponentButton[5];
-    private ScreenComponentWhitelistedPlayer[] players = new ScreenComponentWhitelistedPlayer[5];
+    private final ScreenComponentButton[] deleteButtons = new ScreenComponentButton[5];
+    private final ScreenComponentWhitelistedPlayer[] players = new ScreenComponentWhitelistedPlayer[5];
 
     public ScreenComponentEditBox addEditBox;
 
@@ -85,7 +85,7 @@ public class WrapperPlayerWhitelistTurret {
 
 	screen.addComponent(add = new ScreenComponentButton<>(x + 10, y + 52, 156, 20).setOnPress(button -> {
 
-	    GenericTileTurret turret = screen.getMenu().getSafeHost();
+	    GenericTileTurret turret = screen.getMenu().getSafeHost().orElse(null);
 
 	    if (turret == null) {
 		return;
@@ -114,7 +114,7 @@ public class WrapperPlayerWhitelistTurret {
 
 			ScreenComponentWhitelistedPlayer player = players[index];
 
-			GenericTileTurret tile = screen.getMenu().getSafeHost();
+			GenericTileTurret tile = screen.getMenu().getSafeHost().orElse(null);
 
 			if (player.getName() == null) {
 			    return;
@@ -149,7 +149,7 @@ public class WrapperPlayerWhitelistTurret {
     }
 
     public void tick() {
-	GenericTileTurret tile = screen.getMenu().getSafeHost();
+	GenericTileTurret tile = screen.getMenu().getSafeHost().orElse(null);
 	if (tile == null) {
 	    return;
 	}

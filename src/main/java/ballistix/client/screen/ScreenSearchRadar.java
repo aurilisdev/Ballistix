@@ -7,11 +7,11 @@ import com.mojang.blaze3d.platform.InputConstants;
 
 import ballistix.common.inventory.container.ContainerSearchRadar;
 import ballistix.common.settings.BallistixConfig;
-import ballistix.common.tile.radar.TileSearchRadar;
 import ballistix.prefab.screen.WrapperSearchFrequencyManager;
 import ballistix.prefab.screen.WrapperSearchRadarDetections;
 import ballistix.prefab.utils.BallistixTextUtils;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Inventory;
@@ -39,23 +39,21 @@ public class ScreenSearchRadar extends GenericScreen<ContainerSearchRadar> {
 	addComponent(new ScreenComponentGuiTab(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR,
 		ScreenComponentSlot.IconType.SONAR_PROFILE, () -> {
 		    List<FormattedCharSequence> info = new ArrayList<>();
-
-		    TileSearchRadar radar = menu.getSafeHost();
-
-		    if (radar == null) {
-			return info;
-		    }
-
-		    info.add(BallistixTextUtils.tooltip("turret.blockrange").withStyle(ChatFormatting.DARK_GRAY)
-			    .getVisualOrderText());
-		    info.add(BallistixTextUtils
-			    .tooltip("turret.maxrange",
-				    ChatFormatter.formatDecimals(BallistixConfig.INSTANCE.RADAR_RANGE.getDefault(), 1)
-					    .withStyle(ChatFormatting.GRAY))
-			    .withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
-
+		    menu.getSafeHost().ifPresentOrElse(radar -> {
+			info.add(BallistixTextUtils.tooltip("turret.blockrange").withStyle(ChatFormatting.DARK_GRAY)
+				.getVisualOrderText());
+			info.add(
+				BallistixTextUtils
+					.tooltip("turret.maxrange",
+						ChatFormatter
+							.formatDecimals(
+								BallistixConfig.INSTANCE.RADAR_RANGE.getDefault(), 1)
+							.withStyle(ChatFormatting.GRAY))
+					.withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+		    }, () -> {
+			// empty if no radar present
+		    });
 		    return info;
-
 		}, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE + 2));
 
 	frequencyWrapper = new WrapperSearchFrequencyManager(this, -AbstractScreenComponentInfo.SIZE + 1,
@@ -85,7 +83,9 @@ public class ScreenSearchRadar extends GenericScreen<ContainerSearchRadar> {
     @Override
     protected void initializeComponents() {
 	super.initializeComponents();
-	playerInvLabel.setVisible(false);
+	if (playerInvLabel != null) {
+	    playerInvLabel.setVisible(false);
+	}
     }
 
     @Override
@@ -113,7 +113,7 @@ public class ScreenSearchRadar extends GenericScreen<ContainerSearchRadar> {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-	if ((slider != null && slider.isVisible()) || (detectionsSlider != null && detectionsSlider.isVisible())) {
+	if (slider != null && slider.isVisible() || detectionsSlider != null && detectionsSlider.isVisible()) {
 	    slider.mouseClicked(mouseX, mouseY, button);
 	}
 	return super.mouseClicked(mouseX, mouseY, button);
@@ -121,7 +121,7 @@ public class ScreenSearchRadar extends GenericScreen<ContainerSearchRadar> {
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-	if ((slider != null && slider.isVisible()) || (detectionsSlider != null && detectionsSlider.isVisible())) {
+	if (slider != null && slider.isVisible() || detectionsSlider != null && detectionsSlider.isVisible()) {
 	    slider.mouseReleased(mouseX, mouseY, button);
 	}
 	return super.mouseReleased(mouseX, mouseY, button);
@@ -130,8 +130,10 @@ public class ScreenSearchRadar extends GenericScreen<ContainerSearchRadar> {
     @Override
     public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
 	InputConstants.Key mouseKey = InputConstants.getKey(pKeyCode, pScanCode);
-	if (this.minecraft.options.keyInventory.isActiveAndMatches(mouseKey) && frequencyWrapper.addEditBox.isVisible()
-		&& frequencyWrapper.addEditBox.isFocused()) {
+	Minecraft minecraft = this.minecraft;
+	if (minecraft != null && minecraft.options != null
+		&& minecraft.options.keyInventory.isActiveAndMatches(mouseKey)
+		&& frequencyWrapper.addEditBox.isVisible() && frequencyWrapper.addEditBox.isFocused()) {
 	    return false;
 	}
 	return super.keyPressed(pKeyCode, pScanCode, pModifiers);

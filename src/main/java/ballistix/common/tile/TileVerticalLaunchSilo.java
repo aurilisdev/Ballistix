@@ -32,6 +32,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -64,30 +65,33 @@ public class TileVerticalLaunchSilo extends GenericTile
     public static final int EXPLOSIVE_SLOT = 1;
 
     public SingleProperty<Integer> frequency = property(
-	    new SingleProperty<>(PropertyTypes.INTEGER, "frequency", 0).onChange((prop, prevFreq) -> {
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.INTEGER, "frequency", 0)
+		    .onChange((prop, prevFreq) -> {
+			Level level = this.level;
+			if (level == null || level.isClientSide) {
+			    return;
+			}
 
-		if (level == null || level.isClientSide) {
-		    return;
-		}
+			int newFreq = prop.getValue();
 
-		int newFreq = prop.getValue();
+			SiloRegistry.unregisterSilo(prevFreq, this);
+			SiloRegistry.registerSilo(newFreq, this);
 
-		SiloRegistry.unregisterSilo(prevFreq, this);
-		SiloRegistry.registerSilo(newFreq, this);
-
-	    }));
+		    }))
+	    .setUpdateServer();
 
     public SingleProperty<BlockPos> target = property(
-	    new SingleProperty<>(PropertyTypes.BLOCK_POS, "target", BlockPos.ZERO));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BLOCK_POS, "target", BlockPos.ZERO))
+	    .setUpdateServer();
 
     public SingleProperty<Boolean> hasExplosive = property(
-	    new SingleProperty<>(PropertyTypes.BOOLEAN, "hasexplosive", false));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BOOLEAN, "hasexplosive", false));
     public SingleProperty<Boolean> hasMissile = property(
-	    new SingleProperty<>(PropertyTypes.BOOLEAN, "hasmissile", false));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BOOLEAN, "hasmissile", false));
 
     private int cooldown = 100;
     public final SingleProperty<Boolean> shouldLaunch = property(
-	    new SingleProperty<>(PropertyTypes.BOOLEAN, "shouldlaunch", false));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BOOLEAN, "shouldlaunch", false)).setUpdateServer();
 
     public TileVerticalLaunchSilo(BlockPos worldPos, BlockState blockState) {
 	super(BallistixTiles.TILE_VLS.get(), worldPos, blockState);
@@ -100,18 +104,13 @@ public class TileVerticalLaunchSilo extends GenericTile
 		.setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values())
 		.setDirectionsBySlot(1, BlockEntityUtils.MachineDirection.values()).valid(this::isItemValidForSlot));
 	addComponent(new ComponentContainerProvider("vls", this).createMenu((id, player) -> new ContainerVLS(id, player,
-		getComponent(IComponentType.Inventory), getCoordsArray())));
+		requireComponent(IComponentType.Inventory), getCoordsArray())));
 	addComponent(new ComponentForgeEnergy(this));
 
     }
 
-    protected void tickServer(ComponentTickable tickable) {
-
-	if (target.getValue() == null) {
-	    target.setValue(getBlockPos());
-	}
-
-	ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
+    protected void tickServer(Level level, ComponentTickable tickable) {
+	ComponentElectrodynamic electro = requireComponent(IComponentType.Electrodynamic);
 
 	if (cooldown > 0 || electro.getJoulesStored() < BallistixConfig.INSTANCE.MISSILESILO_USAGE.get() * getTier()) {
 	    cooldown--;
@@ -137,7 +136,7 @@ public class TileVerticalLaunchSilo extends GenericTile
 	    return;
 	}
 
-	int newCool = platform.launch(this, hasRedstone, inaccuracy);
+	int newCool = platform.launch(level, this, hasRedstone, inaccuracy);
 	if (newCool != -1) {
 	    cooldown = newCool;
 	}
@@ -159,7 +158,7 @@ public class TileVerticalLaunchSilo extends GenericTile
     }
 
     @Override
-    public void onBlockDestroyed() {
+    public void onBlockDestroyed(Level level) {
 	if (level.isClientSide) {
 	    return;
 	}
@@ -173,8 +172,8 @@ public class TileVerticalLaunchSilo extends GenericTile
     }
 
     @Override
-    public void onPlace(BlockState oldState, boolean isMoving) {
-	super.onPlace(oldState, isMoving);
+    public void onPlace(Level level, BlockState oldState, boolean isMoving) {
+	super.onPlace(level, oldState, isMoving);
 	if (level.isClientSide) {
 	    return;
 	}
@@ -251,6 +250,10 @@ public class TileVerticalLaunchSilo extends GenericTile
     @Override
     public void onLoad() {
 	super.onLoad();
+	Level level = this.level;
+	if (level == null)
+	    return;
+
 	if (!level.isClientSide) {
 	    SiloRegistry.registerSilo(frequency.getValue(), this);
 	}
@@ -269,13 +272,14 @@ public class TileVerticalLaunchSilo extends GenericTile
     }
 
     @Override
-    public ItemInteractionResult useWithItem(ItemStack used, Player player, InteractionHand hand, BlockHitResult hit) {
+    public ItemInteractionResult useWithItem(Level level, ItemStack used, Player player, InteractionHand hand,
+	    BlockHitResult hit) {
 	ItemStack handStack = player.getItemInHand(hand);
 	if (handStack.getItem() == BallistixItems.ITEM_RADARGUN.get()
 		|| handStack.getItem() == BallistixItems.ITEM_LASERDESIGNATOR.get()) {
 	    return ItemInteractionResult.FAIL;
 	}
-	return super.useWithItem(used, player, hand, hit);
+	return super.useWithItem(level, used, player, hand, hit);
     }
 
     @Override
@@ -304,7 +308,7 @@ public class TileVerticalLaunchSilo extends GenericTile
     }
 
     @Override
-    public int launch(ILauncherControlPanel panel, boolean redstoneTriggered, int inaccuracy) {
+    public int launch(Level level, ILauncherControlPanel panel, boolean redstoneTriggered, int inaccuracy) {
 	double length = inaccuracy * level.random.nextDouble();
 	double angle = level.random.nextDouble() * 2 * Math.PI;
 	int offsetX = (int) (length * Math.cos(angle));
@@ -312,7 +316,7 @@ public class TileVerticalLaunchSilo extends GenericTile
 
 	BlockPos pos = panel.getTarget().offset(offsetX, 0, offsetZ);
 
-	if (launchMissile(pos, panel.getFrequency())) {
+	if (launchMissile(level, pos, panel.getFrequency())) {
 	    cooldown = COOLDOWN;
 	}
 
@@ -324,8 +328,8 @@ public class TileVerticalLaunchSilo extends GenericTile
 
     }
 
-    public boolean launchMissile(BlockPos target, int frequency) {
-	ComponentInventory inv = getComponent(IComponentType.Inventory);
+    public boolean launchMissile(Level level, BlockPos target, int frequency) {
+	ComponentInventory inv = requireComponent(IComponentType.Inventory);
 
 	ItemStack mis = inv.getItem(MISSILE_SLOT);
 
@@ -420,19 +424,20 @@ public class TileVerticalLaunchSilo extends GenericTile
     }
 
     @Override
-    public ItemInteractionResult onSubnodeUseWithItem(ItemStack used, Player player, InteractionHand hand,
+    public ItemInteractionResult onSubnodeUseWithItem(Level level, ItemStack used, Player player, InteractionHand hand,
 	    BlockHitResult hit, TileMultiSubnode subnode) {
-	return useWithItem(used, player, hand, hit);
+	return useWithItem(level, used, player, hand, hit);
     }
 
     @Override
-    public InteractionResult onSubnodeUseWithoutItem(Player player, BlockHitResult hit, TileMultiSubnode subnode) {
-	return useWithoutItem(player, hit);
+    public InteractionResult onSubnodeUseWithoutItem(Level level, Player player, BlockHitResult hit,
+	    TileMultiSubnode subnode) {
+	return useWithoutItem(level, player, hit);
     }
 
     @Override
-    public void onSubnodeDestroyed(TileMultiSubnode subnode) {
-	this.level.destroyBlock(this.worldPosition, true);
+    public void onSubnodeDestroyed(Level level, TileMultiSubnode subnode) {
+	level.destroyBlock(worldPosition, true);
     }
 
     @Override

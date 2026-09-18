@@ -26,7 +26,7 @@ import voltaic.common.item.ItemVoltaic;
 
 public class ItemMinecart extends ItemVoltaic {
 
-    private IBlast blast;
+    private final IBlast blast;
 
     public ItemMinecart(IBlast blast) {
 	super(new Item.Properties().stacksTo(1), BallistixCreativeTabs.MAIN);
@@ -44,6 +44,7 @@ public class ItemMinecart extends ItemVoltaic {
 	}
 	ItemStack itemstack = context.getItemInHand();
 	if (!level.isClientSide) {
+	    @SuppressWarnings("null")
 	    RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock rail
 		    ? rail.getRailDirection(blockstate, level, blockpos, null)
 		    : RailShape.NORTH_SOUTH;
@@ -70,6 +71,7 @@ public class ItemMinecart extends ItemVoltaic {
     private static final DispenseItemBehavior DISPENSE_ITEM_BEHAVIOR = new DefaultDispenseItemBehavior() {
 	private final DefaultDispenseItemBehavior defaultDispenseItemBehavior = new DefaultDispenseItemBehavior();
 
+	@SuppressWarnings("null")
 	@Override
 	public ItemStack execute(BlockSource source, ItemStack stack) {
 	    Direction direction = source.state().getValue(DispenserBlock.FACING);
@@ -124,18 +126,34 @@ public class ItemMinecart extends ItemVoltaic {
 
     public enum SubtypeMinecart implements ISubtype {
 	// Tier 1
-	obsidian(SubtypeBlast.obsidian), condensive(SubtypeBlast.condensive), attractive(SubtypeBlast.attractive),
-	repulsive(SubtypeBlast.repulsive), incendiary(SubtypeBlast.incendiary), shrapnel(SubtypeBlast.shrapnel),
-	anvil(SubtypeBlast.anvil), chemical(SubtypeBlast.chemical), infestive(SubtypeBlast.infestive),
+	obsidian(SubtypeBlast.obsidian),
+	condensive(SubtypeBlast.condensive),
+	attractive(SubtypeBlast.attractive),
+	repulsive(SubtypeBlast.repulsive),
+	incendiary(SubtypeBlast.incendiary),
+	shrapnel(SubtypeBlast.shrapnel),
+	anvil(SubtypeBlast.anvil),
+	chemical(SubtypeBlast.chemical),
+	infestive(SubtypeBlast.infestive),
 	debilitation(SubtypeBlast.debilitation),
 	// Tier 2
-	fragmentation(SubtypeBlast.fragmentation), contagious(SubtypeBlast.contagious), sonic(SubtypeBlast.sonic),
-	breaching(SubtypeBlast.breaching), thermobaric(SubtypeBlast.thermobaric),
+	fragmentation(SubtypeBlast.fragmentation),
+	contagious(SubtypeBlast.contagious),
+	sonic(SubtypeBlast.sonic),
+	breaching(SubtypeBlast.breaching),
+	thermobaric(SubtypeBlast.thermobaric),
 	// Tier 3
-	antigravity(SubtypeBlast.antigravity), emp(SubtypeBlast.emp), endothermic(SubtypeBlast.endothermic),
-	exothermic(SubtypeBlast.exothermic), ender(SubtypeBlast.ender), hypersonic(SubtypeBlast.hypersonic),
-	rejuvination(SubtypeBlast.rejuvination), nuclear(SubtypeBlast.nuclear), antimatter(SubtypeBlast.antimatter),
-	largeantimatter(SubtypeBlast.largeantimatter), darkmatter(SubtypeBlast.darkmatter);
+	antigravity(SubtypeBlast.antigravity),
+	emp(SubtypeBlast.emp),
+	endothermic(SubtypeBlast.endothermic),
+	exothermic(SubtypeBlast.exothermic),
+	ender(SubtypeBlast.ender),
+	hypersonic(SubtypeBlast.hypersonic),
+	rejuvination(SubtypeBlast.rejuvination),
+	nuclear(SubtypeBlast.nuclear),
+	antimatter(SubtypeBlast.antimatter),
+	largeantimatter(SubtypeBlast.largeantimatter),
+	darkmatter(SubtypeBlast.darkmatter);
 
 	public final SubtypeBlast explosiveType;
 

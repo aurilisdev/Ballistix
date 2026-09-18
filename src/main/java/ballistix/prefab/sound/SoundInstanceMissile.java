@@ -13,17 +13,17 @@ public class SoundInstanceMissile extends AbstractTickableSoundInstance {
     public SoundInstanceMissile(SoundEvent soundEvent, EntityMissile missile) {
 	super(soundEvent, SoundSource.HOSTILE, RandomSource.create());
 	this.missile = missile;
-	this.x = missile.getX();
-	this.y = missile.getY();
-	this.z = missile.getZ();
-	this.looping = false;
+	x = missile.getX();
+	y = missile.getY();
+	z = missile.getZ();
+	looping = false;
     }
 
     @Override
     public void tick() {
-	this.x = missile.getX();
-	this.y = missile.getY();
-	this.z = missile.getZ();
+	x = missile.getX();
+	y = missile.getY();
+	z = missile.getZ();
     }
 
 }

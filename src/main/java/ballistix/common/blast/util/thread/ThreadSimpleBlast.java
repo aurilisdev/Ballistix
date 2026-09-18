@@ -9,6 +9,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.Nullable;
+
 import ballistix.common.settings.BallistixConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -33,12 +35,12 @@ public class ThreadSimpleBlast extends ThreadBlast {
     private record CacheKey(int radius, ResourceLocation id, boolean sorted, long strictness) {
     }
 
-    public ThreadSimpleBlast(Level world, BlockPos position, int range, float energy, Entity source,
+    public ThreadSimpleBlast(@Nullable Level world, BlockPos position, int range, float energy, @Nullable Entity source,
 	    ResourceLocation id) {
 	this(world, position, range, energy, source, id, false);
     }
 
-    public ThreadSimpleBlast(Level world, BlockPos position, int range, float energy, Entity source,
+    public ThreadSimpleBlast(@Nullable Level world, BlockPos position, int range, float energy, @Nullable Entity source,
 	    ResourceLocation id, boolean sortBasedOnDistance) {
 	super(world, position, range, energy, source);
 	setName("Simple blast thread");

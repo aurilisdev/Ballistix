@@ -64,7 +64,7 @@ public class ParticleOptionsBlastSmoke extends ParticleType<ParticleOptionsBlast
 	this.scale = scale;
 	this.gravity = gravity;
 	this.lifetime = lifetime;
-	this.hasPhysics = physics;
+	hasPhysics = physics;
 	this.burning = burning;
 	this.friction = friction;
 	this.burningTime = burningTime;
@@ -79,7 +79,7 @@ public class ParticleOptionsBlastSmoke extends ParticleType<ParticleOptionsBlast
 	this.scale = scale;
 	this.gravity = gravity;
 	this.lifetime = lifetime;
-	this.hasPhysics = physics;
+	hasPhysics = physics;
 	this.friction = friction;
 	return this;
     }

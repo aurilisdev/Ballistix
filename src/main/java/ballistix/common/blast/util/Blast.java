@@ -101,7 +101,7 @@ public abstract class Blast {
 	}
 	ServerPlayer onlineOwner = resolveActor((ServerLevel) world, owner);
 
-	GameType gameType = onlineOwner != null ? onlineOwner.gameMode.getGameModeForPlayer() : GameType.SURVIVAL;
+	GameType gameType = onlineOwner.gameMode.getGameModeForPlayer();
 
 	return !CommonHooks.fireBlockBreak(world, gameType, onlineOwner, pos, state).isCanceled();
     }
@@ -113,6 +113,9 @@ public abstract class Blast {
 	BlockState against = placedAgainst != null ? placedAgainst : level.getBlockState(pos);
 
 	BlockSnapshot snapshot = BlockSnapshot.create(level.dimension(), level, pos);
+
+	if (owner == null)
+	    return true;
 
 	BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(snapshot, against, owner);
 	NeoForge.EVENT_BUS.post(event);
@@ -153,7 +156,7 @@ public abstract class Blast {
     }
 
     public boolean doExplode(int callCount) {
-	if (world.isClientSide && (shouldRenderCustomClient || this.isInstantaneous())
+	if (world.isClientSide && (shouldRenderCustomClient || isInstantaneous())
 		&& this instanceof IHasCustomRender renderer) {
 	    renderer.produceParticles();
 	}
@@ -193,7 +196,7 @@ public abstract class Blast {
 	}
     }
 
-    public EntityBlast performExplosion() {
+    public @Nullable EntityBlast performExplosion() {
 	ConstructBlastEvent evt = new ConstructBlastEvent(world, this);
 	NeoForge.EVENT_BUS.post(evt);
 	Explosion explosion = new Explosion(world, blastEntity, world.damageSources().explosion(blastEntity, owner),
@@ -309,7 +312,9 @@ public abstract class Blast {
 
     public static enum GriefPreventionMethod {
 
-	NONE, GRIEF_DEFENDER, SABER_FACTIONS;
+	NONE,
+	GRIEF_DEFENDER,
+	SABER_FACTIONS;
 
     }
 

@@ -4,10 +4,12 @@ import com.mojang.blaze3d.platform.InputConstants;
 
 import ballistix.common.tile.turret.GenericTileTurret;
 import ballistix.prefab.screen.WrapperPlayerWhitelistTurret;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import voltaic.prefab.inventory.container.types.GenericContainerBlockEntity;
 import voltaic.prefab.screen.GenericScreen;
+import voltaic.prefab.screen.component.types.ScreenComponentSimpleLabel;
 import voltaic.prefab.screen.component.types.ScreenComponentVerticalSlider;
 
 public abstract class ScreenPlayerWhitelistTurret<T extends GenericContainerBlockEntity<? extends GenericTileTurret>>
@@ -25,7 +27,12 @@ public abstract class ScreenPlayerWhitelistTurret<T extends GenericContainerBloc
     @Override
     protected void initializeComponents() {
 	super.initializeComponents();
-	playerInvLabel.setVisible(false);
+
+	ScreenComponentSimpleLabel pPlayerInvLabel = playerInvLabel;
+	if (pPlayerInvLabel == null) {
+	    return;
+	}
+	pPlayerInvLabel.setVisible(false);
     }
 
     @Override
@@ -75,9 +82,12 @@ public abstract class ScreenPlayerWhitelistTurret<T extends GenericContainerBloc
     @Override
     public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
 	InputConstants.Key mouseKey = InputConstants.getKey(pKeyCode, pScanCode);
-	if (this.minecraft.options.keyInventory.isActiveAndMatches(mouseKey) && whitelistWrapper.addEditBox.isVisible()
-		&& whitelistWrapper.addEditBox.isFocused()) {
-	    return false;
+	Minecraft minecraft = this.minecraft;
+	if (minecraft != null) {
+	    if (minecraft.options.keyInventory.isActiveAndMatches(mouseKey) && whitelistWrapper.addEditBox.isVisible()
+		    && whitelistWrapper.addEditBox.isFocused()) {
+		return false;
+	    }
 	}
 	return super.keyPressed(pKeyCode, pScanCode, pModifiers);
     }

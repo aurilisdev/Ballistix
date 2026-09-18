@@ -24,6 +24,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -41,7 +43,6 @@ import voltaic.prefab.tile.components.IComponentType;
 import voltaic.prefab.tile.components.type.ComponentContainerProvider;
 import voltaic.prefab.tile.components.type.ComponentElectrodynamic;
 import voltaic.prefab.tile.components.type.ComponentForgeEnergy;
-import voltaic.prefab.tile.components.type.ComponentPacketHandler;
 import voltaic.prefab.tile.components.type.ComponentTickable;
 import voltaic.prefab.utilities.BlockEntityUtils;
 import voltaic.registers.VoltaicCapabilities;
@@ -53,21 +54,21 @@ public class TileFireControlRadar extends GenericTile {
     public static final Vec3 OUT_OF_REACH = new Vec3(0, -1000, 0);
 
     public final SingleProperty<Vec3> trackingPos = property(
-	    new SingleProperty<>(PropertyTypes.VEC3, "trackingpos", OUT_OF_REACH));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.VEC3, "trackingpos", OUT_OF_REACH));
     public final SingleProperty<Boolean> usingWhitelist = property(
-	    new SingleProperty<>(PropertyTypes.BOOLEAN, "usingwhitelist", false));
-    public final ListProperty<Integer> whitelistedFrequencies = property(
-	    new ListProperty<>(PropertyTypes.INTEGER_LIST, "whitelistedfreqs", new ArrayList<>()));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BOOLEAN, "usingwhitelist", false));
+    public final ListProperty<Integer> whitelistedFrequencies = property(new ListProperty<>(getPropertyManager(),
+	    PropertyTypes.INTEGER_LIST, "whitelistedfreqs", new ArrayList<>()));
     public final SingleProperty<Integer> missileType = property(
-	    new SingleProperty<>(PropertyTypes.INTEGER, "trackingtype", -1));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.INTEGER, "trackingtype", -1));
     public final SingleProperty<Boolean> usingRedstone = property(
-	    new SingleProperty<>(PropertyTypes.BOOLEAN, "usingredstone", false));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BOOLEAN, "usingredstone", false));
     public final SingleProperty<Boolean> redstone = property(
-	    new SingleProperty<>(PropertyTypes.BOOLEAN, "redstone", false));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BOOLEAN, "redstone", false));
     public final SingleProperty<Boolean> running = property(
-	    new SingleProperty<>(PropertyTypes.BOOLEAN, "running", false));
-    public final ListProperty<BlockPos> trackedMissilePositions = property(
-	    new ListProperty<>(PropertyTypes.BLOCK_POS_LIST, "trackedmissilepositions", new ArrayList<>()));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BOOLEAN, "running", false));
+    public final ListProperty<BlockPos> trackedMissilePositions = property(new ListProperty<>(getPropertyManager(),
+	    PropertyTypes.BLOCK_POS_LIST, "trackedmissilepositions", new ArrayList<>()));
 
     public final Vec3 searchPos;
     private final AABB searchArea = new AABB(getBlockPos())
@@ -83,12 +84,7 @@ public class TileFireControlRadar extends GenericTile {
     }
 
     private boolean isValidThreat(VirtualMissile missile) {
-
-	if (missile == null || missile.hasExploded() || missile.getId() == null) {
-	    return false;
-	}
-
-	if (!missile.getBoundingBox().intersects(searchArea)) {
+	if (missile.hasExploded() || missile.getId() == null || !missile.getBoundingBox().intersects(searchArea)) {
 	    return false;
 	}
 
@@ -97,6 +93,10 @@ public class TileFireControlRadar extends GenericTile {
 
     @Nullable
     private VirtualMissile getMissileById(UUID id) {
+	Level level = this.level;
+	if (level == null)
+	    return null;
+
 	return MissileManager.getMissile(level.dimension(), id);
     }
 
@@ -106,7 +106,6 @@ public class TileFireControlRadar extends GenericTile {
     public TileFireControlRadar(BlockPos pos, BlockState state) {
 	super(BallistixTiles.TILE_FIRECONTROLRADAR.get(), pos, state);
 	addComponent(new ComponentTickable(this).tickServer(this::tickServer).tickClient(this::tickClient));
-	addComponent(new ComponentPacketHandler(this));
 	addComponent(new ComponentElectrodynamic(this, false, true).voltage(VoltaicCapabilities.DEFAULT_VOLTAGE)
 		.setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM)
 		.maxJoules(BallistixConfig.INSTANCE.FIRE_CONTROL_RADAR_USAGE.get() * 20));
@@ -116,15 +115,16 @@ public class TileFireControlRadar extends GenericTile {
 	searchPos = new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
     }
 
-    public void tickServer(ComponentTickable tickable) {
-	ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
+    public void tickServer(Level level, ComponentTickable tickable) {
+	ComponentElectrodynamic electro = requireComponent(IComponentType.Electrodynamic);
 
 	running.setValue(electro.getJoulesStored() > BallistixConfig.INSTANCE.RADAR_USAGE.get() / 20.0
 		&& level.getBrightness(LightLayer.SKY, getBlockPos()) > 0
 		&& (!usingRedstone.getValue() || usingRedstone.getValue() && redstone.getValue()));
 
+	VirtualMissile pTracking = tracking;
 	if (!running.getValue()) {
-	    tracking = null;
+	    pTracking = tracking = null;
 	    TileESMTower.removeFireControlRadar(this);
 	    return;
 	}
@@ -133,9 +133,9 @@ public class TileFireControlRadar extends GenericTile {
 
 	electro.joules(electro.getJoulesStored() - BallistixConfig.INSTANCE.RADAR_USAGE.get() / 20.0);
 
-	if (tracking != null && (tracking.hasExploded() || tracking.getId() == null
-		|| MissileManager.getMissile(level.dimension(), tracking.getId()) == null)) {
-	    tracking = null;
+	if (pTracking != null && (pTracking.hasExploded() || pTracking.getId() == null
+		|| MissileManager.getMissile(level.dimension(), pTracking.getId()) == null)) {
+	    pTracking = tracking = null;
 	    trackingPos.setValue(OUT_OF_REACH);
 	}
 
@@ -160,13 +160,13 @@ public class TileFireControlRadar extends GenericTile {
 	    return missile == null || !isValidThreat(missile);
 	});
 
-	tracking = trackedMissiles.isEmpty() ? null : trackedMissiles.get(0);
-	if (tracking != null && !tracking.hasExploded()) {
-	    trackingPos.setValue(tracking.position);
-	    missileType.setValue(tracking.payloadData.missileType);
+	pTracking = tracking = trackedMissiles.isEmpty() ? null : trackedMissiles.get(0);
+	if (pTracking != null && !pTracking.hasExploded()) {
+	    trackingPos.setValue(pTracking.position);
+	    missileType.setValue(pTracking.payloadData.missileType);
 	    if (trackingPos.getValue().distanceTo(new Vec3(worldPosition.getX(), trackingPos.getValue().y,
 		    worldPosition.getZ())) > BallistixConfig.INSTANCE.FIRE_CONTROL_RADAR_RANGE.get()) {
-		tracking = null;
+		pTracking = tracking = null;
 		trackingPos.setValue(OUT_OF_REACH);
 	    }
 	} else {
@@ -175,7 +175,7 @@ public class TileFireControlRadar extends GenericTile {
 	}
     }
 
-    private double scoreThreat(VirtualMissile missile, Vec3 requesterPos, float interceptorSpeed) {
+    private static double scoreThreat(VirtualMissile missile, Vec3 requesterPos, float interceptorSpeed) {
 
 	double distanceToRequester = missile.position.distanceTo(requesterPos);
 
@@ -244,7 +244,7 @@ public class TileFireControlRadar extends GenericTile {
 	return count;
     }
 
-    public void tickClient(ComponentTickable tickable) {
+    public void tickClient(Level level, ComponentTickable tickable) {
 	clientRotation += clientRotationSpeed;
 
 	clientRotationSpeed = Mth.clamp(clientRotationSpeed + 0.25 * (running.getValue() ? 1 : -1), 0.0, 20.0);
@@ -255,9 +255,9 @@ public class TileFireControlRadar extends GenericTile {
     }
 
     @Override
-    public void onNeightborChanged(BlockPos neighbor, boolean blockStateTrigger) {
-	super.onNeightborChanged(neighbor, blockStateTrigger);
-	redstone.setValue(level.getBestNeighborSignal(getBlockPos()) > 0);
+    public void onNeighbourChanged(LevelReader reader, BlockPos neighbor, boolean blockStateTrigger) {
+	super.onNeighbourChanged(reader, neighbor, blockStateTrigger);
+	redstone.setValue(reader.getBestNeighborSignal(getBlockPos()) > 0);
     }
 
     public static double getDistanceToMissile(Vec3 pos, Vec3 missilePos) {
@@ -325,8 +325,8 @@ public class TileFireControlRadar extends GenericTile {
     }
 
     @Override
-    public void onBlockDestroyed() {
-	super.onBlockDestroyed();
+    public void onBlockDestroyed(Level level) {
+	super.onBlockDestroyed(level);
 
 	if (!level.isClientSide) {
 	    TileESMTower.removeFireControlRadar(this);
@@ -338,8 +338,8 @@ public class TileFireControlRadar extends GenericTile {
     }
 
     @Override
-    public void onPlace(BlockState oldState, boolean isMoving) {
-	super.onPlace(oldState, isMoving);
+    public void onPlace(Level level, BlockState oldState, boolean isMoving) {
+	super.onPlace(level, oldState, isMoving);
 	if (!level.isClientSide) {
 	    ChunkPos pos = level.getChunk(getBlockPos()).getPos();
 	    ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, getBlockPos(), pos.x, pos.z, true,
@@ -348,7 +348,7 @@ public class TileFireControlRadar extends GenericTile {
     }
 
     @Override
-    public int getComparatorSignal() {
+    public int getComparatorSignal(Level level) {
 	return trackingPos.getValue().equals(OUT_OF_REACH) ? 0 : 15;
     }
 

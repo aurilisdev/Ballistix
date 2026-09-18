@@ -1,10 +1,12 @@
 package ballistix.common.tile.turret.antimissile;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import ballistix.api.missile.MissileManager;
 import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.api.missile.virtual.VirtualProjectile;
+import ballistix.api.turret.ITarget;
 import ballistix.common.inventory.container.ContainerSAMTurret;
 import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissileProjectile;
@@ -14,6 +16,7 @@ import ballistix.registers.BallistixTiles;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import voltaic.common.item.ItemUpgrade;
@@ -28,9 +31,9 @@ import voltaic.prefab.utilities.BlockEntityUtils;
 public class TileTurretSAM extends TileTurretAntimissileProjectile {
 
     public final SingleProperty<Integer> cooldown = property(
-	    new SingleProperty<>(PropertyTypes.INTEGER, "cooldown", 0));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.INTEGER, "cooldown", 0));
     public final SingleProperty<Boolean> outOfAmmo = property(
-	    new SingleProperty<>(PropertyTypes.BOOLEAN, "noammo", false));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BOOLEAN, "noammo", false));
 
     public TileTurretSAM(BlockPos worldPos, BlockState blockState) {
 	super(BallistixTiles.TILE_SAMTURRET.get(), worldPos, blockState,
@@ -58,7 +61,7 @@ public class TileTurretSAM extends TileTurretAntimissileProjectile {
     @Override
     public ComponentContainerProvider getContainer() {
 	return new ComponentContainerProvider("samturret", this).createMenu((id, player) -> new ContainerSAMTurret(id,
-		player, getComponent(IComponentType.Inventory), getCoordsArray()));
+		player, requireComponent(IComponentType.Inventory), getCoordsArray()));
     }
 
     @Override
@@ -69,13 +72,17 @@ public class TileTurretSAM extends TileTurretAntimissileProjectile {
     }
 
     @Override
-    public void fireTickServer(long ticks) {
-
+    public void fireTickServer(Level level, ITarget target, long ticks) {
 	if (cooldown.getValue() > 0) {
 	    return;
 	}
 
-	ComponentInventory inv = getComponent(IComponentType.Inventory);
+	Optional<ComponentInventory> invOpt = getComponent(IComponentType.Inventory);
+	if (invOpt.isEmpty()) {
+	    outOfAmmo.setValue(true);
+	    return;
+	}
+	ComponentInventory inv = invOpt.get();
 
 	ItemStack missile = inv.getItem(0);
 
@@ -86,7 +93,7 @@ public class TileTurretSAM extends TileTurretAntimissileProjectile {
 
 	outOfAmmo.setValue(false);
 
-	UUID targetId = target != null && target.getTarget() instanceof VirtualMissile m ? m.getId() : null;
+	UUID targetId = target.getTarget() instanceof VirtualMissile m ? m.getId() : null;
 
 	if (targetId == null) {
 	    return;

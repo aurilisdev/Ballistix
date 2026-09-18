@@ -1,6 +1,6 @@
 package ballistix.common.tile.silo;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 import ballistix.api.blast.IBlast;
 import ballistix.api.missile.MissileManager;
@@ -33,6 +33,7 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -47,7 +48,6 @@ import voltaic.prefab.tile.GenericTile;
 import voltaic.prefab.tile.components.IComponentType;
 import voltaic.prefab.tile.components.type.ComponentContainerProvider;
 import voltaic.prefab.tile.components.type.ComponentInventory;
-import voltaic.prefab.tile.components.type.ComponentPacketHandler;
 import voltaic.prefab.tile.components.type.ComponentTickable;
 import voltaic.prefab.utilities.BlockEntityUtils;
 
@@ -59,10 +59,11 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
     public static final int COOLDOWN = 100;
 
     public SingleProperty<Boolean> hasExplosive = property(
-	    new SingleProperty<>(PropertyTypes.BOOLEAN, "hasexplosive", false));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BOOLEAN, "hasexplosive", false));
     public SingleProperty<Boolean> hasMissile = property(
-	    new SingleProperty<>(PropertyTypes.BOOLEAN, "hasmissile", false));
-    public SingleProperty<Boolean> hasSam = property(new SingleProperty<>(PropertyTypes.BOOLEAN, "hassam", false));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BOOLEAN, "hasmissile", false));
+    public SingleProperty<Boolean> hasSam = property(
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BOOLEAN, "hassam", false));
 
     public TileLauncherPlatformT1(BlockPos pos, BlockState state) {
 	this(BallistixTiles.TILE_LAUNCHER_PLATFORM_TIER1.get(), pos, state);
@@ -75,19 +76,18 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 	addComponent(new ComponentInventory(this, ComponentInventory.InventoryBuilder.newInv().inputs(2))
 		.setDirectionsBySlot(0, BlockEntityUtils.MachineDirection.values())
 		.setDirectionsBySlot(1, BlockEntityUtils.MachineDirection.values()).valid(this::isItemValidForSlot));
-	addComponent(new ComponentPacketHandler(this));
 	if (tier == 1) {
 	    addComponent(new ComponentContainerProvider("launcherplatformtier" + tier, this)
 		    .createMenu((id, player) -> new ContainerLauncherPlatformT1(id, player,
-			    getComponent(IComponentType.Inventory), getCoordsArray())));
+			    requireComponent(IComponentType.Inventory), getCoordsArray())));
 	} else if (tier == 2) {
 	    addComponent(new ComponentContainerProvider("launcherplatformtier" + tier, this)
 		    .createMenu((id, player) -> new ContainerLauncherPlatformT2(id, player,
-			    getComponent(IComponentType.Inventory), getCoordsArray())));
+			    requireComponent(IComponentType.Inventory), getCoordsArray())));
 	} else if (tier == 3) {
 	    addComponent(new ComponentContainerProvider("launcherplatformtier" + tier, this)
 		    .createMenu((id, player) -> new ContainerLauncherPlatformT3(id, player,
-			    getComponent(IComponentType.Inventory), getCoordsArray())));
+			    requireComponent(IComponentType.Inventory), getCoordsArray())));
 	}
 
     }
@@ -98,7 +98,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
     }
 
     protected int limitRangeBasedOnMissile(int platformRange) {
-	ComponentInventory inv = getComponent(IComponentType.Inventory);
+	ComponentInventory inv = requireComponent(IComponentType.Inventory);
 
 	ItemStack mis = inv.getItem(MISSILE_SLOT);
 	if (mis.getItem() instanceof ItemMissile missileItem) {
@@ -113,13 +113,13 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
     }
 
     @Override
-    public int launch(ILauncherControlPanel controlPanel, boolean redstoneTriggered, int inaccuracy) {
+    public int launch(Level level, ILauncherControlPanel controlPanel, boolean redstoneTriggered, int inaccuracy) {
 
 	int cooldown = 0;
 
 	if (redstoneTriggered && hasSam.getValue()) {
 
-	    ComponentInventory inv = getComponent(IComponentType.Inventory);
+	    ComponentInventory inv = requireComponent(IComponentType.Inventory);
 	    BlockPos target = controlPanel.getTarget();
 
 	    if (level.getBlockEntity(target) instanceof TileFireControlRadar radar
@@ -160,7 +160,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 		    for (TileESMTower tower : radar.trackedEsmTowers) {
 
 			if (tower != null && !tower.isRemoved()
-				&& launchMissile(tower.getBlockPos(), controlPanel.getFrequency())) {
+				&& launchMissile(level, tower.getBlockPos(), controlPanel.getFrequency())) {
 			    cooldown = COOLDOWN * 5;
 			    break;
 			}
@@ -178,7 +178,7 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 
 		BlockPos pos = controlPanel.getTarget().offset(offsetX, 0, offsetZ);
 
-		if (launchMissile(pos, controlPanel.getFrequency())) {
+		if (launchMissile(level, pos, controlPanel.getFrequency())) {
 		    cooldown = COOLDOWN;
 		}
 
@@ -195,8 +195,8 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
 
     }
 
-    public boolean launchMissile(BlockPos target, int frequency) {
-	ComponentInventory inv = getComponent(IComponentType.Inventory);
+    public boolean launchMissile(Level level, BlockPos target, int frequency) {
+	ComponentInventory inv = requireComponent(IComponentType.Inventory);
 
 	ItemStack mis = inv.getItem(MISSILE_SLOT);
 
@@ -325,19 +325,20 @@ public class TileLauncherPlatformT1 extends GenericTile implements ILauncherPlat
     }
 
     @Override
-    public void onSubnodeDestroyed(TileMultiSubnode tileMultiSubnode) {
+    public void onSubnodeDestroyed(Level level, TileMultiSubnode tileMultiSubnode) {
 	level.destroyBlock(worldPosition, true);
     }
 
     @Override
-    public ItemInteractionResult onSubnodeUseWithItem(ItemStack used, Player player, InteractionHand hand,
+    public ItemInteractionResult onSubnodeUseWithItem(Level level, ItemStack used, Player player, InteractionHand hand,
 	    BlockHitResult hit, TileMultiSubnode subnode) {
-	return useWithItem(used, player, hand, hit);
+	return useWithItem(level, used, player, hand, hit);
     }
 
     @Override
-    public InteractionResult onSubnodeUseWithoutItem(Player player, BlockHitResult hit, TileMultiSubnode subnode) {
-	return useWithoutItem(player, hit);
+    public InteractionResult onSubnodeUseWithoutItem(Level level, Player player, BlockHitResult hit,
+	    TileMultiSubnode subnode) {
+	return useWithoutItem(level, player, hit);
     }
 
     @Override

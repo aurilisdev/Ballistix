@@ -56,7 +56,7 @@ public class ParticleOptionsShockwave extends ParticleType<ParticleOptionsShockw
 	this.a = a;
 	this.scale = scale;
 	this.lifetime = lifetime;
-	this.hasPhysics = physics;
+	hasPhysics = physics;
 	this.friction = friction;
 	return this;
     }

@@ -159,13 +159,8 @@ public abstract class VirtualProjectile {
 	}
     }
 
-    protected boolean isInValidBlockstate(BlockPos pos, ServerLevel world) {
-
-	if (pos == null) {
-	    return true;
-	}
-
-	BlockEntity blockentity = world.getBlockEntity(pos);
+    protected boolean isInValidBlockstate(BlockPos pos, ServerLevel level) {
+	BlockEntity blockentity = level.getBlockEntity(pos);
 
 	return blockentity instanceof GenericTileTurret;
 
@@ -402,10 +397,6 @@ public abstract class VirtualProjectile {
 		return super.isInValidBlockstate(pos, world);
 	    }
 
-	    if (pos == null) {
-		return true;
-	    }
-
 	    BlockEntity blockentity = world.getBlockEntity(pos);
 
 	    if (blockentity instanceof ILauncherPlatform || blockentity instanceof ILauncherSupportFrame) {
@@ -478,7 +469,6 @@ public abstract class VirtualProjectile {
 
 	@Override
 	public void updatePosition(ServerLevel level) {
-
 	    float topSpeed = (float) (variant == 0 ? BallistixConfig.INSTANCE.SAM_TOP_SPEED.getAsDouble()
 		    : BallistixConfig.INSTANCE.ANTIBALLISTICMISSILE_TOP_SPEED.getAsDouble());
 
@@ -491,23 +481,26 @@ public abstract class VirtualProjectile {
 		return;
 	    }
 
-	    if (radar == null && level.getBlockEntity(radarPos) instanceof TileFireControlRadar radar) {
-		this.radar = radar;
+	    if (radar == null && level.getBlockEntity(radarPos) instanceof TileFireControlRadar realRadar) {
+		this.radar = realRadar;
 	    }
 
 	    if (radar != null && radar.isRemoved()) {
 		radar = null;
 	    }
 
-	    if (radar == null || radar.isRemoved() || radar.tracking == null || radar.tracking.hasExploded()) {
+	    VirtualMissile tracking = radar.tracking;
+
+	    if (radar == null || radar.isRemoved() || tracking == null || tracking.hasExploded()) {
 		super.updatePosition(level);
 		return;
 	    }
 
-	    VirtualMissile tracking = null;
+	    tracking = null;
 
-	    if (targetMissileId != null) {
-		tracking = MissileManager.getMissile(level.dimension(), targetMissileId);
+	    UUID pTargetMissileId = targetMissileId;
+	    if (pTargetMissileId != null) {
+		tracking = MissileManager.getMissile(level.dimension(), pTargetMissileId);
 	    }
 
 	    if ((tracking == null || tracking.hasExploded()) && radar != null) {

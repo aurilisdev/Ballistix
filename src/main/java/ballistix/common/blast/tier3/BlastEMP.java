@@ -58,6 +58,7 @@ public class BlastEMP extends Blast implements IHasCustomRender {
 
     private Iterator<BlockPos> cachedIterator;
 
+    @SuppressWarnings("null")
     @Override
     public boolean doExplode(int callCount) {
 	super.doExplode(callCount);
@@ -123,7 +124,8 @@ public class BlastEMP extends Blast implements IHasCustomRender {
 
 		IEnergyStorage entityFE = entity.getCapability(Capabilities.EnergyStorage.ENTITY, null);
 
-		drainEnergy(entityFE);
+		if (entityFE != null)
+		    drainEnergy(entityFE);
 
 		if (entity instanceof Player player) {
 		    Inventory inv = player.getInventory();
@@ -158,7 +160,7 @@ public class BlastEMP extends Blast implements IHasCustomRender {
     }
 
     private static void drainEnergy(IEnergyStorage storage) {
-	if (storage == null || !storage.canExtract()) {
+	if (!storage.canExtract()) {
 	    return;
 	}
 

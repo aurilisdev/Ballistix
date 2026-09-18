@@ -57,11 +57,7 @@ public class ItemTracker extends ItemElectric {
     @Override
     public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
 
-	if (!(context.getLevel() instanceof ServerLevel serverLevel)) {
-	    return super.onItemUseFirst(stack, context);
-	}
-
-	if (!stack.has(BallistixDataComponentTypes.TRACKER_UUID)
+	if (!(context.getLevel() instanceof ServerLevel serverLevel) || !stack.has(BallistixDataComponentTypes.TRACKER_UUID)
 		|| !stack.has(BallistixDataComponentTypes.TRACKER_TARGET)) {
 	    return super.onItemUseFirst(stack, context);
 	}
@@ -72,9 +68,12 @@ public class ItemTracker extends ItemElectric {
 
 	if (tile instanceof ILauncherControlPanel controlPanel) {
 	    silo = controlPanel;
-	} else if (tile instanceof TileMultiSubnode subnode && subnode.getLevel() != null && subnode.getLevel()
-		.getBlockEntity(subnode.parentPos.getValue()) instanceof ILauncherControlPanel controlPanel) {
-	    silo = controlPanel;
+	} else if (tile instanceof TileMultiSubnode subnode) {
+	    Level level = subnode.getLevel();
+	    if (level != null && level
+		    .getBlockEntity(subnode.parentPos.getValue()) instanceof ILauncherControlPanel controlPanel) {
+		silo = controlPanel;
+	    }
 	}
 
 	/*
@@ -128,10 +127,7 @@ public class ItemTracker extends ItemElectric {
 
 	super.inventoryTick(stack, level, holder, slot, selected);
 
-	if (!(level instanceof ServerLevel serverLevel)) {
-	    return;
-	}
-	if (!(holder instanceof Player) || !stack.has(BallistixDataComponentTypes.TRACKER_UUID)) {
+	if (!(level instanceof ServerLevel serverLevel) || !(holder instanceof Player) || !stack.has(BallistixDataComponentTypes.TRACKER_UUID)) {
 	    return;
 	}
 
@@ -233,11 +229,7 @@ public class ItemTracker extends ItemElectric {
 	Player player = event.getEntity();
 	ItemStack stack = player.getItemInHand(event.getHand());
 
-	if (!(stack.getItem() instanceof ItemTracker tracker)) {
-	    return;
-	}
-
-	if (!(event.getTarget() instanceof LivingEntity target)) {
+	if (!(stack.getItem() instanceof ItemTracker tracker) || !(event.getTarget() instanceof LivingEntity target)) {
 	    return;
 	}
 

@@ -1,5 +1,7 @@
 package ballistix.prefab.screen;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import voltaic.api.screen.ITexture;
@@ -16,8 +18,9 @@ public class ScreenComponentFrequency extends ScreenComponentGeneric {
     }
 
     @Override
+    @SuppressWarnings("null")
     public void renderBackground(GuiGraphics graphics, int xAxis, int yAxis, int guiWidth, int guiHeight) {
-	if (!isVisible()) {
+	if (!isVisible() || (gui == null)) {
 	    return;
 	}
 
@@ -35,7 +38,7 @@ public class ScreenComponentFrequency extends ScreenComponentGeneric {
 
     }
 
-    public void setFrequency(Integer frequency) {
+    public void setFrequency(@Nullable Integer frequency) {
 	this.frequency = frequency;
     }
 

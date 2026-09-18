@@ -1,5 +1,7 @@
 package ballistix.api.silo;
 
+import net.minecraft.world.level.Level;
+
 public interface ILauncherPlatform {
     public int getRange();
 
@@ -12,6 +14,6 @@ public interface ILauncherPlatform {
     public boolean hasSAM();
 
     // returns cooldown
-    public int launch(ILauncherControlPanel panel, boolean redstoneTriggered, int inaccuracy);
+    public int launch(Level level, ILauncherControlPanel panel, boolean redstoneTriggered, int inaccuracy);
 
 }

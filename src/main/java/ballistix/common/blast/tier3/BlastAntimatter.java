@@ -26,6 +26,7 @@ import ballistix.registers.BallistixSounds;
 import modularforcefields.common.world.FortronFieldData;
 import modularforcefields.common.world.FortronProtectionRegion;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -192,7 +193,11 @@ public class BlastAntimatter extends BlastLasting implements IHasCustomRender {
 	if (hasShaken)
 	    return;
 	Vec3 pos = new Vec3(x, y, z);
-	double realDistance = Minecraft.getInstance().player.position().distanceTo(pos);
+	LocalPlayer player = Minecraft.getInstance().player;
+	if (player == null)
+	    return;
+
+	double realDistance = player.position().distanceTo(pos);
 	double dist = Mth.abs((float) (realDistance - size));
 	if (dist < 3) {
 	    hasShaken = true;

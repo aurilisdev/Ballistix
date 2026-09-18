@@ -652,7 +652,7 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 	    addConfiguration("explosive_nuclear_energy", "Nuclear Energy");
 	    addConfiguration("explosive_nuclear_radiation_radius", "Nuclear Radiation Radius");
 	    addConfiguration("explosive_nuclear_radiation_duration_real_days",
-	            "Nuclear Radiation Duration (real days)");
+		    "Nuclear Radiation Duration (real days)");
 	    addConfiguration("explosive_endothermic_maxhardness", "Endothermic Max Hardness");
 	    addConfiguration("explosive_endothermic_radius", "Endothermic Radius");
 	    addConfiguration("explosive_endothermic_velocity", "Endothermic Velocity");

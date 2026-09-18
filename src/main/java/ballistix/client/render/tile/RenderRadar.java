@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 import voltaic.client.render.AbstractTileRenderer;
 import voltaic.prefab.utilities.math.MathUtils;
 
@@ -24,6 +25,10 @@ public class RenderRadar extends AbstractTileRenderer<TileSearchRadar> {
     @Override
     public void render(TileSearchRadar tileEntityIn, float partialTicks, PoseStack matrixStackIn,
 	    MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+
+	Level level = tileEntityIn.getLevel();
+	if (level == null)
+	    return;
 
 	BakedModel radardish = getModel(BallistixClientRegister.MODEL_RADARDISH);
 
@@ -43,10 +48,9 @@ public class RenderRadar extends AbstractTileRenderer<TileSearchRadar> {
 	matrixStackIn.mulPose(MathUtils.rotQuaternionDeg(0, (float) -yRot, 0));
 	// matrixStackIn.mulPose(new Quaternion(0,(float)
 	// ((tileEntityIn.savedTickRotation + partial)), 0, true));
-	Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), radardish,
+	Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(level, radardish,
 		tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn,
-		bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(),
-		0);
+		bufferIn.getBuffer(RenderType.solid()), false, level.random, new Random().nextLong(), 0);
     }
 
 }

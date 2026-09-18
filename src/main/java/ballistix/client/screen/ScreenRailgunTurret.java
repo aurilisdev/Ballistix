@@ -7,8 +7,6 @@ import ballistix.client.screen.util.ScreenPlayerWhitelistTurret;
 import ballistix.common.inventory.container.ContainerRailgunTurret;
 import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.turret.GenericTileTurret;
-import ballistix.common.tile.turret.antimissile.TileTurretRailgun;
-import ballistix.common.tile.turret.antimissile.util.TileTurretAntimissile;
 import ballistix.prefab.BallistixIconTypes;
 import ballistix.prefab.screen.WrapperPlayerWhitelistTurret;
 import ballistix.prefab.utils.BallistixTextUtils;
@@ -55,127 +53,110 @@ public class ScreenRailgunTurret extends ScreenPlayerWhitelistTurret<ContainerRa
 	addComponent(new ScreenComponentGuiTab(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR_RIGHT,
 		BallistixIconTypes.TARGET_MISSILE, () -> {
 		    List<FormattedCharSequence> text = new ArrayList<>();
-		    TileTurretRailgun turret = menu.getSafeHost();
-		    if (turret == null) {
-			return text;
-
-		    }
-		    text.add(BallistixTextUtils.tooltip("turret.blockrange").withStyle(ChatFormatting.DARK_GRAY)
-			    .getVisualOrderText());
-		    text.add(BallistixTextUtils
-			    .tooltip("turret.maxrange",
-				    ChatFormatter.formatDecimals(turret.currentRange.getValue(), 1)
-					    .withStyle(ChatFormatting.GRAY))
-			    .withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
-		    text.add(
-			    BallistixTextUtils
-				    .tooltip("turret.minrange",
-					    ChatFormatter.formatDecimals(turret.minimumRange, 1)
-						    .withStyle(ChatFormatting.GRAY))
-				    .withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+		    menu.getSafeHost().ifPresent(turret -> {
+			text.add(BallistixTextUtils.tooltip("turret.blockrange").withStyle(ChatFormatting.DARK_GRAY)
+				.getVisualOrderText());
+			text.add(BallistixTextUtils
+				.tooltip("turret.maxrange",
+					ChatFormatter.formatDecimals(turret.currentRange.getValue(), 1)
+						.withStyle(ChatFormatting.GRAY))
+				.withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+			text.add(BallistixTextUtils
+				.tooltip("turret.minrange",
+					ChatFormatter.formatDecimals(turret.minimumRange, 1)
+						.withStyle(ChatFormatting.GRAY))
+				.withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+		    });
 		    return text;
 		}, 176, 2));
 
 	addComponent(new ScreenComponentGuiTab(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR_RIGHT,
 		BallistixIconTypes.TARGET_ENTITY, () -> {
 		    List<FormattedCharSequence> text = new ArrayList<>();
-		    TileTurretRailgun turret = menu.getSafeHost();
-		    if (turret == null) {
-			return text;
-
-		    }
-		    text.add(BallistixTextUtils.tooltip("turret.entityrange").withStyle(ChatFormatting.DARK_GRAY)
-			    .getVisualOrderText());
-		    text.add(BallistixTextUtils
-			    .tooltip("turret.maxrange",
-				    ChatFormatter.formatDecimals(turret.currentRange.getValue() / 4.0, 1)
-					    .withStyle(ChatFormatting.GRAY))
-			    .withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
-		    text.add(
-			    BallistixTextUtils
-				    .tooltip("turret.minrange",
-					    ChatFormatter.formatDecimals(turret.minimumRange, 1)
-						    .withStyle(ChatFormatting.GRAY))
-				    .withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+		    menu.getSafeHost().ifPresent(turret -> {
+			text.add(BallistixTextUtils.tooltip("turret.entityrange").withStyle(ChatFormatting.DARK_GRAY)
+				.getVisualOrderText());
+			text.add(BallistixTextUtils
+				.tooltip("turret.maxrange",
+					ChatFormatter.formatDecimals(turret.currentRange.getValue() / 4.0, 1)
+						.withStyle(ChatFormatting.GRAY))
+				.withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+			text.add(BallistixTextUtils
+				.tooltip("turret.minrange",
+					ChatFormatter.formatDecimals(turret.minimumRange, 1)
+						.withStyle(ChatFormatting.GRAY))
+				.withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+		    });
 		    return text;
 		}, 176, AbstractScreenComponentInfo.SIZE + 2));
 
 	addComponent(radarLabel = new ScreenComponentCustomRender(10, 50, graphics -> {
-	    TileTurretAntimissile turret = menu.getSafeHost();
-	    if (turret == null) {
-		return;
-	    }
-	    Component radar = turret.isNotLinked.getValue()
-		    ? BallistixTextUtils.gui("turret.radarnone").withStyle(ChatFormatting.RED)
-		    : Component.literal(turret.boundFireControl.getValue().toShortString())
-			    .withStyle(ChatFormatting.DARK_GRAY);
+	    menu.getSafeHost().ifPresent(turret -> {
+		Component radar = turret.isNotLinked.getValue()
+			? BallistixTextUtils.gui("turret.radarnone").withStyle(ChatFormatting.RED)
+			: Component.literal(turret.boundFireControl.getValue().toShortString())
+				.withStyle(ChatFormatting.DARK_GRAY);
 
-	    int x = (int) (getGuiWidth() + 10);
-	    int y = (int) (getGuiHeight() + 50);
+		int x = (int) (getGuiWidth() + 10);
+		int y = (int) (getGuiHeight() + 50);
 
-	    Component label = BallistixTextUtils.gui("turret.radar").withStyle(ChatFormatting.BLACK);
+		Component label = BallistixTextUtils.gui("turret.radar").withStyle(ChatFormatting.BLACK);
 
-	    int width = getFontRenderer().width(label);
-	    int height = getFontRenderer().lineHeight;
+		int width = getFontRenderer().width(label);
+		int height = getFontRenderer().lineHeight;
 
-	    graphics.drawString(getFontRenderer(), label, x, y, Color.WHITE.color(), false);
+		graphics.drawString(getFontRenderer(), label, x, y, Color.WHITE.color(), false);
 
-	    x += width;
+		x += width;
 
-	    float scale = 1.0F;
+		float scale = 1.0F;
 
-	    width = font.width(radar);
+		width = font.width(radar);
 
-	    if (width > 100) {
-		scale = 100.0F / width;
-	    }
-
-	    float remHeight = (height - height * scale) / 2.0F;
-
-	    graphics.pose().pushPose();
-
-	    graphics.pose().translate(x, y + remHeight, 0);
-
-	    graphics.pose().scale(scale, scale, scale);
-
-	    graphics.drawString(getFontRenderer(), radar, 0, 0, Color.WHITE.color(), false);
-
-	    graphics.pose().popPose();
-
-	}));
-
-	addComponent(statusLabel = new ScreenComponentSimpleLabel(10, 65, 10, Color.WHITE, () -> {
-	    TileTurretRailgun turret = menu.getSafeHost();
-	    if (turret == null) {
-		return Component.empty();
-	    }
-	    Component status = Component.empty();
-
-	    if (turret.hasNoPower.getValue()) {
-		status = BallistixTextUtils.gui("turret.statusnopower").withStyle(ChatFormatting.RED);
-	    } else {
-
-		if (turret.targetingEntity.getValue()
-			|| !turret.boundFireControl.getValue().equals(BlockEntityUtils.OUT_OF_REACH)) {
-		    if (!turret.hasTarget.getValue()) {
-			status = BallistixTextUtils.gui("turret.statusnotarget").withStyle(ChatFormatting.GREEN);
-		    } else if (!turret.inRange.getValue()) {
-			status = BallistixTextUtils.gui("turret.statusoutofrange").withStyle(ChatFormatting.YELLOW);
-		    } else if (turret.outOfAmmo.getValue()) {
-			status = BallistixTextUtils.gui("turret.statusnoammo").withStyle(ChatFormatting.RED);
-		    } else if (turret.cooldown.getValue() > 0) {
-			status = BallistixTextUtils.gui("turret.statuscooldown", turret.cooldown.getValue())
-				.withStyle(ChatFormatting.RED);
-		    } else {
-			status = BallistixTextUtils.gui("turret.statusgood").withStyle(ChatFormatting.GREEN);
-		    }
-		} else {
-		    status = BallistixTextUtils.gui("turret.statusunlinked").withStyle(ChatFormatting.RED);
+		if (width > 100) {
+		    scale = 100.0F / width;
 		}
-	    }
 
-	    return BallistixTextUtils.gui("turret.status", status).withStyle(ChatFormatting.BLACK);
+		float remHeight = (height - height * scale) / 2.0F;
+
+		graphics.pose().pushPose();
+
+		graphics.pose().translate(x, y + remHeight, 0);
+
+		graphics.pose().scale(scale, scale, scale);
+
+		graphics.drawString(getFontRenderer(), radar, 0, 0, Color.WHITE.color(), false);
+
+		graphics.pose().popPose();
+	    });
+
 	}));
+
+	addComponent(statusLabel = new ScreenComponentSimpleLabel(10, 65, 10, Color.WHITE, () -> menu.getSafeHost().map(turret -> {
+	Component status = Component.empty();
+
+	if (turret.hasNoPower.getValue()) {
+	    status = BallistixTextUtils.gui("turret.statusnopower").withStyle(ChatFormatting.RED);
+	} else if (turret.targetingEntity.getValue()
+		|| !turret.boundFireControl.getValue().equals(BlockEntityUtils.OUT_OF_REACH)) {
+	    if (!turret.hasTarget.getValue()) {
+		status = BallistixTextUtils.gui("turret.statusnotarget").withStyle(ChatFormatting.GREEN);
+	    } else if (!turret.inRange.getValue()) {
+		status = BallistixTextUtils.gui("turret.statusoutofrange").withStyle(ChatFormatting.YELLOW);
+	    } else if (turret.outOfAmmo.getValue()) {
+		status = BallistixTextUtils.gui("turret.statusnoammo").withStyle(ChatFormatting.RED);
+	    } else if (turret.cooldown.getValue() > 0) {
+		status = BallistixTextUtils.gui("turret.statuscooldown", turret.cooldown.getValue())
+			.withStyle(ChatFormatting.RED);
+	    } else {
+		status = BallistixTextUtils.gui("turret.statusgood").withStyle(ChatFormatting.GREEN);
+	    }
+	} else {
+	    status = BallistixTextUtils.gui("turret.statusunlinked").withStyle(ChatFormatting.RED);
+	}
+
+	return BallistixTextUtils.gui("turret.status", status).withStyle(ChatFormatting.BLACK);
+	}).orElse(Component.empty())));
 
 	wrapperInventoryIO = new WrapperInventoryIO(this, -AbstractScreenComponentInfo.SIZE + 1,
 		AbstractScreenComponentInfo.SIZE * 2 + 2, 75, 92, 8, 82).hideAdditional(show -> {
@@ -195,38 +176,35 @@ public class ScreenRailgunTurret extends ScreenPlayerWhitelistTurret<ContainerRa
 
 	addComponent(new ScreenComponentButton<>(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR_RIGHT, 176,
 		AbstractScreenComponentInfo.SIZE * 2 + 2).setOnPress(button -> {
-		    TileTurretRailgun turret = menu.getSafeHost();
-		    if (turret == null) {
-			return;
-		    }
-		    int mode = turret.entityTargetingMode.getValue();
-		    mode++;
-		    if (mode >= GenericTileTurret.TargetingMode.values().length) {
-			mode = 0;
-		    }
-		    turret.entityTargetingMode.setValue(mode);
+		    menu.getSafeHost().ifPresent(turret -> {
+			int mode = turret.entityTargetingMode.getValue();
+			mode++;
+			if (mode >= GenericTileTurret.TargetingMode.values().length) {
+			    mode = 0;
+			}
+			turret.entityTargetingMode.setValue(mode);
+		    });
 		}).onTooltip((graphics, but, xAxis, yAxis) -> {
 		    //
-		    TileTurretRailgun turret = menu.getSafeHost();
-		    if (turret == null) {
-			return;
-		    }
-		    List<Component> tooltips = new ArrayList<>();
-		    tooltips.add(BallistixTextUtils.tooltip("turret.targetmode").withStyle(ChatFormatting.DARK_GRAY));
-		    GenericTileTurret.TargetingMode mode = GenericTileTurret.TargetingMode
-			    .values()[turret.entityTargetingMode.getValue()];
-		    if (mode == GenericTileTurret.TargetingMode.ONLY_PLAYERS) {
-			tooltips.add(BallistixTextUtils.tooltip("turret.targetmodeplayers")
-				.withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
-		    } else if (mode == GenericTileTurret.TargetingMode.ALL) {
-			tooltips.add(BallistixTextUtils.tooltip("turret.targetmodeliving")
-				.withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
-		    } else {
-			tooltips.add(BallistixTextUtils.tooltip("turret.targetmodenone")
-				.withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
-		    }
+		    menu.getSafeHost().ifPresent(turret -> {
+			List<Component> tooltips = new ArrayList<>();
+			tooltips.add(
+				BallistixTextUtils.tooltip("turret.targetmode").withStyle(ChatFormatting.DARK_GRAY));
+			GenericTileTurret.TargetingMode mode = GenericTileTurret.TargetingMode
+				.values()[turret.entityTargetingMode.getValue()];
+			if (mode == GenericTileTurret.TargetingMode.ONLY_PLAYERS) {
+			    tooltips.add(BallistixTextUtils.tooltip("turret.targetmodeplayers")
+				    .withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+			} else if (mode == GenericTileTurret.TargetingMode.ALL) {
+			    tooltips.add(BallistixTextUtils.tooltip("turret.targetmodeliving")
+				    .withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+			} else {
+			    tooltips.add(BallistixTextUtils.tooltip("turret.targetmodenone")
+				    .withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+			}
 
-		    graphics.renderComponentTooltip(getFontRenderer(), tooltips, xAxis, yAxis);
+			graphics.renderComponentTooltip(getFontRenderer(), tooltips, xAxis, yAxis);
+		    });
 
 		}).setIcon(BallistixIconTypes.TARGET_ONLY_PLAYERS));
 
@@ -248,6 +226,8 @@ public class ScreenRailgunTurret extends ScreenPlayerWhitelistTurret<ContainerRa
 
 	}
 
-	playerInvLabel.setVisible(show);
+	if (playerInvLabel != null) {
+	    playerInvLabel.setVisible(show);
+	}
     }
 }

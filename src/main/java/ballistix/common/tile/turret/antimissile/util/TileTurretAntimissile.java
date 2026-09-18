@@ -9,6 +9,7 @@ import ballistix.common.tile.radar.TileFireControlRadar;
 import ballistix.common.tile.turret.GenericTileTurret;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,9 +21,9 @@ import voltaic.prefab.utilities.BlockEntityUtils;
 public abstract class TileTurretAntimissile extends GenericTileTurret {
 
     public final SingleProperty<Boolean> isNotLinked = property(
-	    new SingleProperty<>(PropertyTypes.BOOLEAN, "islinked", false));
-    public final SingleProperty<BlockPos> boundFireControl = property(
-	    new SingleProperty<>(PropertyTypes.BLOCK_POS, "bound", BlockEntityUtils.OUT_OF_REACH));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BOOLEAN, "islinked", false));
+    public final SingleProperty<BlockPos> boundFireControl = property(new SingleProperty<>(getPropertyManager(),
+	    PropertyTypes.BLOCK_POS, "bound", BlockEntityUtils.OUT_OF_REACH));
     @Nullable
     protected TileFireControlRadar radar;
 
@@ -41,7 +42,7 @@ public abstract class TileTurretAntimissile extends GenericTileTurret {
     }
 
     @Override
-    public boolean isValidPlacement() {
+    public boolean isValidPlacement(Level level) {
 	return level.getBrightness(LightLayer.SKY, getBlockPos()) > 0;
     }
 
@@ -57,7 +58,7 @@ public abstract class TileTurretAntimissile extends GenericTileTurret {
 
     @Nullable
     @Override
-    public ITarget getTarget(long ticks) {
+    public ITarget getTarget(Level level, long ticks) {
 	if (ticks % 10 == 0) {
 	    if (level.getBlockEntity(boundFireControl.getValue()) instanceof TileFireControlRadar fire) {
 		radar = fire;
@@ -66,15 +67,15 @@ public abstract class TileTurretAntimissile extends GenericTileTurret {
 		boundFireControl.setValue(BlockEntityUtils.OUT_OF_REACH);
 	    }
 	}
-	isNotLinked.setValue(radar == null);
+	TileFireControlRadar pRadar = radar;
+	isNotLinked.setValue(pRadar == null);
 
-	if (isNotLinked.getValue()) {
+	if (pRadar == null) {
 	    return null;
 	}
 
-	VirtualMissile missile = radar.getTargetFor(getBlockPos(), getProjectileLaunchPosition(),
+	VirtualMissile missile = pRadar.getTargetFor(getBlockPos(), getProjectileLaunchPosition(),
 		getInterceptorSpeedForTargeting());
-
 	if (missile == null || missile.hasExploded()) {
 	    return null;
 	}

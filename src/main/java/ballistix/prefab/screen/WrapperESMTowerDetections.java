@@ -17,7 +17,7 @@ public class WrapperESMTowerDetections {
 
     private final ScreenESMTower screen;
 
-    private ScreenComponentFireControlRadar[] frequencies = new ScreenComponentFireControlRadar[5];
+    private final ScreenComponentFireControlRadar[] frequencies = new ScreenComponentFireControlRadar[5];
 
     private int topRowIndex = 0;
     private int lastRowCount = 0;
@@ -44,7 +44,7 @@ public class WrapperESMTowerDetections {
     }
 
     public void tick() {
-	TileESMTower tile = screen.getMenu().getSafeHost();
+	TileESMTower tile = screen.getMenu().getSafeHost().orElse(null);
 	if (tile == null) {
 	    return;
 	}

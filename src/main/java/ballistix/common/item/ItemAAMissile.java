@@ -15,7 +15,7 @@ import voltaic.api.electricity.formatting.DisplayUnits;
 import voltaic.common.item.ItemVoltaic;
 
 public class ItemAAMissile extends ItemVoltaic {
-    private Supplier<Double> accuracy;
+    private final Supplier<Double> accuracy;
 
     public ItemAAMissile(Properties properties, Holder<CreativeModeTab> creativeTab, Supplier<Double> accuracy) {
 	super(properties, creativeTab);

@@ -19,7 +19,7 @@ public class ThreadDynamicRaySideBlast extends Thread {
 
     public final Direction direction;
     private final RandomSource random = RandomSource.createThreadSafe();
-    private ArrayList<DynamicRay> rays = new ArrayList<>();
+    private final ArrayList<DynamicRay> rays = new ArrayList<>();
 
     public static final float DEFAULT_POWER_DEC = 1.125f;
 

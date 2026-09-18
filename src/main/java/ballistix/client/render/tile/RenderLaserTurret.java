@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import voltaic.client.VoltaicClientRegister;
@@ -31,6 +32,10 @@ public class RenderLaserTurret extends AbstractTileRenderer<TileTurretLaser> {
     @Override
     public void render(@NotNull TileTurretLaser tileEntityIn, float partialTicks, PoseStack matrixStackIn,
 	    MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+
+	Level level = tileEntityIn.getLevel();
+	if (level == null)
+	    return;
 
 	BakedModel model = getModel(BallistixClientRegister.MODEL_LASERTURRET_BALLJOINT);
 
@@ -50,10 +55,9 @@ public class RenderLaserTurret extends AbstractTileRenderer<TileTurretLaser> {
 
 	// matrixStackIn.mulPose(new Quaternion(0,(float)
 	// ((tileEntityIn.savedTickRotation + partial)), 0, true));
-	Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model,
+	Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(level, model,
 		tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn,
-		bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(),
-		0);
+		bufferIn.getBuffer(RenderType.solid()), false, level.random, new Random().nextLong(), 0);
 
 	matrixStackIn.popPose();
 
@@ -65,10 +69,9 @@ public class RenderLaserTurret extends AbstractTileRenderer<TileTurretLaser> {
 
 	model = getModel(BallistixClientRegister.MODEL_LASERTURRET_HEAD);
 
-	Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tileEntityIn.getLevel(), model,
+	Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(level, model,
 		tileEntityIn.getBlockState(), tileEntityIn.getBlockPos(), matrixStackIn,
-		bufferIn.getBuffer(RenderType.solid()), false, tileEntityIn.getLevel().random, new Random().nextLong(),
-		0);
+		bufferIn.getBuffer(RenderType.solid()), false, level.random, new Random().nextLong(), 0);
 
 	matrixStackIn.popPose();
 

@@ -32,7 +32,7 @@ public class EntityShrapnel extends ThrowableProjectile {
 
     public EntityShrapnel(Level worldIn, @Nullable Entity owner) {
 	this(BallistixEntities.ENTITY_SHRAPNEL.get(), worldIn);
-	this.setOwner(owner);
+	setOwner(owner);
     }
 
     @Override

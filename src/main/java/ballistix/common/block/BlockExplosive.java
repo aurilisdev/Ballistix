@@ -52,11 +52,12 @@ public class BlockExplosive extends Block {
 	if (state.hasProperty(VoltaicBlockStates.FACING)) {
 	    return explosive.getShape().getShape(state.getValue(VoltaicBlockStates.FACING));
 	}
-	return explosive.getShape().getShape(null);
+	return explosive.getShape().getShape(Direction.UP);
     }
 
     @Override
-    public void onCaughtFire(BlockState state, Level world, BlockPos pos, Direction face, LivingEntity igniter) {
+    public void onCaughtFire(BlockState state, Level world, BlockPos pos, @Nullable Direction face,
+	    @Nullable LivingEntity igniter) {
 	explode(world, pos, explosive, igniter);
     }
 

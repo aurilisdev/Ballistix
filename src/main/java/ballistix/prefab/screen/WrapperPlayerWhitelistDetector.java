@@ -29,8 +29,8 @@ public class WrapperPlayerWhitelistDetector {
 
     private ScreenComponentSimpleLabel whitelistLabel;
 
-    private ScreenComponentButton[] deleteButtons = new ScreenComponentButton[5];
-    private ScreenComponentWhitelistedPlayer[] players = new ScreenComponentWhitelistedPlayer[5];
+    private final ScreenComponentButton[] deleteButtons = new ScreenComponentButton[5];
+    private final ScreenComponentWhitelistedPlayer[] players = new ScreenComponentWhitelistedPlayer[5];
 
     public ScreenComponentEditBox addEditBox;
 
@@ -85,7 +85,7 @@ public class WrapperPlayerWhitelistDetector {
 
 	screen.addComponent(add = new ScreenComponentButton<>(x + 10, y + 52, 156, 20).setOnPress(button -> {
 
-	    TileProximityDetector turret = screen.getMenu().getSafeHost();
+	    TileProximityDetector turret = screen.getMenu().getSafeHost().orElse(null);
 
 	    if (turret == null) {
 		return;
@@ -114,7 +114,7 @@ public class WrapperPlayerWhitelistDetector {
 
 			ScreenComponentWhitelistedPlayer player = players[index];
 
-			TileProximityDetector tile = screen.getMenu().getSafeHost();
+			TileProximityDetector tile = screen.getMenu().getSafeHost().orElse(null);
 
 			if (player.getName() == null) {
 			    return;
@@ -149,7 +149,7 @@ public class WrapperPlayerWhitelistDetector {
     }
 
     public void tick() {
-	TileProximityDetector tile = screen.getMenu().getSafeHost();
+	TileProximityDetector tile = screen.getMenu().getSafeHost().orElse(null);
 	if (tile == null) {
 	    return;
 	}

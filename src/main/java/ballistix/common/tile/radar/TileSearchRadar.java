@@ -22,6 +22,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -39,7 +40,6 @@ import voltaic.prefab.tile.components.IComponentType;
 import voltaic.prefab.tile.components.type.ComponentContainerProvider;
 import voltaic.prefab.tile.components.type.ComponentElectrodynamic;
 import voltaic.prefab.tile.components.type.ComponentForgeEnergy;
-import voltaic.prefab.tile.components.type.ComponentPacketHandler;
 import voltaic.prefab.tile.components.type.ComponentTickable;
 import voltaic.prefab.utilities.BlockEntityUtils;
 import voltaic.registers.VoltaicCapabilities;
@@ -47,13 +47,13 @@ import voltaic.registers.VoltaicCapabilities;
 public class TileSearchRadar extends GenericTile {
 
     public final SingleProperty<Boolean> usingWhitelist = property(
-	    new SingleProperty<>(PropertyTypes.BOOLEAN, "usingwhitelist", false));
-    public final ListProperty<Integer> whitelistedFrequencies = property(
-	    new ListProperty<>(PropertyTypes.INTEGER_LIST, "whitelistedfreqs", new ArrayList<>()));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BOOLEAN, "usingwhitelist", false));
+    public final ListProperty<Integer> whitelistedFrequencies = property(new ListProperty<>(getPropertyManager(),
+	    PropertyTypes.INTEGER_LIST, "whitelistedfreqs", new ArrayList<>()));
     public final SingleProperty<Boolean> redstone = property(
-	    new SingleProperty<>(PropertyTypes.BOOLEAN, "redstone", false));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BOOLEAN, "redstone", false));
     public final SingleProperty<Boolean> isRunning = property(
-	    new SingleProperty<>(PropertyTypes.BOOLEAN, "isrunning", false));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BOOLEAN, "isrunning", false));
 
     private final AABB searchArea = new AABB(getBlockPos()).inflate(BallistixConfig.INSTANCE.RADAR_RANGE.get());
     private final HashSet<VirtualMissile> trackedMissiles = new HashSet<>();
@@ -66,7 +66,6 @@ public class TileSearchRadar extends GenericTile {
     public TileSearchRadar(BlockPos pos, BlockState state) {
 	super(BallistixTiles.TILE_RADAR.get(), pos, state);
 	addComponent(new ComponentTickable(this).tickServer(this::tickServer).tickClient(this::tickClient));
-	addComponent(new ComponentPacketHandler(this));
 	addComponent(new ComponentElectrodynamic(this, false, true).voltage(VoltaicCapabilities.DEFAULT_VOLTAGE)
 		.setInputDirections(BlockEntityUtils.MachineDirection.BOTTOM)
 		.maxJoules(BallistixConfig.INSTANCE.RADAR_USAGE.get() * 20));
@@ -75,8 +74,8 @@ public class TileSearchRadar extends GenericTile {
 	addComponent(new ComponentForgeEnergy(this));
     }
 
-    public void tickServer(ComponentTickable tickable) {
-	ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
+    public void tickServer(Level level, ComponentTickable tickable) {
+	ComponentElectrodynamic electro = requireComponent(IComponentType.Electrodynamic);
 
 	isRunning.setValue(electro.getJoulesStored() > BallistixConfig.INSTANCE.RADAR_USAGE.get() / 20.0
 		&& level.getBrightness(LightLayer.SKY, getBlockPos()) > 0);
@@ -137,7 +136,7 @@ public class TileSearchRadar extends GenericTile {
 
     }
 
-    public void tickClient(ComponentTickable tickable) {
+    public void tickClient(Level level, ComponentTickable tickable) {
 
 	clientRotation += clientRotationSpeed;
 
@@ -154,7 +153,7 @@ public class TileSearchRadar extends GenericTile {
     }
 
     @Override
-    public int getComparatorSignal() {
+    public int getComparatorSignal(Level level) {
 	if (!trackedMissiles.isEmpty() && !trackedEsmTowers.isEmpty()) {
 	    return 15;
 	} else if (trackedMissiles.isEmpty() && !trackedEsmTowers.isEmpty()) {
@@ -165,8 +164,8 @@ public class TileSearchRadar extends GenericTile {
     }
 
     @Override
-    public void onBlockDestroyed() {
-	super.onBlockDestroyed();
+    public void onBlockDestroyed(Level level) {
+	super.onBlockDestroyed(level);
 
 	if (!level.isClientSide) {
 	    TileESMTower.removeSearchRadar(this);
@@ -178,8 +177,8 @@ public class TileSearchRadar extends GenericTile {
     }
 
     @Override
-    public void onPlace(BlockState oldState, boolean isMoving) {
-	super.onPlace(oldState, isMoving);
+    public void onPlace(Level level, BlockState oldState, boolean isMoving) {
+	super.onPlace(level, oldState, isMoving);
 	if (!level.isClientSide) {
 	    ChunkPos pos = level.getChunk(getBlockPos()).getPos();
 	    ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, getBlockPos(), pos.x, pos.z, true,

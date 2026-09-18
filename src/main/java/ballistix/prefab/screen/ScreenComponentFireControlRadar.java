@@ -1,5 +1,7 @@
 package ballistix.prefab.screen;
 
+import javax.annotation.Nullable;
+
 import ballistix.common.block.subtype.SubtypeBallistixMachine;
 import ballistix.common.inventory.container.ContainerESMTower;
 import ballistix.common.tile.TileESMTower;
@@ -29,10 +31,13 @@ public class ScreenComponentFireControlRadar extends ScreenComponentGeneric {
 	if (!isVisible()) {
 	    return;
 	}
-
 	GenericScreen<ContainerESMTower> screen = (GenericScreen<ContainerESMTower>) gui;
 
-	TileESMTower tile = screen.getMenu().getSafeHost();
+	if (screen == null) {
+	    return;
+	}
+
+	TileESMTower tile = screen.getMenu().getSafeHost().orElse(null);
 
 	if (tile == null) {
 	    return;
@@ -81,7 +86,7 @@ public class ScreenComponentFireControlRadar extends ScreenComponentGeneric {
 
     }
 
-    public void setBlockPos(BlockPos pos) {
+    public void setBlockPos(@Nullable BlockPos pos) {
 	this.pos = pos;
     }
 

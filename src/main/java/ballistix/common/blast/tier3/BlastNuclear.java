@@ -25,6 +25,7 @@ import ballistix.compatibility.nuclearscience.RadiationHandler;
 import ballistix.prefab.utils.ParticleUtilities;
 import ballistix.registers.BallistixSounds;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
@@ -172,8 +173,9 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 		for (Entry<BlockPos, AtomicInteger> entry : threadRay.fortronRayHits.entrySet()) {
 		    long raysHit = entry.getValue().get();
 		    double damagePercentage = raysHit / (double) threadRay.totalRayCount;
-		    Blast.damageFortronField(serverLevel, entry.getKey(), damagePercentage * 0.3333); 
-		    // Hitting the wall of an infinitely large forcefield would here then yield 16 percent damage.
+		    Blast.damageFortronField(serverLevel, entry.getKey(), damagePercentage * 0.3333);
+		    // Hitting the wall of an infinitely large forcefield would here then yield 16
+		    // percent damage.
 		}
 	    }
 	    appliedFortronDamage = true;
@@ -220,13 +222,11 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 		    if (at.is(Tags.Blocks.GLASS_BLOCKS)) {
 			world.setBlock(pos, Blocks.AIR.defaultBlockState(),
 				Block.UPDATE_NEIGHBORS | Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
-		    } else {
-			if (world.random.nextFloat() < 0.2) {
-			    Direction dir = Direction.getRandom(world.random);
-			    if (at.isFlammable(world, pos, dir)) {
-				world.setBlock(pos.relative(dir), Blocks.FIRE.defaultBlockState(),
-					Block.UPDATE_NEIGHBORS | Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
-			    }
+		    } else if (world.random.nextFloat() < 0.2) {
+			Direction dir = Direction.getRandom(world.random);
+			if (at.isFlammable(world, pos, dir)) {
+			    world.setBlock(pos.relative(dir), Blocks.FIRE.defaultBlockState(),
+				    Block.UPDATE_NEIGHBORS | Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
 			}
 		    }
 		}
@@ -307,7 +307,11 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	if (hasShaken)
 	    return;
 	Vec3 pos = new Vec3(x, y, z);
-	double realDistance = Minecraft.getInstance().player.position().distanceTo(pos);
+	LocalPlayer player = Minecraft.getInstance().player;
+	if (player == null)
+	    return;
+
+	double realDistance = player.position().distanceTo(pos);
 	double dist = Mth.abs((float) (realDistance - size));
 	if (dist < 3) {
 	    hasShaken = true;

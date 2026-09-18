@@ -20,7 +20,7 @@ import voltaic.common.item.ItemVoltaic;
 
 public class ItemGrenade extends ItemVoltaic {
 
-    private IBlast grenade;
+    private final IBlast grenade;
 
     public ItemGrenade(IBlast grenade) {
 	super(new Item.Properties().stacksTo(16), BallistixCreativeTabs.MAIN);
@@ -68,9 +68,15 @@ public class ItemGrenade extends ItemVoltaic {
     }
 
     public enum SubtypeGrenade implements ISubtype {
-	attractive(SubtypeBlast.attractive), chemical(SubtypeBlast.chemical), condensive(SubtypeBlast.condensive),
-	debilitation(SubtypeBlast.debilitation), incendiary(SubtypeBlast.incendiary), repulsive(SubtypeBlast.repulsive),
-	anvil(SubtypeBlast.anvil), shrapnel(SubtypeBlast.shrapnel), infestive(SubtypeBlast.infestive);
+	attractive(SubtypeBlast.attractive),
+	chemical(SubtypeBlast.chemical),
+	condensive(SubtypeBlast.condensive),
+	debilitation(SubtypeBlast.debilitation),
+	incendiary(SubtypeBlast.incendiary),
+	repulsive(SubtypeBlast.repulsive),
+	anvil(SubtypeBlast.anvil),
+	shrapnel(SubtypeBlast.shrapnel),
+	infestive(SubtypeBlast.infestive);
 
 	public final SubtypeBlast explosiveType;
 

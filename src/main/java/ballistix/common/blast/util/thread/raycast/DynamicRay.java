@@ -2,6 +2,8 @@ package ballistix.common.blast.util.thread.raycast;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.annotation.Nullable;
+
 import ballistix.Ballistix;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import modularforcefields.registers.ModularForcefieldsBlocks;
@@ -73,7 +75,7 @@ public class DynamicRay {
     }
 
     public boolean tick(final BlockPos position, final Level world, final IResistanceCallback callback,
-	    final Entity explosionSource, Long2ObjectOpenHashMap<BlockState> alreadyDestroyed) {
+	    final @Nullable Entity explosionSource, Long2ObjectOpenHashMap<BlockState> alreadyDestroyed) {
 
 	if (power <= 0.0F || stepX == 0 && stepY == 0 && stepZ == 0) {
 	    return true;

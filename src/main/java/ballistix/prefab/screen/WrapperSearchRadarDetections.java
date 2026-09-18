@@ -15,7 +15,7 @@ public class WrapperSearchRadarDetections {
 
     private final ScreenSearchRadar screen;
 
-    private ScreenComponentDetection[] detections = new ScreenComponentDetection[5];
+    private final ScreenComponentDetection[] detections = new ScreenComponentDetection[5];
 
     private int topRowIndex = 0;
     private int lastRowCount = 0;
@@ -40,7 +40,7 @@ public class WrapperSearchRadarDetections {
     }
 
     public void tick() {
-	TileSearchRadar tile = screen.getMenu().getSafeHost();
+	TileSearchRadar tile = screen.getMenu().getSafeHost().orElse(null);
 	if (tile == null) {
 	    return;
 	}

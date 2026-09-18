@@ -13,7 +13,6 @@ import ballistix.registers.BallistixDataComponentTypes;
 import ballistix.registers.BallistixItems;
 import ballistix.registers.BallistixTiles;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -22,6 +21,7 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -38,37 +38,36 @@ import voltaic.prefab.tile.components.type.ComponentContainerProvider;
 import voltaic.prefab.tile.components.type.ComponentElectrodynamic;
 import voltaic.prefab.tile.components.type.ComponentForgeEnergy;
 import voltaic.prefab.tile.components.type.ComponentInventory;
-import voltaic.prefab.tile.components.type.ComponentPacketHandler;
 import voltaic.prefab.tile.components.type.ComponentTickable;
 import voltaic.prefab.utilities.BlockEntityUtils;
-import voltaic.prefab.utilities.object.CachedTileOutput;
 import voltaic.registers.VoltaicCapabilities;
 import voltaic.registers.VoltaicDataComponentTypes;
 
 public class TileLauncherControlPanelT1 extends GenericTile implements ILauncherControlPanel {
 
     public SingleProperty<Integer> frequency = property(
-	    new SingleProperty<>(PropertyTypes.INTEGER, "frequency", 0).onChange((prop, prevFreq) -> {
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.INTEGER, "frequency", 0)
+		    .onChange((prop, prevFreq) -> {
+			Level level = this.level;
+			if (level == null || level.isClientSide) {
+			    return;
+			}
 
-		if (level == null || level.isClientSide) {
-		    return;
-		}
+			int newFreq = prop.getValue();
 
-		int newFreq = prop.getValue();
+			SiloRegistry.unregisterSilo(prevFreq, this);
+			SiloRegistry.registerSilo(newFreq, this);
 
-		SiloRegistry.unregisterSilo(prevFreq, this);
-		SiloRegistry.registerSilo(newFreq, this);
-
-	    }));
+		    }))
+	    .setUpdateServer();
 
     public SingleProperty<BlockPos> target = property(
-	    new SingleProperty<>(PropertyTypes.BLOCK_POS, "target", BlockPos.ZERO));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BLOCK_POS, "target", BlockPos.ZERO))
+	    .setUpdateServer();
 
     private int cooldown = 100;
     public final SingleProperty<Boolean> shouldLaunch = property(
-	    new SingleProperty<>(PropertyTypes.BOOLEAN, "shouldlaunch", false));
-    public CachedTileOutput launcherPlatform;
-    public CachedTileOutput supportFrame;
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BOOLEAN, "shouldlaunch", false)).setUpdateServer();
 
     public TileLauncherControlPanelT1(BlockPos pos, BlockState state) {
 	this(BallistixTiles.TILE_LAUNCHER_CONTROL_PANEL_TIER1.get(), pos, state);
@@ -90,41 +89,25 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 	} else {
 	    addComponent(new ComponentInventory(this));
 	}
-	addComponent(new ComponentPacketHandler(this));
 	if (tier == 1) {
 	    addComponent(new ComponentContainerProvider("launchercontrolpaneltier" + tier, this)
 		    .createMenu((id, player) -> new ContainerLauncherControlPanelT1(id, player,
-			    getComponent(IComponentType.Inventory), getCoordsArray())));
+			    requireComponent(IComponentType.Inventory), getCoordsArray())));
 	} else if (tier == 2) {
 	    addComponent(new ComponentContainerProvider("launchercontrolpaneltier" + tier, this)
 		    .createMenu((id, player) -> new ContainerLauncherControlPanelT2(id, player,
-			    getComponent(IComponentType.Inventory), getCoordsArray())));
+			    requireComponent(IComponentType.Inventory), getCoordsArray())));
 	} else if (tier == 3) {
 	    addComponent(new ComponentContainerProvider("launchercontrolpaneltier" + tier, this)
 		    .createMenu((id, player) -> new ContainerLauncherControlPanelT3(id, player,
-			    getComponent(IComponentType.Inventory), getCoordsArray())));
+			    requireComponent(IComponentType.Inventory), getCoordsArray())));
 	}
 	addComponent(new ComponentForgeEnergy(this));
 
     }
 
-    protected void tickServer(ComponentTickable tickable) {
-	Direction facing = getFacing();
-	if (launcherPlatform == null) {
-	    launcherPlatform = new CachedTileOutput(level, worldPosition.relative(facing.getOpposite()));
-	}
-	if (supportFrame == null) {
-	    supportFrame = new CachedTileOutput(level, worldPosition.relative(facing.getOpposite(), 2));
-	}
-	if (tickable.getTicks() % 20 == 0) {
-	    launcherPlatform.update(worldPosition.relative(facing.getOpposite()));
-	    supportFrame.update(worldPosition.relative(facing.getOpposite(), 2));
-	}
-	if (target.getValue() == null) {
-	    target.setValue(getBlockPos());
-	}
-
-	ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
+    protected void tickServer(Level level, ComponentTickable tickable) {
+	ComponentElectrodynamic electro = requireComponent(IComponentType.Electrodynamic);
 
 	if (cooldown > 0 || electro.getJoulesStored() < BallistixConfig.INSTANCE.MISSILESILO_USAGE.get() * getTier()) {
 	    cooldown--;
@@ -133,17 +116,9 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 
 	boolean hasRedstone = level.hasNeighborSignal(getBlockPos());
 
-	if (!launcherPlatform.valid() || !(launcherPlatform.getSafe() instanceof ILauncherPlatform)) {
+	ILauncherPlatform platform = getPlatform();
+	if (platform == null)
 	    return;
-	}
-
-	ILauncherPlatform platform = launcherPlatform.getSafe();
-
-	if (platform == null) { // Should really update the cachedtileoutput so this cant occur. As of before
-				// the getsafe, the platform wasnt null, but as it was removed inworld, the
-				// output made it null and returns a null on getsafe.
-	    return;
-	}
 
 	if (!platform.hasMissile() || platform.hasExplosive() && platform.hasSAM()
 		|| !platform.hasExplosive() && !platform.hasSAM() || !hasRedstone && !shouldLaunch.getValue()) {
@@ -152,7 +127,8 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 
 	int inaccuracy = BallistixConfig.INSTANCE.LAUNCH_PLATFORM_DEFAULT_INACCURACY.get();
 
-	if (supportFrame.valid() && supportFrame.getSafe() instanceof ILauncherSupportFrame frame) {
+	ILauncherSupportFrame frame = getSupportFrame();
+	if (frame != null) {
 	    inaccuracy = frame.getInaccuracy();
 	}
 
@@ -164,7 +140,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 	    return;
 	}
 
-	int newCool = platform.launch(this, hasRedstone, inaccuracy);
+	int newCool = platform.launch(level, this, hasRedstone, inaccuracy);
 
 	if (newCool > 0) {
 	    cooldown = newCool;
@@ -177,7 +153,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
     }
 
     @Override
-    public void onBlockDestroyed() {
+    public void onBlockDestroyed(Level level) {
 	if (level.isClientSide) {
 	    return;
 	}
@@ -191,11 +167,11 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
     }
 
     @Override
-    public void onPlace(BlockState oldState, boolean isMoving) {
-	super.onPlace(oldState, isMoving);
-	if (level.isClientSide) {
+    public void onPlace(Level level, BlockState oldState, boolean isMoving) {
+	super.onPlace(level, oldState, isMoving);
+	if (level.isClientSide)
 	    return;
-	}
+
 	ChunkPos chunkPos = level.getChunk(worldPosition).getPos();
 
 	ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, worldPosition, chunkPos.x, chunkPos.z,
@@ -230,6 +206,10 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
     @Override
     public void onLoad() {
 	super.onLoad();
+	Level level = this.level;
+	if (level == null)
+	    return;
+
 	if (!level.isClientSide) {
 	    SiloRegistry.registerSilo(frequency.getValue(), this);
 	}
@@ -248,13 +228,14 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
     }
 
     @Override
-    public ItemInteractionResult useWithItem(ItemStack used, Player player, InteractionHand hand, BlockHitResult hit) {
+    public ItemInteractionResult useWithItem(Level level, ItemStack used, Player player, InteractionHand hand,
+	    BlockHitResult hit) {
 	ItemStack handStack = player.getItemInHand(hand);
 	if (handStack.getItem() == BallistixItems.ITEM_RADARGUN.get()
 		|| handStack.getItem() == BallistixItems.ITEM_LASERDESIGNATOR.get()) {
 	    return ItemInteractionResult.FAIL;
 	}
-	return super.useWithItem(used, player, hand, hit);
+	return super.useWithItem(level, used, player, hand, hit);
     }
 
     @Override
@@ -294,26 +275,28 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 
     @Override
     public ILauncherPlatform getPlatform() {
+	Level level = this.level;
+	if (level == null)
+	    return null;
 
-	BlockEntity tile = launcherPlatform.getSafe();
+	BlockEntity tile = level.getBlockEntity(worldPosition.relative(getFacing().getOpposite()));
+	if (!(tile instanceof ILauncherPlatform platform) || tile.isRemoved())
+	    return null;
 
-	if (tile instanceof ILauncherPlatform) {
-	    return (ILauncherPlatform) tile;
-	}
-
-	return null;
+	return platform;
     }
 
     @Override
     public ILauncherSupportFrame getSupportFrame() {
+	Level level = this.level;
+	if (level == null)
+	    return null;
 
-	BlockEntity tile = supportFrame.getSafe();
+	BlockEntity tile = level.getBlockEntity(worldPosition.relative(getFacing().getOpposite(), 2));
+	if (!(tile instanceof ILauncherSupportFrame frame) || tile.isRemoved())
+	    return null;
 
-	if (tile instanceof ILauncherSupportFrame) {
-	    return (ILauncherSupportFrame) tile;
-	}
-
-	return null;
+	return frame;
     }
 
     public static double calculateDistance(BlockPos fromPos, BlockPos toPos) {

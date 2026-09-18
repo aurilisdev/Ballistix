@@ -14,6 +14,7 @@ import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.BallistixConfig;
 import ballistix.prefab.utils.ParticleUtilities;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
@@ -36,8 +37,8 @@ import voltaic.prefab.utilities.object.Location;
 
 public class BlastBreaching extends BlastLasting implements IHasCustomRender {
 
-    private ThreadDynamicRaycastBlast thread;
-    private Iterator<BlockPos> iterator;
+    private @Nullable ThreadDynamicRaycastBlast thread;
+    private @Nullable Iterator<BlockPos> iterator;
     private int pertick = -1;
 
     public BlastBreaching(Level world, BlockPos position, @Nullable Entity owner, @Nullable Entity blastEntity) {
@@ -65,7 +66,8 @@ public class BlastBreaching extends BlastLasting implements IHasCustomRender {
     public boolean doExplode(int callCount) {
 	hasStarted = true;
 	super.doExplode(callCount);
-	if ((thread == null) || world.isClientSide || !thread.isComplete) {
+	ThreadDynamicRaycastBlast thread = this.thread;
+	if (thread == null || world.isClientSide || !thread.isComplete) {
 	    return ticksSinceBlastStart > BallistixConfig.INSTANCE.EXPLOSIVE_BREACHING_SIZE.getAsDouble() * 3;
 	}
 	Explosion ex = new Explosion(world, blastEntity, world.damageSources().explosion(blastEntity, owner), null,
@@ -73,13 +75,17 @@ public class BlastBreaching extends BlastLasting implements IHasCustomRender {
 		(float) BallistixConfig.INSTANCE.EXPLOSIVE_BREACHING_SIZE.getAsDouble() * 3, false,
 		BlockInteraction.DESTROY, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER,
 		SoundEvents.GENERIC_EXPLODE);
+	Iterator<BlockPos> iterator = this.iterator;
 	if (pertick == -1) {
 	    hasStarted = true;
 	    pertick = (int) (thread.results.size() * 1.5
 		    / BallistixConfig.INSTANCE.EXPLOSIVE_BREACHING_DURATION.getAsDouble() + 1);
-	    iterator = thread.results.iterator();
+	    this.iterator = iterator = thread.results.iterator();
 	}
 	int finished = pertick;
+	if (iterator == null) {
+	    return ticksSinceBlastStart > BallistixConfig.INSTANCE.EXPLOSIVE_BREACHING_SIZE.getAsDouble() * 3;
+	}
 	while (iterator.hasNext()) {
 	    if (finished-- < 0) {
 		break;
@@ -152,7 +158,11 @@ public class BlastBreaching extends BlastLasting implements IHasCustomRender {
 	if (hasShaken)
 	    return;
 	Vec3 pos = new Vec3(x, y, z);
-	double realDistance = Minecraft.getInstance().player.position().distanceTo(pos);
+	LocalPlayer player = Minecraft.getInstance().player;
+	if (player == null)
+	    return;
+
+	double realDistance = player.position().distanceTo(pos);
 	double dist = Mth.abs((float) (realDistance - size));
 	if (dist < 3) {
 	    hasShaken = true;

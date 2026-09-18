@@ -5,7 +5,6 @@ import java.util.List;
 
 import ballistix.common.inventory.container.ContainerESMTower;
 import ballistix.common.settings.BallistixConfig;
-import ballistix.common.tile.TileESMTower;
 import ballistix.prefab.screen.WrapperESMTowerDetections;
 import ballistix.prefab.utils.BallistixTextUtils;
 import net.minecraft.ChatFormatting;
@@ -36,41 +35,29 @@ public class ScreenESMTower extends GenericScreen<ContainerESMTower> {
 	addComponent(new ScreenComponentGuiTab(ScreenComponentGuiTab.GuiInfoTabTextures.REGULAR,
 		ScreenComponentSlot.IconType.SONAR_PROFILE, () -> {
 		    List<FormattedCharSequence> info = new ArrayList<>();
-
-		    TileESMTower radar = menu.getSafeHost();
-
-		    if (radar == null) {
-			return info;
-		    }
-
-		    info.add(BallistixTextUtils.tooltip("turret.blockrange").withStyle(ChatFormatting.DARK_GRAY)
-			    .getVisualOrderText());
-		    info.add(
-			    BallistixTextUtils
-				    .tooltip("turret.maxrange",
-					    ChatFormatter.formatDecimals(
-						    BallistixConfig.INSTANCE.ESM_TOWER_SEARCH_RADIUS.getAsDouble(), 1)
-						    .withStyle(ChatFormatting.GRAY))
-				    .withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
-
+		    menu.getSafeHost().ifPresentOrElse(radar -> {
+			info.add(BallistixTextUtils.tooltip("turret.blockrange").withStyle(ChatFormatting.DARK_GRAY)
+				.getVisualOrderText());
+			info.add(BallistixTextUtils
+				.tooltip("turret.maxrange",
+					ChatFormatter.formatDecimals(
+						BallistixConfig.INSTANCE.ESM_TOWER_SEARCH_RADIUS.getAsDouble(), 1)
+						.withStyle(ChatFormatting.GRAY))
+				.withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+		    }, () -> {
+			// empty if no tower present
+		    });
 		    return info;
-
 		}, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE + 2));
 
-	addComponent(new ScreenComponentSimpleLabel(25, 18, 10, Color.TEXT_GRAY, () -> {
-	    TileESMTower tower = menu.getSafeHost();
-
-	    if (tower == null) {
-		return Component.empty();
-	    }
-
-	    return tower.active.getValue()
+	addComponent(new ScreenComponentSimpleLabel(25, 18, 10, Color.TEXT_GRAY, () -> menu.getSafeHost()
+	    .map(tower -> tower.active.getValue()
 		    ? tower.searchRadarDetected.getValue()
-			    ? BallistixTextUtils.gui("esmtower.searchradardetected").withStyle(ChatFormatting.GREEN)
+			    ? BallistixTextUtils.gui("esmtower.searchradardetected")
+				    .withStyle(ChatFormatting.GREEN)
 			    : BallistixTextUtils.gui("esmtower.nosearchradars").withStyle(ChatFormatting.RED)
-		    : BallistixTextUtils.gui("esmtower.nosearchradars").withStyle(ChatFormatting.RED);
-
-	}));
+		    : BallistixTextUtils.gui("esmtower.nosearchradars").withStyle(ChatFormatting.RED))
+	    .orElseGet(() -> Component.empty())));
 
 	wrapper = new WrapperESMTowerDetections(this, 0, 0);
 
@@ -83,7 +70,9 @@ public class ScreenESMTower extends GenericScreen<ContainerESMTower> {
     @Override
     protected void initializeComponents() {
 	super.initializeComponents();
-	playerInvLabel.setVisible(false);
+	if (playerInvLabel != null) {
+	    playerInvLabel.setVisible(false);
+	}
     }
 
     @Override

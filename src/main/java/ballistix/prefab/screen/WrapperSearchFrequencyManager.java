@@ -30,8 +30,8 @@ public class WrapperSearchFrequencyManager {
 
     private ScreenComponentSimpleLabel whitelistLabel;
 
-    private ScreenComponentButton[] deleteButtons = new ScreenComponentButton[5];
-    private ScreenComponentFrequency[] frequencies = new ScreenComponentFrequency[5];
+    private final ScreenComponentButton[] deleteButtons = new ScreenComponentButton[5];
+    private final ScreenComponentFrequency[] frequencies = new ScreenComponentFrequency[5];
 
     public ScreenComponentEditBox addEditBox;
 
@@ -92,7 +92,7 @@ public class WrapperSearchFrequencyManager {
 		BallistixTextUtils.gui("radar.frequencywhitelist.mode")));
 	screen.addComponent(toggleButton = new ScreenComponentButton<>(x + 90, y + 25, 70, 20).setOnPress(button -> {
 
-	    TileSearchRadar radar = screen.getMenu().getSafeHost();
+	    TileSearchRadar radar = screen.getMenu().getSafeHost().orElse(null);
 
 	    if (radar == null) {
 		return;
@@ -102,7 +102,7 @@ public class WrapperSearchFrequencyManager {
 
 	}).setLabel(() -> {
 
-	    TileSearchRadar radar = screen.getMenu().getSafeHost();
+	    TileSearchRadar radar = screen.getMenu().getSafeHost().orElse(null);
 
 	    if (radar == null) {
 		return Component.empty();
@@ -115,7 +115,7 @@ public class WrapperSearchFrequencyManager {
 
 	screen.addComponent(add = new ScreenComponentButton<>(x + 90, y + 50, 70, 20).setOnPress(button -> {
 
-	    TileSearchRadar radar = screen.getMenu().getSafeHost();
+	    TileSearchRadar radar = screen.getMenu().getSafeHost().orElse(null);
 
 	    if (radar == null) {
 		return;
@@ -153,7 +153,7 @@ public class WrapperSearchFrequencyManager {
 
 			ScreenComponentFrequency frequency = frequencies[index];
 
-			TileSearchRadar tile = screen.getMenu().getSafeHost();
+			TileSearchRadar tile = screen.getMenu().getSafeHost().orElse(null);
 
 			if (frequency.getFrequency() == null) {
 			    return;
@@ -188,7 +188,7 @@ public class WrapperSearchFrequencyManager {
     }
 
     public void tick() {
-	TileSearchRadar tile = screen.getMenu().getSafeHost();
+	TileSearchRadar tile = screen.getMenu().getSafeHost().orElse(null);
 	if (tile == null) {
 	    return;
 	}

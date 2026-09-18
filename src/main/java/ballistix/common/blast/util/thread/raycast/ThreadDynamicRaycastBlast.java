@@ -6,6 +6,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.annotation.Nullable;
+
 import ballistix.common.blast.util.thread.ThreadBlast;
 import ballistix.common.settings.BallistixConfig;
 import net.minecraft.core.BlockPos;
@@ -42,7 +44,7 @@ public class ThreadDynamicRaycastBlast extends ThreadBlast {
     public final long totalRayCount;
     public final ConcurrentHashMap<BlockPos, AtomicInteger> fortronRayHits = new ConcurrentHashMap<>();
 
-    public ThreadDynamicRaycastBlast(Level world, BlockPos position, int range, float energy, Entity source,
+    public ThreadDynamicRaycastBlast(Level world, BlockPos position, int range, float energy, @Nullable Entity source,
 	    IResistanceCallback cb) {
 
 	super(world, position, range, energy, source);
@@ -53,7 +55,7 @@ public class ThreadDynamicRaycastBlast extends ThreadBlast {
 	setName("RaycastBlast Main Thread");
     }
 
-    public ThreadDynamicRaycastBlast(Level world, BlockPos position, int range, float energy, Entity source) {
+    public ThreadDynamicRaycastBlast(Level world, BlockPos position, int range, float energy, @Nullable Entity source) {
 	this(world, position, range, energy, source,
 		new IResistanceCallbackImp(new Explosion(world, source, null, null, position.getX(), position.getY(),
 			position.getZ(), range, false, BlockInteraction.DESTROY, ParticleTypes.EXPLOSION,
@@ -99,7 +101,7 @@ public class ThreadDynamicRaycastBlast extends ThreadBlast {
     public static record IResistanceCallbackImp(Explosion explosion) implements IResistanceCallback {
 
 	@Override
-	public float getResistance(Level world, BlockPos position, BlockPos targetPosition, Entity source,
+	public float getResistance(Level world, BlockPos position, BlockPos targetPosition, @Nullable Entity source,
 		BlockState block) {
 
 	    if (!block.getFluidState().isEmpty()) {

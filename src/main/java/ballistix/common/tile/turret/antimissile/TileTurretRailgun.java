@@ -15,6 +15,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import voltaic.Voltaic;
@@ -31,11 +32,11 @@ import voltaic.prefab.utilities.BlockEntityUtils;
 public class TileTurretRailgun extends TileTurretAntimissileProjectile {
 
     public final SingleProperty<Integer> cooldown = property(
-	    new SingleProperty<>(PropertyTypes.INTEGER, "cooldown", 0));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.INTEGER, "cooldown", 0));
     public final SingleProperty<Boolean> outOfAmmo = property(
-	    new SingleProperty<>(PropertyTypes.BOOLEAN, "noammo", false));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BOOLEAN, "noammo", false));
     public final SingleProperty<Boolean> targetingEntity = property(
-	    new SingleProperty<>(PropertyTypes.BOOLEAN, "targetingentity", false));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.BOOLEAN, "targetingentity", false));
 
     private LivingEntity livingTarget = null;
 
@@ -68,7 +69,7 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
     public ComponentContainerProvider getContainer() {
 	return new ComponentContainerProvider("railgunturret", this)
 		.createMenu((id, player) -> new ContainerRailgunTurret(id, player,
-			getComponent(IComponentType.Inventory), getCoordsArray()));
+			requireComponent(IComponentType.Inventory), getCoordsArray()));
     }
 
     @Override
@@ -79,13 +80,17 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
     }
 
     @Override
-    public void fireTickServer(long ticks) {
-
+    public void fireTickServer(Level level, ITarget target, long ticks) {
 	if (cooldown.getValue() > 0) {
 	    return;
 	}
 
-	ComponentInventory inv = getComponent(IComponentType.Inventory);
+	java.util.Optional<ComponentInventory> invOpt = getComponent(IComponentType.Inventory);
+	if (invOpt.isEmpty()) {
+	    outOfAmmo.setValue(true);
+	    return;
+	}
+	ComponentInventory inv = invOpt.get();
 
 	ItemStack missile = inv.getItem(0);
 
@@ -96,8 +101,16 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
 
 	outOfAmmo.setValue(false);
 
+	ITarget foundTarget = getTarget(level, ticks);
+	if (foundTarget == null)
+	    return;
+
+	Vec3 targetPosition = getTargetPosition(foundTarget);
+	if (targetPosition == null)
+	    return;
+
 	Vec3 trajectory = getProjectileTrajectoryFromInaccuracy(inaccuracy, baseRange, inaccuracyMultiplier.getValue(),
-		getProjectileLaunchPosition(), getTargetPosition(getTarget(ticks)));
+		getProjectileLaunchPosition(), targetPosition);
 
 	VirtualProjectile.VirtualRailgunRound railgunround = new VirtualProjectile.VirtualRailgunRound(
 		getProjectileSpeed(), getProjectileLaunchPosition(), trajectory, currentRange.getValue().floatValue());
@@ -136,11 +149,11 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
 
     @Nullable
     @Override
-    public ITarget getTarget(long ticks) {
+    public ITarget getTarget(Level level, long ticks) {
 
 	targetingEntity.setValue(false);
 
-	ITarget target = super.getTarget(ticks);
+	ITarget target = super.getTarget(level, ticks);
 
 	TargetingMode mode = TargetingMode.values()[entityTargetingMode.getValue()];
 
@@ -154,7 +167,7 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
 	}
 
 	if (ticks % 20 == 0) {
-	    livingTarget = findLivingTarget(mode);
+	    livingTarget = findLivingTarget(level, mode);
 	}
 
 	if (livingTarget != null) {
@@ -166,8 +179,8 @@ public class TileTurretRailgun extends TileTurretAntimissileProjectile {
     }
 
     @Override
-    public boolean isValidPlacement() {
-	return targetingEntity.getValue() || super.isValidPlacement();
+    public boolean isValidPlacement(Level level) {
+	return targetingEntity.getValue() || super.isValidPlacement(level);
     }
 
 }

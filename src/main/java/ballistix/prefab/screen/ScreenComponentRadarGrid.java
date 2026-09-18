@@ -7,6 +7,7 @@ import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
+import voltaic.api.screen.IScreenWrapper;
 import voltaic.prefab.screen.component.ScreenComponentGeneric;
 import voltaic.prefab.tile.components.IComponentType;
 import voltaic.prefab.tile.components.type.ComponentTickable;
@@ -29,7 +30,12 @@ public class ScreenComponentRadarGrid extends ScreenComponentGeneric {
 	int x = xLocation + guiWidth;
 	int y = yLocation + guiHeight;
 
-	TileFireControlRadar tile = ((ScreenFireControlRadar) gui).getMenu().getSafeHost();
+	IScreenWrapper pGui = gui;
+	if (pGui == null || !(pGui instanceof ScreenFireControlRadar)) {
+	    return;
+	}
+
+	TileFireControlRadar tile = ((ScreenFireControlRadar) pGui).getMenu().getSafeHost().orElse(null);
 
 	if (tile == null) {
 	    return;
@@ -45,8 +51,7 @@ public class ScreenComponentRadarGrid extends ScreenComponentGeneric {
 
 	for (int i = 1; i < 10; i++) {
 
-	    graphics.fill(x + 1, y + gridWidth * i, x + this.width - 1, y + 1 + gridWidth * i,
-		    RADAR_GRID_GREEN.color());
+	    graphics.fill(x + 1, y + gridWidth * i, x + width - 1, y + 1 + gridWidth * i, RADAR_GRID_GREEN.color());
 
 	}
 
@@ -74,8 +79,14 @@ public class ScreenComponentRadarGrid extends ScreenComponentGeneric {
 
 	float center = (width - 2) / 2.0F + 1.0F;
 
-	float ratio = (float) (tile.<ComponentTickable>getComponent(IComponentType.Tickable).getTicks()
-		% TileFireControlRadar.PULSE_TIME_TICKS) / (float) TileFireControlRadar.PULSE_TIME_TICKS;
+	java.util.Optional<ComponentTickable> tickableOpt = tile
+		.<ComponentTickable>getComponent(IComponentType.Tickable);
+	if (tickableOpt.isEmpty()) {
+	    return;
+	}
+	ComponentTickable tickable = tickableOpt.get();
+	float ratio = (float) (tickable.getTicks() % TileFireControlRadar.PULSE_TIME_TICKS)
+		/ (float) TileFireControlRadar.PULSE_TIME_TICKS;
 
 	float theta = ratio * 360.0F;
 

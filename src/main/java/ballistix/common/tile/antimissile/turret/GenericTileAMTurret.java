@@ -2,12 +2,14 @@ package ballistix.common.tile.antimissile.turret;
 
 import javax.annotation.Nullable;
 
+import ballistix.api.missile.virtual.VirtualMissile;
 import ballistix.common.tile.radar.TileFireControlRadar;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,11 +35,11 @@ public abstract class GenericTileAMTurret extends GenericTile {
     boolean canFire = false;
 
     public final SingleProperty<Vec3> turretRotation = property(
-	    new SingleProperty<>(PropertyTypes.VEC3, "turrot", getDefaultOrientation()));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.VEC3, "turrot", getDefaultOrientation()));
     public final SingleProperty<Vec3> desiredRotation = property(
-	    new SingleProperty<>(PropertyTypes.VEC3, "currot", getDefaultOrientation()));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.VEC3, "currot", getDefaultOrientation()));
     public final SingleProperty<Vec3> targetMovement = property(
-	    new SingleProperty<>(PropertyTypes.VEC3, "movevec", Vec3.ZERO));
+	    new SingleProperty<>(getPropertyManager(), PropertyTypes.VEC3, "movevec", Vec3.ZERO));
 
     public GenericTileAMTurret(BlockEntityType<?> tileEntityTypeIn, BlockPos worldPos, BlockState blockState,
 	    double usage, double range, double rotationSpeedRadians) {
@@ -51,9 +53,8 @@ public abstract class GenericTileAMTurret extends GenericTile {
 	this.rotationSpeedRadians = rotationSpeedRadians;
     }
 
-    public void tickServer(ComponentTickable tickable) {
-
-	ComponentElectrodynamic electro = getComponent(IComponentType.Electrodynamic);
+    public void tickServer(Level level, ComponentTickable tickable) {
+	ComponentElectrodynamic electro = requireComponent(IComponentType.Electrodynamic);
 
 	if (electro.getJoulesStored() < usage || level.getBrightness(LightLayer.SKY, getBlockPos()) <= 0) {
 	    return;
@@ -64,51 +65,44 @@ public abstract class GenericTileAMTurret extends GenericTile {
 		radar = fire;
 	    }
 	}
-	hasTarget = radar != null && radar.tracking != null && !radar.tracking.hasExploded();
+	TileFireControlRadar radar = this.radar;
+	VirtualMissile tracking = radar == null ? null : radar.tracking;
 
+	hasTarget = false;
 	canFire = false;
 
 	double distanceToTarget = 0;
 
-	if (hasTarget) {
+	if (tracking == null || tracking.hasExploded()) {
+	    desiredRotation.setValue(getDefaultOrientation());
+	} else {
+	    hasTarget = true;
 
-	    float trackingSpeed = 0F;// radar.tracking.speed;
-	    Vec3 trackingVector = radar.tracking.deltaMovement;
+	    float trackingSpeed = 0F; // tracking.speed
+	    Vec3 trackingVector = tracking.deltaMovement;
 
-	    double timeToIntercept = TileFireControlRadar.getTimeToIntercept(radar.tracking.position, trackingVector,
+	    double timeToIntercept = TileFireControlRadar.getTimeToIntercept(tracking.position, trackingVector,
 		    trackingSpeed, getProjectileSpeed(), getProjectileLaunchPosition());
 
 	    if (timeToIntercept >= 0) {
-
-		Vec3 interceptPos = radar.tracking.position
-			.add(trackingVector.scale(trackingSpeed).scale(timeToIntercept));
-
+		Vec3 interceptPos = tracking.position.add(trackingVector.scale(trackingSpeed).scale(timeToIntercept));
 		Vec3 launchPos = getProjectileLaunchPosition();
 
 		double deltaX = interceptPos.x - launchPos.x;
 		double deltaY = interceptPos.y - launchPos.y;
 		double deltaZ = interceptPos.z - launchPos.z;
+		double magXZ = Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
 
-		double sumXZ = deltaX * deltaX + deltaZ * deltaZ;
-
-		double magXZ = Math.sqrt(sumXZ);
-
-		if (magXZ <= 0) {
+		if (magXZ <= 0)
 		    magXZ = 1;
-		}
 
 		double thetaY = Math.atan(deltaY / magXZ);
 
 		targetMovement.setValue(new Vec3(deltaX, deltaY, deltaZ).normalize());
-
 		desiredRotation.setValue(new Vec3(deltaX / magXZ, Math.sin(thetaY), deltaZ / magXZ));
 
 		distanceToTarget = TileFireControlRadar.getDistanceToMissile(launchPos, interceptPos);
-
 	    }
-
-	} else {
-	    desiredRotation.setValue(getDefaultOrientation());
 	}
 
 	if (turretRotation.getValue().equals(desiredRotation.getValue())) {
@@ -157,7 +151,7 @@ public abstract class GenericTileAMTurret extends GenericTile {
 
 	    // thetaCurrXZ = getXZAngleRadians(turretRotation.getValue());
 
-	    if ((angleDifXZ >= 0 && thetaCurrXZ > thetaDesiredXZ) || (angleDifXZ < 0 && thetaCurrXZ < thetaDesiredXZ)) {
+	    if ((angleDifXZ >= 0 ? thetaCurrXZ > thetaDesiredXZ : thetaCurrXZ < thetaDesiredXZ)) {
 
 		turretRotation.setValue(new Vec3(desiredRotation.getValue().x, turretRotation.getValue().y,
 			desiredRotation.getValue().z));

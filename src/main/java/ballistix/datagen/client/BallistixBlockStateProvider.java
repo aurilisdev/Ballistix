@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
+import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import voltaic.Voltaic;
 import voltaic.datagen.utils.client.BaseBlockstateProvider;
@@ -185,10 +186,13 @@ public class BallistixBlockStateProvider extends BaseBlockstateProvider {
 	horrRotatedBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.railgunturret),
 		existingBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.railgunturret)),
 		false);
-	simpleBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.vls),
-		existingBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.vls)), true)
-		.transforms().transform(ItemDisplayContext.GUI).rotation(30, 225, 0).translation(0, -2.8F, 0)
-		.scale(0.4F).end();
+	ItemModelBuilder block = simpleBlock(
+		BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.vls),
+		existingBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.vls)), true);
+	if (block != null) {
+	    block.transforms().transform(ItemDisplayContext.GUI).rotation(30, 225, 0).translation(0, -2.8F, 0)
+		    .scale(0.4F).end();
+	}
 	horrRotatedLitBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.airraidsiren),
 		existingBlock(BallistixBlocks.BLOCKS_BALLISTIXMACHINE.getValue(SubtypeBallistixMachine.airraidsiren)),
 		existingBlock(blockLoc("airraidsirenon")), 90, 0, true);

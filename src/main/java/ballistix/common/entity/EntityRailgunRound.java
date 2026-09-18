@@ -61,7 +61,7 @@ public class EntityRailgunRound extends Entity {
 
 	    VirtualProjectile.VirtualRailgunRound railgunround = MissileManager.getRailgunRound(level.dimension(), id);
 
-	    if ((railgunround == null) || railgunround.hasExploded()) {
+	    if (railgunround == null || railgunround.hasExploded()) {
 		removeAfterChangingDimensions();
 		return;
 	    }

@@ -40,7 +40,7 @@ public class EntityExplosive extends Entity implements IDefusable, TraceableEnti
 
     public void setOwner(@Nullable Entity cachedOwner) {
 	if (cachedOwner != null) {
-	    this.ownerUUID = cachedOwner.getUUID();
+	    ownerUUID = cachedOwner.getUUID();
 	    this.cachedOwner = cachedOwner;
 	}
     }
@@ -48,18 +48,20 @@ public class EntityExplosive extends Entity implements IDefusable, TraceableEnti
     @Nullable
     @Override
     public Entity getOwner() {
-	if (this.cachedOwner != null && !this.cachedOwner.isRemoved()) {
-	    return this.cachedOwner;
-	} else if (this.ownerUUID != null && this.level() instanceof ServerLevel serverlevel) {
-	    this.cachedOwner = serverlevel.getEntity(this.ownerUUID);
-	    return this.cachedOwner;
-	} else {
-	    return null;
+	Entity pCachedOwner = cachedOwner;
+	if (pCachedOwner != null && !pCachedOwner.isRemoved()) {
+	    return pCachedOwner;
 	}
+	UUID pOwnerUUID = ownerUUID;
+	if (pOwnerUUID != null && level() instanceof ServerLevel serverlevel) {
+	    pCachedOwner = cachedOwner = serverlevel.getEntity(pOwnerUUID);
+	    return pCachedOwner;
+	}
+	return null;
     }
 
     protected boolean ownedBy(Entity entity) {
-	return entity.getUUID().equals(this.ownerUUID);
+	return entity.getUUID().equals(ownerUUID);
     }
 
     public EntityExplosive(EntityType<? extends EntityExplosive> type, Level worldIn) {
@@ -75,7 +77,7 @@ public class EntityExplosive extends Entity implements IDefusable, TraceableEnti
 	xo = x;
 	yo = y;
 	zo = z;
-	this.setOwner(owner);
+	setOwner(owner);
     }
 
     @Override
@@ -177,8 +179,9 @@ public class EntityExplosive extends Entity implements IDefusable, TraceableEnti
     @Override
     protected void addAdditionalSaveData(CompoundTag compound) {
 	compound.putInt("Fuse", fuse);
-	if (this.ownerUUID != null) {
-	    compound.putUUID("Owner", this.ownerUUID);
+	UUID pOwnerUUID = ownerUUID;
+	if (pOwnerUUID != null) {
+	    compound.putUUID("Owner", pOwnerUUID);
 	}
 	ResourceLocation.CODEC.encodeStart(NbtOps.INSTANCE, blastId).ifSuccess(tag -> compound.put("type", tag));
     }
@@ -187,8 +190,8 @@ public class EntityExplosive extends Entity implements IDefusable, TraceableEnti
     protected void readAdditionalSaveData(CompoundTag compound) {
 	fuse = compound.getInt("Fuse");
 	if (compound.hasUUID("Owner")) {
-	    this.ownerUUID = compound.getUUID("Owner");
-	    this.cachedOwner = null;
+	    ownerUUID = compound.getUUID("Owner");
+	    cachedOwner = null;
 	}
 	ResourceLocation.CODEC.decode(NbtOps.INSTANCE, compound.get("type"))
 		.ifSuccess(pair -> blastId = pair.getFirst());

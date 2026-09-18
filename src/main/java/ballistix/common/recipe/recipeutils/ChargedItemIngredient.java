@@ -3,6 +3,8 @@ package ballistix.common.recipe.recipeutils;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
+import javax.annotation.Nullable;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -89,7 +91,7 @@ public class ChargedItemIngredient implements ICustomIngredient {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
 	if (obj instanceof ChargedItemIngredient other) {
 	    return other.isStrict == isStrict && other.ingredient.equals(ingredient) && other.charge.equals(charge);
 	}

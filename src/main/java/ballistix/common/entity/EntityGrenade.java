@@ -36,7 +36,7 @@ public class EntityGrenade extends ThrowableProjectile implements IDefusable {
 
     public EntityGrenade(Level worldIn, @Nullable LivingEntity owner) {
 	this(BallistixEntities.ENTITY_GRENADE.get(), worldIn);
-	this.setOwner(owner);
+	setOwner(owner);
     }
 
     public void setExplosiveType(IBlast explosive) {

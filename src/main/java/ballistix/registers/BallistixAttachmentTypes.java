@@ -4,10 +4,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.Dynamic;
 
 import ballistix.Ballistix;
 import ballistix.api.missile.virtual.VirtualMissile;
@@ -17,6 +19,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.attachment.AttachmentType;
@@ -28,470 +31,166 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 public class BallistixAttachmentTypes {
 
+    private static final String SIZE = "size";
+    private static final String FREQUENCY = "freq";
+    private static final String SET_SIZE = "setsize";
+    private static final String POSITION = "pos";
+    private static final String DIMENSION = "key";
+    private static final Codec<ResourceKey<Level>> LEVEL_CODEC = ResourceKey.codec(Registries.DIMENSION);
+
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister
 	    .create(NeoForgeRegistries.ATTACHMENT_TYPES, Ballistix.ID);
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<HashMap<Integer, HashSet<BlockPos>>>> SILO_FREQUENCIES = ATTACHMENT_TYPES
-	    .register("silofrequencies", () -> AttachmentType.builder(() -> new HashMap<Integer, HashSet<BlockPos>>())
-		    .serialize(new IAttachmentSerializer<CompoundTag, HashMap<Integer, HashSet<BlockPos>>>() {
-			@Override
-			public HashMap<Integer, HashSet<BlockPos>> read(IAttachmentHolder holder, CompoundTag tag,
-				HolderLookup.Provider provider) {
-			    HashMap<Integer, HashSet<BlockPos>> data = new HashMap<>();
+	    .register("silofrequencies",
+		    () -> AttachmentType
+			    .<HashMap<Integer, HashSet<BlockPos>>>builder(BallistixAttachmentTypes::newHashMap)
+			    .serialize(new IAttachmentSerializer<CompoundTag, HashMap<Integer, HashSet<BlockPos>>>() {
+				@Override
+				public HashMap<Integer, HashSet<BlockPos>> read(IAttachmentHolder holder,
+					CompoundTag tag, HolderLookup.Provider provider) {
+				    HashMap<Integer, HashSet<BlockPos>> data = newHashMap();
+				    int size = tag.getInt(SIZE);
 
-			    int size = tag.getInt("size");
-			    for (int i = 0; i < size; i++) {
+				    for (int i = 0; i < size; i++) {
+					CompoundTag stored = tag.getCompound(Integer.toString(i));
+					int frequency = stored.getInt(FREQUENCY);
+					HashSet<BlockPos> tiles = new HashSet<>();
+					int setSize = stored.getInt(SET_SIZE);
 
-				CompoundTag stored = tag.getCompound("" + i);
+					for (int j = 0; j < setSize; j++) {
+					    tiles.add(decode(BlockPos.CODEC, getRequired(stored, POSITION + j)));
+					}
 
-				int freq = stored.getInt("freq");
+					data.put(frequency, tiles);
+				    }
 
-				int setSize = stored.getInt("setsize");
-
-				HashSet<BlockPos> tiles = new HashSet<>();
-
-				for (int j = 0; j < setSize; j++) {
-				    BlockPos.CODEC.decode(NbtOps.INSTANCE, stored.get("pos" + j))
-					    .ifSuccess(pair -> tiles.add(pair.getFirst()));
+				    return data;
 				}
 
-				data.put(freq, tiles);
-			    }
+				@Override
+				public @Nullable CompoundTag write(HashMap<Integer, HashSet<BlockPos>> attachment,
+					HolderLookup.Provider provider) {
+				    CompoundTag data = new CompoundTag();
+				    data.putInt(SIZE, attachment.size());
 
-			    return data;
-			}
+				    int i = 0;
+				    for (Map.Entry<Integer, HashSet<BlockPos>> entry : attachment.entrySet()) {
+					CompoundTag stored = new CompoundTag();
+					stored.putInt(FREQUENCY, entry.getKey());
+					stored.putInt(SET_SIZE, entry.getValue().size());
 
-			@Override
-			public @Nullable CompoundTag write(HashMap<Integer, HashSet<BlockPos>> attachment,
-				HolderLookup.Provider provider) {
-			    CompoundTag data = new CompoundTag();
-			    int size = attachment.size();
-			    data.putInt("size", size);
-			    int i = 0;
-			    for (Map.Entry<Integer, HashSet<BlockPos>> entry : attachment.entrySet()) {
+					int j = 0;
+					for (BlockPos pos : entry.getValue()) {
+					    stored.put(POSITION + j++, encode(BlockPos.CODEC, pos));
+					}
 
-				CompoundTag store = new CompoundTag();
+					data.put(Integer.toString(i++), stored);
+				    }
 
-				store.putInt("freq", entry.getKey());
-
-				HashSet<BlockPos> tiles = entry.getValue();
-
-				store.putInt("setsize", tiles.size());
-
-				int j = 0;
-
-				for (BlockPos pos : tiles) {
-				    final int index = j;
-
-				    BlockPos.CODEC.encodeStart(NbtOps.INSTANCE, pos)
-					    .ifSuccess(tag -> store.put("pos" + index, tag));
-				    j++;
-
+				    return data;
 				}
-
-				data.put(i + "", store);
-
-				i++;
-			    }
-			    return data;
-			}
-		    }).build());
+			    }).build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>>>> ACTIVE_MISSILES = ATTACHMENT_TYPES
-	    .register("activemissiles", () -> AttachmentType
-		    .builder(() -> new HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>>()).serialize(
-			    new IAttachmentSerializer<CompoundTag, HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>>>() {
-
-				private static final Codec<ResourceKey<Level>> CODEC = ResourceKey
-					.codec(Registries.DIMENSION);
-
-				@Override
-				public HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> read(
-					IAttachmentHolder holder, CompoundTag tag, HolderLookup.Provider provider) {
-				    HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> data = new HashMap<>();
-
-				    int size = tag.getInt("size");
-
-				    for (int i = 0; i < size; i++) {
-
-					CompoundTag stored = tag.getCompound("" + i);
-
-					if (!stored.contains("key")) {
-					    continue;
-					}
-
-					ResourceKey<Level> key = CODEC.decode(NbtOps.INSTANCE, stored.get("key"))
-						.getOrThrow().getFirst();
-
-					HashMap<UUID, VirtualMissile> active = new HashMap<>();
-
-					int activeSize = stored.getInt("size");
-
-					for (int j = 0; j < activeSize; j++) {
-
-					    VirtualMissile virtual = VirtualMissile.CODEC
-						    .decode(NbtOps.INSTANCE, stored.getCompound("" + j)).getOrThrow()
-						    .getFirst();
-
-					    active.put(virtual.getId(), virtual);
-					}
-
-					data.put(key, active);
-
-				    }
-
-				    return data;
-				}
-
-				@Override
-				public @Nullable CompoundTag write(
-					HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> attachment,
-					HolderLookup.Provider provider) {
-
-				    CompoundTag data = new CompoundTag();
-
-				    data.putInt("size", attachment.size());
-
-				    int i = 0;
-
-				    for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualMissile>> entry : attachment
-					    .entrySet()) {
-
-					if (entry.getValue().size() <= 0) {
-					    continue;
-					}
-
-					CompoundTag stored = new CompoundTag();
-
-					CODEC.encodeStart(NbtOps.INSTANCE, entry.getKey())
-						.ifSuccess(tag -> stored.put("key", tag));
-
-					int activeSize = entry.getValue().size();
-
-					stored.putInt("size", activeSize);
-
-					int j = 0;
-
-					for (VirtualMissile missile : entry.getValue().values()) {
-
-					    final int index = j;
-
-					    VirtualMissile.CODEC.encodeStart(NbtOps.INSTANCE, missile)
-						    .ifSuccess(tag -> stored.put("" + index, tag));
-
-					    j++;
-
-					}
-
-					data.put("" + i, stored);
-
-					i++;
-
-				    }
-
-				    return data;
-				}
-
-			    })
-		    .build());
+	    .register("activemissiles",
+		    () -> AttachmentType
+			    .<HashMap<ResourceKey<Level>, HashMap<UUID, VirtualMissile>>>builder(
+				    BallistixAttachmentTypes::newHashMap)
+			    .serialize(virtualMapSerializer(VirtualMissile.CODEC, VirtualMissile::getId)).build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>>>> ACTIVE_BULLETS = ATTACHMENT_TYPES
-	    .register("activebullets", () -> AttachmentType
-		    .builder(() -> new HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>>())
-		    .serialize(
-			    new IAttachmentSerializer<CompoundTag, HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>>>() {
-
-				private static final Codec<ResourceKey<Level>> CODEC = ResourceKey
-					.codec(Registries.DIMENSION);
-
-				@Override
-				public HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>> read(
-					IAttachmentHolder holder, CompoundTag tag, HolderLookup.Provider provider) {
-				    HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>> data = new HashMap<>();
-
-				    int size = tag.getInt("size");
-
-				    for (int i = 0; i < size; i++) {
-
-					CompoundTag stored = tag.getCompound("" + i);
-
-					if (!stored.contains("key")) {
-					    continue;
-					}
-
-					ResourceKey<Level> key = CODEC.decode(NbtOps.INSTANCE, stored.get("key"))
-						.getOrThrow().getFirst();
-
-					HashMap<UUID, VirtualProjectile.VirtualBullet> active = new HashMap<>();
-
-					int activeSize = stored.getInt("size");
-
-					for (int j = 0; j < activeSize; j++) {
-
-					    VirtualProjectile.VirtualBullet virtual = VirtualProjectile.VirtualBullet.CODEC
-						    .decode(NbtOps.INSTANCE, stored.getCompound("" + j)).getOrThrow()
-						    .getFirst();
-
-					    active.put(virtual.id, virtual);
-					}
-
-					data.put(key, active);
-
-				    }
-
-				    return data;
-				}
-
-				@Override
-				public @Nullable CompoundTag write(
-					HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>> attachment,
-					HolderLookup.Provider provider) {
-
-				    CompoundTag data = new CompoundTag();
-
-				    data.putInt("size", attachment.size());
-
-				    int i = 0;
-
-				    for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>> entry : attachment
-					    .entrySet()) {
-
-					if (entry.getValue().size() <= 0) {
-					    continue;
-					}
-
-					CompoundTag stored = new CompoundTag();
-
-					CODEC.encodeStart(NbtOps.INSTANCE, entry.getKey())
-						.ifSuccess(tag -> stored.put("key", tag));
-
-					int activeSize = entry.getValue().size();
-
-					stored.putInt("size", activeSize);
-
-					int j = 0;
-
-					for (VirtualProjectile.VirtualBullet missile : entry.getValue().values()) {
-
-					    final int index = j;
-
-					    VirtualProjectile.VirtualBullet.CODEC.encodeStart(NbtOps.INSTANCE, missile)
-						    .ifSuccess(tag -> stored.put("" + index, tag));
-
-					    j++;
-
-					}
-
-					data.put("" + i, stored);
-
-					i++;
-
-				    }
-
-				    return data;
-				}
-
-			    })
-		    .build());
+	    .register("activebullets",
+		    () -> AttachmentType.<HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualBullet>>>builder(
+			    BallistixAttachmentTypes::newHashMap)
+			    .serialize(virtualMapSerializer(VirtualProjectile.VirtualBullet.CODEC, bullet -> bullet.id))
+			    .build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>>>> ACTIVE_RAILGUNROUNDS = ATTACHMENT_TYPES
-	    .register("activerailgunrounds", () -> AttachmentType.builder(
-		    () -> new HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>>())
-		    .serialize(
-			    new IAttachmentSerializer<CompoundTag, HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>>>() {
-
-				private static final Codec<ResourceKey<Level>> CODEC = ResourceKey
-					.codec(Registries.DIMENSION);
-
-				@Override
-				public HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> read(
-					IAttachmentHolder holder, CompoundTag tag, HolderLookup.Provider provider) {
-				    HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> data = new HashMap<>();
-
-				    int size = tag.getInt("size");
-
-				    for (int i = 0; i < size; i++) {
-
-					CompoundTag stored = tag.getCompound("" + i);
-
-					if (!stored.contains("key")) {
-					    continue;
-					}
-
-					ResourceKey<Level> key = CODEC.decode(NbtOps.INSTANCE, stored.get("key"))
-						.getOrThrow().getFirst();
-
-					HashMap<UUID, VirtualProjectile.VirtualRailgunRound> active = new HashMap<>();
-
-					int activeSize = stored.getInt("size");
-
-					for (int j = 0; j < activeSize; j++) {
-
-					    VirtualProjectile.VirtualRailgunRound virtual = VirtualProjectile.VirtualRailgunRound.CODEC
-						    .decode(NbtOps.INSTANCE, stored.getCompound("" + j)).getOrThrow()
-						    .getFirst();
-
-					    active.put(virtual.id, virtual);
-					}
-
-					data.put(key, active);
-
-				    }
-
-				    return data;
-				}
-
-				@Override
-				public @Nullable CompoundTag write(
-					HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> attachment,
-					HolderLookup.Provider provider) {
-
-				    CompoundTag data = new CompoundTag();
-
-				    data.putInt("size", attachment.size());
-
-				    int i = 0;
-
-				    for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>> entry : attachment
-					    .entrySet()) {
-
-					if (entry.getValue().size() <= 0) {
-					    continue;
-					}
-
-					CompoundTag stored = new CompoundTag();
-
-					CODEC.encodeStart(NbtOps.INSTANCE, entry.getKey())
-						.ifSuccess(tag -> stored.put("key", tag));
-
-					int activeSize = entry.getValue().size();
-
-					stored.putInt("size", activeSize);
-
-					int j = 0;
-
-					for (VirtualProjectile.VirtualRailgunRound missile : entry.getValue()
-						.values()) {
-
-					    final int index = j;
-
-					    VirtualProjectile.VirtualRailgunRound.CODEC
-						    .encodeStart(NbtOps.INSTANCE, missile)
-						    .ifSuccess(tag -> stored.put("" + index, tag));
-
-					    j++;
-
-					}
-
-					data.put("" + i, stored);
-
-					i++;
-
-				    }
-
-				    return data;
-				}
-
-			    })
-		    .build());
+	    .register("activerailgunrounds",
+		    () -> AttachmentType.<HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualRailgunRound>>>builder(
+			    BallistixAttachmentTypes::newHashMap)
+			    .serialize(virtualMapSerializer(VirtualProjectile.VirtualRailgunRound.CODEC,
+				    round -> round.id))
+			    .build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>>>> ACTIVE_SAMS = ATTACHMENT_TYPES
-	    .register("activesams", () -> AttachmentType
-		    .builder(() -> new HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>>())
-		    .serialize(
-			    new IAttachmentSerializer<CompoundTag, HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>>>() {
+	    .register("activesams",
+		    () -> AttachmentType.<HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>>>builder(
+			    BallistixAttachmentTypes::newHashMap)
+			    .serialize(virtualMapSerializer(VirtualProjectile.VirtualSAM.CODEC, sam -> sam.id))
+			    .build());
 
-				private static final Codec<ResourceKey<Level>> CODEC = ResourceKey
-					.codec(Registries.DIMENSION);
+    private static <T> IAttachmentSerializer<CompoundTag, HashMap<ResourceKey<Level>, HashMap<UUID, T>>> virtualMapSerializer(
+	    Codec<T> codec, Function<T, UUID> idGetter) {
+	return new IAttachmentSerializer<CompoundTag, HashMap<ResourceKey<Level>, HashMap<UUID, T>>>() {
+	    @Override
+	    public HashMap<ResourceKey<Level>, HashMap<UUID, T>> read(IAttachmentHolder holder, CompoundTag tag,
+		    HolderLookup.Provider provider) {
+		HashMap<ResourceKey<Level>, HashMap<UUID, T>> data = newHashMap();
+		int size = tag.getInt(SIZE);
 
-				@Override
-				public HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>> read(
-					IAttachmentHolder holder, CompoundTag tag, HolderLookup.Provider provider) {
-				    HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>> data = new HashMap<>();
+		for (int i = 0; i < size; i++) {
+		    CompoundTag stored = tag.getCompound(Integer.toString(i));
+		    ResourceKey<Level> dimension = decode(LEVEL_CODEC, getRequired(stored, DIMENSION));
+		    HashMap<UUID, T> active = newHashMap();
+		    int activeSize = stored.getInt(SIZE);
 
-				    int size = tag.getInt("size");
+		    for (int j = 0; j < activeSize; j++) {
+			T virtual = decode(codec, getRequired(stored, Integer.toString(j)));
+			active.put(idGetter.apply(virtual), virtual);
+		    }
 
-				    for (int i = 0; i < size; i++) {
+		    data.put(dimension, active);
+		}
 
-					CompoundTag stored = tag.getCompound("" + i);
+		return data;
+	    }
 
-					if (!stored.contains("key")) {
-					    continue;
-					}
+	    @Override
+	    public @Nullable CompoundTag write(HashMap<ResourceKey<Level>, HashMap<UUID, T>> attachment,
+		    HolderLookup.Provider provider) {
+		CompoundTag data = new CompoundTag();
+		data.putInt(SIZE, attachment.size());
 
-					ResourceKey<Level> key = CODEC.decode(NbtOps.INSTANCE, stored.get("key"))
-						.getOrThrow().getFirst();
+		int i = 0;
+		for (Map.Entry<ResourceKey<Level>, HashMap<UUID, T>> entry : attachment.entrySet()) {
+		    CompoundTag stored = new CompoundTag();
+		    stored.put(DIMENSION, encode(LEVEL_CODEC, entry.getKey()));
+		    stored.putInt(SIZE, entry.getValue().size());
 
-					HashMap<UUID, VirtualProjectile.VirtualSAM> active = new HashMap<>();
+		    int j = 0;
+		    for (T virtual : entry.getValue().values()) {
+			stored.put(Integer.toString(j++), encode(codec, virtual));
+		    }
 
-					int activeSize = stored.getInt("size");
+		    data.put(Integer.toString(i++), stored);
+		}
 
-					for (int j = 0; j < activeSize; j++) {
+		return data;
+	    }
+	};
+    }
 
-					    VirtualProjectile.VirtualSAM virtual = VirtualProjectile.VirtualSAM.CODEC
-						    .decode(NbtOps.INSTANCE, stored.getCompound("" + j)).getOrThrow()
-						    .getFirst();
+    private static <K, V> HashMap<K, V> newHashMap() {
+	return new HashMap<>();
+    }
 
-					    active.put(virtual.id, virtual);
-					}
+    private static Tag getRequired(CompoundTag tag, String key) {
+	Tag value = tag.get(key);
 
-					data.put(key, active);
+	if (value == null)
+	    throw new IllegalStateException("Missing attachment field: " + key);
 
-				    }
+	return value;
+    }
 
-				    return data;
-				}
+    private static <T> T decode(Codec<T> codec, Tag tag) {
+	return codec.parse(new Dynamic<>(NbtOps.INSTANCE, tag)).getOrThrow();
+    }
 
-				@Override
-				public @Nullable CompoundTag write(
-					HashMap<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>> attachment,
-					HolderLookup.Provider provider) {
-
-				    CompoundTag data = new CompoundTag();
-
-				    data.putInt("size", attachment.size());
-
-				    int i = 0;
-
-				    for (Map.Entry<ResourceKey<Level>, HashMap<UUID, VirtualProjectile.VirtualSAM>> entry : attachment
-					    .entrySet()) {
-
-					if (entry.getValue().size() <= 0) {
-					    continue;
-					}
-
-					CompoundTag stored = new CompoundTag();
-
-					CODEC.encodeStart(NbtOps.INSTANCE, entry.getKey())
-						.ifSuccess(tag -> stored.put("key", tag));
-
-					int activeSize = entry.getValue().size();
-
-					stored.putInt("size", activeSize);
-
-					int j = 0;
-
-					for (VirtualProjectile.VirtualSAM missile : entry.getValue().values()) {
-
-					    final int index = j;
-
-					    VirtualProjectile.VirtualSAM.CODEC.encodeStart(NbtOps.INSTANCE, missile)
-						    .ifSuccess(tag -> stored.put("" + index, tag));
-
-					    j++;
-
-					}
-
-					data.put("" + i, stored);
-
-					i++;
-
-				    }
-
-				    return data;
-				}
-
-			    })
-		    .build());
+    private static <T> Tag encode(Codec<T> codec, T value) {
+	return codec.encodeStart(NbtOps.INSTANCE, value).getOrThrow();
+    }
 
 }

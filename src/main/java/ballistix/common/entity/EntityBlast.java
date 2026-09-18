@@ -75,7 +75,7 @@ public class EntityBlast extends Entity implements TraceableEntity {
 
     public void setOwner(@Nullable Entity cachedOwner) {
 	if (cachedOwner != null) {
-	    this.ownerUUID = cachedOwner.getUUID();
+	    ownerUUID = cachedOwner.getUUID();
 	    this.cachedOwner = cachedOwner;
 	}
     }
@@ -83,25 +83,26 @@ public class EntityBlast extends Entity implements TraceableEntity {
     @Nullable
     @Override
     public Entity getOwner() {
-	if (this.cachedOwner != null && !this.cachedOwner.isRemoved()) {
-	    return this.cachedOwner;
-	} else if (this.ownerUUID != null && this.level() instanceof ServerLevel serverlevel) {
-	    this.cachedOwner = serverlevel.getEntity(this.ownerUUID);
-	    return this.cachedOwner;
-	} else {
-	    return null;
+	if (cachedOwner != null && !cachedOwner.isRemoved()) {
+	    return cachedOwner;
 	}
+	UUID ownerUUID = this.ownerUUID;
+	if (ownerUUID != null && level() instanceof ServerLevel serverlevel) {
+	    cachedOwner = serverlevel.getEntity(ownerUUID);
+	    return cachedOwner;
+	}
+	return null;
     }
 
     protected boolean ownedBy(Entity entity) {
-	return entity.getUUID().equals(this.ownerUUID);
+	return entity.getUUID().equals(ownerUUID);
     }
 
     @Override
     public void restoreFrom(Entity entity) {
 	super.restoreFrom(entity);
 	if (entity instanceof EntityBlast blastEntity) {
-	    this.cachedOwner = blastEntity.cachedOwner;
+	    cachedOwner = blastEntity.cachedOwner;
 	}
     }
 
@@ -131,9 +132,12 @@ public class EntityBlast extends Entity implements TraceableEntity {
 	blast = getBlastType().createBlast(level(), blockPosition(), getOwner(), this);
     }
 
-    @Nullable
-    public IBlast getBlastType() {
-	return blastId == null ? null : Blast.BLAST_MAP.get(blastId);
+    public @Nullable IBlast getIBlastType() {
+	return Blast.BLAST_MAP.get(blastId);
+    }
+
+    private IBlast getBlastType() {
+	return Blast.BLAST_MAP.get(blastId);
     }
 
     @Override
@@ -245,52 +249,50 @@ public class EntityBlast extends Entity implements TraceableEntity {
 
 			if (callcount == 0) {
 			    blast.preExplode();
-			} else {
-			    if (blast.explode(callcount)) {
-				blast.postExplode();
-				if (!level().isClientSide) {
-				    double dX = level().random.nextDouble() * (level().random.nextBoolean() ? 1 : -1);
-				    double dY = level().random.nextDouble() * (level().random.nextBoolean() ? 1 : -1);
-				    double dZ = level().random.nextDouble() * (level().random.nextBoolean() ? 1 : -1);
+			} else if (blast.explode(callcount)) {
+			    blast.postExplode();
+			    if (!level().isClientSide) {
+				double dX = level().random.nextDouble() * (level().random.nextBoolean() ? 1 : -1);
+				double dY = level().random.nextDouble() * (level().random.nextBoolean() ? 1 : -1);
+				double dZ = level().random.nextDouble() * (level().random.nextBoolean() ? 1 : -1);
 
-				    // Weights to keep it between min and max build heights
+				// Weights to keep it between min and max build heights
 
-				    int deltaHeight = level().getMaxBuildHeight() - level().getMinBuildHeight();
+				int deltaHeight = level().getMaxBuildHeight() - level().getMinBuildHeight();
 
-				    float fifths = deltaHeight / 5.0F;
+				float fifths = deltaHeight / 5.0F;
 
-				    // min weight
+				// min weight
 
-				    if (dY < 0 && getY() <= level().getMinBuildHeight() + fifths) {
+				if (dY < 0 && getY() <= level().getMinBuildHeight() + fifths) {
 
-					float relativeHeight = (float) (getY() - level().getMinBuildHeight());
-					float perc = 1.0F - relativeHeight / fifths;
+				    float relativeHeight = (float) (getY() - level().getMinBuildHeight());
+				    float perc = 1.0F - relativeHeight / fifths;
 
-					if (level().random.nextFloat() <= perc) {
-					    dY = Math.abs(dY);
-					}
-
+				    if (level().random.nextFloat() <= perc) {
+					dY = Math.abs(dY);
 				    }
-
-				    // max weight
-
-				    if (dY > 0 && getY() >= level().getMinBuildHeight() + fifths * 3) {
-
-					float relativeHeight = (float) (getY() - level().getMinBuildHeight());
-					float perc = relativeHeight / (fifths * 5);
-
-					if (level().random.nextFloat() <= perc) {
-					    dY = -dY;
-					}
-
-				    }
-
-				    setDeltaMovement(dX, dY, dZ);
 
 				}
-				moving = true;
-				persistanceTicks++;
+
+				// max weight
+
+				if (dY > 0 && getY() >= level().getMinBuildHeight() + fifths * 3) {
+
+				    float relativeHeight = (float) (getY() - level().getMinBuildHeight());
+				    float perc = relativeHeight / (fifths * 5);
+
+				    if (level().random.nextFloat() <= perc) {
+					dY = -dY;
+				    }
+
+				}
+
+				setDeltaMovement(dX, dY, dZ);
+
 			    }
+			    moving = true;
+			    persistanceTicks++;
 			}
 			callcount++;
 
@@ -300,19 +302,17 @@ public class EntityBlast extends Entity implements TraceableEntity {
 
 		    if (callcount == 0) {
 			blast.preExplode();
-		    } else {
-			if (blast.explode(callcount)) {
-			    blast.postExplode();
-			    hasMatured = true;
-			    ticksAtMaturity = tickCount;
-			    ticksPersisted = 0;
-			    ticksMoving = 0;
-			    callcount = 0;
-			    // unload the chunk at this point
-			    ChunkPos pos = level().getChunk(blockPosition()).getPos();
-			    ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level(), blockPosition(),
-				    pos.x, pos.z, false, true);
-			}
+		    } else if (blast.explode(callcount)) {
+			blast.postExplode();
+			hasMatured = true;
+			ticksAtMaturity = tickCount;
+			ticksPersisted = 0;
+			ticksMoving = 0;
+			callcount = 0;
+			// unload the chunk at this point
+			ChunkPos pos = level().getChunk(blockPosition()).getPos();
+			ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level(), blockPosition(), pos.x,
+				pos.z, false, true);
 		    }
 
 		    callcount++;
@@ -321,11 +321,9 @@ public class EntityBlast extends Entity implements TraceableEntity {
 	    } else {
 		if (callcount == 0) {
 		    blast.preExplode();
-		} else {
-		    if (blast.explode(callcount)) {
-			detonated = true;
-			blast.postExplode();
-		    }
+		} else if (blast.explode(callcount)) {
+		    detonated = true;
+		    blast.postExplode();
 		}
 
 		callcount++;
@@ -367,8 +365,8 @@ public class EntityBlast extends Entity implements TraceableEntity {
 	compound.putBoolean("moivng", moving);
 	compound.putBoolean("shouldpersist", shouldPersist);
 	compound.putBoolean("hasmatured", hasMatured);
-	if (this.ownerUUID != null) {
-	    compound.putUUID("Owner", this.ownerUUID);
+	if (ownerUUID != null) {
+	    compound.putUUID("Owner", ownerUUID);
 	}
 
     }
@@ -390,8 +388,8 @@ public class EntityBlast extends Entity implements TraceableEntity {
 	moving = compound.getBoolean("moving");
 	ticksMoving = compound.getInt("ticksmoving");
 	if (compound.hasUUID("Owner")) {
-	    this.ownerUUID = compound.getUUID("Owner");
-	    this.cachedOwner = null;
+	    ownerUUID = compound.getUUID("Owner");
+	    cachedOwner = null;
 	}
     }
 

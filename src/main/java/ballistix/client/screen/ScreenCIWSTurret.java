@@ -132,28 +132,29 @@ public class ScreenCIWSTurret extends ScreenPlayerWhitelistTurret<ContainerCIWST
 
 	}));
 
-	addComponent(statusLabel = new ScreenComponentSimpleLabel(10, 65, 10, Color.WHITE, () -> menu.getSafeHost().map(turret -> {
-	Component status = Component.empty();
+	addComponent(statusLabel = new ScreenComponentSimpleLabel(10, 65, 10, Color.WHITE,
+		() -> menu.getSafeHost().map(turret -> {
+		    Component status = Component.empty();
 
-	if (turret.hasNoPower.getValue()) {
-	    status = BallistixTextUtils.gui("turret.statusnopower").withStyle(ChatFormatting.RED);
-	} else if (turret.targetingEntity.getValue()
-		|| !turret.boundFireControl.getValue().equals(BlockEntityUtils.OUT_OF_REACH)) {
-	    if (!turret.hasTarget.getValue()) {
-		status = BallistixTextUtils.gui("turret.statusnotarget").withStyle(ChatFormatting.GREEN);
-	    } else if (!turret.inRange.getValue()) {
-		status = BallistixTextUtils.gui("turret.statusoutofrange").withStyle(ChatFormatting.YELLOW);
-	    } else if (turret.outOfAmmo.getValue()) {
-		status = BallistixTextUtils.gui("turret.statusnoammo").withStyle(ChatFormatting.RED);
-	    } else {
-		status = BallistixTextUtils.gui("turret.statusgood").withStyle(ChatFormatting.GREEN);
-	    }
-	} else {
-	    status = BallistixTextUtils.gui("turret.statusunlinked").withStyle(ChatFormatting.RED);
-	}
+		    if (turret.hasNoPower.getValue()) {
+			status = BallistixTextUtils.gui("turret.statusnopower").withStyle(ChatFormatting.RED);
+		    } else if (turret.targetingEntity.getValue()
+			    || !turret.boundFireControl.getValue().equals(BlockEntityUtils.OUT_OF_REACH)) {
+			if (!turret.hasTarget.getValue()) {
+			    status = BallistixTextUtils.gui("turret.statusnotarget").withStyle(ChatFormatting.GREEN);
+			} else if (!turret.inRange.getValue()) {
+			    status = BallistixTextUtils.gui("turret.statusoutofrange").withStyle(ChatFormatting.YELLOW);
+			} else if (turret.outOfAmmo.getValue()) {
+			    status = BallistixTextUtils.gui("turret.statusnoammo").withStyle(ChatFormatting.RED);
+			} else {
+			    status = BallistixTextUtils.gui("turret.statusgood").withStyle(ChatFormatting.GREEN);
+			}
+		    } else {
+			status = BallistixTextUtils.gui("turret.statusunlinked").withStyle(ChatFormatting.RED);
+		    }
 
-	return BallistixTextUtils.gui("turret.status", status).withStyle(ChatFormatting.BLACK);
-	}).orElse(Component.empty())));
+		    return BallistixTextUtils.gui("turret.status", status).withStyle(ChatFormatting.BLACK);
+		}).orElse(Component.empty())));
 
 	wrapperInventoryIO = new WrapperInventoryIO(this, -AbstractScreenComponentInfo.SIZE + 1,
 		AbstractScreenComponentInfo.SIZE * 2 + 2, 75, 92, 8, 82).hideAdditional(show -> {

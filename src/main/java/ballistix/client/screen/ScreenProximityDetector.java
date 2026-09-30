@@ -150,30 +150,30 @@ public class ScreenProximityDetector extends GenericScreen<ContainerProximityDet
 	    getMenu().getSafeHost()
 		    .ifPresent(detector -> { detector.usingWhitelist.setValue(!detector.usingWhitelist.getValue()); });
 	}).setLabel(() -> getMenu().getSafeHost()
-	    .map(detector -> detector.usingWhitelist.getValue()
-		    ? BallistixTextUtils.gui("radar.frequencywhitelist.enabled")
-		    : BallistixTextUtils.gui("radar.frequencywhitelist.disabled"))
-	    .orElseGet(() -> Component.empty())));
+		.map(detector -> detector.usingWhitelist.getValue()
+			? BallistixTextUtils.gui("radar.frequencywhitelist.enabled")
+			: BallistixTextUtils.gui("radar.frequencywhitelist.disabled"))
+		.orElseGet(() -> Component.empty())));
 
 	addComponent(toggleLabel = new ScreenComponentSimpleLabel(13, 151, 10, Color.TEXT_GRAY,
 		BallistixTextUtils.gui("proximitydetector.detectionfield")));
 	addComponent(toggleLines = new ScreenComponentButton<>(92, 145, 70, 20).setLabel(() -> menu.getSafeHost()
-	    .map(detector -> HandlerDetectorLines.containsLines(detector.getBlockPos())
-		    ? BallistixTextUtils.gui("proximitydetector.hidefield")
-		    : BallistixTextUtils.gui("proximitydetector.showfield"))
-	    .orElseGet(() -> Component.empty())).setOnPress(button -> {
-	    menu.getSafeHost().ifPresent(detector -> {
-		BlockPos pos = detector.getBlockPos();
-		if (HandlerDetectorLines.containsLines(pos)) {
-		    HandlerDetectorLines.removeLines(pos);
-		} else {
-		    AABB box = AABB.encapsulatingFullBlocks(
-			    detector.getBlockPos().offset(detector.minCorner.getValue().multiply(-1)),
-			    detector.getBlockPos().offset(detector.maxCorner.getValue()));
-		    HandlerDetectorLines.addLines(detector.getBlockPos(), box);
-		}
-	    });
-	}));
+		.map(detector -> HandlerDetectorLines.containsLines(detector.getBlockPos())
+			? BallistixTextUtils.gui("proximitydetector.hidefield")
+			: BallistixTextUtils.gui("proximitydetector.showfield"))
+		.orElseGet(() -> Component.empty())).setOnPress(button -> {
+		    menu.getSafeHost().ifPresent(detector -> {
+			BlockPos pos = detector.getBlockPos();
+			if (HandlerDetectorLines.containsLines(pos)) {
+			    HandlerDetectorLines.removeLines(pos);
+			} else {
+			    AABB box = AABB.encapsulatingFullBlocks(
+				    detector.getBlockPos().offset(detector.minCorner.getValue().multiply(-1)),
+				    detector.getBlockPos().offset(detector.maxCorner.getValue()));
+			    HandlerDetectorLines.addLines(detector.getBlockPos(), box);
+			}
+		    });
+		}));
 
     }
 

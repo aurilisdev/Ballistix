@@ -50,14 +50,13 @@ public class ScreenESMTower extends GenericScreen<ContainerESMTower> {
 		    return info;
 		}, -AbstractScreenComponentInfo.SIZE + 1, AbstractScreenComponentInfo.SIZE + 2));
 
-	addComponent(new ScreenComponentSimpleLabel(25, 18, 10, Color.TEXT_GRAY, () -> menu.getSafeHost()
-	    .map(tower -> tower.active.getValue()
-		    ? tower.searchRadarDetected.getValue()
-			    ? BallistixTextUtils.gui("esmtower.searchradardetected")
-				    .withStyle(ChatFormatting.GREEN)
-			    : BallistixTextUtils.gui("esmtower.nosearchradars").withStyle(ChatFormatting.RED)
-		    : BallistixTextUtils.gui("esmtower.nosearchradars").withStyle(ChatFormatting.RED))
-	    .orElseGet(() -> Component.empty())));
+	addComponent(new ScreenComponentSimpleLabel(25, 18, 10, Color.TEXT_GRAY,
+		() -> menu.getSafeHost()
+			.map(tower -> tower.active.getValue() ? tower.searchRadarDetected.getValue()
+				? BallistixTextUtils.gui("esmtower.searchradardetected").withStyle(ChatFormatting.GREEN)
+				: BallistixTextUtils.gui("esmtower.nosearchradars").withStyle(ChatFormatting.RED)
+				: BallistixTextUtils.gui("esmtower.nosearchradars").withStyle(ChatFormatting.RED))
+			.orElseGet(() -> Component.empty())));
 
 	wrapper = new WrapperESMTowerDetections(this, 0, 0);
 

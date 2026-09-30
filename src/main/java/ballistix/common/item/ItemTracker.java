@@ -57,7 +57,8 @@ public class ItemTracker extends ItemElectric {
     @Override
     public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
 
-	if (!(context.getLevel() instanceof ServerLevel serverLevel) || !stack.has(BallistixDataComponentTypes.TRACKER_UUID)
+	if (!(context.getLevel() instanceof ServerLevel serverLevel)
+		|| !stack.has(BallistixDataComponentTypes.TRACKER_UUID)
 		|| !stack.has(BallistixDataComponentTypes.TRACKER_TARGET)) {
 	    return super.onItemUseFirst(stack, context);
 	}
@@ -127,7 +128,8 @@ public class ItemTracker extends ItemElectric {
 
 	super.inventoryTick(stack, level, holder, slot, selected);
 
-	if (!(level instanceof ServerLevel serverLevel) || !(holder instanceof Player) || !stack.has(BallistixDataComponentTypes.TRACKER_UUID)) {
+	if (!(level instanceof ServerLevel serverLevel) || !(holder instanceof Player)
+		|| !stack.has(BallistixDataComponentTypes.TRACKER_UUID)) {
 	    return;
 	}
 

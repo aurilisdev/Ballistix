@@ -138,35 +138,36 @@ public class ScreenLaserTurret extends ScreenPlayerWhitelistTurret<ContainerLase
 
 	}));
 
-	addComponent(statusLabel = new ScreenComponentSimpleLabel(10, 65, 10, Color.WHITE, () -> menu.getSafeHost().map(turret -> {
-	Component status = Component.empty();
+	addComponent(statusLabel = new ScreenComponentSimpleLabel(10, 65, 10, Color.WHITE,
+		() -> menu.getSafeHost().map(turret -> {
+		    Component status = Component.empty();
 
-	if (turret.hasNoPower.getValue()) {
-	    status = BallistixTextUtils.gui("turret.statusnopower").withStyle(ChatFormatting.RED);
-	} else if (turret.targetingEntity.getValue()
-		|| !turret.boundFireControl.getValue().equals(BlockEntityUtils.OUT_OF_REACH)) {
-	    if (!turret.hasTarget.getValue()) {
-		status = BallistixTextUtils.gui("turret.statusnotarget").withStyle(ChatFormatting.GREEN);
-	    } else if (!turret.inRange.getValue()) {
-		status = BallistixTextUtils.gui("turret.statusoutofrange").withStyle(ChatFormatting.YELLOW);
-	    } else if (turret.overheated.getValue()) {
-		status = BallistixTextUtils.gui("turret.statusoverheated").withStyle(ChatFormatting.RED);
-	    } else {
-		status = BallistixTextUtils.gui("turret.statusgood").withStyle(ChatFormatting.GREEN);
-	    }
-	} else {
-	    status = BallistixTextUtils.gui("turret.statusunlinked").withStyle(ChatFormatting.RED);
-	}
+		    if (turret.hasNoPower.getValue()) {
+			status = BallistixTextUtils.gui("turret.statusnopower").withStyle(ChatFormatting.RED);
+		    } else if (turret.targetingEntity.getValue()
+			    || !turret.boundFireControl.getValue().equals(BlockEntityUtils.OUT_OF_REACH)) {
+			if (!turret.hasTarget.getValue()) {
+			    status = BallistixTextUtils.gui("turret.statusnotarget").withStyle(ChatFormatting.GREEN);
+			} else if (!turret.inRange.getValue()) {
+			    status = BallistixTextUtils.gui("turret.statusoutofrange").withStyle(ChatFormatting.YELLOW);
+			} else if (turret.overheated.getValue()) {
+			    status = BallistixTextUtils.gui("turret.statusoverheated").withStyle(ChatFormatting.RED);
+			} else {
+			    status = BallistixTextUtils.gui("turret.statusgood").withStyle(ChatFormatting.GREEN);
+			}
+		    } else {
+			status = BallistixTextUtils.gui("turret.statusunlinked").withStyle(ChatFormatting.RED);
+		    }
 
-	return BallistixTextUtils.gui("turret.status", status).withStyle(ChatFormatting.BLACK);
-	}).orElse(Component.empty())));
+		    return BallistixTextUtils.gui("turret.status", status).withStyle(ChatFormatting.BLACK);
+		}).orElse(Component.empty())));
 
-	addComponent(tempLabel = new ScreenComponentSimpleLabel(10, 20, 10, Color.BLACK, () -> menu.getSafeHost()
-	    .map(turret -> BallistixTextUtils.gui("turret.temperature",
-		    ChatFormatter
-			    .getChatDisplayShort(turret.heat.getValue() + 32, DisplayUnits.TEMPERATURE_CELCIUS)
-			    .withStyle(ChatFormatting.DARK_GRAY)))
-	    .orElse(Component.empty())));
+	addComponent(tempLabel = new ScreenComponentSimpleLabel(10, 20, 10, Color.BLACK, () -> menu
+		.getSafeHost().map(
+			turret -> BallistixTextUtils.gui("turret.temperature",
+				ChatFormatter.getChatDisplayShort(turret.heat.getValue() + 32,
+					DisplayUnits.TEMPERATURE_CELCIUS).withStyle(ChatFormatting.DARK_GRAY)))
+		.orElse(Component.empty())));
 
 	addComponent(heatBar = new ScreenComponentCustomRender(0, 0, graphics -> {
 

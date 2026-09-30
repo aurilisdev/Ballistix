@@ -31,7 +31,7 @@ public class BallistixCapabilities {
 	});
 
 	event.registerItem(Capabilities.EnergyStorage.ITEM,
-		(itemstack, context) -> Voltaic.isElectroLoaded() ? null
+		(itemstack, context) -> !Voltaic.isForgeEnergyEnabled() ? null
 			: new CapabilityForgeEnergyItem(itemstack, true, false),
 		BallistixItems.ITEM_DEFUSER.get(), BallistixItems.ITEM_LASERDESIGNATOR.get(),
 		BallistixItems.ITEM_RADARGUN.get(), BallistixItems.ITEM_SCANNER.get(),

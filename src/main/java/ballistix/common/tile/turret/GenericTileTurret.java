@@ -279,8 +279,8 @@ public abstract class GenericTileTurret extends GenericTile {
 
 	    double distSqr = entity.distanceToSqr(turretCenter);
 
-	    if (distSqr > rangeSqr || distSqr < minRangeSqr || !canRaycastTo(level, getProjectileLaunchPosition(), entity.position().add(0, entity.getEyeHeight(), 0),
-		    getBlockPos())) {
+	    if (distSqr > rangeSqr || distSqr < minRangeSqr || !canRaycastTo(level, getProjectileLaunchPosition(),
+		    entity.position().add(0, entity.getEyeHeight(), 0), getBlockPos())) {
 		continue;
 	    }
 

@@ -135,11 +135,7 @@ public class ItemTracker extends ItemElectric {
 
 	UUID targetUuid = stack.get(BallistixDataComponentTypes.TRACKER_UUID);
 
-	if (targetUuid == null) {
-	    return;
-	}
-
-	if (!isTrackerValid(stack, serverLevel)) {
+	if ((targetUuid == null) || !isTrackerValid(stack, serverLevel)) {
 	    return;
 	}
 

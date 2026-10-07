@@ -31,7 +31,7 @@ public class ScreenAirRaidSiren extends GenericScreen<ContainerAirRaidSiren> {
 	addComponent(new ScreenComponentSimpleLabel(19, 30, 10, Color.TEXT_GRAY,
 		BallistixTextUtils.gui("airraidsiren.volume")));
 	addComponent(new ScreenComponentSimpleLabel(144, 30, 10, Color.TEXT_GRAY, () -> getMenu().getSafeHost()
-		.map(siren -> Component.literal("" + siren.volume.getValue())).orElseGet(() -> Component.empty())));
+		.map(siren -> Component.literal("" + siren.volume.getValue())).orElseGet(Component::empty)));
 
 	addComponent(volumeSlider = new ScreenComponentHorizontalSlider(20, 40, 138).setClickConsumer(mouseX -> {
 	    ScreenComponentHorizontalSlider slider = volumeSlider;
@@ -89,7 +89,7 @@ public class ScreenAirRaidSiren extends GenericScreen<ContainerAirRaidSiren> {
 	addComponent(new ScreenComponentSimpleLabel(19, 70, 10, Color.TEXT_GRAY,
 		BallistixTextUtils.gui("airraidsiren.pitch")));
 	addComponent(new ScreenComponentSimpleLabel(144, 70, 10, Color.TEXT_GRAY, () -> getMenu().getSafeHost()
-		.map(siren -> Component.literal("" + siren.pitch.getValue())).orElseGet(() -> Component.empty())));
+		.map(siren -> Component.literal("" + siren.pitch.getValue())).orElseGet(Component::empty)));
 
 	addComponent(pitchSlider = new ScreenComponentHorizontalSlider(20, 80, 138).setClickConsumer(mouseX -> {
 	    ScreenComponentHorizontalSlider slider = pitchSlider;
@@ -152,7 +152,7 @@ public class ScreenAirRaidSiren extends GenericScreen<ContainerAirRaidSiren> {
 	addComponent(new ScreenComponentSimpleLabel(19, 110, 10, Color.TEXT_GRAY,
 		BallistixTextUtils.gui("airraidsiren.radius")));
 	addComponent(new ScreenComponentSimpleLabel(140, 110, 10, Color.TEXT_GRAY, () -> getMenu().getSafeHost()
-		.map(siren -> Component.literal("" + siren.range.getValue())).orElseGet(() -> Component.empty())));
+		.map(siren -> Component.literal("" + siren.range.getValue())).orElseGet(Component::empty)));
 
 	addComponent(rangeSlider = new ScreenComponentHorizontalSlider(20, 120, 138).setClickConsumer(mouseX -> {
 	    ScreenComponentHorizontalSlider slider = rangeSlider;

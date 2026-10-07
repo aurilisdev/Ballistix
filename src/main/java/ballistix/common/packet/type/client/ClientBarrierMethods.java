@@ -59,7 +59,7 @@ public class ClientBarrierMethods {
 
 	Player player = world.getPlayerByUUID(id);
 
-	if ((player == null) || player.isCreative()) {
+	if (player == null || player.isCreative()) {
 	    return;
 	}
 	player.push(0, player.getGravity() * BallistixConfig.INSTANCE.EXPLOSIVE_ANTIGRAVITY_GRAVITYFACTOR.get(), 0);

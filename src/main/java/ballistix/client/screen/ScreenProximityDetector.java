@@ -153,7 +153,7 @@ public class ScreenProximityDetector extends GenericScreen<ContainerProximityDet
 		.map(detector -> detector.usingWhitelist.getValue()
 			? BallistixTextUtils.gui("radar.frequencywhitelist.enabled")
 			: BallistixTextUtils.gui("radar.frequencywhitelist.disabled"))
-		.orElseGet(() -> Component.empty())));
+		.orElseGet(Component::empty)));
 
 	addComponent(toggleLabel = new ScreenComponentSimpleLabel(13, 151, 10, Color.TEXT_GRAY,
 		BallistixTextUtils.gui("proximitydetector.detectionfield")));
@@ -161,7 +161,7 @@ public class ScreenProximityDetector extends GenericScreen<ContainerProximityDet
 		.map(detector -> HandlerDetectorLines.containsLines(detector.getBlockPos())
 			? BallistixTextUtils.gui("proximitydetector.hidefield")
 			: BallistixTextUtils.gui("proximitydetector.showfield"))
-		.orElseGet(() -> Component.empty())).setOnPress(button -> {
+		.orElseGet(Component::empty)).setOnPress(button -> {
 		    menu.getSafeHost().ifPresent(detector -> {
 			BlockPos pos = detector.getBlockPos();
 			if (HandlerDetectorLines.containsLines(pos)) {

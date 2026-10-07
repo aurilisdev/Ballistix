@@ -166,8 +166,10 @@ public class TileVerticalLaunchSilo extends GenericTile
 
 	ChunkPos chunkPos = level.getChunk(worldPosition).getPos();
 
-	ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, worldPosition, chunkPos.x, chunkPos.z,
-		false, true);
+	if (BallistixConfig.INSTANCE.SHOULD_CHUNKLOAD.get()) {
+	    ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, worldPosition, chunkPos.x, chunkPos.z,
+		    false, true);
+	}
 
     }
 
@@ -179,8 +181,10 @@ public class TileVerticalLaunchSilo extends GenericTile
 	}
 	ChunkPos chunkPos = level.getChunk(worldPosition).getPos();
 
-	ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, worldPosition, chunkPos.x, chunkPos.z,
-		true, true);
+	if (BallistixConfig.INSTANCE.SHOULD_CHUNKLOAD.get()) {
+	    ChunkloaderManager.TICKET_CONTROLLER.forceChunk((ServerLevel) level, worldPosition, chunkPos.x, chunkPos.z,
+		    true, true);
+	}
     }
 
     @Override

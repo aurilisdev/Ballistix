@@ -123,7 +123,7 @@ public class BallistixAttachmentTypes {
 
     private static <T> IAttachmentSerializer<CompoundTag, HashMap<ResourceKey<Level>, HashMap<UUID, T>>> virtualMapSerializer(
 	    Codec<T> codec, Function<T, UUID> idGetter) {
-	return new IAttachmentSerializer<CompoundTag, HashMap<ResourceKey<Level>, HashMap<UUID, T>>>() {
+	return new IAttachmentSerializer<>() {
 	    @Override
 	    public HashMap<ResourceKey<Level>, HashMap<UUID, T>> read(IAttachmentHolder holder, CompoundTag tag,
 		    HolderLookup.Provider provider) {

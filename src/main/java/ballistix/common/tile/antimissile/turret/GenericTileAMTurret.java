@@ -151,7 +151,7 @@ public abstract class GenericTileAMTurret extends GenericTile {
 
 	    // thetaCurrXZ = getXZAngleRadians(turretRotation.getValue());
 
-	    if ((angleDifXZ >= 0 ? thetaCurrXZ > thetaDesiredXZ : thetaCurrXZ < thetaDesiredXZ)) {
+	    if (angleDifXZ >= 0 ? thetaCurrXZ > thetaDesiredXZ : thetaCurrXZ < thetaDesiredXZ) {
 
 		turretRotation.setValue(new Vec3(desiredRotation.getValue().x, turretRotation.getValue().y,
 			desiredRotation.getValue().z));

@@ -56,7 +56,7 @@ public class ScreenESMTower extends GenericScreen<ContainerESMTower> {
 				? BallistixTextUtils.gui("esmtower.searchradardetected").withStyle(ChatFormatting.GREEN)
 				: BallistixTextUtils.gui("esmtower.nosearchradars").withStyle(ChatFormatting.RED)
 				: BallistixTextUtils.gui("esmtower.nosearchradars").withStyle(ChatFormatting.RED))
-			.orElseGet(() -> Component.empty())));
+			.orElseGet(Component::empty)));
 
 	wrapper = new WrapperESMTowerDetections(this, 0, 0);
 

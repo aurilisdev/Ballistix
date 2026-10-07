@@ -20,7 +20,7 @@ public class ScreenComponentFrequency extends ScreenComponentGeneric {
     @Override
     @SuppressWarnings("null")
     public void renderBackground(GuiGraphics graphics, int xAxis, int yAxis, int guiWidth, int guiHeight) {
-	if (!isVisible() || (gui == null)) {
+	if (!isVisible() || gui == null) {
 	    return;
 	}
 

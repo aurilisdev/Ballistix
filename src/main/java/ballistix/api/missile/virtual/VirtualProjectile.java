@@ -482,7 +482,7 @@ public abstract class VirtualProjectile {
 	    }
 
 	    if (radar == null && level.getBlockEntity(radarPos) instanceof TileFireControlRadar realRadar) {
-		this.radar = realRadar;
+		radar = realRadar;
 	    }
 
 	    if (radar != null && radar.isRemoved()) {

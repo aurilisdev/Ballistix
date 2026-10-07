@@ -92,6 +92,7 @@ public class BallistixConfig {
     public ModConfigSpec.IntValue LAUNCHER_PLATFORM_RANGE_T3;
     public ModConfigSpec.IntValue VLS_RANGE;
     public ModConfigSpec.IntValue LAUNCH_PLATFORM_DEFAULT_INACCURACY;
+    public ModConfigSpec.BooleanValue SHOULD_CHUNKLOAD;
 
     /* ESM TOWER */
     public ModConfigSpec.DoubleValue ESM_TOWER_USAGE_PER_TICK;
@@ -297,6 +298,8 @@ public class BallistixConfig {
 	VLS_RANGE = builder.defineInRange("vls_range", 500, 0, Integer.MAX_VALUE);
 	LAUNCH_PLATFORM_DEFAULT_INACCURACY = builder.defineInRange("launch_platform_default_inaccuracy_deg", 45, 0,
 		Integer.MAX_VALUE);
+	SHOULD_CHUNKLOAD = builder.comment("Whether the missile silo will force-load chunks around it.")
+		.define("should_chunkload", true);
 	builder.pop();
 
 	// ESM tower

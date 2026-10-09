@@ -687,6 +687,7 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 	    addConfiguration("launcher_platform_range_t3", "Launcher Platform Range T3");
 	    addConfiguration("vls_range", "VLS Range");
 	    addConfiguration("launch_platform_default_inaccuracy_deg", "Launch Platform Default Inaccuracy (deg)");
+	    addConfiguration("should_chunkload", "Should Chunkload");
 
 	    // ESM Tower
 	    addConfiguration("esm_tower_usage_per_tick", "ESM Usage per Tick");

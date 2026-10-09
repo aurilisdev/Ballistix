@@ -1,12 +1,1 @@
-{
-  "loader": "neoforge:obj",
-  "credit": "aurilisdev",
-  "model": "ballistix:models/entity/missiles/missilelongrange.obj",
-  "flip_v": true,
-  "textures": {
-    "texture0": "ballistix:block/model/missilelongrange",
-    "texture1": "ballistix:block/model/missilelongrange1",
-    "texture2": "ballistix:block/model/missilelongrange2",
-    "particle": "ballistix:block/model/missilelongrange"
-  }
-}
+{"loader":"forge:obj","credit":"aurilisdev","model":"ballistix:models/entity/missiles/missilelongrange.obj","flip_v":true,"textures":{"texture0":"ballistix:block/model/missilelongrange","texture1":"ballistix:block/model/missilelongrange1","texture2":"ballistix:block/model/missilelongrange2","particle":"ballistix:block/model/missilelongrange"}}

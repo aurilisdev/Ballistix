@@ -124,6 +124,7 @@
   "ballistix.configuration.sam_turret_usage_per_tick": "SAM Usage per Tick",
   "ballistix.configuration.search_radar": "Search Radar",
   "ballistix.configuration.should_cache_explosions": "Cache Explosions",
+  "ballistix.configuration.should_chunkload": "Should Chunkload",
   "ballistix.configuration.should_multithread_raytracing": "Should Multithread Raytracing (READ COMMENT!!!)",
   "ballistix.configuration.tier1": "Tier 1",
   "ballistix.configuration.tier2": "Tier 2",

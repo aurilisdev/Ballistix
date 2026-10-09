@@ -88,7 +88,7 @@ public class BallistixItems {
 	    .register("laserdesignator", ItemLaserDesignator::new);
     public static final DeferredHolder<Item, ItemDefuser> ITEM_DEFUSER = ITEMS.register("defuser", ItemDefuser::new);
 
-    @EventBusSubscriber(value = Dist.CLIENT, modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(value = Dist.CLIENT, modid = Ballistix.ID)
     private static class BallistixCreativeRegistry {
 
 	@SubscribeEvent

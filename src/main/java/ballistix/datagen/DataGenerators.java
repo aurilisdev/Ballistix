@@ -28,7 +28,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import voltaic.datagen.utils.client.BaseLangKeyProvider;
 
-@EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Ballistix.ID)
 public class DataGenerators {
 
     @SubscribeEvent

@@ -83,7 +83,7 @@ import voltaic.prefab.utilities.math.Color;
 import voltaic.prefab.utilities.math.MathUtils;
 
 @OnlyIn(Dist.CLIENT)
-@EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD, value = { Dist.CLIENT })
+@EventBusSubscriber(modid = Ballistix.ID, value = { Dist.CLIENT })
 public class BallistixClientRegister {
 
     public static final ResourceLocation ANGLE_PREDICATE = Voltaic.vanillarl("angle");

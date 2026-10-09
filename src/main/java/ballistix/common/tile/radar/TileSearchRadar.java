@@ -186,7 +186,7 @@ public class TileSearchRadar extends GenericTile {
 	}
     }
 
-    @EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(modid = Ballistix.ID)
     private static final class ChunkloaderManager {
 
 	private static final TicketController TICKET_CONTROLLER = new TicketController(

@@ -311,7 +311,7 @@ public class TileLauncherControlPanelT1 extends GenericTile implements ILauncher
 	return Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
     }
 
-    @EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(modid = Ballistix.ID)
     private static final class ChunkloaderManager {
 
 	private static final TicketController TICKET_CONTROLLER = new TicketController(

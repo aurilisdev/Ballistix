@@ -21,7 +21,7 @@ import voltaic.prefab.item.ElectricItemProperties;
 import voltaic.prefab.item.ItemElectric;
 import voltaic.prefab.utilities.object.TransferPack;
 
-@EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Ballistix.ID)
 public class ItemScanner extends ItemElectric {
 
     public static final double USAGE = 150.0;

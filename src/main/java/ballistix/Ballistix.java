@@ -30,7 +30,7 @@ import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
 @Mod(Ballistix.ID)
-@EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Ballistix.ID)
 public final class Ballistix {
 
     public static final String ID = "ballistix";

@@ -11,7 +11,7 @@ import voltaic.prefab.item.CapabilityForgeEnergyItem;
 import voltaic.prefab.tile.GenericTile;
 import voltaic.registers.VoltaicCapabilities;
 
-@EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Ballistix.ID)
 public class BallistixCapabilities {
 
     @SubscribeEvent

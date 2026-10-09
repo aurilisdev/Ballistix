@@ -175,7 +175,7 @@ public class TileESMTower extends GenericTile implements IMultiblockParentTile {
 	ESM_TOWERS.put(level.dimension(), esmTowers);
     }
 
-    @EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.GAME)
+    @EventBusSubscriber(modid = Ballistix.ID)
     private static class MapHandlerer {
 
 	@SubscribeEvent

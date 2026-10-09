@@ -352,7 +352,7 @@ public class TileFireControlRadar extends GenericTile {
 	return trackingPos.getValue().equals(OUT_OF_REACH) ? 0 : 15;
     }
 
-    @EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(modid = Ballistix.ID)
     private static final class ChunkloaderManager {
 
 	private static final TicketController TICKET_CONTROLLER = new TicketController(

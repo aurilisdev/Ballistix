@@ -397,7 +397,7 @@ public class EntityBlast extends Entity implements TraceableEntity {
 	return blast;
     }
 
-    @EventBusSubscriber(modid = Ballistix.ID, bus = EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(modid = Ballistix.ID)
     private static final class ChunkloaderManager {
 
 	private static final TicketController TICKET_CONTROLLER = new TicketController(Ballistix.rl("blastcontroller"));

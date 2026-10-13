@@ -123,7 +123,7 @@ public final class Ballistix {
     }
 
     private static void cacheBlast(ThreadSimpleBlast blast) {
-	if (!FMLEnvironment.production) {
+	if (FMLEnvironment.production) {
 	    blast.start();
 	} else {
 	    blast.run();

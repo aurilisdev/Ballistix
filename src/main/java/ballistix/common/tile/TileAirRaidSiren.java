@@ -66,7 +66,7 @@ public class TileAirRaidSiren extends GenericTile implements ITickableSound {
 
     @Override
     public void onNeighbourChanged(LevelReader reader, BlockPos neighbor, boolean blockStateTrigger) {
-	if (!(reader instanceof ClientLevel)) {
+	if (!(reader instanceof Level l && l.isClientSide())) {
 	    boolean currVal = hasRedstoneSignal.getValue();
 	    hasRedstoneSignal.setValue(reader.getBestNeighborSignal(getBlockPos()) > 0);
 	    boolean newVal = hasRedstoneSignal.getValue();

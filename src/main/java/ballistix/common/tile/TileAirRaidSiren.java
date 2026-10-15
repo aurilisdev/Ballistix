@@ -4,7 +4,6 @@ import ballistix.common.inventory.container.ContainerAirRaidSiren;
 import ballistix.prefab.sound.SoundBarrierMethods;
 import ballistix.registers.BallistixSounds;
 import ballistix.registers.BallistixTiles;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.level.Level;

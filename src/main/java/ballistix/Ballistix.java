@@ -1,5 +1,7 @@
 package ballistix;
 
+import org.lwjgl.util.tinyfd.TinyFileDialogs;
+
 import ballistix.api.blast.RegisterBlastEvent;
 import ballistix.client.BallistixClientRegister;
 import ballistix.common.blast.util.thread.ThreadSimpleBlast;
@@ -79,6 +81,8 @@ public final class Ballistix {
 	for (ItemMinecart.SubtypeMinecart minecart : ItemMinecart.SubtypeMinecart.values()) {
 	    event.registerMinecart(minecart.explosiveType, BallistixItems.ITEMS_MINECART.getValue(minecart));
 	}
+	if (!FMLEnvironment.production && (FMLEnvironment.dist != Dist.CLIENT || !confirmBlastPrecalculation()))
+	    return;
 	event.submitCachedThreads(() -> {
 	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO,
 		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_ANTIMATTER_RADIUS.getAsDouble(), Integer.MAX_VALUE, null,
@@ -93,8 +97,8 @@ public final class Ballistix {
 		    null, SubtypeBlast.largeantimatter.id()));
 
 	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO,
-		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble() * 2, Integer.MAX_VALUE, null,
-		    SubtypeBlast.nuclear.id()));
+		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS.getAsDouble(), Integer.MAX_VALUE,
+		    null, SubtypeBlast.nuclear.id()));
 
 	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO,
 		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_EMP_RADIUS.getAsDouble(), Integer.MAX_VALUE, null,
@@ -120,6 +124,13 @@ public final class Ballistix {
 		    (int) BallistixConfig.INSTANCE.EXPLOSIVE_EXOTHERMIC_RADIUS.getAsDouble(), Integer.MAX_VALUE, null,
 		    SubtypeBlast.exothermic.id()));
 	});
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private static boolean confirmBlastPrecalculation() {
+	return TinyFileDialogs.tinyfd_messageBox("Ballistix development",
+		"Precalculate explosions now?\n\n" + "Choosing No calculates them when they are first used.", "yesno",
+		"question", false);
     }
 
     private static void cacheBlast(ThreadSimpleBlast blast) {

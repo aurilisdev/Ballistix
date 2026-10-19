@@ -453,6 +453,7 @@
   "tooltip.ballistix.turret.maxrange": "Макс: %s",
   "tooltip.ballistix.turret.minrange": "Мин: %s",
   "tooltip.ballistix.turret.targetmode": "Режим цели",
+  "tooltip.ballistix.turret.targetmodehostile": "Только враждебные мобы",
   "tooltip.ballistix.turret.targetmodeliving": "Всё живое",
   "tooltip.ballistix.turret.targetmodenone": "Никого",
   "tooltip.ballistix.turret.targetmodeplayers": "Только игроки",

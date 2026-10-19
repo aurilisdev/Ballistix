@@ -458,6 +458,7 @@
   "tooltip.ballistix.turret.maxrange": "Max: %s",
   "tooltip.ballistix.turret.minrange": "Min: %s",
   "tooltip.ballistix.turret.targetmode": "Target Mode",
+  "tooltip.ballistix.turret.targetmodehostile": "Hostile Mobs",
   "tooltip.ballistix.turret.targetmodeliving": "All Living",
   "tooltip.ballistix.turret.targetmodenone": "None",
   "tooltip.ballistix.turret.targetmodeplayers": "Only Players",

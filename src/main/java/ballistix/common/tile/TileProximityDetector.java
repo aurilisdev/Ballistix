@@ -13,6 +13,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
@@ -147,6 +148,10 @@ public class TileProximityDetector extends GenericTile {
 	    for (LivingEntity entity : entities) {
 
 		if (!entity.isAlive()) {
+		    continue;
+		}
+
+		if (mode == GenericTileTurret.TargetingMode.HOSTILE_MOBS && !(entity instanceof Enemy)) {
 		    continue;
 		}
 

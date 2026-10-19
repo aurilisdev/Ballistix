@@ -199,6 +199,9 @@ public class ScreenRailgunTurret extends ScreenPlayerWhitelistTurret<ContainerRa
 			} else if (mode == GenericTileTurret.TargetingMode.ALL) {
 			    tooltips.add(BallistixTextUtils.tooltip("turret.targetmodeliving")
 				    .withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+			} else if (mode == GenericTileTurret.TargetingMode.HOSTILE_MOBS) {
+			    tooltips.add(BallistixTextUtils.tooltip("turret.targetmodehostile")
+				    .withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
 			} else {
 			    tooltips.add(BallistixTextUtils.tooltip("turret.targetmodenone")
 				    .withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));

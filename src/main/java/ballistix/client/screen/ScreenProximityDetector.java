@@ -97,6 +97,9 @@ public class ScreenProximityDetector extends GenericScreen<ContainerProximityDet
 			} else if (mode == GenericTileTurret.TargetingMode.ALL) {
 			    tooltips.add(BallistixTextUtils.tooltip("turret.targetmodeliving")
 				    .withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+			} else if (mode == GenericTileTurret.TargetingMode.HOSTILE_MOBS) {
+			    tooltips.add(BallistixTextUtils.tooltip("turret.targetmodehostile")
+				    .withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
 			} else {
 			    tooltips.add(BallistixTextUtils.tooltip("turret.targetmodenone")
 				    .withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
@@ -157,11 +160,13 @@ public class ScreenProximityDetector extends GenericScreen<ContainerProximityDet
 
 	addComponent(toggleLabel = new ScreenComponentSimpleLabel(13, 151, 10, Color.TEXT_GRAY,
 		BallistixTextUtils.gui("proximitydetector.detectionfield")));
-	addComponent(toggleLines = new ScreenComponentButton<>(92, 145, 70, 20).setLabel(() -> menu.getSafeHost()
-		.map(detector -> HandlerDetectorLines.containsLines(detector.getBlockPos())
-			? BallistixTextUtils.gui("proximitydetector.hidefield")
-			: BallistixTextUtils.gui("proximitydetector.showfield"))
-		.orElseGet(Component::empty)).setOnPress(button -> {
+	addComponent(toggleLines = new ScreenComponentButton<>(92, 145, 70, 20)
+		.setLabel(() -> menu.getSafeHost()
+			.map(detector -> HandlerDetectorLines.containsLines(detector.getBlockPos())
+				? BallistixTextUtils.gui("proximitydetector.hidefield")
+				: BallistixTextUtils.gui("proximitydetector.showfield"))
+			.orElseGet(Component::empty))
+		.setOnPress(button -> {
 		    menu.getSafeHost().ifPresent(detector -> {
 			BlockPos pos = detector.getBlockPos();
 			if (HandlerDetectorLines.containsLines(pos)) {

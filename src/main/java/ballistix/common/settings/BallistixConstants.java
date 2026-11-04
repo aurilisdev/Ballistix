@@ -196,6 +196,8 @@ public class BallistixConstants {
     public static int VLS_RANGE = 500;
     @IntValue(def = 45)
     public static int LAUNCH_PLATFORM_DEFAULT_INACCURACY = 45;
+    @BooleanValue(def = true, comment = "Whether the missile silo will force-load chunks around it.")
+    public static boolean SHOULD_CHUNKLOAD = true;
 
     /* ESM TOWER */
 

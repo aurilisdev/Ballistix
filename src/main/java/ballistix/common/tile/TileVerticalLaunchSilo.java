@@ -162,7 +162,9 @@ public class TileVerticalLaunchSilo extends GenericTile
 
 	ChunkPos pos = level.getChunk(worldPosition).getPos();
 
-	ForgeChunkManager.forceChunk((ServerLevel) level, Ballistix.ID, getBlockPos(), pos.x, pos.z, false, true);
+	if (BallistixConstants.SHOULD_CHUNKLOAD) {
+	    ForgeChunkManager.forceChunk((ServerLevel) level, Ballistix.ID, getBlockPos(), pos.x, pos.z, false, true);
+	}
 
     }
 
@@ -174,7 +176,9 @@ public class TileVerticalLaunchSilo extends GenericTile
 	}
 	ChunkPos pos = level.getChunk(worldPosition).getPos();
 
-	ForgeChunkManager.forceChunk((ServerLevel) level, Ballistix.ID, getBlockPos(), pos.x, pos.z, true, true);
+	if (BallistixConstants.SHOULD_CHUNKLOAD) {
+	    ForgeChunkManager.forceChunk((ServerLevel) level, Ballistix.ID, getBlockPos(), pos.x, pos.z, true, true);
+	}
     }
 
     @Override

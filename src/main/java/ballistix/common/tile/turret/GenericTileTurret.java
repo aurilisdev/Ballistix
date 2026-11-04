@@ -14,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -267,6 +268,10 @@ public abstract class GenericTileTurret extends GenericTile {
 		continue;
 	    }
 
+	    if (mode == TargetingMode.HOSTILE_MOBS && !(entity instanceof Enemy)) {
+		continue;
+	    }
+
 	    if (entity instanceof Player player
 		    && (player.isCreative() || whitelistedPlayers.getValue().contains(player.getName().getString()))) {
 		continue;
@@ -303,6 +308,10 @@ public abstract class GenericTileTurret extends GenericTile {
 	}
 
 	if (mode == TargetingMode.ONLY_PLAYERS && !(entity instanceof Player)) {
+	    return false;
+	}
+
+	if (mode == TargetingMode.HOSTILE_MOBS && !(entity instanceof Enemy)) {
 	    return false;
 	}
 
@@ -486,7 +495,10 @@ public abstract class GenericTileTurret extends GenericTile {
     }
 
     public static enum TargetingMode {
-	ALL, ONLY_PLAYERS, NONE;
+	ALL,
+	ONLY_PLAYERS,
+	HOSTILE_MOBS,
+	NONE;
     }
 
 }

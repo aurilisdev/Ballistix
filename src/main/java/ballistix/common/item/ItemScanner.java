@@ -58,8 +58,8 @@ public class ItemScanner extends ItemElectric {
 
 	    extractPower(stack, USAGE, false);
 
-	    player.displayClientMessage(BallistixTextUtils.chatMessage(
-		    "scanner.cleared", target.getName().copy().withStyle(ChatFormatting.YELLOW))
+	    player.displayClientMessage(BallistixTextUtils
+		    .chatMessage("scanner.cleared", target.getName().copy().withStyle(ChatFormatting.YELLOW))
 		    .withStyle(ChatFormatting.WHITE), true);
 	}
 

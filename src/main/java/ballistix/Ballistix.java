@@ -56,9 +56,7 @@ public class Ballistix {
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public static void onClientSetup(FMLClientSetupEvent event) {
-	event.enqueueWork(() -> {
-	    BallistixClientRegister.setup();
-	});
+	event.enqueueWork(() -> { BallistixClientRegister.setup(); });
     }
 
     @SubscribeEvent
@@ -95,8 +93,9 @@ public class Ballistix {
 	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO,
 		    (int) BallistixConstants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, Integer.MAX_VALUE, null,
 		    SubtypeBlast.largeantimatter.id()));
-	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS,
-		    Integer.MAX_VALUE, null, SubtypeBlast.nuclear.id()));
+	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO,
+		    (int) BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS, Integer.MAX_VALUE, null,
+		    SubtypeBlast.nuclear.id()));
 	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_EMP_RADIUS,
 		    Integer.MAX_VALUE, null, SubtypeBlast.emp.id()));
 	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_SONIC_RADIUS,

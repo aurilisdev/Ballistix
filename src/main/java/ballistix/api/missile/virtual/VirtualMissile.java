@@ -636,7 +636,10 @@ public class VirtualMissile {
 
     public static enum FlightPath {
 
-	ROCKET_LAUNCHER, VLS, SILO, SILO_CLUSTER;
+	ROCKET_LAUNCHER,
+	VLS,
+	SILO,
+	SILO_CLUSTER;
 
     }
 

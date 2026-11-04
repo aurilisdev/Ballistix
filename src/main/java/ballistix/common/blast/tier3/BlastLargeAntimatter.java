@@ -89,6 +89,8 @@ public class BlastLargeAntimatter extends BlastLasting implements IHasCustomRend
 	    if (Ballistix.MFFS_LOADED && world instanceof ServerLevel serverLevel) {
 		protectionRegions = FortronFieldData.get(serverLevel).getProtectionRegions(position, radius);
 	    }
+	    pertick = (int) (thread.results.size() * 1.5 / BallistixConstants.EXPLOSIVE_LARGEANTIMATTER_DURATION + 1);
+	    iterator = thread.results.iterator();
 
 	}
 	int finished = pertick;

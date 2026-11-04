@@ -253,6 +253,7 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 	    addTooltip("turret.targetmodeplayers", "Only Players");
 	    addTooltip("turret.targetmodeliving", "All Living");
 	    addTooltip("turret.targetmodenone", "None");
+	    addTooltip("turret.targetmodehostile", "Hostile Mobs");
 
 	    addTooltip("radar.frequencymanager", "Frequency Manager");
 	    addTooltip("radar.frequencymanager.delete", "Delete");

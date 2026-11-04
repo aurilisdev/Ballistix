@@ -110,8 +110,7 @@ public class BlastRejuvination extends Blast {
 		    ChunkPos pos = new ChunkPos(position);
 
 		    CompletableFuture<ChunkAccess> loadedChunk = newWorld.getChunkSource()
-			    .getChunkFuture(pos.x, pos.z, ChunkStatus.FEATURES, true)
-			    .thenApply(Either::orThrow);
+			    .getChunkFuture(pos.x, pos.z, ChunkStatus.FEATURES, true).thenApply(Either::orThrow);
 
 		    BlockableEventLoop<Runnable> executor = newWorld.getChunkSource().mainThreadProcessor;
 

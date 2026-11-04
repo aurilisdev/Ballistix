@@ -305,7 +305,9 @@ public abstract class Blast {
     }
 
     public static enum GriefPreventionMethod {
-	NONE, GRIEF_DEFENDER, SABER_FACTIONS;
+	NONE,
+	GRIEF_DEFENDER,
+	SABER_FACTIONS;
     }
 
     public static void damageFortronField(ServerLevel level, BlockPos fieldPos, double damagePercentage) {

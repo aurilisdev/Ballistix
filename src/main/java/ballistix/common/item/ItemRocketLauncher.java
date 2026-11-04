@@ -70,7 +70,8 @@ public class ItemRocketLauncher extends ItemVoltaic {
     @Override
     public void releaseUsing(ItemStack stack, Level world, LivingEntity entityLiving, int timeLeft) {
 
-	if (world.isClientSide || !(entityLiving instanceof Player) || (stack.getOrCreateTag().getInt(NBTUtils.TIMER) > 0)) {
+	if (world.isClientSide || !(entityLiving instanceof Player)
+		|| (stack.getOrCreateTag().getInt(NBTUtils.TIMER) > 0)) {
 	    return;
 	}
 

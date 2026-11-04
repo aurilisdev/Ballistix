@@ -1,5 +1,7 @@
 package ballistix;
 
+import org.lwjgl.util.tinyfd.TinyFileDialogs;
+
 import ballistix.api.blast.RegisterBlastEvent;
 import ballistix.client.BallistixClientRegister;
 import ballistix.client.event.RegisterBlastRenderersEvent;
@@ -82,6 +84,9 @@ public class Ballistix {
 	for (ItemMinecart.SubtypeMinecart minecart : ItemMinecart.SubtypeMinecart.values()) {
 	    event.registerMinecart(minecart.explosiveType, BallistixItems.ITEMS_MINECART.getValue(minecart));
 	}
+	if (!FMLEnvironment.production && (FMLEnvironment.dist != Dist.CLIENT || !confirmBlastPrecalculation())) {
+	    return;
+	}
 	event.submitCachedThreads(() -> {
 	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_ANTIMATTER_RADIUS,
 		    Integer.MAX_VALUE, null, SubtypeBlast.antimatter.id()));
@@ -90,7 +95,7 @@ public class Ballistix {
 	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO,
 		    (int) BallistixConstants.EXPLOSIVE_LARGEANTIMATTER_RADIUS, Integer.MAX_VALUE, null,
 		    SubtypeBlast.largeantimatter.id()));
-	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_NUCLEAR_SIZE * 2,
+	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_NUCLEAR_RADIATION_RADIUS,
 		    Integer.MAX_VALUE, null, SubtypeBlast.nuclear.id()));
 	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_EMP_RADIUS,
 		    Integer.MAX_VALUE, null, SubtypeBlast.emp.id()));
@@ -105,6 +110,13 @@ public class Ballistix {
 	    cacheBlast(new ThreadSimpleBlast(null, BlockPos.ZERO, (int) BallistixConstants.EXPLOSIVE_EXOTHERMIC_RADIUS,
 		    Integer.MAX_VALUE, null, SubtypeBlast.exothermic.id()));
 	});
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private static boolean confirmBlastPrecalculation() {
+	return TinyFileDialogs.tinyfd_messageBox("Ballistix development",
+		"Precalculate explosions now?\n\nChoosing No calculates them when they are first used.", "yesno",
+		"question", false);
     }
 
     private static void cacheBlast(ThreadSimpleBlast blast) {

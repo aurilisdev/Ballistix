@@ -6,6 +6,8 @@ import java.util.Iterator;
 
 import javax.annotation.Nullable;
 
+import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
+import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
@@ -104,7 +106,13 @@ final class BlastParticleRenderer {
 	RenderSystem.setShader(GameRenderer::getParticleShader);
 	RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);
 	RenderSystem.enableBlend();
-	RenderSystem.defaultBlendFunc();
+	if (fabulous) {
+	    // The compositor reads premultiplied colour and accumulated alpha from this target.
+	    RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA,
+		    SourceFactor.ONE, DestFactor.ONE_MINUS_SRC_ALPHA);
+	} else {
+	    RenderSystem.defaultBlendFunc();
+	}
 	RenderSystem.enableDepthTest();
 	RenderSystem.depthMask(fabulous);
 	RenderSystem.disableCull();
@@ -113,6 +121,7 @@ final class BlastParticleRenderer {
 	} finally {
 	    RenderSystem.enableCull();
 	    RenderSystem.disableBlend();
+	    RenderSystem.defaultBlendFunc();
 	    lightTexture.turnOffLightLayer();
 	    RenderSystem.setShaderTexture(2, previousLightTexture);
 	    RenderSystem.setShaderTexture(0, previousTexture);

@@ -6,7 +6,6 @@ import net.minecraft.client.ParticleStatus;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
@@ -21,31 +20,6 @@ import voltaic.Voltaic;
 public class ParticleUtilities {
 
     private static final int MAX_SHOCKWAVE_SAMPLES = 192;
-
-    public static void spawnDetonationBurst(double x, double y, double z, float sparkSpread, ParticleOptions spark) {
-	Minecraft minecraft = Minecraft.getInstance();
-	ParticleStatus detail = minecraft.options.particles().get();
-	if (detail == ParticleStatus.MINIMAL)
-	    return;
-
-	ParticleEngine engine = minecraft.particleEngine;
-	engine.createParticle(ParticleTypes.FLASH, x, y, z, 0, 0, 0);
-	int count = Math.min(48, 12 + (int) (sparkSpread * 4));
-	if (detail == ParticleStatus.DECREASED)
-	    count /= 2;
-
-	double speedScale = Math.sqrt(sparkSpread);
-	for (int i = 0; i < count; i++) {
-	    double angle = 2 * Math.PI * (i + Voltaic.RANDOM.nextDouble()) / count;
-	    double dirX = Math.cos(angle);
-	    double dirZ = Math.sin(angle);
-	    double radius = sparkSpread * (0.65 + Voltaic.RANDOM.nextDouble() * 0.55);
-	    double speed = speedScale * (0.22 + Voltaic.RANDOM.nextDouble() * 0.38);
-	    double rise = 0.12 + Voltaic.RANDOM.nextDouble() * speed;
-	    engine.createParticle(spark, x + radius * dirX, y + rise * sparkSpread, z + radius * dirZ,
-		    speed * dirX, rise, speed * dirZ);
-	}
-    }
 
     public static void spawnParticleRing(ParticleOptions particle, double centerX, double centerY, double centerZ,
 	    int count, double initialSpeed, boolean shouldRandomize) {

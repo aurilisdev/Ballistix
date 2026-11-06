@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 
 import ballistix.Ballistix;
 import ballistix.api.blast.IHasCustomRender;
-import ballistix.client.particle.ParticleOptionsBlastSmoke;
+import ballistix.client.effect.BlastEffects.Style;
 import ballistix.client.shake.CameraShakeEffect;
 import ballistix.client.shake.CameraShakeManager;
 import ballistix.common.blast.util.Blast;
@@ -18,11 +18,9 @@ import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.packet.type.client.particle.BlastParticleSpawnType;
 import ballistix.common.packet.type.client.particle.PacketSpawnBlastParticle;
 import ballistix.common.settings.BallistixConfig;
-import ballistix.prefab.utils.ParticleUtilities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -152,36 +150,17 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
     @Override
     @OnlyIn(Dist.CLIENT)
     public void produceParticles() {
+	playDetonationEffects(Style.THERMOBARIC, BallistixConfig.INSTANCE.EXPLOSIVE_THERMOBARIC_SIZE.getAsDouble());
+
 	double x = position.getX() + 0.5;
 	double y = position.getY() + 0.5;
 	double z = position.getZ() + 0.5;
-	playDetonationBurst(x, y, z, 5f, ParticleTypes.FLAME);
-
-	double initialSpeed = 0.8;
-
-	if (ticksSinceBlastStart <= 5) {
-	    // Fireball
-	    ParticleOptions particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 4f, -0.045f, 750,
-		    true, true, 40, 0.95);
-	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 25, 50, 90, initialSpeed, true);
-
-	    // Centersmokes
-	    initialSpeed = 1; // Increase/decrease to taste
-	    particle = new ParticleOptionsBlastSmoke().setParameters(0.8f, 0.8f, 0.8f, 4f, 0.033f, 750, true, 0.95);
-	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 25, 0, 20, initialSpeed, true);
-
-	    // Centersmokes
-	    initialSpeed = 1; // Increase/decrease to taste
-	    particle = new ParticleOptionsBlastSmoke().setParameters(0.8f, 0.8f, 0.8f, 4f, -0.033f, 750, true, 0.95);
-	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 25, 0, 20, initialSpeed, true);
-	}
 	double spawnSize = 3;
 	double endSize = BallistixConfig.INSTANCE.EXPLOSIVE_THERMOBARIC_SIZE.getAsDouble() * 7.5;
 	int diff = (int) (endSize - spawnSize);
 	if (ticksSinceBlastStart > diff)
 	    return;
-	double size = ParticleUtilities.progressGroundShockwave(world, x, z, ticksSinceBlastStart * 2 / (double) diff,
-		spawnSize, endSize, 0.15, 0xFF9C47);
+	double size = shockwaveRadius(spawnSize, endSize, ticksSinceBlastStart * 2 / (double) diff);
 	if (hasShaken)
 	    return;
 	Vec3 pos = new Vec3(x, y, z);

@@ -2,11 +2,14 @@ package ballistix.common.blast.util;
 
 import javax.annotation.Nullable;
 
-import ballistix.prefab.utils.ParticleUtilities;
+import ballistix.client.effect.BlastEffects;
+import ballistix.client.effect.BlastEffects.Style;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
@@ -17,14 +20,20 @@ public abstract class BlastLasting extends Blast {
     }
 
     public int ticksSinceBlastStart;
-    private boolean playedDetonationBurst;
+    private boolean playedDetonationEffects;
 
     @OnlyIn(Dist.CLIENT)
-    protected void playDetonationBurst(double x, double y, double z, float sparkSpread, ParticleOptions spark) {
-	if (playedDetonationBurst || ticksSinceBlastStart < 1 || ticksSinceBlastStart > 10)
+    protected void playDetonationEffects(Style style, double radius) {
+	if (playedDetonationEffects || ticksSinceBlastStart < 1 || ticksSinceBlastStart > 24)
 	    return;
-	playedDetonationBurst = true;
-	ParticleUtilities.spawnDetonationBurst(x, y, z, sparkSpread, spark);
+	playedDetonationEffects = true;
+	BlastEffects.start((ClientLevel) world, Vec3.atCenterOf(position), style, radius);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    protected static double shockwaveRadius(double start, double end, double progress) {
+	return !Double.isFinite(progress) || progress > 1 || end <= start ? end
+		: (int) Mth.lerp(Math.max(0, progress), start, end);
     }
 
     @Override

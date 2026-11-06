@@ -3,15 +3,19 @@ package ballistix.common.blast.tier1;
 import javax.annotation.Nullable;
 
 import ballistix.api.blast.IHasCustomRender;
+import ballistix.client.effect.BlastEffects;
+import ballistix.client.effect.BlastEffects.Style;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.BallistixConfig;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.Level.ExplosionInteraction;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
@@ -39,6 +43,8 @@ public class BlastCondensive extends Blast implements IHasCustomRender {
     @OnlyIn(Dist.CLIENT)
     @Override
     public void produceParticles() {
+	BlastEffects.start((ClientLevel) world, Vec3.atCenterOf(position), Style.CONDENSIVE,
+		BallistixConfig.INSTANCE.EXPLOSIVE_CONDENSIVE_SIZE.getAsDouble());
     }
 
     @Override

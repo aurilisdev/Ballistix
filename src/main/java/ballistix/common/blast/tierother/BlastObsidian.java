@@ -3,15 +3,19 @@ package ballistix.common.blast.tierother;
 import javax.annotation.Nullable;
 
 import ballistix.api.blast.IHasCustomRender;
+import ballistix.client.effect.BlastEffects;
+import ballistix.client.effect.BlastEffects.Style;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.BallistixConfig;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.Level.ExplosionInteraction;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
@@ -32,8 +36,6 @@ public class BlastObsidian extends Blast implements IHasCustomRender {
 		    (float) BallistixConfig.INSTANCE.EXPLOSIVE_OBSIDIAN_SIZE.getAsDouble(), false,
 		    ExplosionInteraction.BLOCK, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER,
 		    SoundEvents.GENERIC_EXPLODE);
-	} else {
-	    produceParticles();
 	}
 	return true;
     }
@@ -41,6 +43,8 @@ public class BlastObsidian extends Blast implements IHasCustomRender {
     @Override
     @OnlyIn(Dist.CLIENT)
     public void produceParticles() {
+	BlastEffects.start((ClientLevel) world, Vec3.atCenterOf(position), Style.OBSIDIAN,
+		BallistixConfig.INSTANCE.EXPLOSIVE_OBSIDIAN_SIZE.getAsDouble());
     }
 
     @Override

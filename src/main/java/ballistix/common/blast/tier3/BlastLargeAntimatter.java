@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 import ballistix.Ballistix;
 import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IHasCustomRender;
-import ballistix.client.particle.ParticleOptionsBlastSmoke;
+import ballistix.client.effect.BlastEffects.Style;
 import ballistix.client.shake.CameraShakeEffect;
 import ballistix.client.shake.CameraShakeManager;
 import ballistix.common.blast.util.Blast;
@@ -19,14 +19,12 @@ import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.packet.type.client.particle.BlastParticleSpawnType;
 import ballistix.common.packet.type.client.particle.PacketSpawnBlastParticle;
 import ballistix.common.settings.BallistixConfig;
-import ballistix.prefab.utils.ParticleUtilities;
 import ballistix.registers.BallistixSounds;
 import modularforcefields.common.world.FortronFieldData;
 import modularforcefields.common.world.FortronProtectionRegion;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -169,27 +167,17 @@ public class BlastLargeAntimatter extends BlastLasting implements IHasCustomRend
     public void produceParticles() {
 	if (ticksSinceBlastStart < 2)
 	    return;
+	playDetonationEffects(Style.LARGE_ANTIMATTER, BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_RADIUS.getAsDouble());
+
 	double x = position.getX() + 0.5;
 	double y = position.getY() + 0.5;
 	double z = position.getZ() + 0.5;
-	playDetonationBurst(x, y, z, 15f, ParticleTypes.ELECTRIC_SPARK);
-	// Violet blast cloud
-	if (ticksSinceBlastStart < 10) {
-
-	    ParticleOptions particle = new ParticleOptionsBlastSmoke().setParameters(0.9f, 0.48f, 1f, 20f, 0.015f, 750,
-		    true, 0.999);
-	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 60, -90, 90,
-		    BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_RADIUS.get()
-			    / BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_DURATION.get() * 3,
-		    true);
-	} // Shockwave
 	double spawnSize = 3;
 	double endSize = BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.get() * 5;
 	int diff = (int) (endSize - spawnSize);
 	if (ticksSinceBlastStart > diff)
 	    return;
-	double size = ParticleUtilities.progressGroundShockwave(world, x, z, ticksSinceBlastStart * 5 / (double) diff,
-		spawnSize, endSize, 0.275, 0xD28AFF);
+	double size = shockwaveRadius(spawnSize, endSize, ticksSinceBlastStart * 5 / (double) diff);
 	if (hasShaken)
 	    return;
 	Vec3 pos = new Vec3(x, y, z);

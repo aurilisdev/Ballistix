@@ -12,7 +12,6 @@ import net.minecraft.client.ParticleStatus;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -123,13 +122,10 @@ public final class BlastEffects {
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
 	Minecraft minecraft = Minecraft.getInstance();
+	BlastParticleRenderer.tick(minecraft.level, minecraft.isPaused());
 	ACTIVE.removeIf(effect -> effect.level != minecraft.level);
-	if (ACTIVE.isEmpty() || minecraft.isPaused())
-	    return;
-
-	if (minecraft.getTextureManager().getTexture(TextureAtlas.LOCATION_PARTICLES) instanceof TextureAtlas atlas) {
-	    ACTIVE.removeIf(effect -> effect.tick(minecraft, atlas));
-	}
+	if (!minecraft.isPaused())
+	    ACTIVE.removeIf(effect -> effect.tick(minecraft));
     }
 
     @SubscribeEvent
@@ -163,29 +159,29 @@ public final class BlastEffects {
 	}
     }
 
-    private boolean tick(Minecraft minecraft, TextureAtlas atlas) {
+    private boolean tick(Minecraft minecraft) {
 	if (age == 0)
-	    flash(minecraft, atlas);
+	    flash();
 	if (age >= 2 && age <= 20 && age % 2 == 0)
-	    fireball(minecraft, atlas);
+	    fireball();
 	if (age <= 36 && age % 2 == 0)
-	    ejecta(minecraft, atlas);
+	    ejecta();
 	if (age <= dustTicks && age % 2 == 0)
-	    dustFront(minecraft, atlas);
+	    dustFront(minecraft);
 	if (style == Style.NUCLEAR && age >= 6 && age <= 154 && age % 3 == 0)
-	    mushroomCloud(minecraft, atlas);
+	    mushroomCloud();
 
 	int duration = style == Style.NUCLEAR ? 155 : Math.max(dustTicks, 36);
 	return ++age > duration;
     }
 
-    private void flash(Minecraft minecraft, TextureAtlas atlas) {
-	puff(minecraft, atlas, Shape.GLOW, origin.add(0, core * 0.32, 0), Vec3.ZERO, core * 1.7f, 17, style.heat,
+    private void flash() {
+	puff(Shape.GLOW, origin.add(0, core * 0.32, 0), Vec3.ZERO, core * 1.7f, 17, style.heat,
 		style.heat);
-	puff(minecraft, atlas, Shape.GLOW, origin.add(0, core * 0.25, 0), Vec3.ZERO, core * 0.98f, 11, WHITE, style.heat);
-	puff(minecraft, atlas, Shape.GLOW, origin.add(0, core * 0.14, 0), Vec3.ZERO, core * 0.52f, 7,
+	puff(Shape.GLOW, origin.add(0, core * 0.25, 0), Vec3.ZERO, core * 0.98f, 11, WHITE, style.heat);
+	puff(Shape.GLOW, origin.add(0, core * 0.14, 0), Vec3.ZERO, core * 0.52f, 7,
 		0xFFFFFFFF, WHITE);
-	puff(minecraft, atlas, Shape.RING, origin.add(0, core * 0.12, 0), Vec3.ZERO, core * 0.9f, 22, WHITE,
+	puff(Shape.RING, origin.add(0, core * 0.12, 0), Vec3.ZERO, core * 0.9f, 22, WHITE,
 		style.heat);
 
 	if (detail < 0.5f)
@@ -196,18 +192,18 @@ public final class BlastEffects {
 	    double elevation = i % 3 == 0 ? 0.09 : 0.36 + random.nextDouble() * 0.95;
 	    Vec3 axis = direction(azimuth, elevation);
 	    Vec3 centre = origin.add(0, core * 0.19, 0).add(axis.scale(core * 0.75));
-	    puff(minecraft, atlas, Shape.RAY, centre, axis.scale(core * 0.035), core * (0.095f + random.nextFloat() * 0.075f),
+	    puff(Shape.RAY, centre, axis.scale(core * 0.035), core * (0.095f + random.nextFloat() * 0.075f),
 		    11 + random.nextInt(9), WHITE, style.heat);
 	}
 	if (style.core >= 20) {
-	    puff(minecraft, atlas, Shape.RAY, origin.add(0, core * 1.2, 0), new Vec3(0, core * 0.075, 0),
+	    puff(Shape.RAY, origin.add(0, core * 1.2, 0), new Vec3(0, core * 0.075, 0),
 		    core * 0.20f, 18, WHITE, style.heat);
-	    puff(minecraft, atlas, Shape.RING, origin.add(0, core * 0.85, 0), new Vec3(0, core * 0.037, 0),
+	    puff(Shape.RING, origin.add(0, core * 0.85, 0), new Vec3(0, core * 0.037, 0),
 		    core * 0.63f, 23, WHITE, style.heat);
 	}
     }
 
-    private void fireball(Minecraft minecraft, TextureAtlas atlas) {
+    private void fireball() {
 	int puffs = count(14 + (int) style.core);
 	float expansion = core * (0.22f + age * 0.044f);
 	for (int i = 0; i < puffs; i++) {
@@ -216,15 +212,15 @@ public final class BlastEffects {
 	    Vec3 velocity = outward.scale((0.035 + random.nextDouble() * 0.035) * core).add(0, core * 0.012, 0);
 	    float size = core * (0.14f + random.nextFloat() * 0.27f);
 	    int heat = ARGB32.lerp(random.nextFloat() * 0.68f, style.heat, WHITE);
-	    puff(minecraft, atlas, Shape.FIRE, pos, velocity, size, 33 + random.nextInt(38), heat, style.smoke);
+	    puff(Shape.FIRE, pos, velocity, size, 33 + random.nextInt(38), heat, style.smoke);
 	    if (age <= 8 && i % 3 == 0) {
-		puff(minecraft, atlas, Shape.GLOW, pos, velocity, size * 0.82f, 8 + random.nextInt(7),
+		puff(Shape.GLOW, pos, velocity, size * 0.82f, 8 + random.nextInt(7),
 			WHITE, style.heat);
 	    }
 	}
     }
 
-    private void ejecta(Minecraft minecraft, TextureAtlas atlas) {
+    private void ejecta() {
 	for (int i = 0; i < ejecta.size(); i++) {
 	    Vec3 velocity = ejecta.get(i);
 	    double time = 1 + age * 0.8;
@@ -235,20 +231,20 @@ public final class BlastEffects {
 
 	    Vec3 pos = origin.add(velocity.x * horizontal, height + core * 0.1, velocity.z * horizontal);
 	    float size = (0.28f + random.nextFloat() * 0.55f) * (1 + core * 0.16f);
-	    puff(minecraft, atlas, age < 9 ? Shape.FIRE : Shape.SMOKE, pos,
+	    puff(age < 9 ? Shape.FIRE : Shape.SMOKE, pos,
 		    velocity.scale(0.065).add(0, 0.075, 0), size, 30 + random.nextInt(48),
 		    age < 9 ? style.heat : style.dust, style.smoke);
 
 	    if ((i + age / 2) % 2 == 0 && detail > 0.25f) {
 		Vec3 scatter = new Vec3((random.nextDouble() - 0.5) * 0.8, random.nextDouble() * 0.55,
 			(random.nextDouble() - 0.5) * 0.8);
-		puff(minecraft, atlas, Shape.SPARK, pos, velocity.scale(0.28).add(scatter), size * 0.21f,
+		puff(Shape.SPARK, pos, velocity.scale(0.28).add(scatter), size * 0.21f,
 			18 + random.nextInt(23), WHITE, style.heat);
 	    }
 	}
     }
 
-    private void dustFront(Minecraft minecraft, TextureAtlas atlas) {
+    private void dustFront(Minecraft minecraft) {
 	double progress = age / (double) dustTicks;
 	double range = style.dustRange * scale;
 	double radius = core * 0.25 + range * (1 - Math.pow(1 - progress, 1.45));
@@ -271,7 +267,7 @@ public final class BlastEffects {
 	    Vec3 pos = new Vec3(x + 0.5, surface + size * 0.20, z + 0.5);
 	    Vec3 velocity = new Vec3(dirX * push, 0.045 + random.nextDouble() * 0.18, dirZ * push);
 	    int color = ARGB32.lerp(random.nextFloat() * 0.35f, style.dust, style.smoke);
-	    puff(minecraft, atlas, Shape.DUST, pos, velocity, size, 38 + random.nextInt(50), color, style.dust);
+	    puff(Shape.DUST, pos, velocity, size, 38 + random.nextInt(50), color, style.dust);
 	    if (age <= 18 && i % 6 == 0 && detail > 0.25f) {
 		BlockPos ground = new BlockPos(x, surface - 1, z);
 		BlockState state = level.getBlockState(ground);
@@ -286,7 +282,7 @@ public final class BlastEffects {
 	}
     }
 
-    private void mushroomCloud(Minecraft minecraft, TextureAtlas atlas) {
+    private void mushroomCloud() {
 	double headHeight = scale * (9 + 69 * (1 - Math.exp(-age / 37.0)));
 	double capRadius = scale * (9 + 37 * (1 - Math.exp(-age / 47.0)));
 	Vec3 head = cloudAxis(headHeight);
@@ -300,7 +296,7 @@ public final class BlastEffects {
 	    double offset = Math.sqrt(random.nextDouble()) * width;
 	    Vec3 pos = centre.add(Math.cos(angle) * offset, 0, Math.sin(angle) * offset);
 	    Vec3 velocity = new Vec3(Math.cos(angle) * 0.07, 0.16 + random.nextDouble() * 0.23, Math.sin(angle) * 0.07).scale(scale);
-	    cloudPuff(minecraft, atlas, pos, velocity, (float) (width * (0.35 + random.nextDouble() * 0.39)),
+	    cloudPuff(pos, velocity, (float) (width * (0.35 + random.nextDouble() * 0.39)),
 		    heat * (0.36f + random.nextFloat() * 0.64f));
 	}
 
@@ -324,11 +320,11 @@ public final class BlastEffects {
 	    Vec3 velocity = new Vec3(xDir * outward, scale * (0.16 - cos * 0.22), zDir * outward)
 		    .add(wind.scale(scale * 0.05));
 	    float size = (float) (capRadius * (0.125 + random.nextDouble() * 0.15));
-	    cloudPuff(minecraft, atlas, pos, velocity, size, heat * (0.31f + random.nextFloat() * 0.69f));
+	    cloudPuff(pos, velocity, size, heat * (0.31f + random.nextFloat() * 0.69f));
 	    if (age >= 39 && i % 5 == 1) {
 		Vec3 falling = new Vec3(xDir * 0.12, -0.24 - random.nextDouble() * 0.22, zDir * 0.12)
 			.add(wind.scale(0.14));
-		puff(minecraft, atlas, Shape.SMOKE, pos, falling, scale * (0.25f + random.nextFloat() * 0.50f),
+		puff(Shape.SMOKE, pos, falling, scale * (0.25f + random.nextFloat() * 0.50f),
 			96 + random.nextInt(75), 0xFF514543, 0xFF78665B);
 	    }
 	}
@@ -339,22 +335,22 @@ public final class BlastEffects {
 		Math.sin(height * 0.07) * scale * 1.7);
     }
 
-    private void cloudPuff(Minecraft minecraft, TextureAtlas atlas, Vec3 pos, Vec3 velocity, float size, float heat) {
+    private void cloudPuff(Vec3 pos, Vec3 velocity, float size, float heat) {
 	boolean hot = heat > 0.25f && random.nextFloat() < heat * 0.86f;
 	int color = hot ? ARGB32.lerp(heat, 0xFFA04928, 0xFFFFAA52)
 		: ARGB32.lerp(random.nextFloat() * 0.65f, 0xFF362D2B, 0xFF9A8170);
-	puff(minecraft, atlas, hot ? Shape.FIRE : Shape.SMOKE, pos, velocity, size, 100 + random.nextInt(106),
+	puff(hot ? Shape.FIRE : Shape.SMOKE, pos, velocity, size, 100 + random.nextInt(106),
 		color, style.smoke);
     }
 
-    private void puff(Minecraft minecraft, TextureAtlas atlas, Shape shape, Vec3 pos, Vec3 velocity, float size,
+    private void puff(Shape shape, Vec3 pos, Vec3 velocity, float size,
 	    int life, int hotColor, int coolColor) {
 	ResourceLocation sprite = switch (shape) {
 	    case GLOW, RAY, SPARK -> GLOW;
 	    case RING -> RING;
 	    case SMOKE, DUST, FIRE -> SMOKE.get(random.nextInt(SMOKE.size()));
 	};
-	minecraft.particleEngine.add(new BlastEffectParticle(level, atlas.getSprite(sprite), shape, pos, velocity, size,
+	BlastParticleRenderer.add(new BlastEffectParticle(level, sprite, shape, pos, velocity, size,
 		life, hotColor, coolColor));
     }
 

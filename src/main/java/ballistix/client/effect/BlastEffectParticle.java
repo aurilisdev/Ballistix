@@ -1,19 +1,14 @@
 package ballistix.client.effect;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
 
+import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.TextureSheetParticle;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
@@ -49,9 +44,10 @@ final class BlastEffectParticle extends TextureSheetParticle {
 	}
     }
 
-    private static final ParticleRenderType BLAST_SHEET = new BlastRenderType();
+    private static final int RING_SEGMENTS = 48;
 
     private final Shape shape;
+    private final ResourceLocation spriteId;
     private final float size;
     private final int hotColor;
     private final int coolColor;
@@ -60,10 +56,11 @@ final class BlastEffectParticle extends TextureSheetParticle {
     private final float renderExtent;
     private int light;
 
-    BlastEffectParticle(ClientLevel level, TextureAtlasSprite sprite, Shape shape, Vec3 pos, Vec3 velocity,
+    BlastEffectParticle(ClientLevel level, ResourceLocation spriteId, Shape shape, Vec3 pos, Vec3 velocity,
 	    float size, int lifetime, int hotColor, int coolColor) {
 	super(level, pos.x, pos.y, pos.z);
 	this.shape = shape;
+	this.spriteId = spriteId;
 	this.size = size;
 	this.lifetime = lifetime;
 	this.hotColor = hotColor;
@@ -81,13 +78,12 @@ final class BlastEffectParticle extends TextureSheetParticle {
 	if (shape == Shape.SMOKE || shape == Shape.FIRE || shape == Shape.DUST) {
 	    oRoll = roll = level.random.nextFloat() * Mth.TWO_PI;
 	}
-	setSprite(sprite);
 	updateLight();
     }
 
     @Override
     public ParticleRenderType getRenderType() {
-	return BLAST_SHEET;
+	return ParticleRenderType.NO_RENDER;
     }
 
     @Override
@@ -113,10 +109,9 @@ final class BlastEffectParticle extends TextureSheetParticle {
 	return shape.lit ? LightTexture.FULL_BRIGHT : light;
     }
 
-    @Override
-    public FacingCameraMode getFacingCameraMode() {
-	return shape == Shape.RING ? (rotation, camera, partialTick) -> rotation.rotationX(-Mth.HALF_PI)
-		: super.getFacingCameraMode();
+    void render(VertexConsumer buffer, Camera camera, float partialTick, TextureAtlas atlas) {
+	setSprite(atlas.getSprite(spriteId));
+	super.render(buffer, camera, partialTick);
     }
 
     @Override
@@ -139,6 +134,10 @@ final class BlastEffectParticle extends TextureSheetParticle {
 	float growth = 1 - (1 - progress) * (1 - progress);
 	quadSize = size * Mth.lerp(growth, 1, shape.growth);
 
+	if (shape == Shape.RING) {
+	    renderRing(buffer, x, y, z);
+	    return;
+	}
 	if (shape != Shape.RAY) {
 	    super.renderRotatedQuad(buffer, rotation, x, y, z, partialTick);
 	    return;
@@ -161,14 +160,26 @@ final class BlastEffectParticle extends TextureSheetParticle {
 		.setLight(LightTexture.FULL_BRIGHT);
     }
 
-    private static final class BlastRenderType implements ParticleRenderType {
-	@Override
-	public BufferBuilder begin(Tesselator tesselator, TextureManager textures) {
-	    RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);
-	    RenderSystem.enableBlend();
-	    RenderSystem.depthMask(false);
-	    RenderSystem.defaultBlendFunc();
-	    return tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
+    private void renderRing(VertexConsumer buffer, float x, float y, float z) {
+	float previousCos = 1;
+	float previousSin = 0;
+	for (int i = 1; i <= RING_SEGMENTS; i++) {
+	    float angle = i * Mth.TWO_PI / RING_SEGMENTS;
+	    float cos = Mth.cos(angle);
+	    float sin = Mth.sin(angle);
+	    addRingVertex(buffer, x, y, z, previousCos * 0.60f, previousSin * 0.60f);
+	    addRingVertex(buffer, x, y, z, previousCos * 0.98f, previousSin * 0.98f);
+	    addRingVertex(buffer, x, y, z, cos * 0.98f, sin * 0.98f);
+	    addRingVertex(buffer, x, y, z, cos * 0.60f, sin * 0.60f);
+	    previousCos = cos;
+	    previousSin = sin;
 	}
+    }
+
+    private void addRingVertex(VertexConsumer buffer, float x, float y, float z, float dx, float dz) {
+	float u = Mth.lerp((dx + 1) * 0.5f, getU0(), getU1());
+	float v = Mth.lerp((dz + 1) * 0.5f, getV0(), getV1());
+	buffer.addVertex(x + dx * quadSize, y, z + dz * quadSize).setUv(u, v).setColor(rCol, gCol, bCol, alpha)
+		.setLight(LightTexture.FULL_BRIGHT);
     }
 }

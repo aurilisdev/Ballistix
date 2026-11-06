@@ -606,6 +606,9 @@ public class BallistixLangKeyProvider extends BaseLangKeyProvider {
 
 	    // Explosives (global)
 	    addConfiguration("should_cache_explosions", "Cache Explosions");
+	    addConfiguration("blast_screen_flash_strength", "Blast Screen Flash Strength");
+	    addConfiguration("blast_camera_shake_strength", "Blast Camera Shake Strength");
+	    addConfiguration("blast_particle_density", "Blast Particle Density");
 
 	    // Explosives → Tier 1
 	    addConfiguration("explosive_obsidian_size", "Obsidian Size");

@@ -1,77 +1,95 @@
 package ballistix.client.shake;
 
+/** One camera shake: an impact jolt followed by a rumble, both dying away over the shake's duration. */
 public class CameraShakeEffect {
-    private final double duration; // in ticks or seconds
-    private final double fadeInTime; // portion or absolute
-    private final double fadeOutTime;
-    private final double amplitude; // max angle offset
-    private final double frequency; // how quickly the noise evolves
-    private final long startTime; // system time or in-game tick
 
+    private static final Offsets NONE = new Offsets(0, 0);
+
+    private static final double HIGH_OCTAVE_WEIGHT = 0.55;
+    private static final double MID_OCTAVE_WEIGHT = 0.30;
+    private static final double LOW_OCTAVE_WEIGHT = 0.15;
+    private static final double PITCH_NOISE_LANE = 11.7;
+    private static final double ROLL_NOISE_LANE = 37.3;
+    private static final double CROSS_COUPLING = 0.22;
+    private static final double SOFT_LIMIT = 1.0;
+    private static final double SOFT_HEADROOM = 0.6;
+    private static final double FADE_OUT_START = 0.75;
+    private static final double ENVELOPE_EXPONENT = 1.4;
+    private static final double RUMBLE_RAMP_TICKS = 2;
+
+    private final double duration;
+    private final double amplitude;
+    private final long startTime;
     private final PerlinNoise noise;
-    private final double xOffsetSeed;
-    private final double yOffsetSeed;
+    private final int rollDirection;
 
-    public CameraShakeEffect(double duration, double fadeInTime, double fadeOutTime, double amplitude, double frequency,
-	    long worldTime, long seed) {
+    public CameraShakeEffect(double duration, double amplitude, long startTime, long seed) {
 	this.duration = duration;
-	this.fadeInTime = fadeInTime;
-	this.fadeOutTime = fadeOutTime;
 	this.amplitude = amplitude;
-	this.frequency = frequency;
-	startTime = worldTime;
-
+	this.startTime = startTime;
 	noise = new PerlinNoise(seed);
-	// Random offsets so that x/y samples don't use the same chunk of noise
-	// This prevents them from being locked in the same pattern.
-	xOffsetSeed = seed * 1.37;
-	yOffsetSeed = seed * 2.17;
+	rollDirection = (seed & 1) == 0 ? 1 : -1;
     }
 
-    /**
-     * Computes the current yaw/pitch offset for this shake effect.
-     * 
-     * @param currentTime The current in-game tick or system time
-     * @return a float[] of size 2: {yawOffset, pitchOffset}
-     */
-    public float[] getShakeOffsets(long currentTime) {
-	double elapsed = currentTime - startTime;
-	if (elapsed < 0 || elapsed > duration) {
-	    // outside of effect window
-	    return new float[] { 0f, 0f };
-	}
+    public Offsets getShakeOffsets(double gameTime) {
+	double elapsed = gameTime - startTime;
+	if (elapsed <= 0 || elapsed >= duration)
+	    return NONE;
 
-	// fade factor: 0->1->0 over the life of the effect
-	double fadeMultiplier = computeFadeMultiplier(elapsed);
+	double remaining = 1 - elapsed / duration;
+	double strength = amplitude * Math.pow(remaining, ENVELOPE_EXPONENT);
+	double impact = impactWave(elapsed);
+	double rumble = Math.min(elapsed / RUMBLE_RAMP_TICKS, 1) * (0.35 + 0.65 * remaining);
 
-	// sample noise
-	double t = elapsed * frequency * 0.01; // scale time for noise
-	double noiseX = noise.noise(xOffsetSeed + t, 0.0, 0.0);
-	double noiseY = noise.noise(yOffsetSeed + t, 0.0, 0.0);
+	double pitch = -0.52 * impact + 0.6 * rumble * rumbleNoise(elapsed, PITCH_NOISE_LANE);
+	double roll = 0.85 * rollDirection * impact + rumble * rumbleNoise(elapsed, ROLL_NOISE_LANE);
 
-	// Map noise from [-1,1] to offset
-	float yawOffset = (float) (noiseX * amplitude * fadeMultiplier);
-	float pitchOffset = (float) (noiseY * amplitude * fadeMultiplier);
+	// Each axis leaks into the other, which rocks the view diagonally instead of along two independent axes.
+	double coupledPitch = softClamp(pitch + CROSS_COUPLING * roll);
+	double coupledRoll = softClamp(roll + CROSS_COUPLING * pitch);
 
-	return new float[] { yawOffset, pitchOffset };
+	double fade = fadeOut(elapsed);
+	return new Offsets((float) (strength * coupledPitch * fade), (float) (strength * coupledRoll * fade));
     }
 
-    private double computeFadeMultiplier(double elapsed) {
-	// Let’s treat fadeInTime / fadeOutTime as absolute times in ticks for clarity.
-	if (elapsed < fadeInTime) {
-	    // Fade in from 0 to 1
-	    return elapsed / fadeInTime;
-	} else if (elapsed > duration - fadeOutTime) {
-	    // Fade out from 1 to 0
-	    double fadeOutStart = duration - fadeOutTime;
-	    return 1.0 - (elapsed - fadeOutStart) / fadeOutTime;
-	} else {
-	    // Full intensity
-	    return 1.0;
-	}
+    public boolean isComplete(long gameTime) {
+	return gameTime - startTime >= duration;
     }
 
-    public boolean isComplete(long currentTime) {
-	return currentTime - startTime > duration;
+    /** The initial hit, a higher ring and a low tick, all damped away within a few ticks. */
+    private static double impactWave(double elapsed) {
+	double hit = 0.85 * Math.sin(elapsed * 0.95);
+	double ring = 0.30 * Math.sin(elapsed * 1.37 + 1.7);
+	double tick = 0.15 * Math.sin(elapsed * 2.23 + 3.1);
+	return (hit + ring + tick) * Math.exp(-elapsed / 4.5);
+    }
+
+    private double rumbleNoise(double elapsed, double lane) {
+	return HIGH_OCTAVE_WEIGHT * noise.noise(elapsed * 2.0 + 1.0, lane, 0)
+		+ MID_OCTAVE_WEIGHT * noise.noise(elapsed * 0.7 + 2.0, lane + 17.3, 0)
+		+ LOW_OCTAVE_WEIGHT * noise.noise(elapsed * 0.15, lane + 41.9, 0);
+    }
+
+    /** Smoothly eases the whole shake to zero over its last quarter. */
+    private double fadeOut(double elapsed) {
+	double fadeStart = duration * FADE_OUT_START;
+	if (elapsed <= fadeStart)
+	    return 1;
+	double t = (elapsed - fadeStart) / (duration - fadeStart);
+	double t3 = t * t * t;
+	double t4 = t3 * t;
+	double t5 = t4 * t;
+	return Math.max(0, 1 - 6 * t5 + 15 * t4 - 10 * t3);
+    }
+
+    /** Passes values below the limit unchanged and rolls larger ones off smoothly towards limit + headroom. */
+    private static double softClamp(double value) {
+	double magnitude = Math.abs(value);
+	if (magnitude <= SOFT_LIMIT)
+	    return value;
+	return Math.signum(value) * (SOFT_LIMIT + SOFT_HEADROOM * Math.tanh((magnitude - SOFT_LIMIT) / SOFT_HEADROOM));
+    }
+
+    public record Offsets(float pitch, float roll) {
     }
 }

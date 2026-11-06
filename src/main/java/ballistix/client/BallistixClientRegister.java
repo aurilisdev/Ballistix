@@ -324,24 +324,6 @@ public class BallistixClientRegister {
 		    matrixStack.popPose();
 		});
 
-	event.register(SubtypeBlast.nuclear,
-		(entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
-
-		    if (!entityIn.shouldRenderCustom) {
-			return;
-		    }
-
-		    float scale = (entityIn.tickCount - entityIn.ticksWhenCustomRender) / 20.0f;
-		    matrixStack.scale(scale, scale, scale);
-
-		    if (entityIn.tickCount - entityIn.ticksWhenCustomRender < 10) {
-			matrixStack.scale(5, 5, 5);
-			RenderingUtils.renderStar(matrixStack, bufferIn, entityIn.tickCount + partialTicks, 100, 1, 1,
-				1, 0.7f, false);
-		    }
-
-		});
-
 	event.register(SubtypeBlast.emp, (entityIn, entityYaw, partialTicks, matrixStack, bufferIn, packedLightIn) -> {
 
 	    if (!entityIn.shouldRenderCustom) {

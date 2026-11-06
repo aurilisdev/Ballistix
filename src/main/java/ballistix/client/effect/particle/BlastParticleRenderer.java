@@ -1,0 +1,138 @@
+package ballistix.client.effect.particle;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Iterator;
+
+import javax.annotation.Nullable;
+
+import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
+import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
+import com.mojang.blaze3d.vertex.ByteBufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.MeshData;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexSorting;
+
+import ballistix.Ballistix;
+import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage;
+
+/** Owns, ticks and draws every live {@link BlastParticle} as a single depth-sorted batch. */
+@EventBusSubscriber(modid = Ballistix.ID, value = Dist.CLIENT)
+public final class BlastParticleRenderer {
+
+    private static final int MAX_PARTICLES = 16_384;
+    private static final Deque<BlastParticle> PARTICLES = new ArrayDeque<>();
+    private static final ByteBufferBuilder SORT_BUFFER = new ByteBufferBuilder(64 * 1024);
+    @Nullable
+    private static ClientLevel level;
+
+    private BlastParticleRenderer() {
+    }
+
+    public static void add(BlastParticle particle) {
+	if (PARTICLES.size() >= MAX_PARTICLES)
+	    PARTICLES.removeFirst();
+	PARTICLES.addLast(particle);
+    }
+
+    public static void tick(@Nullable ClientLevel currentLevel, boolean paused) {
+	if (level != currentLevel) {
+	    PARTICLES.clear();
+	    level = currentLevel;
+	}
+	if (paused)
+	    return;
+	Iterator<BlastParticle> iterator = PARTICLES.iterator();
+	while (iterator.hasNext()) {
+	    BlastParticle particle = iterator.next();
+	    particle.tick();
+	    if (!particle.isAlive())
+		iterator.remove();
+	}
+    }
+
+    @SubscribeEvent
+    public static void onRenderLevel(RenderLevelStageEvent event) {
+	if (PARTICLES.isEmpty())
+	    return;
+
+	// Fabulous composites particles by depth, whereas Fast and Fancy draw clouds into the main target first.
+	boolean fabulous = event.getLevelRenderer().getParticlesTarget() != null;
+	Stage stage = fabulous ? Stage.AFTER_PARTICLES : Stage.AFTER_WEATHER;
+	if (event.getStage() != stage)
+	    return;
+
+	Minecraft minecraft = Minecraft.getInstance();
+	if (minecraft.level != level || !(minecraft.getTextureManager()
+		.getTexture(TextureAtlas.LOCATION_PARTICLES) instanceof TextureAtlas atlas))
+	    return;
+
+	MeshData mesh = buildSortedMesh(event, atlas);
+	if (mesh != null)
+	    draw(mesh, minecraft.gameRenderer.lightTexture(), fabulous);
+    }
+
+    @Nullable
+    private static MeshData buildSortedMesh(RenderLevelStageEvent event, TextureAtlas atlas) {
+	Camera camera = event.getCamera();
+	float partialTick = event.getPartialTick().getGameTimeDeltaPartialTick(false);
+	BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
+	for (BlastParticle particle : PARTICLES) {
+	    if (event.getFrustum().isVisible(particle.getRenderBoundingBox(partialTick)))
+		particle.render(buffer, camera, partialTick, atlas);
+	}
+	MeshData mesh = buffer.build();
+	if (mesh != null) {
+	    // Quad centres are camera relative, so their dot product with the look vector orders them back to front.
+	    mesh.sortQuads(SORT_BUFFER, VertexSorting.byDistance(camera.getLookVector()::dot));
+	}
+	return mesh;
+    }
+
+    private static void draw(MeshData mesh, LightTexture lightTexture, boolean fabulous) {
+	ShaderInstance previousShader = RenderSystem.getShader();
+	int previousTexture = RenderSystem.getShaderTexture(0);
+	int previousLightTexture = RenderSystem.getShaderTexture(2);
+	lightTexture.turnOnLightLayer();
+	RenderSystem.setShader(GameRenderer::getParticleShader);
+	RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);
+	RenderSystem.enableBlend();
+	if (fabulous) {
+	    // The compositor reads premultiplied colour and accumulated alpha from this target.
+	    RenderSystem.blendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE,
+		    DestFactor.ONE_MINUS_SRC_ALPHA);
+	} else {
+	    RenderSystem.defaultBlendFunc();
+	}
+	RenderSystem.enableDepthTest();
+	RenderSystem.depthMask(fabulous);
+	RenderSystem.disableCull();
+	try {
+	    BufferUploader.drawWithShader(mesh);
+	} finally {
+	    RenderSystem.enableCull();
+	    RenderSystem.disableBlend();
+	    RenderSystem.defaultBlendFunc();
+	    lightTexture.turnOffLightLayer();
+	    RenderSystem.setShaderTexture(2, previousLightTexture);
+	    RenderSystem.setShaderTexture(0, previousTexture);
+	    RenderSystem.setShader(() -> previousShader);
+	}
+    }
+}

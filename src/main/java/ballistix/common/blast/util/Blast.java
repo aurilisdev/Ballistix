@@ -20,11 +20,14 @@ import ballistix.api.event.BlastEvent;
 import ballistix.api.event.BlastEvent.ConstructBlastEvent;
 import ballistix.api.event.BlastEvent.PostBlastEvent;
 import ballistix.api.event.BlastEvent.PreBlastEvent;
+import ballistix.client.effect.BlastEffects;
+import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.entity.EntityBlast;
 import ballistix.compatibility.griefdefender.GriefDefenderHandler;
 import modularforcefields.common.settings.MFFSConfig;
 import modularforcefields.common.tile.TileFortronFieldProjector;
 import modularforcefields.common.world.FortronFieldData;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
@@ -47,6 +50,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.NeoForge;
@@ -166,6 +171,30 @@ public abstract class Blast {
     public void doPostExplode() {
     }
 
+    /** The configured blast radius that sizes this blast's visual effects, or 0 if it has none. */
+    protected double effectRadius() {
+	return 0;
+    }
+
+    /** Announces the detonation to nearby clients so they play its visual effects. Sent once per blast entity. */
+    protected final void sendDetonationEffects() {
+	if (world instanceof ServerLevel level && blastEntity instanceof EntityBlast entity
+		&& getBlastType() instanceof SubtypeBlast type) {
+	    entity.sendDetonationEffects(level, position, type, effectRadius());
+	}
+    }
+
+    /** Plays the visual effects locally; only does so if the server does not announce them itself. */
+    @OnlyIn(Dist.CLIENT)
+    protected void startClientEffects() {
+	if (world instanceof ClientLevel level && getBlastType() instanceof SubtypeBlast type)
+	    BlastEffects.startClientFallback(level, position, type, effectRadius());
+    }
+
+    private boolean isShowingCustomEffects() {
+	return this instanceof IHasCustomRender renderer && (isInstantaneous() || renderer.shouldRender());
+    }
+
     @Deprecated(since = "Should not be called externally!", forRemoval = false)
     public final void preExplode() {
 	PreBlastEvent evt = new PreBlastEvent(world, this);
@@ -181,7 +210,10 @@ public abstract class Blast {
 	BlastEvent evt = new BlastEvent(world, this);
 	NeoForge.EVENT_BUS.post(evt);
 	if (!evt.isCanceled()) {
-	    return doExplode(callcount);
+	    boolean done = doExplode(callcount);
+	    if (world instanceof ServerLevel && isShowingCustomEffects())
+		sendDetonationEffects();
+	    return done;
 	}
 	return true;
     }

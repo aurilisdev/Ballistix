@@ -32,15 +32,19 @@ public class BlastObsidian extends Blast implements IHasCustomRender {
 		    (float) BallistixConfig.INSTANCE.EXPLOSIVE_OBSIDIAN_SIZE.getAsDouble(), false,
 		    ExplosionInteraction.BLOCK, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER,
 		    SoundEvents.GENERIC_EXPLODE);
-	} else {
-	    produceParticles();
 	}
 	return true;
     }
 
     @Override
+    protected double effectRadius() {
+	return BallistixConfig.INSTANCE.EXPLOSIVE_OBSIDIAN_SIZE.getAsDouble();
+    }
+
+    @Override
     @OnlyIn(Dist.CLIENT)
     public void produceParticles() {
+	startClientEffects();
     }
 
     @Override

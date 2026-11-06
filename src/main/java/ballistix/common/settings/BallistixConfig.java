@@ -11,6 +11,9 @@ public class BallistixConfig {
 
     public ModConfigSpec.BooleanValue SHOULD_CACHE_EXPLOSIONS;
     public ModConfigSpec.BooleanValue SHOULD_MULTITHREAD_RAYTRACING;
+    public ModConfigSpec.DoubleValue BLAST_SCREEN_FLASH_STRENGTH;
+    public ModConfigSpec.DoubleValue BLAST_CAMERA_SHAKE_STRENGTH;
+    public ModConfigSpec.DoubleValue BLAST_PARTICLE_DENSITY;
 
     // Tier 1
     public ModConfigSpec.DoubleValue EXPLOSIVE_OBSIDIAN_SIZE;
@@ -169,6 +172,15 @@ public class BallistixConfig {
 	SHOULD_MULTITHREAD_RAYTRACING = builder.comment(
 		"NB! This is ONLY useful for very slow pc's. Like very slow. It is very BAD for slow - mediocre - good pc's and will make raytracing SLOWER for these!!!")
 		.define("should_multithread_raytracing", false);
+	BLAST_SCREEN_FLASH_STRENGTH = builder
+		.comment("Client side. Strength of the white screen flash when a large blast goes off in view; 0 disables it.")
+		.defineInRange("blast_screen_flash_strength", 2.0, 0, 10.0);
+	BLAST_CAMERA_SHAKE_STRENGTH = builder
+		.comment("Client side. Multiplier on how hard the camera shakes when a blast's shockwave arrives; 0 disables it.")
+		.defineInRange("blast_camera_shake_strength", 1.0, 0, 5.0);
+	BLAST_PARTICLE_DENSITY = builder
+		.comment("Client side. Multiplier on how many particles blast effects spawn, on top of the particle setting.")
+		.defineInRange("blast_particle_density", 1.0, 0.1, 2.0);
 
 	// Tier 1
 	builder.push("tier1");

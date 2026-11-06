@@ -1,9 +1,12 @@
 package ballistix.common.packet.type.client;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
 
 import ballistix.api.radar.IDetected;
+import ballistix.client.effect.BlastEffects;
+import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.packet.type.client.particle.BlastParticleSpawnType;
 import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.radar.TileSearchRadar;
@@ -23,6 +26,18 @@ public class ClientBarrierMethods {
 	    radar.detections.clear();
 	    radar.detections.addAll(detected);
 	}
+    }
+
+    public static void handleStartBlastEffects(BlockPos position, SubtypeBlast blast, double radius) {
+	ClientLevel level = Minecraft.getInstance().level;
+	if (level != null)
+	    BlastEffects.start(level, position, blast, radius);
+    }
+
+    public static void handleCraterGround(BlockPos origin, SubtypeBlast blast, List<BlockPos> floors) {
+	ClientLevel level = Minecraft.getInstance().level;
+	if (level != null)
+	    BlastEffects.reportCraterFloors(level, origin, blast, floors);
     }
 
     public static void handlerSpawnBlastParticle(BlockPos p, BlastParticleSpawnType type) {

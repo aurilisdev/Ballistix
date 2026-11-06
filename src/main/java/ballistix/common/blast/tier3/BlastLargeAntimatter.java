@@ -9,9 +9,6 @@ import javax.annotation.Nullable;
 import ballistix.Ballistix;
 import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IHasCustomRender;
-import ballistix.client.particle.ParticleOptionsBlastSmoke;
-import ballistix.client.shake.CameraShakeEffect;
-import ballistix.client.shake.CameraShakeManager;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.blast.util.BlastLasting;
 import ballistix.common.blast.util.thread.ThreadSimpleBlast;
@@ -19,19 +16,14 @@ import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.packet.type.client.particle.BlastParticleSpawnType;
 import ballistix.common.packet.type.client.particle.PacketSpawnBlastParticle;
 import ballistix.common.settings.BallistixConfig;
-import ballistix.prefab.utils.ParticleUtilities;
 import ballistix.registers.BallistixSounds;
 import modularforcefields.common.world.FortronFieldData;
 import modularforcefields.common.world.FortronProtectionRegion;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
@@ -40,7 +32,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -92,6 +83,7 @@ public class BlastLargeAntimatter extends BlastLasting implements IHasCustomRend
 	    hasStarted = true;
 
 	    int radius = (int) BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_RADIUS.getAsDouble();
+	    startCraterEffects();
 
 	    if (Ballistix.MFFS_LOADED && world instanceof ServerLevel serverLevel) {
 		protectionRegions = FortronFieldData.get(serverLevel).getProtectionRegions(position, radius);
@@ -138,8 +130,9 @@ public class BlastLargeAntimatter extends BlastLasting implements IHasCustomRend
 
 		if (canBreakBlockState(world, state, p, owner)) {
 		    block.wasExploded(world, p, ex);
-		    world.setBlock(p, Blocks.AIR.defaultBlockState(),
-			    Block.UPDATE_NEIGHBORS | Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
+		    if (world.setBlock(p, Blocks.AIR.defaultBlockState(),
+			    Block.UPDATE_NEIGHBORS | Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS))
+			recordCraterRemoval(p, state);
 		}
 		if (world.random.nextFloat() < 1 / 120.0 && world instanceof ServerLevel serverlevel) {
 		    serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false)
@@ -149,7 +142,9 @@ public class BlastLargeAntimatter extends BlastLasting implements IHasCustomRend
 
 	    }
 	}
-	if (!iterator.hasNext()) {
+	boolean carvingDone = !iterator.hasNext();
+	reportCraterFloors(callCount, carvingDone);
+	if (carvingDone) {
 	    position = position.above().above();
 	    attackEntities((float) BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_RADIUS.getAsDouble() * 2, ex);
 	    return true;
@@ -162,48 +157,15 @@ public class BlastLargeAntimatter extends BlastLasting implements IHasCustomRend
 	return false;
     }
 
-    private boolean hasShaken;
+    @Override
+    protected double effectRadius() {
+	return BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_RADIUS.getAsDouble();
+    }
 
     @Override
     @OnlyIn(Dist.CLIENT)
     public void produceParticles() {
-	if (ticksSinceBlastStart < 2)
-	    return;
-	double x = position.getX() + 0.5;
-	double y = position.getY() + 0.5;
-	double z = position.getZ() + 0.5;
-	// Fireball
-	if (ticksSinceBlastStart < 10) {
-
-	    ParticleOptions particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 20f, 0.015f, 750,
-		    true, true, 120, 0.999);
-	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 60, -90, 90,
-		    BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_RADIUS.get()
-			    / BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_DURATION.get() * 3,
-		    true);
-	} // Shockwave
-	double spawnSize = 3;
-	double endSize = BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.get() * 5;
-	int diff = (int) (endSize - spawnSize);
-	if (ticksSinceBlastStart > diff)
-	    return;
-	double size = ParticleUtilities.progressGroundShockwave(world, x, z, ticksSinceBlastStart * 5 / (double) diff,
-		spawnSize, endSize, 0.275);
-	if (hasShaken)
-	    return;
-	Vec3 pos = new Vec3(x, y, z);
-	LocalPlayer player = Minecraft.getInstance().player;
-	if (player == null)
-	    return;
-	double realDistance = player.position().distanceTo(pos);
-	double dist = Mth.abs((float) (realDistance - size));
-	if (dist < 3) {
-	    hasShaken = true;
-	    CameraShakeEffect effect = CameraShakeManager.createBlastSourcedEffect(
-		    BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_DURATION.get(), endSize, world.getGameTime(),
-		    pos);
-	    CameraShakeManager.addShake(effect);
-	}
+	startClientEffects();
     }
 
     @Override

@@ -36,9 +36,15 @@ public class BlastCondensive extends Blast implements IHasCustomRender {
 	return true;
     }
 
+    @Override
+    protected double effectRadius() {
+	return BallistixConfig.INSTANCE.EXPLOSIVE_CONDENSIVE_SIZE.getAsDouble();
+    }
+
     @OnlyIn(Dist.CLIENT)
     @Override
     public void produceParticles() {
+	startClientEffects();
     }
 
     @Override

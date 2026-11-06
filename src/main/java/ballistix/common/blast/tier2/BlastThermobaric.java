@@ -8,9 +8,6 @@ import javax.annotation.Nullable;
 
 import ballistix.Ballistix;
 import ballistix.api.blast.IHasCustomRender;
-import ballistix.client.particle.ParticleOptionsBlastSmoke;
-import ballistix.client.shake.CameraShakeEffect;
-import ballistix.client.shake.CameraShakeManager;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.blast.util.BlastLasting;
 import ballistix.common.blast.util.thread.raycast.ThreadDynamicRaycastBlast;
@@ -18,18 +15,13 @@ import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.packet.type.client.particle.BlastParticleSpawnType;
 import ballistix.common.packet.type.client.particle.PacketSpawnBlastParticle;
 import ballistix.common.settings.BallistixConfig;
-import ballistix.prefab.utils.ParticleUtilities;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
@@ -37,7 +29,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -147,56 +138,15 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
 	return false;
     }
 
-    private boolean hasShaken = false;
+    @Override
+    protected double effectRadius() {
+	return BallistixConfig.INSTANCE.EXPLOSIVE_THERMOBARIC_SIZE.getAsDouble();
+    }
 
     @Override
     @OnlyIn(Dist.CLIENT)
     public void produceParticles() {
-	double x = position.getX() + 0.5;
-	double y = position.getY() + 0.5;
-	double z = position.getZ() + 0.5;
-
-	double initialSpeed = 0.8;
-
-	if (ticksSinceBlastStart <= 5) {
-	    // Fireball
-	    ParticleOptions particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 4f, -0.045f, 750,
-		    true, true, 40, 0.95);
-	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 25, 50, 90, initialSpeed, true);
-
-	    // Centersmokes
-	    initialSpeed = 1; // Increase/decrease to taste
-	    particle = new ParticleOptionsBlastSmoke().setParameters(0.8f, 0.8f, 0.8f, 4f, 0.033f, 750, true, 0.95);
-	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 25, 0, 20, initialSpeed, true);
-
-	    // Centersmokes
-	    initialSpeed = 1; // Increase/decrease to taste
-	    particle = new ParticleOptionsBlastSmoke().setParameters(0.8f, 0.8f, 0.8f, 4f, -0.033f, 750, true, 0.95);
-	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 25, 0, 20, initialSpeed, true);
-	}
-	double spawnSize = 3;
-	double endSize = BallistixConfig.INSTANCE.EXPLOSIVE_THERMOBARIC_SIZE.getAsDouble() * 7.5;
-	int diff = (int) (endSize - spawnSize);
-	if (ticksSinceBlastStart > diff)
-	    return;
-	double size = ParticleUtilities.progressGroundShockwave(world, x, z, ticksSinceBlastStart * 2 / (double) diff,
-		spawnSize, endSize, 0.15);
-	if (hasShaken)
-	    return;
-	Vec3 pos = new Vec3(x, y, z);
-	Player player = Minecraft.getInstance().player;
-	if (player == null)
-	    return;
-
-	double realDistance = player.position().distanceTo(pos);
-	double dist = Mth.abs((float) (realDistance - size));
-	if (dist < 3) {
-	    hasShaken = true;
-	    CameraShakeEffect effect = CameraShakeManager.createBlastSourcedEffect(
-		    BallistixConfig.INSTANCE.EXPLOSIVE_THERMOBARIC_DURATION.getAsDouble() / 1.5, endSize,
-		    world.getGameTime(), pos);
-	    CameraShakeManager.addShake(effect);
-	}
+	startClientEffects();
     }
 
     @Override

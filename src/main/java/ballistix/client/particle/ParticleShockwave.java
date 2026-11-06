@@ -10,6 +10,7 @@ import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.util.Mth;
 
 public class ParticleShockwave extends TextureSheetParticle {
@@ -54,6 +55,11 @@ public class ParticleShockwave extends TextureSheetParticle {
     }
 
     @Override
+    protected int getLightColor(float partialTicks) {
+	return LightTexture.FULL_BRIGHT;
+    }
+
+    @Override
     public void tick() {
 	xd *= friction;
 	yd *= friction;
@@ -63,15 +69,10 @@ public class ParticleShockwave extends TextureSheetParticle {
 
     @Override
     public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
+	float lifeProgress = Mth.clamp((age + partialTicks) / lifetime, 0f, 1f);
+	quadSize = startQuadSize * (0.65f + lifeProgress * 0.65f);
+	alpha = startAlpha * (1f - lifeProgress) * (1f - lifeProgress);
 	super.render(buffer, renderInfo, partialTicks);
-
-	float lifeProgress = (age + partialTicks) / lifetime;
-	if (lifeProgress <= 1 && lifeProgress >= 0) {
-	    // Gradually shrink and expand the particle
-	    quadSize = startQuadSize * Mth.cos((float) (Mth.PI * 2 * Math.pow(lifeProgress - 0.5, 2)));
-
-	    alpha = startAlpha * Mth.cos((float) (Mth.PI * 2 * Math.pow(lifeProgress - 0.5, 2)));
-	}
     }
 
     public static class Factory implements ParticleProvider<ParticleOptionsShockwave>,

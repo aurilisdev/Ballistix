@@ -130,6 +130,7 @@ public class BlastBreaching extends BlastLasting implements IHasCustomRender {
 	double x = position.getX() + 0.5;
 	double y = position.getY() - 2;
 	double z = position.getZ() + 0.5;
+	playDetonationBurst(x, position.getY() + 0.5, z, 2f, ParticleTypes.FLAME);
 	if (ticksSinceBlastStart == 1) {
 	    double initialSpeed = 0.4;
 	    // Fireball
@@ -154,7 +155,7 @@ public class BlastBreaching extends BlastLasting implements IHasCustomRender {
 	if (ticksSinceBlastStart > diff)
 	    return;
 	double size = ParticleUtilities.progressGroundShockwave(world, x, z, ticksSinceBlastStart / (double) diff,
-		spawnSize, endSize, 0.1);
+		spawnSize, endSize, 0.1, 0xFFD4A8);
 	if (hasShaken)
 	    return;
 	Vec3 pos = new Vec3(x, y, z);

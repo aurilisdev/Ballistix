@@ -172,11 +172,12 @@ public class BlastAntimatter extends BlastLasting implements IHasCustomRender {
 	double x = position.getX() + 0.5;
 	double y = position.getY() + 0.5;
 	double z = position.getZ() + 0.5;
-	// Fireball
+	playDetonationBurst(x, y, z, 12f, ParticleTypes.SOUL_FIRE_FLAME);
+	// Cold blue blast cloud
 	if (ticksSinceBlastStart < 10) {
 
-	    ParticleOptions particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 15f, 0.015f, 750,
-		    true, true, 120, 0.999);
+	    ParticleOptions particle = new ParticleOptionsBlastSmoke().setParameters(0.45f, 0.7f, 1f, 15f, 0.015f, 750,
+		    true, 0.999);
 	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 50, -90, 90,
 		    BallistixConfig.INSTANCE.EXPLOSIVE_ANTIMATTER_RADIUS.get()
 			    / BallistixConfig.INSTANCE.EXPLOSIVE_ANTIMATTER_DURATION.get() * 2.5,
@@ -189,7 +190,7 @@ public class BlastAntimatter extends BlastLasting implements IHasCustomRender {
 	if (ticksSinceBlastStart > diff)
 	    return;
 	double size = ParticleUtilities.progressGroundShockwave(world, x, z, ticksSinceBlastStart * 5 / (double) diff,
-		spawnSize, endSize, 0.25);
+		spawnSize, endSize, 0.25, 0x65E6FF);
 	if (hasShaken)
 	    return;
 	Vec3 pos = new Vec3(x, y, z);

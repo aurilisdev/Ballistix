@@ -172,11 +172,12 @@ public class BlastLargeAntimatter extends BlastLasting implements IHasCustomRend
 	double x = position.getX() + 0.5;
 	double y = position.getY() + 0.5;
 	double z = position.getZ() + 0.5;
-	// Fireball
+	playDetonationBurst(x, y, z, 15f, ParticleTypes.ELECTRIC_SPARK);
+	// Violet blast cloud
 	if (ticksSinceBlastStart < 10) {
 
-	    ParticleOptions particle = new ParticleOptionsBlastSmoke().setParameters(1.0f, 1.0f, 1.0f, 20f, 0.015f, 750,
-		    true, true, 120, 0.999);
+	    ParticleOptions particle = new ParticleOptionsBlastSmoke().setParameters(0.9f, 0.48f, 1f, 20f, 0.015f, 750,
+		    true, 0.999);
 	    ParticleUtilities.spawnParticleSphere(particle, x, y, z, 60, -90, 90,
 		    BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_RADIUS.get()
 			    / BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_DURATION.get() * 3,
@@ -188,7 +189,7 @@ public class BlastLargeAntimatter extends BlastLasting implements IHasCustomRend
 	if (ticksSinceBlastStart > diff)
 	    return;
 	double size = ParticleUtilities.progressGroundShockwave(world, x, z, ticksSinceBlastStart * 5 / (double) diff,
-		spawnSize, endSize, 0.275);
+		spawnSize, endSize, 0.275, 0xD28AFF);
 	if (hasShaken)
 	    return;
 	Vec3 pos = new Vec3(x, y, z);

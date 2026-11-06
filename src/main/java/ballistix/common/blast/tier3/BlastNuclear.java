@@ -245,6 +245,7 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	double x = position.getX() + 0.5;
 	double y = position.getY() + 0.5;
 	double z = position.getZ() + 0.5;
+	playDetonationBurst(x, y, z, 9f, ParticleTypes.FLAME);
 
 	double initialSpeed = 1.25;
 
@@ -274,7 +275,7 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	    // Shockwave
 	    if (ticksSinceBlastStart == 3) {
 		initialSpeed = 1.5;
-		particle = new ParticleOptionsShockwave().setParameters(1, 1, 1, 1, 4, 150, false, 0.999);
+		particle = new ParticleOptionsShockwave().setParameters(1f, 0.86f, 0.58f, 0.85f, 4f, 95, false, 0.999);
 		ParticleUtilities.spawnParticleRing(particle, x, y + 25, z, 100, initialSpeed, false);
 	    }
 	} else if (ticksSinceBlastStart < 1500 && ticksSinceBlastStart % 3 == 0) {
@@ -303,7 +304,7 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	if (ticksSinceBlastStart > diff)
 	    return;
 	double size = ParticleUtilities.progressGroundShockwave(world, x, z, ticksSinceBlastStart * 5 / (double) diff,
-		spawnSize, endSize, 0.2);
+		spawnSize, endSize, 0.2, 0xFFE4A3);
 	if (hasShaken)
 	    return;
 	Vec3 pos = new Vec3(x, y, z);

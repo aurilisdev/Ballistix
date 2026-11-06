@@ -155,6 +155,7 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
 	double x = position.getX() + 0.5;
 	double y = position.getY() + 0.5;
 	double z = position.getZ() + 0.5;
+	playDetonationBurst(x, y, z, 5f, ParticleTypes.FLAME);
 
 	double initialSpeed = 0.8;
 
@@ -180,7 +181,7 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
 	if (ticksSinceBlastStart > diff)
 	    return;
 	double size = ParticleUtilities.progressGroundShockwave(world, x, z, ticksSinceBlastStart * 2 / (double) diff,
-		spawnSize, endSize, 0.15);
+		spawnSize, endSize, 0.15, 0xFF9C47);
 	if (hasShaken)
 	    return;
 	Vec3 pos = new Vec3(x, y, z);

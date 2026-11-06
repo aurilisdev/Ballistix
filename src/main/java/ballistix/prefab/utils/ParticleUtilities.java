@@ -2,7 +2,11 @@ package ballistix.prefab.utils;
 
 import ballistix.client.particle.ParticleOptionsShockwave;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.ParticleStatus;
+import net.minecraft.client.particle.ParticleEngine;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
@@ -15,6 +19,33 @@ import voltaic.Voltaic;
  * 
  */
 public class ParticleUtilities {
+
+    private static final int MAX_SHOCKWAVE_SAMPLES = 192;
+
+    public static void spawnDetonationBurst(double x, double y, double z, float sparkSpread, ParticleOptions spark) {
+	Minecraft minecraft = Minecraft.getInstance();
+	ParticleStatus detail = minecraft.options.particles().get();
+	if (detail == ParticleStatus.MINIMAL)
+	    return;
+
+	ParticleEngine engine = minecraft.particleEngine;
+	engine.createParticle(ParticleTypes.FLASH, x, y, z, 0, 0, 0);
+	int count = Math.min(48, 12 + (int) (sparkSpread * 4));
+	if (detail == ParticleStatus.DECREASED)
+	    count /= 2;
+
+	double speedScale = Math.sqrt(sparkSpread);
+	for (int i = 0; i < count; i++) {
+	    double angle = 2 * Math.PI * (i + Voltaic.RANDOM.nextDouble()) / count;
+	    double dirX = Math.cos(angle);
+	    double dirZ = Math.sin(angle);
+	    double radius = sparkSpread * (0.65 + Voltaic.RANDOM.nextDouble() * 0.55);
+	    double speed = speedScale * (0.22 + Voltaic.RANDOM.nextDouble() * 0.38);
+	    double rise = 0.12 + Voltaic.RANDOM.nextDouble() * speed;
+	    engine.createParticle(spark, x + radius * dirX, y + rise * sparkSpread, z + radius * dirZ,
+		    speed * dirX, rise, speed * dirZ);
+	}
+    }
 
     public static void spawnParticleRing(ParticleOptions particle, double centerX, double centerY, double centerZ,
 	    int count, double initialSpeed, boolean shouldRandomize) {
@@ -61,38 +92,59 @@ public class ParticleUtilities {
 	}
     }
 
-    /**
-     * @param world
-     * @param x
-     * @param z
-     * @param progress
-     * @param spawnSize
-     * @param endSize
-     * @param chance
-     * @return currentShockwaveRadius
-     */
     public static double progressGroundShockwave(Level world, double x, double z, double progress, double spawnSize,
 	    double endSize, double chance) {
-	if (progress > 1)
-	    return endSize;
-	int r = (int) (spawnSize + (endSize - spawnSize) * progress);
-	for (double i = 0; i < 360.0; i += 360.0 / (Math.PI * 2 * r) * (0.5 + Voltaic.RANDOM.nextDouble())) {
-	    if (Voltaic.RANDOM.nextDouble() < chance) {
-		double angle = Math.toRadians(i);
-		double dirX = Math.cos(angle);
-		double dirZ = Math.sin(angle);
-		int rx = (int) (x + r * dirX);
-		int rz = (int) (z + r * dirZ);
-		int ry = world.getHeight(Types.WORLD_SURFACE, rx, rz);
+	return progressGroundShockwave(world, x, z, progress, spawnSize, endSize, chance, 0xFFFFFF);
+    }
 
-		int life = 15;
-		if (life > 0) {
-		    Minecraft.getInstance().particleEngine.createParticle(new ParticleOptionsShockwave()
-			    .setParameters(1f, 1f, 1f, (float) (1.0f - progress), 1.3f, life, false, 1), rx + 1.5, ry,
-			    rz + 0.5, 0, 0, 0);
-		}
+    public static double progressGroundShockwave(Level world, double x, double z, double progress, double spawnSize,
+	    double endSize, double chance, int color) {
+	if (!Double.isFinite(progress) || progress > 1 || endSize <= spawnSize)
+	    return endSize;
+
+	progress = Math.max(0, progress);
+	int radius = (int) (spawnSize + (endSize - spawnSize) * progress);
+	if (radius <= 0)
+	    return radius;
+
+	Minecraft minecraft = Minecraft.getInstance();
+	ParticleStatus detail = minecraft.options.particles().get();
+	int budget = switch (detail) {
+	    case ALL -> MAX_SHOCKWAVE_SAMPLES;
+	    case DECREASED -> MAX_SHOCKWAVE_SAMPLES / 2;
+	    case MINIMAL -> MAX_SHOCKWAVE_SAMPLES / 6;
+	};
+	double circumference = 2 * Math.PI * radius;
+	int samples = (int) Math.min(circumference, budget);
+	double spawnChance = Math.min(1, chance * Math.max(1, circumference / MAX_SHOCKWAVE_SAMPLES));
+
+	float red = (color >> 16 & 0xFF) / 255f;
+	float green = (color >> 8 & 0xFF) / 255f;
+	float blue = (color & 0xFF) / 255f;
+	float opacity = 1f - 0.85f * (float) progress;
+	ParticleOptionsShockwave front = new ParticleOptionsShockwave().setParameters(red, green, blue, opacity,
+		1.8f, 12, false, 0.98);
+	ParticleOptionsShockwave wake = new ParticleOptionsShockwave().setParameters(red * 0.65f, green * 0.65f,
+		blue * 0.65f, opacity * 0.4f, 2.4f, 22, false, 0.95);
+
+	ParticleEngine engine = minecraft.particleEngine;
+	for (int i = 0; i < samples; i++) {
+	    if (Voltaic.RANDOM.nextDouble() >= spawnChance)
+		continue;
+	    double angle = 2 * Math.PI * (i + Voltaic.RANDOM.nextDouble()) / samples;
+	    double dirX = Math.cos(angle);
+	    double dirZ = Math.sin(angle);
+	    int rx = Mth.floor(x + radius * dirX);
+	    int rz = Mth.floor(z + radius * dirZ);
+	    if (!world.hasChunkAt(new BlockPos(rx, 0, rz)))
+		continue;
+	    int ry = world.getHeight(Types.WORLD_SURFACE, rx, rz);
+	    engine.createParticle(front, rx + 0.5, ry + 0.25, rz + 0.5, dirX * 0.18, 0, dirZ * 0.18);
+	    if (detail == ParticleStatus.ALL) {
+		engine.createParticle(wake, rx + 0.5 - dirX * 0.7, ry + 0.25, rz + 0.5 - dirZ * 0.7,
+			-dirX * 0.1, 0.07, -dirZ * 0.1);
 	    }
 	}
-	return r;
+	return radius;
     }
 }

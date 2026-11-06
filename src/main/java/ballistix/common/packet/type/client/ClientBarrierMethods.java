@@ -4,6 +4,9 @@ import java.util.HashSet;
 import java.util.UUID;
 
 import ballistix.api.radar.IDetected;
+import ballistix.client.effect.BlastEffects;
+import ballistix.client.effect.BlastEffects.Style;
+import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.packet.type.client.particle.BlastParticleSpawnType;
 import ballistix.common.settings.BallistixConfig;
 import ballistix.common.tile.radar.TileSearchRadar;
@@ -12,6 +15,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 
 public class ClientBarrierMethods {
     public static void handleSetSearchRadarTrackedClient(HashSet<IDetected.Detected> detected, BlockPos tilePos) {
@@ -23,6 +27,25 @@ public class ClientBarrierMethods {
 	    radar.detections.clear();
 	    radar.detections.addAll(detected);
 	}
+    }
+
+    public static void handleStartBlastEffects(BlockPos position, SubtypeBlast blast, double radius) {
+	ClientLevel level = Minecraft.getInstance().level;
+	if (level == null)
+	    return;
+
+	Style style = switch (blast) {
+	    case condensive -> Style.CONDENSIVE;
+	    case breaching -> Style.BREACHING;
+	    case obsidian -> Style.OBSIDIAN;
+	    case thermobaric -> Style.THERMOBARIC;
+	    case nuclear -> Style.NUCLEAR;
+	    case antimatter -> Style.ANTIMATTER;
+	    case largeantimatter -> Style.LARGE_ANTIMATTER;
+	    default -> null;
+	};
+	if (style != null)
+	    BlastEffects.start(level, Vec3.atCenterOf(position), style, radius);
     }
 
     public static void handlerSpawnBlastParticle(BlockPos p, BlastParticleSpawnType type) {

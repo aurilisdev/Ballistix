@@ -5,6 +5,7 @@ import java.util.List;
 
 import ballistix.Ballistix;
 import ballistix.client.effect.BlastEffectParticle.Shape;
+import ballistix.common.packet.type.client.particle.PacketStartBlastEffects;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.ParticleStatus;
@@ -27,6 +28,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
+import net.neoforged.neoforge.network.registration.NetworkRegistry;
 
 @EventBusSubscriber(modid = Ballistix.ID, value = Dist.CLIENT)
 public final class BlastEffects {
@@ -100,6 +102,13 @@ public final class BlastEffects {
 	    ejecta.add(new Vec3(Math.cos(angle) * speed,
 		    (0.28 + random.nextDouble() * 1.18) * (0.45 + core * 0.075), Math.sin(angle) * speed));
 	}
+    }
+
+    public static void startFromEntity(ClientLevel level, Vec3 origin, Style style, double radius) {
+	// The local animation is a fallback for servers without the detonation payload.
+	var connection = Minecraft.getInstance().getConnection();
+	if (connection == null || !NetworkRegistry.hasChannel(connection, PacketStartBlastEffects.TYPE.id()))
+	    start(level, origin, style, radius);
     }
 
     public static void start(ClientLevel level, Vec3 origin, Style style, double radius) {

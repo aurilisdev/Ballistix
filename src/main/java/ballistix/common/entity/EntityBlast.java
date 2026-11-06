@@ -9,7 +9,9 @@ import ballistix.api.blast.IBlast;
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.blast.util.BlastLasting;
+import ballistix.common.packet.type.client.particle.PacketStartBlastEffects;
 import ballistix.registers.BallistixEntities;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -60,6 +62,7 @@ public class EntityBlast extends Entity implements TraceableEntity {
     public boolean shouldRenderCustom = false;
     public int ticksWhenCustomRender;
     private boolean detonated = false;
+    private boolean visualsSent;
     private boolean shouldPersist = false;
     private int persistanceTicks = 0;
     private int ticksPersisted = 0;
@@ -365,6 +368,7 @@ public class EntityBlast extends Entity implements TraceableEntity {
 	compound.putBoolean("moivng", moving);
 	compound.putBoolean("shouldpersist", shouldPersist);
 	compound.putBoolean("hasmatured", hasMatured);
+	compound.putBoolean("visualsSent", visualsSent);
 	if (ownerUUID != null) {
 	    compound.putUUID("Owner", ownerUUID);
 	}
@@ -384,12 +388,20 @@ public class EntityBlast extends Entity implements TraceableEntity {
 	ticksAtMaturity = compound.getInt("ticksatmaturity");
 	shouldPersist = compound.getBoolean("shouldpersist");
 	hasMatured = compound.getBoolean("hasmatured");
+	visualsSent = compound.getBoolean("visualsSent");
 	movementTicks = compound.getInt("movementticks");
 	moving = compound.getBoolean("moving");
 	ticksMoving = compound.getInt("ticksmoving");
 	if (compound.hasUUID("Owner")) {
 	    ownerUUID = compound.getUUID("Owner");
 	    cachedOwner = null;
+	}
+    }
+
+    public void sendDetonationEffects(ServerLevel level, BlockPos position, IBlast type) {
+	if (!visualsSent) {
+	    visualsSent = true;
+	    PacketStartBlastEffects.send(level, position, type);
 	}
     }
 

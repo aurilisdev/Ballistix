@@ -43,7 +43,7 @@ public class BlastObsidian extends Blast implements IHasCustomRender {
     @Override
     @OnlyIn(Dist.CLIENT)
     public void produceParticles() {
-	BlastEffects.start((ClientLevel) world, Vec3.atCenterOf(position), Style.OBSIDIAN,
+	BlastEffects.startFromEntity((ClientLevel) world, Vec3.atCenterOf(position), Style.OBSIDIAN,
 		BallistixConfig.INSTANCE.EXPLOSIVE_OBSIDIAN_SIZE.getAsDouble());
     }
 

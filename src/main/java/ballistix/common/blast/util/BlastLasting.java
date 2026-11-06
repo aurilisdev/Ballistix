@@ -27,7 +27,7 @@ public abstract class BlastLasting extends Blast {
 	if (playedDetonationEffects || ticksSinceBlastStart < 1 || ticksSinceBlastStart > 24)
 	    return;
 	playedDetonationEffects = true;
-	BlastEffects.start((ClientLevel) world, Vec3.atCenterOf(position), style, radius);
+	BlastEffects.startFromEntity((ClientLevel) world, Vec3.atCenterOf(position), style, radius);
     }
 
     @OnlyIn(Dist.CLIENT)

@@ -181,7 +181,12 @@ public abstract class Blast {
 	BlastEvent evt = new BlastEvent(world, this);
 	NeoForge.EVENT_BUS.post(evt);
 	if (!evt.isCanceled()) {
-	    return doExplode(callcount);
+	    boolean done = doExplode(callcount);
+	    if (world instanceof ServerLevel level && blastEntity instanceof EntityBlast entity
+		    && this instanceof IHasCustomRender renderer && (isInstantaneous() || renderer.shouldRender())) {
+		entity.sendDetonationEffects(level, position, getBlastType());
+	    }
+	    return done;
 	}
 	return true;
     }

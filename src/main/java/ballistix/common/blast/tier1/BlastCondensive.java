@@ -43,7 +43,7 @@ public class BlastCondensive extends Blast implements IHasCustomRender {
     @OnlyIn(Dist.CLIENT)
     @Override
     public void produceParticles() {
-	BlastEffects.start((ClientLevel) world, Vec3.atCenterOf(position), Style.CONDENSIVE,
+	BlastEffects.startFromEntity((ClientLevel) world, Vec3.atCenterOf(position), Style.CONDENSIVE,
 		BallistixConfig.INSTANCE.EXPLOSIVE_CONDENSIVE_SIZE.getAsDouble());
     }
 

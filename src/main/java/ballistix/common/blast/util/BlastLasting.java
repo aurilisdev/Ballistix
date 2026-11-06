@@ -6,7 +6,6 @@ import ballistix.client.effect.BlastEffects;
 import ballistix.client.effect.BlastEffects.Style;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -28,12 +27,6 @@ public abstract class BlastLasting extends Blast {
 	    return;
 	playedDetonationEffects = true;
 	BlastEffects.startFromEntity((ClientLevel) world, Vec3.atCenterOf(position), style, radius);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    protected static double shockwaveRadius(double start, double end, double progress) {
-	return !Double.isFinite(progress) || progress > 1 || end <= start ? end
-		: (int) Mth.lerp(Math.max(0, progress), start, end);
     }
 
     @Override

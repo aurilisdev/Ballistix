@@ -6,20 +6,15 @@ import javax.annotation.Nullable;
 
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.client.effect.BlastEffects.Style;
-import ballistix.client.shake.CameraShakeEffect;
-import ballistix.client.shake.CameraShakeManager;
 import ballistix.common.blast.util.BlastLasting;
 import ballistix.common.blast.util.thread.raycast.ThreadDynamicRaycastBlast;
 import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.settings.BallistixConfig;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
@@ -28,7 +23,6 @@ import net.minecraft.world.level.Level.ExplosionInteraction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import voltaic.prefab.utilities.object.Location;
@@ -120,37 +114,10 @@ public class BlastBreaching extends BlastLasting implements IHasCustomRender {
 	return SubtypeBlast.breaching;
     }
 
-    private boolean hasShaken;
-
     @Override
     @OnlyIn(Dist.CLIENT)
     public void produceParticles() {
 	playDetonationEffects(Style.BREACHING, BallistixConfig.INSTANCE.EXPLOSIVE_BREACHING_SIZE.getAsDouble());
-
-	double x = position.getX() + 0.5;
-	double y = position.getY() - 2;
-	double z = position.getZ() + 0.5;
-	double spawnSize = 3;
-	double endSize = BallistixConfig.INSTANCE.EXPLOSIVE_BREACHING_SIZE.getAsDouble() * 5;
-	int diff = (int) (endSize - spawnSize);
-	if (ticksSinceBlastStart > diff)
-	    return;
-	double size = shockwaveRadius(spawnSize, endSize, ticksSinceBlastStart / (double) diff);
-	if (hasShaken)
-	    return;
-	Vec3 pos = new Vec3(x, y, z);
-	LocalPlayer player = Minecraft.getInstance().player;
-	if (player == null)
-	    return;
-
-	double realDistance = player.position().distanceTo(pos);
-	double dist = Mth.abs((float) (realDistance - size));
-	if (dist < 3) {
-	    hasShaken = true;
-	    CameraShakeEffect effect = CameraShakeManager.createBlastSourcedEffect(20.0, endSize, world.getGameTime(),
-		    pos);
-	    CameraShakeManager.addShake(effect);
-	}
     }
 
     @Override

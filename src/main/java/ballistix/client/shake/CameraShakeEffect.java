@@ -1,77 +1,43 @@
 package ballistix.client.shake;
 
 public class CameraShakeEffect {
-    private final double duration; // in ticks or seconds
-    private final double fadeInTime; // portion or absolute
-    private final double fadeOutTime;
-    private final double amplitude; // max angle offset
-    private final double frequency; // how quickly the noise evolves
-    private final long startTime; // system time or in-game tick
 
+    private static final Offsets NONE = new Offsets(0, 0);
+
+    private final double duration;
+    private final double amplitude;
+    private final long startTime;
     private final PerlinNoise noise;
-    private final double xOffsetSeed;
-    private final double yOffsetSeed;
+    private final int rollDirection;
 
-    public CameraShakeEffect(double duration, double fadeInTime, double fadeOutTime, double amplitude, double frequency,
-	    long worldTime, long seed) {
+    public CameraShakeEffect(double duration, double amplitude, long startTime, long seed) {
 	this.duration = duration;
-	this.fadeInTime = fadeInTime;
-	this.fadeOutTime = fadeOutTime;
 	this.amplitude = amplitude;
-	this.frequency = frequency;
-	startTime = worldTime;
-
+	this.startTime = startTime;
 	noise = new PerlinNoise(seed);
-	// Random offsets so that x/y samples don't use the same chunk of noise
-	// This prevents them from being locked in the same pattern.
-	xOffsetSeed = seed * 1.37;
-	yOffsetSeed = seed * 2.17;
+	rollDirection = (seed & 1) == 0 ? 1 : -1;
     }
 
-    /**
-     * Computes the current yaw/pitch offset for this shake effect.
-     * 
-     * @param currentTime The current in-game tick or system time
-     * @return a float[] of size 2: {yawOffset, pitchOffset}
-     */
-    public float[] getShakeOffsets(long currentTime) {
-	double elapsed = currentTime - startTime;
-	if (elapsed < 0 || elapsed > duration) {
-	    // outside of effect window
-	    return new float[] { 0f, 0f };
-	}
+    public Offsets getShakeOffsets(double gameTime) {
+	double elapsed = gameTime - startTime;
+	if (elapsed <= 0 || elapsed >= duration)
+	    return NONE;
 
-	// fade factor: 0->1->0 over the life of the effect
-	double fadeMultiplier = computeFadeMultiplier(elapsed);
-
-	// sample noise
-	double t = elapsed * frequency * 0.01; // scale time for noise
-	double noiseX = noise.noise(xOffsetSeed + t, 0.0, 0.0);
-	double noiseY = noise.noise(yOffsetSeed + t, 0.0, 0.0);
-
-	// Map noise from [-1,1] to offset
-	float yawOffset = (float) (noiseX * amplitude * fadeMultiplier);
-	float pitchOffset = (float) (noiseY * amplitude * fadeMultiplier);
-
-	return new float[] { yawOffset, pitchOffset };
+	// A fast impact gives way to a softer, irregular rumble.
+	double remaining = 1 - elapsed / duration;
+	double strength = amplitude * remaining * remaining;
+	double impact = Math.sin(elapsed * 0.95) * Math.exp(-elapsed / 4.5);
+	double rumble = Math.min(elapsed / 2, 1);
+	double time = elapsed * 0.34;
+	float pitch = (float) (strength * (-0.52 * impact + 0.23 * rumble * noise.noise(time, 11.7, 0)));
+	float roll = (float) (strength * (0.85 * rollDirection * impact + 0.65 * rumble * noise.noise(time, 37.3, 0)));
+	return new Offsets(pitch, roll);
     }
 
-    private double computeFadeMultiplier(double elapsed) {
-	// Let’s treat fadeInTime / fadeOutTime as absolute times in ticks for clarity.
-	if (elapsed < fadeInTime) {
-	    // Fade in from 0 to 1
-	    return elapsed / fadeInTime;
-	} else if (elapsed > duration - fadeOutTime) {
-	    // Fade out from 1 to 0
-	    double fadeOutStart = duration - fadeOutTime;
-	    return 1.0 - (elapsed - fadeOutStart) / fadeOutTime;
-	} else {
-	    // Full intensity
-	    return 1.0;
-	}
+    public boolean isComplete(long gameTime) {
+	return gameTime - startTime >= duration;
     }
 
-    public boolean isComplete(long currentTime) {
-	return currentTime - startTime > duration;
+    public record Offsets(float pitch, float roll) {
     }
 }

@@ -9,8 +9,6 @@ import javax.annotation.Nullable;
 import ballistix.Ballistix;
 import ballistix.api.blast.IHasCustomRender;
 import ballistix.client.effect.BlastEffects.Style;
-import ballistix.client.shake.CameraShakeEffect;
-import ballistix.client.shake.CameraShakeManager;
 import ballistix.common.blast.util.Blast;
 import ballistix.common.blast.util.BlastLasting;
 import ballistix.common.blast.util.thread.raycast.ThreadDynamicRaycastBlast;
@@ -18,16 +16,13 @@ import ballistix.common.block.subtype.SubtypeBlast;
 import ballistix.common.packet.type.client.particle.BlastParticleSpawnType;
 import ballistix.common.packet.type.client.particle.PacketSpawnBlastParticle;
 import ballistix.common.settings.BallistixConfig;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
@@ -35,7 +30,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -145,38 +139,10 @@ public class BlastThermobaric extends BlastLasting implements IHasCustomRender {
 	return false;
     }
 
-    private boolean hasShaken = false;
-
     @Override
     @OnlyIn(Dist.CLIENT)
     public void produceParticles() {
 	playDetonationEffects(Style.THERMOBARIC, BallistixConfig.INSTANCE.EXPLOSIVE_THERMOBARIC_SIZE.getAsDouble());
-
-	double x = position.getX() + 0.5;
-	double y = position.getY() + 0.5;
-	double z = position.getZ() + 0.5;
-	double spawnSize = 3;
-	double endSize = BallistixConfig.INSTANCE.EXPLOSIVE_THERMOBARIC_SIZE.getAsDouble() * 7.5;
-	int diff = (int) (endSize - spawnSize);
-	if (ticksSinceBlastStart > diff)
-	    return;
-	double size = shockwaveRadius(spawnSize, endSize, ticksSinceBlastStart * 2 / (double) diff);
-	if (hasShaken)
-	    return;
-	Vec3 pos = new Vec3(x, y, z);
-	Player player = Minecraft.getInstance().player;
-	if (player == null)
-	    return;
-
-	double realDistance = player.position().distanceTo(pos);
-	double dist = Mth.abs((float) (realDistance - size));
-	if (dist < 3) {
-	    hasShaken = true;
-	    CameraShakeEffect effect = CameraShakeManager.createBlastSourcedEffect(
-		    BallistixConfig.INSTANCE.EXPLOSIVE_THERMOBARIC_DURATION.getAsDouble() / 1.5, endSize,
-		    world.getGameTime(), pos);
-	    CameraShakeManager.addShake(effect);
-	}
     }
 
     @Override

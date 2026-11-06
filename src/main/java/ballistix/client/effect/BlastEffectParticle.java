@@ -14,7 +14,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 final class BlastEffectParticle extends TextureSheetParticle {
 
@@ -23,7 +22,6 @@ final class BlastEffectParticle extends TextureSheetParticle {
 	DUST(1.9f, 0.79f, 0.37f, 0.95f, 0, false),
 	FIRE(1.75f, 0.98f, 0.32f, 0.94f, 0, true),
 	GLOW(1.6f, 0.96f, 0.08f, 1, 0, true),
-	RAY(1.32f, 0.9f, 0.1f, 0.98f, 0, true),
 	SPARK(0.35f, 1, 0.35f, 0.95f, 0.65f, true),
 	RING(3.8f, 0.75f, 0.06f, 1, 0, true);
 
@@ -52,7 +50,6 @@ final class BlastEffectParticle extends TextureSheetParticle {
     private final int hotColor;
     private final int coolColor;
     private final float brightness;
-    private final Vec3 rayDirection;
     private final float renderExtent;
     private int light;
 
@@ -73,8 +70,7 @@ final class BlastEffectParticle extends TextureSheetParticle {
 	gravity = shape.gravity;
 	hasPhysics = false;
 	quadSize = size;
-	rayDirection = shape == Shape.RAY ? velocity.normalize() : Vec3.ZERO;
-	renderExtent = size * Math.max(1, shape.growth) * (shape == Shape.RAY ? 13 : 1.5f);
+	renderExtent = size * Math.max(1, shape.growth) * 1.5f;
 	if (shape == Shape.SMOKE || shape == Shape.FIRE || shape == Shape.DUST) {
 	    oRoll = roll = level.random.nextFloat() * Mth.TWO_PI;
 	}
@@ -136,28 +132,9 @@ final class BlastEffectParticle extends TextureSheetParticle {
 
 	if (shape == Shape.RING) {
 	    renderRing(buffer, x, y, z);
-	    return;
-	}
-	if (shape != Shape.RAY) {
+	} else {
 	    super.renderRotatedQuad(buffer, rotation, x, y, z, partialTick);
-	    return;
 	}
-
-	Vector3f projected = rayDirection.toVector3f().rotate(new Quaternionf(rotation).conjugate());
-	float projection = Mth.sqrt(projected.x * projected.x + projected.y * projected.y);
-	rotation.rotateZ((float) Math.atan2(projected.y, projected.x));
-	float length = quadSize * (1 + projection * 8);
-	addRayVertex(buffer, rotation, x, y, z, length, -quadSize, getU1(), getV1());
-	addRayVertex(buffer, rotation, x, y, z, length, quadSize, getU1(), getV0());
-	addRayVertex(buffer, rotation, x, y, z, -length, quadSize, getU0(), getV0());
-	addRayVertex(buffer, rotation, x, y, z, -length, -quadSize, getU0(), getV1());
-    }
-
-    private void addRayVertex(VertexConsumer buffer, Quaternionf rotation, float x, float y, float z,
-	    float u, float v, float texU, float texV) {
-	Vector3f vertex = new Vector3f(u, v, 0).rotate(rotation).add(x, y, z);
-	buffer.addVertex(vertex.x, vertex.y, vertex.z).setUv(texU, texV).setColor(rCol, gCol, bCol, alpha)
-		.setLight(LightTexture.FULL_BRIGHT);
     }
 
     private void renderRing(VertexConsumer buffer, float x, float y, float z) {

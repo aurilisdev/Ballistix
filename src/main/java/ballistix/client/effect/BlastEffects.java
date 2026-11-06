@@ -5,6 +5,7 @@ import java.util.List;
 
 import ballistix.Ballistix;
 import ballistix.client.effect.BlastEffectParticle.Shape;
+import ballistix.client.shake.CameraShakeManager;
 import ballistix.common.packet.type.client.particle.PacketStartBlastEffects;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -33,25 +34,27 @@ import net.neoforged.neoforge.network.registration.NetworkRegistry;
 public final class BlastEffects {
 
     public enum Style {
-	CONDENSIVE(2.5, 3.5f, 19, 0xFFFFA047, 0xFF5C4A43, 0xFFC1A991),
-	BREACHING(5, 5.5f, 29, 0xFFFFB259, 0xFF554842, 0xFFC3AE98),
-	OBSIDIAN(10, 7f, 42, 0xFFFFA452, 0xFF51444A, 0xFFAA9D99),
-	THERMOBARIC(30, 14f, 96, 0xFFFF822B, 0xFF603A2D, 0xFFB69B82),
-	NUCLEAR(45, 27f, 155, 0xFFFF9338, 0xFF4C403B, 0xFFAA9D91),
-	ANTIMATTER(45, 22f, 118, 0xFF5BDCFF, 0xFF36485F, 0xFF97ADBD),
-	LARGE_ANTIMATTER(100, 35f, 216, 0xFFC487FF, 0xFF514067, 0xFFAAA0B8);
+	CONDENSIVE(2.5, 3.5f, 19, 0, 0xFFFFA047, 0xFF5C4A43, 0xFFC1A991),
+	BREACHING(5, 5.5f, 29, 0, 0xFFFFB259, 0xFF554842, 0xFFC3AE98),
+	OBSIDIAN(10, 7f, 42, 0, 0xFFFFA452, 0xFF51444A, 0xFFAA9D99),
+	THERMOBARIC(30, 14f, 96, 0, 0xFFFF822B, 0xFF603A2D, 0xFFB69B82),
+	NUCLEAR(45, 27f, 155, 660, 0xFFFF9338, 0xFF4C403B, 0xFFAA9D91),
+	ANTIMATTER(45, 22f, 118, 280, 0xFF5BDCFF, 0xFF36485F, 0xFF97ADBD),
+	LARGE_ANTIMATTER(100, 35f, 216, 500, 0xFFC487FF, 0xFF514067, 0xFFAAA0B8);
 
 	private final double referenceRadius;
 	private final float core;
 	private final float dustRange;
+	private final int aftermathTicks;
 	private final int heat;
 	private final int smoke;
 	private final int dust;
 
-	Style(double referenceRadius, float core, float dustRange, int heat, int smoke, int dust) {
+	Style(double referenceRadius, float core, float dustRange, int aftermathTicks, int heat, int smoke, int dust) {
 	    this.referenceRadius = referenceRadius;
 	    this.core = core;
 	    this.dustRange = dustRange;
+	    this.aftermathTicks = aftermathTicks;
 	    this.heat = heat;
 	    this.smoke = smoke;
 	    this.dust = dust;
@@ -59,6 +62,8 @@ public final class BlastEffects {
     }
 
     private static final int MAX_SEQUENCES = 6;
+    private static final int FLASH_TICKS = 12;
+    private static final float FLASH_HOLD_TICKS = 1.5f;
     private static final int WHITE = 0xFFFFF4E4;
     private static final ResourceLocation GLOW = Ballistix.rl("blast_glow");
     private static final ResourceLocation RING = Ballistix.rl("blast_ring");
@@ -77,8 +82,10 @@ public final class BlastEffects {
     private final float core;
     private final float detail;
     private final int dustTicks;
+    private final int aftermathTicks;
     private final List<Vec3> ejecta = new ArrayList<>();
     private int age;
+    private boolean shakeStarted;
 
     private BlastEffects(ClientLevel level, Vec3 origin, Style style, double radius, ParticleStatus particles) {
 	this.level = level;
@@ -94,6 +101,7 @@ public final class BlastEffects {
 	    case MINIMAL -> 0.23f;
 	};
 	dustTicks = (int) (24 + style.core * 0.95f);
+	aftermathTicks = Math.round(style.aftermathTicks * Mth.clamp(scale, 0.75f, 1.6f));
 	int count = count(12 + (int) style.core);
 	for (int i = 0; i < count; i++) {
 	    double angle = (i + random.nextDouble()) / count * Mth.TWO_PI;
@@ -133,29 +141,29 @@ public final class BlastEffects {
 	if (ACTIVE.isEmpty())
 	    return;
 	Minecraft minecraft = Minecraft.getInstance();
+	float screenEffectScale = minecraft.options.screenEffectScale().get().floatValue();
+	if (screenEffectScale == 0)
+	    return;
+
 	Camera camera = minecraft.gameRenderer.getMainCamera();
 	float strength = 0;
-	int tint = WHITE;
 	for (BlastEffects effect : ACTIVE) {
-	    if (effect.level != minecraft.level || effect.detail < 0.5f || effect.age > 11)
+	    if (effect.level != minecraft.level || effect.age > FLASH_TICKS)
 		continue;
 	    Vec3 offset = effect.origin.subtract(camera.getPosition());
 	    double distance = offset.length();
 	    double facing = distance < 1 ? 1 : offset.normalize().dot(new Vec3(camera.getLookVector()));
 	    double reach = effect.core * 9 + 18;
-	    double visibility = Math.max(0, 1 - distance / reach) * Mth.clamp((facing + 0.28) / 1.28, 0, 1);
+	    double visibility = Math.max(0, 1 - distance / reach) * (0.24 + 0.76 * Math.max(0, facing));
 	    float time = Math.max(0, effect.age - 1 + event.getPartialTick().getGameTimeDeltaPartialTick(false));
-	    float fade = 1 - time / 11;
-	    float candidate = (float) (visibility * fade * fade * effect.detail * 0.52);
-	    if (candidate > strength) {
-		strength = candidate;
-		tint = ARGB32.lerp(0.38f, WHITE, effect.style.heat);
-	    }
+	    float fade = 1 - Mth.clamp((time - FLASH_HOLD_TICKS) / (FLASH_TICKS - FLASH_HOLD_TICKS), 0, 1);
+	    float peak = Math.min(1, 0.35f + effect.core / 32);
+	    strength = Math.max(strength, (float) (visibility * fade * fade * peak));
 	}
-	int opacity = (int) (255 * strength * minecraft.options.screenEffectScale().get());
+	int opacity = Math.round(255 * strength * screenEffectScale);
 	if (opacity > 0) {
 	    GuiGraphics graphics = event.getGuiGraphics();
-	    graphics.fill(0, 0, graphics.guiWidth(), graphics.guiHeight(), opacity << 24 | tint & 0xFFFFFF);
+	    graphics.fill(0, 0, graphics.guiWidth(), graphics.guiHeight(), opacity << 24 | 0xFFFFFF);
 	}
     }
 
@@ -166,12 +174,18 @@ public final class BlastEffects {
 	    fireball();
 	if (age <= 36 && age % 2 == 0)
 	    ejecta();
-	if (age <= dustTicks && age % 2 == 0)
-	    dustFront(minecraft);
-	if (style == Style.NUCLEAR && age >= 6 && age <= 154 && age % 3 == 0)
-	    mushroomCloud();
+	if (age <= dustTicks)
+	    pressureFront(minecraft);
+	if (age <= aftermathTicks) {
+	    if (style == Style.NUCLEAR) {
+		if (age >= 6 && age % (age < 150 ? 3 : 6) == 0)
+		    mushroomCloud();
+	    } else if (age >= 18 && age % 5 == 0) {
+		antimatterAftermath();
+	    }
+	}
 
-	int duration = style == Style.NUCLEAR ? 155 : Math.max(dustTicks, 36);
+	int duration = Math.max(aftermathTicks, Math.max(dustTicks, 36));
 	return ++age > duration;
     }
 
@@ -184,20 +198,7 @@ public final class BlastEffects {
 	puff(Shape.RING, origin.add(0, core * 0.12, 0), Vec3.ZERO, core * 0.9f, 22, WHITE,
 		style.heat);
 
-	if (detail < 0.5f)
-	    return;
-	int spokes = count(style.core >= 20 ? 14 : 9);
-	for (int i = 0; i < spokes; i++) {
-	    double azimuth = Mth.TWO_PI * (i + random.nextDouble() * 0.45) / spokes;
-	    double elevation = i % 3 == 0 ? 0.09 : 0.36 + random.nextDouble() * 0.95;
-	    Vec3 axis = direction(azimuth, elevation);
-	    Vec3 centre = origin.add(0, core * 0.19, 0).add(axis.scale(core * 0.75));
-	    puff(Shape.RAY, centre, axis.scale(core * 0.035), core * (0.095f + random.nextFloat() * 0.075f),
-		    11 + random.nextInt(9), WHITE, style.heat);
-	}
-	if (style.core >= 20) {
-	    puff(Shape.RAY, origin.add(0, core * 1.2, 0), new Vec3(0, core * 0.075, 0),
-		    core * 0.20f, 18, WHITE, style.heat);
+	if (detail >= 0.5f && style.core >= 20) {
 	    puff(Shape.RING, origin.add(0, core * 0.85, 0), new Vec3(0, core * 0.037, 0),
 		    core * 0.63f, 23, WHITE, style.heat);
 	}
@@ -244,10 +245,24 @@ public final class BlastEffects {
 	}
     }
 
-    private void dustFront(Minecraft minecraft) {
+    private void pressureFront(Minecraft minecraft) {
 	double progress = age / (double) dustTicks;
 	double range = style.dustRange * scale;
-	double radius = core * 0.25 + range * (1 - Math.pow(1 - progress, 1.45));
+	double initialRadius = core * 0.25;
+	double radius = initialRadius + range * (1 - Math.pow(1 - progress, 1.45));
+	var viewer = minecraft.getCameraEntity();
+	if (!shakeStarted && viewer != null) {
+	    double distance = viewer.getEyePosition().distanceTo(origin);
+	    if (distance <= radius) {
+		shakeStarted = true;
+		CameraShakeManager.startBlastShake(level, core, distance / (initialRadius + range));
+	    }
+	}
+	if (age % 2 == 0)
+	    dustFront(minecraft, radius);
+    }
+
+    private void dustFront(Minecraft minecraft, double radius) {
 	int samples = count(Math.min(66, (int) (14 + radius * 0.43)));
 	for (int i = 0; i < samples; i++) {
 	    double angle = (i + random.nextDouble()) * Mth.TWO_PI / samples;
@@ -283,13 +298,15 @@ public final class BlastEffects {
     }
 
     private void mushroomCloud() {
-	double headHeight = scale * (9 + 69 * (1 - Math.exp(-age / 37.0)));
-	double capRadius = scale * (9 + 37 * (1 - Math.exp(-age / 47.0)));
+	float late = Mth.clamp((age - 150) / (float) (aftermathTicks - 150), 0, 1);
+	float density = 1 - 0.78f * late;
+	double headHeight = scale * (9 + 69 * (1 - Math.exp(-age / 37.0)) + late * 28);
+	double capRadius = scale * (9 + 37 * (1 - Math.exp(-age / 47.0)) + late * 15);
 	Vec3 head = cloudAxis(headHeight);
 	float heat = 1 - Mth.clamp((age - 12) / 85f, 0, 1);
-	int stemPuffs = count(13);
+	int stemPuffs = count(Math.round(13 * density));
 	for (int i = 0; i < stemPuffs; i++) {
-	    double fraction = (i + random.nextDouble()) / stemPuffs;
+	    double fraction = Mth.lerp((i + random.nextDouble()) / stemPuffs, late * 0.26, 1);
 	    Vec3 centre = cloudAxis(headHeight * fraction);
 	    double angle = random.nextDouble() * Mth.TWO_PI;
 	    double width = scale * (5.5 + 7 * Math.pow(1 - fraction, 4) + 5 * Math.pow(fraction, 6));
@@ -300,7 +317,7 @@ public final class BlastEffects {
 		    heat * (0.36f + random.nextFloat() * 0.64f));
 	}
 
-	int capPuffs = count(32);
+	int capPuffs = count(Math.round(32 * density));
 	for (int i = 0; i < capPuffs; i++) {
 	    double azimuth = (i + random.nextDouble()) * Mth.TWO_PI / capPuffs;
 	    double tubeAngle = random.nextDouble() * Mth.TWO_PI;
@@ -339,14 +356,33 @@ public final class BlastEffects {
 	boolean hot = heat > 0.25f && random.nextFloat() < heat * 0.86f;
 	int color = hot ? ARGB32.lerp(heat, 0xFFA04928, 0xFFFFAA52)
 		: ARGB32.lerp(random.nextFloat() * 0.65f, 0xFF362D2B, 0xFF9A8170);
-	puff(hot ? Shape.FIRE : Shape.SMOKE, pos, velocity, size, 100 + random.nextInt(106),
+	puff(hot ? Shape.FIRE : Shape.SMOKE, pos, velocity, size, 140 + random.nextInt(101),
 		color, style.smoke);
+    }
+
+    private void antimatterAftermath() {
+	float progress = age / (float) aftermathTicks;
+	float density = 1 - 0.8f * progress;
+	double spread = core * (0.45 + 1.3 * (1 - Math.exp(-age / 42.0)));
+	Vec3 centre = origin.add(wind.scale(core * progress * 0.65)).add(0, core * (0.22 + 0.46 * progress), 0);
+	int puffs = count(Math.round((style == Style.LARGE_ANTIMATTER ? 23 : 15) * density));
+	for (int i = 0; i < puffs; i++) {
+	    Vec3 outward = direction(random.nextDouble() * Mth.TWO_PI, -0.16 + random.nextDouble() * 1.13);
+	    Vec3 pos = centre.add(outward.scale(spread * (0.25 + random.nextDouble() * 0.75)));
+	    Vec3 drift = outward.scale(0.11 * scale).add(wind.scale(0.08 * scale)).add(0, 0.06 * scale, 0);
+	    float size = core * (0.11f + random.nextFloat() * 0.14f);
+	    int color = ARGB32.lerp(random.nextFloat() * 0.57f, style.smoke, style.dust);
+	    puff(Shape.SMOKE, pos, drift, size, 102 + random.nextInt(75), color, style.smoke);
+	    if (i % 5 == 0 && random.nextFloat() < density) {
+		puff(Shape.GLOW, pos, drift, size * 0.23f, 18 + random.nextInt(27), style.heat, style.smoke);
+	    }
+	}
     }
 
     private void puff(Shape shape, Vec3 pos, Vec3 velocity, float size,
 	    int life, int hotColor, int coolColor) {
 	ResourceLocation sprite = switch (shape) {
-	    case GLOW, RAY, SPARK -> GLOW;
+	    case GLOW, SPARK -> GLOW;
 	    case RING -> RING;
 	    case SMOKE, DUST, FIRE -> SMOKE.get(random.nextInt(SMOKE.size()));
 	};

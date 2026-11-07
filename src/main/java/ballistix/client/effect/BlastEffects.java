@@ -35,12 +35,12 @@ public final class BlastEffects {
 
     public enum Style {
 	CONDENSIVE(2.5, 3.5f, 19, 0, 0xFFFFA047, 0xFF5C4A43, 0xFFC1A991),
-	BREACHING(5, 5.5f, 29, 0, 0xFFFFB259, 0xFF554842, 0xFFC3AE98),
-	OBSIDIAN(10, 7f, 42, 0, 0xFFFFA452, 0xFF51444A, 0xFFAA9D99),
-	THERMOBARIC(30, 14f, 96, 0, 0xFFFF822B, 0xFF603A2D, 0xFFB69B82),
-	NUCLEAR(45, 27f, 155, 660, 0xFFFF9338, 0xFF4C403B, 0xFFAA9D91),
-	ANTIMATTER(45, 22f, 118, 280, 0xFF5BDCFF, 0xFF36485F, 0xFF97ADBD),
-	LARGE_ANTIMATTER(100, 35f, 216, 500, 0xFFC487FF, 0xFF514067, 0xFFAAA0B8);
+	BREACHING(5, 5.5f, 29, 0, 0xFFFFD58A, 0xFF554842, 0xFFC3AE98),
+	OBSIDIAN(10, 7f, 42, 0, 0xFFFFD174, 0xFF51444A, 0xFFAA9D99),
+	THERMOBARIC(30, 14f, 96, 0, 0xFFFFC85E, 0xFF603A2D, 0xFFB69B82),
+	NUCLEAR(45, 27f, 155, 660, 0xFFFFE17D, 0xFF4C403B, 0xFFAA9D91),
+	ANTIMATTER(45, 22f, 118, 280, 0xFFA6EBFF, 0xFF50677C, 0xFFA9BFCC),
+	LARGE_ANTIMATTER(100, 35f, 216, 500, 0xFF6BAEFF, 0xFF344C69, 0xFF8EAAC6);
 
 	private final double referenceRadius;
 	private final float core;
@@ -354,7 +354,7 @@ public final class BlastEffects {
 
     private void cloudPuff(Vec3 pos, Vec3 velocity, float size, float heat) {
 	boolean hot = heat > 0.25f && random.nextFloat() < heat * 0.86f;
-	int color = hot ? ARGB32.lerp(heat, 0xFFA04928, 0xFFFFAA52)
+	int color = hot ? ARGB32.lerp(heat, 0xFFAF702E, style.heat)
 		: ARGB32.lerp(random.nextFloat() * 0.65f, 0xFF362D2B, 0xFF9A8170);
 	puff(hot ? Shape.FIRE : Shape.SMOKE, pos, velocity, size, 140 + random.nextInt(101),
 		color, style.smoke);

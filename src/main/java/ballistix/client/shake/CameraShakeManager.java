@@ -32,8 +32,10 @@ public class CameraShakeManager {
 	    ACTIVE_SHAKES.clear();
 	    shakeLevel = level;
 	}
-	double duration = Mth.clamp(10 + 1.25 * blastScale, 12, 48);
-	double amplitude = Math.min(6, 0.8 + 0.2 * blastScale) * Math.exp(-2.5 * distanceFraction);
+	double heavyBlast = Mth.clamp((blastScale - 8) / 27.0, 0, 1);
+	double duration = Mth.clamp(10 + 1.25 * blastScale, 12, 48) + 20 * heavyBlast;
+	double peakAmplitude = Math.min(6, 0.8 + 0.2 * blastScale) * (1 + 0.75 * heavyBlast);
+	double amplitude = peakAmplitude * Math.exp(-(2.5 - 0.4 * heavyBlast) * distanceFraction);
 	ACTIVE_SHAKES.add(new CameraShakeEffect(duration, amplitude, level.getGameTime(), level.random.nextLong()));
     }
 
@@ -69,7 +71,7 @@ public class CameraShakeManager {
 	    roll += offsets.roll();
 	}
 
-	event.setPitch(event.getPitch() + Mth.clamp(pitch, -3, 3) * screenEffectScale);
-	event.setRoll(event.getRoll() + Mth.clamp(roll, -5, 5) * screenEffectScale);
+	event.setPitch(event.getPitch() + Mth.clamp(pitch, -4, 4) * screenEffectScale);
+	event.setRoll(event.getRoll() + Mth.clamp(roll, -7, 7) * screenEffectScale);
     }
 }

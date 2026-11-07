@@ -14,6 +14,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
@@ -23,6 +24,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -35,10 +37,10 @@ public final class BlastEffects {
 
     public enum Style {
 	CONDENSIVE(2.5, 3.5f, 19, 0, 0xFFFFA047, 0xFF5C4A43, 0xFFC1A991),
-	BREACHING(5, 5.5f, 29, 0, 0xFFFFD58A, 0xFF554842, 0xFFC3AE98),
-	OBSIDIAN(10, 7f, 42, 0, 0xFFFFD174, 0xFF51444A, 0xFFAA9D99),
-	THERMOBARIC(30, 14f, 96, 0, 0xFFFFC85E, 0xFF603A2D, 0xFFB69B82),
-	NUCLEAR(45, 27f, 155, 660, 0xFFFFE17D, 0xFF4C403B, 0xFFAA9D91),
+	BREACHING(5, 5.5f, 29, 0, 0xFFFFC77E, 0xFF554842, 0xFFC3AE98),
+	OBSIDIAN(10, 7f, 42, 0, 0xFFFFC469, 0xFF51444A, 0xFFAA9D99),
+	THERMOBARIC(30, 14f, 96, 0, 0xFFFFBB50, 0xFF603A2D, 0xFFB69B82),
+	NUCLEAR(45, 27f, 155, 660, 0xFFFFD26F, 0xFF4C403B, 0xFFAA9D91),
 	ANTIMATTER(45, 22f, 118, 280, 0xFFA6EBFF, 0xFF50677C, 0xFFA9BFCC),
 	LARGE_ANTIMATTER(100, 35f, 216, 500, 0xFF6BAEFF, 0xFF344C69, 0xFF8EAAC6);
 
@@ -64,6 +66,8 @@ public final class BlastEffects {
     private static final int MAX_SEQUENCES = 6;
     private static final int FLASH_TICKS = 12;
     private static final float FLASH_HOLD_TICKS = 1.5f;
+    private static final int CRATER_START_TICK = 20;
+    private static final int CRATER_EMISSION_INTERVAL = 5;
     private static final int WHITE = 0xFFFFF4E4;
     private static final ResourceLocation GLOW = Ballistix.rl("blast_glow");
     private static final ResourceLocation RING = Ballistix.rl("blast_ring");
@@ -83,6 +87,8 @@ public final class BlastEffects {
     private final float detail;
     private final int dustTicks;
     private final int aftermathTicks;
+    private final double craterRadius;
+    private final int craterTicks;
     private final List<Vec3> ejecta = new ArrayList<>();
     private int age;
     private boolean shakeStarted;
@@ -101,7 +107,14 @@ public final class BlastEffects {
 	    case MINIMAL -> 0.23f;
 	};
 	dustTicks = (int) (24 + style.core * 0.95f);
-	aftermathTicks = Math.round(style.aftermathTicks * Mth.clamp(scale, 0.75f, 1.6f));
+	float durationScale = Mth.clamp(scale, 0.75f, 1.6f);
+	aftermathTicks = Math.round(style.aftermathTicks * durationScale);
+	craterRadius = Math.min(radius, style.referenceRadius * 1.75);
+	craterTicks = switch (style) {
+	    case THERMOBARIC -> Math.round(260 * durationScale);
+	    case NUCLEAR, ANTIMATTER, LARGE_ANTIMATTER -> aftermathTicks;
+	    default -> 0;
+	};
 	int count = count(12 + (int) style.core);
 	for (int i = 0; i < count; i++) {
 	    double angle = (i + random.nextDouble()) / count * Mth.TWO_PI;
@@ -176,6 +189,8 @@ public final class BlastEffects {
 	    ejecta();
 	if (age <= dustTicks)
 	    pressureFront(minecraft);
+	if (age >= CRATER_START_TICK && age <= craterTicks && age % CRATER_EMISSION_INTERVAL == 0)
+	    craterAftermath();
 	if (age <= aftermathTicks) {
 	    if (style == Style.NUCLEAR) {
 		if (age >= 6 && age % (age < 150 ? 3 : 6) == 0)
@@ -185,7 +200,7 @@ public final class BlastEffects {
 	    }
 	}
 
-	int duration = Math.max(aftermathTicks, Math.max(dustTicks, 36));
+	int duration = Math.max(Math.max(aftermathTicks, craterTicks), Math.max(dustTicks, 36));
 	return ++age > duration;
     }
 
@@ -293,6 +308,45 @@ public final class BlastEffects {
 		    if (chip != null)
 			chip.scale(1.8f + core * 0.075f);
 		}
+	    }
+	}
+    }
+
+    private void craterAftermath() {
+	float progress = (age - CRATER_START_TICK) / (float) (craterTicks - CRATER_START_TICK);
+	float density = 1 - 0.8f * progress;
+	int samples = count((int) Math.round(Math.min(26, 12 + craterRadius * 0.16) * density));
+	double reach = craterRadius + 2;
+	Vec3 windDrift = wind.scale(0.025 * scale);
+	for (int i = 0; i < samples; i++) {
+	    double angle = random.nextDouble() * Mth.TWO_PI;
+	    double offset = craterRadius * 0.9 * Math.sqrt(random.nextDouble());
+	    int x = Mth.floor(origin.x + Math.cos(angle) * offset);
+	    int z = Mth.floor(origin.z + Math.sin(angle) * offset);
+	    if (!level.hasChunk(x >> 4, z >> 4))
+		continue;
+	    // Sample the current floor as the blast cuts the crater deeper.
+	    int surface = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+	    if (surface <= level.getMinBuildHeight() || origin.distanceToSqr(x + 0.5, surface, z + 0.5) > reach * reach)
+		continue;
+	    BlockPos ground = new BlockPos(x, surface - 1, z);
+	    BlockState state = level.getBlockState(ground);
+	    if (!state.getFluidState().isEmpty())
+		continue;
+	    VoxelShape shape = state.getCollisionShape(level, ground);
+	    if (shape.isEmpty())
+		continue;
+
+	    double floorY = ground.getY() + shape.max(Direction.Axis.Y);
+	    Vec3 pos = new Vec3(x + 0.5, floorY + 0.15, z + 0.5);
+	    float size = (0.65f + random.nextFloat() * 0.65f) * (0.6f + core * 0.075f);
+	    boolean smoke = random.nextInt(4) == 0;
+	    Vec3 drift = windDrift.add(0, smoke ? 0.045 + random.nextDouble() * 0.035 : 0.018, 0);
+	    int color = ARGB32.lerp(random.nextFloat() * 0.45f, style.dust, style.smoke);
+	    puff(smoke ? Shape.SMOKE : Shape.DUST, pos, drift, size, 90 + random.nextInt(76), color, style.dust);
+	    if (detail > 0.25f && random.nextFloat() < 0.25f * density) {
+		puff(Shape.GLOW, pos.add(0, 0.1, 0), windDrift.add(0, 0.032, 0), size * 0.16f,
+			24 + random.nextInt(34), style.heat, style.smoke);
 	    }
 	}
     }

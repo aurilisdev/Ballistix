@@ -468,17 +468,20 @@ public final class BlastEffects {
 	Vec3 head = cloudAxis(headHeight);
 	float heat = 1 - Mth.clamp((age - 12) / 85f, 0, 1);
 	Vec3 baseOffset = mushroomBase().subtract(origin);
-	float extraPuffs = (float) Mth.clamp(-baseOffset.y / (10 * scale), 0, 6);
-	int stemPuffs = Math.max(3, count(Math.round(5 + 8 * density + extraPuffs)));
-	for (int i = 0; i < stemPuffs; i++) {
-	    double fraction = i == 0 ? 0 : (i - 1 + random.nextDouble()) / (stemPuffs - 1);
+	// Space puffs by distance so the stem stays filled as the cap rises.
+	double stemLength = headHeight - baseOffset.y;
+	float stemSpacing = scale * (11 - 5 * detail);
+	int stemSections = Mth.clamp(Mth.ceil(stemLength / stemSpacing), 4, 36);
+	for (int i = 0; i <= stemSections; i++) {
+	    double heightJitter = i == 0 || i == stemSections ? 0 : (random.nextDouble() - 0.5) * 0.5;
+	    double fraction = (i + heightJitter) / stemSections;
 	    Vec3 centre = cloudAxis(headHeight * fraction).add(baseOffset.scale(1 - fraction));
 	    double angle = random.nextDouble() * Mth.TWO_PI;
-	    double width = scale * (5.5 + 7 * Math.pow(1 - fraction, 4) + 5 * Math.pow(fraction, 6));
-	    double offset = Math.sqrt(random.nextDouble()) * width * (i == 0 ? 0.2 : 1);
+	    double width = scale * (10.5 + 4 * Math.pow(1 - fraction, 4) + 4 * Math.pow(fraction, 6));
+	    double offset = Math.sqrt(random.nextDouble()) * width * (i == 0 ? 0.18 : 0.52);
 	    Vec3 pos = centre.add(Math.cos(angle) * offset, 0, Math.sin(angle) * offset);
-	    Vec3 velocity = new Vec3(Math.cos(angle) * 0.07, 0.16 + random.nextDouble() * 0.23, Math.sin(angle) * 0.07).scale(scale);
-	    float size = (float) (width * (0.35 + random.nextDouble() * 0.39));
+	    Vec3 velocity = new Vec3(Math.cos(angle) * 0.05, 0.16 + random.nextDouble() * 0.11, Math.sin(angle) * 0.05).scale(scale);
+	    float size = (float) (width * (0.62 + random.nextDouble() * 0.23));
 	    if (i == 0)
 		puff(Shape.SMOKE, pos, velocity, size, 140 + random.nextInt(101), style.dust, style.smoke);
 	    else

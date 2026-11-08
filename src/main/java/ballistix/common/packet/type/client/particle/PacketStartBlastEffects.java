@@ -45,11 +45,14 @@ public record PacketStartBlastEffects(BlockPos position, SubtypeBlast blast, dou
 	if (!Double.isFinite(radius) || radius <= 0)
 	    return;
 
-	PacketStartBlastEffects packet = new PacketStartBlastEffects(position, subtype, radius);
+	sendToViewers(level, position, new PacketStartBlastEffects(position, subtype, radius));
+    }
+
+    static void sendToViewers(ServerLevel level, BlockPos position, CustomPacketPayload packet) {
 	Vec3 centre = Vec3.atCenterOf(position);
 	for (ServerPlayer player : level.players()) {
 	    if (player.distanceToSqr(centre) <= VIEW_DISTANCE_SQUARED
-		    && NetworkRegistry.hasChannel(player.connection, TYPE.id())) {
+		    && NetworkRegistry.hasChannel(player.connection, packet.type().id())) {
 		PacketDistributor.sendToPlayer(player, packet);
 	    }
 	}

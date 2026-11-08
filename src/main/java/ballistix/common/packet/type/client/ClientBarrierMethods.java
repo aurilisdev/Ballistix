@@ -1,6 +1,7 @@
 package ballistix.common.packet.type.client;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
 
 import ballistix.api.radar.IDetected;
@@ -34,7 +35,20 @@ public class ClientBarrierMethods {
 	if (level == null)
 	    return;
 
-	Style style = switch (blast) {
+	Style style = blastStyle(blast);
+	if (style != null)
+	    BlastEffects.start(level, Vec3.atCenterOf(position), style, radius);
+    }
+
+    public static void handleCraterGround(BlockPos origin, SubtypeBlast blast, List<BlockPos> floors) {
+	ClientLevel level = Minecraft.getInstance().level;
+	Style style = blastStyle(blast);
+	if (level != null && style != null)
+	    BlastEffects.updateCraterGround(level, Vec3.atCenterOf(origin), style, floors);
+    }
+
+    private static Style blastStyle(SubtypeBlast blast) {
+	return switch (blast) {
 	    case condensive -> Style.CONDENSIVE;
 	    case breaching -> Style.BREACHING;
 	    case obsidian -> Style.OBSIDIAN;
@@ -44,8 +58,6 @@ public class ClientBarrierMethods {
 	    case largeantimatter -> Style.LARGE_ANTIMATTER;
 	    default -> null;
 	};
-	if (style != null)
-	    BlastEffects.start(level, Vec3.atCenterOf(position), style, radius);
     }
 
     public static void handlerSpawnBlastParticle(BlockPos p, BlastParticleSpawnType type) {

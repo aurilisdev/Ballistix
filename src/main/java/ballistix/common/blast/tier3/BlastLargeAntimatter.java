@@ -82,9 +82,9 @@ public class BlastLargeAntimatter extends BlastLasting implements IHasCustomRend
 		SoundEvents.GENERIC_EXPLODE);
 	if (pertick == -1) {
 	    hasStarted = true;
-	    sendDetonationEffects();
 
 	    int radius = (int) BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_RADIUS.getAsDouble();
+	    startCraterEffects(radius);
 
 	    if (Ballistix.MFFS_LOADED && world instanceof ServerLevel serverLevel) {
 		protectionRegions = FortronFieldData.get(serverLevel).getProtectionRegions(position, radius);
@@ -131,8 +131,10 @@ public class BlastLargeAntimatter extends BlastLasting implements IHasCustomRend
 
 		if (canBreakBlockState(world, state, p, owner)) {
 		    block.wasExploded(world, p, ex);
-		    world.setBlock(p, Blocks.AIR.defaultBlockState(),
-			    Block.UPDATE_NEIGHBORS | Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
+		    if (world.setBlock(p, Blocks.AIR.defaultBlockState(),
+			    Block.UPDATE_NEIGHBORS | Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS)
+			    && state.blocksMotion())
+			recordCraterRemoval(p);
 		}
 		if (world.random.nextFloat() < 1 / 120.0 && world instanceof ServerLevel serverlevel) {
 		    serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false)
@@ -142,7 +144,9 @@ public class BlastLargeAntimatter extends BlastLasting implements IHasCustomRend
 
 	    }
 	}
-	if (!iterator.hasNext()) {
+	boolean carvingDone = !iterator.hasNext();
+	flushCraterEffects(callCount, carvingDone);
+	if (carvingDone) {
 	    position = position.above().above();
 	    attackEntities((float) BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_RADIUS.getAsDouble() * 2, ex);
 	    return true;

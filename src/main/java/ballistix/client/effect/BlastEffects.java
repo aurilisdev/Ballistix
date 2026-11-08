@@ -1,11 +1,16 @@
 package ballistix.client.effect;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Nullable;
 
 import ballistix.Ballistix;
 import ballistix.client.effect.BlastEffectParticle.Shape;
 import ballistix.client.shake.CameraShakeManager;
+import ballistix.common.packet.type.client.particle.PacketCraterGround;
 import ballistix.common.packet.type.client.particle.PacketStartBlastEffects;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -21,6 +26,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
@@ -68,8 +74,6 @@ public final class BlastEffects {
     private static final float FLASH_HOLD_TICKS = 1.5f;
     private static final int CRATER_START_TICK = 20;
     private static final int CRATER_EMISSION_INTERVAL = 5;
-    private static final int CRATER_SCAN_INTERVAL = 20;
-    private static final int UNKNOWN_SURFACE = Integer.MIN_VALUE;
     private static final int WHITE = 0xFFFFF4E4;
     private static final ResourceLocation GLOW = Ballistix.rl("blast_glow");
     private static final ResourceLocation RING = Ballistix.rl("blast_ring");
@@ -92,27 +96,14 @@ public final class BlastEffects {
     private final int dustTicks;
     private final int aftermathTicks;
     private final double craterRadius;
-    private final boolean trackCrater;
+    private final boolean useCraterFloors;
     private final int craterLingerTicks;
-    private final List<CraterColumn> craterColumns;
-    private final List<CraterColumn> loweredColumns = new ArrayList<>();
+    private final Map<Long, Integer> craterFloorIndices = new HashMap<>();
+    private final List<BlockPos> craterFloors = new ArrayList<>();
     private final List<Vec3> ejecta = new ArrayList<>();
     private int craterEndTick;
     private int age;
     private boolean shakeStarted;
-
-    private static final class CraterColumn {
-	private final int x;
-	private final int z;
-	private int originalSurface;
-	private int lowestSurface;
-
-	private CraterColumn(int x, int z, int surface) {
-	    this.x = x;
-	    this.z = z;
-	    originalSurface = lowestSurface = surface;
-	}
-    }
 
     private BlastEffects(ClientLevel level, Vec3 origin, Style style, double radius, ParticleStatus particles) {
 	this.level = level;
@@ -145,7 +136,9 @@ public final class BlastEffects {
 	float durationScale = Mth.clamp(scale, 0.75f, 1.6f);
 	aftermathTicks = Math.round(style.aftermathTicks * durationScale);
 	craterRadius = Math.min(radius, style.referenceRadius * 1.75);
-	trackCrater = style == Style.NUCLEAR || style == Style.ANTIMATTER || style == Style.LARGE_ANTIMATTER;
+	var connection = Minecraft.getInstance().getConnection();
+	useCraterFloors = style.aftermathTicks > 0 && connection != null
+		&& NetworkRegistry.hasChannel(connection, PacketCraterGround.TYPE.id());
 	int linger = switch (style) {
 	    case THERMOBARIC -> 260;
 	    case NUCLEAR -> 1800;
@@ -155,7 +148,6 @@ public final class BlastEffects {
 	};
 	craterLingerTicks = Math.round(linger * durationScale);
 	craterEndTick = craterLingerTicks;
-	craterColumns = trackCrater ? sampleCraterColumns() : List.of();
 	int count = count(12 + (int) style.core);
 	for (int i = 0; i < count; i++) {
 	    double angle = (i + random.nextDouble()) / count * Mth.TWO_PI;
@@ -179,6 +171,25 @@ public final class BlastEffects {
 	if (ACTIVE.size() >= MAX_SEQUENCES)
 	    ACTIVE.removeFirst();
 	ACTIVE.add(new BlastEffects(level, origin, style, radius, Minecraft.getInstance().options.particles().get()));
+    }
+
+    public static void updateCraterGround(ClientLevel level, Vec3 origin, Style style, List<BlockPos> floors) {
+	for (int i = ACTIVE.size() - 1; i >= 0; i--) {
+	    BlastEffects effect = ACTIVE.get(i);
+	    if (effect.level == level && effect.origin.equals(origin) && effect.style == style && effect.useCraterFloors) {
+		for (BlockPos floor : floors) {
+		    long key = ChunkPos.asLong(floor.getX(), floor.getZ());
+		    Integer index = effect.craterFloorIndices.putIfAbsent(key, effect.craterFloors.size());
+		    if (index == null)
+			effect.craterFloors.add(floor);
+		    else
+			effect.craterFloors.set(index, floor);
+		}
+		if (!floors.isEmpty())
+		    effect.craterEndTick = effect.age + effect.craterLingerTicks;
+		return;
+	    }
+	}
     }
 
     @SubscribeEvent
@@ -355,90 +366,34 @@ public final class BlastEffects {
 	}
     }
 
-    private List<CraterColumn> sampleCraterColumns() {
-	List<CraterColumn> columns = new ArrayList<>();
-	int centreX = Mth.floor(origin.x);
-	int centreZ = Mth.floor(origin.z);
-	// Keep the number of heightmap samples bounded even for oversized blasts.
-	int stride = Math.max(2, Mth.ceil(craterRadius / 20));
-	int extent = Mth.floor(craterRadius / stride);
-	for (int dx = -extent; dx <= extent; dx++) {
-	    for (int dz = -extent; dz <= extent; dz++) {
-		if ((dx * dx + dz * dz) * (double) stride * stride > craterRadius * craterRadius)
-		    continue;
-		int x = centreX + dx * stride;
-		int z = centreZ + dz * stride;
-		int surface = level.hasChunk(x >> 4, z >> 4)
-			? level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) : UNKNOWN_SURFACE;
-		columns.add(new CraterColumn(x, z, surface));
-	    }
-	}
-	return columns;
-    }
-
-    private void scanCraterFloor() {
-	loweredColumns.clear();
-	double reach = craterRadius + 2;
-	for (CraterColumn column : craterColumns) {
-	    if (!level.hasChunk(column.x >> 4, column.z >> 4))
-		continue;
-	    int surface = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, column.x, column.z);
-	    if (column.originalSurface == UNKNOWN_SURFACE) {
-		column.originalSurface = column.lowestSurface = surface;
-		continue;
-	    }
-	    if (surface >= column.originalSurface || surface <= level.getMinBuildHeight())
-		continue;
-	    // Check the removed layers so an exposed floor can sit below the blast radius.
-	    int removedY = Mth.clamp(Mth.floor(origin.y), surface, column.originalSurface - 1);
-	    if (origin.distanceToSqr(column.x + 0.5, removedY + 0.5, column.z + 0.5) > reach * reach)
-		continue;
-	    loweredColumns.add(column);
-	    if (surface < column.lowestSurface) {
-		column.lowestSurface = surface;
-		craterEndTick = age + craterLingerTicks;
-	    }
-	}
-    }
-
     private void craterAftermath() {
-	if (trackCrater && age % CRATER_SCAN_INTERVAL == 0)
-	    scanCraterFloor();
-	int lowered = loweredColumns.size();
-	if (trackCrater && lowered == 0)
+	int floorCount = craterFloors.size();
+	if (useCraterFloors && floorCount == 0)
 	    return;
 
-	float progress = trackCrater ? 1 - (craterEndTick - age) / (float) craterLingerTicks
+	float progress = useCraterFloors ? 1 - (craterEndTick - age) / (float) craterLingerTicks
 		: (age - CRATER_START_TICK) / (float) (craterLingerTicks - CRATER_START_TICK);
-	float density = 1 - 0.8f * (trackCrater ? progress * progress : progress);
-	double fullSamples = trackCrater ? Math.min(30, 18 + craterRadius * 0.12) : Math.min(26, 12 + craterRadius * 0.16);
+	float density = 1 - 0.8f * (useCraterFloors ? progress * progress : progress);
+	double fullSamples = useCraterFloors ? Math.min(30, 18 + craterRadius * 0.12) : Math.min(26, 12 + craterRadius * 0.16);
 	int samples = count((int) Math.round(fullSamples * density));
-	int start = trackCrater ? random.nextInt(lowered) : 0;
-	if (trackCrater)
-	    samples = Math.min(samples, lowered);
-	double reach = craterRadius + 2;
+	int start = useCraterFloors ? random.nextInt(floorCount) : 0;
+	if (useCraterFloors)
+	    samples = Math.min(samples, floorCount);
 	Vec3 windDrift = wind.scale(0.025 * scale);
 	for (int i = 0; i < samples; i++) {
-	    CraterColumn column = trackCrater ? loweredColumns.get((start + i * lowered / samples) % lowered) : null;
-	    int x;
-	    int z;
-	    if (column != null) {
-		x = column.x;
-		z = column.z;
-	    } else {
-		double angle = random.nextDouble() * Mth.TWO_PI;
-		double offset = craterRadius * 0.9 * Math.sqrt(random.nextDouble());
-		x = Mth.floor(origin.x + Math.cos(angle) * offset);
-		z = Mth.floor(origin.z + Math.sin(angle) * offset);
+	    BlockPos ground = useCraterFloors ? craterFloors.get((start + i * floorCount / samples) % floorCount)
+		    : sampleCraterGround();
+	    if (ground == null)
+		continue;
+	    if (useCraterFloors) {
+		if (!level.hasChunk(ground.getX() >> 4, ground.getZ() >> 4))
+		    continue;
+		// A floor update may arrive ahead of the corresponding block changes.
+		BlockPos above = ground.above();
+		BlockState space = level.getBlockState(above);
+		if (!space.getFluidState().isEmpty() || !space.getCollisionShape(level, above).isEmpty())
+		    continue;
 	    }
-	    if (!level.hasChunk(x >> 4, z >> 4))
-		continue;
-	    // Sample the current floor as the blast cuts the crater deeper.
-	    int surface = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
-	    if (surface <= level.getMinBuildHeight() || (column != null ? surface >= column.originalSurface
-		    : origin.distanceToSqr(x + 0.5, surface, z + 0.5) > reach * reach))
-		continue;
-	    BlockPos ground = new BlockPos(x, surface - 1, z);
 	    BlockState state = level.getBlockState(ground);
 	    if (!state.getFluidState().isEmpty())
 		continue;
@@ -448,18 +403,37 @@ public final class BlastEffects {
 
 	    double floorY = ground.getY() + shape.max(Direction.Axis.Y);
 	    float size = (0.65f + random.nextFloat() * 0.65f) * (0.6f + core * 0.075f);
-	    Vec3 pos = new Vec3(x + 0.5, floorY + (trackCrater ? size * 0.28 : 0.15), z + 0.5);
+	    double x = ground.getX() + (useCraterFloors ? 0.2 + random.nextDouble() * 0.6 : 0.5);
+	    double z = ground.getZ() + (useCraterFloors ? 0.2 + random.nextDouble() * 0.6 : 0.5);
+	    Vec3 pos = new Vec3(x, floorY + (useCraterFloors ? size * 0.4 : 0.15), z);
 	    boolean smoke = random.nextInt(4) == 0;
-	    Vec3 drift = windDrift.add(0, smoke ? 0.045 + random.nextDouble() * 0.035 : trackCrater ? 0.01 : 0.018, 0);
+	    double dustRise = useCraterFloors ? 0.01 : 0.018;
+	    Vec3 drift = windDrift.add(0, smoke ? 0.045 + random.nextDouble() * 0.035 : dustRise, 0);
 	    int color = ARGB32.lerp(random.nextFloat() * 0.45f, style.dust, style.smoke);
-	    int life = trackCrater ? 220 + random.nextInt(141) : 90 + random.nextInt(76);
+	    int life = useCraterFloors ? 220 + random.nextInt(141) : 90 + random.nextInt(76);
 	    puff(smoke ? Shape.SMOKE : Shape.DUST, pos, drift, size, life, color, style.dust);
 	    if (detail > 0.25f && random.nextFloat() < 0.25f * density) {
-		int emberLife = (trackCrater ? 40 : 24) + random.nextInt(34);
+		int emberLife = (useCraterFloors ? 40 : 24) + random.nextInt(34);
 		puff(Shape.GLOW, pos.add(0, 0.1, 0), windDrift.add(0, 0.032, 0), size * 0.16f, emberLife, style.heat,
 			style.smoke);
 	    }
 	}
+    }
+
+    @Nullable
+    private BlockPos sampleCraterGround() {
+	double angle = random.nextDouble() * Mth.TWO_PI;
+	double offset = craterRadius * 0.9 * Math.sqrt(random.nextDouble());
+	int x = Mth.floor(origin.x + Math.cos(angle) * offset);
+	int z = Mth.floor(origin.z + Math.sin(angle) * offset);
+	if (!level.hasChunk(x >> 4, z >> 4))
+	    return null;
+
+	int surface = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+	double reach = craterRadius + 2;
+	if (surface <= level.getMinBuildHeight() || origin.distanceToSqr(x + 0.5, surface, z + 0.5) > reach * reach)
+	    return null;
+	return new BlockPos(x, surface - 1, z);
     }
 
     private void mushroomCloud() {

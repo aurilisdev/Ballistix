@@ -3,6 +3,7 @@ package ballistix.common.packet;
 import ballistix.Ballistix;
 import ballistix.common.packet.type.client.PacketPushPlayer;
 import ballistix.common.packet.type.client.PacketSetSearchRadarTrackedClient;
+import ballistix.common.packet.type.client.particle.PacketCraterGround;
 import ballistix.common.packet.type.client.particle.PacketSpawnBlastParticle;
 import ballistix.common.packet.type.client.particle.PacketStartBlastEffects;
 import net.minecraft.resources.ResourceLocation;
@@ -29,6 +30,7 @@ public class NetworkHandler {
 	registry.playToClient(PacketPushPlayer.TYPE, PacketPushPlayer.CODEC, PacketPushPlayer::handle);
 	registry.playToClient(PacketStartBlastEffects.TYPE, PacketStartBlastEffects.CODEC,
 		PacketStartBlastEffects::handle);
+	registry.playToClient(PacketCraterGround.TYPE, PacketCraterGround.CODEC, PacketCraterGround::handle);
 
     }
 

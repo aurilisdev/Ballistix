@@ -105,8 +105,7 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	    synchronized (threadRay.finishedBlocks) {
 		if (pertick == -1) {
 		    hasStarted = true;
-		    // The client samples the terrain before the first blocks are removed.
-		    sendDetonationEffects();
+		    startCraterEffects(BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble());
 		    attackEntities((float) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble() * 2, ex);
 		    world.playSound(null, position, BallistixSounds.SOUND_NUCLEAREXPLOSION.get(), SoundSource.BLOCKS,
 			    25, 1);
@@ -135,8 +134,10 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 			}
 		    }
 		    block.wasExploded(world, p, ex);
-		    world.setBlock(p, toPlace,
-			    Block.UPDATE_NEIGHBORS | Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS);
+		    if (world.setBlock(p, toPlace,
+			    Block.UPDATE_NEIGHBORS | Block.UPDATE_CLIENTS | Block.UPDATE_SUPPRESS_DROPS)
+			    && state.blocksMotion())
+			recordCraterRemoval(p);
 		    if (world instanceof ServerLevel serverlevel) {
 			if (!sounded) {
 			    serverlevel.getChunkSource().chunkMap.getPlayers(new ChunkPos(p), false).forEach(player -> {
@@ -172,6 +173,7 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	    }
 	    appliedFortronDamage = true;
 	}
+	boolean done = false;
 	if (threadSimple.isComplete && callCount % 2 == 0) {
 	    if (!thirdDamage) {
 		attackEntities((float) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble() * 2, ex);
@@ -224,10 +226,11 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 		}
 	    }
 	    if (!cachedIterator.hasNext()) {
-		return ticksSinceBlastStart > 1500;
+		done = ticksSinceBlastStart > 1500;
 	    }
 	}
-	return false;
+	flushCraterEffects(callCount, done);
+	return done;
 
     }
 

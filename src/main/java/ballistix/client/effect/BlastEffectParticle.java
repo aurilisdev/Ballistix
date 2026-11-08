@@ -49,12 +49,13 @@ final class BlastEffectParticle extends TextureSheetParticle {
     private final float size;
     private final int hotColor;
     private final int coolColor;
+    private final int minimumBlockLight;
     private final float brightness;
     private final float renderExtent;
     private int light;
 
     BlastEffectParticle(ClientLevel level, ResourceLocation spriteId, Shape shape, Vec3 pos, Vec3 velocity,
-	    float size, int lifetime, int hotColor, int coolColor) {
+	    float size, int lifetime, int hotColor, int coolColor, int minimumBlockLight) {
 	super(level, pos.x, pos.y, pos.z);
 	this.shape = shape;
 	this.spriteId = spriteId;
@@ -62,6 +63,7 @@ final class BlastEffectParticle extends TextureSheetParticle {
 	this.lifetime = lifetime;
 	this.hotColor = hotColor;
 	this.coolColor = coolColor;
+	this.minimumBlockLight = minimumBlockLight;
 	brightness = shape.lit ? 1 : 0.8f + level.random.nextFloat() * 0.2f;
 	xd = velocity.x;
 	yd = velocity.y;
@@ -94,8 +96,11 @@ final class BlastEffectParticle extends TextureSheetParticle {
     }
 
     private void updateLight() {
-	if (!shape.lit || shape == Shape.FIRE)
+	if (!shape.lit || shape == Shape.FIRE) {
 	    light = super.getLightColor(0);
+	    if (LightTexture.block(light) < minimumBlockLight)
+		light = LightTexture.pack(minimumBlockLight, LightTexture.sky(light));
+	}
     }
 
     @Override

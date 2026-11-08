@@ -29,6 +29,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
@@ -74,6 +75,7 @@ public final class BlastEffects {
     private static final float FLASH_HOLD_TICKS = 1.5f;
     private static final int CRATER_START_TICK = 20;
     private static final int CRATER_EMISSION_INTERVAL = 5;
+    private static final int CRATER_MIN_LIGHT = 7;
     private static final int WHITE = 0xFFFFF4E4;
     private static final ResourceLocation GLOW = Ballistix.rl("blast_glow");
     private static final ResourceLocation RING = Ballistix.rl("blast_ring");
@@ -391,22 +393,38 @@ public final class BlastEffects {
 	    if (Double.isNaN(floorY))
 		continue;
 	    float size = (0.65f + random.nextFloat() * 0.65f) * (0.6f + core * 0.075f);
+	    double top = cloud == null ? floorY : Math.max(floorY, cloud.y);
+	    double ceiling = useCraterFloors ? craterCeilingY(ground, top + 3 * size + 4 * scale) : Double.POSITIVE_INFINITY;
+	    double clearance = ceiling - floorY;
+	    if (clearance <= 0)
+		continue;
+	    size = (float) Math.min(size, clearance * 0.32);
 	    double x = ground.getX() + (useCraterFloors ? 0.2 + random.nextDouble() * 0.6 : 0.5);
 	    double z = ground.getZ() + (useCraterFloors ? 0.2 + random.nextDouble() * 0.6 : 0.5);
 	    Vec3 pos = new Vec3(x, floorY + (useCraterFloors ? size * 0.4 : 0.15), z);
 	    boolean smoke = random.nextInt(4) == 0;
-	    double dustRise = useCraterFloors ? 0.01 : 0.018;
-	    Vec3 drift = windDrift.add(0, smoke ? 0.045 + random.nextDouble() * 0.035 : dustRise, 0);
-	    int color = ARGB32.lerp(random.nextFloat() * 0.45f, style.dust, style.smoke);
+	    double rise = smoke ? 0.045 + random.nextDouble() * 0.035 : 0.018;
+	    rise = Math.min(rise, Math.max(0, ceiling - pos.y - size * 1.9) * 0.02);
+	    Vec3 drift = windDrift.add(0, rise, 0);
+	    int dust = style.dust;
+	    if (useCraterFloors) {
+		double crosswind = (random.nextDouble() - 0.5) * 0.06 * scale;
+		Vec3 gust = windDrift.scale(1.1 + random.nextDouble() * 1.5).add(-wind.z * crosswind, 0, wind.x * crosswind);
+		drift = gust.scale(Math.min(1, clearance / 4)).add(0, rise, 0);
+		MapColor groundColor = level.getBlockState(ground).getMapColor(level, ground);
+		if (groundColor != MapColor.NONE)
+		    dust = ARGB32.lerp(0.25f, dust, 0xFF000000 | groundColor.col);
+	    }
+	    int color = ARGB32.lerp(random.nextFloat() * 0.45f, dust, style.smoke);
 	    int life = useCraterFloors ? 220 + random.nextInt(141) : 90 + random.nextInt(76);
-	    puff(smoke ? Shape.SMOKE : Shape.DUST, pos, drift, size, life, color, style.dust);
+	    puff(smoke ? Shape.SMOKE : Shape.DUST, pos, drift, size, life, color, dust, CRATER_MIN_LIGHT);
 	    if (detail > 0.25f && random.nextFloat() < 0.25f * density) {
 		int emberLife = (useCraterFloors ? 40 : 24) + random.nextInt(34);
 		puff(Shape.GLOW, pos.add(0, 0.1, 0), windDrift.add(0, 0.032, 0), size * 0.16f, emberLife, style.heat,
 			style.smoke);
 	    }
 	    if (cloud != null && i % 2 == 0)
-		liftCraterDust(pos, cloud, size, color);
+		liftCraterDust(pos, cloud, size, color, ceiling);
 	}
     }
 
@@ -427,20 +445,44 @@ public final class BlastEffects {
 	return shape.isEmpty() ? Double.NaN : ground.getY() + shape.max(Direction.Axis.Y);
     }
 
-    private void liftCraterDust(Vec3 floor, Vec3 cloud, float size, int color) {
+    private double craterCeilingY(BlockPos ground, double maxY) {
+	// The heightmap bounds the scan, but a roof does not prevent dust from spawning below it.
+	int top = Math.min(Mth.ceil(maxY), level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+		ground.getX(), ground.getZ()) - 1);
+	if (top <= ground.getY() + 1)
+	    return Double.POSITIVE_INFINITY;
+	BlockPos.MutableBlockPos above = new BlockPos.MutableBlockPos();
+	for (int y = ground.getY() + 2; y <= top; y++) {
+	    above.set(ground.getX(), y, ground.getZ());
+	    BlockState state = level.getBlockState(above);
+	    if (!state.getFluidState().isEmpty())
+		return y;
+	    VoxelShape shape = state.getCollisionShape(level, above);
+	    if (!shape.isEmpty())
+		return y + shape.min(Direction.Axis.Y);
+	}
+	return Double.POSITIVE_INFINITY;
+    }
+
+    private void liftCraterDust(Vec3 floor, Vec3 cloud, float size, int color, double ceiling) {
 	double dx = cloud.x - floor.x;
 	double dz = cloud.z - floor.z;
 	double distance = Math.hypot(dx, dz);
 	double edge = Mth.clamp(distance / core - 1.1, 0, 1);
 	double rise = Math.max(3 * scale, cloud.y - floor.y) * (1 - 0.7 * edge);
-	Vec3 drift = wind.scale(0.03 * scale).add(dx * 0.002, 0.08 * scale, dz * 0.002);
+	rise = Math.min(rise, ceiling - floor.y - size * 3);
+	if (rise <= size)
+	    return;
+	Vec3 drift = wind.scale(0.03 * scale).add(dx * 0.002, 0, dz * 0.002);
 	// Fill both the crater interior and the gap to the underside of the cloud.
 	for (int layer = 0; layer < 2; layer++) {
 	    double fraction = (layer + random.nextDouble()) * 0.5;
 	    Vec3 pos = floor.add(0, rise * fraction, 0);
 	    float loftSize = size * (1 + 0.55f * (float) fraction);
 	    int tint = ARGB32.lerp((float) fraction * 0.7f, color, style.smoke);
-	    puff(Shape.SMOKE, pos, drift, loftSize, 112 + random.nextInt(69), tint, style.smoke);
+	    double loftRise = Math.min(0.08 * scale, Math.max(0, ceiling - pos.y - loftSize * 1.65) * 0.02);
+	    puff(Shape.SMOKE, pos, drift.add(0, loftRise, 0), loftSize, 112 + random.nextInt(69), tint, style.smoke,
+		    CRATER_MIN_LIGHT);
 	}
     }
 
@@ -462,7 +504,6 @@ public final class BlastEffects {
 
     private void mushroomCloud() {
 	float late = Mth.clamp((age - 150) / (float) (aftermathTicks - 150), 0, 1);
-	float density = 1 - 0.78f * late;
 	double headHeight = scale * (9 + 69 * (1 - Math.exp(-age / 37.0)) + late * 28);
 	double capRadius = scale * (9 + 37 * (1 - Math.exp(-age / 47.0)) + late * 15);
 	Vec3 head = cloudAxis(headHeight);
@@ -488,26 +529,29 @@ public final class BlastEffects {
 		cloudPuff(pos, velocity, size, heat * (0.36f + random.nextFloat() * 0.64f));
 	}
 
-	int capPuffs = count(Math.round(32 * density));
+	int capPuffs = count(Math.round(40 - 16 * late * late));
 	for (int i = 0; i < capPuffs; i++) {
 	    double azimuth = (i + random.nextDouble()) * Mth.TWO_PI / capPuffs;
 	    double tubeAngle = random.nextDouble() * Mth.TWO_PI;
 	    double cos = Math.cos(tubeAngle);
 	    double sin = Math.sin(tubeAngle);
 	    double ringRadius = capRadius * (0.66 + 0.30 * cos);
-	    double y = capRadius * sin * 0.24;
-	    // Fill the crown above the rolling rim so the cap reads as a mass from above and below.
-	    if (i % 4 == 0) {
-		ringRadius = capRadius * 0.68 * Math.sqrt(random.nextDouble());
-		y = capRadius * (0.14 + 0.20 * Math.sqrt(1 - ringRadius / capRadius));
+	    double y = capRadius * sin * 0.31;
+	    boolean interior = i % 3 == 0;
+	    // Keep smoke inside the rolling rim as the crown expands.
+	    if (interior) {
+		double fill = random.nextDouble();
+		ringRadius = capRadius * 0.72 * Math.sqrt(fill);
+		y = capRadius * (0.15 + (2 * random.nextDouble() - 1) * 0.24 * Math.sqrt(1 - fill));
 	    }
 	    double xDir = Math.cos(azimuth);
 	    double zDir = Math.sin(azimuth);
 	    Vec3 pos = head.add(xDir * ringRadius, y, zDir * ringRadius);
-	    double outward = scale * (0.22 + sin * 0.17);
-	    Vec3 velocity = new Vec3(xDir * outward, scale * (0.16 - cos * 0.22), zDir * outward)
+	    double outward = scale * (interior ? 0.07 : 0.22 + sin * 0.17);
+	    double rise = scale * (interior ? 0.11 : 0.16 - cos * 0.22);
+	    Vec3 velocity = new Vec3(xDir * outward, rise, zDir * outward)
 		    .add(wind.scale(scale * 0.05));
-	    float size = (float) (capRadius * (0.125 + random.nextDouble() * 0.15));
+	    float size = (float) (capRadius * (0.145 + random.nextDouble() * 0.15));
 	    cloudPuff(pos, velocity, size, heat * (0.31f + random.nextFloat() * 0.69f));
 	    if (age >= 39 && i % 5 == 1) {
 		Vec3 falling = new Vec3(xDir * 0.12, -0.24 - random.nextDouble() * 0.22, zDir * 0.12)
@@ -587,13 +631,18 @@ public final class BlastEffects {
 
     private void puff(Shape shape, Vec3 pos, Vec3 velocity, float size,
 	    int life, int hotColor, int coolColor) {
+	puff(shape, pos, velocity, size, life, hotColor, coolColor, 0);
+    }
+
+    private void puff(Shape shape, Vec3 pos, Vec3 velocity, float size,
+	    int life, int hotColor, int coolColor, int minimumBlockLight) {
 	ResourceLocation sprite = switch (shape) {
 	    case GLOW, SPARK -> GLOW;
 	    case RING -> RING;
 	    case SMOKE, DUST, FIRE -> SMOKE.get(random.nextInt(SMOKE.size()));
 	};
 	BlastParticleRenderer.add(new BlastEffectParticle(level, sprite, shape, pos, velocity, size,
-		life, hotColor, coolColor));
+		life, hotColor, coolColor, minimumBlockLight));
     }
 
     private int count(int fullCount) {

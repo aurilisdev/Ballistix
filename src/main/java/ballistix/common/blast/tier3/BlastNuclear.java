@@ -105,6 +105,8 @@ public class BlastNuclear extends BlastLasting implements IHasCustomRender {
 	    synchronized (threadRay.finishedBlocks) {
 		if (pertick == -1) {
 		    hasStarted = true;
+		    // The client samples the terrain before the first blocks are removed.
+		    sendDetonationEffects();
 		    attackEntities((float) BallistixConfig.INSTANCE.EXPLOSIVE_NUCLEAR_SIZE.getAsDouble() * 2, ex);
 		    world.playSound(null, position, BallistixSounds.SOUND_NUCLEAREXPLOSION.get(), SoundSource.BLOCKS,
 			    25, 1);

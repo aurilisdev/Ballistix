@@ -166,6 +166,12 @@ public abstract class Blast {
     public void doPostExplode() {
     }
 
+    protected final void sendDetonationEffects() {
+	if (world instanceof ServerLevel level && blastEntity instanceof EntityBlast entity) {
+	    entity.sendDetonationEffects(level, position, getBlastType());
+	}
+    }
+
     @Deprecated(since = "Should not be called externally!", forRemoval = false)
     public final void preExplode() {
 	PreBlastEvent evt = new PreBlastEvent(world, this);
@@ -182,9 +188,9 @@ public abstract class Blast {
 	NeoForge.EVENT_BUS.post(evt);
 	if (!evt.isCanceled()) {
 	    boolean done = doExplode(callcount);
-	    if (world instanceof ServerLevel level && blastEntity instanceof EntityBlast entity
-		    && this instanceof IHasCustomRender renderer && (isInstantaneous() || renderer.shouldRender())) {
-		entity.sendDetonationEffects(level, position, getBlastType());
+	    if (world instanceof ServerLevel && this instanceof IHasCustomRender renderer
+		    && (isInstantaneous() || renderer.shouldRender())) {
+		sendDetonationEffects();
 	    }
 	    return done;
 	}

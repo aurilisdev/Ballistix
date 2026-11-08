@@ -68,6 +68,8 @@ public final class BlastEffects {
     private static final float FLASH_HOLD_TICKS = 1.5f;
     private static final int CRATER_START_TICK = 20;
     private static final int CRATER_EMISSION_INTERVAL = 5;
+    private static final int CRATER_SCAN_INTERVAL = 20;
+    private static final int UNKNOWN_SURFACE = Integer.MIN_VALUE;
     private static final int WHITE = 0xFFFFF4E4;
     private static final ResourceLocation GLOW = Ballistix.rl("blast_glow");
     private static final ResourceLocation RING = Ballistix.rl("blast_ring");
@@ -85,13 +87,32 @@ public final class BlastEffects {
     private final float scale;
     private final float core;
     private final float detail;
+    private final float initialLifetimeScale;
+    private final int fireballTicks;
     private final int dustTicks;
     private final int aftermathTicks;
     private final double craterRadius;
-    private final int craterTicks;
+    private final boolean trackCrater;
+    private final int craterLingerTicks;
+    private final List<CraterColumn> craterColumns;
+    private final List<CraterColumn> loweredColumns = new ArrayList<>();
     private final List<Vec3> ejecta = new ArrayList<>();
+    private int craterEndTick;
     private int age;
     private boolean shakeStarted;
+
+    private static final class CraterColumn {
+	private final int x;
+	private final int z;
+	private int originalSurface;
+	private int lowestSurface;
+
+	private CraterColumn(int x, int z, int surface) {
+	    this.x = x;
+	    this.z = z;
+	    originalSurface = lowestSurface = surface;
+	}
+    }
 
     private BlastEffects(ClientLevel level, Vec3 origin, Style style, double radius, ParticleStatus particles) {
 	this.level = level;
@@ -101,20 +122,40 @@ public final class BlastEffects {
 	wind = direction(random.nextDouble() * Mth.TWO_PI, 0);
 	scale = Mth.clamp((float) Math.sqrt(radius / style.referenceRadius), 0.55f, 2.25f);
 	core = style.core * scale;
-	detail = switch (particles) {
+	float particleDetail = switch (particles) {
 	    case ALL -> 1f;
 	    case DECREASED -> 0.57f;
 	    case MINIMAL -> 0.23f;
+	};
+	detail = style == Style.CONDENSIVE ? particleDetail * 0.4f : particleDetail;
+	initialLifetimeScale = switch (style) {
+	    case CONDENSIVE -> 0.65f;
+	    case NUCLEAR, LARGE_ANTIMATTER -> 2.5f;
+	    case ANTIMATTER -> 2.25f;
+	    default -> 1f;
+	};
+	fireballTicks = switch (style) {
+	    case CONDENSIVE -> 14;
+	    case NUCLEAR -> 48;
+	    case ANTIMATTER -> 40;
+	    case LARGE_ANTIMATTER -> 56;
+	    default -> 20;
 	};
 	dustTicks = (int) (24 + style.core * 0.95f);
 	float durationScale = Mth.clamp(scale, 0.75f, 1.6f);
 	aftermathTicks = Math.round(style.aftermathTicks * durationScale);
 	craterRadius = Math.min(radius, style.referenceRadius * 1.75);
-	craterTicks = switch (style) {
-	    case THERMOBARIC -> Math.round(260 * durationScale);
-	    case NUCLEAR, ANTIMATTER, LARGE_ANTIMATTER -> aftermathTicks;
+	trackCrater = style == Style.NUCLEAR || style == Style.ANTIMATTER || style == Style.LARGE_ANTIMATTER;
+	int linger = switch (style) {
+	    case THERMOBARIC -> 260;
+	    case NUCLEAR -> 1800;
+	    case ANTIMATTER -> 1500;
+	    case LARGE_ANTIMATTER -> 2200;
 	    default -> 0;
 	};
+	craterLingerTicks = Math.round(linger * durationScale);
+	craterEndTick = craterLingerTicks;
+	craterColumns = trackCrater ? sampleCraterColumns() : List.of();
 	int count = count(12 + (int) style.core);
 	for (int i = 0; i < count; i++) {
 	    double angle = (i + random.nextDouble()) / count * Mth.TWO_PI;
@@ -183,13 +224,13 @@ public final class BlastEffects {
     private boolean tick(Minecraft minecraft) {
 	if (age == 0)
 	    flash();
-	if (age >= 2 && age <= 20 && age % 2 == 0)
+	if (age >= 2 && age <= fireballTicks && age % (age <= 20 ? 2 : 4) == 0)
 	    fireball();
 	if (age <= 36 && age % 2 == 0)
 	    ejecta();
 	if (age <= dustTicks)
 	    pressureFront(minecraft);
-	if (age >= CRATER_START_TICK && age <= craterTicks && age % CRATER_EMISSION_INTERVAL == 0)
+	if (age >= CRATER_START_TICK && age <= craterEndTick && age % CRATER_EMISSION_INTERVAL == 0)
 	    craterAftermath();
 	if (age <= aftermathTicks) {
 	    if (style == Style.NUCLEAR) {
@@ -200,37 +241,39 @@ public final class BlastEffects {
 	    }
 	}
 
-	int duration = Math.max(Math.max(aftermathTicks, craterTicks), Math.max(dustTicks, 36));
+	int duration = Math.max(Math.max(aftermathTicks, craterEndTick), Math.max(dustTicks, 36));
 	return ++age > duration;
     }
 
     private void flash() {
-	puff(Shape.GLOW, origin.add(0, core * 0.32, 0), Vec3.ZERO, core * 1.7f, 17, style.heat,
+	puff(Shape.GLOW, origin.add(0, core * 0.32, 0), Vec3.ZERO, core * 1.7f, initialLifetime(17), style.heat,
 		style.heat);
-	puff(Shape.GLOW, origin.add(0, core * 0.25, 0), Vec3.ZERO, core * 0.98f, 11, WHITE, style.heat);
+	puff(Shape.GLOW, origin.add(0, core * 0.25, 0), Vec3.ZERO, core * 0.98f, initialLifetime(11), WHITE, style.heat);
 	puff(Shape.GLOW, origin.add(0, core * 0.14, 0), Vec3.ZERO, core * 0.52f, 7,
 		0xFFFFFFFF, WHITE);
-	puff(Shape.RING, origin.add(0, core * 0.12, 0), Vec3.ZERO, core * 0.9f, 22, WHITE,
+	puff(Shape.RING, origin.add(0, core * 0.12, 0), Vec3.ZERO, core * 0.9f, initialLifetime(22), WHITE,
 		style.heat);
 
 	if (detail >= 0.5f && style.core >= 20) {
 	    puff(Shape.RING, origin.add(0, core * 0.85, 0), new Vec3(0, core * 0.037, 0),
-		    core * 0.63f, 23, WHITE, style.heat);
+		    core * 0.63f, initialLifetime(23), WHITE, style.heat);
 	}
     }
 
     private void fireball() {
-	int puffs = count(14 + (int) style.core);
-	float expansion = core * (0.22f + age * 0.044f);
+	float tail = age <= 20 ? 0 : (age - 20f) / (fireballTicks - 20);
+	int puffs = count(Math.round((14 + (int) style.core) * (1 - 0.82f * tail)));
+	float expansion = core * (0.22f + (Math.min(age, 20) + 7 * tail) * 0.044f);
 	for (int i = 0; i < puffs; i++) {
 	    Vec3 outward = direction(random.nextDouble() * Mth.TWO_PI, -0.12 + random.nextDouble() * 1.69);
 	    Vec3 pos = origin.add(0, core * 0.14, 0).add(outward.scale(expansion * (0.34 + random.nextDouble() * 0.66)));
 	    Vec3 velocity = outward.scale((0.035 + random.nextDouble() * 0.035) * core).add(0, core * 0.012, 0);
 	    float size = core * (0.14f + random.nextFloat() * 0.27f);
 	    int heat = ARGB32.lerp(random.nextFloat() * 0.68f, style.heat, WHITE);
-	    puff(Shape.FIRE, pos, velocity, size, 33 + random.nextInt(38), heat, style.smoke);
+	    heat = ARGB32.lerp(tail * 0.55f, heat, style.smoke);
+	    puff(Shape.FIRE, pos, velocity, size, initialLifetime(33 + random.nextInt(38)), heat, style.smoke);
 	    if (age <= 8 && i % 3 == 0) {
-		puff(Shape.GLOW, pos, velocity, size * 0.82f, 8 + random.nextInt(7),
+		puff(Shape.GLOW, pos, velocity, size * 0.82f, initialLifetime(8 + random.nextInt(7)),
 			WHITE, style.heat);
 	    }
 	}
@@ -248,7 +291,7 @@ public final class BlastEffects {
 	    Vec3 pos = origin.add(velocity.x * horizontal, height + core * 0.1, velocity.z * horizontal);
 	    float size = (0.28f + random.nextFloat() * 0.55f) * (1 + core * 0.16f);
 	    puff(age < 9 ? Shape.FIRE : Shape.SMOKE, pos,
-		    velocity.scale(0.065).add(0, 0.075, 0), size, 30 + random.nextInt(48),
+		    velocity.scale(0.065).add(0, 0.075, 0), size, initialLifetime(30 + random.nextInt(48)),
 		    age < 9 ? style.heat : style.dust, style.smoke);
 
 	    if ((i + age / 2) % 2 == 0 && detail > 0.25f) {
@@ -297,7 +340,7 @@ public final class BlastEffects {
 	    Vec3 pos = new Vec3(x + 0.5, surface + size * 0.20, z + 0.5);
 	    Vec3 velocity = new Vec3(dirX * push, 0.045 + random.nextDouble() * 0.18, dirZ * push);
 	    int color = ARGB32.lerp(random.nextFloat() * 0.35f, style.dust, style.smoke);
-	    puff(Shape.DUST, pos, velocity, size, 38 + random.nextInt(50), color, style.dust);
+	    puff(Shape.DUST, pos, velocity, size, initialLifetime(38 + random.nextInt(50)), color, style.dust);
 	    if (age <= 18 && i % 6 == 0 && detail > 0.25f) {
 		BlockPos ground = new BlockPos(x, surface - 1, z);
 		BlockState state = level.getBlockState(ground);
@@ -312,22 +355,88 @@ public final class BlastEffects {
 	}
     }
 
+    private List<CraterColumn> sampleCraterColumns() {
+	List<CraterColumn> columns = new ArrayList<>();
+	int centreX = Mth.floor(origin.x);
+	int centreZ = Mth.floor(origin.z);
+	// Keep the number of heightmap samples bounded even for oversized blasts.
+	int stride = Math.max(2, Mth.ceil(craterRadius / 20));
+	int extent = Mth.floor(craterRadius / stride);
+	for (int dx = -extent; dx <= extent; dx++) {
+	    for (int dz = -extent; dz <= extent; dz++) {
+		if ((dx * dx + dz * dz) * (double) stride * stride > craterRadius * craterRadius)
+		    continue;
+		int x = centreX + dx * stride;
+		int z = centreZ + dz * stride;
+		int surface = level.hasChunk(x >> 4, z >> 4)
+			? level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) : UNKNOWN_SURFACE;
+		columns.add(new CraterColumn(x, z, surface));
+	    }
+	}
+	return columns;
+    }
+
+    private void scanCraterFloor() {
+	loweredColumns.clear();
+	double reach = craterRadius + 2;
+	for (CraterColumn column : craterColumns) {
+	    if (!level.hasChunk(column.x >> 4, column.z >> 4))
+		continue;
+	    int surface = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, column.x, column.z);
+	    if (column.originalSurface == UNKNOWN_SURFACE) {
+		column.originalSurface = column.lowestSurface = surface;
+		continue;
+	    }
+	    if (surface >= column.originalSurface || surface <= level.getMinBuildHeight())
+		continue;
+	    // Check the removed layers so an exposed floor can sit below the blast radius.
+	    int removedY = Mth.clamp(Mth.floor(origin.y), surface, column.originalSurface - 1);
+	    if (origin.distanceToSqr(column.x + 0.5, removedY + 0.5, column.z + 0.5) > reach * reach)
+		continue;
+	    loweredColumns.add(column);
+	    if (surface < column.lowestSurface) {
+		column.lowestSurface = surface;
+		craterEndTick = age + craterLingerTicks;
+	    }
+	}
+    }
+
     private void craterAftermath() {
-	float progress = (age - CRATER_START_TICK) / (float) (craterTicks - CRATER_START_TICK);
-	float density = 1 - 0.8f * progress;
-	int samples = count((int) Math.round(Math.min(26, 12 + craterRadius * 0.16) * density));
+	if (trackCrater && age % CRATER_SCAN_INTERVAL == 0)
+	    scanCraterFloor();
+	int lowered = loweredColumns.size();
+	if (trackCrater && lowered == 0)
+	    return;
+
+	float progress = trackCrater ? 1 - (craterEndTick - age) / (float) craterLingerTicks
+		: (age - CRATER_START_TICK) / (float) (craterLingerTicks - CRATER_START_TICK);
+	float density = 1 - 0.8f * (trackCrater ? progress * progress : progress);
+	double fullSamples = trackCrater ? Math.min(30, 18 + craterRadius * 0.12) : Math.min(26, 12 + craterRadius * 0.16);
+	int samples = count((int) Math.round(fullSamples * density));
+	int start = trackCrater ? random.nextInt(lowered) : 0;
+	if (trackCrater)
+	    samples = Math.min(samples, lowered);
 	double reach = craterRadius + 2;
 	Vec3 windDrift = wind.scale(0.025 * scale);
 	for (int i = 0; i < samples; i++) {
-	    double angle = random.nextDouble() * Mth.TWO_PI;
-	    double offset = craterRadius * 0.9 * Math.sqrt(random.nextDouble());
-	    int x = Mth.floor(origin.x + Math.cos(angle) * offset);
-	    int z = Mth.floor(origin.z + Math.sin(angle) * offset);
+	    CraterColumn column = trackCrater ? loweredColumns.get((start + i * lowered / samples) % lowered) : null;
+	    int x;
+	    int z;
+	    if (column != null) {
+		x = column.x;
+		z = column.z;
+	    } else {
+		double angle = random.nextDouble() * Mth.TWO_PI;
+		double offset = craterRadius * 0.9 * Math.sqrt(random.nextDouble());
+		x = Mth.floor(origin.x + Math.cos(angle) * offset);
+		z = Mth.floor(origin.z + Math.sin(angle) * offset);
+	    }
 	    if (!level.hasChunk(x >> 4, z >> 4))
 		continue;
 	    // Sample the current floor as the blast cuts the crater deeper.
 	    int surface = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
-	    if (surface <= level.getMinBuildHeight() || origin.distanceToSqr(x + 0.5, surface, z + 0.5) > reach * reach)
+	    if (surface <= level.getMinBuildHeight() || (column != null ? surface >= column.originalSurface
+		    : origin.distanceToSqr(x + 0.5, surface, z + 0.5) > reach * reach))
 		continue;
 	    BlockPos ground = new BlockPos(x, surface - 1, z);
 	    BlockState state = level.getBlockState(ground);
@@ -338,15 +447,17 @@ public final class BlastEffects {
 		continue;
 
 	    double floorY = ground.getY() + shape.max(Direction.Axis.Y);
-	    Vec3 pos = new Vec3(x + 0.5, floorY + 0.15, z + 0.5);
 	    float size = (0.65f + random.nextFloat() * 0.65f) * (0.6f + core * 0.075f);
+	    Vec3 pos = new Vec3(x + 0.5, floorY + (trackCrater ? size * 0.28 : 0.15), z + 0.5);
 	    boolean smoke = random.nextInt(4) == 0;
-	    Vec3 drift = windDrift.add(0, smoke ? 0.045 + random.nextDouble() * 0.035 : 0.018, 0);
+	    Vec3 drift = windDrift.add(0, smoke ? 0.045 + random.nextDouble() * 0.035 : trackCrater ? 0.01 : 0.018, 0);
 	    int color = ARGB32.lerp(random.nextFloat() * 0.45f, style.dust, style.smoke);
-	    puff(smoke ? Shape.SMOKE : Shape.DUST, pos, drift, size, 90 + random.nextInt(76), color, style.dust);
+	    int life = trackCrater ? 220 + random.nextInt(141) : 90 + random.nextInt(76);
+	    puff(smoke ? Shape.SMOKE : Shape.DUST, pos, drift, size, life, color, style.dust);
 	    if (detail > 0.25f && random.nextFloat() < 0.25f * density) {
-		puff(Shape.GLOW, pos.add(0, 0.1, 0), windDrift.add(0, 0.032, 0), size * 0.16f,
-			24 + random.nextInt(34), style.heat, style.smoke);
+		int emberLife = (trackCrater ? 40 : 24) + random.nextInt(34);
+		puff(Shape.GLOW, pos.add(0, 0.1, 0), windDrift.add(0, 0.032, 0), size * 0.16f, emberLife, style.heat,
+			style.smoke);
 	    }
 	}
     }
@@ -446,6 +557,10 @@ public final class BlastEffects {
 
     private int count(int fullCount) {
 	return Math.max(1, Math.round(fullCount * detail));
+    }
+
+    private int initialLifetime(int ticks) {
+	return Math.round(ticks * initialLifetimeScale);
     }
 
     private static Vec3 direction(double azimuth, double elevation) {

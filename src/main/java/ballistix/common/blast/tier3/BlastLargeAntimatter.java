@@ -82,6 +82,7 @@ public class BlastLargeAntimatter extends BlastLasting implements IHasCustomRend
 		SoundEvents.GENERIC_EXPLODE);
 	if (pertick == -1) {
 	    hasStarted = true;
+	    sendDetonationEffects();
 
 	    int radius = (int) BallistixConfig.INSTANCE.EXPLOSIVE_LARGEANTIMATTER_RADIUS.getAsDouble();
 
